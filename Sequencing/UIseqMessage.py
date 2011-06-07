@@ -77,10 +77,11 @@ class UIseqMessage:
         
         # Tree store contains :
         # str : type {"group" or "message"}
-        # str : text
+        # str : text ( group/message )
+        # str : text ( score )
         # str : color foreground
         # str : color background
-        self.treestoreGroup = gtk.TreeStore(str, str, str, str)
+        self.treestoreGroup = gtk.TreeStore(str, str, str, str, str)
        
         self.treeViewGroups = gtk.TreeView(self.treestoreGroup)
         # enable dropping data in a group
@@ -102,11 +103,14 @@ class UIseqMessage:
 
         lvcolumn = gtk.TreeViewColumn('Messages')
         lvcolumn.set_sort_column_id(1)
-        cell = gtk.CellRendererText()
-        lvcolumn.pack_start(cell, True)
-        cell.set_property('background-set' , True)
-        cell.set_property('foreground-set' , True)
-        lvcolumn.set_attributes(cell, text=1, foreground=2, background=3)
+        cell1 = gtk.CellRendererText()
+        cell2 = gtk.CellRendererText()
+        lvcolumn.pack_start(cell1, True)
+        lvcolumn.pack_start(cell2, True)
+        cell1.set_property('background-set' , True)
+        cell1.set_property('foreground-set' , True)
+        lvcolumn.set_attributes(cell1, text=1, foreground=3, background=4)
+        lvcolumn.set_attributes(cell2, text=2, foreground=3, background=4)
         self.treeViewGroups.append_column(lvcolumn)
         self.treeViewGroups.show()
 
@@ -313,9 +317,9 @@ class UIseqMessage:
         self.treestoreGroup.clear()
         for group in self.groups :
             #
-            iter = self.treestoreGroup.append(None, ["Group", group.getName(), '#000000', '#FF00FF'])
+            iter = self.treestoreGroup.append(None, ["Group", group.getName(), str(group.score), '#000000', '#FF00FF'])
             for message in group.getMessages() :
-                self.treestoreGroup.append(iter, ["Message", message.getID(), '#000000', '#FF00FF'])
+                self.treestoreGroup.append(iter, ["Message", message.getID(), "0", '#000000', '#FF00FF'])
         
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
