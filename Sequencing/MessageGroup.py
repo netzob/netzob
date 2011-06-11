@@ -59,7 +59,10 @@ class MessageGroup(object):
         innerThread = self.InnerMessageGroup(self)
         innerThread.start()
         innerThread.join()
-   
+    #+---------------------------------------------- 
+    #| removeMessage : remove any ref to the given
+    #| message and recompute regex and score
+    #+----------------------------------------------
     def removeMessage(self, message):
         self.messages.remove(message)
         self.computeRegex()
@@ -88,6 +91,9 @@ class MessageGroup(object):
         return self.messages   
     def getRegex(self):
         return self.regex
+    def getScore(self):
+        return self.score
+
 
     #+---------------------------------------------- 
     #| SETTERS : 

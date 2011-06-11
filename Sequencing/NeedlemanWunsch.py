@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # coding: utf8
-
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
@@ -25,7 +24,7 @@ class NeedlemanWunsch:
     #| computeScore :
     #|     Computes the score of a given regex 
     #| @param regex : the regex for which the score is computed
-    #| @return the score
+    #| @return the score   
     #+---------------------------------------------- 
     def computeScore(self, regex):
         score = 0
@@ -131,10 +130,36 @@ class NeedlemanWunsch:
               return ""
           
           regex = ""
+          saved1 = ""
+          saved2 = ""
           for i in range(0,len(regex1)) :
               if (regex1[i]!=regex2[i]) :
                   if (i<len(regex1)-1 and regex1[i+1]==regex2[i+1]) :
-                      regex = regex+"(.*)"
+                      
+                      
+                      saved1=saved1+regex1[i]
+                      saved2=saved2+regex2[i]
+                      
+                      saved1 = saved1.replace("-","").replace("(", "").replace(")","").replace("*", "")
+                      saved2 = saved2.replace("-","").replace("(", "").replace(")", "").replace("*", "")
+                      if (len(saved1)>0 or len(saved2)>0) :
+#                        regex = regex+"*("                        
+#                        if (len(saved1)>0) :
+#                            regex = regex+saved1
+#                            if (len(saved2)>0) :
+#                                regex = regex+"|"
+#                        if (len(saved2)>0) :
+#                            regex = regex +saved2
+#                        regex = regex + ")"
+                         regex = regex + "(.*)"
+#                     print "Saved = {0}".format(saved1)
+#                     print "Saved = {0}".format(saved2)
+                      saved1 = ""
+                      saved2 = ""
+                  else :
+#                      print "save : {0};{1}".format(regex1[i], regex2[i])
+                      saved1=saved1+regex1[i]
+                      saved2=saved2+regex2[i]
               else :
                   regex = regex+regex1[i]
               
@@ -150,15 +175,18 @@ class NeedlemanWunsch:
 #| UNIT TESTS
 #+----------------------------------------------
 if __name__ == "__main__":
-    sequence1 = "bonjour pseudo, welcome in my world on 180.90.20.1"
-    sequence2 = "bonjour hardC0ded, welcome to my world on 180.90.20.1"
-    sequence3 = "bonjour aaaaaaaa, welcome in my world on xxx.xxx.xxx.xxx"
+    sequence1 = "bonjour you where do you come from!"
+    #sequence1 = "bonjour *(you|me) where *(do|will) you *(c|g)o*(me from)!"
+    #sequence1 = "bonjour *(you|me)*(me) where *(do|will)*(will) you *(c|g)*(g)o*(me from)!"
+    #sequence1 = "bonjour  where  you o!"
+    sequence2 = "bonjour me where will you go!"
+    sequence3 = "bonjour tii where do you come from!"
     sequence4 = "bonjour aaaaaaaa, your are not welcome in my world on xxx.xxx.xxx.xxx"
     sequences = []
     sequences.append(sequence1)
     sequences.append(sequence2)
     sequences.append(sequence3)
-    sequences.append(sequence4)
+    #sequences.append(sequence4)
     alignor = NeedlemanWunsch()
     regex = alignor.getRegex(sequences)   
     score = alignor.computeScore(regex)

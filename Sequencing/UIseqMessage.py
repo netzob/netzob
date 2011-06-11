@@ -16,6 +16,7 @@ pygtk.require('2.0')
 #+----------------------------------------------
 import MessageGroup
 import TracesExtractor
+import NeedlemanWunsch
 
 #+---------------------------------------------- 
 #| UIseqMessage :
@@ -56,6 +57,7 @@ class UIseqMessage:
         self.zob = self.uizob.zob
         self.groups = []
         self.selectedGroup = ""
+        self.selectedMessage = ""
 
         self.panel = gtk.HBox(False, spacing=10)
         self.vb_sortie = gtk.VBox(False, spacing=0)
@@ -106,9 +108,13 @@ class UIseqMessage:
         cell1 = gtk.CellRendererText()
         cell2 = gtk.CellRendererText()
         lvcolumn.pack_start(cell1, True)
-        lvcolumn.pack_start(cell2, True)
+        lvcolumn.pack_start(cell2,True)
         cell1.set_property('background-set' , True)
         cell1.set_property('foreground-set' , True)
+        
+        cell2.set_property('background-set' , True)
+        cell2.set_property('foreground-set' , True)
+        
         lvcolumn.set_attributes(cell1, text=1, foreground=3, background=4)
         lvcolumn.set_attributes(cell2, text=2, foreground=3, background=4)
         self.treeViewGroups.append_column(lvcolumn)
@@ -134,7 +140,7 @@ class UIseqMessage:
         self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
                   gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
-        
+        self.treeViewDetail.connect("cursor-changed", self.messageSelected)
         
         
         cellDetail2 = gtk.CellRendererText()
@@ -290,7 +296,8 @@ class UIseqMessage:
             #Update Left and Right
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
-          
+        else :
+            print "[ERROR] Impossible to retrive the message to Drop"
         return
    
    
@@ -307,6 +314,7 @@ class UIseqMessage:
       texte = str(modele.get_value(iter, 2))
 
       selection.set(selection.target, 8, texte)
+
       return
     
     
@@ -316,21 +324,50 @@ class UIseqMessage:
     def updateTreeStoreGroup(self):
         self.treestoreGroup.clear()
         for group in self.groups :
-            #
-            iter = self.treestoreGroup.append(None, ["Group", group.getName(), str(group.score), '#000000', '#FF00FF'])
+            if (self.selectedMessage != "") :
+
+                # compute tmp score of the group if it include the selected message
+                tmp_sequences = []
+                if (len(group.getRegex())>0) :
+                    tmp_sequences.append(group.getRegex())
+
+                tmp_sequences.append(self.selectedMessage.getStringData())
+                tmp_alignator = NeedlemanWunsch.NeedlemanWunsch()
+
+                tmp_score = group.getScore()
+                if (len(tmp_sequences)>=2) :
+                    tmp_regex = tmp_alignator.getRegex(tmp_sequences)
+                    tmp_score = tmp_alignator.computeScore(tmp_regex)
+
+                if (tmp_score >= group.getScore()):
+                    color = '#66FF00'
+                else :
+                    color = '#FF0000'
+
+                iter = self.treestoreGroup.append(None, ["Group","{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
+            else :
+                iter = self.treestoreGroup.append(None, ["Group","{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
+
             for message in group.getMessages() :
                 self.treestoreGroup.append(iter, ["Message", message.getID(), "0", '#000000', '#FF00FF'])
+
+        self.selectedMessage = ""
         
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
+        print "[DEBUG] Updating the tree store of messages"
         self.treestoreMessage.clear()
         if (self.selectedGroup != "") :
+            print "[DEBUG] Selected group : {0}".format(self.selectedGroup)
             for group in self.groups :
                 if (group.getName() == self.selectedGroup) :
+                    if (len(group.getRegex())>0) :
+                        self.treestoreMessage.append(None, [group.getRegex, "", ""])
+
                     for message in group.getMessages() :
-                        print group.getRegex()
+                        print "- {0}".format(message.getStringData())
                         self.treestoreMessage.append(None, [message.getPangoData(group.getRegex()), group.getRegex(), message.getID()])
    
        
@@ -338,17 +375,34 @@ class UIseqMessage:
 #| CALLBACKS 
 #+----------------------------------------------
 
+    def messageSelected(self, treeview) :
+        (modele, iter) = treeview.get_selection().get_selected()
+        if(iter):
+            if(modele.iter_is_valid(iter)):
+
+                pango = modele.get_value(iter, 0)
+                group_regex = modele.get_value(iter,1)
+                msg_id = modele.get_value(iter, 2)
+                
+                for group in self.groups :
+                    for message in group.getMessages() :
+                        if str(message.getID()) == msg_id :
+                            self.selectedMessage = message
+                            print "[DEBUG] selected message {0}".format(self.selectedMessage.getID())     
+                            self.updateTreeStoreGroup()
+
     #+---------------------------------------------- 
     #| Called when user click on a group or on a message
     #+----------------------------------------------
     def messageChanged(self, treeview):
-        (modele, iter) = self.treeViewGroups.get_selection().get_selected()
+        (modele, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(modele.iter_is_valid(iter)):
                 
                 type = modele.get_value(iter, 0)
                 name = modele.get_value(iter, 1)
-                
+                score = modele.get_value(iter,2)
+
                 if (type == "Group") :
                     print "Group : {0}".format(name)
                     self.selectedGroup = name
@@ -356,3 +410,5 @@ class UIseqMessage:
                     
                 if (type == "Message") :
                     print "Message : {0}".format(name)    
+                    self.selectedMessage = name
+

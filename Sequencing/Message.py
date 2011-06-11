@@ -52,43 +52,37 @@ class Message(object):
     #| @return string(data)
     #+----------------------------------------------
     def getPangoData(self, regex):
-        print "[DEBUG] get Pando data"
+        # Simplify the regex
+        #regex = "^"+regex+"$"
         
-        regex = "^"+regex+"$"
-        
+        # Compute the score of the regex
         needle = NeedlemanWunsch.NeedlemanWunsch()
-        
         score = needle.computeScore(regex)
-      
+        # if score > 75 : apply regex
         if (score < 75) :
             return self.getStringData()
         
         data = self.getStringData()
         result = data
-        print "Data = {0}".format(data)
-        print "Regex = {0}".format(regex)
-        
         compiledRegex = re.compile(regex)
-        
         m = compiledRegex.match(data)
     
         if (m == None) :
-            print "MERDE"
+            print "[ERROR] The regex of the group doesn't match one of its message"
+            return self.getStringData()
         
         
-        print "++++"
         result = ""
         current = 0
         
         nbGroup = len(m.groups())
         
         for i_group in range(1, nbGroup+1) :
-            print "."
             start = m.start(i_group)
             end = m.end(i_group)
             
-            result += '<span style="font-family : Courier;">' + data[current:start] + '</span>'
-            result += '<span style="font-family : Courier;" foreground="blue">' + data[start:end] + '</span>'
+            result += '<span >' + data[current:start] + '</span>'
+            result += '<span foreground="blue" font_family="monospace" >' + data[start:end] + '</span>'
             
             current = end
         

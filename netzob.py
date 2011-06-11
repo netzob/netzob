@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding: utf8
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import sys
@@ -36,7 +36,7 @@ class Netzob:
         
         # Main window definition
         self.fenetre = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.fenetre.set_size_request(1500, 900) 
+        self.fenetre.set_size_request(1200, 800) 
         self.fenetre.connect("delete_event", self.evnmt_delete)
         self.fenetre.connect("destroy", self.destroy)
         
@@ -116,6 +116,9 @@ class Netzob:
 
     def evnmt_delete(self, widget, event, data=None):
         return False
+
+
+
 
     def destroy(self, widget, data=None):
         for page in self.pageList:
