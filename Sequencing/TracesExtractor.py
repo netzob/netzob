@@ -27,9 +27,9 @@ class TracesExtractor(object):
     #| Constructor :
     #| @param path: path of the directory containing traces to parse 
     #+----------------------------------------------   
-    def __init__(self, path, uizob):
-        self.uizob = uizob
-        self.path = path
+    def __init__(self, zob):
+        self.zob = zob
+        self.path = self.zob.tracePath
     
     #+---------------------------------------------- 
     #| Parse :
@@ -85,11 +85,11 @@ class TracesExtractor(object):
     #| doProgressBarStep :
     #+----------------------------------------------    
     def doProgressBarStep(self, step):
-        new_val = self.uizob.progressBar.get_fraction() + step
-        self.uizob.progressBar.set_fraction(new_val)
+        new_val = self.zob.progressBar.get_fraction() + step
+        self.zob.progressBar.set_fraction(new_val)
         
     #+---------------------------------------------- 
     #| resetProgressBar :
     #+----------------------------------------------
     def resetProgressBar(self):
-        self.uizob.progressBar.set_fraction(0)
+        self.zob.progressBar.set_fraction(0)

@@ -33,7 +33,7 @@ class UIseqMessage:
     #+----------------------------------------------
     def new(self):
         # Parse the traces and store the results
-        tracesExtractor = TracesExtractor.TracesExtractor(self.zob.tracePath, self.uizob)
+        tracesExtractor = TracesExtractor.TracesExtractor(self.zob)
         self.selectedGroup = ""
         task = tracesExtractor.parse(self.groups, self)
         gobject.idle_add(task.next)
@@ -52,9 +52,8 @@ class UIseqMessage:
     #| Constructor :
     #| @param groups: list of all groups 
     #+----------------------------------------------   
-    def __init__(self, uizob):
-        self.uizob = uizob
-        self.zob = self.uizob.zob
+    def __init__(self, zob):
+        self.zob = zob
         self.groups = []
         self.selectedGroup = ""
         

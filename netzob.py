@@ -15,7 +15,6 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import netzobModel
 from Sequencing import UIseqMessage
 
 #+---------------------------------------------- 
@@ -31,9 +30,6 @@ class Netzob:
     #| @param path: path of the directory containing traces to parse 
     #+----------------------------------------------   
     def __init__(self):
-        # Main model instanciation
-        self.zob = netzobModel.NetzobModel()
-        
         # Main window definition
         self.fenetre = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.fenetre.set_size_request(1200, 800) 
@@ -150,10 +146,9 @@ class Netzob:
             return
 
         self.label_analyse.set_text("./traces" + os.sep + target)
-        self.zob.tracePath = os.path.abspath(".") + os.sep + "traces" + os.sep + target
+        self.tracePath = os.path.abspath(".") + os.sep + "traces" + os.sep + target
 
         # clear past analysis and initialize the active notebook analysis
-        self.zob.clear()
         for page in self.pageList:
             page[1].clear()
             nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
