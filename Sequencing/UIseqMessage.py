@@ -57,6 +57,7 @@ class UIseqMessage:
         self.zob = self.uizob.zob
         self.groups = []
         self.selectedGroup = ""
+        
         self.selectedMessage = ""
 
         self.panel = gtk.HBox(False, spacing=10)
@@ -324,7 +325,7 @@ class UIseqMessage:
     def updateTreeStoreGroup(self):
         self.treestoreGroup.clear()
         for group in self.groups :
-            if (self.selectedMessage != "") :
+            if (self.selectedMessage != "" and group.getName() != self.selectedMessageGroup) :
 
                 # compute tmp score of the group if it include the selected message
                 tmp_sequences = []
@@ -364,7 +365,7 @@ class UIseqMessage:
             for group in self.groups :
                 if (group.getName() == self.selectedGroup) :
                     if (len(group.getRegex())>0) :
-                        self.treestoreMessage.append(None, [group.getRegex, "", ""])
+                        self.treestoreMessage.append(None, [group.getRegex(), "", ""])
 
                     for message in group.getMessages() :
                         print "- {0}".format(message.getStringData())
@@ -411,4 +412,5 @@ class UIseqMessage:
                 if (type == "Message") :
                     print "Message : {0}".format(name)    
                     self.selectedMessage = name
+
 
