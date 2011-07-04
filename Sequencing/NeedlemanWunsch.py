@@ -4,6 +4,7 @@
 #| Global Imports
 #+----------------------------------------------
 from numpy  import *
+import re
 
 #+---------------------------------------------- 
 #| NeedlemanWunsch :
@@ -27,15 +28,29 @@ class NeedlemanWunsch:
     #| @return the score   
     #+---------------------------------------------- 
     def computeScore(self, regex):
-        score = 0
-        if (len(regex)==0) :
-            return score
+#        score = 0
+#        if (len(regex) == 0) :
+#            return score
+#        
+#        ar = regex.split("(.{,")
+#        
+#        for i in range(0,len(ar)) :
+#            
+#            ar2 = 
+#            
+        return 90
+            
         
-        nbStatic = len(regex.replace("(.*)", ""))
-        nbDynamic = (len(regex) - nbStatic) / 4
-        score = 100.0 / (nbStatic+nbDynamic) * nbStatic 
-        return score
-    
+        
+#        
+##        nbStatic = len(regex.replace("-", ""))
+#        nbDynamic = (len(regex) - nbStatic) / 1
+#        
+#        print "size = {0}, static:{1}, var:{2}".format(len(regex))
+#        
+#        score = 100.0 / (nbStatic + nbDynamic) * nbStatic 
+#        return score
+#    
     
     #+---------------------------------------------- 
     #| getRegex :
@@ -45,17 +60,46 @@ class NeedlemanWunsch:
     #| @return the regex
     #+---------------------------------------------- 
     def getRegex(self, sequences):
-        if (len(sequences)<2) :
+        if (len(sequences) < 2) :
             print "[ERROR] Impossible to compute the regex if at least 2 sequences are not provided."
             return ""
         
         sequence1 = sequences[0]
         
-        for i in range(1,len(sequences)) :
+        for i in range(1, len(sequences)) :
             sequence2 = sequences[i]            
             regex = self.getRegexWithTwoSequences(sequence1, sequence2)
             sequence1 = regex
-        return regex    
+            
+        print "Now we transform [{0}] into a regex".format(regex)
+        
+        i = 0
+        start = 0
+        result = ""
+        found = False
+        for i in range(0,len(regex)) :
+            if (regex[i]=="-"):
+                
+                if (found == False) :
+                    start = i
+                
+                found = True
+            else :
+                if (found == True) :
+                    found = False
+                    nbTiret = i - start
+                                   
+                    result = result + "(.{,"+str(nbTiret)+"})" + regex[i]
+                else :
+                    result = result + regex[i]
+        
+        if (found == True) :
+            nbTiret = i - start
+            result = result + "(.{,"+str(nbTiret)+"})"
+        
+        
+        print result
+        return result    
     
         
     #+---------------------------------------------- 
@@ -105,63 +149,66 @@ class NeedlemanWunsch:
           
           while (not finish) :
               eltL = matrix[i][j - 1]
-              eltD = matrix[i-1][j-1]
+              eltD = matrix[i - 1][j - 1]
               eltT = matrix[i - 1][j]
               if (eltL > eltD and eltL > eltT) :
-                  j=j-1  
-                  regex1 = "-"+regex1
-                  regex2 = sequence2[j]+regex2
+                  j = j - 1  
+                  regex1 = "-" + regex1
+                  regex2 = sequence2[j] + regex2
               elif (eltT >= eltL and eltT > eltD) :
-                  i=i-1  
-                  regex2 = "-"+regex2
-                  regex1 = sequence1[i]+regex1
+                  i = i - 1  
+                  regex2 = "-" + regex2
+                  regex1 = sequence1[i] + regex1
               else :
-                  i=i-1
-                  j=j-1
-                  regex1 = sequence1[i]+regex1
-                  regex2 = sequence2[j]+regex2
+                  i = i - 1
+                  j = j - 1
+                  regex1 = sequence1[i] + regex1
+                  regex2 = sequence2[j] + regex2
          
-              if (i==0 or j==0) :
+              if (i == 0 or j == 0) :
                   finish = True 
           
           # Computes the first version of the regex
-          if len(regex1)!=len(regex2) :
+          if len(regex1) != len(regex2) :
               print "[ERROR] Computed alignment is not good !"
               return ""
           
           regex = ""
           saved1 = ""
           saved2 = ""
-          for i in range(0,len(regex1)) :
-              if (regex1[i]!=regex2[i]) :
-                  if (i<len(regex1)-1 and regex1[i+1]==regex2[i+1]) :
-                      
-                      
-                      saved1=saved1+regex1[i]
-                      saved2=saved2+regex2[i]
-                      
-                      saved1 = saved1.replace("-","").replace("(", "").replace(")","").replace("*", "")
-                      saved2 = saved2.replace("-","").replace("(", "").replace(")", "").replace("*", "")
-                      if (len(saved1)>0 or len(saved2)>0) :
-#                        regex = regex+"*("                        
-#                        if (len(saved1)>0) :
-#                            regex = regex+saved1
-#                            if (len(saved2)>0) :
-#                                regex = regex+"|"
-#                        if (len(saved2)>0) :
-#                            regex = regex +saved2
-#                        regex = regex + ")"
-                         regex = regex + "(.*)"
-#                     print "Saved = {0}".format(saved1)
-#                     print "Saved = {0}".format(saved2)
-                      saved1 = ""
-                      saved2 = ""
-                  else :
-#                      print "save : {0};{1}".format(regex1[i], regex2[i])
-                      saved1=saved1+regex1[i]
-                      saved2=saved2+regex2[i]
+          for i in range(0, len(regex1)) :
+              if (regex1[i] != regex2[i]) :
+                  regex = regex+"-"
               else :
                   regex = regex+regex1[i]
+#                  if (i < len(regex1) - 1 and regex1[i + 1] == regex2[i + 1]) :
+#                      
+#                      
+#                      saved1 = saved1 + regex1[i]
+#                      saved2 = saved2 + regex2[i]
+#                      
+#                      saved1 = saved1.replace("-", "").replace("(", "").replace(")", "").replace("*", "")
+#                      saved2 = saved2.replace("-", "").replace("(", "").replace(")", "").replace("*", "")
+#                      if (len(saved1) > 0 or len(saved2) > 0) :
+##                        regex = regex+"*("                        
+##                        if (len(saved1)>0) :
+##                            regex = regex+saved1
+##                            if (len(saved2)>0) :
+##                                regex = regex+"|"
+##                        if (len(saved2)>0) :
+##                            regex = regex +saved2
+##                        regex = regex + ")"
+#                         regex = regex + "-"
+##                     print "Saved = {0}".format(saved1)
+##                     print "Saved = {0}".format(saved2)
+#                      saved1 = ""
+#                      saved2 = ""
+#                  else :
+##                      print "save : {0};{1}".format(regex1[i], regex2[i])
+#                      saved1 = saved1 + regex1[i]
+#                      saved2 = saved2 + regex2[i]
+#              else :
+#                  regex = regex + regex1[i]
               
           return regex  
                   
@@ -185,10 +232,32 @@ if __name__ == "__main__":
     sequences = []
     sequences.append(sequence1)
     sequences.append(sequence2)
-    sequences.append(sequence3)
+    #sequences.append(sequence3)
     #sequences.append(sequence4)
     alignor = NeedlemanWunsch()
     regex = alignor.getRegex(sequences)   
     score = alignor.computeScore(regex)
     print regex
+    
+    compiledRegex = re.compile(regex)
+    for seq in sequences :
+        m = compiledRegex.match(seq)
+        if (m == None) :
+            print "doesn't match for seq : {0}".format(seq)
+        else :
+            print "match for seq :  {0}".format(seq)
+            nbGroup = len(m.groups())
+            print "Number of groups : {0}".format(nbGroup)
+            for i_group in range(0, nbGroup+1) :
+                start = m.start(i_group)
+                end = m.end(i_group)
+                
+                msg = seq[start:end]
+                
+                print "group n°{0} : [{1}:{2}] : {3}".format(str(i_group), str(start), str(end), msg)
+                
+                
+    
+    
     print "Score : {0}".format(score)
+    
