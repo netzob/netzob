@@ -223,6 +223,7 @@ class NeedlemanWunsch:
 ##                            regex = regex+saved1
 ##                            if (len(saved2)>0) :
 ##                                regex = regex+"|"
+    
 ##                        if (len(saved2)>0) :
 ##                            regex = regex +saved2
 ##                        regex = regex + ")"

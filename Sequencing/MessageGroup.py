@@ -40,6 +40,15 @@ class MessageGroup(object):
        self.messages = messages
        self.score = 0
        self.regex = ""
+
+    def __str__(self, *args, **kwargs):
+        return self.name+"("+str(round(self.score,2))+")"
+
+
+
+
+    
+
     
     #+---------------------------------------------- 
     #| computeScore : given the messages, 
@@ -79,6 +88,20 @@ class MessageGroup(object):
         self.computeRegex()
         # Compute the score
         self.computeScore()
+        
+    def addMessages(self, _messages) :
+        for msg in _messages :
+            found = False
+            for message in self.messages :
+                if message.getID() == msg.getID() :
+                    found = True;
+            if found == False :
+                 self.messages.append(message)
+        # Compute the regex
+        self.computeRegex()
+        # Compute the score
+        self.computeScore()
+            
     
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -103,7 +126,6 @@ class MessageGroup(object):
     def setMessages(self, messages): 
         self.messages = messages
     
-
     #+---------------------------------------------- 
     #| Inner thread for huge calcul
     #+----------------------------------------------
