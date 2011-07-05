@@ -5,6 +5,7 @@
 #+----------------------------------------------
 from numpy  import *
 import re
+import TracesExtractor
 
 #+---------------------------------------------- 
 #| NeedlemanWunsch :
@@ -28,30 +29,28 @@ class NeedlemanWunsch:
     #| @return the score   
     #+---------------------------------------------- 
     def computeScore(self, regex):
-#        score = 0
-#        if (len(regex) == 0) :
-#            return score
-#        
-#        ar = regex.split("(.{,")
-#        
-#        for i in range(0,len(ar)) :
-#            
-#            ar2 = 
-#            
-        return 90
+        score = 0
+        # Default score for an empty regex
+        if (len(regex) == 0) :
+            return score
+        
+        fixe = ""
+        ar = regex.split("(.{,")
+        nbDynamic = len(ar)+1
+        if (len(ar)>0):
+            fixe = ar[0]
             
+        for s in ar :
+            ar2 = s.split("})")
+            if len(ar2)==2 :
+                f = ar2[1]
+                fixe = fixe + f
+        nbStatic = len(fixe)
         
+        score = 100.0 / (nbStatic + nbDynamic) * nbStatic     
+        return score
         
-#        
-##        nbStatic = len(regex.replace("-", ""))
-#        nbDynamic = (len(regex) - nbStatic) / 1
-#        
-#        print "size = {0}, static:{1}, var:{2}".format(len(regex))
-#        
-#        score = 100.0 / (nbStatic + nbDynamic) * nbStatic 
-#        return score
-#    
-    
+   
     #+---------------------------------------------- 
     #| getRegex :
     #|     Computes the regex for the given sequences 
