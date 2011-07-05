@@ -315,8 +315,7 @@ class UIseqMessage:
     def drag_fromDND(self, treeview, contexte, selection, info, dateur):
       treeselection = treeview.get_selection()
       modele, iter = treeselection.get_selected()
-      texte = str(modele.get_value(iter, 2))
-
+      texte = str(modele.get_value(iter, 0))
       selection.set(selection.target, 8, texte)
 
       return
@@ -381,16 +380,22 @@ class UIseqMessage:
                 print "[Error] Error, impossible to retrieve the selected group !"
                 return
             
-            print "[Debug] Group name : {0}".format(groupName)         
+            print "[Debug] Group name : {0}".format(groupName)     
+            print "[Debug] Group regex : {0}".format(groupRegex)    
             needle = NeedlemanWunsch.NeedlemanWunsch()
             score = needle.computeScore(groupRegex)    
             print "[Debug] Score du groupe : {0}".format(score)
             
             error = False
             
-            if (score > 75) :
-                # create a view with 30 cols
-                self.treestoreMessage = gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str,str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str)        
+            if (score >= 50) :
+                # create a view with 61 cols
+                self.treestoreMessage = gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, 
+                                                      str, str, str, str, str, str, str, str, str, str, 
+                                                      str, str, str, str, str, str, str, str, str, str, 
+                                                      str, str, str, str, str, str, str, str, str, str, 
+                                                      str, str, str, str, str, str, str, str, str, str, 
+                                                      str, str, str, str, str, str, str, str, str, str, str)        
                 self.treeViewDetail.set_model(self.treestoreMessage)
                 self.treeViewDetail.set_reorderable(True)    
                 compiledRegex = re.compile(groupRegex)
@@ -402,12 +407,6 @@ class UIseqMessage:
                     m = compiledRegex.match(data)
                     if (m == None) :
                         print "[ERROR] The regex of the group doesn't match one of its message"
-                        print "-----"
-                        for msg in messages :
-                            print "sequences.append({0})".format(msg)
-                        
-                        
-                        
                         error = True
                         break
                     
@@ -415,6 +414,7 @@ class UIseqMessage:
                     if maxNumberOfGroup < nbGroup :
                         maxNumberOfGroup = nbGroup
                     ar = []
+                    ar.append(message.getID())
                     current = 0
                     
                     print "data = {0}".format(data)
@@ -429,7 +429,7 @@ class UIseqMessage:
                         current = end
                     ar.append('<span >' + data[current:] + '</span>')
                     
-                    for t in range(0,60-len(ar)) :
+                    for t in range(0,61-len(ar)) :
                         ar.append("-");
                     self.treestoreMessage.append(None, ar)
                 if (error != True) :    
@@ -443,11 +443,16 @@ class UIseqMessage:
                         # Column Messages
                         self.lvcolumnDetail2 = gtk.TreeViewColumn('Col'+str(i))
                         self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
-                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=i)
-                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i)
+                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=i+1)
+                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i+1)
                         self.treeViewDetail.append_column(self.lvcolumnDetail2)
+                         # enable dragging message out of current group
+                        self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
+                          gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+                        self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
+                        self.treeViewDetail.connect("cursor-changed", self.messageSelected) 
                 
-            if (score < 75 or error == True):
+            if (score < 50 or error == True):
                 # create a view with 30 cols
                 self.treestoreMessage = gtk.TreeStore(str, str, str)        
                 self.treeViewDetail.set_model(self.treestoreMessage)
