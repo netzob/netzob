@@ -41,6 +41,10 @@ class MessageGroup(object):
        self.score = 0
        self.regex = ""
 
+    def __repr__(self, *args, **kwargs):
+        return self.name+"("+str(round(self.score,2))+")"
+
+
     def __str__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
 
@@ -56,7 +60,7 @@ class MessageGroup(object):
     #| of the group
     #+----------------------------------------------
     def computeScore(self):
-        print "[Debug] Compute the score of group {0}".format(self.id)
+        #print "[Debug] Compute the score of group {0}".format(self.id)
         alignator = NeedlemanWunsch.NeedlemanWunsch()
         self.score = alignator.computeScore(self.regex)
    
@@ -136,12 +140,12 @@ class MessageGroup(object):
 
         def run(self):
             ## Run huge calcul
-            print "[Debug] Compute the regex of group {0}".format(self.mg.id)
+            #print "[Debug] Compute the regex of group {0}".format(self.mg.id)
             alignator = NeedlemanWunsch.NeedlemanWunsch()
             sequences = []
             for message in self.mg.messages :
                 sequences.append(message.getStringData())
         
             self.mg.regex = alignator.getRegex(sequences) 
-            print "[Debug] regex = {0}".format(self.mg.regex)
+            #print "[Debug] regex = {0}".format(self.mg.regex)
         
