@@ -132,6 +132,7 @@ class UIseqMessage:
         
         # Tree store contains :
         # str : text
+        # str : text
         self.treestoreMessage = gtk.TreeStore(str, str, str)        
         self.treeViewDetail = gtk.TreeView(self.treestoreMessage)
         self.treeViewDetail.set_reorderable(True)
@@ -152,9 +153,6 @@ class UIseqMessage:
         self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=0)
         self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=0)
         self.treeViewDetail.append_column(self.lvcolumnDetail2)
-        
-        
-        
         
         self.treeViewDetail.show()
         
@@ -389,13 +387,13 @@ class UIseqMessage:
             error = False
             
             if (score >= 50) :
-                # create a view with 61 cols
-                self.treestoreMessage = gtk.TreeStore(str, str, str, str, str, str, str, str, str, str, 
+                # create a view with 64 cols
+                self.treestoreMessage = gtk.TreeStore(str, str, int, gobject.TYPE_BOOLEAN, str, str, str, str, str, str, 
                                                       str, str, str, str, str, str, str, str, str, str, 
                                                       str, str, str, str, str, str, str, str, str, str, 
                                                       str, str, str, str, str, str, str, str, str, str, 
                                                       str, str, str, str, str, str, str, str, str, str, 
-                                                      str, str, str, str, str, str, str, str, str, str, str)        
+                                                      str, str, str, str, str, str, str, str, str, str, str, str, str, str)
                 self.treeViewDetail.set_model(self.treestoreMessage)
                 self.treeViewDetail.set_reorderable(True)    
                 compiledRegex = re.compile(groupRegex)
@@ -415,10 +413,12 @@ class UIseqMessage:
                         maxNumberOfGroup = nbGroup
                     ar = []
                     ar.append(message.getID())
+                    ar.append("#ffffff")
+                    ar.append(pango.WEIGHT_NORMAL)
+                    ar.append(False)
                     current = 0
                     
                     print "data = {0}".format(data)
-                    
                     for i_group in range(1, nbGroup+1) :
                         start = m.start(i_group)
                         end = m.end(i_group)
@@ -429,26 +429,57 @@ class UIseqMessage:
                         current = end
                     ar.append('<span >' + data[current:] + '</span>')
                     
-                    for t in range(0,61-len(ar)) :
+                    for t in range(0,64-len(ar)) :
                         ar.append("-");
+                    print repr(ar)
                     self.treestoreMessage.append(None, ar)
+
+                # Type header
+                hdr_row = []
+                hdr_row.append("HEADER TYPE")
+                hdr_row.append("#00ffff")
+                hdr_row.append(pango.WEIGHT_BOLD)
+                hdr_row.append(True)
+                for t in range(0,64-4):
+                    hdr_row.append("String");
+                self.treestoreMessage.prepend(None, hdr_row)
+
+                # REGEX header
+                splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", groupRegex)
+
+                hdr_row = []
+                hdr_row.append("HEADER REGEX")
+                hdr_row.append("#00ffff")
+                hdr_row.append(pango.WEIGHT_BOLD)
+                hdr_row.append(True)
+
+                for i in range(0, len(splittedRegex)):
+                    hdr_row.append("")
+                    hdr_row.append(splittedRegex[i][1:-1])
+
+                for t in range(0,64 - len(hdr_row)):
+                    hdr_row.append("-");
+                self.treestoreMessage.prepend(None, hdr_row)
+
+                # columns handling
                 if (error != True) :    
                     # remove all the colomns
                     for col in self.treeViewDetail.get_columns() :
                         self.treeViewDetail.remove_column(col)
-                    
-                    for i in range(0, (maxNumberOfGroup)*2 +1) :
-                        # clear all the attributes
-                        self.cellDetail2 = gtk.CellRendererText()
+
+                    # Define cellRenderer objects
+                    self.cellDetail2 = gtk.CellRendererText()
+                    self.cellDetail2.set_property('background-set' , True)
+
+                    for i in range(4, 4 + (maxNumberOfGroup * 2) + 1) :
                         # Column Messages
                         self.lvcolumnDetail2 = gtk.TreeViewColumn('Col'+str(i))
                         self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
-                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=i+1)
-                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i+1)
+                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i, background=1, weight=2, editable=3)
                         self.treeViewDetail.append_column(self.lvcolumnDetail2)
                          # enable dragging message out of current group
                         self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
-                          gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+                                                                     gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
                         self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
                         self.treeViewDetail.connect("cursor-changed", self.messageSelected) 
                 
