@@ -144,6 +144,7 @@ class UIseqMessage:
                   gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
         self.treeViewDetail.connect("cursor-changed", self.messageSelected)
+        self.treeViewDetail.connect('button-press-event',self.button_press_on_treeview_messages)
         
         
         self.cellDetail2 = gtk.CellRendererText()
@@ -177,6 +178,17 @@ class UIseqMessage:
             self.build_context_menu_for_groups(event)
 
     #+---------------------------------------------- 
+    #| button_press_on_treeview_messages :
+    #|   operation when the user click on the treeview.
+    #|   mainly to open a contextual menu
+    #+----------------------------------------------
+    def button_press_on_treeview_messages(self,obj,event):
+        print "[DEBUG] User requested a contextual menu (treeview messages)"
+        
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+            self.build_context_menu_for_messages(event)
+
+    #+---------------------------------------------- 
     #| build_context_menu_for_groups :
     #|   Create a menu to display available operations
     #|   on the treeview groups
@@ -193,6 +205,28 @@ class UIseqMessage:
         entries =[        
                   (gtk.STOCK_ADD, self.displayPopupToCreateGroup,1),
                   (gtk.STOCK_REMOVE, self.displayPopupToRemoveGroup,canWeDelete)
+        ]
+
+        menu = gtk.Menu()
+        for stock_id,callback,sensitivity in entries:
+            item = gtk.ImageMenuItem(stock_id)
+            if callback:
+                item.connect("activate",callback)   
+            item.set_sensitive(sensitivity)
+            item.show()
+            menu.append(item)
+        menu.popup(None,None,None,event.button,event.time)
+
+    #+---------------------------------------------- 
+    #| build_context_menu_for_messages :
+    #|   Create a menu to display available operations
+    #|   on the treeview messages
+    #+----------------------------------------------
+    def build_context_menu_for_messages(self, event):
+        entries =[        
+                  (gtk.STOCK_JUSTIFY_FILL, self.displayPopupToCreateGroup,1),
+                  (gtk.STOCK_JUSTIFY_FILL, self.displayPopupToCreateGroup,1),
+                  (gtk.STOCK_JUSTIFY_FILL, self.displayPopupToRemoveGroup,0)
         ]
 
         menu = gtk.Menu()
