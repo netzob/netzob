@@ -8,7 +8,7 @@ import gtk
 import os
 import gobject
 import pygtk
-from Sequencing.Clusterer import Clusterer
+from Clusterer import Clusterer
 pygtk.require('2.0')
 
 #+---------------------------------------------- 
@@ -16,6 +16,7 @@ pygtk.require('2.0')
 #+----------------------------------------------
 import TraceParser
 import MessageGroup
+
 
 #+---------------------------------------------- 
 #| TracesExtractor :
@@ -50,6 +51,7 @@ class TracesExtractor(object):
                 files.append(file)
         
         # compute the progression step
+        # 2 steps per file
         progressionStep = 1.0 / len(files)        
         
         tmp_groups = []
@@ -63,20 +65,22 @@ class TracesExtractor(object):
             tmpMessages = traceParser.parse()
             # Save the extracted messages in a dedicated group
             group = MessageGroup.MessageGroup(file, tmpMessages)
-#            # Compute the regex
-#            group.computeRegex()
-#            # Compute the score
-#            group.computeScore()
             
-            # Now we try to reoganize eveything
-            clusterer = Clusterer()
+            # Now we try to re-organize the newly created group
+            clusterer = Clusterer(True)
             for g in clusterer.reOrganize([group]) :
-                groups.append(g)
+                tmp_groups.append(g)
             
-            
-            
+                        
             self.doProgressBarStep(progressionStep)
             
+        # Now that all the groups are reorganized separatly
+        # we should consider merging them
+        clusterer = Clusterer(True)
+        for g in clusterer.reOrganizeGroups(tmp_groups) :
+            groups.append(g)
+
+
 
         #Once files parsed, reset the progressBar
         self.resetProgressBar()

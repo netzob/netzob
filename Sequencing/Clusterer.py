@@ -3,13 +3,23 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
+#
+try: 
+    import psyco; 
+    psyco.full() 
+except: pass
 
-
-import Message
+import time
 from numpy.numarray.numerictypes import Float
 from numpy.core.numeric import zeros
 import binascii
+
+#+---------------------------------------------- 
+#| Local Imports
+#+----------------------------------------------
 import MessageGroup
+import Message
+import NeedlemanWunsch
 
 
 #+---------------------------------------------- 
@@ -20,10 +30,14 @@ import MessageGroup
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self):
+    def __init__(self, debug):
+        self.debug = debug
         pass
     
+    
     def getMatrix(self, groups):
+        if self.debug == True :
+            print "[Debug] Compute the matrix associated."
         matrix = zeros([len(groups), len(groups)], Float)
         for i in range(0, len(groups)) :
             for j in range(0, len(groups)):
@@ -32,54 +46,84 @@ class Clusterer(object):
                 elif (i<j) :
                     group1 = groups[i]
                     group2 = groups[j]
+                    
+#                    group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), group1.getMessages())
+#                    group3.setRegex(group1.getRegex())
+#                    group3.setScore(group1.getScore())
+#                    group3.setAlignment(group1.getAlignment())
+#                    group3.addMessages(group2.getMessages())
+                    
+#                    
                     msgs = group1.getMessages() + group2.getMessages()
-                    group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), msgs)
-                    group3.computeRegex()
+                    group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), [])
+                    group3.setAlignment(group1.getAlignment())
+                    group3.addMessages(msgs)
+#                    group3.computeRegex()
                     group3.computeScore()
+                    
                     matrix[i][j] = group3.getScore()        
                     matrix[j][i] = group3.getScore()        
         return matrix
     
-    def reOrganize(self, _groups):
-        print "[Debug] Re-Organize the groups"
-        messages = []
-        for group in _groups :
-            for msg in group.getMessages():
-                messages.append(msg)
-        print "[Debug] A number of {0} messages will be clustered.".format(str(len(messages)))
+    def reOrganizeGroups(self, groups):
+        if self.debug == True :
+            print "[Debug] Re-Organize the groups"
+        nbIteration = 5
         
-        # Create a group for each message
-        groups = []
-        for i in range(0, len(messages)) :
-            groups.append(MessageGroup.MessageGroup(str(i), [messages[i]]))
+        min_equivalence = 85
         
-        nbIteration = 3
-        min_equivalence = 80
-        
-        for iteration in range(0, nbIteration) :            
+        for iteration in range(0, nbIteration) :     
+            min_equivalence = min_equivalence + iteration
+            if self.debug == True :    
+                print "[Debug] Iteration {0} started...".format(str(iteration))      
             # Create the score matrix for each group
             matrix = self.getMatrix(groups)
-            
+            if self.debug == True :
+                print "[Debug] Searching for the maximum of equivalence."
             # Search for the maximum score not on the diag
             maximum = -1
             i_maximum = -1
             j_maximum = -1
             for i in range(0, len(groups)) :
                 for j in range(0, len(groups)) :
-                    if (i != j and (maximum < matrix[i][j] or maximum == -1)) :
+                    if (i > j and (maximum < matrix[i][j] or maximum == -1)) :
                         maximum = matrix[i][j]
                         i_maximum = i
                         j_maximum = j
-            print "Maximum = {0} [{1};{2}]".format(maximum, i_maximum, j_maximum) 
+            if self.debug == True :
+                print "Maximum = {0} [{1};{2}]".format(maximum, i_maximum, j_maximum) 
             
-            if (maximum > min_equivalence) :
-                (groups, new_matrix) = self.merge(matrix, groups, i_maximum, j_maximum)
+            if (maximum >= min_equivalence) :
+                groups = self.merge(matrix, groups, i_maximum, j_maximum)        
         
+        for g in groups :
+            g.computeRegex()
+            g.computeScore()
         
         return groups
         
+        
+    
+    def reOrganize(self, _groups):
+        if self.debug == True :
+            print "[Debug] Re-Organize the groups"
+        messages = []
+        for group in _groups :
+            for msg in group.getMessages():
+                messages.append(msg)
+        if self.debug == True :
+            print "[Debug] A number of {0} messages will be clustered.".format(str(len(messages)))
+        
+        # Create a group for each message
+        groups = []
+        for i in range(0, len(messages)) :
+            groups.append(MessageGroup.MessageGroup(str(i), [messages[i]]))
+        return self.reOrganizeGroups(groups)
+       
+        
     def merge(self, matrix, groups, i_maximum, j_maximum):
-        print "[Debug] Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum))
+        if self.debug == True :
+            print "[Debug] Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum))
         new_groups = []
         found = False
         for i in range(0, len(groups)) :
@@ -87,17 +131,12 @@ class Clusterer(object):
                 found = True
                 group1 = groups[i_maximum]
                 group2 = groups[j_maximum]
-                msgs = group1.getMessages() + group2.getMessages()
-                group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), msgs)
-                group3.computeRegex()
-                group3.computeScore()
+                group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), group1.getMessages() + group2.getMessages())
                 new_groups.append(group3)
             elif (i != i_maximum and i != j_maximum):
                 new_groups.append(groups[i])    
-        print new_groups    
-        new_matrix = self.getMatrix(new_groups)
-        print new_matrix
-        return (new_groups, new_matrix)
+
+        return new_groups
         
         
 #+---------------------------------------------- 
@@ -112,7 +151,7 @@ if __name__ == "__main__":
     sequence6 = "bonsoir ccccccc, your are not welcome in my world on 85.45.56.96"
     sequences = []
     
-#    alignor = NeedlemanWunsch()
+#    alignor = NeedlemanWunsch.NeedlemanWunsch()
 #    sequences.append(alignor.asctohex(sequence1))
 #    sequences.append(alignor.asctohex(sequence2))
 #    sequences.append(alignor.asctohex(sequence3))
@@ -131,26 +170,47 @@ if __name__ == "__main__":
     sequences.append("4301fffff48912cd2c00ff0201000000000000012805000000c00000020000000000000000000000881300000200000002000000")
     sequences.append("4301ffff248b12cd2c00ff0201000000000000012805000000c00000020000000000000000000000881300000200000002000000")
     sequences.append("43020000586d9dda1400ff01010000000976c80001000000f48912cd3400ff03010000000976c8012805a90028050000020000000f0000001f000000881300000200000002000000dbb20e500011440f")
-    sequences.append("4301a900a28b12cd1400ff01010000000000000001000000586d9dda")
-    sequences.append("4301a900b18b12cd5200010601000000000000010e504600b69adb3220b7323de03a57237a76469ebd2f1583b33de8332efd2c13849d4bcb24ba19182ad554a802c19562471dafcec52a26d85d7018f002fd75b8b7b715d5")
-    sequences.append("43010000846e9dda3400ff03010000000976c8012805a90028050000020000000f0000001f000000881300000200000002000000dbb20e500011440f")
-    sequences.append("4301a900b88c12cd1400ff01010000000000000001000000846e9dda")
-    sequences.append("4301a9004a8d12cd5200010601000000000000010e504600b69adb3220b7323de03a57237a76469ebd2f1583b33de8332efd2c13849d4bcb24ba19182ad554a802c19562471dafcec52a26d85d7018f002fd75b8b7b715d5")
-    sequences.append("430100001a6f9dda14000101010000000976c80001000000b18b12cd")
-    sequences.append("430100001d6f9ddaa203010601000000000000010e509603b69adb322aa2323d994eae6038abb858c7b13f954c53efb0aea51be4f23c9268588c94dd741509a26036bda6823cd98f7d8f2b9a0773068657e0a9f363bad6ddbb045a66806f9fa8367a22ac1ec78fd1ad225d207f2e63cede503372ca27ba5c706eb2224e85bc3b29726a7207732db457e0a9f363bad6ddbb045a66806f9fa8367a22acb5078fd1fda8045b7f2ec5e3de503372ca27ba5c706eb2220921bc3b096ee42225c83af15d8e9389944a62862c86114f171ec3a8deb2d6ba15b8f9d58ae53ffd9a6eed3b86c20049ca270a04706eb222e76abc3bc2d1c61a903965f02bbf3ea2572a6cf04569d10dd8598366d7cf3ce5bb9674a914aa58dc0223b6f22fda9a74ca27180c706eb22232f0bc3b46ca5d945ed067e9fed658537513fb4c358b92c2c65d1b9f48006dcd98a2c0c81245e44f3631e3259d0a7c62ca270597706eb222e4d5bc3b649668c3049ca8d1ef11f5a66abdd05d377b0adf672114416608aca932f65e87f627609ff319636fcb4f27dfca278b69706eb222b0b1bc3b83083474535d35c54eeb408004b627570a6bc95d5eaa4a4dc7ba40ef1f6aec1005625a2d63ab641a0c019b7fca27136d706eb2225e45bc3b65fbf8a8713fe99680a72c2742990949e07202621f08b6ce2ecaead2a4138f3b50ed9111bef8bffa991703cbca279655706eb222efd5bc3b95f8d653218048416dcf66651fd996cb38d8af435a9570982a1d9492cb3de79c91cdfd860c8bcf63535e1144ca27c4db706eb2227c35bc3b7812095848d6419f63d715d5e73782fc957b8a055b2c27f2afae1c54ce324be434d3673ca9a2aae53d9a907dca27632b706eb2221195bc3b06d44c0a272f7689445b93cf3b6abd7efbaca85a78ee0ef6cc9094f81ed28708f2b935a1e46e80fda0abf49eca27c35f706eb222e94ebc3bea0c99180031be08450b1421546045ddecae990a715b948cc985becc61451b020dab0fe8a55126e7bd746186ca27969d706eb2224b76bc3b8e6588a25357e8c652998d8c27c5f87c4df9f57c10d1675e68c5f81ff15c5b62906aef759f771d89392563e39eb808f5465e47481df03d44996a806d1f3e8ec51a7e9ba5557e41701dea1a20ce43c3ea0e8a981d340f5b55fa988686b5aa2a83c74e7a4e97b781d3965af20525cccd3cf44751bf84a4299824ad8f51d16f5c30bad8ac54c7ae8d667eb568e9799b4967dc78705e02fc4c1d05b18645ca279e4a706eb222885fbc3b1059cc211a0630575a65d065e7fabf48bfffd4d7b7b77a270000b7b7")
-    sequences.append("430100001d6f9dda0c00ff04020000005710fc01")
-    sequences.append("4302a9004a8d12cd140001010100000000000000010000001d6f9dda1400ff010000000000000000020000001d6f9dda")
+#    sequences.append("4301a900a28b12cd1400ff01010000000000000001000000586d9dda")
+#    sequences.append("4301a900b18b12cd5200010601000000000000010e504600b69adb3220b7323de03a57237a76469ebd2f1583b33de8332efd2c13849d4bcb24ba19182ad554a802c19562471dafcec52a26d85d7018f002fd75b8b7b715d5")
+#    sequences.append("43010000846e9dda3400ff03010000000976c8012805a90028050000020000000f0000001f000000881300000200000002000000dbb20e500011440f")
+#    sequences.append("4301a900b88c12cd1400ff01010000000000000001000000846e9dda")
+#    sequences.append("4301a9004a8d12cd5200010601000000000000010e504600b69adb3220b7323de03a57237a76469ebd2f1583b33de8332efd2c13849d4bcb24ba19182ad554a802c19562471dafcec52a26d85d7018f002fd75b8b7b715d5")
+#    sequences.append("430100001a6f9dda14000101010000000976c80001000000b18b12cd")
+#    sequences.append("430100001d6f9ddaa203010601000000000000010e509603b69adb322aa2323d994eae6038abb858c7b13f954c53efb0aea51be4f23c9268588c94dd741509a26036bda6823cd98f7d8f2b9a0773068657e0a9f363bad6ddbb045a66806f9fa8367a22ac1ec78fd1ad225d207f2e63cede503372ca27ba5c706eb2224e85bc3b29726a7207732db457e0a9f363bad6ddbb045a66806f9fa8367a22acb5078fd1fda8045b7f2ec5e3de503372ca27ba5c706eb2220921bc3b096ee42225c83af15d8e9389944a62862c86114f171ec3a8deb2d6ba15b8f9d58ae53ffd9a6eed3b86c20049ca270a04706eb222e76abc3bc2d1c61a903965f02bbf3ea2572a6cf04569d10dd8598366d7cf3ce5bb9674a914aa58dc0223b6f22fda9a74ca27180c706eb22232f0bc3b46ca5d945ed067e9fed658537513fb4c358b92c2c65d1b9f48006dcd98a2c0c81245e44f3631e3259d0a7c62ca270597706eb222e4d5bc3b649668c3049ca8d1ef11f5a66abdd05d377b0adf672114416608aca932f65e87f627609ff319636fcb4f27dfca278b69706eb222b0b1bc3b83083474535d35c54eeb408004b627570a6bc95d5eaa4a4dc7ba40ef1f6aec1005625a2d63ab641a0c019b7fca27136d706eb2225e45bc3b65fbf8a8713fe99680a72c2742990949e07202621f08b6ce2ecaead2a4138f3b50ed9111bef8bffa991703cbca279655706eb222efd5bc3b95f8d653218048416dcf66651fd996cb38d8af435a9570982a1d9492cb3de79c91cdfd860c8bcf63535e1144ca27c4db706eb2227c35bc3b7812095848d6419f63d715d5e73782fc957b8a055b2c27f2afae1c54ce324be434d3673ca9a2aae53d9a907dca27632b706eb2221195bc3b06d44c0a272f7689445b93cf3b6abd7efbaca85a78ee0ef6cc9094f81ed28708f2b935a1e46e80fda0abf49eca27c35f706eb222e94ebc3bea0c99180031be08450b1421546045ddecae990a715b948cc985becc61451b020dab0fe8a55126e7bd746186ca27969d706eb2224b76bc3b8e6588a25357e8c652998d8c27c5f87c4df9f57c10d1675e68c5f81ff15c5b62906aef759f771d89392563e39eb808f5465e47481df03d44996a806d1f3e8ec51a7e9ba5557e41701dea1a20ce43c3ea0e8a981d340f5b55fa988686b5aa2a83c74e7a4e97b781d3965af20525cccd3cf44751bf84a4299824ad8f51d16f5c30bad8ac54c7ae8d667eb568e9799b4967dc78705e02fc4c1d05b18645ca279e4a706eb222885fbc3b1059cc211a0630575a65d065e7fabf48bfffd4d7b7b77a270000b7b7")
+#    sequences.append("430100001d6f9dda0c00ff04020000005710fc01")
+#    sequences.append("4302a9004a8d12cd140001010100000000000000010000001d6f9dda1400ff010000000000000000020000001d6f9dda")
     messages = []
     for sequence in sequences :
-        msg = Message()
+        msg = Message.Message()
         msg.setData(sequence)
         messages.append(msg)    
-    group = MessageGroup("group", messages)    
+    group = MessageGroup.MessageGroup("group", messages)    
     
-    clusterer = Clusterer()
+    print "Execution started..."
+    # Measure the time for clustering
+    start_time = time.clock()
+    
+    clusterer = Clusterer(True)
     groups = clusterer.reOrganize([group])
+    
+    end_time = time.clock()
+    print "Execution time : {0}".format((end_time - start_time))
+    
+    
     for group in groups :
         print "[+] Group " + group.getName()
+        print "\t+ " + group.getRegex()
+        print "\t+ " + group.getAlignment()
         for message in group.getMessages() :
             print "\t- " + message.getStringData()
-            print "\t: " + binascii.unhexlify(''.join(message.getStringData().split()))
+
+    print "-----------------------"  
+    # retry an optimization process
+    clusterer = Clusterer(True)
+    for g in clusterer.reOrganizeGroups(groups) :
+        print "[+] Group " + g.getName()
+        print "\t+ " + g.getRegex()
+        print "\t+ " + g.getAlignment()
+        for message in g.getMessages() :
+            print "\t- " + message.getStringData()
+#            print "\t: " + binascii.unhexlify(''.join(message.getStringData().split()))

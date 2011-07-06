@@ -3,6 +3,11 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
+try: 
+    import psyco; 
+    psyco.full() 
+except: pass
+
 from numpy  import *
 import re
 import TracesExtractor
@@ -61,13 +66,13 @@ class NeedlemanWunsch:
     def getRegex(self, sequences):
         if (len(sequences) < 2) :
             print "[ERROR] Impossible to compute the regex if at least 2 sequences are not provided."
-            return ""
+            return ("","")
         
         sequence1 = sequences[0]
-        
         for i in range(1, len(sequences)) :
             sequence2 = sequences[i]    
             regex = self.getRegexWithTwoSequences(sequence1, sequence2)
+            
             sequence1 = regex
             
         
@@ -95,9 +100,7 @@ class NeedlemanWunsch:
         if (found == True) :
             nbTiret = i - start
             result = result + "(.{," + str(nbTiret) + "})"
-        
-        
-        return result    
+        return (result, str(regex))  
     
     def asctohex(self, s):
             empty = '' # I use this construct because I find ''.join() too dense
