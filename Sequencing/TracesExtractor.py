@@ -63,11 +63,17 @@ class TracesExtractor(object):
             tmpMessages = traceParser.parse()
             # Save the extracted messages in a dedicated group
             group = MessageGroup.MessageGroup(file, tmpMessages)
-            # Compute the regex
-            group.computeRegex()
-            # Compute the score
-            group.computeScore()
-            tmp_groups.append(group)
+#            # Compute the regex
+#            group.computeRegex()
+#            # Compute the score
+#            group.computeScore()
+            
+            # Now we try to reoganize eveything
+            clusterer = Clusterer()
+            for g in clusterer.reOrganize([group]) :
+                groups.append(g)
+            
+            
             
             self.doProgressBarStep(progressionStep)
             
@@ -75,15 +81,14 @@ class TracesExtractor(object):
         #Once files parsed, reset the progressBar
         self.resetProgressBar()
         
-        # Now we try to reoganize eveything
-        clusterer = Clusterer()
-        for g in clusterer.reOrganize(tmp_groups) :
-            groups.append(g)
+        
+        
         
         for group in groups :
             print "Group {0}".format(group.getName())
             for message in group.getMessages() :
                 print message.getStringData()
+        
         uiNotebook.update()
         yield False
         

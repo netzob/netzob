@@ -27,13 +27,17 @@ class Clusterer(object):
         matrix = zeros([len(groups), len(groups)], Float)
         for i in range(0, len(groups)) :
             for j in range(0, len(groups)):
-                group1 = groups[i]
-                group2 = groups[j]
-                msgs = group1.getMessages() + group2.getMessages()
-                group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), msgs)
-                group3.computeRegex()
-                group3.computeScore()
-                matrix[i][j] = group3.getScore()        
+                if (i==j) :
+                    matrix[i][j] = 100
+                elif (i<j) :
+                    group1 = groups[i]
+                    group2 = groups[j]
+                    msgs = group1.getMessages() + group2.getMessages()
+                    group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), msgs)
+                    group3.computeRegex()
+                    group3.computeScore()
+                    matrix[i][j] = group3.getScore()        
+                    matrix[j][i] = group3.getScore()        
         return matrix
     
     def reOrganize(self, _groups):
