@@ -35,24 +35,18 @@ class MessageGroup(object):
     #| @param messages : list of messages 
     #+----------------------------------------------   
     def __init__(self, name, messages):
-       self.id = uuid.uuid4() 
-       self.name = name
-       self.messages = messages
-       self.score = 0
-       self.regex = ""
+        self.id = uuid.uuid4() 
+        self.name = name
+        self.messages = messages
+        self.score = 0
+        self.regex = ""
+        self.alignment = ""
 
     def __repr__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
 
-
     def __str__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
-
-
-
-
-    
-
     
     #+---------------------------------------------- 
     #| computeScore : given the messages, 
@@ -72,6 +66,12 @@ class MessageGroup(object):
         innerThread = self.InnerMessageGroup(self) # parameter := the MessageGroup class object
         innerThread.start()
         innerThread.join()
+        
+    def computeRegex2(self, new_msgs):
+        innerThread = self.InnerMessageGroup2(self, new_msgs)
+        innerThread.start()
+        innerThread.join()
+    
     #+---------------------------------------------- 
     #| removeMessage : remove any ref to the given
     #| message and recompute regex and score
@@ -94,17 +94,22 @@ class MessageGroup(object):
         self.computeScore()
         
     def addMessages(self, _messages) :
+        msgs = []
         for msg in _messages :
             found = False
             for message in self.messages :
-                if message.getID() == msg.getID() :
+                if message.getID() == msg.getID():
                     found = True;
             if found == False :
-                 self.messages.append(message)
-        # Compute the regex
-        self.computeRegex()
-        # Compute the score
-        self.computeScore()
+                msgs.append(msg)
+        if (self.alignment == "") :
+            for m in msgs :
+                self.messages.append(m)
+            self.computeRegex()
+            self.computeScore()
+        else :
+            self.computeRegex2(msgs)
+            self.computeScore()
             
     
     #+---------------------------------------------- 
@@ -118,6 +123,8 @@ class MessageGroup(object):
         return self.messages   
     def getRegex(self):
         return self.regex
+    def getAlignment(self):
+        return self.alignment
     def getScore(self):
         return self.score
 
@@ -129,23 +136,59 @@ class MessageGroup(object):
         self.name = name
     def setMessages(self, messages): 
         self.messages = messages
-    
+    def setRegex(self, regex):
+        self.regex = regex
+    def setAlignment(self, alignment):
+        self.alignment = alignment
+    def setScore(self, score):
+        self.score = score
     #+---------------------------------------------- 
-    #| Inner thread for huge calcul
+    #| Inner thread for regex computation
     #+----------------------------------------------
     class InnerMessageGroup(threading.Thread):
-        def __init__(self, mg):
+        #+---------------------------------------------- 
+        #| Constructor :
+        #| @param group : the manipulated group
+        #+----------------------------------------------  
+        def __init__(self, group):
             threading.Thread.__init__(self)
-            self.mg = mg
+            self.group = group
 
         def run(self):
-            ## Run huge calcul
-            #print "[Debug] Compute the regex of group {0}".format(self.mg.id)
             alignator = NeedlemanWunsch.NeedlemanWunsch()
             sequences = []
-            for message in self.mg.messages :
+            for message in self.group.getMessages() :
                 sequences.append(message.getStringData())
-        
-            self.mg.regex = alignator.getRegex(sequences) 
-            #print "[Debug] regex = {0}".format(self.mg.regex)
-        
+            if (len(sequences) >=2) :
+                (regex, alignment) = alignator.getRegex(sequences) 
+                self.group.regex = regex
+                self.group.alignment = alignment
+            else :
+                self.group.regex = ""
+                self.group.alignment = ""
+     
+    class InnerMessageGroup2(threading.Thread):
+        #+---------------------------------------------- 
+        #| Constructor :
+        #| @param group : the manipulated group
+        #+----------------------------------------------  
+        def __init__(self, group, new_msgs):
+            threading.Thread.__init__(self)
+            self.group = group
+            self.new_msgs = new_msgs
+
+        def run(self):
+            alignator = NeedlemanWunsch.NeedlemanWunsch()
+            sequences = []
+            sequences.append(str(self.group.getAlignment()))
+            for message in self.new_msgs :
+                sequences.append(message.getStringData())
+            
+            
+            if (len(sequences) >=2) :
+                (regex, alignment) = alignator.getRegex(sequences) 
+                self.group.regex = regex
+                self.group.alignment = alignment
+            else :
+                self.group.regex = ""
+                self.group.alignment = ""
