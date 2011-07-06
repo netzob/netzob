@@ -353,6 +353,20 @@ class UIseqMessage:
                 self.treestoreGroup.append(iter, ["Message", message.getID(), "0", '#000000', '#FF00FF'])
 
         self.selectedMessage = ""
+
+    #+---------------------------------------------- 
+    #| Identify a possible type from a hexa string
+    #+----------------------------------------------
+    def identifyType(self, string):
+        setSpace = set()
+        for i in range(0, len(string), 2):
+            setSpace.add( int(string[i:i+2], 16) )
+        sorted(setSpace)
+        res = ""
+        for i in setSpace:
+            res += repr(chr(i))
+        return res
+        
         
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
@@ -391,6 +405,7 @@ class UIseqMessage:
                 
                 maxNumberOfGroup = 0
                 matchMessages = []
+                aggregateValuesPerCol = {}
                 
                 for message in messages :
                     data = message.getStringData()                    
@@ -415,17 +430,18 @@ class UIseqMessage:
                         start = m.start(i_group)
                         end = m.end(i_group)
                         
-                        ar.append('<span >' + data[current:start] + '</span>')
-                        ar.append('<span foreground="blue" font_family="monospace" >' + data[start:end] + '</span>')
-                        
+                        ar.append('<span>' + data[current:start] + '</span>')
+                        ar.append('<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>')
+                        if not i_group in aggregateValuesPerCol:
+                            aggregateValuesPerCol[i_group] = ""
+                        aggregateValuesPerCol[i_group] += data[start:end]
+
                         current = end
                     ar.append('<span >' + data[current:] + '</span>')
                     matchMessages.append(ar)
 
                 # create a TreeView with N cols, with := (maxNumberOfGroup * 2 + 1)
                 treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-                print maxNumberOfGroup
-                print matchMessages
                 for i in range( maxNumberOfGroup * 2 + 1):
                     treeStoreTypes.append(str)
                 self.treestoreMessage = gtk.TreeStore(*treeStoreTypes)
@@ -435,31 +451,33 @@ class UIseqMessage:
                 for i in range(len(matchMessages)):
                     self.treestoreMessage.append(None, matchMessages[i])
 
-                # Type header
+                # Type and Regex headers
                 hdr_row = []
                 hdr_row.append("HEADER TYPE")
                 hdr_row.append("#00ffff")
                 hdr_row.append(pango.WEIGHT_BOLD)
                 hdr_row.append(True)
-                for t in range(maxNumberOfGroup * 2 + 1):
-                    hdr_row.append("String");
-                self.treestoreMessage.prepend(None, hdr_row)
 
-                # REGEX header
                 splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", groupRegex)
 
-                hdr_row = []
-                hdr_row.append("HEADER REGEX")
-                hdr_row.append("#00ffff")
-                hdr_row.append(pango.WEIGHT_BOLD)
-                hdr_row.append(True)
+                regex_row = []
+                regex_row.append("HEADER REGEX")
+                regex_row.append("#00ffff")
+                regex_row.append(pango.WEIGHT_BOLD)
+                regex_row.append(True)
 
                 for i in range(len(splittedRegex)):
+                    hdr_row.append("");
+                    # Identify the type from the string of the aggregated rows of the same column
+                    hdr_row.append( self.identifyType( aggregateValuesPerCol[i+1] ));
+                    regex_row.append("")
+                    # Get the Regex of the current column
+                    regex_row.append(splittedRegex[i][1:-1])
+                for i in range((maxNumberOfGroup * 2 + 1 + 4) - len(regex_row)):
                     hdr_row.append("")
-                    hdr_row.append(splittedRegex[i][1:-1])
-                for i in range((maxNumberOfGroup * 2 + 1 + 4) - len(hdr_row)):
-                    hdr_row.append("")
+                    regex_row.append("")
                 self.treestoreMessage.prepend(None, hdr_row)
+                self.treestoreMessage.prepend(None, regex_row)
 
                 # columns handling
                 if (error != True) :    
