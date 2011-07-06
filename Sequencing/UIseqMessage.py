@@ -424,6 +424,7 @@ class UIseqMessage:
                     ar.append(pango.WEIGHT_NORMAL)
                     ar.append(False)
                     current = 0
+                    k = 0
                     
                     print "data = {0}".format(data)
                     for i_group in range(1, nbGroup+1) :
@@ -432,12 +433,20 @@ class UIseqMessage:
                         
                         ar.append('<span>' + data[current:start] + '</span>')
                         ar.append('<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>')
-                        if not i_group in aggregateValuesPerCol:
-                            aggregateValuesPerCol[i_group] = ""
-                        aggregateValuesPerCol[i_group] += data[start:end]
+                        if not k in aggregateValuesPerCol:
+                            aggregateValuesPerCol[k] = ""
+                        aggregateValuesPerCol[k] += data[current:start]
+                        k += 1
+                        if not k in aggregateValuesPerCol:
+                            aggregateValuesPerCol[k] = ""
+                        aggregateValuesPerCol[k] += data[start:end]
+                        k += 1
 
                         current = end
                     ar.append('<span >' + data[current:] + '</span>')
+                    if not k in aggregateValuesPerCol:
+                        aggregateValuesPerCol[k] = ""
+                    aggregateValuesPerCol[k] += data[current:]
                     matchMessages.append(ar)
 
                 # create a TreeView with N cols, with := (maxNumberOfGroup * 2 + 1)
@@ -458,6 +467,11 @@ class UIseqMessage:
                 hdr_row.append(pango.WEIGHT_BOLD)
                 hdr_row.append(True)
 
+                for i in range( len(aggregateValuesPerCol) ):
+                    # Identify the type from the string of the aggregated rows of the same column
+                    hdr_row.append( self.identifyType( aggregateValuesPerCol[i] ));
+                self.treestoreMessage.prepend(None, hdr_row)
+
                 splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", groupRegex)
 
                 regex_row = []
@@ -474,9 +488,7 @@ class UIseqMessage:
                     # Get the Regex of the current column
                     regex_row.append(splittedRegex[i][1:-1])
                 for i in range((maxNumberOfGroup * 2 + 1 + 4) - len(regex_row)):
-                    hdr_row.append("")
                     regex_row.append("")
-                self.treestoreMessage.prepend(None, hdr_row)
                 self.treestoreMessage.prepend(None, regex_row)
 
                 # columns handling
