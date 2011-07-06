@@ -8,6 +8,7 @@ import gtk
 import pango
 import gobject
 import re
+import base64
 import pygtk
 pygtk.require('2.0')
 
@@ -182,12 +183,44 @@ class UIseqMessage:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
-    def button_press_on_treeview_messages(self,obj,event):
-        print "[DEBUG] User requested a contextual menu (treeview messages)"
-        
+    def button_press_on_treeview_messages(self,treeview,event):
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
-            self.build_context_menu_for_messages(event)
+            print "[DEBUG] User requested a contextual menu (treeview messages)"
+            x = int(event.x)
+            y = int(event.y)
+            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            iCol = 4
+            # Get the selected column number
+            for col in treeview.get_columns():
+                if col == treeviewColumn:
+                    break
+                iCol += 1
 
+            # Build a context menu to change the string rendering of a specific column
+            i = treeview.get_model().iter_next( treeview.get_model().get_iter_first() )
+            typesList = treeview.get_model().get_value(i, iCol)
+            menu = gtk.Menu()
+            for type in typesList.split(","):
+                item = gtk.MenuItem(type)
+                item.show()
+                menu.append(item)
+            menu.popup(None, None, None, event.button, event.time)
+
+            # Change the string rendering of the selected column according to the selected type
+            """
+            i = treeview.get_model().get_iter_first()
+            while True:
+                if i==None:
+                    break
+                if treeview.get_model().get_value(i, 0) == "HEADER REGEX":
+                    pass
+                elif treeview.get_model().get_value(i, 0) == "HEADER TYPE":
+                    pass
+                else:
+                    print treeview.get_model().get_value(i, iCol)
+                i = treeview.get_model().iter_next(i)
+                # TODO : change the rendering
+            """
     #+---------------------------------------------- 
     #| build_context_menu_for_groups :
     #|   Create a menu to display available operations
@@ -217,27 +250,6 @@ class UIseqMessage:
             menu.append(item)
         menu.popup(None,None,None,event.button,event.time)
 
-    #+---------------------------------------------- 
-    #| build_context_menu_for_messages :
-    #|   Create a menu to display available operations
-    #|   on the treeview messages
-    #+----------------------------------------------
-    def build_context_menu_for_messages(self, event):
-        entries =[        
-                  (gtk.STOCK_JUSTIFY_FILL, self.displayPopupToCreateGroup,1),
-                  (gtk.STOCK_JUSTIFY_FILL, self.displayPopupToCreateGroup,1),
-                  (gtk.STOCK_JUSTIFY_FILL, self.displayPopupToRemoveGroup,0)
-        ]
-
-        menu = gtk.Menu()
-        for stock_id,callback,sensitivity in entries:
-            item = gtk.ImageMenuItem(stock_id)
-            if callback:
-                item.connect("activate",callback)   
-            item.set_sensitive(sensitivity)
-            item.show()
-            menu.append(item)
-        menu.popup(None,None,None,event.button,event.time)     
 
     #+---------------------------------------------- 
     #| displayPopupToCreateGroup_ResponseToDialog :
@@ -245,6 +257,7 @@ class UIseqMessage:
     #+----------------------------------------------
     def displayPopupToCreateGroup_ResponseToDialog(self, entry, dialog, response):
         dialog.response(response)
+
     
     #+---------------------------------------------- 
     #| displayPopupToCreateGroup :
@@ -388,18 +401,63 @@ class UIseqMessage:
 
         self.selectedMessage = ""
 
+
+    #+---------------------------------------------- 
+    #| Return True if the string parameter is ASCII
+    #+----------------------------------------------
+    def isascii(self, string):
+        try:
+            string.decode('ascii')
+            return True
+        except UnicodeDecodeError:
+            return False
+
+    #+---------------------------------------------- 
+    #| Return True if the string parameter is base64
+    #|  encoded
+    #+----------------------------------------------
+    def isbase64(self, stringsTable):
+        res = True
+        try:
+            for s in stringsTable:
+                tmp = base64.b64decode(s)
+                if tmp == "":
+                    res = False
+        except TypeError:
+            res = False
+
+        return res
+
     #+---------------------------------------------- 
     #| Identify a possible type from a hexa string
     #+----------------------------------------------
-    def identifyType(self, string):
+    def identifyType(self, stringsTable):
+        entireString = "".join(stringsTable)
         setSpace = set()
-        for i in range(0, len(string), 2):
-            setSpace.add( int(string[i:i+2], 16) )
+        for i in range(0, len(entireString), 2):
+            setSpace.add( int(entireString[i:i+2], 16) )
         sorted(setSpace)
-        res = ""
+
+        aggregatedValues = ""
         for i in setSpace:
-            res += repr(chr(i))
-        return res
+            aggregatedValues += chr(i)
+
+        typesList = ""
+        if aggregatedValues == "":
+            return typesList
+        if aggregatedValues.isdigit():
+            typesList += "num,"
+        if aggregatedValues.isalpha():
+            typesList += "alpha,"
+        if aggregatedValues.isalnum():
+            typesList += "alphanum,"
+        if self.isascii(aggregatedValues):
+            typesList += "ascii,"
+        if self.isbase64(stringsTable):
+            typesList += "base64,"
+        typesList += "binary"
+
+        return typesList
         
         
     #+---------------------------------------------- 
@@ -439,7 +497,7 @@ class UIseqMessage:
                 
                 maxNumberOfGroup = 0
                 matchMessages = []
-                aggregateValuesPerCol = {}
+                aggregatedValuesPerCol = {}
                 
                 for message in messages :
                     data = message.getStringData()                    
@@ -467,20 +525,20 @@ class UIseqMessage:
                         
                         ar.append('<span>' + data[current:start] + '</span>')
                         ar.append('<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>')
-                        if not k in aggregateValuesPerCol:
-                            aggregateValuesPerCol[k] = ""
-                        aggregateValuesPerCol[k] += data[current:start]
+                        if not k in aggregatedValuesPerCol:
+                            aggregatedValuesPerCol[k] = []
+                        aggregatedValuesPerCol[k].append( data[current:start] )
                         k += 1
-                        if not k in aggregateValuesPerCol:
-                            aggregateValuesPerCol[k] = ""
-                        aggregateValuesPerCol[k] += data[start:end]
+                        if not k in aggregatedValuesPerCol:
+                            aggregatedValuesPerCol[k] = []
+                        aggregatedValuesPerCol[k].append( data[start:end] )
                         k += 1
 
                         current = end
                     ar.append('<span >' + data[current:] + '</span>')
-                    if not k in aggregateValuesPerCol:
-                        aggregateValuesPerCol[k] = ""
-                    aggregateValuesPerCol[k] += data[current:]
+                    if not k in aggregatedValuesPerCol:
+                        aggregatedValuesPerCol[k] = []
+                    aggregatedValuesPerCol[k].append( data[current:] )
                     matchMessages.append(ar)
 
                 # create a TreeView with N cols, with := (maxNumberOfGroup * 2 + 1)
@@ -495,15 +553,17 @@ class UIseqMessage:
                     self.treestoreMessage.append(None, matchMessages[i])
 
                 # Type and Regex headers
+                ## TODO : divide the regex numbers by 2
                 hdr_row = []
                 hdr_row.append("HEADER TYPE")
                 hdr_row.append("#00ffff")
                 hdr_row.append(pango.WEIGHT_BOLD)
                 hdr_row.append(True)
 
-                for i in range( len(aggregateValuesPerCol) ):
-                    # Identify the type from the string of the aggregated rows of the same column
-                    hdr_row.append( self.identifyType( aggregateValuesPerCol[i] ));
+                for i in range( len(aggregatedValuesPerCol) ):
+                    # Identify the type from the strings of the same column
+                    typesList = self.identifyType( aggregatedValuesPerCol[i] )
+                    hdr_row.append( typesList );
                 self.treestoreMessage.prepend(None, hdr_row)
 
                 splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", groupRegex)
@@ -515,9 +575,6 @@ class UIseqMessage:
                 regex_row.append(True)
 
                 for i in range(len(splittedRegex)):
-                    hdr_row.append("");
-                    # Identify the type from the string of the aggregated rows of the same column
-                    hdr_row.append( self.identifyType( aggregateValuesPerCol[i+1] ));
                     regex_row.append("")
                     # Get the Regex of the current column
                     regex_row.append(splittedRegex[i][1:-1])
