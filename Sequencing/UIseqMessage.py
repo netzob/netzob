@@ -387,18 +387,10 @@ class UIseqMessage:
             error = False
             
             if (score >= 50) :
-                # create a view with 64 cols
-                self.treestoreMessage = gtk.TreeStore(str, str, int, gobject.TYPE_BOOLEAN, str, str, str, str, str, str, 
-                                                      str, str, str, str, str, str, str, str, str, str, 
-                                                      str, str, str, str, str, str, str, str, str, str, 
-                                                      str, str, str, str, str, str, str, str, str, str, 
-                                                      str, str, str, str, str, str, str, str, str, str, 
-                                                      str, str, str, str, str, str, str, str, str, str, str, str, str, str)
-                self.treeViewDetail.set_model(self.treestoreMessage)
-                self.treeViewDetail.set_reorderable(True)    
                 compiledRegex = re.compile(groupRegex)
                 
                 maxNumberOfGroup = 0
+                matchMessages = []
                 
                 for message in messages :
                     data = message.getStringData()                    
@@ -428,11 +420,20 @@ class UIseqMessage:
                         
                         current = end
                     ar.append('<span >' + data[current:] + '</span>')
-                    
-                    for t in range(0,64-len(ar)) :
-                        ar.append("-");
-                    print repr(ar)
-                    self.treestoreMessage.append(None, ar)
+                    matchMessages.append(ar)
+
+                # create a TreeView with N cols, with := (maxNumberOfGroup * 2 + 1)
+                treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
+                print maxNumberOfGroup
+                print matchMessages
+                for i in range( maxNumberOfGroup * 2 + 1):
+                    treeStoreTypes.append(str)
+                self.treestoreMessage = gtk.TreeStore(*treeStoreTypes)
+                self.treeViewDetail.set_model(self.treestoreMessage)
+                self.treeViewDetail.set_reorderable(True)
+
+                for i in range(len(matchMessages)):
+                    self.treestoreMessage.append(None, matchMessages[i])
 
                 # Type header
                 hdr_row = []
@@ -440,7 +441,7 @@ class UIseqMessage:
                 hdr_row.append("#00ffff")
                 hdr_row.append(pango.WEIGHT_BOLD)
                 hdr_row.append(True)
-                for t in range(0,64-4):
+                for t in range(maxNumberOfGroup * 2 + 1):
                     hdr_row.append("String");
                 self.treestoreMessage.prepend(None, hdr_row)
 
@@ -453,12 +454,11 @@ class UIseqMessage:
                 hdr_row.append(pango.WEIGHT_BOLD)
                 hdr_row.append(True)
 
-                for i in range(0, len(splittedRegex)):
+                for i in range(len(splittedRegex)):
                     hdr_row.append("")
                     hdr_row.append(splittedRegex[i][1:-1])
-
-                for t in range(0,64 - len(hdr_row)):
-                    hdr_row.append("-");
+                for i in range((maxNumberOfGroup * 2 + 1 + 4) - len(hdr_row)):
+                    hdr_row.append("")
                 self.treestoreMessage.prepend(None, hdr_row)
 
                 # columns handling
