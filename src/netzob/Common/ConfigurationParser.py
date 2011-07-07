@@ -39,4 +39,10 @@ class ConfigurationParser(object):
     def get(self, section, name):
         return self.config.get(section, name)
     
+    def getInt(self, section, name):
+        return self.config.getint(section, name)
+    
+    def getFloat(self, section, name):
+        return self.config.getfloat(section, name)
+    
         
