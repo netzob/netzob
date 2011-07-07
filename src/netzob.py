@@ -65,7 +65,7 @@ class Netzob:
         self.zone_saisie.set_size_request(300, -1)
         self.zone_saisie.set_model(gtk.ListStore(str))
 
-        for tmpDir in os.listdir("./traces/"):
+        for tmpDir in os.listdir("resources/traces/"):
             if tmpDir == '.svn':
                 continue
             self.zone_saisie.append_text(tmpDir)
@@ -159,9 +159,9 @@ class Netzob:
         if target == "":
             return
 
-        self.label_analyse.set_text("./traces" + os.sep + target)
-        self.tracePath = os.path.abspath(".") + os.sep + "traces" + os.sep + target
-
+        self.label_analyse.set_text("resources/traces" + os.sep + target)
+        self.tracePath = os.path.abspath(".") + os.sep + "resources/traces" + os.sep + target
+        
         # clear past analysis and initialize the active notebook analysis
         for page in self.pageList:
             page[1].clear()
