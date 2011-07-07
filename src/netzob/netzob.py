@@ -102,6 +102,16 @@ class Netzob:
         self.progressBar = gtk.ProgressBar()
         align.add(self.progressBar)
 
+        # Widget for choosing the anlysed protocole type
+        label2 = gtk.Label("Protocol type : ")
+        zone_saisie2 = gtk.combo_box_entry_new_text()
+        zone_saisie2.set_size_request(300, -1)
+        zone_saisie2.set_model(gtk.ListStore(str))
+
+        zone_saisie2.append_text("Text based (HTTP, FTP)")
+        zone_saisie2.append_text("Fixed fields binary based (IP, TCP)")
+        zone_saisie2.append_text("Variable fields binary based (ASN.1)")
+
         self.barre_outil.append_widget(label, "", "")
         self.barre_outil.append_widget(self.zone_saisie, "Select trace", "Privé")
         self.barre_outil.append_widget(self.button_valid, "Validation du choix de l'analyse", "Privé")
@@ -109,6 +119,8 @@ class Netzob:
         self.barre_outil.append_widget(label_text, "", "")
         self.barre_outil.append_widget(self.label_analyse, "", "")
         self.barre_outil.append_widget(progressBox, None, None)
+        self.barre_outil.append_widget(label2, "", "")
+        self.barre_outil.append_widget(zone_saisie2, "Select type", "Privé")
 
         # Notebook definition
         self.notebook = gtk.Notebook()
@@ -128,6 +140,8 @@ class Netzob:
         self.boite_poing.show()
         self.zone_saisie.show()
         label.show()
+        zone_saisie2.show()
+        label2.show()
         label_text.show()
         self.label_analyse.show()
         self.button_valid.show()
