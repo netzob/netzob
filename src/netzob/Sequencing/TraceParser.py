@@ -5,11 +5,20 @@
 #| Global Imports
 #+----------------------------------------------
 import xml.dom.minidom
+import logging
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 import Message
+from ..Common import ConfigurationParser
+
+
+#+---------------------------------------------- 
+#| Configuration of the logger
+#+----------------------------------------------
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TraceParser :
@@ -23,14 +32,16 @@ class TraceParser(object):
     #| @param path: path of the file to parse 
     #+----------------------------------------------   
     def __init__(self, path):
-       self.path = path
-       self.messages = []
+        self.path = path
+        self.messages = []
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.TraceParser.py')
        
     #+---------------------------------------------- 
     #| Parse :  
     #+----------------------------------------------   
     def parse(self):
-        print "[INFO] Extract traces from file {0}".format(self.path)
+        self.log.info("Extract traces from file {0}".format(self.path))
         
         dom = xml.dom.minidom.parse(self.path)
         xmlMessages = dom.getElementsByTagName("data")
@@ -45,9 +56,9 @@ class TraceParser(object):
             message.setL4TargetPort(xmlMessage.attributes["targetPort"].value)
             message.setTimestamp(xmlMessage.attributes["timestamp"].value)
             for node in xmlMessage.childNodes:
-                      message.setData(node.data.split())
+                message.setData(node.data.split())
             self.messages.append(message)     
         
-        print "Found : {0} messages ".format(len(self.messages))    
+        self.log.info("Found : {0} messages ".format(len(self.messages)))
         return self.messages  
         
