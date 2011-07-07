@@ -10,14 +10,10 @@ import gtk
 import pango
 import gobject
 import re
-import base64
 import pygtk
 import logging
 
 pygtk.require('2.0')
-
-
-
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -26,6 +22,7 @@ import MessageGroup
 import TracesExtractor
 import NeedlemanWunsch
 from ..Common import ConfigurationParser
+from ..Common import TypeIdentifier
 
 
 #+---------------------------------------------- 
@@ -229,20 +226,20 @@ class UIseqMessage:
             menu.popup(None, None, None, event.button, event.time)
 
             # Change the string rendering of the selected column according to the selected type
-            """
-            i = treeview.get_model().get_iter_first()
-            while True:
-                if i==None:
-                    break
-                if treeview.get_model().get_value(i, 0) == "HEADER REGEX":
-                    pass
-                elif treeview.get_model().get_value(i, 0) == "HEADER TYPE":
-                    pass
-                else:
-                    print treeview.get_model().get_value(i, iCol)
-                i = treeview.get_model().iter_next(i)
-                # TODO : change the rendering
-            """
+#            
+#            i = treeview.get_model().get_iter_first()
+#            while True:
+#                if i==None:
+#                    break
+#                if treeview.get_model().get_value(i, 0) == "HEADER REGEX":
+#                    pass
+#                elif treeview.get_model().get_value(i, 0) == "HEADER TYPE":
+#                    pass
+#                else:
+#                    print treeview.get_model().get_value(i, iCol)
+#                i = treeview.get_model().iter_next(i)
+#                # TODO : change the rendering
+            
     #+---------------------------------------------- 
     #| build_context_menu_for_groups :
     #|   Create a menu to display available operations
@@ -275,7 +272,7 @@ class UIseqMessage:
 
     #+---------------------------------------------- 
     #| displayPopupToCreateGroup_ResponseToDialog :
-    #|   pygtk is so good ! arf :( 
+    #|   pygtk is so good ! arf :( <-- clap clap :D
     #+----------------------------------------------
     def displayPopupToCreateGroup_ResponseToDialog(self, entry, dialog, response):
         dialog.response(response)
@@ -315,7 +312,7 @@ class UIseqMessage:
         dialog.destroy()
         
         if (len(newGroupName)>0) :
-            self.log.debug("a new group will created with the given name : {0}".format(newGroupName))
+            self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
             newGroup = MessageGroup.MessageGroup(newGroupName, [])
             self.groups.append(newGroup)
@@ -423,62 +420,11 @@ class UIseqMessage:
         self.selectedMessage = ""
 
 
-    #+---------------------------------------------- 
-    #| Return True if the string parameter is ASCII
-    #+----------------------------------------------
-    def isascii(self, string):
-        try:
-            string.decode('ascii')
-            return True
-        except UnicodeDecodeError:
-            return False
+   
 
-    #+---------------------------------------------- 
-    #| Return True if the string parameter is base64
-    #|  encoded
-    #+----------------------------------------------
-    def isbase64(self, stringsTable):
-        res = True
-        try:
-            for s in stringsTable:
-                tmp = base64.b64decode(s)
-                if tmp == "":
-                    res = False
-        except TypeError:
-            res = False
+    
 
-        return res
-
-    #+---------------------------------------------- 
-    #| Identify a possible type from a hexa string
-    #+----------------------------------------------
-    def identifyType(self, stringsTable):
-        entireString = "".join(stringsTable)
-        setSpace = set()
-        for i in range(0, len(entireString), 2):
-            setSpace.add( int(entireString[i:i+2], 16) )
-        sorted(setSpace)
-
-        aggregatedValues = ""
-        for i in setSpace:
-            aggregatedValues += chr(i)
-
-        typesList = ""
-        if aggregatedValues == "":
-            return typesList
-        if aggregatedValues.isdigit():
-            typesList += "num,"
-        if aggregatedValues.isalpha():
-            typesList += "alpha,"
-        if aggregatedValues.isalnum():
-            typesList += "alphanum,"
-        if self.isascii(aggregatedValues):
-            typesList += "ascii,"
-        if self.isbase64(stringsTable):
-            typesList += "base64,"
-        typesList += "binary"
-
-        return typesList
+    
         
         
     #+---------------------------------------------- 
@@ -581,7 +527,8 @@ class UIseqMessage:
 
                 for i in range( len(aggregatedValuesPerCol) ):
                     # Identify the type from the strings of the same column
-                    typesList = self.identifyType( aggregatedValuesPerCol[i] )
+                    typesList = TypeIdentifier.TypeIdentifier().getType(aggregatedValuesPerCol[i])
+                     
                     hdr_row.append( typesList );
                 self.treestoreMessage.prepend(None, hdr_row)
 
