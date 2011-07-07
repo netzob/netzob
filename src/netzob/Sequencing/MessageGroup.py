@@ -6,11 +6,21 @@
 #+----------------------------------------------
 import uuid
 import threading
+import logging
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 import NeedlemanWunsch
+from ..Common import ConfigurationParser
+
+
+#+---------------------------------------------- 
+#| Configuration of the logger
+#+----------------------------------------------
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
+
 
 #+---------------------------------------------- 
 #| MessageGroup :
@@ -35,6 +45,8 @@ class MessageGroup(object):
     #| @param messages : list of messages 
     #+----------------------------------------------   
     def __init__(self, name, messages):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
         self.id = uuid.uuid4() 
         self.name = name
         self.messages = messages
@@ -54,7 +66,7 @@ class MessageGroup(object):
     #| of the group
     #+----------------------------------------------
     def computeScore(self):
-        #print "[Debug] Compute the score of group {0}".format(self.id)
+        self.log.debug("[Debug] Compute the score of group {0}".format(self.id))
         alignator = NeedlemanWunsch.NeedlemanWunsch()
         self.score = alignator.computeScore(self.regex)
    
@@ -66,7 +78,10 @@ class MessageGroup(object):
         innerThread = self.InnerMessageGroup(self) # parameter := the MessageGroup class object
         innerThread.start()
         innerThread.join()
-        
+    #+---------------------------------------------- 
+    #| computeRegex2 : given the messages, 
+    #| this function computes the new regex of the group
+    #+----------------------------------------------    
     def computeRegex2(self, new_msgs):
         innerThread = self.InnerMessageGroup2(self, new_msgs)
         innerThread.start()
