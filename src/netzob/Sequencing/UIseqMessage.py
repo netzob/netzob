@@ -23,6 +23,7 @@ import TracesExtractor
 import NeedlemanWunsch
 from ..Common import ConfigurationParser
 from ..Common import TypeIdentifier
+from TreeStores import TreeStoreGroupGenerator
 
 
 #+---------------------------------------------- 
@@ -388,45 +389,18 @@ class UIseqMessage:
     #| Update the content of the tree store for groups
     #+----------------------------------------------
     def updateTreeStoreGroup(self):
-        self.treestoreGroup.clear()
-        for group in self.groups :
-            if (self.selectedMessage != "") :
-
-                # compute tmp score of the group if it include the selected message
-                tmp_sequences = []
-                if (len(group.getRegex())>0) :
-                    tmp_sequences.append(group.getRegex())
-
-                tmp_sequences.append(self.selectedMessage.getStringData())
-                tmp_alignator = NeedlemanWunsch.NeedlemanWunsch()
-
-                tmp_score = group.getScore()
-                if (len(tmp_sequences)>=2) :
-                    tmp_regex = tmp_alignator.getRegex(tmp_sequences)
-                    tmp_score = tmp_alignator.computeScore(tmp_regex)
-
-                if (tmp_score >= group.getScore()):
-                    color = '#66FF00'
-                else :
-                    color = '#FF0000'
-
-                iter = self.treestoreGroup.append(None, ["Group","{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
-            else :
-                iter = self.treestoreGroup.append(None, ["Group","{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
-
-            for message in group.getMessages() :
-                self.treestoreGroup.append(iter, ["Message", message.getID(), "0", '#000000', '#FF00FF'])
-
-        self.selectedMessage = ""
-
-
-   
-
-    
-
-    
         
         
+        # Updates the treestore with a selected message
+        if (self.selectedMessage != "") :
+            treeStoreGenerator = TreeStoreGroupGenerator.TreeStoreGroupGenerator(self.groups, self.treestoreGroup)
+            treeStoreGenerator.messageSelected(self.selectedMessage)
+            self.selectedMessage = ""
+        else :
+        # Default display of the groups
+            treeStoreGenerator = TreeStoreGroupGenerator.TreeStoreGroupGenerator(self.groups, self.treestoreGroup)
+            treeStoreGenerator.default()
+ 
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
     #+----------------------------------------------
