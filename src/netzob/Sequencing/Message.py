@@ -13,6 +13,14 @@ import logging
 #| Local Imports
 #+----------------------------------------------
 import NeedlemanWunsch
+from ..Common import ConfigurationParser
+
+
+#+---------------------------------------------- 
+#| Configuration of the logger
+#+----------------------------------------------
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Message :
@@ -38,6 +46,8 @@ class Message(object):
     #| Constructor : 
     #+----------------------------------------------   
     def __init__(self):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.Message.py')
         self.id = uuid.uuid4() 
         self.protocol = ""
         self.ipSource = ""
@@ -46,6 +56,7 @@ class Message(object):
         self.l4TargetPort = -1
         self.timestamp = -1
         self.data = ""
+        
         
     
     #+---------------------------------------------- 
@@ -64,12 +75,11 @@ class Message(object):
             return self.getStringData()
         
         data = self.getStringData()
-        result = data
         compiledRegex = re.compile(regex)
         m = compiledRegex.match(data)
     
         if (m == None) :
-            logger.error("The regex of the group doesn't match one of its message")
+            self.log.warning("The regex of the group doesn't match one of its message")
             return self.getStringData()
         
         
@@ -88,11 +98,6 @@ class Message(object):
             current = end
         
         return result
-#        i_regex = 0
-#        for i_data in range(0, len(data)) :
-#            
-        
-        
     
     #+---------------------------------------------- 
     #|`getStringData : compute a string representation
