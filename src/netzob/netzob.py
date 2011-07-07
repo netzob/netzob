@@ -20,17 +20,19 @@ pygtk.require('2.0')
 #+----------------------------------------------
 from Sequencing import UIseqMessage
 
-tracesDirectoryPath = ""
+#+---------------------------------------------- 
+#| Global variable definitions
+#+----------------------------------------------
+tracesDirectoryPath = "resources/traces"
+configFilePath      = "resources/logging/logging.conf"
 
 #+---------------------------------------------- 
 #| Configuration of loggers
 #+----------------------------------------------
 # Extract logging configuration from file
-configFilePath = 'resources/logging/logging.conf'
-
 if not (os.path.isfile(configFilePath)):
     print "[WARNING] Impossible to open logging configuration file ("+configFilePath+")."
-    logger = logging.getLogger('netzob.py')
+    logger = logging.getLogger('netzob.netzob.py')
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
@@ -42,7 +44,7 @@ if not (os.path.isfile(configFilePath)):
 else :
     logging.config.fileConfig(configFilePath)
     # create logger with the given configuration
-    logger = logging.getLogger('netzob.py')
+    logger = logging.getLogger('netzob.netzob.py')
     logger.info("Logging module configured and loaded ["+configFilePath+"].")
     
 
@@ -81,7 +83,7 @@ class Netzob:
         self.zone_saisie.set_size_request(300, -1)
         self.zone_saisie.set_model(gtk.ListStore(str))
 
-        for tmpDir in os.listdir("resources/traces/"):
+        for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
             self.zone_saisie.append_text(tmpDir)
@@ -175,8 +177,8 @@ class Netzob:
         if target == "":
             return
 
-        self.label_analyse.set_text("resources/traces" + os.sep + target)
-        self.tracePath = os.path.abspath(".") + os.sep + "resources/traces" + os.sep + target
+        self.label_analyse.set_text(tracesDirectoryPath + os.sep + target)
+        self.tracePath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target
         
         # clear past analysis and initialize the active notebook analysis
         for page in self.pageList:
