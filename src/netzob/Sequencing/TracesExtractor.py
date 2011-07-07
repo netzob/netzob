@@ -8,15 +8,23 @@ import gtk
 import os
 import gobject
 import pygtk
-from Clusterer import Clusterer
+import logging
 pygtk.require('2.0')
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
+import Clusterer
 import TraceParser
 import MessageGroup
+from ..Common import ConfigurationParser
 
+
+#+---------------------------------------------- 
+#| Configuration of the logger
+#+----------------------------------------------
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TracesExtractor :
@@ -32,13 +40,15 @@ class TracesExtractor(object):
     def __init__(self, zob):
         self.zob = zob
         self.path = self.zob.tracePath
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.TraceExtractor.py')
     
     #+---------------------------------------------- 
     #| Parse :
     #| @update the groups paramter with the computed groups of messages
     #+----------------------------------------------   
     def parse(self, groups, uiNotebook):
-        print "[INFO] Extract traces from directory {0}".format(self.path)
+        self.log.info("[INFO] Extract traces from directory {0}".format(self.path))
         
         # Retrieves all the files to parse
         files = []
@@ -46,7 +56,7 @@ class TracesExtractor(object):
             filePath = self.path + "/" + file
             
             if file == '.svn':
-                print "[INFO] Do not parse file {0}".format(filePath)
+                self.log.warning("[INFO] Do not parse file {0}".format(filePath))
             else :
                 files.append(file)
         
@@ -67,7 +77,7 @@ class TracesExtractor(object):
             group = MessageGroup.MessageGroup(file, tmpMessages)
             
             # Now we try to re-organize the newly created group
-            clusterer = Clusterer(True)
+            clusterer = Clusterer.Clusterer()
             for g in clusterer.reOrganize([group]) :
                 tmp_groups.append(g)
             
@@ -76,7 +86,7 @@ class TracesExtractor(object):
             
         # Now that all the groups are reorganized separatly
         # we should consider merging them
-        clusterer = Clusterer(True)
+        clusterer = Clusterer.Clusterer()
         for g in clusterer.reOrganizeGroups(tmp_groups) :
             groups.append(g)
 
@@ -89,9 +99,9 @@ class TracesExtractor(object):
         
         
         for group in groups :
-            print "Group {0}".format(group.getName())
+            self.log.debug("Group {0}".format(group.getName()))
             for message in group.getMessages() :
-                print message.getStringData()
+                self.log.debug("- "+message.getStringData())
         
         uiNotebook.update()
         yield False
