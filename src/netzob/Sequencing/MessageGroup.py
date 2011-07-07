@@ -66,7 +66,7 @@ class MessageGroup(object):
     #| of the group
     #+----------------------------------------------
     def computeScore(self):
-        self.log.debug("[Debug] Compute the score of group {0}".format(self.id))
+        self.log.debug("Compute the score of group {0}".format(self.id))
         alignator = NeedlemanWunsch.NeedlemanWunsch()
         self.score = alignator.computeScore(self.regex)
    
