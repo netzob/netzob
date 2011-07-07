@@ -20,15 +20,31 @@ pygtk.require('2.0')
 #+----------------------------------------------
 from Sequencing import UIseqMessage
 
+tracesDirectoryPath = ""
 
 #+---------------------------------------------- 
 #| Configuration of loggers
 #+----------------------------------------------
 # Extract logging configuration from file
-logging.config.fileConfig('resources/logging.conf')
-# create logger with the given configuration
-logger = logging.getLogger('netzob')
+configFilePath = 'resources/logging/logging.conf'
 
+if not (os.path.isfile(configFilePath)):
+    print "[WARNING] Impossible to open logging configuration file ("+configFilePath+")."
+    logger = logging.getLogger('netzob.py')
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    logger.info("Logging module configured and loaded [default].")
+    
+else :
+    logging.config.fileConfig(configFilePath)
+    # create logger with the given configuration
+    logger = logging.getLogger('netzob.py')
+    logger.info("Logging module configured and loaded ["+configFilePath+"].")
+    
 
 
 #+---------------------------------------------- 
