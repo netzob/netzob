@@ -195,7 +195,7 @@ class UIseqMessage:
     #|   mainly to open a contextual menu
     #+----------------------------------------------
     def button_press_on_treeview_groups(self,obj,event):
-        print "[DEBUG] User requested a contextual menu (treeview group)"
+        self.log.debug("User requested a contextual menu (treeview group)")
         
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_groups(event)
@@ -207,7 +207,7 @@ class UIseqMessage:
     #+----------------------------------------------
     def button_press_on_treeview_messages(self,treeview,event):
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
-            print "[DEBUG] User requested a contextual menu (treeview messages)"
+            self.log.debug("User requested a contextual menu (treeview messages)")
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
@@ -287,7 +287,7 @@ class UIseqMessage:
     #|   Based on the famous dialogs
     #+----------------------------------------------
     def displayPopupToCreateGroup(self, event):
-        print "[DEBUG] Display a popup to create a group"
+        self.log.debug("Display a popup to create a group")
         #base this on a message dialog
         dialog = gtk.MessageDialog(
                                    None,
@@ -315,7 +315,7 @@ class UIseqMessage:
         dialog.destroy()
         
         if (len(newGroupName)>0) :
-            print "[DEBUG] a new group will created with the given name : {0}".format(newGroupName)
+            self.log.debug("a new group will created with the given name : {0}".format(newGroupName))
             
             newGroup = MessageGroup.MessageGroup(newGroupName, [])
             self.groups.append(newGroup)
@@ -330,7 +330,7 @@ class UIseqMessage:
         
     
     def displayPopupToRemoveGroup(self, event):
-        print "on delete"
+        self.log.debug("on delete")
         
     #+---------------------------------------------- 
     #| drop_fromDND :
@@ -358,7 +358,7 @@ class UIseqMessage:
                         found = True
         
         if (found) :
-            print "[DEBUG] The message {0} must be moved out its current group {1} to the new group {2}".format(msg.getID(), old_grp.getName(), new_grp.getName())
+            self.log.debug("The message {0} must be moved out its current group {1} to the new group {2}".format(msg.getID(), old_grp.getName(), new_grp.getName()))
             #Removing from its old group
             old_grp.removeMessage(msg)
             #Adding to its new group
@@ -368,7 +368,7 @@ class UIseqMessage:
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
         else :
-            print "[ERROR] Impossible to retrieve the message to Drop"
+            self.log.warning("Impossible to retrieve the message to Drop")
         return
    
    
@@ -380,12 +380,11 @@ class UIseqMessage:
     #|   is dragged out current group 
     #+----------------------------------------------
     def drag_fromDND(self, treeview, contexte, selection, info, dateur):
-      treeselection = treeview.get_selection()
-      modele, iter = treeselection.get_selected()
-      texte = str(modele.get_value(iter, 0))
-      selection.set(selection.target, 8, texte)
-
-      return
+        treeselection = treeview.get_selection()
+        modele, iter = treeselection.get_selected()
+        texte = str(modele.get_value(iter, 0))
+        selection.set(selection.target, 8, texte)
+        return
     
     
     #+---------------------------------------------- 
@@ -486,10 +485,10 @@ class UIseqMessage:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
-        print "[DEBUG] Updating the tree store of messages"
+        self.log.debug("Updating the tree store of messages")
         self.treestoreMessage.clear()
         if (self.selectedGroup != "") :
-            print "[DEBUG] Selected group : {0}".format(self.selectedGroup)
+            self.log.debug("Selected group : {0}".format(self.selectedGroup))
             
             groupName = ""
             groupRegex = ""
@@ -503,14 +502,13 @@ class UIseqMessage:
             
             # Verify the requested group is found
             if (len(groupRegex) == 0 ) :
-                print "[Error] Error, impossible to retrieve the selected group !"
+                self.log.warning("Error, impossible to retrieve the selected group !")
                 return
             
-            print "[Debug] Group name : {0}".format(groupName)     
-            print "[Debug] Group regex : {0}".format(groupRegex)    
+            self.log.debug("Group regex : {0}".format(groupRegex))    
             needle = NeedlemanWunsch.NeedlemanWunsch()
             score = needle.computeScore(groupRegex)    
-            print "[Debug] Score du groupe : {0}".format(score)
+            self.log.debug("Score du groupe : {0}".format(score))
             
             error = False
             
@@ -525,7 +523,7 @@ class UIseqMessage:
                     data = message.getStringData()                    
                     m = compiledRegex.match(data)
                     if (m == None) :
-                        print "[ERROR] The regex of the group doesn't match one of its message"
+                        self.log.warning("The regex of the group doesn't match one of its message")
                         error = True
                         break
                     
@@ -539,8 +537,7 @@ class UIseqMessage:
                     ar.append(False)
                     current = 0
                     k = 0
-                    
-                    print "data = {0}".format(data)
+
                     for i_group in range(1, nbGroup+1) :
                         start = m.start(i_group)
                         end = m.end(i_group)
@@ -620,7 +617,7 @@ class UIseqMessage:
                         self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
                         self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i, background=1, weight=2, editable=3)
                         self.treeViewDetail.append_column(self.lvcolumnDetail2)
-                         # enable dragging message out of current group
+                        # enable dragging message out of current group
                         self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
                                                                      gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
                         self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
@@ -742,7 +739,7 @@ class UIseqMessage:
                     for message in group.getMessages() :
                         if str(message.getID()) == msg_id :
                             self.selectedMessage = message
-                            print "[DEBUG] selected message {0}".format(self.selectedMessage.getID())     
+                            self.log.debug("selected message {0}".format(self.selectedMessage.getID()))     
                             self.updateTreeStoreGroup()
 
     #+---------------------------------------------- 
@@ -758,12 +755,10 @@ class UIseqMessage:
                 score = modele.get_value(iter,2)
 
                 if (type == "Group") :
-                    print "Group : {0}".format(name)
                     self.selectedGroup = name
                     self.updateTreeStoreMessage()
                     
-                if (type == "Message") :
-                    print "Message : {0}".format(name)    
+                if (type == "Message") :   
                     self.selectedMessage = name
 
 
