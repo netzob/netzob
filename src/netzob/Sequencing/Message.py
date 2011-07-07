@@ -6,11 +6,18 @@
 #+----------------------------------------------
 import uuid
 import re
+import logging
+
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 import NeedlemanWunsch
+
+#+---------------------------------------------- 
+#| Logging definition
+#+----------------------------------------------
+logger = logging.getLogger('netzob.sequencing.Message.py')
 
 #+---------------------------------------------- 
 #| Message :
@@ -36,14 +43,15 @@ class Message(object):
     #| Constructor : 
     #+----------------------------------------------   
     def __init__(self):
-       self.id = uuid.uuid4() 
-       self.protocol = ""
-       self.ipSource = ""
-       self.ipTarget = ""
-       self.l4SourcePort = -1
-       self.l4TargetPort = -1
-       self.timestamp = -1
-       self.data = ""
+        self.id = uuid.uuid4() 
+        self.protocol = ""
+        self.ipSource = ""
+        self.ipTarget = ""
+        self.l4SourcePort = -1
+        self.l4TargetPort = -1
+        self.timestamp = -1
+        self.data = ""
+        
     
     #+---------------------------------------------- 
     #|`getPangoData : compute a colored representation    
@@ -52,12 +60,11 @@ class Message(object):
     #| @return string(data)
     #+----------------------------------------------
     def getPangoData(self, regex):
-        # Simplify the regex
-        #regex = "^"+regex+"$"
-        
+        logger.debug("Computes the pango data of message "+self.getID()+".")
         # Compute the score of the regex
         needle = NeedlemanWunsch.NeedlemanWunsch()
         score = needle.computeScore(regex)
+
         # if score > 75 : apply regex
         if (score < 75) :
             return self.getStringData()
@@ -68,7 +75,7 @@ class Message(object):
         m = compiledRegex.match(data)
     
         if (m == None) :
-            print "[ERROR] The regex of the group doesn't match one of its message"
+            logger.error("The regex of the group doesn't match one of its message")
             return self.getStringData()
         
         
@@ -99,7 +106,7 @@ class Message(object):
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
-       return "".join(self.data) 
+        return "".join(self.data) 
     
     
     #+---------------------------------------------- 
