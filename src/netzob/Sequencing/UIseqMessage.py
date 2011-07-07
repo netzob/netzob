@@ -24,6 +24,7 @@ import NeedlemanWunsch
 from ..Common import ConfigurationParser
 from ..Common import TypeIdentifier
 from TreeStores import TreeStoreGroupGenerator
+from TreeStores import TreeStoreMessageGenerator
 
 
 #+---------------------------------------------- 
@@ -388,9 +389,7 @@ class UIseqMessage:
     #+---------------------------------------------- 
     #| Update the content of the tree store for groups
     #+----------------------------------------------
-    def updateTreeStoreGroup(self):
-        
-        
+    def updateTreeStoreGroup(self):        
         # Updates the treestore with a selected message
         if (self.selectedMessage != "") :
             treeStoreGenerator = TreeStoreGroupGenerator.TreeStoreGroupGenerator(self.groups, self.treestoreGroup)
@@ -407,169 +406,190 @@ class UIseqMessage:
     def updateTreeStoreMessage(self):
         self.log.debug("Updating the tree store of messages")
         self.treestoreMessage.clear()
+        
         if (self.selectedGroup != "") :
-            self.log.debug("Selected group : {0}".format(self.selectedGroup))
-            
-            groupName = ""
-            groupRegex = ""
-            messages = []
-            
+            # Search for the selected group in groups list
+            selectedGroup = None
             for group in self.groups :
-                if (group.getName() == self.selectedGroup) :
-                    groupRegex = group.getRegex()
-                    messages = group.getMessages()
-                    groupName = group.getName()
+                if group.getName() == self.selectedGroup :
+                    selectedGroup = group
+            # If we found it we can update the content of the treestore        
+            if selectedGroup != None :
+                treeStoreGenerator = TreeStoreMessageGenerator.TreeStoreMessageGenerator(selectedGroup, self.treestoreMessage, self.treeViewDetail)
+                treeStoreGenerator.default()
+            # Else, quite weird so throw a warning
+            else :
+                self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name "+self.selectedGroup)
             
-            # Verify the requested group is found
-            if (len(groupRegex) == 0 ) :
-                self.log.warning("Error, impossible to retrieve the selected group !")
-                return
             
-            self.log.debug("Group regex : {0}".format(groupRegex))    
-            needle = NeedlemanWunsch.NeedlemanWunsch()
-            score = needle.computeScore(groupRegex)    
-            self.log.debug("Score du groupe : {0}".format(score))
-            
-            error = False
-            
-            if (score >= 50) :
-                compiledRegex = re.compile(groupRegex)
-                
-                maxNumberOfGroup = 0
-                matchMessages = []
-                aggregatedValuesPerCol = {}
-                
-                for message in messages :
-                    data = message.getStringData()                    
-                    m = compiledRegex.match(data)
-                    if (m == None) :
-                        self.log.warning("The regex of the group doesn't match one of its message")
-                        error = True
-                        break
-                    
-                    nbGroup = len(m.groups())
-                    if maxNumberOfGroup < nbGroup :
-                        maxNumberOfGroup = nbGroup
-                    ar = []
-                    ar.append(message.getID())
-                    ar.append("#ffffff")
-                    ar.append(pango.WEIGHT_NORMAL)
-                    ar.append(False)
-                    current = 0
-                    k = 0
-
-                    for i_group in range(1, nbGroup+1) :
-                        start = m.start(i_group)
-                        end = m.end(i_group)
-                        
-                        ar.append('<span>' + data[current:start] + '</span>')
-                        ar.append('<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>')
-                        if not k in aggregatedValuesPerCol:
-                            aggregatedValuesPerCol[k] = []
-                        aggregatedValuesPerCol[k].append( data[current:start] )
-                        k += 1
-                        if not k in aggregatedValuesPerCol:
-                            aggregatedValuesPerCol[k] = []
-                        aggregatedValuesPerCol[k].append( data[start:end] )
-                        k += 1
-
-                        current = end
-                    ar.append('<span >' + data[current:] + '</span>')
-                    if not k in aggregatedValuesPerCol:
-                        aggregatedValuesPerCol[k] = []
-                    aggregatedValuesPerCol[k].append( data[current:] )
-                    matchMessages.append(ar)
-
-                # create a TreeView with N cols, with := (maxNumberOfGroup * 2 + 1)
-                treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-                for i in range( maxNumberOfGroup * 2 + 1):
-                    treeStoreTypes.append(str)
-                self.treestoreMessage = gtk.TreeStore(*treeStoreTypes)
-                self.treeViewDetail.set_model(self.treestoreMessage)
-                self.treeViewDetail.set_reorderable(True)
-
-                for i in range(len(matchMessages)):
-                    self.treestoreMessage.append(None, matchMessages[i])
-
-                # Type and Regex headers
-                ## TODO : divide the regex numbers by 2
-                hdr_row = []
-                hdr_row.append("HEADER TYPE")
-                hdr_row.append("#00ffff")
-                hdr_row.append(pango.WEIGHT_BOLD)
-                hdr_row.append(True)
-
-                for i in range( len(aggregatedValuesPerCol) ):
-                    # Identify the type from the strings of the same column
-                    typesList = TypeIdentifier.TypeIdentifier().getType(aggregatedValuesPerCol[i])
-                     
-                    hdr_row.append( typesList );
-                self.treestoreMessage.prepend(None, hdr_row)
-
-                splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", groupRegex)
-
-                regex_row = []
-                regex_row.append("HEADER REGEX")
-                regex_row.append("#00ffff")
-                regex_row.append(pango.WEIGHT_BOLD)
-                regex_row.append(True)
-
-                for i in range(len(splittedRegex)):
-                    regex_row.append("")
-                    # Get the Regex of the current column
-                    regex_row.append(splittedRegex[i][1:-1])
-                for i in range((maxNumberOfGroup * 2 + 1 + 4) - len(regex_row)):
-                    regex_row.append("")
-                self.treestoreMessage.prepend(None, regex_row)
-
-                # columns handling
-                if (error != True) :    
-                    # remove all the colomns
-                    for col in self.treeViewDetail.get_columns() :
-                        self.treeViewDetail.remove_column(col)
-
-                    # Define cellRenderer objects
-                    self.cellDetail2 = gtk.CellRendererText()
-                    self.cellDetail2.set_property('background-set' , True)
-
-                    for i in range(4, 4 + (maxNumberOfGroup * 2) + 1) :
-                        # Column Messages
-                        self.lvcolumnDetail2 = gtk.TreeViewColumn('Col'+str(i))
-                        self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
-                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i, background=1, weight=2, editable=3)
-                        self.treeViewDetail.append_column(self.lvcolumnDetail2)
-                        # enable dragging message out of current group
-                        self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
-                                                                     gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-                        self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
-                        self.treeViewDetail.connect("cursor-changed", self.messageSelected) 
-                
-            if (score < 50 or error == True):
-                # create a view with 30 cols
-                self.treestoreMessage = gtk.TreeStore(str, str, str)        
-                self.treeViewDetail.set_model(self.treestoreMessage)
-                self.treeViewDetail.set_reorderable(True)   
-                
-                # remove all the colomns
-                for col in self.treeViewDetail.get_columns() :
-                    self.treeViewDetail.remove_column(col)
-                
-                # clear all the attributes
-                self.cellDetail2 = gtk.CellRendererText()
-                # Column Messages
-                self.lvcolumnDetail2 = gtk.TreeViewColumn('Message')
-                self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
-                self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=0)
-                self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=0)
-                self.treeViewDetail.append_column(self.lvcolumnDetail2)
-                
-                # enable dragging message out of current group
-                self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
-                  gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-                self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
-                self.treeViewDetail.connect("cursor-changed", self.messageSelected) 
-                for message in messages :
-                    self.treestoreMessage.append(None, [message.getPangoData(groupRegex), groupRegex, message.getID()])
+#            
+#        
+#        
+#        
+#        
+#        if (self.selectedGroup != "") :
+#            self.log.debug("Selected group : {0}".format(self.selectedGroup))
+#            
+#            groupName = ""
+#            groupRegex = ""
+#            messages = []
+#            
+#            for group in self.groups :
+#                if (group.getName() == self.selectedGroup) :
+#                    groupRegex = group.getRegex()
+#                    messages = group.getMessages()
+#                    groupName = group.getName()
+#            
+#            # Verify the requested group is found
+#            if (len(groupRegex) == 0 ) :
+#                self.log.warning("Error, impossible to retrieve the selected group !")
+#                return
+#            
+#            self.log.debug("Group regex : {0}".format(groupRegex))    
+#            needle = NeedlemanWunsch.NeedlemanWunsch()
+#            score = needle.computeScore(groupRegex)    
+#            self.log.debug("Score du groupe : {0}".format(score))
+#            
+#            error = False
+#            
+#            if (score >= 50) :
+#                compiledRegex = re.compile(groupRegex)
+#                
+#                maxNumberOfGroup = 0
+#                matchMessages = []
+#                aggregatedValuesPerCol = {}
+#                
+#                for message in messages :
+#                    data = message.getStringData()                    
+#                    m = compiledRegex.match(data)
+#                    if (m == None) :
+#                        self.log.warning("The regex of the group doesn't match one of its message")
+#                        error = True
+#                        break
+#                    
+#                    nbGroup = len(m.groups())
+#                    if maxNumberOfGroup < nbGroup :
+#                        maxNumberOfGroup = nbGroup
+#                    ar = []
+#                    ar.append(message.getID())
+#                    ar.append("#ffffff")
+#                    ar.append(pango.WEIGHT_NORMAL)
+#                    ar.append(False)
+#                    current = 0
+#                    k = 0
+#
+#                    for i_group in range(1, nbGroup+1) :
+#                        start = m.start(i_group)
+#                        end = m.end(i_group)
+#                        
+#                        ar.append('<span>' + data[current:start] + '</span>')
+#                        ar.append('<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>')
+#                        if not k in aggregatedValuesPerCol:
+#                            aggregatedValuesPerCol[k] = []
+#                        aggregatedValuesPerCol[k].append( data[current:start] )
+#                        k += 1
+#                        if not k in aggregatedValuesPerCol:
+#                            aggregatedValuesPerCol[k] = []
+#                        aggregatedValuesPerCol[k].append( data[start:end] )
+#                        k += 1
+#
+#                        current = end
+#                    ar.append('<span >' + data[current:] + '</span>')
+#                    if not k in aggregatedValuesPerCol:
+#                        aggregatedValuesPerCol[k] = []
+#                    aggregatedValuesPerCol[k].append( data[current:] )
+#                    matchMessages.append(ar)
+#
+#                # create a TreeView with N cols, with := (maxNumberOfGroup * 2 + 1)
+#                treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
+#                for i in range( maxNumberOfGroup * 2 + 1):
+#                    treeStoreTypes.append(str)
+#                self.treestoreMessage = gtk.TreeStore(*treeStoreTypes)
+#                self.treeViewDetail.set_model(self.treestoreMessage)
+#                self.treeViewDetail.set_reorderable(True)
+#
+#                for i in range(len(matchMessages)):
+#                    self.treestoreMessage.append(None, matchMessages[i])
+#
+#                # Type and Regex headers
+#                ## TODO : divide the regex numbers by 2
+#                hdr_row = []
+#                hdr_row.append("HEADER TYPE")
+#                hdr_row.append("#00ffff")
+#                hdr_row.append(pango.WEIGHT_BOLD)
+#                hdr_row.append(True)
+#
+#                for i in range( len(aggregatedValuesPerCol) ):
+#                    # Identify the type from the strings of the same column
+#                    typesList = TypeIdentifier.TypeIdentifier().getType(aggregatedValuesPerCol[i])
+#                     
+#                    hdr_row.append( typesList );
+#                self.treestoreMessage.prepend(None, hdr_row)
+#
+#                splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", groupRegex)
+#
+#                regex_row = []
+#                regex_row.append("HEADER REGEX")
+#                regex_row.append("#00ffff")
+#                regex_row.append(pango.WEIGHT_BOLD)
+#                regex_row.append(True)
+#
+#                for i in range(len(splittedRegex)):
+#                    regex_row.append("")
+#                    # Get the Regex of the current column
+#                    regex_row.append(splittedRegex[i][1:-1])
+#                for i in range((maxNumberOfGroup * 2 + 1 + 4) - len(regex_row)):
+#                    regex_row.append("")
+#                self.treestoreMessage.prepend(None, regex_row)
+#
+#                # columns handling
+#                if (error != True) :    
+#                    # remove all the colomns
+#                    for col in self.treeViewDetail.get_columns() :
+#                        self.treeViewDetail.remove_column(col)
+#
+#                    # Define cellRenderer objects
+#                    self.cellDetail2 = gtk.CellRendererText()
+#                    self.cellDetail2.set_property('background-set' , True)
+#
+#                    for i in range(4, 4 + (maxNumberOfGroup * 2) + 1) :
+#                        # Column Messages
+#                        self.lvcolumnDetail2 = gtk.TreeViewColumn('Col'+str(i))
+#                        self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
+#                        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i, background=1, weight=2, editable=3)
+#                        self.treeViewDetail.append_column(self.lvcolumnDetail2)
+#                        # enable dragging message out of current group
+#                        self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
+#                                                                     gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+#                        self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
+#                        self.treeViewDetail.connect("cursor-changed", self.messageSelected) 
+#                
+#            if (score < 50 or error == True):
+#                # create a view with 30 cols
+#                self.treestoreMessage = gtk.TreeStore(str, str, str)        
+#                self.treeViewDetail.set_model(self.treestoreMessage)
+#                self.treeViewDetail.set_reorderable(True)   
+#                
+#                # remove all the colomns
+#                for col in self.treeViewDetail.get_columns() :
+#                    self.treeViewDetail.remove_column(col)
+#                
+#                # clear all the attributes
+#                self.cellDetail2 = gtk.CellRendererText()
+#                # Column Messages
+#                self.lvcolumnDetail2 = gtk.TreeViewColumn('Message')
+#                self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
+#                self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=0)
+#                self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=0)
+#                self.treeViewDetail.append_column(self.lvcolumnDetail2)
+#                
+#                # enable dragging message out of current group
+#                self.treeViewDetail.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,
+#                  gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+#                self.treeViewDetail.connect("drag-data-get", self.drag_fromDND)      
+#                self.treeViewDetail.connect("cursor-changed", self.messageSelected) 
+#                for message in messages :
+#                    self.treestoreMessage.append(None, [message.getPangoData(groupRegex), groupRegex, message.getID()])
             
                     
                   

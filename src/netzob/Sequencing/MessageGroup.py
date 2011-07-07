@@ -78,6 +78,7 @@ class MessageGroup(object):
         innerThread = self.InnerMessageGroup(self) # parameter := the MessageGroup class object
         innerThread.start()
         innerThread.join()
+        
     #+---------------------------------------------- 
     #| computeRegex2 : given the messages, 
     #| this function computes the new regex of the group
