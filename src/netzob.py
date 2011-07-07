@@ -10,12 +10,26 @@ import pango
 import gobject
 import os
 import pygtk
+import logging
+import logging.config
+
 pygtk.require('2.0')
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from Sequencing import UIseqMessage
+
+
+#+---------------------------------------------- 
+#| Configuration of loggers
+#+----------------------------------------------
+# Extract logging configuration from file
+logging.config.fileConfig('resources/logging.conf')
+# create logger with the given configuration
+logger = logging.getLogger('netzob')
+
+
 
 #+---------------------------------------------- 
 #| Netzob :
@@ -141,7 +155,7 @@ class Netzob:
     #+----------------------------------------------
     def traceSelected(self, null):
         # retrieve the new trace path
-        target= self.zone_saisie.get_active_text()
+        target = self.zone_saisie.get_active_text()
         if target == "":
             return
 

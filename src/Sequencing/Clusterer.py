@@ -7,7 +7,8 @@
 try: 
     import psyco; 
     psyco.full() 
-except: pass
+except: 
+    pass
 
 import time
 from numpy.numarray.numerictypes import Float
@@ -68,7 +69,7 @@ class Clusterer(object):
     def reOrganizeGroups(self, groups):
         if self.debug == True :
             print "[Debug] Re-Organize the groups"
-        nbIteration = 5
+        nbIteration = 10
         
         min_equivalence = 85
         
