@@ -1,16 +1,23 @@
 #!/usr/bin/python
 # coding: utf8
+
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
-try: 
-    import psyco; 
-    psyco.full() 
-except: pass
-
-from numpy  import *
 import re
+import logging
+
+#+---------------------------------------------- 
+#| Local Imports
+#+----------------------------------------------
 import TracesExtractor
+from ..Common import ConfigurationParser
+from numpy  import *
+#+---------------------------------------------- 
+#| Configuration of the logger
+#+----------------------------------------------
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| NeedlemanWunsch :
@@ -25,7 +32,8 @@ class NeedlemanWunsch:
     #| no actions 
     #+----------------------------------------------   
     def __init__(self):
-        pass
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.NeedlemanWunsch.py')
     
     #+---------------------------------------------- 
     #| computeScore :
@@ -65,7 +73,7 @@ class NeedlemanWunsch:
     #+---------------------------------------------- 
     def getRegex(self, sequences):
         if (len(sequences) < 2) :
-            print "[ERROR] Impossible to compute the regex if at least 2 sequences are not provided."
+            self.log.error("[ERROR] Impossible to compute the regex if at least 2 sequences are not provided.")
             return ("","")
         
         sequence1 = sequences[0]
@@ -193,7 +201,7 @@ class NeedlemanWunsch:
          
         # Computes the first version of the regex
         if len(regex1) != len(regex2) :
-            print "[ERROR] Computed alignment is not good !"
+            self.log.error("Computed alignment is not good !")
             return ""
           
         regex = ""
