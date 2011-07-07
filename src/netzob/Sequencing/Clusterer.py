@@ -16,11 +16,15 @@ import logging
 #+----------------------------------------------
 import MessageGroup
 import Message
+from ..Common import ConfigurationParser
+
 
 #+---------------------------------------------- 
-#| Logging definition
+#| Configuration of the logger
 #+----------------------------------------------
-logger = logging.getLogger('netzob.sequencing.Clusterer.py')
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
+
 
 #+---------------------------------------------- 
 #| Clusterer :
@@ -30,13 +34,13 @@ logger = logging.getLogger('netzob.sequencing.Clusterer.py')
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self, debug):
-        self.debug = debug
-        pass
+    def __init__(self):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
     
     
     def getMatrix(self, groups):
-        logger.warning("Computing the associated matrix")
+        self.log.debug("Computing the associated matrix")
         matrix = zeros([len(groups), len(groups)], Float)
         for i in range(0, len(groups)) :
             for j in range(0, len(groups)):
@@ -65,21 +69,23 @@ class Clusterer(object):
         return matrix
     
     def reOrganizeGroups(self, groups):
-        if self.debug == True :
-            print "[Debug] Re-Organize the groups"
-        nbIteration = 10
         
-        min_equivalence = 85
+        # retrieves the following parameters from the configuration file
+        configParser = ConfigurationParser.ConfigurationParser()
+        nbIteration = configParser.getInt("clustering", "nbIteration")        
+        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
+        
+        self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
+        
         
         for iteration in range(0, nbIteration) :     
             min_equivalence = min_equivalence + iteration
             
-            logger.warning("Iteration {0} started...".format(str(iteration)))
+            self.log.debug("Iteration {0} started...".format(str(iteration)))
             
             # Create the score matrix for each group
             matrix = self.getMatrix(groups)
-            if self.debug == True :
-                print "[Debug] Searching for the maximum of equivalence."
+            self.log.debug("Searching for the maximum of equivalence.")
             # Search for the maximum score not on the diag
             maximum = -1
             i_maximum = -1
@@ -90,8 +96,7 @@ class Clusterer(object):
                         maximum = matrix[i][j]
                         i_maximum = i
                         j_maximum = j
-            if self.debug == True :
-                print "Maximum = {0} [{1};{2}]".format(maximum, i_maximum, j_maximum) 
+            self.log.debug("Maximum = {0} [{1};{2}]".format(maximum, i_maximum, j_maximum)) 
             
             if (maximum >= min_equivalence) :
                 groups = self.merge(matrix, groups, i_maximum, j_maximum)        
@@ -105,14 +110,11 @@ class Clusterer(object):
         
     
     def reOrganize(self, _groups):
-        if self.debug == True :
-            print "[Debug] Re-Organize the groups"
         messages = []
         for group in _groups :
             for msg in group.getMessages():
                 messages.append(msg)
-        if self.debug == True :
-            print "[Debug] A number of {0} messages will be clustered.".format(str(len(messages)))
+        self.log.debug("A number of {0} messages will be clustered.".format(str(len(messages))))
         
         # Create a group for each message
         groups = []
@@ -122,8 +124,7 @@ class Clusterer(object):
        
         
     def merge(self, matrix, groups, i_maximum, j_maximum):
-        if self.debug == True :
-            print "[Debug] Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum))
+        self.log.debug("Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum)))
         new_groups = []
         found = False
         for i in range(0, len(groups)) :
