@@ -28,7 +28,7 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------- 
 class TraceParser(object):
     #+---------------------------------------------- 
-    #| Constructor :
+    #| Constructor :NeedemanWunsch
     #| @param path: path of the file to parse 
     #+----------------------------------------------   
     def __init__(self, path):
