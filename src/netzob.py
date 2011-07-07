@@ -4,13 +4,10 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-import sys
 import gtk
-import pango
 import gobject
 import os
 import pygtk
-import logging
 import logging.config
 
 pygtk.require('2.0')
@@ -18,36 +15,14 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from Sequencing import UIseqMessage
+from netzob.Sequencing import UIseqMessage
+from netzob.Common import ConfigurationParser
 
 #+---------------------------------------------- 
-#| Global variable definitions
+#| Configuration of the logger
 #+----------------------------------------------
-tracesDirectoryPath = "resources/traces"
-configFilePath      = "resources/logging/logging.conf"
-
-#+---------------------------------------------- 
-#| Configuration of loggers
-#+----------------------------------------------
-# Extract logging configuration from file
-if not (os.path.isfile(configFilePath)):
-    print "[WARNING] Impossible to open logging configuration file ("+configFilePath+")."
-    logger = logging.getLogger('netzob.netzob.py')
-    logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-    logger.info("Logging module configured and loaded [default].")
-    
-else :
-    logging.config.fileConfig(configFilePath)
-    # create logger with the given configuration
-    logger = logging.getLogger('netzob.netzob.py')
-    logger.info("Logging module configured and loaded ["+configFilePath+"].")
-    
-
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Netzob :
@@ -83,6 +58,10 @@ class Netzob:
         self.zone_saisie.set_size_request(300, -1)
         self.zone_saisie.set_model(gtk.ListStore(str))
 
+        # retrieves the trace directory path
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        
+        
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -191,6 +170,8 @@ class Netzob:
         if target == "":
             return
 
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+
         self.label_analyse.set_text(tracesDirectoryPath + os.sep + target)
         self.tracePath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target
         
@@ -206,8 +187,12 @@ class Netzob:
 #| RUNTIME
 #+----------------------------------------------
 if __name__ == "__main__":
+    # create logger with the given configuration
+    logger = logging.getLogger('netzob.py')
+    logger.info("Logging module configured and loaded .")
+    
     # for handling GUI access from threads
     gobject.threads_init()
-
+    
     netZob = Netzob()
     netZob.startGui()

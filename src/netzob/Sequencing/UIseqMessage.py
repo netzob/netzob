@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding: utf8
 
+
+
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
@@ -10,7 +12,12 @@ import gobject
 import re
 import base64
 import pygtk
+import logging
+
 pygtk.require('2.0')
+
+
+
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -18,6 +25,15 @@ pygtk.require('2.0')
 import MessageGroup
 import TracesExtractor
 import NeedlemanWunsch
+from ..Common import ConfigurationParser
+
+
+#+---------------------------------------------- 
+#| Configuration of the logger
+#+----------------------------------------------
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
+
 
 #+---------------------------------------------- 
 #| UIseqMessage :
@@ -54,6 +70,11 @@ class UIseqMessage:
     #| @param groups: list of all groups 
     #+----------------------------------------------   
     def __init__(self, zob):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
+        
+        
+        
         self.zob = zob
         self.groups = []
         self.selectedGroup = ""
@@ -166,6 +187,7 @@ class UIseqMessage:
         self.sortie_frame.add(scroll_sortie)
         self.vb_sortie.pack_start(self.sortie_frame, False, False, 0)
         scroll_sortie.show()
+        self.log.debug("GUI for sequential part is created")
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_groups :

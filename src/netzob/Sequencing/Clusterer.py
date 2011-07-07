@@ -1,27 +1,26 @@
 #!/usr/bin/python
 # coding: utf8
+
+
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
-#
-try: 
-    import psyco; 
-    psyco.full() 
-except: 
-    pass
-
 import time
 from numpy.numarray.numerictypes import Float
 from numpy.core.numeric import zeros
 import binascii
+import logging
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 import MessageGroup
 import Message
-import NeedlemanWunsch
 
+#+---------------------------------------------- 
+#| Logging definition
+#+----------------------------------------------
+logger = logging.getLogger('netzob.sequencing.Clusterer.py')
 
 #+---------------------------------------------- 
 #| Clusterer :
@@ -37,8 +36,7 @@ class Clusterer(object):
     
     
     def getMatrix(self, groups):
-        if self.debug == True :
-            print "[Debug] Compute the matrix associated."
+        logger.warning("Computing the associated matrix")
         matrix = zeros([len(groups), len(groups)], Float)
         for i in range(0, len(groups)) :
             for j in range(0, len(groups)):
@@ -75,8 +73,9 @@ class Clusterer(object):
         
         for iteration in range(0, nbIteration) :     
             min_equivalence = min_equivalence + iteration
-            if self.debug == True :    
-                print "[Debug] Iteration {0} started...".format(str(iteration))      
+            
+            logger.warning("Iteration {0} started...".format(str(iteration)))
+            
             # Create the score matrix for each group
             matrix = self.getMatrix(groups)
             if self.debug == True :

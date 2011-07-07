@@ -15,11 +15,6 @@ import logging
 import NeedlemanWunsch
 
 #+---------------------------------------------- 
-#| Logging definition
-#+----------------------------------------------
-logger = logging.getLogger('netzob.sequencing.Message.py')
-
-#+---------------------------------------------- 
 #| Message :
 #|     definition of a message
 #| @author     : {gbt,fgy}@amossys.fr
@@ -60,7 +55,6 @@ class Message(object):
     #| @return string(data)
     #+----------------------------------------------
     def getPangoData(self, regex):
-        logger.debug("Computes the pango data of message "+self.getID()+".")
         # Compute the score of the regex
         needle = NeedlemanWunsch.NeedlemanWunsch()
         score = needle.computeScore(regex)
