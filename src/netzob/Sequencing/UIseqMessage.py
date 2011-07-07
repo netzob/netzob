@@ -85,8 +85,8 @@ class UIseqMessage:
         self.vb_sortie = gtk.VBox(False, spacing=0)
         self.vb_filter = gtk.VBox(False, spacing=0)
 
-        self.panel.pack_start(self.vb_filter, False, False, 0)
-        self.panel.pack_start(self.vb_sortie, False, False, 0)
+        self.panel.pack_start(self.vb_filter, True, True, 0)
+        self.panel.pack_start(self.vb_sortie, True, True, 0)
 
         self.vb_sortie.set_size_request(-1, -1)
         self.vb_filter.set_size_request(-1, -1)
@@ -116,10 +116,10 @@ class UIseqMessage:
         scroll_lib = gtk.ScrolledWindow()
         scroll_lib.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_lib.show()
-        scroll_lib.set_size_request(300, 700)
+        scroll_lib.set_size_request(500, 500)
         scroll_lib.add(self.treeViewGroups)
         
-        self.vb_filter.pack_start(scroll_lib, False, False, 0)
+        self.vb_filter.pack_start(scroll_lib, True, True, 0)
         
 
         self.treeViewGroups.connect("cursor-changed", self.messageChanged)
@@ -180,12 +180,12 @@ class UIseqMessage:
         self.treeViewDetail.show()
         
         scroll_sortie = gtk.ScrolledWindow()
-        scroll_sortie.set_size_request(1200, 800)
+        scroll_sortie.set_size_request(1000, 500)
         scroll_sortie.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         
         scroll_sortie.add(self.treeViewDetail)
         self.sortie_frame.add(scroll_sortie)
-        self.vb_sortie.pack_start(self.sortie_frame, False, False, 0)
+        self.vb_sortie.pack_start(self.sortie_frame, True, True, 0)
         scroll_sortie.show()
         self.log.debug("GUI for sequential part is created")
     

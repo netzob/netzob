@@ -105,7 +105,7 @@ class Netzob:
         self.notebook = gtk.Notebook()
         self.notebook.set_tab_pos(gtk.POS_TOP)
         self.notebook.connect("switch-page", self.notebookFocus)
-        self.vbox.pack_start(self.notebook, False, False, 0)
+        self.vbox.pack_start(self.notebook, True, True, 0)
 
         self.pageList = []
         uiseqmessage = UIseqMessage.UIseqMessage(self)
