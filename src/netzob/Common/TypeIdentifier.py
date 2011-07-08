@@ -81,7 +81,10 @@ class TypeIdentifier():
     def isBase64(self, stringsTable):
         res = True
         try:
-            for s in stringsTable:
+            for string in stringsTable:
+                s = ""
+                for i in range(0, len(string), 2):
+                    s += chr(int(string[i:i + 2], 16))
                 tmp = base64.b64decode(s)
                 if tmp == "":
                     res = False
