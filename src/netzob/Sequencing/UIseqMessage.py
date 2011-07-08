@@ -75,13 +75,18 @@ class UIseqMessage:
         self.selectedGroup = ""
         
         self.selectedMessage = ""
-
-        self.panel = gtk.HBox(False, spacing=10)
+        
+        # Definition of the Sequence Onglet
+        # First we create an HPaned which hosts the two main children
+        self.panel = gtk.HPaned()        
+        
+        # Creation of the two children
         self.vb_sortie = gtk.VBox(False, spacing=0)
         self.vb_filter = gtk.VBox(False, spacing=0)
 
-        self.panel.pack_start(self.vb_filter, True, True, 0)
-        self.panel.pack_start(self.vb_sortie, True, True, 0)
+        # includes the two children
+        self.panel.add(self.vb_filter)
+        self.panel.add(self.vb_sortie)
 
         self.vb_sortie.set_size_request(-1, -1)
         self.vb_filter.set_size_request(-1, -1)
