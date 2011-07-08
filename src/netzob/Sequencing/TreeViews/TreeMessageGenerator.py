@@ -9,12 +9,14 @@ import re
 import pango
 import gobject
 import gtk
+from numpy.core.numeric import zeros
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from ...Common import ConfigurationParser
 from ...Common import TypeIdentifier
+from ..Message import Message
 from ..NeedlemanWunsch import NeedlemanWunsch
 
 #+---------------------------------------------- 
@@ -24,39 +26,62 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| TreeStoreMessageGenerator :
-#|     update and generates the treestore 
-#|     dedicated to the messages
+#| TreeMessageGenerator :
+#|     update and generates the treeview and its 
+#|     treestore dedicated to the messages
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class TreeStoreMessageGenerator():
+class TreeMessageGenerator():
     
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param groups : the groups of messages
-    #| @param treestore : the treestore to update
-    #| @param treeview : the treeview 
+    #| @param vbox : where the treeview will be hold
     #+---------------------------------------------- 
-    def __init__(self, group, treestore, treeview):
-        self.group = group
-        self.treestore = treestore
-        self.treeview = treeview
+    def __init__(self, vbox):
+        self.vbox = vbox
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeStoreMessageGenerator.py')
+        self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeMessageGenerator.py')
+   
+    #+---------------------------------------------- 
+    #| initialization :
+    #| builds and configures the treeview
+    #+----------------------------------------------     
+    def initialization(self):
+        # creation of the treestore
+        self.treestore = gtk.TreeStore(str, str, str)     
+        # creation of the treeview   
+        self.treeview = gtk.TreeView(self.treestore)
+        self.treeview.set_reorderable(True)
+        # Creation of a cell rendered and of a column
+        self.cell = gtk.CellRendererText()
+        self.column = gtk.TreeViewColumn('Messages')
+        self.column.pack_start(self.cell, True)
+        self.column.set_attributes(self.cell, text=0)
+        self.column.set_attributes(self.cell, markup=0)
+        self.treeview.append_column(self.column)
+        
+        self.treeview.show()
+        
+        self.scroll_lib = gtk.ScrolledWindow()
+        self.scroll_lib.set_size_request(1000, 500)
+        self.scroll_lib.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
+        self.scroll_lib.add(self.treeview)
+        self.scroll_lib.show()
     
     #+---------------------------------------------- 
     #| default :
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
-    def default(self):
+    def default(self, group):
+        self.group = group
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the group "+self.group.getName())        
         self.treestore.clear()
         
         # Compile the regex (in order to prepare to the identification of groups in the messages)
         compiledRegex = re.compile(self.group.getRegex())
         
-        # the maximum number of groups per message (eq. to nb of displayed cols)
+        # the maximum number of groups per message (eq. the nb of displayed cols)
         numberOfGroup = -1
         
         # Matrix (2D array) incluing the content of the treestore
@@ -175,3 +200,10 @@ class TreeStoreMessageGenerator():
 #                    self.treeview.connect("drag-data-get", self.drag_fromDND)      
 #                    self.treeview.connect("cursor-changed", self.messageSelected) 
         
+    #+---------------------------------------------- 
+    #| GETTERS : 
+    #+----------------------------------------------
+    def getTreeview(self):
+        return self.treeview
+    def getScrollLib(self):
+        return self.scroll_lib

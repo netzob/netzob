@@ -5,6 +5,7 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
+import gtk
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -25,18 +26,51 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class TreeStoreGroupGenerator():
+class TreeGroupGenerator():
     
     #+---------------------------------------------- 
     #| Constructor :
     #| @param groups : the groups of messages
-    #| @param treestore : the treestore to update
     #+---------------------------------------------- 
-    def __init__(self, groups, treestore):
+    def __init__(self, groups):
         self.groups = groups
-        self.treestore = treestore
+        self.treestore = None
+        self.treeview = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeStoreGroupGenerator.py')
+        self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeGroupGenerator.py')
+    
+    #+---------------------------------------------- 
+    #| initialization :
+    #| builds and configures the treeview
+    #+---------------------------------------------- 
+    def initialization(self):
+        # Tree store contains :
+        # str : text ( group Name )
+        # str : text ( score )
+        # str : color foreground
+        # str : color background
+        self.treestore = gtk.TreeStore(str, str, str, str)
+        self.treeview  = gtk.TreeView(self.treestore)
+
+        # messages list
+        self.scroll_lib = gtk.ScrolledWindow()
+        self.scroll_lib.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll_lib.show()
+        self.scroll_lib.set_size_request(500, 500)
+        self.scroll_lib.add(self.treeview)        
+        
+        
+
+        lvcolumn = gtk.TreeViewColumn('Messages')
+        lvcolumn.set_sort_column_id(1)
+        cell1 = gtk.CellRendererText()
+        lvcolumn.pack_start(cell1, True)
+        cell1.set_property('background-set' , True)
+        cell1.set_property('foreground-set' , True)            
+        lvcolumn.set_attributes(cell1, text=0, foreground=2, background=3)
+        self.treeview.append_column(lvcolumn)
+        self.treeview.show()
+    
     
     #+---------------------------------------------- 
     #| default :
@@ -46,9 +80,8 @@ class TreeStoreGroupGenerator():
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
         for group in self.groups :
-            iter = self.treestore.append(None, ["Group","{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
-            for message in group.getMessages() :
-                self.treestore.append(iter, ["Message", message.getID(), "0", '#000000', '#FF00FF'])
+            iter = self.treestore.append(None, ["{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
+           
 
     #+---------------------------------------------- 
     #| messageSelected :
@@ -75,10 +108,16 @@ class TreeStoreGroupGenerator():
                 color = '#66FF00'
             else :
                 color = '#FF0000'
-                iter = self.treestore.append(None, ["Group","{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
-            for message in group.getMessages() :
-                self.treestore.append(iter, ["Message", message.getID(), "0", '#000000', '#FF00FF'])
+                iter = self.treestore.append(None, ["{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
     
     
+    
+    #+---------------------------------------------- 
+    #| GETTERS : 
+    #+----------------------------------------------
+    def getTreeview(self):
+        return self.treeview
+    def getScrollLib(self):
+        return self.scroll_lib
     
         
