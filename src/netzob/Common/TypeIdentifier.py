@@ -34,8 +34,6 @@ class TypeIdentifier():
     def getType(self, stringsTable):
         entireString = "".join(stringsTable)
         
-        self.log.debug("Identify type of strings "+entireString)
-        
         setSpace = set()
         for i in range(0, len(entireString), 2):
             setSpace.add(int(entireString[i:i + 2], 16))
