@@ -122,41 +122,6 @@ class UIseqMessage:
         self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected)
         self.treeMessageGenerator.getTreeview().connect('button-press-event',self.button_press_on_treeview_messages)
         
-        
-        
-        # Tree store contains :
-        # str : text
-        # str : text
-#        self.treestoreMessage = gtk.TreeStore(str, str, str)        
-#        self.treeViewDetail = gtk.TreeView(self.treestoreMessage)
-#        self.treeViewDetail.set_reorderable(True)
-        
-        
-        
-        
-#        
-#        
-#        self.cellDetail2 = gtk.CellRendererText()
-#        # Column Messages
-#        self.lvcolumnDetail2 = gtk.TreeViewColumn('Messages')
-#        self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
-#        self.lvcolumnDetail2.set_attributes(self.cellDetail2, text=0)
-#        self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=0)
-#        self.treeViewDetail.append_column(self.lvcolumnDetail2)
-#        
-#        self.treeViewDetail.show()
-#        
-#        scroll_sortie = gtk.ScrolledWindow()
-#        scroll_sortie.set_size_request(1000, 500)
-#        scroll_sortie.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-#        
-#        scroll_sortie.add(self.treeViewDetail)
-#        
-#        
-#        
-#        self.sortie_frame.add(scroll_sortie)
-#        self.vb_sortie.pack_start(self.sortie_frame, True, True, 0)
-        
         self.log.debug("GUI for sequential part is created")
     
     #+---------------------------------------------- 
@@ -315,7 +280,7 @@ class UIseqMessage:
         if info_depot :
             chemin, position = info_depot
             iter = modele.get_iter(chemin)
-            new_grp_name = str(modele.get_value(iter, 1))
+            new_grp_name = str(modele.get_value(iter, 0))
         
             found = False
             for tmp_group in self.groups :
@@ -382,6 +347,10 @@ class UIseqMessage:
             # If we found it we can update the content of the treestore        
             if selectedGroup != None :
                 self.treeMessageGenerator.default(selectedGroup)
+                # enable dragging message out of current group
+                self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+                self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
+                self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected) 
             # Else, quite weird so throw a warning
             else :
                 self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name "+self.selectedGroup)

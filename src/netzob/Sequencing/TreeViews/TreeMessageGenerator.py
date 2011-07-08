@@ -195,10 +195,7 @@ class TreeMessageGenerator():
                 self.lvcolumnDetail2.pack_start(self.cellDetail2, True)
                 self.lvcolumnDetail2.set_attributes(self.cellDetail2, markup=i, background=1, weight=2, editable=3)
                 self.treeview.append_column(self.lvcolumnDetail2)
-                    # enable dragging message out of current group
-#                    self.treeview.enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.target,gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-#                    self.treeview.connect("drag-data-get", self.drag_fromDND)      
-#                    self.treeview.connect("cursor-changed", self.messageSelected) 
+
         
     #+---------------------------------------------- 
     #| GETTERS : 
