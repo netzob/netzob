@@ -28,6 +28,8 @@ class TypeIdentifier():
         self.log = logging.getLogger('netzob.Common.TypeIdentifier.py')
     
     
+    
+    
     #+---------------------------------------------- 
     #| Identify a possible type from a hexa string
     #+----------------------------------------------
@@ -43,20 +45,20 @@ class TypeIdentifier():
         for i in setSpace:
             aggregatedValues += chr(i)
 
-        typesList = ""
+        typesList = []
         if aggregatedValues == "":
             return typesList
         if aggregatedValues.isdigit():
-            typesList += "num,"
+            typesList.append("num")
         if aggregatedValues.isalpha():
-            typesList += "alpha,"
+            typesList.append("alpha")
         if aggregatedValues.isalnum():
-            typesList += "alphanum,"
+            typesList.append("alphanum")
         if self.isAscii(aggregatedValues):
-            typesList += "ascii,"
+            typesList.append( "ascii")
         if self.isBase64(stringsTable):
-            typesList += "base64,"
-        typesList += "binary"
+            typesList.append("base64")
+        typesList.append("binary")
         
         self.log.debug("identified type is "+typesList)
         return typesList
@@ -89,4 +91,6 @@ class TypeIdentifier():
 
         return res    
        
-         
+def toASCII(raw):
+    return raw 
+             
