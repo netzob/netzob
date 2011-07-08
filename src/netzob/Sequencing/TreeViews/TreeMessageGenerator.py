@@ -89,12 +89,12 @@ class TreeMessageGenerator():
         aggregatedValuesPerCol = {}
         
         # Apply the regex to each message in order to compute the groups
-        for message in self.group.getMessages() :
-            data = message.getStringData()                    
+        for message in self.group.getMessages():
+            data = message.getStringData()
             m = compiledRegex.match(data)
-            if (m == None) :
+            if (m == None):
                 self.log.warning("The regex of the group doesn't match one of its message ! ("+data+")")
-                return 
+                return
             
             # compute the number of group in this message in order to compute the maximum
             if numberOfGroup < len(m.groups()) :

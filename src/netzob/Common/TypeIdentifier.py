@@ -60,11 +60,8 @@ class TypeIdentifier():
             typesList.append("base64")
         typesList.append("binary")
         
-        self.log.debug("identified type is "+typesList)
+        self.log.debug("identified type is " + str(typesList))
         return typesList
-    
-    
-    
     
     #+---------------------------------------------- 
     #| Return True if the string parameter is ASCII
@@ -75,6 +72,7 @@ class TypeIdentifier():
             return True
         except UnicodeDecodeError:
             return False    
+
     #+---------------------------------------------- 
     #| Return True if the string parameter is base64
     #|  encoded
@@ -90,7 +88,38 @@ class TypeIdentifier():
             res = False
 
         return res    
-       
+
+
+#+---------------------------------------------- 
+#| Return the string parameter in ASCII
+#+----------------------------------------------
 def toASCII(raw):
-    return raw 
-             
+    if len(raw) % 2 != 0:
+        self.log.error("Hex string len not even !")
+        return raw
+
+    res = ""
+    for i in range(0, len(raw), 2):
+        res = res + chr(int(raw[i: i+2], 16))
+    return res
+
+"""
+#+---------------------------------------------- 
+#| Return the string parameter in numerical value
+#+----------------------------------------------
+def toNum(raw):
+    if len(raw) % 2 != 0:
+        self.log.error("Hex string len not even !")
+        return raw
+
+    s = ""
+    for i in range(0, len(raw), 2):
+        s += chr(int(raw[i:i + 2], 16))
+
+    if not s.isdigit():
+
+    res = ""
+    for i in range(0, len(raw), 2):
+        res = res + chr(int(raw[i: i+2], 16))
+    return res
+"""          
