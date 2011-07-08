@@ -113,7 +113,7 @@ class UIseqMessage:
         #+----------------------------------------------
         # messages output
         self.sortie_frame = gtk.Frame()
-        self.sortie_frame.set_label("Message output")
+#        self.sortie_frame.set_label("Message output")
         self.sortie_frame.show()
         # Initialize the treeview generator for the messages
         self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator(self.vb_sortie)
