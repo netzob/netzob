@@ -89,37 +89,34 @@ class TypeIdentifier():
 
         return res    
 
+    #+---------------------------------------------- 
+    #| Return the string parameter in ASCII
+    #+----------------------------------------------
+    def toASCII(raw):
+        if len(raw) % 2 != 0:
+            self.log.error("Hex string len not even !")
+            return raw
 
-#+---------------------------------------------- 
-#| Return the string parameter in ASCII
-#+----------------------------------------------
-def toASCII(raw):
-    if len(raw) % 2 != 0:
-        self.log.error("Hex string len not even !")
-        return raw
+        res = ""
+        for i in range(0, len(raw), 2):
+            res = res + chr(int(raw[i: i+2], 16))
+        return res
 
-    res = ""
-    for i in range(0, len(raw), 2):
-        res = res + chr(int(raw[i: i+2], 16))
-    return res
+    #+---------------------------------------------- 
+    #| Return the string parameter in numerical value
+    #+----------------------------------------------
+    def toNum(raw):
+        if len(raw) % 2 != 0:
+            self.log.error("Hex string len not even")
+            return raw
 
-"""
-#+---------------------------------------------- 
-#| Return the string parameter in numerical value
-#+----------------------------------------------
-def toNum(raw):
-    if len(raw) % 2 != 0:
-        self.log.error("Hex string len not even !")
-        return raw
+        s = ""
+        for i in range(0, len(raw), 2):
+            s += chr(int(raw[i:i + 2], 16))
 
-    s = ""
-    for i in range(0, len(raw), 2):
-        s += chr(int(raw[i:i + 2], 16))
+        if not s.isdigit():
+            self.log.error("Not a digit")
+            return raw
 
-    if not s.isdigit():
-
-    res = ""
-    for i in range(0, len(raw), 2):
-        res = res + chr(int(raw[i: i+2], 16))
-    return res
-"""          
+        return s
+          
