@@ -57,7 +57,8 @@ class TypeIdentifier():
         if self.isAscii(aggregatedValues):
             typesList.append( "ascii")
         if self.isBase64(stringsTable):
-            typesList.append("base64")
+            typesList.append("base64enc")
+            typesList.append("base64dec")
         typesList.append("binary")
         
         self.log.debug("identified type is " + str(typesList))
@@ -119,4 +120,84 @@ class TypeIdentifier():
             return raw
 
         return s
+
+    #+---------------------------------------------- 
+    #| Return the string parameter in alpha
+    #+----------------------------------------------
+    def toAlpha(raw):
+        if len(raw) % 2 != 0:
+            self.log.error("Hex string len not even")
+            return raw
+
+        s = ""
+        for i in range(0, len(raw), 2):
+            s += chr(int(raw[i:i + 2], 16))
+
+        if not s.isalpha():
+            self.log.error("Not an alpha string")
+            return raw
+
+        return s
+
+    #+---------------------------------------------- 
+    #| Return the string parameter in alphanum
+    #+----------------------------------------------
+    def toAlphanum(raw):
+        if len(raw) % 2 != 0:
+            self.log.error("Hex string len not even")
+            return raw
+
+        s = ""
+        for i in range(0, len(raw), 2):
+            s += chr(int(raw[i:i + 2], 16))
+
+        if not s.isalnum():
+            self.log.error("Not an alphanumerical string")
+            return raw
+
+        return s
+
+    #+---------------------------------------------- 
+    #| Return the string parameter base64 encoded
+    #+----------------------------------------------
+    def toBase64Encoded(raw):
+        if len(raw) % 2 != 0:
+            self.log.error("Hex string len not even")
+            return raw
+
+        s = ""
+        for i in range(0, len(raw), 2):
+            s += chr(int(raw[i:i + 2], 16))
+
+        res = ""
+        try:
+            res = base64.b64decode(s)
+            if res == "":
+                res = raw
+        except TypeError:
+            res = raw
+
+        return s
+
+    #+---------------------------------------------- 
+    #| Return the string parameter base64 decoded
+    #+----------------------------------------------
+    def toBase64Decoded(raw):
+        if len(raw) % 2 != 0:
+            self.log.error("Hex string len not even")
+            return raw
+
+        s = ""
+        for i in range(0, len(raw), 2):
+            s += chr(int(raw[i:i + 2], 16))
+
+        res = ""
+        try:
+            res = base64.b64decode(s)
+            if res == "":
+                res = raw
+        except TypeError:
+            res = raw
+
+        return res
           
