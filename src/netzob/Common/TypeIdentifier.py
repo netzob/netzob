@@ -93,7 +93,7 @@ class TypeIdentifier():
     #+---------------------------------------------- 
     #| Return the string parameter in ASCII
     #+----------------------------------------------
-    def toASCII(raw):
+    def toASCII(self, raw):
         if len(raw) % 2 != 0:
             self.log.error("Hex string len not even !")
             return raw
@@ -106,7 +106,7 @@ class TypeIdentifier():
     #+---------------------------------------------- 
     #| Return the string parameter in numerical value
     #+----------------------------------------------
-    def toNum(raw):
+    def toNum(self, raw):
         if len(raw) % 2 != 0:
             self.log.error("Hex string len not even")
             return raw
@@ -124,7 +124,7 @@ class TypeIdentifier():
     #+---------------------------------------------- 
     #| Return the string parameter in alpha
     #+----------------------------------------------
-    def toAlpha(raw):
+    def toAlpha(self, raw):
         if len(raw) % 2 != 0:
             self.log.error("Hex string len not even")
             return raw
@@ -142,7 +142,7 @@ class TypeIdentifier():
     #+---------------------------------------------- 
     #| Return the string parameter in alphanum
     #+----------------------------------------------
-    def toAlphanum(raw):
+    def toAlphanum(self, raw):
         if len(raw) % 2 != 0:
             self.log.error("Hex string len not even")
             return raw
@@ -160,7 +160,7 @@ class TypeIdentifier():
     #+---------------------------------------------- 
     #| Return the string parameter base64 encoded
     #+----------------------------------------------
-    def toBase64Encoded(raw):
+    def toBase64Encoded(self, raw):
         if len(raw) % 2 != 0:
             self.log.error("Hex string len not even")
             return raw
@@ -182,7 +182,7 @@ class TypeIdentifier():
     #+---------------------------------------------- 
     #| Return the string parameter base64 decoded
     #+----------------------------------------------
-    def toBase64Decoded(raw):
+    def toBase64Decoded(self, raw):
         if len(raw) % 2 != 0:
             self.log.error("Hex string len not even")
             return raw

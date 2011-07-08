@@ -41,7 +41,10 @@ class Clusterer(object):
     
     def getMatrix(self, groups):
         self.log.debug("Computing the associated matrix")
-        matrix = zeros([len(groups), len(groups)], Float)
+        
+        matrix = zeros([len(groups), len(groups)], Float)       
+        
+        
         for i in range(0, len(groups)) :
             for j in range(0, len(groups)):
                 if (i==j) :

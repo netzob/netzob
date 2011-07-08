@@ -151,7 +151,7 @@ class UIseqMessage:
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
-            iCol = 4
+            iCol = 0
             # Get the selected column number
             for col in treeview.get_columns():
                 if col == treeviewColumn:
@@ -159,14 +159,17 @@ class UIseqMessage:
                 iCol += 1
 
             # Build a context menu to change the string rendering of a specific column
-            i = treeview.get_model().iter_next( treeview.get_model().get_iter_first() )
-            typesList = treeview.get_model().get_value(i, iCol)
+            typesList = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
+
             menu = gtk.Menu()
-            for type in typesList.split(","):
+            for type in typesList:
                 item = gtk.MenuItem(type)
                 item.show()
+                item.connect("activate",self.callbackForTypeModification, iCol, type)   
                 menu.append(item)
             menu.popup(None, None, None, event.button, event.time)
+            
+            
 
             # Change the string rendering of the selected column according to the selected type
 #            
@@ -182,7 +185,13 @@ class UIseqMessage:
 #                    print treeview.get_model().get_value(i, iCol)
 #                i = treeview.get_model().iter_next(i)
 #                # TODO : change the rendering
-            
+    def callbackForTypeModification(self, event, iCol, type):
+        
+        self.treeMessageGenerator.setTypeForCol(iCol,type)
+        self.treeMessageGenerator.updateDefault()
+        
+        
+        
     #+---------------------------------------------- 
     #| build_context_menu_for_groups :
     #|   Create a menu to display available operations
