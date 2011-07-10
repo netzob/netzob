@@ -31,9 +31,9 @@ class TypeIdentifier():
     
     
     #+---------------------------------------------- 
-    #| Identify a possible type from a hexa string
+    #| Identify the possible types from a hexa string
     #+----------------------------------------------
-    def getType(self, stringsTable):
+    def getTypes(self, stringsTable):
         entireString = "".join(stringsTable)
         
         setSpace = set()
@@ -61,7 +61,7 @@ class TypeIdentifier():
             typesList.append("base64dec")
         typesList.append("binary")
         
-        self.log.debug("identified type is " + str(typesList))
+        self.log.debug("identified types are " + str(typesList))
         return typesList
     
     #+---------------------------------------------- 

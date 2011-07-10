@@ -300,7 +300,7 @@ class TreeMessageGenerator():
     
     def getAllDiscoveredTypes(self, iCol):
         typeIdentifier = TypeIdentifier.TypeIdentifier()        
-        return typeIdentifier.getType(self.msgByCol[iCol])
+        return typeIdentifier.getTypes(self.msgByCol[iCol])
     
     def setTypeForCol(self, iCol, type):
         self.selectedType[iCol]=type

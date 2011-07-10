@@ -126,6 +126,7 @@ class UIseqMessage:
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected)
         self.treeMessageGenerator.getTreeview().connect('button-press-event',self.button_press_on_treeview_messages)
+        self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
         
         self.log.debug("GUI for sequential part is created")
     
@@ -151,8 +152,9 @@ class UIseqMessage:
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+
+            # Retrieve the selected column number
             iCol = 0
-            # Get the selected column number
             for col in treeview.get_columns():
                 if col == treeviewColumn:
                     break
@@ -160,7 +162,6 @@ class UIseqMessage:
 
             # Build a context menu to change the string rendering of a specific column
             typesList = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
-
             menu = gtk.Menu()
             for type in typesList:
                 item = gtk.MenuItem(type)
@@ -168,29 +169,42 @@ class UIseqMessage:
                 item.connect("activate",self.callbackForTypeModification, iCol, type)   
                 menu.append(item)
             menu.popup(None, None, None, event.button, event.time)
-            
-            
 
-            # Change the string rendering of the selected column according to the selected type
-#            
-#            i = treeview.get_model().get_iter_first()
-#            while True:
-#                if i==None:
-#                    break
-#                if treeview.get_model().get_value(i, 0) == "HEADER REGEX":
-#                    pass
-#                elif treeview.get_model().get_value(i, 0) == "HEADER TYPE":
-#                    pass
-#                else:
-#                    print treeview.get_model().get_value(i, iCol)
-#                i = treeview.get_model().iter_next(i)
-#                # TODO : change the rendering
+    #+---------------------------------------------- 
+    #| callbackForTypeModification :
+    #|   Callback to change the column type
+    #+----------------------------------------------
     def callbackForTypeModification(self, event, iCol, type):
-        
         self.treeMessageGenerator.setTypeForCol(iCol,type)
         self.treeMessageGenerator.updateDefault()
-        
-        
+
+    #+---------------------------------------------- 
+    #| dbClickToChangeType :
+    #|   Called when user double click on a row
+    #|    in order to change the column type
+    #+----------------------------------------------
+    def dbClickToChangeType(self, treeview, path, paramCol):
+        # Retrieve the selected column number
+        iCol = 0
+        for col in treeview.get_columns():
+            if col == paramCol:
+                break
+            iCol += 1
+
+        # Find the next possible type for this column
+        possibleTypes = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
+        print "FGY" + str(len(possibleTypes))
+        i = 0
+        chosedType = self.treeMessageGenerator.getSelectedType(iCol)
+        for type in possibleTypes:
+            if type == chosedType:
+                chosedType = possibleTypes[(i+1) % len(possibleTypes)]
+                break
+            i += 1
+
+        # Apply the new chosed type for this column
+        self.treeMessageGenerator.setTypeForCol(iCol, chosedType)
+        self.treeMessageGenerator.updateDefault()
         
     #+---------------------------------------------- 
     #| build_context_menu_for_groups :
@@ -272,12 +286,6 @@ class UIseqMessage:
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
         
-        
-        
-        
-        
-        
-    
     def displayPopupToRemoveGroup(self, event):
         self.log.debug("on delete")
         
@@ -320,9 +328,6 @@ class UIseqMessage:
             self.log.warning("Impossible to retrieve the message to Drop")
         return
    
-   
-
-   
     #+---------------------------------------------- 
     #| drag_fromDND :
     #|   defines the operation executed when a message is
@@ -334,7 +339,6 @@ class UIseqMessage:
         texte = str(modele.get_value(iter, 0))
         selection.set(selection.target, 8, texte)
         return
-    
     
     #+---------------------------------------------- 
     #| Update the content of the tree store for groups
@@ -368,8 +372,6 @@ class UIseqMessage:
             # Else, quite weird so throw a warning
             else :
                 self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name "+self.selectedGroup)
-  
-       
        
 #+---------------------------------------------- 
 #| CALLBACKS 
