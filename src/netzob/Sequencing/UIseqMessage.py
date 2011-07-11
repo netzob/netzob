@@ -206,9 +206,53 @@ class UIseqMessage:
     #+----------------------------------------------
     def rightClickToConcatColumns(self, event, iCol, strOtherCol):
         self.log.debug("Concatenate the column " + str(iCol) + " with the " + str(strOtherCol) + " column")
-        self.log.debug("REGEX: " + str( self.treeMessageGenerator.getGroup().getRegex()) )
 
-#        self.treeMessageGenerator.updateDefault()
+        if iCol == 0 and strOtherCol == "left":
+            self.log.debug("Can't concatenate the first column with its left column")
+            return
+
+        if iCol + 1 == len(self.treeMessageGenerator.getGroup().getRegex())  and strOtherCol == "right":
+            self.log.debug("Can't concatenate the last column with its right column")
+            return
+
+        newRegex = self.treeMessageGenerator.getGroup().getRegex()
+
+        if strOtherCol == "left":
+            elt1 = newRegex.pop(iCol - 1)
+            elt2 = newRegex.pop(iCol - 1)
+            eltResult = self.concatRegexElts(elt1, elt2)
+            newRegex.insert(iCol - 1, eltResult)
+            print newRegex
+        else:
+            elt1 = newRegex.pop(iCol)
+            elt2 = newRegex.pop(iCol)
+            eltResult = self.concatRegexElts(elt1, elt2)
+            newRegex.insert(iCol, eltResult)
+
+        self.treeMessageGenerator.getGroup().setRegex( newRegex )
+        self.treeMessageGenerator.updateDefault()
+
+    #+---------------------------------------------- 
+    #| concatRegexElts :
+    #|   Concatenate two elements of a regex
+    #+----------------------------------------------
+    def concatRegexElts(self, elt1, elt2):
+        if elt1 == "":
+            return elt2
+        if elt2 == "":
+            return elt1
+
+        if elt1[0] == "(" and elt2[0] != "(": # Dyn + Static fields
+            return elt1[:-1] + elt2 + ")"
+
+        if elt1[0] != "(" and elt2[0] == "(": # Static + Dyn fields
+            return "(" + elt1 + elt2[1:]
+
+        if elt1[0] == "(" and elt2[0] == "(": # Dyn + Dyn fields
+            return elt1[:-1] + elt2[1:]
+
+        if elt1[0] != "(" and elt2[0] != "(": # Static + Static fields (should not happen...)
+            return elt1 + elt2
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :

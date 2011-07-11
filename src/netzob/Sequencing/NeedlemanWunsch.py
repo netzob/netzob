@@ -50,7 +50,7 @@ class NeedlemanWunsch:
         nbDynamic = 0
         nbStatic = 0
         for elt in regex:
-            if elt.find("(.{") != -1:
+            if elt.find("(") != -1:
                 nbDynamic += 1
             else:
                 nbStatic += len(elt)

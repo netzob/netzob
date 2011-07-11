@@ -56,12 +56,12 @@ class TreeGroupGenerator():
         self.scroll_lib = gtk.ScrolledWindow()
         self.scroll_lib.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll_lib.show()
-        self.scroll_lib.set_size_request(500, 500)
+        self.scroll_lib.set_size_request(300, 500)
         self.scroll_lib.add(self.treeview)        
         
         
 
-        lvcolumn = gtk.TreeViewColumn('Messages')
+        lvcolumn = gtk.TreeViewColumn('Groups')
         lvcolumn.set_sort_column_id(1)
         cell1 = gtk.CellRendererText()
         lvcolumn.pack_start(cell1, True)

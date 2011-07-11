@@ -105,9 +105,10 @@ class TreeMessageGenerator():
         # Create a TreeStore with N cols, with N := len(self.group.getRegex())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
         for i in range( len(self.group.getRegex()) ):
-            treeStoreTypes.append(str)
-            
+            treeStoreTypes.append(str)           
         self.treestore = gtk.TreeStore(*treeStoreTypes)
+
+        compiledRegex = re.compile("".join( self.group.getRegex() ))
 
         # Apply the content matrix to the treestore
         for i in range(0, len(self.group.getMessages())) :
@@ -121,7 +122,6 @@ class TreeMessageGenerator():
             line.append(False)
 
             # We apply the regex to the message
-            compiledRegex = re.compile("".join( self.group.getRegex() ))
             data = message.getStringData()                    
             m = compiledRegex.match(data)
 
@@ -139,7 +139,7 @@ class TreeMessageGenerator():
                     self.msgByCol[iCol] = []
 
                 # Append styled data to the treestore
-                if regexElt.find("(.{") != -1: # Means this column is not static
+                if regexElt.find("(") != -1: # Means this column is not static
                     start = m.start(dynamicCol)
                     end = m.end(dynamicCol)
                     line.append('<span foreground="blue" font_family="monospace">' + self.getRepresentation( data[start:end], iCol ) + '</span>')
@@ -161,7 +161,7 @@ class TreeMessageGenerator():
         header_line.append(True)        
 
         for i in range( len(self.group.getRegex()) ):
-            header_line.append(", ".join(self.getAllDiscoveredTypes(i)))            
+            header_line.append(", ".join(self.getAllDiscoveredTypes(i)))
         self.treestore.prepend(None, header_line)
 
         # Creates the header line for the regex

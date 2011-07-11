@@ -96,7 +96,6 @@ class MessageGroup(object):
         self.messages.remove(message)
         self.computeRegex()
         self.computeScore()
-    
         
     #+---------------------------------------------- 
     #| addMessage : add a message in the list
@@ -126,7 +125,6 @@ class MessageGroup(object):
         else :
             self.computeRegex2(msgs)
             self.computeScore()
-            
     
     #+---------------------------------------------- 
     #| GETTERS : 
