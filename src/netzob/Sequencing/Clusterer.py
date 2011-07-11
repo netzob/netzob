@@ -64,6 +64,8 @@ class Clusterer(object):
                     group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), [])
                     group3.setAlignment(group1.getAlignment())
                     group3.addMessages(msgs)
+
+
 #                    group3.computeRegex()
                     group3.computeScore()
                     
