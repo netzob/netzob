@@ -49,7 +49,7 @@ class TreeGroupGenerator():
         # str : text ( score )
         # str : color foreground
         # str : color background
-        self.treestore = gtk.TreeStore(str, str, str, str)
+        self.treestore = gtk.TreeStore(str, str, str, str, str)
         self.treeview  = gtk.TreeView(self.treestore)
 
         # messages list
@@ -67,7 +67,7 @@ class TreeGroupGenerator():
         lvcolumn.pack_start(cell1, True)
         cell1.set_property('background-set' , True)
         cell1.set_property('foreground-set' , True)            
-        lvcolumn.set_attributes(cell1, text=0, foreground=2, background=3)
+        lvcolumn.set_attributes(cell1, text=1, foreground=3, background=4)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
     
@@ -80,7 +80,7 @@ class TreeGroupGenerator():
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
         for group in self.groups :
-            iter = self.treestore.append(None, ["{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
+            iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
            
 
     #+---------------------------------------------- 
@@ -108,9 +108,32 @@ class TreeGroupGenerator():
                 color = '#66FF00'
             else :
                 color = '#FF0000'
-                iter = self.treestore.append(None, ["{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
+                iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
     
-    
+    #+---------------------------------------------- 
+    #| getGroupAtPosition :
+    #|         retrieves the group wich is inserted
+    #|         in the treeview at the given position
+    #| @param x the position in X
+    #| @param y the position in Y
+    #| @return the group if it exists (or None)
+    #+---------------------------------------------- 
+    def getGroupAtPosition(self, x, y):
+        self.log.debug("Search for the group referenced at position {0};{1}".format(str(x),str(y)))
+        info = self.treeview.get_path_at_pos(x, y)
+        if info is not None :
+            path = info[0]
+            iter = self.treeview.get_model().get_iter(path)
+            idGroup = str(self.treeview.get_model().get_value(iter, 0))
+            if idGroup is not None :
+                self.log.debug("An entry with the ID {0} has been found.".format(idGroup))                
+                for group in self.groups :
+                    if (str(group.getID()) == idGroup) :
+                        self.log.debug("The requested group with ID {0} has been found".format(group.getID()))
+                        return group
+                
+        
+        return None
     
     #+---------------------------------------------- 
     #| GETTERS : 

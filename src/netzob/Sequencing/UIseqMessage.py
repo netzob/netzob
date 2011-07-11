@@ -106,7 +106,7 @@ class UIseqMessage:
         self.treeGroupGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeGroupGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
         self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.messageChanged)
-        self.treeGroupGenerator.getTreeview().connect('button-press-event',self.button_press_on_treeview_groups)
+        self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
        
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TREEVIEW
@@ -122,10 +122,10 @@ class UIseqMessage:
         self.vb_sortie.pack_start(self.sortie_frame, True, True, 0)
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+        self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected)
-        self.treeMessageGenerator.getTreeview().connect('button-press-event',self.button_press_on_treeview_messages)
+        self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
         
         self.log.debug("GUI for sequential part is created")
@@ -135,7 +135,7 @@ class UIseqMessage:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
-    def button_press_on_treeview_groups(self,obj,event):
+    def button_press_on_treeview_groups(self, obj, event):
         self.log.debug("User requested a contextual menu (treeview group)")
         
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
@@ -146,7 +146,7 @@ class UIseqMessage:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
-    def button_press_on_treeview_messages(self,treeview,event):
+    def button_press_on_treeview_messages(self, treeview, event):
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.log.debug("User requested a contextual menu (treeview messages)")
             x = int(event.x)
@@ -166,7 +166,7 @@ class UIseqMessage:
             for type in typesList:
                 item = gtk.MenuItem(type)
                 item.show()
-                item.connect("activate",self.callbackForTypeModification, iCol, type)   
+                item.connect("activate", self.callbackForTypeModification, iCol, type)   
                 menu.append(item)
             menu.popup(None, None, None, event.button, event.time)
 
@@ -175,7 +175,7 @@ class UIseqMessage:
     #|   Callback to change the column type
     #+----------------------------------------------
     def callbackForTypeModification(self, event, iCol, type):
-        self.treeMessageGenerator.setTypeForCol(iCol,type)
+        self.treeMessageGenerator.setTypeForCol(iCol, type)
         self.treeMessageGenerator.updateDefault()
 
     #+---------------------------------------------- 
@@ -193,12 +193,12 @@ class UIseqMessage:
 
         # Find the next possible type for this column
         possibleTypes = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
-        print "FGY" + str(len(possibleTypes))
+#        print "FGY" + str(len(possibleTypes))
         i = 0
         chosedType = self.treeMessageGenerator.getSelectedType(iCol)
         for type in possibleTypes:
             if type == chosedType:
-                chosedType = possibleTypes[(i+1) % len(possibleTypes)]
+                chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
                 break
             i += 1
 
@@ -213,27 +213,25 @@ class UIseqMessage:
     #+----------------------------------------------
     def build_context_menu_for_groups(self, event):
         
+        # Retrieves the group on which the user has clicked on
         x = int(event.x)
         y = int(event.y)
-        pthinfo = self.treeGroupGenerator.getTreeview().get_path_at_pos(x, y)
-        if pthinfo is None:
-            canWeDelete = 0
-        else :
-            canWeDelete = 1    
-        entries =[        
-                  (gtk.STOCK_ADD, self.displayPopupToCreateGroup,1),
-                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveGroup,canWeDelete)
+        
+        selectedGroup = self.treeGroupGenerator.getGroupAtPosition(x,y)        
+        entries = [        
+                  (gtk.STOCK_EDIT, self.displayPopupToEditGroup, (selectedGroup != None)),
+                  (gtk.STOCK_ADD, self.displayPopupToCreateGroup, (selectedGroup == None)),
+                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveGroup, (selectedGroup != None))
         ]
 
         menu = gtk.Menu()
-        for stock_id,callback,sensitivity in entries:
+        for stock_id, callback, sensitive in entries:
             item = gtk.ImageMenuItem(stock_id)
-            if callback:
-                item.connect("activate",callback)   
-            item.set_sensitive(sensitivity)
+            item.connect("activate", callback, selectedGroup)  
+            item.set_sensitive(sensitive)
             item.show()
             menu.append(item)
-        menu.popup(None,None,None,event.button,event.time)
+        menu.popup(None, None, None, event.button, event.time)
 
 
     #+---------------------------------------------- 
@@ -243,13 +241,48 @@ class UIseqMessage:
     def displayPopupToCreateGroup_ResponseToDialog(self, entry, dialog, response):
         dialog.response(response)
 
+    def displayPopupToEditGroup(self, event, group):
+        self.log.debug("Display a edit to rename a group")
+        dialog = gtk.MessageDialog(
+        None,
+        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+        gtk.MESSAGE_QUESTION,
+        gtk.BUTTONS_OK,
+        None)
+        dialog.set_markup('Please enter the <b>name</b> of the group:')
+        #create the text input field
+        entry = gtk.Entry()
+        entry.set_text(group.getName())
+        #allow the user to press enter to do ok
+        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        #create a horizontal box to pack the entry and a label
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label("Name:"), False, 5, 5)
+        hbox.pack_end(entry)
+        #some secondary text
+#        dialog.format_secondary_markup("Th <i>identification</i> purposes")
+        #add it and show it
+        dialog.vbox.pack_end(hbox, True, True, 0)
+        dialog.show_all()
+        #go go go
+        dialog.run()
+        text = entry.get_text()
+        group.setName(text)
+        dialog.destroy()
+        #Update Left and Right
+        self.updateTreeStoreGroup()
+        self.updateTreeStoreMessage()
+
+    def responseToDialog(self, entry, dialog, response):
+        dialog.response(response)
+    
     
     #+---------------------------------------------- 
     #| displayPopupToCreateGroup :
     #|   Display a form to create a new group.
     #|   Based on the famous dialogs
     #+----------------------------------------------
-    def displayPopupToCreateGroup(self, event):
+    def displayPopupToCreateGroup(self, event, group):
         self.log.debug("Display a popup to create a group")
         #base this on a message dialog
         dialog = gtk.MessageDialog(
@@ -277,7 +310,7 @@ class UIseqMessage:
         newGroupName = entry.get_text()
         dialog.destroy()
         
-        if (len(newGroupName)>0) :
+        if (len(newGroupName) > 0) :
             self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
             newGroup = MessageGroup.MessageGroup(newGroupName, [])
@@ -286,7 +319,7 @@ class UIseqMessage:
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
         
-    def displayPopupToRemoveGroup(self, event):
+    def displayPopupToRemoveGroup(self, event, group):
         self.log.debug("on delete")
         
     #+---------------------------------------------- 
@@ -349,7 +382,7 @@ class UIseqMessage:
             self.treeGroupGenerator.messageSelected(self.selectedMessage)
             self.selectedMessage = ""
         else :
-        # Default display of the groups
+            # Default display of the groups
             self.treeGroupGenerator.default()
  
     #+---------------------------------------------- 
@@ -360,18 +393,18 @@ class UIseqMessage:
             # Search for the selected group in groups list
             selectedGroup = None
             for group in self.groups :
-                if group.getName() == self.selectedGroup :
+                if str(group.getID()) == self.selectedGroup :
                     selectedGroup = group
             # If we found it we can update the content of the treestore        
             if selectedGroup != None :
                 self.treeMessageGenerator.default(selectedGroup)
                 # enable dragging message out of current group
-                self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK,self.TARGETS,gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+                self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
                 self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
                 self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected) 
             # Else, quite weird so throw a warning
             else :
-                self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name "+self.selectedGroup)
+                self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name " + self.selectedGroup)
        
 #+---------------------------------------------- 
 #| CALLBACKS 
@@ -382,7 +415,7 @@ class UIseqMessage:
             if(modele.iter_is_valid(iter)):
 
                 pango = modele.get_value(iter, 0)
-                group_regex = modele.get_value(iter,1)
+                group_regex = modele.get_value(iter, 1)
                 msg_id = modele.get_value(iter, 2)
                 
                 for group in self.groups :
@@ -399,9 +432,9 @@ class UIseqMessage:
         (modele, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(modele.iter_is_valid(iter)):
-                name = modele.get_value(iter, 0)
-                score = modele.get_value(iter,1)
-                self.selectedGroup = name
+                idGroup = modele.get_value(iter, 0)
+                score = modele.get_value(iter, 1)
+                self.selectedGroup = idGroup
                 self.updateTreeStoreMessage()
 
 
