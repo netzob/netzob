@@ -319,8 +319,40 @@ class UIseqMessage:
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
         
+        
+    #+---------------------------------------------- 
+    #| displayPopupToRemoveGroup :
+    #|   Display a popup to remove a group
+    #|   the removal of a group can only occurs
+    #|   if its an empty group
+    #+----------------------------------------------    
     def displayPopupToRemoveGroup(self, event, group):
-        self.log.debug("on delete")
+        self.log.debug("Display a popup to create a group")
+        
+        if (len(group.getMessages()) == 0) :
+            self.log.debug("Can remove the group {0} since it's an empty one.".format(group.getName()))
+            questionMsg = "Click yes to confirm the removal of the group {0}".format(group.getName())
+            md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+            result = md.run()
+            md.destroy()
+            if result == gtk.RESPONSE_YES:
+                self.groups.remove(group)
+                self.log.debug("The group "+group.getName()+" has been deleted !")
+                #Update Left and Right
+                self.updateTreeStoreGroup()
+                self.updateTreeStoreMessage()
+            else :
+                self.log.debug("The user didn't confirm the deletion of the group "+group.getName())                
+            
+        else :
+            self.log.debug("Can't remove the group {0} since its not an empty one.".format(group.getName()))
+            errorMsg = "The selected group cannot be removed since it has messages."
+            md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, errorMsg)
+            md.run()
+            md.destroy()
+
+                    
+        
         
     #+---------------------------------------------- 
     #| drop_fromDND :
