@@ -206,6 +206,8 @@ class UIseqMessage:
     #+----------------------------------------------
     def rightClickToConcatColumns(self, event, iCol, strOtherCol):
         self.log.debug("Concatenate the column " + str(iCol) + " with the " + str(strOtherCol) + " column")
+        self.log.debug("REGEX: " + str( self.treeMessageGenerator.getGroup().getRegex()) )
+
 #        self.treeMessageGenerator.updateDefault()
 
     #+---------------------------------------------- 

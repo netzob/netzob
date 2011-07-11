@@ -44,23 +44,18 @@ class NeedlemanWunsch:
     def computeScore(self, regex):
         score = 0
         # Default score for an empty regex
-        if (len(regex) == 0) :
+        if len(regex) == 0 :
             return score
+
+        nbDynamic = 0
+        nbStatic = 0
+        for elt in regex:
+            if elt.find("(.{") != -1:
+                nbDynamic += 1
+            else:
+                nbStatic += len(elt)
         
-        fixe = ""
-        ar = regex.split("(.{,")
-        nbDynamic = len(ar)
-        if (len(ar) > 0):
-            fixe = ar[0]
-            
-        for s in ar :
-            ar2 = s.split("})")
-            if len(ar2) == 2 :
-                f = ar2[1]
-                fixe = fixe + f
-        nbStatic = len(fixe)
-        
-        score = 100.0 / (nbStatic + nbDynamic) * nbStatic     
+        score = 100.0 / (nbStatic + nbDynamic) * nbStatic
         return score
         
    
@@ -69,12 +64,12 @@ class NeedlemanWunsch:
     #|     Computes the regex for the given sequences 
     #| @param sequences : a list containing all the sequences
     #|                    to align
-    #| @return the regex
+    #| @return the regex as a table
     #+---------------------------------------------- 
     def getRegex(self, sequences):
         if (len(sequences) < 2) :
             self.log.error("[ERROR] Impossible to compute the regex if at least 2 sequences are not provided.")
-            return ("","")
+            return ([],"")
         
         sequence1 = sequences[0]
         for i in range(1, len(sequences)) :
@@ -87,7 +82,7 @@ class NeedlemanWunsch:
         
         i = 0
         start = 0
-        result = ""
+        result = []
         found = False
         for i in range(0, len(regex)) :
             if (regex[i] == "-"):
@@ -101,13 +96,15 @@ class NeedlemanWunsch:
                     found = False
                     nbTiret = i - start
                                    
-                    result = result + "(.{," + str(nbTiret) + "})" + regex[i]
+                    result.append( "(.{," + str(nbTiret) + "})")
+                    result.append( regex[i] )
                 else :
-                    result = result + regex[i]
+                    result[-1] = result[-1] + regex[i]
         
         if (found == True) :
             nbTiret = i - start
-            result = result + "(.{," + str(nbTiret) + "})"
+            result.append( "(.{," + str(nbTiret) + "})" )
+
         return (result, str(regex))  
     
     def asctohex(self, s):
@@ -301,10 +298,10 @@ if __name__ == "__main__":
     #sequences.append(alignor.asctohex(sequence4))
     
     regex = alignor.getRegex(sequences)   
-    score = alignor.computeScore(regex)
+    score = alignor.computeScore("".join(regex))
     print regex
     print "Score : {0}".format(score)
-    compiledRegex = re.compile(regex)
+    compiledRegex = re.compile("".join(regex))
     for seq in sequences :
         m = compiledRegex.match(seq)
         if (m == None) :

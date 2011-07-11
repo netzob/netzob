@@ -91,72 +91,65 @@ class TreeMessageGenerator():
         self.group = group
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the group "+self.group.getName())        
         self.treestore.clear()
-        
+
         # Verifies we have everything needed for the creation of the treeview
-        if (self.group == None or len(self.group.getMessages())<1) or len(self.group.getRegex())==0 :
+        if (self.group == None or len(self.group.getMessages())<1) or len(self.group.getRegex()) == 0 :
             self.error()
             return
         
-        # Computes the content matrix
-        (self.content, numberOfGroups) = self.computeContent()
-        
         # configuration of the representation format
         # default = binary
-        for i in range(0, 2*numberOfGroups+1) :
+        for i in range(0, len(self.group.getRegex())) :
             self.selectedType.append("binary")
         
-        # Create a TreeStore with N cols, with := (maxNumberOfGroup * 2 + 1)
+        # Create a TreeStore with N cols, with N := len(self.group.getRegex())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for i in range(2*numberOfGroups+1):
+        for i in range( len(self.group.getRegex()) ):
             treeStoreTypes.append(str)
             
         self.treestore = gtk.TreeStore(*treeStoreTypes)
-        
-        # Create the content of the treestore
+
+        # Apply the content matrix to the treestore
         for i in range(0, len(self.group.getMessages())) :
             message = self.group.getMessages()[i]
+
             # for each message we create a line and computes its cols
             line = []
             line.append(message.getID())
             line.append("#ffffff")
             line.append(pango.WEIGHT_NORMAL)
             line.append(False)
+
+            # We apply the regex to the message
+            compiledRegex = re.compile("".join( self.group.getRegex() ))
+            data = message.getStringData()                    
+            m = compiledRegex.match(data)
+
+            # If the regex doesn't match the message, we activate the error mode
+            if (m == None) :
+                self.log.warning("The regex of the group doesn't match the message : " + data)
+                self.error()
+                return 
             
-            c=0
-            data = message.getStringData()
-            current = 0
-            while c<numberOfGroups*2 :
-                start = self.content[i][c]
-                rawContent1 = data[current:start]                
-                if not c in self.msgByCol:
-                    self.msgByCol[c] = []
-                self.msgByCol[c].append(rawContent1)               
-                content1 = self.getRepresentation(rawContent1, c)
-                c = c+1
-                
-                
-                end = self.content[i][c]
-                rawContent2 = data[start:end]
-                if not c in self.msgByCol:
-                    self.msgByCol[c] = []
-                self.msgByCol[c].append(rawContent2)
-                content2 = self.getRepresentation(rawContent2, c)
-                c = c+1
-                              
-                                    
-                line.append('<span font_family="monospace">' + content1 + '</span>')
-                line.append('<span foreground="blue" font_family="monospace">' + content2 + '</span>')                
-                current = end
-                
-                
-            if not c in self.msgByCol:
-                self.msgByCol[c] = []
-            self.msgByCol[c].append( data[current:] )
-            
-            print self.msgByCol
-            
-            
-            line.append('<span font_family="monospace">' + self.getRepresentation(data[current:],c) + '</span>')     
+            iCol = 0
+            dynamicCol = 1
+            for regexElt in self.group.getRegex():
+                # (init) Aggregate the cells content to a structure dedicacted to identify the column type
+                if not iCol in self.msgByCol:
+                    self.msgByCol[iCol] = []
+
+                # Append styled data to the treestore
+                if regexElt.find("(.{") != -1: # Means this column is not static
+                    start = m.start(dynamicCol)
+                    end = m.end(dynamicCol)
+                    line.append('<span foreground="blue" font_family="monospace">' + self.getRepresentation( data[start:end], iCol ) + '</span>')
+                    self.msgByCol[iCol].append( data[start:end] )
+                    dynamicCol += 1
+                else:
+                    line.append('<span font_family="monospace">' + self.getRepresentation( regexElt, iCol ) + '</span>')
+                    self.msgByCol[iCol].append( regexElt )
+
+                iCol = iCol + 1
             self.treestore.append(None, line)
         
         
@@ -166,33 +159,22 @@ class TreeMessageGenerator():
         header_line.append("#DEDEDE")
         header_line.append(pango.WEIGHT_BOLD)
         header_line.append(True)        
-        for i in range( numberOfGroups*2 +1):
-            header_line.append(", ".join(self.getAllDiscoveredTypes(i)))
-            
-        self.treestore.prepend(None, header_line)
-        
-        
-        # Creates the header line for the regex
-        splittedRegex = re.findall("(\(\.\{\d*,\d*\}\))", self.group.getRegex())
 
+        for i in range( len(self.group.getRegex()) ):
+            header_line.append(", ".join(self.getAllDiscoveredTypes(i)))            
+        self.treestore.prepend(None, header_line)
+
+        # Creates the header line for the regex
         regex_row = []
         regex_row.append("HEADER REGEX")
         regex_row.append("#c8c8c8")
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
 
-        for i in range(len(splittedRegex)):
-            regex_row.append("")
-            # Get the Regex of the current column
-            regex_row.append(splittedRegex[i][1:-1])
-            
-        for i in range((numberOfGroups * 2 + 1 + 4) - len(regex_row)):
-            regex_row.append("")
-            
+        for i in range( len(self.group.getRegex()) ):
+            # Get the Sub-Regex of the current column
+            regex_row.append( self.group.getRegex()[i] )
         self.treestore.prepend(None, regex_row)
-        
-        
-        
                  
         # Updates the treeview with the newly created treestore
         self.treeview.set_model(self.treestore)
@@ -206,7 +188,7 @@ class TreeMessageGenerator():
         self.textCellRenderer = gtk.CellRendererText()
         self.textCellRenderer.set_property('background-set' , True)
 
-        for i in range(4, 4 + (2*numberOfGroups +1)) :
+        for i in range(4, 4 + len(self.group.getRegex()) ) :
             # Column Messages
             self.lvcolumnDetail2 = gtk.TreeViewColumn('Col'+str(i-4))
             self.lvcolumnDetail2.pack_start(self.textCellRenderer, True)
@@ -248,62 +230,13 @@ class TreeMessageGenerator():
             return typer.toBase64Encoded(raw)
         else :
             return raw
-     
-    
-    def computeContent(self):
-        
-        # Compile the regex (in order to prepare to the identification of groups in the messages)
-        compiledRegex = re.compile(self.group.getRegex())
-        
-        # the maximum number of groups per message (eq. the nb of displayed cols)
-        numberOfGroup = -1
-        
-        # create a table which contains all the cols and lines of the treestore
-        maxNumberOfCols = 40
-        content = zeros([len(self.group.getMessages()), maxNumberOfCols*2], int)
-        i_message = 0        
-        # Apply the regex to each message in order to comptagramute the groups
-        # Full fill the content array
-        for message in self.group.getMessages() :
-            
-            # Apply the group regex's to the current message
-            data = message.getStringData()                    
-            m = compiledRegex.match(data)
-            
-            # If the regex doesn't match one of the message, we activate the error mode
-            if (m == None) :
-                self.log.warning("The regex of the group doesn't match one of its message ! ("+data+")")
-                self.error()
-                return 
-            
-            # compute the number of group in this message in order to compute the maximum
-            if numberOfGroup < len(m.groups()) :
-                numberOfGroup = len(m.groups())
-                
-            # retrieves all the groups of the regex
-            start = 0
-            end = 0
-            k = 0
-            
-            for i_group in range(1, len(m.groups())+1) :
-                start = m.start(i_group)
-                end = m.end(i_group)
-                content[i_message][k]=start
-                k = k+1
-                content[i_message][k]=end
-                k = k+1
-            
-            i_message = i_message + 1
-            
-        return (content, numberOfGroup)
-        
-    
+
     def getAllDiscoveredTypes(self, iCol):
         typeIdentifier = TypeIdentifier.TypeIdentifier()        
         return typeIdentifier.getTypes(self.msgByCol[iCol])
     
-    def setTypeForCol(self, iCol, type):
-        self.selectedType[iCol]=type
+    def setTypeForCol(self, iCol, aType):
+        self.selectedType[iCol] = aType
         
     def updateDefault(self):
         self.default(self.group)
@@ -314,6 +247,9 @@ class TreeMessageGenerator():
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
+
     def getScrollLib(self):
         return self.scroll_lib
-    
+
+    def getGroup(self):
+        return self.group

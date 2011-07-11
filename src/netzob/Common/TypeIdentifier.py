@@ -60,8 +60,7 @@ class TypeIdentifier():
             typesList.append("base64enc")
             typesList.append("base64dec")
         typesList.append("binary")
-        
-        self.log.debug("identified types are " + str(typesList))
+
         return typesList
     
     #+---------------------------------------------- 

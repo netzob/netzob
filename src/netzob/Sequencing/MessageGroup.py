@@ -51,7 +51,7 @@ class MessageGroup(object):
         self.name = name
         self.messages = messages
         self.score = 0
-        self.regex = ""
+        self.regex = []
         self.alignment = ""
 
     def __repr__(self, *args, **kwargs):
@@ -137,13 +137,12 @@ class MessageGroup(object):
         return self.name
     def getMessages(self):
         return self.messages   
-    def getRegex(self):
-        return self.regex
     def getAlignment(self):
         return self.alignment
     def getScore(self):
         return self.score
-
+    def getRegex(self):
+        return self.regex
 
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -158,6 +157,7 @@ class MessageGroup(object):
         self.alignment = alignment
     def setScore(self, score):
         self.score = score
+
     #+---------------------------------------------- 
     #| Inner thread for regex computation
     #+----------------------------------------------
