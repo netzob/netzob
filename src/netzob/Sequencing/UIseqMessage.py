@@ -160,23 +160,53 @@ class UIseqMessage:
                     break
                 iCol += 1
 
-            # Build a context menu to change the string rendering of a specific column
-            typesList = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
             menu = gtk.Menu()
-            for type in typesList:
-                item = gtk.MenuItem(type)
+            # Add sub-entries to change the type of a specific column
+            typesList = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
+            typeMenu = gtk.Menu()
+            for aType in typesList:
+                item = gtk.MenuItem("Render in : " + str(aType))
                 item.show()
-                item.connect("activate", self.callbackForTypeModification, iCol, type)   
-                menu.append(item)
+                item.connect("activate",self.rightClickToChangeType, iCol, aType)   
+                typeMenu.append(item)
+            item = gtk.MenuItem("Change Type")
+            item.set_submenu(typeMenu)
+            item.show()
+            menu.append(item)
+
+            # Add entries to concatenate column
+            concatMenu = gtk.Menu()
+            item = gtk.MenuItem("with left column")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, iCol, "left")
+            concatMenu.append(item)
+            item = gtk.MenuItem("with right column")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, iCol, "right")
+            concatMenu.append(item)
+            item = gtk.MenuItem("Concatenate")
+            item.set_submenu(concatMenu)
+            item.show()
+            menu.append(item)
+
             menu.popup(None, None, None, event.button, event.time)
 
     #+---------------------------------------------- 
-    #| callbackForTypeModification :
+    #| rightClickToChangeType :
     #|   Callback to change the column type
+    #|   by doing a right click
     #+----------------------------------------------
-    def callbackForTypeModification(self, event, iCol, type):
-        self.treeMessageGenerator.setTypeForCol(iCol, type)
+    def rightClickToChangeType(self, event, iCol, aType):
+        self.treeMessageGenerator.setTypeForCol(iCol, aType)
         self.treeMessageGenerator.updateDefault()
+
+    #+---------------------------------------------- 
+    #|  rightClickToConcatColumns:
+    #|   Callback to concatenate two columns
+    #+----------------------------------------------
+    def rightClickToConcatColumns(self, event, iCol, strOtherCol):
+        self.log.debug("Concatenate the column " + str(iCol) + " with the " + str(strOtherCol) + " column")
+#        self.treeMessageGenerator.updateDefault()
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :
@@ -193,11 +223,10 @@ class UIseqMessage:
 
         # Find the next possible type for this column
         possibleTypes = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
-#        print "FGY" + str(len(possibleTypes))
         i = 0
         chosedType = self.treeMessageGenerator.getSelectedType(iCol)
-        for type in possibleTypes:
-            if type == chosedType:
+        for aType in possibleTypes:
+            if aType == chosedType:
                 chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
                 break
             i += 1
