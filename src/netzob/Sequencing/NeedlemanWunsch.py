@@ -99,7 +99,10 @@ class NeedlemanWunsch:
                     result.append( "(.{," + str(nbTiret) + "})")
                     result.append( regex[i] )
                 else :
-                    result[-1] = result[-1] + regex[i]
+                    if len(result) == 0:
+                        result.append( regex[i] )
+                    else:
+                        result[-1] += regex[i]
         
         if (found == True) :
             nbTiret = i - start
