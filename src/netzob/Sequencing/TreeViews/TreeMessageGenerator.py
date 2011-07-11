@@ -110,6 +110,8 @@ class TreeMessageGenerator():
 
         compiledRegex = re.compile("".join( self.group.getRegex() ))
 
+        self.msgByCol = {}
+
         # Apply the content matrix to the treestore
         for i in range(0, len(self.group.getMessages())) :
             message = self.group.getMessages()[i]
@@ -151,7 +153,6 @@ class TreeMessageGenerator():
 
                 iCol = iCol + 1
             self.treestore.append(None, line)
-        
         
         # Creates the header (a line with the type displayed)
         header_line = []
