@@ -161,8 +161,9 @@ class TreeMessageGenerator():
         header_line.append(pango.WEIGHT_BOLD)
         header_line.append(True)        
 
-        for i in range( len(self.group.getRegex()) ):
-            header_line.append(", ".join(self.getAllDiscoveredTypes(i)))
+        # Get the possible types of each column
+        for iCol in range( len(self.group.getRegex()) ):
+            header_line.append(", ".join(self.getAllDiscoveredTypes(iCol)))
         self.treestore.prepend(None, header_line)
 
         # Creates the header line for the regex
@@ -172,9 +173,22 @@ class TreeMessageGenerator():
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
 
-        for i in range( len(self.group.getRegex()) ):
-            # Get the Sub-Regex of the current column
-            regex_row.append( self.group.getRegex()[i] )
+        # Get the Sub-Regex of each column
+        for iCol in range( len(self.group.getRegex()) ):
+            # Split the regex (this is scrapy...)
+            tmpRegex = self.group.getRegex()[iCol]
+            if len(tmpRegex) > 0 and tmpRegex[0] == "(": # Means a complex regex (static + dyn)
+                tmpRegex = tmpRegex[1:-1] # We exclude the parenthesis
+
+            splittedRegex = re.findall('(,?[0-9a-f]+)', self.group.getRegex()[iCol])
+
+            resRegex = ""
+            for elt in splittedRegex:
+                if elt[0] == ",":
+                    resRegex += ".{" + elt + "}"
+                else:
+                    resRegex += self.getRepresentation( elt, iCol )
+            regex_row.append( resRegex )
         self.treestore.prepend(None, regex_row)
                  
         # Updates the treeview with the newly created treestore
