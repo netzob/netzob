@@ -16,8 +16,8 @@ import logging
 #+----------------------------------------------
 import MessageGroup
 import Message
-from ..Common import ConfigurationParser
-
+from ..Common import ConfigurationParser, TypeIdentifier
+import libNeedleman
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -41,10 +41,22 @@ class Clusterer(object):
     
     def getMatrix(self, groups):
         self.log.debug("Computing the associated matrix")
-        
-        matrix = zeros([len(groups), len(groups)], Float)       
-        
-        
+
+        # Serialize the groups before feeding the C library
+        serialGroups = ""
+        format = ""
+        typer = TypeIdentifier.TypeIdentifier()
+
+        for group in groups:
+            format += str(len(group.getMessages())) + "G"
+            for m in group.getMessages():
+                format += str(len(m.getStringData())/2) + "M"
+                serialGroups += typer.toBinary( m.getStringData() )
+
+        libNeedleman.getMatrix(len(groups), format, serialGroups)
+
+        # Former way
+        matrix = zeros([len(groups), len(groups)], Float)        
         for i in range(0, len(groups)) :
             for j in range(0, len(groups)):
                 if (i==j) :
@@ -74,7 +86,7 @@ class Clusterer(object):
         return matrix
     
     def reOrganizeGroups(self, groups):
-        
+
         # retrieves the following parameters from the configuration file
         configParser = ConfigurationParser.ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
