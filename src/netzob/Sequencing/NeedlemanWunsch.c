@@ -28,9 +28,10 @@ typedef struct
   unsigned short int len; // size of the regex
   char *regex; // the actual regex
   char *mask; // its mask
+  float score;
 } t_regex;
 
-void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex);
+void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex regex);
 int hexdump(unsigned char *buf, int dlen);
 
 static PyObject* py_getMatrix(PyObject* self, PyObject* args)
@@ -46,10 +47,11 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
   unsigned short int sizeMessage;
   unsigned short int i, j, k, l;
   unsigned short int len;
+  int sizeMessages;
   t_group   *t_groups;
   // TODO: (fgy) do not forget the freeing of these tables of pointers
 
-  if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups))
+  if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups, &sizeMessages))
     return NULL;
 
   // Allocate nbGroups pointers
@@ -117,35 +119,45 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
 	regex1.len = p_group.messages[0].len;
 	regex1.regex = p_group.messages[0].message;
 	regex1.mask = malloc( p_group.messages[0].len * sizeof(char) );
-	memset( regex1.mask, 0, p_group.messages[0].len );
-
-	printf("regex1:\n");
-	hexdump(regex1.mask, regex1.len);
+	memset( regex1.mask, 2, p_group.messages[0].len );
+	
 	for(k = 1; k < p_group.len; ++k) {
 	  regex2.len = p_group.messages[k].len;
 	  regex2.regex = p_group.messages[k].message;
 	  regex2.mask = malloc( p_group.messages[k].len * sizeof(char) );
-	  memset( regex2.mask, 0, p_group.messages[k].len );
-	  printf("regex2:\n");
-	  hexdump(regex2.mask, regex2.len);
+	  memset( regex2.mask, 2, p_group.messages[k].len );
 
-	  alignTwoSequences(regex1, regex2, &regex);
+	  regex.len = regex1.len + regex2.len;
+	  regex.regex = malloc(regex.len * sizeof(char));
+	  regex.mask = malloc(regex.len * sizeof(char));
+	  memset(regex.regex, 0, regex.len * sizeof(char));
+	  memset(regex.mask, 2, regex.len * sizeof(char));
+
+	  alignTwoSequences(regex1, regex2, regex);
+
+	  hexdump(regex.regex, regex.len);
+	  hexdump(regex.mask, regex.len);
+	  printf("score: %f\n", regex.score);
 	  free(regex1.mask);
 	  free(regex2.mask);
+	  regex1.len = regex.len;
 	  regex1.mask = regex.mask;
+	  regex1.regex = regex.regex;
 	}
-
-	/*
-	group.computeScore();
-                    
-	matrix[i][j] = group.getScore();
-	matrix[j][i] = group.getScore();
-	*/
-
+	matrix[i][j] = regex.score;
+	matrix[j][i] = regex.score;
       }
     }
   }
+
+  for( i = 0; i < nbGroups; ++i) {
+    for( j = 0; j < nbGroups; ++j)
+      printf( " %f ", matrix[j][i] );
+    printf("\n");
+  }
+  
   return Py_None;
+  //Py_BuildValue("i", sts); // return the matrice and the regex...
 }
 
 /*
@@ -160,27 +172,7 @@ void initlibNeedleman() {
   (void) Py_InitModule("libNeedleman", libNeedleman_methods);
 }
 
-/*
-int computeScore(self, regex) {
-        score = 0
-        # Default score for an empty regex
-        if len(regex) == 0 :
-            return score
-
-        nbDynamic = 0
-        nbStatic = 0
-        for elt in regex:
-            if elt.find("(") != -1:
-                nbDynamic += 1
-            else:
-                nbStatic += len(elt)
-        
-        score = 100.0 / (nbStatic + nbDynamic) * nbStatic
-        return score
-        
-*/
-
-void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
+void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex regex) {
   const short int match = 10;
   const short int mismatch = -10;
   const short int gap = 0;
@@ -203,7 +195,7 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	# elt3 :         Matrix[i-1][j]   + gap)
       */
       elt1 = matrix[i - 1][j - 1];
-      if(seq1.regex[i - 1] == seq2.regex[j - 1])
+      if((seq1.mask[i - 1] != 1) && (seq2.mask[j - 1] != 1) && (seq1.regex[i - 1] == seq2.regex[j - 1]))
 	elt1 += match;
       else
 	elt1 += mismatch;
@@ -215,15 +207,6 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
       matrix[i][j] = max;
     }
   }
-
-  /*
-  for(i = 0; i < (seq1.len + 1) ; i++) {
-    for(j = 0; j < (seq2.len + 1) ; j++)
-      printf("%02x ", matrix[i][j]);
-    printf("\n");
-  }
-  printf("\n");
-  */
    
   // Traceback
   finish = FALSE;
@@ -234,8 +217,8 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
   // TODO: (fgy) handle errors on malloc operation
   memset(regex1, 0x00, (seq1.len + seq2.len) * sizeof(unsigned char));
   memset(regex2, 0x00, (seq1.len + seq2.len) * sizeof(unsigned char));
-  memset(regex1Mask, 0x00, (seq1.len + seq2.len) * sizeof(unsigned char));
-  memset(regex2Mask, 0x00, (seq1.len + seq2.len) * sizeof(unsigned char));
+  memset(regex1Mask, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
+  memset(regex2Mask, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
   unsigned short int iReg1 = seq1.len + seq2.len - 1;
   unsigned short int iReg2 = seq1.len + seq2.len - 1;
 
@@ -267,6 +250,8 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
       --j;
       regex1[iReg1] = seq1.regex[i];
       regex2[iReg2] = seq2.regex[j];
+      regex1Mask[iReg1] = 0;
+      regex2Mask[iReg2] = 0;
       --iReg1;
       --iReg2;
     }
@@ -275,43 +260,59 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
       finish = TRUE;
   }
 
-  // Computes the first version of the regex
+  // Compute the common regex
   unsigned short int iReg = seq1.len + seq2.len - 1;
   i = seq1.len + seq2.len - 1;
   while ( i > 0 ) {
-    if( (regex1Mask[i] == 1) || (regex2Mask[i] == 1) || (regex1[i] != regex2[i]) ) {
-      regex->regex[iReg] = '0';
-      //      regex[iReg] = 0xff;
-      regex->mask[iReg] = 1;
+    if( (regex1Mask[i] == 2) && (regex2Mask[i] == 2)) {
+      regex.regex[iReg] = 0xff;
+      regex.mask[iReg] = 2;
+      --iReg;
+    }
+    else if( (regex1Mask[i] == 1) || (regex2Mask[i] == 1) || (regex1[i] != regex2[i]) ) {
+      regex.regex[iReg] = 0xff;
+      regex.mask[iReg] = 1;
       --iReg;
     }
     else {
-      regex->regex[iReg] = regex1[i];
+      regex.regex[iReg] = regex1[i];
+      regex.mask[iReg] = 0;
       --iReg;
     }
     --i;
   }
 
-  /*  
-  for(j = 0; j < seq1.len + seq2.len ; j++)
-    printf("%02x ", regexMask[j]);
-  printf("\n");
+  // Compute the score of the regex
+  float nbDynamic = 0.0f;
+  float nbStatic = 0.0f;
+  float cent = 100.0f;
+  BOOL inDyn = FALSE;
+  for(i = 0; i < regex.len; ++i) {
+    if(regex.mask[i] == 0) {
+      if(inDyn == TRUE) {
+	nbDynamic = nbDynamic + 1.0f;
+	inDyn = FALSE;
+      }
+      nbStatic = nbStatic + 1.0f;
+    }
+    else if(regex.mask[i] == 1)
+      inDyn = TRUE;
+  }
+  if(inDyn == TRUE)
+    nbDynamic = nbDynamic + 1.0f;
+  regex.score = (float) ((float)(((float)cent) / (((float)nbStatic) + ((float)nbDynamic))) * ((float)nbStatic));
+  printf("Ouinnnnnnnnnnnnnnnnnnnnnh... \n");
 
-  for(j = 0; j < seq1.len + seq2.len ; j++)
-    printf("%02x ", regex[j]);
-  printf("\n");
-  */
-
+  // Room service
   free( regex1 );
   free( regex2 );
   free( regex1Mask );
   free( regex2Mask );
-
   // TODO: (fgy) avoid double freeing
 }
 
 int hexdump(unsigned char *buf, int dlen) {
-  int OPL = 16;
+  int OPL = 32;
   char	c[OPL+1];
   int	i, ct;
 

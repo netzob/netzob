@@ -37,7 +37,13 @@ class Clusterer(object):
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
+
+    def getBinaryMsg(self, msg):
+        res = ""
     
+        for i in range(0, len(msg), 2):
+            res = res + chr(int(msg[i: i+2], 16))
+        return res
     
     def getMatrix(self, groups):
         self.log.debug("Computing the associated matrix")
@@ -51,7 +57,8 @@ class Clusterer(object):
             format += str(len(group.getMessages())) + "G"
             for m in group.getMessages():
                 format += str(len(m.getStringData())/2) + "M"
-                serialGroups += typer.toBinary( m.getStringData() )
+                serialGroups += self.getBinaryMsg( m.getStringData() )
+#                serialGroups += typer.toBinary( m.getStringData() )
 
         libNeedleman.getMatrix(len(groups), format, serialGroups)
 
