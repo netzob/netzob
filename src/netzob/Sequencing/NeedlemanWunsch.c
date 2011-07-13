@@ -54,8 +54,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
   if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups, &sizeMessages))
     return NULL;
 
-  printf("nbGroups: %d\n", nbGroups);
-
   // Allocate nbGroups pointers
   t_groups = malloc( nbGroups * sizeof(t_group) );
 
@@ -140,9 +138,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
 
 	  alignTwoSequences(regex1, regex2, &regex);
 
-	  hexdump(regex.regex, regex.len);
-	  hexdump(regex.mask, regex.len);
-	  printf("score: %f\n", regex.score);
 	  free(regex1.mask);
 	  free(regex2.mask);
 	  regex1.len = regex.len;

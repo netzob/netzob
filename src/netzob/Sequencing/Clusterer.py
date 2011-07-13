@@ -58,10 +58,6 @@ class Clusterer(object):
 #        print myMatrix
 
         """
-        for groups:
-            group.setScore() 
-            group.setRegex()
-        """
         # Former way
         matrix = zeros([len(groups), len(groups)], Float)        
         for i in range(0, len(groups)) :
@@ -91,7 +87,8 @@ class Clusterer(object):
                     matrix[i][j] = group3.getScore()        
                     matrix[j][i] = group3.getScore()
 
-        return matrix
+        """
+        return (i_max, j_max, maxScore)
     
     def reOrganizeGroups(self, groups):
 
@@ -109,11 +106,11 @@ class Clusterer(object):
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             
             # Create the score matrix for each group
-            matrix = self.getMatrix(groups)
-#            (i, j, valueIJ)self.getMatrix(groups)
+#            matrix = self.getMatrix(groups)
+            (i_maximum, j_maximum, maximum) = self.getMatrix(groups)
             self.log.debug("Searching for the maximum of equivalence.")
             # Search for the maximum score not on the diag
-
+            """
             maximum = -1
             i_maximum = -1
             j_maximum = -1
@@ -124,9 +121,9 @@ class Clusterer(object):
                         i_maximum = i
                         j_maximum = j
             self.log.debug("Maximum = {0} [{1};{2}]".format(maximum, i_maximum, j_maximum)) 
-            
+            """
             if (maximum >= min_equivalence) :
-                groups = self.merge(matrix, groups, i_maximum, j_maximum)        
+                groups = self.merge(groups, i_maximum, j_maximum)        
         
         for g in groups :
             g.computeRegex()
@@ -150,7 +147,7 @@ class Clusterer(object):
         return self.reOrganizeGroups(groups)
        
         
-    def merge(self, matrix, groups, i_maximum, j_maximum):
+    def merge(self, groups, i_maximum, j_maximum):
         self.log.debug("Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum)))
         new_groups = []
         found = False
