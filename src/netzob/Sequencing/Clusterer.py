@@ -52,9 +52,7 @@ class Clusterer(object):
                 format += str(len(m.getStringData())/2) + "M"
                 serialGroups += typer.toBinary( m.getStringData() )
 
-        print libNeedleman.getMatrix("toto")
-
-#        (i, j, valueIJ) = libNeedleman.getMatrix(len(groups), format, serialGroups)
+        (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(groups), format, serialGroups)
 
 #        myMatrix = libNeedleman.getMatrix(len(groups), format, serialGroups)
 #        print myMatrix
@@ -93,7 +91,6 @@ class Clusterer(object):
                     matrix[i][j] = group3.getScore()        
                     matrix[j][i] = group3.getScore()
 
-        print matrix
         return matrix
     
     def reOrganizeGroups(self, groups):

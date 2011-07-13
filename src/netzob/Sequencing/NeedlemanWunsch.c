@@ -51,8 +51,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
   t_group   *t_groups;
   // TODO: (fgy) do not forget the freeing of these tables of pointers
 
-  return Py_None;
-
   if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups, &sizeMessages))
     return NULL;
 
@@ -100,13 +98,14 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
 
   // Compute the matrix
   float matrix[nbGroups][nbGroups];
+  float maxScore = -1.0f;
+  short int i_maximum = -1;
+  short int j_maximum = -1;
   t_group p_group;
   t_regex regex;
   t_regex regex1;
   t_regex regex2;
   short int nb_msg_group;
-  PyObject* pyListAlign = PyList_New( 0 );
-  PyObject* pyListFloat = PyList_New( 0 );
   for( i = 0; i < nbGroups; ++i) {
     for( j = 0; j < nbGroups; ++j) {
       if( i == j )
@@ -152,20 +151,17 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
 	}
 	matrix[i][j] = regex.score;
 	matrix[j][i] = regex.score;
-
-	PyObject *objFloat = PyFloat_FromDouble((double)matrix[i][j]);
-	PyList_Append(pyListFloat, objFloat);
-
-	PyObject *objFloat = PyFloat_FromDouble((double)matrix[i][j]);
-	PyList_Append(pyListAlign, objFloat);
-
+	
+	if ( (maxScore < matrix[i][j]) || (maxScore == -1) ) {
+	  maxScore = matrix[i][j];
+	  i_maximum = i;
+	  j_maximum = j;
+	}
       }
     }
   }
 
-
-
-  return pyObj;
+  return Py_BuildValue("(iif)", i_maximum, j_maximum, maxScore);
 }
 
 /*
