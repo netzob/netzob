@@ -156,6 +156,8 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
     }
   }
 
+  free( t_groups );
+
   return Py_BuildValue("(iif)", i_maximum, j_maximum, maxScore);
 }
 
