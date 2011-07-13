@@ -202,4 +202,16 @@ class TypeIdentifier():
             res = raw
 
         return res
-          
+
+    #+---------------------------------------------- 
+    #| Transform the current hex message ( '1fdf' ) in binary ( '\x1f\xdf' )
+    #+----------------------------------------------          
+    def toBinary(self, msg):
+        if len(msg) % 2 != 0:
+            self.log.error("Hex string len not even")
+            return msg
+
+        res = ""
+        for i in range(0, len(msg), 2):
+            res = res + chr(int(msg[i: i+2], 16))
+        return res
