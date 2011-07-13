@@ -17,6 +17,10 @@ import logging
 import MessageGroup
 import Message
 from ..Common import ConfigurationParser, TypeIdentifier
+
+#+---------------------------------------------- 
+#| C Imports
+#+----------------------------------------------
 import libNeedleman
 
 #+---------------------------------------------- 
@@ -37,7 +41,16 @@ class Clusterer(object):
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
-
+        
+    #+---------------------------------------------- 
+    #| getMatrix :
+    #|   given a list of groups, it computes the 
+    #|   the possible two groups which can be merged
+    #| @param groups : list of group to merge
+    #| @return (i,j,max) (i,j) path in the matrix of 
+    #|                   the groups to merge
+    #|                    max score of the two groups
+    #+---------------------------------------------- 
     def getMatrix(self, groups):
         self.log.debug("Computing the associated matrix")
 
@@ -51,43 +64,10 @@ class Clusterer(object):
             for m in group.getMessages():
                 format += str(len(m.getStringData())/2) + "M"
                 serialGroups += typer.toBinary( m.getStringData() )
-
+                
+        # Execute the Clustering part in C :) (thx fgy)
         (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(groups), format, serialGroups)
 
-#        myMatrix = libNeedleman.getMatrix(len(groups), format, serialGroups)
-#        print myMatrix
-
-        """
-        # Former way
-        matrix = zeros([len(groups), len(groups)], Float)        
-        for i in range(0, len(groups)) :
-            for j in range(0, len(groups)):
-                if (i==j) :
-                    matrix[i][j] = 100
-                elif (i<j) :
-                    group1 = groups[i]
-                    group2 = groups[j]
-                    
-#                    group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), group1.getMessages())
-#                    group3.setRegex(group1.getRegex())
-#                    group3.setScore(group1.getScore())
-#                    group3.setAlignment(group1.getAlignment())
-#                    group3.addMessages(group2.getMessages())
-                    
-#                    
-                    msgs = group1.getMessages() + group2.getMessages()
-                    group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), [])
-                    group3.setAlignment(group1.getAlignment())
-                    group3.addMessages(msgs)
-
-
-#                    group3.computeRegex()
-                    group3.computeScore()
-                    
-                    matrix[i][j] = group3.getScore()        
-                    matrix[j][i] = group3.getScore()
-
-        """
         return (i_max, j_max, maxScore)
     
     def reOrganizeGroups(self, groups):
@@ -100,9 +80,7 @@ class Clusterer(object):
         self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
         
         
-        for iteration in range(0, nbIteration) :     
-#            min_equivalence = min_equivalence + iteration
-            
+        for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             
             # Create the score matrix for each group
