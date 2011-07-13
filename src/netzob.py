@@ -16,6 +16,7 @@ pygtk.require('2.0')
 #| Local Imports
 #+----------------------------------------------
 from netzob.Sequencing import UIseqMessage
+from netzob.Dumping import UIDumpingMessage
 from netzob.Common import ConfigurationParser
 
 #+---------------------------------------------- 
@@ -108,9 +109,14 @@ class Netzob:
         self.vbox.pack_start(self.notebook, True, True, 0)
 
         self.pageList = []
-        uiseqmessage = UIseqMessage.UIseqMessage(self)
-        self.pageList.append(["Message Sequencing", uiseqmessage])
-
+        # Adding the message sequencing "onglet"
+        self.uiseqmessage = UIseqMessage.UIseqMessage(self)
+        self.pageList.append(["Message Sequencing", self.uiseqmessage])
+        
+        # Adding the message dumping "onglet"
+        self.uiDumpingMessage = UIDumpingMessage.UIDumpingMessage(self)
+        self.pageList.append(["Message XML Dumping", self.uiDumpingMessage])
+        
         for page in self.pageList:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
 
