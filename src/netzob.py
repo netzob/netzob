@@ -8,9 +8,16 @@ import gtk
 import gobject
 import os
 import pygtk
-import logging.config
-
 pygtk.require('2.0')
+import logging.config
+import threading
+import sys
+
+#+---------------------------------------------- 
+#| Configure the Python path
+#+----------------------------------------------
+import sys
+sys.path.append('lib/libNeedleman')
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -139,18 +146,20 @@ class Netzob:
         self.progressBar.show()
 
     def startGui(self):
-        gtk.main()
+        # UI thread launching
+        self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
+        self.uiThread.start()
 
     def evnmt_delete(self, widget, event, data=None):
         return False
-
-
-
 
     def destroy(self, widget, data=None):
         for page in self.pageList:
             page[1].kill()
         gtk.main_quit()
+
+    def guiThread(self):
+        gtk.main()
 
 
 #+---------------------------------------------- 

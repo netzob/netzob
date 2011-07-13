@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding: utf8
 
-
-
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
@@ -11,9 +9,9 @@ import pango
 import gobject
 import re
 import pygtk
-import logging
-
 pygtk.require('2.0')
+import logging
+import threading
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -24,13 +22,11 @@ from ..Common import ConfigurationParser
 from TreeViews import TreeGroupGenerator
 from TreeViews import TreeMessageGenerator
 
-
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
 loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
 logging.config.fileConfig(loggingFilePath)
-
 
 #+---------------------------------------------- 
 #| UIseqMessage :
@@ -47,10 +43,9 @@ class UIseqMessage:
     #+----------------------------------------------
     def new(self):
         # Parse the traces and store the results
-        tracesExtractor = TracesExtractor.TracesExtractor(self.zob)
         self.selectedGroup = ""
-        task = tracesExtractor.parse(self.groups, self)
-        gobject.idle_add(task.next)
+        self.parseThread = threading.Thread(None, self.treeGroupGenerator.initTreeGroupWithTraces, None, (self.zob, self), {})
+        self.parseThread.start()
 
     def update(self):
         self.updateTreeStoreGroup()
@@ -71,7 +66,6 @@ class UIseqMessage:
         self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
         
         self.zob = zob
-        self.groups = []
         self.selectedGroup = ""
         
         self.selectedMessage = ""
@@ -99,7 +93,7 @@ class UIseqMessage:
         #| LEFT PART OF THE GUI : TREEVIEW
         #+----------------------------------------------           
         # Initialize the treeview generator for the groups
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.groups)
+        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator( [] )
         self.treeGroupGenerator.initialization()
         self.vb_filter.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
@@ -389,7 +383,7 @@ class UIseqMessage:
             self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
             newGroup = MessageGroup.MessageGroup(newGroupName, [])
-            self.groups.append(newGroup)
+            self.treeGroupGenerator.addGroup( newGroup )
             #Update Left and Right
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
@@ -411,7 +405,7 @@ class UIseqMessage:
             result = md.run()
             md.destroy()
             if result == gtk.RESPONSE_YES:
-                self.groups.remove(group)
+                self.treeGroupGenerator.removeGroup( group )
                 self.log.debug("The group "+group.getName()+" has been deleted !")
                 #Update Left and Right
                 self.updateTreeStoreGroup()
@@ -445,7 +439,7 @@ class UIseqMessage:
             new_grp_name = str(modele.get_value(iter, 0))
         
             found = False
-            for tmp_group in self.groups :
+            for tmp_group in self.treeGroupGenerator.getGroups() :
                 if (tmp_group.getName() == new_grp_name) :
                     new_grp = tmp_group
                 for tmp_message in tmp_group.getMessages() :
@@ -491,7 +485,7 @@ class UIseqMessage:
         else :
             # Default display of the groups
             self.treeGroupGenerator.default()
-            self.zob.uiDumpingMessage.updateGoups(self.groups)
+            self.zob.uiDumpingMessage.updateGoups( self.treeGroupGenerator.getGroups() )
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
@@ -500,7 +494,7 @@ class UIseqMessage:
         if (self.selectedGroup != "") :
             # Search for the selected group in groups list
             selectedGroup = None
-            for group in self.groups :
+            for group in self.treeGroupGenerator.getGroups() :
                 if str(group.getID()) == self.selectedGroup :
                     selectedGroup = group
             # If we found it we can update the content of the treestore        
@@ -526,7 +520,7 @@ class UIseqMessage:
                 group_regex = modele.get_value(iter, 1)
                 msg_id = modele.get_value(iter, 2)
                 
-                for group in self.groups :
+                for group in self.treeGroupGenerator.getGroups() :
                     for message in group.getMessages() :
                         if str(message.getID()) == msg_id :
                             self.selectedMessage = message

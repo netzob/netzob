@@ -64,17 +64,26 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	}
 
 	// Compute the matrix
-	float matrix[nbGroups][nbGroups];
+	float **matrix;
 	float maxScore = -1.0f;
 	short int i_maximum = -1;
 	short int j_maximum = -1;
-
 	short int nb_msg_group;
+
+	matrix = (float **) malloc( nbGroups * sizeof(float*) );
+	for (i = 0; i < nbGroups; i++) {
+	  matrix[i] = (float *) malloc( sizeof(float) * nbGroups );
+	  for(j = 0; j < nbGroups; j++)
+	    {
+	      matrix[i][j] = 0.0;
+	    }
+	}
+
 	#pragma omp parallel for shared(matrix, t_groups)
 	for (i = 0; i < nbGroups; ++i) {
 		for (j = 0; j < nbGroups; ++j) {
 			if (i == j)
-				matrix[i][j] = 100;
+			  matrix[i][j] = 100.0;
 			else if (i < j) {
 				t_group p_group;
 				t_regex regex;
@@ -145,10 +154,18 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	const short int gap = 0;
 
 	// initiliaze the matrix with 0
-	short int matrix[seq1.len + 1][seq2.len + 1];unsigned
-	short int i = 0;
+	short int **matrix;
+	unsigned short int i = 0;
 	unsigned short int j = 0;
-	memset(matrix, 0, sizeof(short int) * (seq1.len + 1) * (seq2.len + 1)); // TODO: not necessary => only fill first col and first row
+
+	matrix = (short int**) malloc( sizeof(short int*) * (seq1.len + 1) );
+	for (i = 0; i < (seq1.len + 1); i++) {
+	  matrix[i] = (short int*) malloc( sizeof(short int) * (seq2.len + 1) );
+	  for(j = 0; j < (seq2.len + 1); j++)
+	    {
+	      matrix[i][j] = 0;
+	    }
+	}
 
 	// fill the matrix
 	short int elt1, elt2, elt3, max, eltL, eltD, eltT;
@@ -162,7 +179,7 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 			 # elt2 :         Matrix[i][j-1]   + gap,
 			 # elt3 :         Matrix[i-1][j]   + gap)
 			 */
-			elt1 = matrix[i - 1][j - 1];
+		        elt1 = matrix[i - 1][j - 1];
 			if ((seq1.mask[i - 1] != 1) && (seq2.mask[j - 1] != 1)
 					&& (seq1.regex[i - 1] == seq2.regex[j - 1]))
 				elt1 += match;

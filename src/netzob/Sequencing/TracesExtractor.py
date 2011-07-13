@@ -47,9 +47,10 @@ class TracesExtractor(object):
     #| Parse :
     #| @update the groups paramter with the computed groups of messages
     #+----------------------------------------------   
-    def parse(self, groups, uiNotebook):
+    def parse(self):
         self.log.info("[INFO] Extract traces from directory {0}".format(self.path))
-        
+        groups = []
+
         # Retrieves all the files to parse
         files = []
         for file in os.listdir(self.path):
@@ -63,11 +64,10 @@ class TracesExtractor(object):
         # compute the progression step
         # 2 steps per file
         progressionStep = 1.0 / len(files)        
-        
-        tmp_groups = []
+
         # Parse each file
+        tmp_groups = []
         for file in files :
-            yield True
             filePath = self.path + "/" + file
             traceParser = TraceParser.TraceParser(filePath)
             # Append retrieved message to the final list
@@ -81,8 +81,7 @@ class TracesExtractor(object):
             for g in clusterer.reOrganize([group]) :
                 tmp_groups.append(g)
             
-                        
-            self.doProgressBarStep(progressionStep)
+            gobject.idle_add(self.doProgressBarStep, progressionStep)
             
         # Now that all the groups are reorganized separatly
         # we should consider merging them
@@ -90,22 +89,15 @@ class TracesExtractor(object):
         for g in clusterer.reOrganizeGroups(tmp_groups) :
             groups.append(g)
 
-
-
         #Once files parsed, reset the progressBar
-        self.resetProgressBar()
-        
-        
-        
+        gobject.idle_add(self.resetProgressBar)
         
         for group in groups :
             self.log.debug("Group {0}".format(group.getName()))
             for message in group.getMessages() :
                 self.log.debug("- "+message.getStringData())
-        
-        uiNotebook.update()
-        yield False
-        
+
+        return groups
         
     #+---------------------------------------------- 
     #| doProgressBarStep :

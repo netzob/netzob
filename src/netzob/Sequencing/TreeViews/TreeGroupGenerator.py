@@ -12,7 +12,8 @@ import gtk
 #+----------------------------------------------
 from ...Common import ConfigurationParser
 from ..NeedlemanWunsch import NeedlemanWunsch
-
+from ...Sequencing import TracesExtractor
+       
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
@@ -71,7 +72,6 @@ class TreeGroupGenerator():
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
     
-    
     #+---------------------------------------------- 
     #| default :
     #|         Update the treestore in normal mode
@@ -81,7 +81,6 @@ class TreeGroupGenerator():
         self.treestore.clear()
         for group in self.groups :
             iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
-           
 
     #+---------------------------------------------- 
     #| messageSelected :
@@ -134,6 +133,17 @@ class TreeGroupGenerator():
                 
         
         return None
+
+    def initTreeGroupWithTraces(self, zob, ui):
+        tracesExtractor = TracesExtractor.TracesExtractor(zob)
+        self.setGroups(  tracesExtractor.parse() )
+        ui.update()
+
+    def addGroup(self, group):
+        self.groups.append( group )
+    def removeGroup(self, group):
+        self.groups.remove( group )
+
     
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -142,5 +152,12 @@ class TreeGroupGenerator():
         return self.treeview
     def getScrollLib(self):
         return self.scroll_lib
-    
-        
+    def getGroups(self):
+        return self.groups
+
+    #+---------------------------------------------- 
+    #| SETTERS : 
+    #+----------------------------------------------    
+    def setGroups(self, groups):
+        self.groups = groups
+
