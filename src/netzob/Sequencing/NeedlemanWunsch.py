@@ -55,6 +55,7 @@ class NeedlemanWunsch:
             else:
                 nbStatic += len(elt)
         
+        nbStatic /= 2
         score = 100.0 / (nbStatic + nbDynamic) * nbStatic
         return score
         

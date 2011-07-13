@@ -31,7 +31,7 @@ typedef struct
   float score;
 } t_regex;
 
-void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex regex);
+void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex);
 int hexdump(unsigned char *buf, int dlen);
 
 static PyObject* py_getMatrix(PyObject* self, PyObject* args)
@@ -51,8 +51,12 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
   t_group   *t_groups;
   // TODO: (fgy) do not forget the freeing of these tables of pointers
 
+  return Py_None;
+
   if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups, &sizeMessages))
     return NULL;
+
+  printf("nbGroups: %d\n", nbGroups);
 
   // Allocate nbGroups pointers
   t_groups = malloc( nbGroups * sizeof(t_group) );
@@ -101,6 +105,8 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
   t_regex regex1;
   t_regex regex2;
   short int nb_msg_group;
+  PyObject* pyListAlign = PyList_New( 0 );
+  PyObject* pyListFloat = PyList_New( 0 );
   for( i = 0; i < nbGroups; ++i) {
     for( j = 0; j < nbGroups; ++j) {
       if( i == j )
@@ -133,7 +139,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
 	  memset(regex.regex, 0, regex.len * sizeof(char));
 	  memset(regex.mask, 2, regex.len * sizeof(char));
 
-	  alignTwoSequences(regex1, regex2, regex);
+	  alignTwoSequences(regex1, regex2, &regex);
 
 	  hexdump(regex.regex, regex.len);
 	  hexdump(regex.mask, regex.len);
@@ -146,18 +152,20 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args)
 	}
 	matrix[i][j] = regex.score;
 	matrix[j][i] = regex.score;
+
+	PyObject *objFloat = PyFloat_FromDouble((double)matrix[i][j]);
+	PyList_Append(pyListFloat, objFloat);
+
+	PyObject *objFloat = PyFloat_FromDouble((double)matrix[i][j]);
+	PyList_Append(pyListAlign, objFloat);
+
       }
     }
   }
 
-  for( i = 0; i < nbGroups; ++i) {
-    for( j = 0; j < nbGroups; ++j)
-      printf( " %f ", matrix[j][i] );
-    printf("\n");
-  }
-  
-  return Py_None;
-  //Py_BuildValue("i", sts); // return the matrice and the regex...
+
+
+  return pyObj;
 }
 
 /*
@@ -172,7 +180,7 @@ void initlibNeedleman() {
   (void) Py_InitModule("libNeedleman", libNeedleman_methods);
 }
 
-void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex regex) {
+void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
   const short int match = 10;
   const short int mismatch = -10;
   const short int gap = 0;
@@ -265,18 +273,18 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex regex) {
   i = seq1.len + seq2.len - 1;
   while ( i > 0 ) {
     if( (regex1Mask[i] == 2) && (regex2Mask[i] == 2)) {
-      regex.regex[iReg] = 0xff;
-      regex.mask[iReg] = 2;
+      regex->regex[iReg] = 0xff;
+      regex->mask[iReg] = 2;
       --iReg;
     }
     else if( (regex1Mask[i] == 1) || (regex2Mask[i] == 1) || (regex1[i] != regex2[i]) ) {
-      regex.regex[iReg] = 0xff;
-      regex.mask[iReg] = 1;
+      regex->regex[iReg] = 0xff;
+      regex->mask[iReg] = 1;
       --iReg;
     }
     else {
-      regex.regex[iReg] = regex1[i];
-      regex.mask[iReg] = 0;
+      regex->regex[iReg] = regex1[i];
+      regex->mask[iReg] = 0;
       --iReg;
     }
     --i;
@@ -287,21 +295,21 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex regex) {
   float nbStatic = 0.0f;
   float cent = 100.0f;
   BOOL inDyn = FALSE;
-  for(i = 0; i < regex.len; ++i) {
-    if(regex.mask[i] == 0) {
+  for(i = 0; i < regex->len; ++i) {
+    if(regex->mask[i] == 0) {
       if(inDyn == TRUE) {
 	nbDynamic = nbDynamic + 1.0f;
 	inDyn = FALSE;
       }
       nbStatic = nbStatic + 1.0f;
     }
-    else if(regex.mask[i] == 1)
+    else if(regex->mask[i] == 1)
       inDyn = TRUE;
   }
   if(inDyn == TRUE)
     nbDynamic = nbDynamic + 1.0f;
-  regex.score = (float) ((float)(((float)cent) / (((float)nbStatic) + ((float)nbDynamic))) * ((float)nbStatic));
-  printf("Ouinnnnnnnnnnnnnnnnnnnnnh... \n");
+
+  regex->score = 100.0 / (nbStatic + nbDynamic) * nbStatic;
 
   // Room service
   free( regex1 );

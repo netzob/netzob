@@ -52,8 +52,18 @@ class Clusterer(object):
                 format += str(len(m.getStringData())/2) + "M"
                 serialGroups += typer.toBinary( m.getStringData() )
 
-#        libNeedleman.getMatrix(len(groups), format, serialGroups)
+        print libNeedleman.getMatrix("toto")
 
+#        (i, j, valueIJ) = libNeedleman.getMatrix(len(groups), format, serialGroups)
+
+#        myMatrix = libNeedleman.getMatrix(len(groups), format, serialGroups)
+#        print myMatrix
+
+        """
+        for groups:
+            group.setScore() 
+            group.setRegex()
+        """
         # Former way
         matrix = zeros([len(groups), len(groups)], Float)        
         for i in range(0, len(groups)) :
@@ -81,7 +91,9 @@ class Clusterer(object):
                     group3.computeScore()
                     
                     matrix[i][j] = group3.getScore()        
-                    matrix[j][i] = group3.getScore()        
+                    matrix[j][i] = group3.getScore()
+
+        print matrix
         return matrix
     
     def reOrganizeGroups(self, groups):
@@ -101,8 +113,10 @@ class Clusterer(object):
             
             # Create the score matrix for each group
             matrix = self.getMatrix(groups)
+#            (i, j, valueIJ)self.getMatrix(groups)
             self.log.debug("Searching for the maximum of equivalence.")
             # Search for the maximum score not on the diag
+
             maximum = -1
             i_maximum = -1
             j_maximum = -1
