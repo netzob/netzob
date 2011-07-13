@@ -127,6 +127,20 @@ class MessageGroup(object):
             self.computeScore()
     
     #+---------------------------------------------- 
+    #| getXMLDefinition : 
+    #|  returns the XML description of the group
+    #| @return a string containing the xml def.
+    #+----------------------------------------------
+    def getXMLDefinition(self):
+        result = "<dictionnary>\n"
+        
+        result += self.alignment
+        
+        result += "\n</dictionnary>\n"
+        
+        return result
+    
+    #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
     def getID(self):
@@ -155,6 +169,8 @@ class MessageGroup(object):
         self.alignment = alignment
     def setScore(self, score):
         self.score = score
+        
+    
 
     #+---------------------------------------------- 
     #| Inner thread for regex computation

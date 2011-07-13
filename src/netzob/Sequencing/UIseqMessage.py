@@ -491,6 +491,7 @@ class UIseqMessage:
         else :
             # Default display of the groups
             self.treeGroupGenerator.default()
+            self.zob.uiDumpingMessage.updateGoups(self.groups)
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages

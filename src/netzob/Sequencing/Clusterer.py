@@ -101,7 +101,7 @@ class Clusterer(object):
         
         
         for iteration in range(0, nbIteration) :     
-            min_equivalence = min_equivalence + iteration
+#            min_equivalence = min_equivalence + iteration
             
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             
@@ -124,6 +124,9 @@ class Clusterer(object):
             """
             if (maximum >= min_equivalence) :
                 groups = self.merge(groups, i_maximum, j_maximum)        
+            else :
+                self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
+                break
         
         for g in groups :
             g.computeRegex()
