@@ -7,7 +7,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	char *format;
 	char *tmp;
 	char *tmp2;
-	char *tmp3;
 	char *p;
 	unsigned short int nbGroups;
 	unsigned short int nbMessages;
@@ -52,15 +51,14 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 			k += len + 1;
 
 			// Retrieve the data of each message
-			tmp3 = malloc(sizeMessage * sizeof(char));
+			t_groups[i].messages[j].message = malloc(sizeMessage * sizeof(char));			
 			// TODO: (fgy) do not forget the freeing of this string
-			memcpy(tmp3, serialGroups + l, sizeMessage);
+			memcpy(t_groups[i].messages[j].message, serialGroups + l, sizeMessage);
 			t_groups[i].messages[j].len = sizeMessage;
-			t_groups[i].messages[j].message = tmp3;
 			l += sizeMessage;
-			free(tmp2);
+			free( tmp2 );
 		}
-		free(tmp);
+		free( tmp );
 	}
 
 	// Compute the matrix
@@ -92,7 +90,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 				p_group.len = t_groups[i].len + t_groups[j].len;
 				p_group.messages = malloc(p_group.len * sizeof(t_message));
 				for (k = 0; k < t_groups[i].len; ++k) {
-					p_group.messages[k] = t_groups[i].messages[k];
+				  p_group.messages[k] = t_groups[i].messages[k];
 				}
 				for (k = k, l = 0; l < t_groups[j].len; ++k, ++l) {
 					p_group.messages[k] = t_groups[j].messages[l];
@@ -111,6 +109,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 							p_group.messages[k].len * sizeof(char));
 					memset(regex2.mask, 2, p_group.messages[k].len);
 
+					// TODO: free regex.mask and regex.regex
 					regex.len = regex1.len + regex2.len;
 					regex.regex = malloc(regex.len * sizeof(char));
 					regex.mask = malloc(regex.len * sizeof(char));
@@ -126,8 +125,10 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 					regex1.regex = regex.regex;
 				}
 				matrix[i][j] = regex.score;
-				//				matrix[j][i] = regex.score;
 
+				free( regex.regex );
+				free( regex.mask );				
+				free( p_group.messages );
 			}
 		}
 	}
@@ -140,7 +141,20 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 			}
 		}
 	}
-
+	
+	// Room service
+	for (i = 0; i < nbGroups; i++)
+	  free( matrix[i] );
+	free( matrix );
+	
+	for (i = 0; i < nbGroups; ++i) {
+	  for (j = 0; j < t_groups[i].len; ++j) {
+	    free( t_groups[i].messages[j].message );
+	  }
+	  free( t_groups[i].messages );
+	}
+	free( t_groups );
+	
 	return Py_BuildValue("(iif)", i_maximum, j_maximum, maxScore);
 }
 
@@ -247,6 +261,11 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 		if (i == 0 || j == 0)
 			finish = TRUE;
 	}
+
+	for (i = 0; i < (seq1.len + 1); i++) {
+	  free( matrix[i] );
+	}
+	free( matrix );
 
 	// Compute the common regex
 	unsigned short int iReg = seq1.len + seq2.len - 1;
