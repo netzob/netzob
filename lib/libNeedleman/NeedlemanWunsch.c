@@ -126,7 +126,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 					regex1.regex = regex.regex;
 				}
 				matrix[i][j] = regex.score;
-				matrix[j][i] = regex.score;
+				//				matrix[j][i] = regex.score;
 
 			}
 		}
