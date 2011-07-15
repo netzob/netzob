@@ -16,8 +16,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	int sizeMessages;
 	t_group *t_groups;
 
-	// TODO: (fgy) do not forget the freeing of these tables of pointers
-
 	if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups,
 			&sizeMessages))
 		return NULL;
@@ -51,10 +49,8 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 			k += len + 1;
 
 			// Retrieve the data of each message
-			t_groups[i].messages[j].message = malloc(sizeMessage * sizeof(char));			
-			// TODO: (fgy) do not forget the freeing of this string
-			memcpy(t_groups[i].messages[j].message, serialGroups + l, sizeMessage);
 			t_groups[i].messages[j].len = sizeMessage;
+			t_groups[i].messages[j].message = serialGroups + l;
 			l += sizeMessage;
 			free( tmp2 );
 		}
@@ -148,9 +144,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	free( matrix );
 	
 	for (i = 0; i < nbGroups; ++i) {
-	  for (j = 0; j < t_groups[i].len; ++j) {
-	    free( t_groups[i].messages[j].message );
-	  }
 	  free( t_groups[i].messages );
 	}
 	free( t_groups );
@@ -262,11 +255,6 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 			finish = TRUE;
 	}
 
-	for (i = 0; i < (seq1.len + 1); i++) {
-	  free( matrix[i] );
-	}
-	free( matrix );
-
 	// Compute the common regex
 	unsigned short int iReg = seq1.len + seq2.len - 1;
 	i = seq1.len + seq2.len - 1;
@@ -309,11 +297,15 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	regex->score = 100.0 / (nbStatic + nbDynamic) * nbStatic;
 
 	// Room service
+	for (i = 0; i < (seq1.len + 1); i++) {
+	  free( matrix[i] );
+	}
+	free( matrix );
+
 	free(regex1);
 	free(regex2);
 	free(regex1Mask);
 	free(regex2Mask);
-	// TODO: (fgy) avoid double freeing
 }
 
 int hexdump(unsigned char *buf, int dlen) {
