@@ -59,6 +59,54 @@ class MessageGroup(object):
 
     def __str__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
+
+    #+---------------------------------------------- 
+    #| buildRegexAndAlignment : compute self.regex and 
+    #| self.alignment from the binary strings computed 
+    #| in the C Needleman library
+    #+----------------------------------------------
+    def buildRegexAndAlignment(self, aRegex, aMask):
+        # Build alignment
+        align = ""
+        for i in range(len(aMask)):
+            if aMask[i] != '\x02':
+                if aMask[i] == '\x01':
+                    align += "--"
+                else:
+                    align += aRegex[i].encode("hex")
+
+        self.setAlignment( align )
+
+        # Build regex from alignment
+        i = 0
+        start = 0
+        regex = []
+        found = False
+        for i in range(0, len(align)) :
+            if (align[i] == "-"):
+                
+                if (found == False) :
+                    start = i
+                
+                found = True
+            else :
+                if (found == True) :
+                    found = False
+                    nbTiret = i - start
+                                   
+                    regex.append( "(.{," + str(nbTiret) + "})")
+                    regex.append( align[i] )
+                else :
+                    if len(regex) == 0:
+                        regex.append( align[i] )
+                    else:
+                        regex[-1] += align[i]
+        
+        if (found == True) :
+            nbTiret = i - start
+            regex.append( "(.{," + str(nbTiret) + "})" )
+
+        self.setRegex( regex )
     
     #+---------------------------------------------- 
     #| computeScore : given the messages, 

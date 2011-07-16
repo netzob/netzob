@@ -6,9 +6,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 /**
- * Definitions of the different ENUM
+ * Definitions of the different ENUM and Types
  */
 
 typedef enum {
@@ -32,21 +31,19 @@ typedef struct {
 	float score;
 } t_regex;
 
-
-
-
 static PyObject* py_getMatrix(PyObject* self, PyObject* args);
+static PyObject* py_alignSequences(PyObject* self, PyObject* args);
 
 void initlibNeedleman();
 void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex);
 int hexdump(unsigned char *buf, int dlen);
-
 
 /**
  * Bind Python function names to our C functions
  */
 static PyMethodDef libNeedleman_methods[] = {
 	{"getMatrix", py_getMatrix, METH_VARARGS},
+	{"alignSequences", py_alignSequences, METH_VARARGS},
 	{NULL, NULL}
 };
 #endif

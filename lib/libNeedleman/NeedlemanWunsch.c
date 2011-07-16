@@ -13,11 +13,11 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	unsigned short int sizeMessage;
 	unsigned short int i, j, k, l;
 	unsigned short int len;
-	int sizeMessages;
+	int sizeSerialGroups;
 	t_group *t_groups;
 
 	if (!PyArg_ParseTuple(args, "hss#", &nbGroups, &format, &serialGroups,
-			&sizeMessages))
+			&sizeSerialGroups))
 		return NULL;
 
 	// Allocate nbGroups pointers
@@ -62,7 +62,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	float maxScore = -1.0f;
 	short int i_maximum = -1;
 	short int j_maximum = -1;
-	short int nb_msg_group;
 
 	matrix = (float **) malloc( nbGroups * sizeof(float*) );
 	for (i = 0; i < nbGroups; i++) {
@@ -149,6 +148,89 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	free( t_groups );
 	
 	return Py_BuildValue("(iif)", i_maximum, j_maximum, maxScore);
+}
+
+static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
+	char *serialMessages;
+	char *format;
+	char *tmp2;
+	char *p;
+	unsigned short int nbMessages;
+	unsigned short int sizeMessage;
+	unsigned short int i, j, k, l;
+	unsigned short int len;
+	int sizeSerialMessages;
+	t_group p_group;
+	t_regex regex;
+	t_regex regex1;
+	t_regex regex2;
+
+	if (!PyArg_ParseTuple(args, "hss#", &nbMessages, &format, &serialMessages,
+			&sizeSerialMessages))
+		return NULL;
+
+	// Allocate nbMessages pointers
+	p_group.len = nbMessages;
+	p_group.messages = malloc(nbMessages * sizeof(t_message));
+
+	// Deserialize the input messages
+	for (k = 0, l = 0, j = 0; j < nbMessages; ++j) {
+	  // Retrieve the size of each message
+	  p = strchr(format + k, 'M');
+	  len = (unsigned short int) (p - (format + k));
+	  tmp2 = malloc((len + 1) * sizeof(char));
+	  memcpy(tmp2, format + k, len);
+	  tmp2[len] = '\0';
+	  sizeMessage = atoi(tmp2);
+	  k += len + 1;
+
+	  // Retrieve the data of each message
+	  p_group.messages[j].len = sizeMessage;
+	  p_group.messages[j].message = serialMessages + l;
+	  l += sizeMessage;
+	  free( tmp2 );
+	}
+
+	// Align the messages
+	regex1.len = p_group.messages[0].len;
+	regex1.regex = p_group.messages[0].message;
+	regex1.mask = malloc(p_group.messages[0].len * sizeof(char));
+	memset(regex1.mask, 2, p_group.messages[0].len);
+
+	// Only usefull in case of nbMessages == 1
+	regex.len = regex1.len;
+	regex.mask = regex1.mask;
+	regex.regex = regex1.regex;
+	regex.score = 0.0;
+
+	for (k = 1; k < p_group.len; ++k) {
+	  regex2.len = p_group.messages[k].len;
+	  regex2.regex = p_group.messages[k].message;
+	  regex2.mask = malloc(p_group.messages[k].len * sizeof(char));
+	  memset(regex2.mask, 2, p_group.messages[k].len);
+	  
+	  // TODO: free regex.mask and regex.regex
+	  regex.len = regex1.len + regex2.len;
+	  regex.regex = malloc(regex.len * sizeof(char));
+	  regex.mask = malloc(regex.len * sizeof(char));
+	  memset(regex.regex, 0, regex.len * sizeof(char));
+	  memset(regex.mask, 2, regex.len * sizeof(char));
+	  
+	  alignTwoSequences(regex1, regex2, &regex);
+	  
+	  free(regex1.mask);
+	  free(regex2.mask);
+	  regex1.len = regex.len;
+	  regex1.mask = regex.mask;
+	  regex1.regex = regex.regex;
+	}
+
+	// Room service
+	//	free( regex.regex );
+	//	free( regex.mask );
+	free( p_group.messages );
+
+	return Py_BuildValue("(fs#s#)", regex.score, regex.regex, regex.len, regex.mask, regex.len);
 }
 
 void initlibNeedleman() {

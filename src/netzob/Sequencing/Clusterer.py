@@ -58,7 +58,7 @@ class Clusterer(object):
         serialGroups = ""
         format = ""
         typer = TypeIdentifier.TypeIdentifier()
-
+        t1 = time.time()
         for group in groups:
             format += str(len(group.getMessages())) + "G"
             for m in group.getMessages():
@@ -67,19 +67,17 @@ class Clusterer(object):
                 
         # Execute the Clustering part in C :) (thx fgy)
         (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(groups), format, serialGroups)
-
+#        print str(time.time() - t1) + " nbGroups: " + str(len(groups)) + " format: " + format
         return (i_max, j_max, maxScore)
     
     def reOrganizeGroups(self, groups):
-
         # retrieves the following parameters from the configuration file
         configParser = ConfigurationParser.ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
         min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
         
         self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
-        
-        
+
         for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             
@@ -87,32 +85,26 @@ class Clusterer(object):
 #            matrix = self.getMatrix(groups)
             (i_maximum, j_maximum, maximum) = self.getMatrix(groups)
             self.log.debug("Searching for the maximum of equivalence.")
-            # Search for the maximum score not on the diag
-            """
-            maximum = -1
-            i_maximum = -1
-            j_maximum = -1
-            for i in range(0, len(groups)) :
-                for j in range(0, len(groups)) :
-                    if (i > j and (maximum < matrix[i][j] or maximum == -1)) :
-                        maximum = matrix[i][j]
-                        i_maximum = i
-                        j_maximum = j
-            self.log.debug("Maximum = {0} [{1};{2}]".format(maximum, i_maximum, j_maximum)) 
-            """
             if (maximum >= min_equivalence) :
                 groups = self.merge(groups, i_maximum, j_maximum)        
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
-        
+
+        # Compute the regex/alignment of each group
+        typer = TypeIdentifier.TypeIdentifier()      
         for g in groups :
-            g.computeRegex()
-            g.computeScore()
-        
+            serialMessages = ""
+            format = ""
+            for m in g.getMessages():
+                format += str(len(m.getStringData())/2) + "M"
+                serialMessages += typer.toBinary( m.getStringData() )
+
+            # Align sequences in C library
+            (score, regex, mask) = libNeedleman.alignSequences(len(g.getMessages()), format, serialMessages)
+            g.setScore( score )
+            g.buildRegexAndAlignment( regex, mask )
         return groups
-        
-        
     
     def reOrganize(self, _groups):
         messages = []
@@ -126,7 +118,6 @@ class Clusterer(object):
         for i in range(0, len(messages)) :
             groups.append(MessageGroup.MessageGroup(str(i), [messages[i]]))
         return self.reOrganizeGroups(groups)
-       
         
     def merge(self, groups, i_maximum, j_maximum):
         self.log.debug("Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum)))
