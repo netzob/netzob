@@ -11,7 +11,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	unsigned short int nbGroups;
 	unsigned short int nbMessages;
 	unsigned short int sizeMessage;
-	unsigned short int i, j, k, l;
+	int i, j, k, l;
 	unsigned short int len;
 	int sizeSerialGroups;
 	t_group *t_groups;
@@ -72,21 +72,23 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	    }
 	}
 
-	#pragma omp parallel for shared(matrix, t_groups)
-	for (i = 0; i < nbGroups; ++i) {
-		for (j = 0; j < nbGroups; ++j) {
-		  if (i < j) {
+#pragma omp parallel for shared(matrix, t_groups)
+	for (i = 0; i < nbGroups; i++) {
+	  int p = 0;
+	  for (p = 0; p < nbGroups; p++) {
+		  if (i < p) {
+		                int m, n;
 				t_group p_group;
 				t_regex regex;
 				t_regex regex1;
 				t_regex regex2;
-				p_group.len = t_groups[i].len + t_groups[j].len;
+				p_group.len = t_groups[i].len + t_groups[p].len;
 				p_group.messages = malloc(p_group.len * sizeof(t_message));
-				for (k = 0; k < t_groups[i].len; ++k) {
-				  p_group.messages[k] = t_groups[i].messages[k];
+				for (m = 0; m < t_groups[i].len; ++m) {
+				  p_group.messages[m] = t_groups[i].messages[m];
 				}
-				for (k = k, l = 0; l < t_groups[j].len; ++k, ++l) {
-					p_group.messages[k] = t_groups[j].messages[l];
+				for (m = m, n = 0; n < t_groups[p].len; ++m, ++n) {
+					p_group.messages[m] = t_groups[p].messages[n];
 				}
 
 				// Align the messages of the current group
@@ -95,12 +97,12 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 				regex1.mask = malloc(p_group.messages[0].len * sizeof(char));
 				memset(regex1.mask, 2, p_group.messages[0].len);
 
-				for (k = 1; k < p_group.len; ++k) {
-					regex2.len = p_group.messages[k].len;
-					regex2.regex = p_group.messages[k].message;
+				for (m = 1; m < p_group.len; ++m) {
+					regex2.len = p_group.messages[m].len;
+					regex2.regex = p_group.messages[m].message;
 					regex2.mask = malloc(
-							p_group.messages[k].len * sizeof(char));
-					memset(regex2.mask, 2, p_group.messages[k].len);
+							p_group.messages[m].len * sizeof(char));
+					memset(regex2.mask, 2, p_group.messages[m].len);
 
 					// TODO: free regex.mask and regex.regex
 					regex.len = regex1.len + regex2.len;
@@ -116,7 +118,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 					regex1.mask = regex.mask;
 					regex1.regex = regex.regex;
 				}
-				matrix[i][j] = regex.score;
+				matrix[i][p] = regex.score;
 
 				free( regex.regex );
 				free( regex.mask );				
