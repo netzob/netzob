@@ -20,7 +20,6 @@ import TraceParser
 import MessageGroup
 from ..Common import ConfigurationParser
 
-
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
@@ -62,10 +61,6 @@ class TracesExtractor(object):
             else :
                 files.append(file)
         
-        # Compute the progression step
-        # 2 steps per file
-        progressionStep = 1.0 / len(files)
-
         # Parse each file
         groups = []
         for file in files :
@@ -75,39 +70,21 @@ class TracesExtractor(object):
             tmpMessages = traceParser.parse()
             # Save the extracted messages in a dedicated group
             group = MessageGroup.MessageGroup(file, tmpMessages)            
-            # Now we try to re-organize the newly created group
-            clusterer = Clusterer.Clusterer(self.zob)
-            tmp_groups = [group]
-            clusterer.reOrganize( tmp_groups )
-            clusterer.reOrganizeGroups( tmp_groups )
-            groups.extend( tmp_groups )
+            # Now we try to clusterize the newly created group
+            clusterer = Clusterer.Clusterer(self.zob, [group], explodeGroups=True)
+            clusterer.mergeGroups()
+            groups.extend( clusterer.getGroups() )
                 
         # Now that all the groups are reorganized separatly
         # we should consider merging them
-        clusterer = Clusterer.Clusterer(self.zob)
-        clusterer.reOrganizeGroups( groups )
+        clusterer = Clusterer.Clusterer(self.zob, groups)
+        clusterer.mergeGroups()
 
-        #Once files parsed, reset the progressBar
-        gobject.idle_add(self.resetProgressBar)
-        
         self.log.debug("Time of parsing : " + str(time.time() - t1))
 
-        for group in groups :
+        for group in clusterer.getGroups() :
             self.log.debug("Group {0}".format(group.getName()))
             for message in group.getMessages() :
                 self.log.debug("- "+message.getStringData())
 
-        return groups
-        
-    #+---------------------------------------------- 
-    #| doProgressBarStep :
-    #+----------------------------------------------    
-    def doProgressBarStep(self, step):
-        new_val = self.zob.progressBar.get_fraction() + step
-        self.zob.progressBar.set_fraction(new_val)
-        
-    #+---------------------------------------------- 
-    #| resetProgressBar :
-    #+----------------------------------------------
-    def resetProgressBar(self):
-        self.zob.progressBar.set_fraction(0)
+        return clusterer.getGroups()

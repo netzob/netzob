@@ -130,8 +130,6 @@ class TreeGroupGenerator():
                     if (str(group.getID()) == idGroup) :
                         self.log.debug("The requested group with ID {0} has been found".format(group.getID()))
                         return group
-                
-        
         return None
 
     def initTreeGroupWithTraces(self, zob, ui):
@@ -143,7 +141,6 @@ class TreeGroupGenerator():
         self.groups.append( group )
     def removeGroup(self, group):
         self.groups.remove( group )
-
     
     #+---------------------------------------------- 
     #| GETTERS : 

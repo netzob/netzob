@@ -75,9 +75,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	#pragma omp parallel for shared(matrix, t_groups)
 	for (i = 0; i < nbGroups; ++i) {
 		for (j = 0; j < nbGroups; ++j) {
-			if (i == j)
-			  matrix[i][j] = 100.0;
-			else if (i < j) {
+		  if (i < j) {
 				t_group p_group;
 				t_regex regex;
 				t_regex regex1;
@@ -106,9 +104,8 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 
 					// TODO: free regex.mask and regex.regex
 					regex.len = regex1.len + regex2.len;
-					regex.regex = malloc(regex.len * sizeof(char));
+					regex.regex = calloc(regex.len, sizeof(char));
 					regex.mask = malloc(regex.len * sizeof(char));
-					memset(regex.regex, 0, regex.len * sizeof(char));
 					memset(regex.mask, 2, regex.len * sizeof(char));
 
 					alignTwoSequences(regex1, regex2, &regex);
@@ -211,9 +208,8 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	  
 	  // TODO: free regex.mask and regex.regex
 	  regex.len = regex1.len + regex2.len;
-	  regex.regex = malloc(regex.len * sizeof(char));
+	  regex.regex = calloc(regex.len, sizeof(char));
 	  regex.mask = malloc(regex.len * sizeof(char));
-	  memset(regex.regex, 0, regex.len * sizeof(char));
 	  memset(regex.mask, 2, regex.len * sizeof(char));
 	  
 	  alignTwoSequences(regex1, regex2, &regex);
@@ -249,11 +245,7 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 
 	matrix = (short int**) malloc( sizeof(short int*) * (seq1.len + 1) );
 	for (i = 0; i < (seq1.len + 1); i++) {
-	  matrix[i] = (short int*) malloc( sizeof(short int) * (seq2.len + 1) );
-	  for(j = 0; j < (seq2.len + 1); j++)
-	    {
-	      matrix[i][j] = 0;
-	    }
+	  matrix[i] = (short int*) calloc( (seq2.len + 1), sizeof(short int) );
 	}
 
 	// fill the matrix
@@ -285,17 +277,11 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 
 	// Traceback
 	finish = FALSE;
-	unsigned char *regex1 = malloc(
-			(seq1.len + seq2.len) * sizeof(unsigned char));
-	unsigned char *regex2 = malloc(
-			(seq1.len + seq2.len) * sizeof(unsigned char));
-	unsigned char *regex1Mask = malloc(
-			(seq1.len + seq2.len) * sizeof(unsigned char));
-	unsigned char *regex2Mask = malloc(
-			(seq1.len + seq2.len) * sizeof(unsigned char));
+	unsigned char *regex1 = calloc( seq1.len + seq2.len, sizeof(unsigned char));
+	unsigned char *regex2 = calloc( seq1.len + seq2.len, sizeof(unsigned char));
+	unsigned char *regex1Mask = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
+	unsigned char *regex2Mask = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
 	// TODO: (fgy) handle errors on malloc operation
-	memset(regex1, 0x00, (seq1.len + seq2.len) * sizeof(unsigned char));
-	memset(regex2, 0x00, (seq1.len + seq2.len) * sizeof(unsigned char));
 	memset(regex1Mask, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
 	memset(regex2Mask, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
 	unsigned short int iReg1 = seq1.len + seq2.len - 1;
@@ -342,9 +328,12 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	i = seq1.len + seq2.len - 1;
 	while (i > 0) {
 		if ((regex1Mask[i] == 2) && (regex2Mask[i] == 2)) {
+		  break;
+		  /*
 			regex->regex[iReg] = 0xff;
 			regex->mask[iReg] = 2;
 			--iReg;
+		  */
 		} else if ((regex1Mask[i] == 1) || (regex2Mask[i] == 1)
 				|| (regex1[i] != regex2[i])) {
 			regex->regex[iReg] = 0xff;
@@ -363,19 +352,21 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	float nbStatic = 0.0f;
 	float cent = 100.0f;
 	BOOL inDyn = FALSE;
-	for (i = 0; i < regex->len; ++i) {
-		if (regex->mask[i] == 0) {
-			if (inDyn == TRUE) {
-				nbDynamic = nbDynamic + 1.0f;
-				inDyn = FALSE;
-			}
-			nbStatic = nbStatic + 1.0f;
-		} else if (regex->mask[i] == 1)
-			inDyn = TRUE;
+	for (i = (regex->len - 1); i >= 1; --i) {
+	  if (regex->mask[i] == 2) {
+	    break;
+	  } else if (regex->mask[i] == 0) {
+	    if (inDyn == TRUE) {
+	      nbDynamic = nbDynamic + 1.0f;
+	      inDyn = FALSE;
+	    }
+	    nbStatic = nbStatic + 1.0f;
+	  } else if (regex->mask[i] == 1)
+	    inDyn = TRUE;
 	}
 	if (inDyn == TRUE)
-		nbDynamic = nbDynamic + 1.0f;
-
+	  nbDynamic = nbDynamic + 1.0f;
+	
 	regex->score = 100.0 / (nbStatic + nbDynamic) * nbStatic;
 
 	// Room service

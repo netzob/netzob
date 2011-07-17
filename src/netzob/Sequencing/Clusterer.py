@@ -37,13 +37,26 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self, zob):
-        # create logger with the given configuration
+    def __init__(self, zob, groups, explodeGroups=False):
         self.zob = zob
+        self.groups= []
+        # Create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
+
+        if not explodeGroups:
+            self.groups= groups
+        else:
+            # Create a group for each message
+            self.groups= []
+            i = 0
+            for group in groups :
+                for m in group.getMessages():
+                    self.groups.append( MessageGroup.MessageGroup(str(i), [m]) )
+                    i += 1
+            self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
         
     #+---------------------------------------------- 
-    #| getMatrix :
+    #| retrieveMaxIJ :
     #|   given a list of groups, it computes the 
     #|   the possible two groups which can be merged
     #| @param groups : list of group to merge
@@ -51,25 +64,25 @@ class Clusterer(object):
     #|                   the groups to merge
     #|                    max score of the two groups
     #+---------------------------------------------- 
-    def getMatrix(self, groups):
+    def retrieveMaxIJ(self):
         self.log.debug("Computing the associated matrix")
         # Serialize the groups before feeding the C library
         serialGroups = ""
         format = ""
         typer = TypeIdentifier.TypeIdentifier()
 #        t1 = time.time()
-        for group in groups:
+        for group in self.groups:
             format += str(len(group.getMessages())) + "G"
             for m in group.getMessages():
                 format += str(len(m.getStringData())/2) + "M"
                 serialGroups += typer.toBinary( m.getStringData() )
                 
         # Execute the Clustering part in C :) (thx fgy)
-        (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(groups), format, serialGroups)
-#        print str(time.time() - t1) + " nbGroups: " + str(len(groups)) + " format: " + format
+        (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(self.groups), format, serialGroups)
+#        print str(time.time() - t1) + " nbGroups: " + str(len(self.groups)) + " format: " + format
         return (i_max, j_max, maxScore)
     
-    def reOrganizeGroups(self, groups):
+    def mergeGroups(self):
         # retrieves the following parameters from the configuration file
         configParser = ConfigurationParser.ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
@@ -81,58 +94,43 @@ class Clusterer(object):
         for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             # Create the score matrix for each group
-            (i_maximum, j_maximum, maximum) = self.getMatrix(groups)
+            (i_maximum, j_maximum, maximum) = self.retrieveMaxIJ()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :
-                self.merge(groups, i_maximum, j_maximum)        
+                self.mergeRowCol(i_maximum, j_maximum)        
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
 
         # Compute the regex/alignment of each group
         gobject.idle_add(self.resetProgressBar)
-        progressionStep = 1.0 / len(groups)
-        for g in groups :
+        progressionStep = 1.0 / len(self.groups)
+        for g in self.groups :
             g.buildRegexAndAlignment()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
+        gobject.idle_add(self.resetProgressBar)
 
     #+---------------------------------------------- 
-    #| reOrganize :
-    #|   Create a group for each message of each group,
-    #|   and do a clustering
-    #+----------------------------------------------        
-    def reOrganize(self, groups):
-        tmp_groups = []
-        tmp_groups.extend( groups )
-        del(groups[:]) # We clear the list before refilling it
-        i = 0
-        for group in tmp_groups :
-            for m in group.getMessages():
-                groups.append( MessageGroup.MessageGroup(str(i), [m]) )
-                i += 1
-        self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
-
-    #+---------------------------------------------- 
-    #| merge :
-    #|   Merge the groups i and j and append it to the "groups" structure
+    #| mergeRowCol :
+    #|   Merge the groups i and j in the "groups" structure
     #+----------------------------------------------    
-    def merge(self, groups, i_maximum, j_maximum):
+    def mergeRowCol(self, i_maximum, j_maximum):
         self.log.debug("Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum)))
         # Extract groups i and j
         if i_maximum > j_maximum:
-            group1 = groups.pop(i_maximum)
-            group2 = groups.pop(j_maximum)
+            group1 = self.groups.pop(i_maximum)
+            group2 = self.groups.pop(j_maximum)
         else:
-            group2 = groups.pop(j_maximum)
-            group1 = groups.pop(i_maximum)
+            group2 = self.groups.pop(j_maximum)
+            group1 = self.groups.pop(i_maximum)
 
         # Merge the groups i and j and append it to the "groups" structure
         messages = []
         messages.extend( group1.getMessages() )
         messages.extend( group2.getMessages() )
         group = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
-        groups.append(group)
+        self.groups.append(group)
 
     #+---------------------------------------------- 
     #| doProgressBarStep :
@@ -146,6 +144,12 @@ class Clusterer(object):
     #+----------------------------------------------
     def resetProgressBar(self):
         self.zob.progressBar.set_fraction(0)
+
+    #+---------------------------------------------- 
+    #| GETTER/SETTER :
+    #+----------------------------------------------
+    def getGroups(self):
+        return self.groups
         
 #+---------------------------------------------- 
 #| UNIT TESTS
