@@ -63,7 +63,7 @@ class TracesExtractor(object):
         
         # compute the progression step
         # 2 steps per file
-        progressionStep = 1.0 / len(files)        
+        progressionStep = 1.0 / len(files)
 
         # Parse each file
         tmp_groups = []
@@ -77,15 +77,13 @@ class TracesExtractor(object):
             group = MessageGroup.MessageGroup(file, tmpMessages)
             
             # Now we try to re-organize the newly created group
-            clusterer = Clusterer.Clusterer()
+            clusterer = Clusterer.Clusterer(self.zob)
             for g in clusterer.reOrganize([group]) :
                 tmp_groups.append(g)
             
-            gobject.idle_add(self.doProgressBarStep, progressionStep)
-            
         # Now that all the groups are reorganized separatly
         # we should consider merging them
-        clusterer = Clusterer.Clusterer()
+        clusterer = Clusterer.Clusterer(self.zob)
         for g in clusterer.reOrganizeGroups(tmp_groups) :
             groups.append(g)
 

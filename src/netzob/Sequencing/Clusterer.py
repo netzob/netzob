@@ -5,6 +5,7 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
+import gobject
 import time
 from numpy.numarray.numerictypes import Float
 from numpy.core.numeric import zeros
@@ -38,8 +39,9 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self):
+    def __init__(self, zob):
         # create logger with the given configuration
+        self.zob = zob
         self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
         
     #+---------------------------------------------- 
@@ -78,11 +80,12 @@ class Clusterer(object):
         
         self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
 
+        gobject.idle_add(self.resetProgressBar)
+        progressionStep = 1.0 / nbIteration
         for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             
             # Create the score matrix for each group
-#            matrix = self.getMatrix(groups)
             (i_maximum, j_maximum, maximum) = self.getMatrix(groups)
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :
@@ -90,9 +93,12 @@ class Clusterer(object):
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
+            gobject.idle_add(self.doProgressBarStep, progressionStep)
 
         # Compute the regex/alignment of each group
         typer = TypeIdentifier.TypeIdentifier()      
+        gobject.idle_add(self.resetProgressBar)
+        progressionStep = 1.0 / len(groups)
         for g in groups :
             serialMessages = ""
             format = ""
@@ -104,6 +110,7 @@ class Clusterer(object):
             (score, regex, mask) = libNeedleman.alignSequences(len(g.getMessages()), format, serialMessages)
             g.setScore( score )
             g.buildRegexAndAlignment( regex, mask )
+            gobject.idle_add(self.doProgressBarStep, progressionStep)
         return groups
     
     def reOrganize(self, _groups):
@@ -134,7 +141,19 @@ class Clusterer(object):
                 new_groups.append(groups[i])    
 
         return new_groups
-        
+
+    #+---------------------------------------------- 
+    #| doProgressBarStep :
+    #+----------------------------------------------    
+    def doProgressBarStep(self, step):
+        new_val = self.zob.progressBar.get_fraction() + step
+        self.zob.progressBar.set_fraction(new_val)
+
+    #+---------------------------------------------- 
+    #| resetProgressBar :
+    #+----------------------------------------------
+    def resetProgressBar(self):
+        self.zob.progressBar.set_fraction(0)
         
 #+---------------------------------------------- 
 #| UNIT TESTS
