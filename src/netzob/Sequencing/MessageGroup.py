@@ -69,6 +69,11 @@ class MessageGroup(object):
     #| in the C Needleman library
     #+----------------------------------------------
     def buildRegexAndAlignment(self):
+        if len(self.getMessages()) == 1:
+            self.regex = [self.getMessages()[0].getStringData()]
+            self.align = self.getMessages()[0].getStringData()
+            return
+
         # Serialize the messages before sending them to the C library
         typer = TypeIdentifier.TypeIdentifier()
         serialMessages = ""

@@ -59,7 +59,6 @@ class Clusterer(object):
     #| retrieveMaxIJ :
     #|   given a list of groups, it computes the 
     #|   the possible two groups which can be merged
-    #| @param groups : list of group to merge
     #| @return (i,j,max) (i,j) path in the matrix of 
     #|                   the groups to merge
     #|                    max score of the two groups
