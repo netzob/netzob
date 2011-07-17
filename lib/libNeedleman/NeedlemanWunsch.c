@@ -1,4 +1,4 @@
-// Compilation : gcc -fPIC -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
+// Compilation : gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
 
 #include "headers/NeedlemanWunsch.h"
 
