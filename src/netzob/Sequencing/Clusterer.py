@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # coding: utf8
 
-
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
@@ -30,7 +29,6 @@ import libNeedleman
 loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
 logging.config.fileConfig(loggingFilePath)
 
-
 #+---------------------------------------------- 
 #| Clusterer :
 #|     Reorganize a set of groups
@@ -55,12 +53,11 @@ class Clusterer(object):
     #+---------------------------------------------- 
     def getMatrix(self, groups):
         self.log.debug("Computing the associated matrix")
-
         # Serialize the groups before feeding the C library
         serialGroups = ""
         format = ""
         typer = TypeIdentifier.TypeIdentifier()
-        t1 = time.time()
+#        t1 = time.time()
         for group in groups:
             format += str(len(group.getMessages())) + "G"
             for m in group.getMessages():
@@ -77,70 +74,65 @@ class Clusterer(object):
         configParser = ConfigurationParser.ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
         min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
-        
         self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
 
         gobject.idle_add(self.resetProgressBar)
         progressionStep = 1.0 / nbIteration
         for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
-            
             # Create the score matrix for each group
             (i_maximum, j_maximum, maximum) = self.getMatrix(groups)
+            gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :
-                groups = self.merge(groups, i_maximum, j_maximum)        
+                self.merge(groups, i_maximum, j_maximum)        
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
-            gobject.idle_add(self.doProgressBarStep, progressionStep)
 
         # Compute the regex/alignment of each group
-        typer = TypeIdentifier.TypeIdentifier()      
         gobject.idle_add(self.resetProgressBar)
         progressionStep = 1.0 / len(groups)
         for g in groups :
-            serialMessages = ""
-            format = ""
-            for m in g.getMessages():
-                format += str(len(m.getStringData())/2) + "M"
-                serialMessages += typer.toBinary( m.getStringData() )
-
-            # Align sequences in C library
-            (score, regex, mask) = libNeedleman.alignSequences(len(g.getMessages()), format, serialMessages)
-            g.setScore( score )
-            g.buildRegexAndAlignment( regex, mask )
+            g.buildRegexAndAlignment()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
-        return groups
-    
-    def reOrganize(self, _groups):
-        messages = []
-        for group in _groups :
-            for msg in group.getMessages():
-                messages.append(msg)
-        self.log.debug("A number of {0} messages will be clustered.".format(str(len(messages))))
-        
-        # Create a group for each message
-        groups = []
-        for i in range(0, len(messages)) :
-            groups.append(MessageGroup.MessageGroup(str(i), [messages[i]]))
-        return self.reOrganizeGroups(groups)
-        
+
+    #+---------------------------------------------- 
+    #| reOrganize :
+    #|   Create a group for each message of each group,
+    #|   and do a clustering
+    #+----------------------------------------------        
+    def reOrganize(self, groups):
+        tmp_groups = []
+        tmp_groups.extend( groups )
+        del(groups[:]) # We clear the list before refilling it
+        i = 0
+        for group in tmp_groups :
+            for m in group.getMessages():
+                groups.append( MessageGroup.MessageGroup(str(i), [m]) )
+                i += 1
+        self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
+
+    #+---------------------------------------------- 
+    #| merge :
+    #|   Merge the groups i and j and append it to the "groups" structure
+    #+----------------------------------------------    
     def merge(self, groups, i_maximum, j_maximum):
         self.log.debug("Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum)))
-        new_groups = []
-        found = False
-        for i in range(0, len(groups)) :
-            if (found == False and (i == i_maximum or i == j_maximum)) :
-                found = True
-                group1 = groups[i_maximum]
-                group2 = groups[j_maximum]
-                group3 = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), group1.getMessages() + group2.getMessages())
-                new_groups.append(group3)
-            elif (i != i_maximum and i != j_maximum):
-                new_groups.append(groups[i])    
+        # Extract groups i and j
+        if i_maximum > j_maximum:
+            group1 = groups.pop(i_maximum)
+            group2 = groups.pop(j_maximum)
+        else:
+            group2 = groups.pop(j_maximum)
+            group1 = groups.pop(i_maximum)
 
-        return new_groups
+        # Merge the groups i and j and append it to the "groups" structure
+        messages = []
+        messages.extend( group1.getMessages() )
+        messages.extend( group2.getMessages() )
+        group = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
+        groups.append(group)
 
     #+---------------------------------------------- 
     #| doProgressBarStep :

@@ -8,8 +8,9 @@ import gtk
 import os
 import gobject
 import pygtk
-import logging
 pygtk.require('2.0')
+import logging
+import time
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -49,7 +50,7 @@ class TracesExtractor(object):
     #+----------------------------------------------   
     def parse(self):
         self.log.info("[INFO] Extract traces from directory {0}".format(self.path))
-        groups = []
+        t1 = time.time()
 
         # Retrieves all the files to parse
         files = []
@@ -61,35 +62,36 @@ class TracesExtractor(object):
             else :
                 files.append(file)
         
-        # compute the progression step
+        # Compute the progression step
         # 2 steps per file
         progressionStep = 1.0 / len(files)
 
         # Parse each file
-        tmp_groups = []
+        groups = []
         for file in files :
             filePath = self.path + "/" + file
             traceParser = TraceParser.TraceParser(filePath)
             # Append retrieved message to the final list
-            tmpMessages = []
             tmpMessages = traceParser.parse()
             # Save the extracted messages in a dedicated group
-            group = MessageGroup.MessageGroup(file, tmpMessages)
-            
+            group = MessageGroup.MessageGroup(file, tmpMessages)            
             # Now we try to re-organize the newly created group
             clusterer = Clusterer.Clusterer(self.zob)
-            for g in clusterer.reOrganize([group]) :
-                tmp_groups.append(g)
-            
+            tmp_groups = [group]
+            clusterer.reOrganize( tmp_groups )
+            clusterer.reOrganizeGroups( tmp_groups )
+            groups.extend( tmp_groups )
+                
         # Now that all the groups are reorganized separatly
         # we should consider merging them
         clusterer = Clusterer.Clusterer(self.zob)
-        for g in clusterer.reOrganizeGroups(tmp_groups) :
-            groups.append(g)
+        clusterer.reOrganizeGroups( groups )
 
         #Once files parsed, reset the progressBar
         gobject.idle_add(self.resetProgressBar)
         
+        self.log.debug("Time of parsing : " + str(time.time() - t1))
+
         for group in groups :
             self.log.debug("Group {0}".format(group.getName()))
             for message in group.getMessages() :

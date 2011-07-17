@@ -12,15 +12,18 @@ import logging
 #| Local Imports
 #+----------------------------------------------
 import NeedlemanWunsch
-from ..Common import ConfigurationParser
+from ..Common import ConfigurationParser, TypeIdentifier
 
+#+---------------------------------------------- 
+#| C Imports
+#+----------------------------------------------
+import libNeedleman
 
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
 loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
 logging.config.fileConfig(loggingFilePath)
-
 
 #+---------------------------------------------- 
 #| MessageGroup :
@@ -65,8 +68,20 @@ class MessageGroup(object):
     #| self.alignment from the binary strings computed 
     #| in the C Needleman library
     #+----------------------------------------------
-    def buildRegexAndAlignment(self, aRegex, aMask):
-        # Build alignment
+    def buildRegexAndAlignment(self):
+        # Serialize the messages before sending them to the C library
+        typer = TypeIdentifier.TypeIdentifier()
+        serialMessages = ""
+        format = ""
+        for m in self.getMessages():
+            format += str(len(m.getStringData())/2) + "M"
+            serialMessages += typer.toBinary( m.getStringData() )
+
+        # Align sequences in C library
+        (score, aRegex, aMask) = libNeedleman.alignSequences(len(self.getMessages()), format, serialMessages)
+        self.setScore( score )
+
+        # Build alignment C library result
         align = ""
         for i in range(len(aMask)):
             if aMask[i] != '\x02':
@@ -74,7 +89,6 @@ class MessageGroup(object):
                     align += "--"
                 else:
                     align += aRegex[i].encode("hex")
-
         self.setAlignment( align )
 
         # Build regex from alignment
@@ -83,17 +97,14 @@ class MessageGroup(object):
         regex = []
         found = False
         for i in range(0, len(align)) :
-            if (align[i] == "-"):
-                
+            if (align[i] == "-"):                
                 if (found == False) :
                     start = i
-                
                 found = True
             else :
                 if (found == True) :
                     found = False
-                    nbTiret = i - start
-                                   
+                    nbTiret = i - start                                   
                     regex.append( "(.{," + str(nbTiret) + "})")
                     regex.append( align[i] )
                 else :
@@ -101,11 +112,9 @@ class MessageGroup(object):
                         regex.append( align[i] )
                     else:
                         regex[-1] += align[i]
-        
         if (found == True) :
             nbTiret = i - start
             regex.append( "(.{," + str(nbTiret) + "})" )
-
         self.setRegex( regex )
     
     #+---------------------------------------------- 
