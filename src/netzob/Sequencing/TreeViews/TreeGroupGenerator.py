@@ -54,21 +54,19 @@ class TreeGroupGenerator():
         self.treeview  = gtk.TreeView(self.treestore)
 
         # messages list
-        self.scroll_lib = gtk.ScrolledWindow()
-        self.scroll_lib.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.scroll_lib.show()
-        self.scroll_lib.set_size_request(300, 500)
-        self.scroll_lib.add(self.treeview)        
-        
-        
+        self.scroll = gtk.ScrolledWindow()
+        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll.show()
+        self.scroll.set_size_request(300, 500)
+        self.scroll.add(self.treeview)        
 
         lvcolumn = gtk.TreeViewColumn('Groups')
         lvcolumn.set_sort_column_id(1)
-        cell1 = gtk.CellRendererText()
-        lvcolumn.pack_start(cell1, True)
-        cell1.set_property('background-set' , True)
-        cell1.set_property('foreground-set' , True)            
-        lvcolumn.set_attributes(cell1, text=1, foreground=3, background=4)
+        cell = gtk.CellRendererText()
+        lvcolumn.pack_start(cell, True)
+        cell.set_property('background-set' , True)
+        cell.set_property('foreground-set' , True)            
+        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
     
@@ -148,7 +146,7 @@ class TreeGroupGenerator():
     def getTreeview(self):
         return self.treeview
     def getScrollLib(self):
-        return self.scroll_lib
+        return self.scroll
     def getGroups(self):
         return self.groups
 

@@ -45,7 +45,6 @@ class TreeMessageGenerator():
         self.msgByCol = {}
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeMessageGenerator.py')
-        
    
     #+---------------------------------------------- 
     #| initialization :
@@ -58,20 +57,18 @@ class TreeMessageGenerator():
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
-        self.cell = gtk.CellRendererText()
-        self.column = gtk.TreeViewColumn('Messages')
-        self.column.pack_start(self.cell, True)
-        self.column.set_attributes(self.cell, text=0)
-        self.column.set_attributes(self.cell, markup=0)
-        self.treeview.append_column(self.column)
-        
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Messages')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        column.set_attributes(cell, markup=0)
+        self.treeview.append_column(column)
         self.treeview.show()
-        
-        self.scroll_lib = gtk.ScrolledWindow()
-        self.scroll_lib.set_size_request(1000, 500)
-        self.scroll_lib.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
-        self.scroll_lib.add(self.treeview)
-        self.scroll_lib.show()
+        self.scroll = gtk.ScrolledWindow()
+        self.scroll.set_size_request(1000, 500)
+        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
+        self.scroll.add(self.treeview)
+        self.scroll.show()
         
     #+---------------------------------------------- 
     #| error :
@@ -80,8 +77,6 @@ class TreeMessageGenerator():
     def error(self):
         self.log.warning("The treeview for the messages is in error mode")      
         self.treestore.clear()
-        
-    
     
     #+---------------------------------------------- 
     #| default :
@@ -205,13 +200,10 @@ class TreeMessageGenerator():
 
         for i in range(4, 4 + len(self.group.getRegex()) ) :
             # Column Messages
-            self.lvcolumnDetail2 = gtk.TreeViewColumn('Col'+str(i-4))
-            self.lvcolumnDetail2.pack_start(self.textCellRenderer, True)
-            self.lvcolumnDetail2.set_attributes(self.textCellRenderer, markup=i, background=1, weight=2, editable=3)
-            self.treeview.append_column(self.lvcolumnDetail2)
-            
-        
-            
+            lvcolumn = gtk.TreeViewColumn('Col'+str(i-4))
+            lvcolumn.pack_start(self.textCellRenderer, True)
+            lvcolumn.set_attributes(self.textCellRenderer, markup=i, background=1, weight=2, editable=3)
+            self.treeview.append_column(lvcolumn)
 
     def getRepresentation(self, raw, colId) :
         type = self.getSelectedType(colId)
@@ -249,6 +241,9 @@ class TreeMessageGenerator():
     def getAllDiscoveredTypes(self, iCol):
         typeIdentifier = TypeIdentifier.TypeIdentifier()        
         return typeIdentifier.getTypes(self.msgByCol[iCol])
+
+    def getMessagesFromCol(self, iCol):
+        return self.msgByCol[iCol]
     
     def setTypeForCol(self, iCol, aType):
         self.selectedType[iCol] = aType
@@ -264,7 +259,7 @@ class TreeMessageGenerator():
         return self.treeview
 
     def getScrollLib(self):
-        return self.scroll_lib
+        return self.scroll
 
     def getGroup(self):
         return self.group

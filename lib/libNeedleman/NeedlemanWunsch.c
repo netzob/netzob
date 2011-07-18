@@ -77,7 +77,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	omp_set_num_threads(8);
 	omp_init_lock(&my_lock);
 
-#pragma omp parallel for //shared(t_groups, nbGroups, matrix)
+#pragma omp parallel for shared(t_groups, nbGroups, matrix)
 	for (i = 0; i < nbGroups; i++) {
 	  int p = 0;
 	  for (p = 0; p < nbGroups; p++) {

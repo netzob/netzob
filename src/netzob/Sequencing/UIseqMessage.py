@@ -183,6 +183,12 @@ class UIseqMessage:
             item.show()
             menu.append(item)
 
+            # Add entry to split the column
+            item = gtk.MenuItem("Split column")
+            item.show()
+            item.connect("activate", self.rightClickToSplitColumn, iCol)
+            menu.append(item)
+
             menu.popup(None, None, None, event.button, event.time)
 
     #+---------------------------------------------- 
@@ -216,7 +222,6 @@ class UIseqMessage:
             elt2 = newRegex.pop(iCol - 1)
             eltResult = self.concatRegexElts(elt1, elt2)
             newRegex.insert(iCol - 1, eltResult)
-            print newRegex
         else:
             elt1 = newRegex.pop(iCol)
             elt2 = newRegex.pop(iCol)
@@ -247,6 +252,119 @@ class UIseqMessage:
 
         if elt1[0] != "(" and elt2[0] != "(": # Static + Static fields (should not happen...)
             return elt1 + elt2
+
+    #+---------------------------------------------- 
+    #|  rightClickToSplitColumn:
+    #|   Callback to split a column
+    #+----------------------------------------------
+    def rightClickToSplitColumn(self, event, iCol):
+        dialog = gtk.Dialog(title="Split column " + str(iCol), flags=0, buttons=None)
+        textview = gtk.TextView()
+        textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
+        textview.get_buffer().create_tag("greenTag", weight=pango.WEIGHT_BOLD, foreground="#006400", family="Courier")
+        self.positionToSplit = 0
+
+        # Left arrow
+        arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
+        arrow.show()
+        but = gtk.Button()
+        but.add(arrow)
+        but.connect("clicked", self.adjustSplitColumn, textview, "left", iCol)
+        but.show()
+        dialog.action_area.pack_start(but, True, True, 0)
+
+        # Right arrow
+        arrow = gtk.Arrow(gtk.ARROW_RIGHT, gtk.SHADOW_OUT)
+        arrow.show()
+        but = gtk.Button()
+        but.add(arrow)
+        but.connect("clicked", self.adjustSplitColumn, textview, "right", iCol)
+        but.show()
+        dialog.action_area.pack_start(but, True, True, 0)
+
+        # Split button
+        but = gtk.Button(label="Split column")
+        but.show()
+        but.connect("clicked", self.doSplitColumn, textview, iCol, dialog)
+        dialog.action_area.pack_start(but, True, True, 0)
+
+        # Text view containing selected column messages
+        frame = gtk.Frame()
+        frame.set_label("Content of the column to split")
+        frame.show()
+        textview.set_editable(True)
+        textview.set_size_request(400, 300)
+        textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_start_iter(), "\n".join(self.treeMessageGenerator.getMessagesFromCol(iCol)), "greenTag" )
+        textview.show()
+        buff = textview.get_buffer()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(textview)
+        frame.add(scroll)
+        dialog.vbox.pack_start(frame, True, True, 0)
+        dialog.show()
+
+    def doSplitColumn(self, widget, textview, iCol, dialog):
+        # Find the static/dynamic cols
+        messages = self.treeMessageGenerator.getMessagesFromCol(iCol)
+        ref1 = messages[0][:self.positionToSplit]
+        ref2 = messages[0][self.positionToSplit:]
+        isStatic1 = True
+        isStatic2 = True
+        lenDyn1 = 0
+        lenDyn2 = 0
+        for m in messages[1:]:
+            if m[:self.positionToSplit] != ref1:
+                isStatic1 = False
+                if len(m[:self.positionToSplit]) > lenDyn1:
+                    lenDyn1 = len(m[:self.positionToSplit])
+            if m[self.positionToSplit:] != ref2:
+                isStatic2 = False
+                if len(m[self.positionToSplit:]) > lenDyn2:
+                    lenDyn2 = len(m[self.positionToSplit:])
+
+        # Build the new sub-regex
+        if isStatic1:
+            regex1 = ref1
+        else:
+            regex1 = "(.{," + str(lenDyn1) + "})"
+        if isStatic2:
+            regex2 = ref2
+        else:
+            regex2 = "(.{," + str(lenDyn2) + "})"
+
+        # Build the new regex and apply it
+        newRegex = self.treeMessageGenerator.getGroup().getRegex()
+        newRegex.pop(iCol)
+        newRegex.insert(iCol, regex1)
+        newRegex.insert(iCol + 1, regex2)
+        self.treeMessageGenerator.getGroup().setRegex( newRegex )
+        self.treeMessageGenerator.updateDefault()            
+        dialog.destroy()
+
+    def adjustSplitColumn(self, widget, textview, direction, iCol):
+        messages = self.treeMessageGenerator.getMessagesFromCol(iCol)
+
+        # Bounds checking
+        if direction == "left":
+            self.positionToSplit -= 2
+            if self.positionToSplit < 0:
+                self.positionToSplit = 0
+        else:
+            self.positionToSplit += 2
+            maxLen = 0
+            for m in messages: # Find maxLen
+                if len(m) > maxLen:
+                    maxLen = len(m)
+            if self.positionToSplit > maxLen:
+                self.positionToSplit = maxLen
+
+        # Colorize text according to position
+        textview.get_buffer().set_text("")
+        for m in messages:
+            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), m[:self.positionToSplit] + "  ", "redTag" )
+            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), m[self.positionToSplit:] + "\n", "greenTag" )
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :
