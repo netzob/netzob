@@ -1,6 +1,7 @@
 // Compilation : gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
 
 #include "headers/NeedlemanWunsch.h"
+#include <omp.h>
 
 static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	char *serialGroups;
@@ -72,7 +73,9 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	    }
 	}
 
-#pragma omp parallel for shared(matrix, t_groups)
+	omp_set_num_threads(8);
+
+#pragma omp parallel for //shared(t_groups, nbGroups, matrix)
 	for (i = 0; i < nbGroups; i++) {
 	  int p = 0;
 	  for (p = 0; p < nbGroups; p++) {
@@ -126,6 +129,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 			}
 		}
 	}
+
 	for (i = 0; i < nbGroups; ++i) {
 		for (j = 0; j < nbGroups; ++j) {
 			if (i != j && ((maxScore < matrix[i][j]) || (maxScore == -1))) {

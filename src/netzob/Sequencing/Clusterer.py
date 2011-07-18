@@ -75,7 +75,7 @@ class Clusterer(object):
             for m in group.getMessages():
                 format += str(len(m.getStringData())/2) + "M"
                 serialGroups += typer.toBinary( m.getStringData() )
-                
+
         # Execute the Clustering part in C :) (thx fgy)
         (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(self.groups), format, serialGroups)
 #        print str(time.time() - t1) + " nbGroups: " + str(len(self.groups)) + " format: " + format
