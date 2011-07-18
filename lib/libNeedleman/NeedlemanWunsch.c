@@ -73,7 +73,9 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	    }
 	}
 
+	omp_lock_t my_lock;
 	omp_set_num_threads(8);
+	omp_init_lock(&my_lock);
 
 #pragma omp parallel for //shared(t_groups, nbGroups, matrix)
 	for (i = 0; i < nbGroups; i++) {
@@ -121,7 +123,9 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 					regex1.mask = regex.mask;
 					regex1.regex = regex.regex;
 				}
+				omp_set_lock(&my_lock);
 				matrix[i][p] = regex.score;
+				omp_unset_lock(&my_lock);
 
 				free( regex.regex );
 				free( regex.mask );				
