@@ -88,12 +88,14 @@ class MessageGroup(object):
 
         # Build alignment C library result
         align = ""
-        for i in range(len(aMask)):
-            if aMask[i] != '\x02':
-                if aMask[i] == '\x01':
+        i = 0
+        for c in aMask:
+            if c != '\x02':
+                if c == '\x01':
                     align += "--"
                 else:
-                    align += aRegex[i].encode("hex")
+                    align += aRegex[i:i+1].encode("hex")
+            i += 1
         self.setAlignment( align )
 
         # Build regex from alignment
@@ -101,7 +103,7 @@ class MessageGroup(object):
         start = 0
         regex = []
         found = False
-        for i in range(0, len(align)) :
+        for i in range(len(align)) :
             if (align[i] == "-"):                
                 if (found == False) :
                     start = i

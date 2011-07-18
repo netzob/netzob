@@ -107,6 +107,9 @@ class TreeMessageGenerator():
 
         self.msgByCol = {}
 
+        for m in self.group.getMessages():
+            print m.getStringData()
+
         # Apply the content matrix to the treestore
         for i in range(0, len(self.group.getMessages())) :
             message = self.group.getMessages()[i]
@@ -119,12 +122,13 @@ class TreeMessageGenerator():
             line.append(False)
 
             # We apply the regex to the message
-            data = message.getStringData()                    
+            data = message.getStringData()
             m = compiledRegex.match(data)
 
             # If the regex doesn't match the message, we activate the error mode
             if (m == None) :
                 self.log.warning("The regex of the group doesn't match the message : " + data)
+                self.log.warning("The regex of the group is : " + "".join(self.group.getRegex()))
                 self.error()
                 return 
             
