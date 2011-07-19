@@ -294,7 +294,9 @@ class UIseqMessage:
         frame.show()
         textview.set_editable(True)
         textview.set_size_request(400, 300)
-        textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_start_iter(), "\n".join(self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)), "greenTag" )
+        messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
+        for m in messages:
+            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m, iCol) + "\n", "greenTag" )
         textview.show()
         buff = textview.get_buffer()
         scroll = gtk.ScrolledWindow()
@@ -363,8 +365,8 @@ class UIseqMessage:
         # Colorize text according to position
         textview.get_buffer().set_text("")
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), m[:self.positionToSplit] + "  ", "redTag" )
-            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), m[self.positionToSplit:] + "\n", "greenTag" )
+            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[:self.positionToSplit], iCol) + "  ", "redTag" )
+            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[self.positionToSplit:], iCol) + "\n", "greenTag" )
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :
