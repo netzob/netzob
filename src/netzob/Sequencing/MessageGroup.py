@@ -56,6 +56,8 @@ class MessageGroup(object):
         self.score = 0
         self.regex = []
         self.alignment = ""
+        self.selectedType = []
+        self.msgByCol = {}
 
     def __repr__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
@@ -97,8 +99,6 @@ class MessageGroup(object):
                     align += aRegex[i:i+1].encode("hex")
             i += 1
         self.setAlignment( align )
-
-        print align
 
         # Build regex from alignment
         i = 0
@@ -205,6 +205,52 @@ class MessageGroup(object):
         result += "\n</dictionnary>\n"
         
         return result
+
+
+    def setTypeForCol(self, iCol, aType):
+        self.selectedType[iCol] = aType
+
+    def getSelectedType(self, colId):
+        if colId>=0 and colId<len(self.selectedType) :
+            return self.selectedType[colId]
+        else :
+            self.log.warning("The type for the column "+str(colId)+" is not defined ! ")
+            return "binary"
+
+    def getAllDiscoveredTypes(self, iCol):
+        typeIdentifier = TypeIdentifier.TypeIdentifier()        
+        return typeIdentifier.getTypes(self.msgByCol[iCol])
+
+    def getMessagesFromCol(self, iCol):
+        return self.msgByCol[iCol]
+
+    def getRepresentation(self, raw, colId) :
+        type = self.getSelectedType(colId)
+        return self.encode(raw, type)
+    
+    def encode(self, raw, type):
+        if type == "ascii" :
+            typer = TypeIdentifier.TypeIdentifier()
+            return typer.toASCII(raw)
+        elif type == "alphanum" :
+            typer = TypeIdentifier.TypeIdentifier()
+            return typer.toAlphanum(raw)
+        elif type == "num" :
+            typer = TypeIdentifier.TypeIdentifier()
+            return typer.toNum(raw)
+        elif type == "alpha" :
+            typer = TypeIdentifier.TypeIdentifier()
+            return typer.toAlpha(raw)
+        elif type == "base64dec" :
+            typer = TypeIdentifier.TypeIdentifier()
+            return typer.toBase64Decoded(raw)
+        elif type == "base64enc" :
+            typer = TypeIdentifier.TypeIdentifier()
+            return typer.toBase64Encoded(raw)
+        else :
+            return raw
+      
+
     
     #+---------------------------------------------- 
     #| GETTERS : 

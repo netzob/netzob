@@ -17,7 +17,7 @@ typedef enum {
 
 typedef struct {
 	unsigned short int len; // length of the message
-	char *message; // a message
+	unsigned char *message; // a message
 } t_message;
 
 typedef struct {
@@ -27,8 +27,8 @@ typedef struct {
 
 typedef struct {
 	unsigned short int len; // size of the regex
-	char *regex; // the actual regex
-	char *mask; // its mask
+	unsigned char *regex; // the actual regex
+	unsigned char *mask; // its mask
 	float score;
 } t_regex;
 
@@ -38,6 +38,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args);
 void initlibNeedleman();
 void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex);
 int hexdump(unsigned char *buf, int dlen);
+void dumpRegex(t_regex regex);
 
 /**
  * Bind Python function names to our C functions

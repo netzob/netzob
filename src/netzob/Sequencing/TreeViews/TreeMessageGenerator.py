@@ -41,8 +41,6 @@ class TreeMessageGenerator():
     def __init__(self, vbox):
         self.vbox = vbox
         self.content = None
-        self.selectedType = []
-        self.msgByCol = {}
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeMessageGenerator.py')
    
@@ -95,7 +93,7 @@ class TreeMessageGenerator():
         # configuration of the representation format
         # default = binary
         for i in range(0, len(self.group.getRegex())) :
-            self.selectedType.append("binary")
+            self.group.selectedType.append("binary")
         
         # Create a TreeStore with N cols, with N := len(self.group.getRegex())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
@@ -105,7 +103,7 @@ class TreeMessageGenerator():
 
         compiledRegex = re.compile("".join( self.group.getRegex() ))
 
-        self.msgByCol = {}
+        self.group.msgByCol = {}
 
         # Apply the content matrix to the treestore
         for i in range(0, len(self.group.getMessages())) :
@@ -133,19 +131,19 @@ class TreeMessageGenerator():
             dynamicCol = 1
             for regexElt in self.group.getRegex():
                 # (init) Aggregate the cells content to a structure dedicacted to identify the column type
-                if not iCol in self.msgByCol:
-                    self.msgByCol[iCol] = []
+                if not iCol in self.group.msgByCol:
+                    self.group.msgByCol[iCol] = []
 
                 # Append styled data to the treestore
                 if regexElt.find("(") != -1: # Means this column is not static
                     start = m.start(dynamicCol)
                     end = m.end(dynamicCol)
-                    line.append('<span foreground="blue" font_family="monospace">' + self.getRepresentation( data[start:end], iCol ) + '</span>')
-                    self.msgByCol[iCol].append( data[start:end] )
+                    line.append('<span foreground="blue" font_family="monospace">' + self.group.getRepresentation( data[start:end], iCol ) + '</span>')
+                    self.group.msgByCol[iCol].append( data[start:end] )
                     dynamicCol += 1
                 else:
-                    line.append('<span font_family="monospace">' + self.getRepresentation( regexElt, iCol ) + '</span>')
-                    self.msgByCol[iCol].append( regexElt )
+                    line.append('<span font_family="monospace">' + self.group.getRepresentation( regexElt, iCol ) + '</span>')
+                    self.group.msgByCol[iCol].append( regexElt )
 
                 iCol = iCol + 1
             self.treestore.append(None, line)
@@ -159,7 +157,7 @@ class TreeMessageGenerator():
 
         # Get the possible types of each column
         for iCol in range( len(self.group.getRegex()) ):
-            header_line.append(", ".join(self.getAllDiscoveredTypes(iCol)))
+            header_line.append(", ".join(self.group.getAllDiscoveredTypes(iCol)))
         self.treestore.prepend(None, header_line)
 
         # Creates the header line for the regex
@@ -183,7 +181,7 @@ class TreeMessageGenerator():
                 if elt[0] == ",":
                     resRegex += ".{" + elt + "}"
                 else:
-                    resRegex += self.getRepresentation( elt, iCol )
+                    resRegex += self.group.getRepresentation( elt, iCol )
             regex_row.append( resRegex )
         self.treestore.prepend(None, regex_row)
                  
@@ -206,49 +204,6 @@ class TreeMessageGenerator():
             lvcolumn.set_attributes(self.textCellRenderer, markup=i, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
 
-    def getRepresentation(self, raw, colId) :
-        type = self.getSelectedType(colId)
-        return self.encode(raw, type)
-    
-    def getSelectedType(self, colId):
-        if colId>=0 and colId<len(self.selectedType) :
-            return self.selectedType[colId]
-        else :
-            self.log.warning("The type for the column "+str(colId)+" is not defined ! ")
-            return "binary"
-    
-    def encode(self, raw, type):
-        if type == "ascii" :
-            typer = TypeIdentifier.TypeIdentifier()
-            return typer.toASCII(raw)
-        elif type == "alphanum" :
-            typer = TypeIdentifier.TypeIdentifier()
-            return typer.toAlphanum(raw)
-        elif type == "num" :
-            typer = TypeIdentifier.TypeIdentifier()
-            return typer.toNum(raw)
-        elif type == "alpha" :
-            typer = TypeIdentifier.TypeIdentifier()
-            return typer.toAlpha(raw)
-        elif type == "base64dec" :
-            typer = TypeIdentifier.TypeIdentifier()
-            return typer.toBase64Decoded(raw)
-        elif type == "base64enc" :
-            typer = TypeIdentifier.TypeIdentifier()
-            return typer.toBase64Encoded(raw)
-        else :
-            return raw
-
-    def getAllDiscoveredTypes(self, iCol):
-        typeIdentifier = TypeIdentifier.TypeIdentifier()        
-        return typeIdentifier.getTypes(self.msgByCol[iCol])
-
-    def getMessagesFromCol(self, iCol):
-        return self.msgByCol[iCol]
-    
-    def setTypeForCol(self, iCol, aType):
-        self.selectedType[iCol] = aType
-        
     def updateDefault(self):
         self.default(self.group)
     

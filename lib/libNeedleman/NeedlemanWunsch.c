@@ -99,14 +99,14 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 				regex1.len = p_group.messages[0].len;
 				regex1.regex = p_group.messages[0].message;
 				regex1.mask = malloc(p_group.messages[0].len * sizeof(char));
-				memset(regex1.mask, 2, p_group.messages[0].len);
+				memset(regex1.mask, 0, p_group.messages[0].len);
 
 				for (m = 1; m < p_group.len; ++m) {
 					regex2.len = p_group.messages[m].len;
 					regex2.regex = p_group.messages[m].message;
 					regex2.mask = malloc(
 							p_group.messages[m].len * sizeof(char));
-					memset(regex2.mask, 2, p_group.messages[m].len);
+					memset(regex2.mask, 0, p_group.messages[m].len);
 
 					alignTwoSequences(regex1, regex2, &regex);
 
@@ -195,7 +195,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	regex1.len = p_group.messages[0].len;
 	regex1.regex = p_group.messages[0].message;
 	regex1.mask = malloc(p_group.messages[0].len * sizeof(char));
-	memset(regex1.mask, 2, p_group.messages[0].len);
+	memset(regex1.mask, 0, p_group.messages[0].len);
 
 	// Only usefull in case of nbMessages == 1
 	regex.len = regex1.len;
@@ -207,7 +207,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	  regex2.len = p_group.messages[k].len;
 	  regex2.regex = p_group.messages[k].message;
 	  regex2.mask = malloc(p_group.messages[k].len * sizeof(char));
-	  memset(regex2.mask, 2, p_group.messages[k].len);
+	  memset(regex2.mask, 0, p_group.messages[k].len);
 	    
 	  alignTwoSequences(regex1, regex2, &regex);
 	  
@@ -383,6 +383,13 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	memcpy(regex->regex, regexTmp + i, regex->len);
 	memcpy(regex->mask, regexMaskTmp + i, regex->len);
 
+	/*	
+	dumpRegex(seq1);
+	dumpRegex(seq2);
+	dumpRegex(*regex);
+	printf("\n");
+	*/
+
 	// Room service
 	for (i = 0; i < (seq1.len + 1); i++) {
 	  free( matrix[i] );
@@ -423,3 +430,16 @@ int hexdump(unsigned char *buf, int dlen) {
 	printf("\t\"%s\"\n", c);
 }
 
+void dumpRegex(t_regex regex) {
+  int i;
+  printf("%d ", regex.len);
+  for(i = 0; i < regex.len; i++) {
+    if(regex.mask[i] == 0)
+      printf("%02x", (unsigned char) regex.regex[i]);
+    else if(regex.mask[i] == 2)
+      printf("##");
+    else
+      printf("--");
+  }
+  printf("\n");
+}

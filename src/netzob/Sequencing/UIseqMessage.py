@@ -156,7 +156,7 @@ class UIseqMessage:
 
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific column
-            typesList = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
+            typesList = self.treeMessageGenerator.getGroup().getAllDiscoveredTypes(iCol)
             typeMenu = gtk.Menu()
             for aType in typesList:
                 item = gtk.MenuItem("Render in : " + str(aType))
@@ -197,7 +197,7 @@ class UIseqMessage:
     #|   by doing a right click
     #+----------------------------------------------
     def rightClickToChangeType(self, event, iCol, aType):
-        self.treeMessageGenerator.setTypeForCol(iCol, aType)
+        self.treeMessageGenerator.getGroup().setTypeForCol(iCol, aType)
         self.treeMessageGenerator.updateDefault()
 
     #+---------------------------------------------- 
@@ -294,7 +294,7 @@ class UIseqMessage:
         frame.show()
         textview.set_editable(True)
         textview.set_size_request(400, 300)
-        textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_start_iter(), "\n".join(self.treeMessageGenerator.getMessagesFromCol(iCol)), "greenTag" )
+        textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_start_iter(), "\n".join(self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)), "greenTag" )
         textview.show()
         buff = textview.get_buffer()
         scroll = gtk.ScrolledWindow()
@@ -307,7 +307,7 @@ class UIseqMessage:
 
     def doSplitColumn(self, widget, textview, iCol, dialog):
         # Find the static/dynamic cols
-        messages = self.treeMessageGenerator.getMessagesFromCol(iCol)
+        messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
         ref1 = messages[0][:self.positionToSplit]
         ref2 = messages[0][self.positionToSplit:]
         isStatic1 = True
@@ -344,7 +344,7 @@ class UIseqMessage:
         dialog.destroy()
 
     def adjustSplitColumn(self, widget, textview, direction, iCol):
-        messages = self.treeMessageGenerator.getMessagesFromCol(iCol)
+        messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
 
         # Bounds checking
         if direction == "left":
@@ -380,9 +380,9 @@ class UIseqMessage:
             iCol += 1
 
         # Find the next possible type for this column
-        possibleTypes = self.treeMessageGenerator.getAllDiscoveredTypes(iCol)
+        possibleTypes = self.treeMessageGenerator.getGroup().getAllDiscoveredTypes(iCol)
         i = 0
-        chosedType = self.treeMessageGenerator.getSelectedType(iCol)
+        chosedType = self.treeMessageGenerator.getGroup().getSelectedType(iCol)
         for aType in possibleTypes:
             if aType == chosedType:
                 chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
@@ -390,7 +390,7 @@ class UIseqMessage:
             i += 1
 
         # Apply the new chosed type for this column
-        self.treeMessageGenerator.setTypeForCol(iCol, chosedType)
+        self.treeMessageGenerator.getGroup().setTypeForCol(iCol, chosedType)
         self.treeMessageGenerator.updateDefault()
         
     #+---------------------------------------------- 
