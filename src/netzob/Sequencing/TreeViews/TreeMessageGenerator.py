@@ -147,7 +147,7 @@ class TreeMessageGenerator():
 
                 iCol = iCol + 1
             self.treestore.append(None, line)
-        
+      
         # Creates the header (a line with the type displayed)
         header_line = []
         header_line.append("HEADER TYPE")
@@ -184,10 +184,18 @@ class TreeMessageGenerator():
                     resRegex += self.group.getRepresentation( elt, iCol )
             regex_row.append( resRegex )
         self.treestore.prepend(None, regex_row)
-                 
-        # Updates the treeview with the newly created treestore
-        self.treeview.set_model(self.treestore)
-        self.treeview.set_reorderable(True)
+
+        # Creates the header for naming the column
+        name_line = []
+        name_line.append("HEADER TYPE")
+        name_line.append("#ababab")
+        name_line.append(pango.WEIGHT_BOLD)
+        name_line.append(True)        
+
+        # Get the possible types of each column
+        for iCol in range( len(self.group.getRegex()) ):
+            name_line.append("Name")
+        self.treestore.prepend(None, name_line)
 
         # Remove all the columns of the current treeview
         for col in self.treeview.get_columns() :
@@ -203,6 +211,11 @@ class TreeMessageGenerator():
             lvcolumn.pack_start(self.textCellRenderer, True)
             lvcolumn.set_attributes(self.textCellRenderer, markup=i, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
+
+                 
+        # Updates the treeview with the newly created treestore
+        self.treeview.set_model(self.treestore)
+        self.treeview.set_reorderable(True)
 
     def updateDefault(self):
         self.default(self.group)
