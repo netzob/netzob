@@ -84,7 +84,7 @@ class TreeMessageGenerator():
     #+---------------------------------------------- 
     def default(self, group):
         self.group = group
-        self.log.debug("Updating the treestore of the messages in default mode with the messages from the group "+self.group.getName())        
+        self.log.debug("Updating the treestore of the messages in default mode with the messages from the group "+self.group.getName())
         self.treestore.clear()
 
         # Verifies we have everything needed for the creation of the treeview
@@ -106,9 +106,6 @@ class TreeMessageGenerator():
         compiledRegex = re.compile("".join( self.group.getRegex() ))
 
         self.msgByCol = {}
-
-        for m in self.group.getMessages():
-            print m.getStringData()
 
         # Apply the content matrix to the treestore
         for i in range(0, len(self.group.getMessages())) :

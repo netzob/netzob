@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # coding: utf8
 
-
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
@@ -21,14 +20,10 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 class TypeIdentifier():
-    
 
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.TypeIdentifier.py')
-    
-    
-    
     
     #+---------------------------------------------- 
     #| Identify the possible types from a hexa string
