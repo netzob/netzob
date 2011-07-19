@@ -1,7 +1,6 @@
 // Compilation : gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
 
 #include "headers/NeedlemanWunsch.h"
-#include <omp.h>
 
 static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	char *serialGroups;
@@ -259,11 +258,11 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 			 # elt3 :         Matrix[i-1][j]   + gap)
 			 */
 		        elt1 = matrix[i - 1][j - 1];
-			if ((seq1.mask[i - 1] != 1) && (seq2.mask[j - 1] != 1)
-					&& (seq1.regex[i - 1] == seq2.regex[j - 1]))
-				elt1 += match;
+			if ( (seq1.mask[i - 1] == 0) && (seq2.mask[j - 1] == 0)
+			     && (seq1.regex[i - 1] == seq2.regex[j - 1]))
+			  elt1 += match;
 			else
-				elt1 += mismatch;
+			  elt1 += mismatch;
 			elt2 = matrix[i][j - 1] + gap;
 			elt3 = matrix[i - 1][j] + gap;
 
@@ -295,13 +294,15 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 		if ((eltL > eltD) && (eltL > eltT)) {
 			--j;
 			regex1[iReg1] = 0xff;
-			regex1Mask[iReg1] = 1;
 			regex2[iReg2] = seq2.regex[j];
+			regex1Mask[iReg1] = 1;
+			regex2Mask[iReg2] = 0;
 		} else if ((eltT >= eltL) && (eltT > eltD)) {
 			--i;
 			regex2[iReg2] = 0xff;
-			regex2Mask[iReg2] = 1;
 			regex1[iReg1] = seq1.regex[i];
+			regex1Mask[iReg1] = 0;
+			regex2Mask[iReg2] = 1;
 		} else {
 			--i;
 			--j;
@@ -316,16 +317,18 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	while (i > 0) {
 	  --i;
 	  regex2[iReg2] = 0xff;
-	  regex2Mask[iReg2] = 1;
 	  regex1[iReg1] = seq1.regex[i];
+	  regex1Mask[iReg1] = 0;
+	  regex2Mask[iReg2] = 1;
 	  --iReg1;
 	  --iReg2;
 	}
 	while (j > 0) {
 	  --j;
-	  regex2[iReg2] = 0xff;
-	  regex2Mask[iReg2] = 1;
-	  regex1[iReg1] = seq1.regex[i];
+	  regex1[iReg1] = 0xff;
+	  regex2[iReg2] = seq2.regex[j];
+	  regex1Mask[iReg1] = 1;
+	  regex2Mask[iReg2] = 0;
 	  --iReg1;
 	  --iReg2;
 	}
@@ -339,15 +342,11 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	  --i;
 	  if ((regex1Mask[i] == 2) && (regex2Mask[i] == 2)) {
 	    break;
-	  } else if ((regex1Mask[i] == 1) || (regex2Mask[i] == 1)
-		     || (regex1[i] != regex2[i])) {
+	  } else if ((regex1Mask[i] != 0) || (regex2Mask[i] != 0) || (regex1[i] != regex2[i])) {
 	    regexTmp[i] = 0xff;
 	    regexMaskTmp[i] = 1;
 	  } else {
-	    if(regex1Mask[i] == 2)
-	      regexTmp[i] = regex2[i];
-	    else
-	      regexTmp[i] = regex1[i];
+	    regexTmp[i] = regex1[i];
 	    regexMaskTmp[i] = 0;
 	  }
 	}

@@ -98,6 +98,8 @@ class MessageGroup(object):
             i += 1
         self.setAlignment( align )
 
+        print align
+
         # Build regex from alignment
         i = 0
         start = 0
@@ -107,7 +109,7 @@ class MessageGroup(object):
             if (align[i] == "-"):                
                 if (found == False) :
                     start = i
-                found = True
+                    found = True
             else :
                 if (found == True) :
                     found = False
