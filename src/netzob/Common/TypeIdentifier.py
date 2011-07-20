@@ -66,10 +66,10 @@ class TypeIdentifier():
             string.decode('ascii')
             return True
         except UnicodeDecodeError:
-            return False    
+            return False 
 
     #+---------------------------------------------- 
-    #| Return True if the string parameter is base64
+    #| Return True if the string table parameter is base64
     #|  encoded
     #+----------------------------------------------
     def isBase64(self, stringsTable):
@@ -97,7 +97,11 @@ class TypeIdentifier():
 
         res = ""
         for i in range(0, len(raw), 2):
-            res = res + chr(int(raw[i: i+2], 16))
+            v = int(raw[i: i+2], 16)
+            if v >= 0x20 and v <= 0x7e: # means between ' ' and '~'
+                res += chr(v)
+            else:
+                res += "."
         return res
 
     #+---------------------------------------------- 
