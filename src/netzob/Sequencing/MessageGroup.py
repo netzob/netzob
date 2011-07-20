@@ -244,6 +244,9 @@ class MessageGroup(object):
     #|  try to find the size fields of each regex
     #+----------------------------------------------    
     def findSizeFields(self):
+        if len(self.msgByCol) == 0:
+            return
+
         typer = TypeIdentifier.TypeIdentifier()
 
         # First step: try to find a size field for a uniq data column
@@ -278,7 +281,7 @@ class MessageGroup(object):
                             res = False
                             break
                     if res:
-                        self.log.info("Found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
+                        self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
                 j += 1
             iCol += 1
 
@@ -293,17 +296,16 @@ class MessageGroup(object):
                 # Initialize the aggregate of messages from colJ to colK
                 aggregateMsgsData = []
                 for l in range(len(msgsSize)):
-                    aggregateMsgsData.append("")
+                    aggregateMsgsData.append( self.getMessagesFromCol(j)[l] )
 
                 # Fill the aggregate of messages and try to compare its length with the current expected length
-                k = j
+                k = j + 1
                 while k < len(self.getRegex()):
                     res = True
                     for l in range(len(msgsSize)):
                         aggregateMsgsData[l] += self.getMessagesFromCol(k)[l]
-                        if iCol == 1:
-                            print str(msgsSize[l]) + " " + str(hex(len(aggregateMsgsData[l]))) + " " + aggregateMsgsData[l]
 
+                    for l in range(len(msgsSize)):
                         # Handle big and little endian for size field of 1, 2 and 4 octets length
                         rawMsgSize = typer.toBinary(msgsSize[l])
                         if len(rawMsgSize) == 1:
@@ -321,7 +323,7 @@ class MessageGroup(object):
                             res = False
                             break
                     if res:
-                        self.log.info("!! Found potential size field (col " + str(iCol) + ") for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")  
+                        self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")  
                     k += 1
                 j += 1
             iCol += 1
@@ -346,7 +348,10 @@ class MessageGroup(object):
         return typeIdentifier.getTypes(self.msgByCol[iCol])
 
     def getMessagesFromCol(self, iCol):
-        return self.msgByCol[iCol]
+        if iCol < len(self.msgByCol):
+            return self.msgByCol[iCol]
+        else:
+            return None
 
     def getRepresentation(self, raw, colId) :
         type = self.getSelectedType(colId)

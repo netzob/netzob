@@ -46,21 +46,16 @@ class Netzob:
     #+----------------------------------------------   
     def __init__(self):
         # Main window definition
-        self.fenetre = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.fenetre.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
-        self.fenetre.set_size_request(1200, 800) 
-        self.fenetre.connect("delete_event", self.evnmt_delete)
-        self.fenetre.connect("destroy", self.destroy)
+        window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
+        window.set_size_request(1200, 800) 
+        window.connect("delete_event", self.evnmt_delete)
+        window.connect("destroy", self.destroy)
         
         # UI Header definition
-        self.boite_poing = gtk.HandleBox()
-        self.vbox = gtk.VBox(False, spacing=10)
-        self.vbox.pack_start(self.boite_poing, False, False, 0)
-        self.barre_outil = gtk.Toolbar();
-        self.barre_outil.set_orientation(gtk.ORIENTATION_HORIZONTAL)
-        self.barre_outil.set_style(gtk.TOOLBAR_BOTH)
-        self.barre_outil.set_border_width(5)
-        self.boite_poing.add(self.barre_outil)
+        vbox = gtk.VBox(False, spacing=10)
+        toolbar = gtk.HBox(False, spacing=0)
+        vbox.pack_start(toolbar, False, False, 5)
 
         label = gtk.Label("Select target : ")
         self.zone_saisie = gtk.combo_box_entry_new_text()
@@ -68,8 +63,7 @@ class Netzob:
         self.zone_saisie.set_model(gtk.ListStore(str))
 
         # retrieves the trace directory path
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")        
         
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
@@ -77,9 +71,9 @@ class Netzob:
             self.zone_saisie.append_text(tmpDir)
 
         self.label_analyse = gtk.Label("...")
-        self.button_valid = gtk.Button(stock=gtk.STOCK_OK)
-        self.button_valid.set_label("Valider")
-        self.button_valid.connect("clicked", self.traceSelected)
+        button_valid = gtk.Button(gtk.STOCK_OK)
+        button_valid.set_label("Select")
+        button_valid.connect("clicked", self.traceSelected)
         label_text = gtk.Label("     Current target : ")
 
         # Progress Bar handling inside UI Header
@@ -100,21 +94,20 @@ class Netzob:
         zone_saisie2.append_text("Fixed fields binary based (IP, TCP)")
         zone_saisie2.append_text("Variable fields binary based (ASN.1)")
 
-        self.barre_outil.append_widget(label, "", "")
-        self.barre_outil.append_widget(self.zone_saisie, "Select trace", "Privé")
-        self.barre_outil.append_widget(self.button_valid, "Validation du choix de l'analyse", "Privé")
-        self.barre_outil.append_space()
-        self.barre_outil.append_widget(label_text, "", "")
-        self.barre_outil.append_widget(self.label_analyse, "", "")
-        self.barre_outil.append_widget(progressBox, None, None)
-        self.barre_outil.append_widget(label2, "", "")
-        self.barre_outil.append_widget(zone_saisie2, "Select type", "Privé")
+        toolbar.pack_start(label, False, False, 0)
+        toolbar.pack_start(self.zone_saisie, False, False, 0)
+        toolbar.pack_start(button_valid, False, False, 0)
+        toolbar.pack_start(label_text, False, False, 0)
+        toolbar.pack_start(self.label_analyse, False, False, 0)
+        toolbar.pack_start(progressBox, False, False, 0)
+        toolbar.pack_start(label2, False, False, 0)
+        toolbar.pack_start(zone_saisie2, False, False, 0)
 
         # Notebook definition
         self.notebook = gtk.Notebook()
         self.notebook.set_tab_pos(gtk.POS_TOP)
         self.notebook.connect("switch-page", self.notebookFocus)
-        self.vbox.pack_start(self.notebook, True, True, 0)
+        vbox.pack_start(self.notebook, True, True, 0)
 
         self.pageList = []
         # Adding the message sequencing "onglet"
@@ -129,19 +122,18 @@ class Netzob:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
 
         # Show every widgets
-        self.barre_outil.show()
-        self.boite_poing.show()
+        toolbar.show()
         self.zone_saisie.show()
         label.show()
         zone_saisie2.show()
         label2.show()
         label_text.show()
         self.label_analyse.show()
-        self.button_valid.show()
+        button_valid.show()
         self.notebook.show()
-        self.vbox.show()
-        self.fenetre.add(self.vbox)
-        self.fenetre.show()
+        vbox.show()
+        window.add(vbox)
+        window.show()
         progressBox.show()
         align.show()
         self.progressBar.show()
