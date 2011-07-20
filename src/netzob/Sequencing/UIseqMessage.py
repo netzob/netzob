@@ -105,15 +105,39 @@ class UIseqMessage:
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TREEVIEW
         #+----------------------------------------------
-        # messages output
+        vbox = gtk.VBox(False, spacing=0)
+        vbox.show()
         self.sortie_frame = gtk.Frame()
-#        self.sortie_frame.set_label("Message output")
         self.sortie_frame.show()
+        # Sub-panel for specific buttions
+        table = gtk.Table(rows=3, columns=6, homogeneous=False)
+        table.show()
+
+        # TODO: add type chosing here instead of at the top
+
+        but = gtk.Button("Try to slick regexes")
+        but.connect("clicked", self.treeGroupGenerator.slickRegexes, self)
+        but.show()
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        but = gtk.Button("Try to merge common regexes")
+        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
+        but.show()
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        but = gtk.Button("Option XXX")
+        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
+        but.show()
+        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        vbox.add(table)
+        # messages output
         # Initialize the treeview generator for the messages
         self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator(self.vb_sortie)
         self.treeMessageGenerator.initialization()        
         self.sortie_frame.add(self.treeMessageGenerator.getScrollLib())
-        self.vb_sortie.pack_start(self.sortie_frame, True, True, 0)
+        vbox.add(self.sortie_frame)
+        self.vb_sortie.pack_start(vbox, True, True, 0)
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)

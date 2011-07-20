@@ -80,7 +80,7 @@ class TracesExtractor(object):
         clusterer = Clusterer.Clusterer(self.zob, groups)
         clusterer.mergeGroups()
 
-        self.log.debug("Time of parsing : " + str(time.time() - t1))
+        self.log.info("Time of parsing : " + str(time.time() - t1))
 
         for group in clusterer.getGroups() :
             self.log.debug("Group {0}".format(group.getName()))

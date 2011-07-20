@@ -7,6 +7,7 @@
 import uuid
 import threading
 import logging
+import re
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -206,7 +207,40 @@ class MessageGroup(object):
         
         return result
 
+    #+---------------------------------------------- 
+    #| slickRegex:
+    #|  try to make smooth the regex, by deleting tiny static
+    #|  sequences that are between big dynamic sequences
+    #+----------------------------------------------
+    def slickRegex(self):
+        newRegex = self.getRegex()
+        res = False
+        i = 1
+        while i < len(newRegex) - 1:
+            if newRegex[i].find("{") == -1: # Means the current element is static
+                if len(newRegex[i]) == 2: # Means a potential negligeable element
+                    if re.match("\(\.\{,\d+\}\)", newRegex[i-1]) != None: # Means the precedent element is purely dynamic (not complex)
+                        if re.match("\(\.\{,\d+\}\)", newRegex[i+1]) != None: # Means the next element is purely dynamic (not complex)
+                            res = True
+                            elt1 = newRegex.pop(i - 1) # we retrieve the precedent regex
+                            elt2 = newRegex.pop(i - 1) # we retrieve the current regex
+                            elt3 = newRegex.pop(i - 1) # we retrieve the next regex
+                            lenEltResult = int(elt1[4:-2]) + 2 + int(elt3[4:-2]) # We compute the len of the aggregated regex
+                            newRegex.insert(i - 1, "(.{," + str(lenEltResult) + "})")
+            i += 1
 
+        if res:
+            self.setRegex( newRegex )
+            self.slickRegex() # Try to loop until no more merges are done
+            self.log.debug("The regex has been slicked")
+
+        # TODO: relaunch the matrix step of getting the maxIJ to merge column/row
+        # TODO: memorize old regex/align
+        # TODO: adapt align
+
+    #+---------------------------------------------- 
+    #| Type handling
+    #+----------------------------------------------
     def setTypeForCol(self, iCol, aType):
         self.selectedType[iCol] = aType
 
@@ -249,8 +283,6 @@ class MessageGroup(object):
             return typer.toBase64Encoded(raw)
         else :
             return raw
-      
-
     
     #+---------------------------------------------- 
     #| GETTERS : 

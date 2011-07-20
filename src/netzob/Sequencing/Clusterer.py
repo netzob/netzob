@@ -97,6 +97,7 @@ class Clusterer(object):
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :
+                self.log.info("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
                 self.mergeRowCol(i_maximum, j_maximum)        
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
@@ -115,7 +116,6 @@ class Clusterer(object):
     #|   Merge the groups i and j in the "groups" structure
     #+----------------------------------------------    
     def mergeRowCol(self, i_maximum, j_maximum):
-        self.log.debug("Merge the column/line {0} with the column/line {1}".format(str(i_maximum), str(j_maximum)))
         # Extract groups i and j
         if i_maximum > j_maximum:
             group1 = self.groups.pop(i_maximum)

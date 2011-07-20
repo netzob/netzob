@@ -139,6 +139,34 @@ class TreeGroupGenerator():
         self.groups.append( group )
     def removeGroup(self, group):
         self.groups.remove( group )
+
+    #+---------------------------------------------- 
+    #| slickRegexes:
+    #|  try to make smooth the regexes, by deleting tiny static
+    #|  sequences that are between big dynamic sequences
+    #+----------------------------------------------
+    def slickRegexes(self, button, ui):
+        for group in self.getGroups():
+            group.slickRegex()
+        ui.update()
+
+    #+---------------------------------------------- 
+    #| mergeCommonRegexes:
+    #|  try to merge identical regexes
+    #+----------------------------------------------
+    def mergeCommonRegexes(self, button, ui):
+        res = False
+        for group in self.getGroups():
+            regex = "".join( group.getRegex() )
+            for group2 in self.getGroups():
+                if group != group2 and regex == group2.getRegex():
+                    self.log.debug("Common regexes found !")
+                    res = True
+                    # TODO: merge regexes
+        if res:
+            # TODO: loop on mergeRegexes until no more merge
+            pass
+        ui.update()
     
     #+---------------------------------------------- 
     #| GETTERS : 
