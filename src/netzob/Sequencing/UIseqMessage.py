@@ -115,18 +115,19 @@ class UIseqMessage:
 
         # TODO: add type chosing here instead of at the top
 
-        but = gtk.Button("Try to slick regexes")
+        but = gtk.Button("Slick regexes")
         but.connect("clicked", self.treeGroupGenerator.slickRegexes, self)
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        but = gtk.Button("Try to merge common regexes")
+        but = gtk.Button("Merge common regexes")
         but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        but = gtk.Button("Option XXX")
-        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
+        but = gtk.Button("Find size fields")
+        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
+        but.connect("clicked", self.treeGroupGenerator.findSizeFields, self)
         but.show()
         table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 

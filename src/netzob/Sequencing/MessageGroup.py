@@ -8,6 +8,7 @@ import uuid
 import threading
 import logging
 import re
+import struct
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -239,6 +240,95 @@ class MessageGroup(object):
         # TODO: adapt align
 
     #+---------------------------------------------- 
+    #| findSizeFields:
+    #|  try to find the size fields of each regex
+    #+----------------------------------------------    
+    def findSizeFields(self):
+        typer = TypeIdentifier.TypeIdentifier()
+
+        # First step: try to find a size field for a uniq data column
+        iCol = 0
+        for regexElt in self.getRegex():
+            if not (re.match("\(\.\{,\d+\}\)", regexElt) != None): # Means the element is not purely dynamic
+                continue
+            msgsSize = self.getMessagesFromCol(iCol)
+            j = 0
+            while j < len(self.getRegex()):
+                if not (re.match("\(\.\{,\d+\}\)", self.getRegex()[j]) != None): # Means the element is not purely dynamic
+                    j += 1
+                    continue
+                if j != iCol:
+                    msgsData = self.getMessagesFromCol(j)
+                    res = True
+                    for k in range(len(msgsSize)):
+                        # Handle big and little endian for size field of 1, 2 and 4 octets length
+                        rawMsgSize = typer.toBinary(msgsSize[k])
+                        if len(rawMsgSize) == 1:
+                            expectedSizeType = "B"
+                        elif len(rawMsgSize) == 2:
+                            expectedSizeType = "H"
+                        elif len(rawMsgSize) == 4:
+                            expectedSizeType = "I"
+                        else: # Do not consider size field with len > 4
+                            res = False
+                            break
+                        (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
+                        (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
+                        if (expectedSizeLE != len(msgsData[k]) / 2) and (expectedSizeBE != len(msgsData[k]) / 2):
+                            res = False
+                            break
+                    if res:
+                        self.log.info("Found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
+                j += 1
+            iCol += 1
+
+        # Second step: try to find a size field for an aggregate of data columns
+        iCol = 0
+        for regexElt in self.getRegex():
+            if not (re.match("\(\.\{,\d+\}\)", regexElt) != None): # Means the element is not purely dynamic
+                continue
+            msgsSize = self.getMessagesFromCol(iCol)
+            j = 0
+            while j < len(self.getRegex()) - 1:
+                # Initialize the aggregate of messages from colJ to colK
+                aggregateMsgsData = []
+                for l in range(len(msgsSize)):
+                    aggregateMsgsData.append("")
+
+                # Fill the aggregate of messages and try to compare its length with the current expected length
+                k = j
+                while k < len(self.getRegex()):
+                    res = True
+                    for l in range(len(msgsSize)):
+                        aggregateMsgsData[l] += self.getMessagesFromCol(k)[l]
+                        if iCol == 1:
+                            print str(msgsSize[l]) + " " + str(hex(len(aggregateMsgsData[l]))) + " " + aggregateMsgsData[l]
+
+                        # Handle big and little endian for size field of 1, 2 and 4 octets length
+                        rawMsgSize = typer.toBinary(msgsSize[l])
+                        if len(rawMsgSize) == 1:
+                            expectedSizeType = "B"
+                        elif len(rawMsgSize) == 2:
+                            expectedSizeType = "H"
+                        elif len(rawMsgSize) == 4:
+                            expectedSizeType = "I"
+                        else: # Do not consider size field with len > 4
+                            res = False
+                            break
+                        (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
+                        (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
+                        if (expectedSizeLE != len(aggregateMsgsData[l]) / 2) and (expectedSizeBE != len(aggregateMsgsData[l]) / 2):
+                            res = False
+                            break
+                    if res:
+                        self.log.info("!! Found potential size field (col " + str(iCol) + ") for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")  
+                    k += 1
+                j += 1
+            iCol += 1
+
+    # Third step: try to find a size field concatenated with a data field
+
+    #+---------------------------------------------- 
     #| Type handling
     #+----------------------------------------------
     def setTypeForCol(self, iCol, aType):
@@ -263,23 +353,18 @@ class MessageGroup(object):
         return self.encode(raw, type)
     
     def encode(self, raw, type):
+        typer = TypeIdentifier.TypeIdentifier()
         if type == "ascii" :
-            typer = TypeIdentifier.TypeIdentifier()
             return typer.toASCII(raw)
         elif type == "alphanum" :
-            typer = TypeIdentifier.TypeIdentifier()
             return typer.toAlphanum(raw)
         elif type == "num" :
-            typer = TypeIdentifier.TypeIdentifier()
             return typer.toNum(raw)
         elif type == "alpha" :
-            typer = TypeIdentifier.TypeIdentifier()
             return typer.toAlpha(raw)
         elif type == "base64dec" :
-            typer = TypeIdentifier.TypeIdentifier()
             return typer.toBase64Decoded(raw)
         elif type == "base64enc" :
-            typer = TypeIdentifier.TypeIdentifier()
             return typer.toBase64Encoded(raw)
         else :
             return raw

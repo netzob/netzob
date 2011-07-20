@@ -167,7 +167,16 @@ class TreeGroupGenerator():
             # TODO: loop on mergeRegexes until no more merge
             pass
         ui.update()
-    
+
+    #+---------------------------------------------- 
+    #| findSizeField:
+    #|  try to find the size field of each regex
+    #+----------------------------------------------    
+    def findSizeFields(self, button, ui):
+        for group in self.getGroups():
+            group.findSizeFields()
+        #ui.update()
+            
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
