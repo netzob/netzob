@@ -66,20 +66,21 @@ class TracesExtractor(object):
         for file in files :
             filePath = self.path + "/" + file
             
+            # TODO in futur
             # Retrieves the extension of the files in directory
-            fileExtension = os.path.splitext(filePath)[1]
-            if (fileExtension != ".xml") :
-                self.log.warning("Do not parse file {0} since it's not an xml file (extension {1})".format(filePath, fileExtension))
-            else :         
-                traceParser = TraceParser.TraceParser(filePath)
-                # Append retrieved message to the final list
-                tmpMessages = traceParser.parse()
-                # Save the extracted messages in a dedicated group
-                group = MessageGroup.MessageGroup(file, tmpMessages)            
-                # Now we try to clusterize the newly created group
-                clusterer = Clusterer.Clusterer(self.zob, [group], explodeGroups=True)
-                clusterer.mergeGroups()
-                groups.extend( clusterer.getGroups() )
+#            fileExtension = os.path.splitext(filePath)[1]
+#            if (fileExtension != ".xml") :
+#                self.log.warning("Do not parse file {0} since it's not an xml file (extension {1})".format(filePath, fileExtension))
+               
+            traceParser = TraceParser.TraceParser(filePath)
+            # Append retrieved message to the final list
+            tmpMessages = traceParser.parse()
+            # Save the extracted messages in a dedicated group
+            group = MessageGroup.MessageGroup(file, tmpMessages)            
+            # Now we try to clusterize the newly created group
+            clusterer = Clusterer.Clusterer(self.zob, [group], explodeGroups=True)
+            clusterer.mergeGroups()
+            groups.extend( clusterer.getGroups() )
                 
         # Now that all the groups are reorganized separatly
         # we should consider merging them
