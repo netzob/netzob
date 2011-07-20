@@ -252,7 +252,8 @@ class MessageGroup(object):
         # First step: try to find a size field for a uniq data column
         iCol = 0
         for regexElt in self.getRegex():
-            if not (re.match("\(\.\{,\d+\}\)", regexElt) != None): # Means the element is not purely dynamic
+            if re.match("[0-9a-fA-F]{1,}", regexElt) != None: # Means the element is static
+                iCol += 1
                 continue
             msgsSize = self.getMessagesFromCol(iCol)
             j = 0
@@ -265,7 +266,7 @@ class MessageGroup(object):
                     res = True
                     for k in range(len(msgsSize)):
                         # Handle big and little endian for size field of 1, 2 and 4 octets length
-                        rawMsgSize = typer.toBinary(msgsSize[k])
+                        rawMsgSize = typer.toBinary(msgsSize[k][:8])
                         if len(rawMsgSize) == 1:
                             expectedSizeType = "B"
                         elif len(rawMsgSize) == 2:
@@ -285,10 +286,11 @@ class MessageGroup(object):
                 j += 1
             iCol += 1
 
-        # Second step: try to find a size field for an aggregate of data columns
+        # Second step: try to find a size field for an aggregate of data columns or a uniq data column
         iCol = 0
         for regexElt in self.getRegex():
-            if not (re.match("\(\.\{,\d+\}\)", regexElt) != None): # Means the element is not purely dynamic
+            if re.match("[0-9a-fA-F]{2,}", regexElt) != None: # Means the element is static
+                iCol += 1
                 continue
             msgsSize = self.getMessagesFromCol(iCol)
             j = 0
@@ -296,34 +298,51 @@ class MessageGroup(object):
                 # Initialize the aggregate of messages from colJ to colK
                 aggregateMsgsData = []
                 for l in range(len(msgsSize)):
-                    aggregateMsgsData.append( self.getMessagesFromCol(j)[l] )
+                    aggregateMsgsData.append( "" )
 
                 # Fill the aggregate of messages and try to compare its length with the current expected length
                 k = j + 1
                 while k < len(self.getRegex()):
-                    res = True
                     for l in range(len(msgsSize)):
                         aggregateMsgsData[l] += self.getMessagesFromCol(k)[l]
 
-                    for l in range(len(msgsSize)):
-                        # Handle big and little endian for size field of 1, 2 and 4 octets length
-                        rawMsgSize = typer.toBinary(msgsSize[l])
-                        if len(rawMsgSize) == 1:
-                            expectedSizeType = "B"
-                        elif len(rawMsgSize) == 2:
-                            expectedSizeType = "H"
-                        elif len(rawMsgSize) == 4:
-                            expectedSizeType = "I"
-                        else: # Do not consider size field with len > 4
-                            res = False
-                            break
-                        (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
-                        (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
-                        if (expectedSizeLE != len(aggregateMsgsData[l]) / 2) and (expectedSizeBE != len(aggregateMsgsData[l]) / 2):
-                            res = False
-                            break
-                    if res:
-                        self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")  
+                    # We try to aggregate the successive sub-parts of j if it's a static column
+                    if self.getRegex()[j].find("{") == -1: # Means the regex j element is static
+                        lenJ = len(self.getRegex()[j])
+                        stop = 0
+                    else:
+                        lenJ = 2
+                        stop = 0
+                    for m in range(lenJ, stop, -2):
+                        for n in [1, 2, 4]: # loop over different possible encoding of size field
+                            res = True
+                            for l in range(len(msgsSize)):
+                                if self.getRegex()[j].find("{") == -1: # Means the precedent regex element is static
+                                    targetData = self.getRegex()[j][lenJ - m:] + aggregateMsgsData[l]
+                                else:
+                                    targetData = self.getMessagesFromCol(j)[l] + aggregateMsgsData[l]
+
+                                # Handle big and little endian for size field of 1, 2 and 4 octets length
+                                rawMsgSize = typer.toBinary(msgsSize[l][:n*2])
+                                if len(rawMsgSize) == 1:
+                                    expectedSizeType = "B"
+                                elif len(rawMsgSize) == 2:
+                                    expectedSizeType = "H"
+                                elif len(rawMsgSize) == 4:
+                                    expectedSizeType = "I"
+                                else: # Do not consider size field with len > 4
+                                    res = False
+                                    break
+                                (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
+                                (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
+                                if (expectedSizeLE != len(targetData) / 2) and (expectedSizeBE != len(targetData) / 2):
+                                    res = False
+                                    break
+                            if res:
+                                if self.getRegex()[j].find("{") == -1: # Means the regex j element is static and a sub-part is concerned
+                                    self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
+                                else:
+                                    self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
                     k += 1
                 j += 1
             iCol += 1

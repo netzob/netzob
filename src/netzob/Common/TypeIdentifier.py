@@ -92,7 +92,7 @@ class TypeIdentifier():
     #+----------------------------------------------
     def toASCII(self, raw):
         if len(raw) % 2 != 0:
-            self.log.error("Hex string len not even !")
+#            self.log.error("Hex string len not even !")
             return raw
 
         res = ""
@@ -207,7 +207,7 @@ class TypeIdentifier():
     #+----------------------------------------------          
     def toBinary(self, msg):
         if len(msg) % 2 != 0:
-            self.log.error("Hex string len not even")
+#            self.log.error("Hex string len not even")
             return msg
 
         res = ""

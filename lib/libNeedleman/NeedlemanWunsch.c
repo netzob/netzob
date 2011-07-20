@@ -384,12 +384,13 @@ void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex) {
 	memcpy(regex->mask, regexMaskTmp + i, regex->len);
 
 	// Try to slick the regex
+	/*
 	for(i = 1; i < regex->len - 1; i++)
 	  if( regex->mask[i] == 0 )
 	    if( regex->mask[i - 1] == 1 )
 	      if( regex->mask[i + 1] == 1 )
 		regex->mask[i] = 1;
-
+	*/
 	/*	
 	dumpRegex(seq1);
 	dumpRegex(seq2);
