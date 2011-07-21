@@ -41,6 +41,7 @@ class TreeMessageGenerator():
     def __init__(self, vbox):
         self.vbox = vbox
         self.content = None
+        self.group = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeMessageGenerator.py')
    
@@ -91,10 +92,16 @@ class TreeMessageGenerator():
             return
         
         # configuration of the representation format
-        # default = binary
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
         for i in range(0, len(self.group.getRegex())) :
-            self.group.selectedType.append("binary")
-        
+            self.group.selectedType.append(aType)
+
         # Create a TreeStore with N cols, with N := len(self.group.getRegex())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
         for i in range( len(self.group.getRegex()) ):
@@ -216,7 +223,6 @@ class TreeMessageGenerator():
             lvcolumn.set_attributes(self.textCellRenderer, markup=i, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
 
-                 
         # Updates the treeview with the newly created treestore
         self.treeview.set_model(self.treestore)
         self.treeview.set_reorderable(True)

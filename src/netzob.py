@@ -58,9 +58,9 @@ class Netzob:
         vbox.pack_start(toolbar, False, False, 5)
 
         label = gtk.Label("Select target : ")
-        self.zone_saisie = gtk.combo_box_entry_new_text()
-        self.zone_saisie.set_size_request(300, -1)
-        self.zone_saisie.set_model(gtk.ListStore(str))
+        entry = gtk.combo_box_entry_new_text()
+        entry.set_size_request(300, -1)
+        entry.set_model(gtk.ListStore(str))
 
         # retrieves the trace directory path
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")        
@@ -68,12 +68,12 @@ class Netzob:
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
-            self.zone_saisie.append_text(tmpDir)
+            entry.append_text(tmpDir)
 
         self.label_analyse = gtk.Label("...")
         button_valid = gtk.Button(gtk.STOCK_OK)
         button_valid.set_label("Select")
-        button_valid.connect("clicked", self.traceSelected)
+        button_valid.connect("clicked", self.traceSelected, entry)
         label_text = gtk.Label("     Current target : ")
 
         # Progress Bar handling inside UI Header
@@ -84,24 +84,12 @@ class Netzob:
         self.progressBar = gtk.ProgressBar()
         align.add(self.progressBar)
 
-        # Widget for choosing the anlysed protocole type
-        label2 = gtk.Label("Protocol type : ")
-        zone_saisie2 = gtk.combo_box_entry_new_text()
-        zone_saisie2.set_size_request(300, -1)
-        zone_saisie2.set_model(gtk.ListStore(str))
-
-        zone_saisie2.append_text("Text based (HTTP, FTP)")
-        zone_saisie2.append_text("Fixed fields binary based (IP, TCP)")
-        zone_saisie2.append_text("Variable fields binary based (ASN.1)")
-
         toolbar.pack_start(label, False, False, 0)
-        toolbar.pack_start(self.zone_saisie, False, False, 0)
+        toolbar.pack_start(entry, False, False, 0)
         toolbar.pack_start(button_valid, False, False, 0)
         toolbar.pack_start(label_text, False, False, 0)
         toolbar.pack_start(self.label_analyse, False, False, 0)
         toolbar.pack_start(progressBox, False, False, 0)
-        toolbar.pack_start(label2, False, False, 0)
-        toolbar.pack_start(zone_saisie2, False, False, 0)
 
         # Notebook definition
         self.notebook = gtk.Notebook()
@@ -123,10 +111,8 @@ class Netzob:
 
         # Show every widgets
         toolbar.show()
-        self.zone_saisie.show()
+        entry.show()
         label.show()
-        zone_saisie2.show()
-        label2.show()
         label_text.show()
         self.label_analyse.show()
         button_valid.show()
@@ -172,9 +158,9 @@ class Netzob:
     #+---------------------------------------------- 
     #| Called when user select a new trace for analysis
     #+----------------------------------------------
-    def traceSelected(self, null):
+    def traceSelected(self, null, entry):
         # retrieve the new trace path
-        target = self.zone_saisie.get_active_text()
+        target = entry.get_active_text()
         if target == "":
             return
 

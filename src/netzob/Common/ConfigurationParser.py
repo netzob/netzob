@@ -44,5 +44,11 @@ class ConfigurationParser(object):
     
     def getFloat(self, section, name):
         return self.config.getfloat(section, name)
-    
-        
+
+    #+---------------------------------------------- 
+    #| SETTERS
+    #+----------------------------------------------     
+
+    def set(self, section, name, value):
+        self.config.set(section, name, value)
+        self.config.write(open(ConfigurationParser.configurationFilePath, "w"))

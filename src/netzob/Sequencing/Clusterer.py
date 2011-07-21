@@ -66,6 +66,8 @@ class Clusterer(object):
     def retrieveEffectiveMaxIJ(self, groups):
         self.log.debug("Computing the associated matrix")
         # Serialize the groups before feeding the C library
+        configParser = ConfigurationParser.ConfigurationParser()
+        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
         serialGroups = ""
         format = ""
         typer = TypeIdentifier.TypeIdentifier()
@@ -77,7 +79,7 @@ class Clusterer(object):
                 serialGroups += typer.toBinary( m.getReducedStringData() )
 
         # Execute the Clustering part in C :) (thx fgy)
-        (i_max, j_max, maxScore) = libNeedleman.getMatrix(len(groups), format, serialGroups)
+        (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(groups), format, serialGroups)
 #        print str(time.time() - t1) + " nbGroups: " + str(len(self.groups)) + " format: " + format
         return (i_max, j_max, maxScore)
     

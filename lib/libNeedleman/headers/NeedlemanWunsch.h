@@ -36,7 +36,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args);
 static PyObject* py_alignSequences(PyObject* self, PyObject* args);
 
 void initlibNeedleman();
-void alignTwoSequences(t_regex seq1, t_regex seq2, t_regex *regex);
+void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex seq2, t_regex *regex);
 int hexdump(unsigned char *buf, int dlen);
 void dumpRegex(t_regex regex);
 

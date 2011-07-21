@@ -64,30 +64,26 @@ class UIseqMessage:
     def __init__(self, zob):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
-        
         self.zob = zob
         self.selectedGroup = ""
-        
         self.selectedMessage = ""
+        self.treeMessageGenerator = None
         
         # Definition of the Sequence Onglet
         # First we create an HPaned which hosts the two main children
-        self.panel = gtk.HPaned()        
-        
+        self.panel = gtk.HPaned()               
         # Creation of the two children
-        self.vb_sortie = gtk.VBox(False, spacing=0)
-        self.vb_filter = gtk.VBox(False, spacing=0)
-
+        vb_treeGroups = gtk.VBox(False, spacing=0)
+        vb_treeMsgs = gtk.VBox(False, spacing=0)
         # includes the two children
-        self.panel.add(self.vb_filter)
-        self.panel.add(self.vb_sortie)
-
-        self.vb_sortie.set_size_request(-1, -1)
-        self.vb_filter.set_size_request(-1, -1)
-
-        self.vb_sortie.show()
-        self.vb_filter.show()
+        self.panel.add(vb_treeMsgs)
+        self.panel.add(vb_treeGroups)
+        vb_treeGroups.set_size_request(-1, -1)
+        vb_treeMsgs.set_size_request(-1, -1)
+        vb_treeGroups.show()
+        vb_treeMsgs.show()
         self.panel.show()
+        configParser = ConfigurationParser.ConfigurationParser()
         
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : TREEVIEW
@@ -95,7 +91,7 @@ class UIseqMessage:
         # Initialize the treeview generator for the groups
         self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator( [] )
         self.treeGroupGenerator.initialization()
-        self.vb_filter.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
+        vb_treeMsgs.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeGroupGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeGroupGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
@@ -103,42 +99,89 @@ class UIseqMessage:
         self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
        
         #+---------------------------------------------- 
-        #| RIGHT PART OF THE GUI : TREEVIEW
+        #| RIGHT PART OF THE GUI : TOP BUTTONS
         #+----------------------------------------------
         vbox = gtk.VBox(False, spacing=0)
         vbox.show()
-        self.sortie_frame = gtk.Frame()
-        self.sortie_frame.show()
+        frame = gtk.Frame()
+        frame.show()
         # Sub-panel for specific buttions
-        table = gtk.Table(rows=3, columns=6, homogeneous=False)
+        table = gtk.Table(rows=3, columns=8, homogeneous=False)
         table.show()
+        vbox.pack_start(table, False, False, 0)
 
-        # TODO: add type chosing here instead of at the top
+        # Widget for choosing the analysed protocole type
+        label = gtk.Label("Protocol type : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_size_request(300, -1)
+        combo.set_model(gtk.ListStore(str))
+        combo.append_text("Text based (HTTP, FTP)")
+        combo.append_text("Fixed fields binary based (IP, TCP)")
+        combo.append_text("Variable fields binary based (ASN.1)")
+        combo.connect("changed", self.updateProtocolType)
+        protocol_type_ID = configParser.getInt("clustering", "protocol_type")
+        combo.set_active(protocol_type_ID)
+        combo.show()
+        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Widget entry for chosing the alignment score sub-limit
+        label = gtk.Label("Score limit : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_size_request(60, -1)
+        combo.set_model(gtk.ListStore(str))
+        combo.connect("changed", self.updateScoreLimit)
+        possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
+        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
+        for i in range(len(possible_choices)):
+            combo.append_text(str(possible_choices[i]))
+            if str(possible_choices[i]) == str(int(min_equivalence)):
+                combo.set_active(i)
+        combo.show()
+        table.attach(label, 4, 5, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 5, 6, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget checkbox for selecting the slickery during alignement process
+        but = gtk.CheckButton("Slick regexes during alignment")
+        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
+        if doInternalSlick == 1:
+            but.set_active(True)
+        else:
+            but.set_active(False)
+        but.connect("toggled", self.activeInternalSlickRegexes)
+        but.show()
+        table.attach(but, 6, 7, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button slick regexes
         but = gtk.Button("Slick regexes")
         but.connect("clicked", self.treeGroupGenerator.slickRegexes, self)
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Widget button merge common regexes
         but = gtk.Button("Merge common regexes")
         but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Widget button find size fields
         but = gtk.Button("Find size fields")
         # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
         but.connect("clicked", self.treeGroupGenerator.findSizeFields, self)
         but.show()
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        vbox.add(table)
-        # messages output
+        #+---------------------------------------------- 
+        #| RIGHT PART OF THE GUI : TREEVIEW MESSAGE OUTPUT
+        #+----------------------------------------------
         # Initialize the treeview generator for the messages
-        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator(self.vb_sortie)
+        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator(vb_treeGroups)
         self.treeMessageGenerator.initialization()        
-        self.sortie_frame.add(self.treeMessageGenerator.getScrollLib())
-        vbox.add(self.sortie_frame)
-        self.vb_sortie.pack_start(vbox, True, True, 0)
+        frame.add(self.treeMessageGenerator.getScrollLib())
+        vbox.pack_start(frame, True, True, 0)
+        vb_treeGroups.pack_start(vbox, True, True, 0)
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
@@ -564,9 +607,6 @@ class UIseqMessage:
             md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, errorMsg)
             md.run()
             md.destroy()
-
-                    
-        
         
     #+---------------------------------------------- 
     #| drop_fromDND :
@@ -684,5 +724,33 @@ class UIseqMessage:
                 self.selectedGroup = idGroup
                 self.updateTreeStoreMessage()
 
+    #+---------------------------------------------- 
+    #| Called when user select a new score limit
+    #+----------------------------------------------
+    def updateScoreLimit(self, combo):
+        val = combo.get_active_text()
+        configParser = ConfigurationParser.ConfigurationParser()
+        configParser.set("clustering", "equivalence_threshold", val)
 
+    #+---------------------------------------------- 
+    #| Called when user wants to slick internally in libNeedleman
+    #+----------------------------------------------
+    def activeInternalSlickRegexes(self, checkButton):
+        configParser = ConfigurationParser.ConfigurationParser()
+        configParser.set("clustering", "do_internal_slick", (0, 1)[checkButton.get_active()])
 
+    #+---------------------------------------------- 
+    #| Called when user wants to modify the expected protocol type
+    #+----------------------------------------------
+    def updateProtocolType(self, combo):
+        valID = combo.get_active()
+        configParser = ConfigurationParser.ConfigurationParser()
+        configParser.set("clustering", "protocol_type", valID)
+
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+        if self.treeMessageGenerator != None and self.treeMessageGenerator.getGroup() != None:
+            self.treeMessageGenerator.getGroup().setTypeForCols( aType )
+            self.update()

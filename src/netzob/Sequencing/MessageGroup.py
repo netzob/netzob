@@ -96,8 +96,9 @@ class MessageGroup(object):
                 maxReducedSize = m.getReducedSize()
 
         # Align sequences in C library
-        (score, aRegex, aMask) = libNeedleman.alignSequences(len(self.getMessages()), format, serialMessages)
-        
+        configParser = ConfigurationParser.ConfigurationParser()
+        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
+        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
         
         self.setScore( score )
 
@@ -382,6 +383,10 @@ class MessageGroup(object):
     #+---------------------------------------------- 
     #| Type handling
     #+----------------------------------------------
+    def setTypeForCols(self, aType):
+        for iCol in range(len(self.getRegex())):
+            self.selectedType[iCol] = aType
+
     def setTypeForCol(self, iCol, aType):
         self.selectedType[iCol] = aType
 
