@@ -189,7 +189,17 @@ class UIseqMessage:
         self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected)
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
-        
+
+        #+---------------------------------------------- 
+        #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
+        #+----------------------------------------------
+        # Initialize the treeview for the type structure
+        """
+        self.treeTypeStructureGenerator = TreeMessaGenerator.TreeMessageGenerator()
+        frame.add(self.treeTypeStructureGenerator.getScrollLib())
+        vbox.pack_start(frame, True, True, 0)
+        vb_treeGroups.pack_start(vbox, True, True, 0)
+        """
         self.log.debug("GUI for sequential part is created")
     
     #+---------------------------------------------- 
