@@ -100,7 +100,9 @@ class TreeMessageGenerator():
         for i in range( len(self.group.getRegex()) ):
             treeStoreTypes.append(str)           
         self.treestore = gtk.TreeStore(*treeStoreTypes)
-
+        
+        
+        
         compiledRegex = re.compile("".join( self.group.getRegex() ))
 
         self.group.msgByCol = {}
@@ -118,6 +120,11 @@ class TreeMessageGenerator():
 
             # We apply the regex to the message
             data = message.getStringData()
+            
+            self.log.warning("DATA : "+data)
+            self.log.warning("R-DATA : "+message.getReducedStringData())
+            
+            
             m = compiledRegex.match(data)
 
             # If the regex doesn't match the message, we activate the error mode

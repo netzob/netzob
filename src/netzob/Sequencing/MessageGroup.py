@@ -82,12 +82,23 @@ class MessageGroup(object):
         typer = TypeIdentifier.TypeIdentifier()
         serialMessages = ""
         format = ""
+        maxLeftReducedStringData = 0
+        maxRightReducedStringData = 0
+        maxReducedSize = 0
         for m in self.getMessages():
-            format += str(len(m.getStringData())/2) + "M"
-            serialMessages += typer.toBinary( m.getStringData() )
+            format += str(len(m.getReducedStringData())/2) + "M"
+            serialMessages += typer.toBinary( m.getReducedStringData() )
+            if m.getLeftReductionFactor()>maxLeftReducedStringData :
+                maxLeftReducedStringData = m.getLeftReductionFactor()
+            if m.getRightReductionFactor()>maxRightReducedStringData :
+                maxRightReducedStringData = m.getRightReductionFactor()
+            if m.getReducedSize() > maxReducedSize :
+                maxReducedSize = m.getReducedSize()
 
         # Align sequences in C library
         (score, aRegex, aMask) = libNeedleman.alignSequences(len(self.getMessages()), format, serialMessages)
+        
+        
         self.setScore( score )
 
         # Build alignment C library result
@@ -100,7 +111,26 @@ class MessageGroup(object):
                 else:
                     align += aRegex[i:i+1].encode("hex")
             i += 1
+        
+        if maxLeftReducedStringData > 0 :
+            self.log.warning("add on the left part adding a bit of --")
+            for i in range(0, maxReducedSize):
+                align = "--"+align
+        if maxRightReducedStringData > 0 :
+            self.log.warning("add on the right part adding a bit of --")
+            for i in range(0, maxReducedSize):
+                align = align+"--"
+            
+            
+        # Updates the alignment by adding -- on its end
+#        if maxReducedStringData > 1 :
+#            for i in range(0, (maxReducedStringData*len(align) - len(align))) :
+#                align+="--"
+            
+        
         self.setAlignment( align )
+        
+        
 
         # Build regex from alignment
         i = 0

@@ -82,10 +82,15 @@ class TracesExtractor(object):
             clusterer.mergeGroups()
             groups.extend( clusterer.getGroups() )
                 
-        # Now that all the groups are reorganized separatly
+        # Now that all the groups are reorganized separately
         # we should consider merging them
+        self.log.info("Merging the groups extracted from the different files")
         clusterer = Clusterer.Clusterer(self.zob, groups)
         clusterer.mergeGroups()
+        
+        # Now we execute the second part of Netzob Magical Algorithms :)
+        # clean the single groups
+        clusterer.mergeOrphanGroups()
 
         self.log.info("Time of parsing : " + str(time.time() - t1))
 

@@ -56,6 +56,9 @@ class Message(object):
         self.l4TargetPort = -1
         self.timestamp = -1
         self.data = ""
+        self.rightReductionFactor = 0
+        self.leftReductionFactor = 0
+
         
         
     
@@ -107,6 +110,40 @@ class Message(object):
     def getStringData(self):
         return "".join(self.data) 
     
+    def getReducedSize(self):
+        start = 0
+        end = len(self.getStringData())
+        
+        if self.getLeftReductionFactor()>0 :
+            start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
+            if (end-start)%2 == 1 :
+                start=start-1
+        if self.getRightReductionFactor()>0 :
+            end   = self.getRightReductionFactor() * len(self.getStringData()) / 100 
+            if (end-start)%2 == 1 :
+                end=end+1 
+        
+        if (end-start)%2 == 1 :
+            end=end+1 
+            
+        return len(self.getStringData()) - (end-start)
+    
+    def getReducedStringData(self):
+        
+        start = 0
+        end = len(self.getStringData())
+        
+        if self.getLeftReductionFactor()>0 :
+            start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
+            if (end-start)%2 == 1 :
+                start=start-1 
+        if self.getRightReductionFactor()>0 :
+            end   = self.getRightReductionFactor() * len(self.getStringData()) / 100 
+            if (end-start)%2 == 1 :
+                end=end+1 
+        
+            
+        return "".join(self.getStringData()[start:end]) 
     
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -127,6 +164,10 @@ class Message(object):
         return self.timestamp
     def getData(self):
         return self.data   
+    def getRightReductionFactor(self):
+        return self.rightReductionFactor
+    def getLeftReductionFactor(self):
+        return self.leftReductionFactor
        
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -145,6 +186,9 @@ class Message(object):
         self.timestamp = timestamp
     def setData(self, data):
         self.data = data   
-       
-    
-       
+    def setRightReductionFactor(self, factor):
+        self.rightReductionFactor = factor
+        self.leftReductionFactor = 0
+    def setLeftReductionFactor(self, factor):
+        self.leftReductionFactor = factor
+        self.rightReductionFactor = 0

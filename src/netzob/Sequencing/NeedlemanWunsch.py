@@ -123,9 +123,9 @@ class NeedlemanWunsch:
     #| @return the regex
     #+---------------------------------------------- 
     def getRegexWithTwoSequences(self, seq1, seq2):
-        match = 10
-        mismatch = -10
-        gap = 0
+        match = 2
+        mismatch = -1
+        gap = -5
         
         sequence1 = ['++']
         sequence2 = ['++']
