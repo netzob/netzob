@@ -69,7 +69,14 @@ class TreeGroupGenerator():
         lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
-    
+
+    #+---------------------------------------------- 
+    #| clear :
+    #|         Clear the class
+    #+---------------------------------------------- 
+    def clear(self):
+        del self.groups[:]
+
     #+---------------------------------------------- 
     #| default :
     #|         Update the treestore in normal mode
@@ -172,10 +179,11 @@ class TreeGroupGenerator():
     #| findSizeField:
     #|  try to find the size field of each regex
     #+----------------------------------------------    
-    def findSizeFields(self, button, ui):
+    def findSizeFields(self):
+        res = []
         for group in self.getGroups():
-            group.findSizeFields()
-        #ui.update()
+            res.extend( group.findSizeFields() )
+        return res
             
     #+---------------------------------------------- 
     #| GETTERS : 

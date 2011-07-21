@@ -57,6 +57,7 @@ class MessageGroup(object):
         self.messages = messages
         self.score = 0
         self.regex = []
+        self.columnNames = []
         self.alignment = ""
         self.selectedType = []
         self.msgByCol = {}
@@ -158,6 +159,11 @@ class MessageGroup(object):
             nbTiret = i - start
             regex.append( "(.{," + str(nbTiret) + "})" )
         self.setRegex( regex )
+
+        # Fill columnNames with a default name
+        self.columnNames = []
+        for i in range(len(self.getRegex())):
+            self.columnNames.append("Prout")
     
     #+---------------------------------------------- 
     #| computeScore : given the messages, 
@@ -275,8 +281,9 @@ class MessageGroup(object):
     #|  try to find the size fields of each regex
     #+----------------------------------------------    
     def findSizeFields(self):
+        resTable = []
         if len(self.msgByCol) == 0:
-            return
+            return resTable
 
         typer = TypeIdentifier.TypeIdentifier()
 
@@ -313,11 +320,12 @@ class MessageGroup(object):
                             res = False
                             break
                     if res:
+                        resTable.append("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
                         self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
                 j += 1
             iCol += 1
 
-        # Second step: try to find a size field for an aggregate of data columns or a uniq data column
+        # Second step: try to find a size field for an aggregate of data columns
         iCol = 0
         for regexElt in self.getRegex():
             if re.match("[0-9a-fA-F]{2,}", regexElt) != None: # Means the element is static
@@ -371,14 +379,16 @@ class MessageGroup(object):
                                     break
                             if res:
                                 if self.getRegex()[j].find("{") == -1: # Means the regex j element is static and a sub-part is concerned
+                                    resTable.append("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                     self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:
+                                    resTable.append("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
                                     self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
                     k += 1
                 j += 1
             iCol += 1
 
-    # Third step: try to find a size field concatenated with a data field
+        return resTable
 
     #+---------------------------------------------- 
     #| Type handling
@@ -443,6 +453,13 @@ class MessageGroup(object):
         return self.score
     def getRegex(self):
         return self.regex
+    def getMessageByID(self, messageID):
+        for message in self.getMessages():
+            if str(message.getID()) == str(messageID):
+                return message
+        return None
+    def getColumnNames(self):
+        return self.columnNames
 
     #+---------------------------------------------- 
     #| SETTERS : 

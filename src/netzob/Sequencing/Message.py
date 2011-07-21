@@ -58,9 +58,6 @@ class Message(object):
         self.data = ""
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-
-        
-        
     
     #+---------------------------------------------- 
     #|`getPangoData : compute a colored representation    

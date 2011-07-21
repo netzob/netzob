@@ -38,9 +38,7 @@ class TreeMessageGenerator():
     #| Constructor :
     #| @param vbox : where the treeview will be hold
     #+---------------------------------------------- 
-    def __init__(self, vbox):
-        self.vbox = vbox
-        self.content = None
+    def __init__(self):
         self.group = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeMessageGenerator.py')
@@ -64,10 +62,18 @@ class TreeMessageGenerator():
         self.treeview.append_column(column)
         self.treeview.show()
         self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_size_request(1000, 500)
+        self.scroll.set_size_request(1000, 400)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
         self.scroll.add(self.treeview)
         self.scroll.show()
+
+    #+---------------------------------------------- 
+    #| clear :
+    #|         Clear the class
+    #+---------------------------------------------- 
+    def clear(self):
+        self.group = None
+        self.treestore.clear()
         
     #+---------------------------------------------- 
     #| error :
@@ -198,14 +204,14 @@ class TreeMessageGenerator():
 
         # Creates the header for naming the column
         name_line = []
-        name_line.append("HEADER TYPE")
+        name_line.append("HEADER NAME")
         name_line.append("#ababab")
         name_line.append(pango.WEIGHT_BOLD)
         name_line.append(True)        
 
         # Get the possible types of each column
         for iCol in range( len(self.group.getRegex()) ):
-            name_line.append("Name")
+            name_line.append(self.getGroup().getColumnNames()[iCol])
         self.treestore.prepend(None, name_line)
 
         # Remove all the columns of the current treeview

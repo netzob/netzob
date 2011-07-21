@@ -21,6 +21,7 @@ import TracesExtractor
 from ..Common import ConfigurationParser
 from TreeViews import TreeGroupGenerator
 from TreeViews import TreeMessageGenerator
+from TreeViews import TreeTypeStructureGenerator
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -44,12 +45,17 @@ class UIseqMessage:
     def new(self):
         # Parse the traces and store the results
         self.selectedGroup = ""
+        self.treeMessageGenerator.clear()
+        self.treeGroupGenerator.clear()
+        self.treeTypeStructureGenerator.clear()
+        self.update()
         self.parseThread = threading.Thread(None, self.treeGroupGenerator.initTreeGroupWithTraces, None, (self.zob, self), {})
         self.parseThread.start()
 
     def update(self):
         self.updateTreeStoreGroup()
         self.updateTreeStoreMessage()
+        self.updateTreeStoreTypeStructure()
 
     def clear(self):
         pass
@@ -68,47 +74,42 @@ class UIseqMessage:
         self.selectedGroup = ""
         self.selectedMessage = ""
         self.treeMessageGenerator = None
+        self.treeTypeStructureGenerator = None
         
         # Definition of the Sequence Onglet
         # First we create an HPaned which hosts the two main children
-        self.panel = gtk.HPaned()               
-        # Creation of the two children
-        vb_treeGroups = gtk.VBox(False, spacing=0)
-        vb_treeMsgs = gtk.VBox(False, spacing=0)
-        # includes the two children
-        self.panel.add(vb_treeMsgs)
-        self.panel.add(vb_treeGroups)
-        vb_treeGroups.set_size_request(-1, -1)
-        vb_treeMsgs.set_size_request(-1, -1)
-        vb_treeGroups.show()
-        vb_treeMsgs.show()
+        self.panel = gtk.HPaned()
         self.panel.show()
+
         configParser = ConfigurationParser.ConfigurationParser()
         
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : TREEVIEW
         #+----------------------------------------------           
+        vb_left_panel = gtk.VBox(False, spacing=0)
+        self.panel.add(vb_left_panel)
+        vb_left_panel.set_size_request(-1, -1)
+        vb_left_panel.show()
         # Initialize the treeview generator for the groups
         self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator( [] )
         self.treeGroupGenerator.initialization()
-        vb_treeMsgs.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
+        vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeGroupGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeGroupGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
-        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.messageChanged)
+        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupChanged)
         self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
        
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TOP BUTTONS
         #+----------------------------------------------
-        vbox = gtk.VBox(False, spacing=0)
-        vbox.show()
-        frame = gtk.Frame()
-        frame.show()
+        vb_right_panel = gtk.VBox(False, spacing=0)
+        self.panel.add(vb_right_panel)
+        vb_right_panel.show()
         # Sub-panel for specific buttions
         table = gtk.Table(rows=3, columns=8, homogeneous=False)
         table.show()
-        vbox.pack_start(table, False, False, 0)
+        vb_right_panel.pack_start(table, False, False, 0)
 
         # Widget for choosing the analysed protocole type
         label = gtk.Label("Protocol type : ")
@@ -169,19 +170,20 @@ class UIseqMessage:
         # Widget button find size fields
         but = gtk.Button("Find size fields")
         # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
-        but.connect("clicked", self.treeGroupGenerator.findSizeFields, self)
+        but.connect("clicked", self.findSizeFields)
         but.show()
         table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TREEVIEW MESSAGE OUTPUT
         #+----------------------------------------------
+        right_sub_vpaned = gtk.VPaned()
+        right_sub_vpaned.show()
+        vb_right_panel.pack_start(right_sub_vpaned, True, True, 0)
         # Initialize the treeview generator for the messages
-        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator(vb_treeGroups)
+        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator()
         self.treeMessageGenerator.initialization()        
-        frame.add(self.treeMessageGenerator.getScrollLib())
-        vbox.pack_start(frame, True, True, 0)
-        vb_treeGroups.pack_start(vbox, True, True, 0)
+        right_sub_vpaned.add(self.treeMessageGenerator.getScrollLib())
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
@@ -194,12 +196,10 @@ class UIseqMessage:
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
         # Initialize the treeview for the type structure
-        """
-        self.treeTypeStructureGenerator = TreeMessaGenerator.TreeMessageGenerator()
-        frame.add(self.treeTypeStructureGenerator.getScrollLib())
-        vbox.pack_start(frame, True, True, 0)
-        vb_treeGroups.pack_start(vbox, True, True, 0)
-        """
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator.initialization()
+        right_sub_vpaned.add(self.treeTypeStructureGenerator.getScrollLib())
+        
         self.log.debug("GUI for sequential part is created")
     
     #+---------------------------------------------- 
@@ -370,13 +370,11 @@ class UIseqMessage:
         frame = gtk.Frame()
         frame.set_label("Content of the column to split")
         frame.show()
-        textview.set_editable(True)
         textview.set_size_request(400, 300)
         messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
         for m in messages:
             textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m, iCol) + "\n", "greenTag" )
         textview.show()
-        buff = textview.get_buffer()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
@@ -698,22 +696,46 @@ class UIseqMessage:
                 # enable dragging message out of current group
                 self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
                 self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
-                self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected) 
+
+
+
+
+#                self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected) 
+
+
+
+
             # Else, quite weird so throw a warning
             else :
                 self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name " + self.selectedGroup)
-       
-#+---------------------------------------------- 
-#| CALLBACKS 
-#+----------------------------------------------
-    def messageSelected(self, treeview) :
-        (modele, iter) = treeview.get_selection().get_selected()
-        if(iter):
-            if(modele.iter_is_valid(iter)):
 
-                pango = modele.get_value(iter, 0)
+    #+---------------------------------------------- 
+    #| Update the content of the tree store for type structure
+    #+----------------------------------------------
+    def updateTreeStoreTypeStructure(self):
+        self.treeTypeStructureGenerator.default()
+       
+    #+---------------------------------------------- 
+    #| Called when a message is selected
+    #+----------------------------------------------
+    def messageSelected(self, treeview) :
+        (model, iter) = treeview.get_selection().get_selected()
+        if(iter):
+            if(model.iter_is_valid(iter)):
+                msg_id = model.get_value(iter, 0)
+                group = self.treeMessageGenerator.getGroup()
+                message = group.getMessageByID( msg_id )
+                self.treeTypeStructureGenerator.setGroup( group )
+                self.treeTypeStructureGenerator.setMessage( message )
+                messageTable = []
+                for i in range(len(group.getRegex())):
+                    messageTable.append( model.get_value(iter, i + 4) )
+                self.treeTypeStructureGenerator.buildTypeStructure(messageTable, msg_id) # Not very clean :)
+                self.updateTreeStoreTypeStructure()
+
+                """
                 group_regex = modele.get_value(iter, 1)
-                msg_id = modele.get_value(iter, 2)
+                pango = modele.get_value(iter, 2)
                 
                 for group in self.treeGroupGenerator.getGroups() :
                     for message in group.getMessages() :
@@ -721,11 +743,12 @@ class UIseqMessage:
                             self.selectedMessage = message
                             self.log.debug("selected message {0}".format(self.selectedMessage.getID()))     
                             self.updateTreeStoreGroup()
+                """
 
     #+---------------------------------------------- 
     #| Called when user click on a group or on a message
     #+----------------------------------------------
-    def messageChanged(self, treeview):
+    def groupChanged(self, treeview):
         (modele, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(modele.iter_is_valid(iter)):
@@ -733,6 +756,8 @@ class UIseqMessage:
                 score = modele.get_value(iter, 1)
                 self.selectedGroup = idGroup
                 self.updateTreeStoreMessage()
+                self.treeTypeStructureGenerator.clear()
+                self.updateTreeStoreTypeStructure()
 
     #+---------------------------------------------- 
     #| Called when user select a new score limit
@@ -764,3 +789,34 @@ class UIseqMessage:
         if self.treeMessageGenerator != None and self.treeMessageGenerator.getGroup() != None:
             self.treeMessageGenerator.getGroup().setTypeForCols( aType )
             self.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to find the potential size fields
+    #+----------------------------------------------
+    def findSizeFields(self, button):
+        dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
+        textview = gtk.TextView()
+
+        # Chose button
+        but = gtk.Button(label="Apply size field")
+        but.show()
+#        but.connect("clicked", self.doSplitColumn, textview, iCol, dialog)
+        dialog.action_area.pack_start(but, True, True, 0)
+
+        # Text view containing potential size fields
+        frame = gtk.Frame()
+        frame.set_label("Potential size fields and related payload")
+        frame.show()
+        textview.set_size_request(800, 300)
+        foundSizeFields = self.treeGroupGenerator.findSizeFields()
+        if foundSizeFields != None:
+            for sizeField in foundSizeFields:
+                textview.get_buffer().insert( textview.get_buffer().get_end_iter(), sizeField + "\n" )
+        textview.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(textview)
+        frame.add(scroll)
+        dialog.vbox.pack_start(frame, True, True, 0)
+        dialog.show()
