@@ -121,9 +121,6 @@ class TreeMessageGenerator():
             # We apply the regex to the message
             data = message.getStringData()
             
-            self.log.warning("DATA : "+data)
-            self.log.warning("R-DATA : "+message.getReducedStringData())
-            
             
             m = compiledRegex.match(data)
 
