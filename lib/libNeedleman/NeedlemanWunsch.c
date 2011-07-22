@@ -102,12 +102,19 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 				regex1.regex = p_group.messages[0].message;
 				regex1.mask = p_group.messages[0].mask;
 
+				//				dumpRegex(regex1);
+
 				for (m = 1; m < p_group.len; ++m) {
 					regex2.len = p_group.messages[m].len;
 					regex2.regex = p_group.messages[m].message;
 					regex2.mask = p_group.messages[m].mask;
 
+					//					dumpRegex(regex2);
+
 					alignTwoSequences(doInternalSlick, regex1, regex2, &regex);
+
+					//					dumpRegex(regex);
+					//					printf("\n");
 
 					regex1.len = regex.len;
 					regex1.mask = regex.mask;
