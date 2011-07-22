@@ -141,8 +141,8 @@ class UIseqMessage:
             if str(possible_choices[i]) == str(int(min_equivalence)):
                 combo.set_active(i)
         combo.show()
-        table.attach(label, 4, 5, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 5, 6, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 4, 5, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Slick regexes during alignment")
@@ -154,6 +154,17 @@ class UIseqMessage:
         but.connect("toggled", self.activeInternalSlickRegexes)
         but.show()
         table.attach(but, 6, 7, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Widget button activate orphan reduction
+        butOrphanReduction = gtk.CheckButton("Activate Orphan Reduction")
+        doOrphanReduction = configParser.getInt("clustering", "orphan_reduction")
+        if doOrphanReduction == 1:
+            butOrphanReduction.set_active(True)
+        else:
+            butOrphanReduction.set_active(False)
+        butOrphanReduction.connect("toggled", self.activeOrphanReduction)
+        butOrphanReduction.show()
+        table.attach(butOrphanReduction, 5, 6, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button slick regexes
         but = gtk.Button("Slick regexes")
@@ -173,6 +184,8 @@ class UIseqMessage:
         but.connect("clicked", self.findSizeFields)
         but.show()
         table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TREEVIEW MESSAGE OUTPUT
@@ -790,6 +803,13 @@ class UIseqMessage:
     def activeInternalSlickRegexes(self, checkButton):
         configParser = ConfigurationParser.ConfigurationParser()
         configParser.set("clustering", "do_internal_slick", (0, 1)[checkButton.get_active()])
+        
+    #+---------------------------------------------- 
+    #| Called when user wants to activate orphan reduction
+    #+----------------------------------------------
+    def activeOrphanReduction(self, checkButton):
+        configParser = ConfigurationParser.ConfigurationParser()
+        configParser.set("clustering", "orphan_reduction", (0, 1)[checkButton.get_active()])
 
     #+---------------------------------------------- 
     #| Called when user wants to modify the expected protocol type

@@ -103,7 +103,10 @@ class Clusterer(object):
     def retrieveMaxIJ(self):
         return self.retrieveEffectiveMaxIJ(self.groups)
     
-    def mergeEffectiveGroups(self):
+    def mergeGroups(self):
+        self.mergeEffectiveGroups(self.groups)
+    
+    def mergeEffectiveGroups(self, groups):
         # retrieves the following parameters from the configuration file
         configParser = ConfigurationParser.ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
@@ -115,26 +118,24 @@ class Clusterer(object):
         for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             # Create the score matrix for each group
-            (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ(self.groups)
+            (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ(groups)
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :
                 self.log.info("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
-                self.mergeEffectiveRowCol(i_maximum, j_maximum, self.groups)        
+                self.mergeEffectiveRowCol(i_maximum, j_maximum, groups)        
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
 
         # Compute the regex/alignment of each group
         gobject.idle_add(self.resetProgressBar)
-        progressionStep = 1.0 / len(self.groups)
-        for g in self.groups :
+        progressionStep = 1.0 / len(groups)
+        for g in groups :
             g.buildRegexAndAlignment()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
         gobject.idle_add(self.resetProgressBar)
     
-    def mergeGroups(self):
-        self.mergeEffectiveGroups()
     #+---------------------------------------------- 
     #| mergeOrphanGroups :
     #|   try to merge orphan groups by progressively
