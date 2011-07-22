@@ -10,6 +10,8 @@ from numpy.numarray.numerictypes import Float
 from numpy.core.numeric import zeros
 import binascii
 import logging
+import re 
+import time
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -119,6 +121,22 @@ class Clusterer(object):
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             # Create the score matrix for each group
             (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ(groups)
+
+            for group in self.groups:
+                compiledRegex = re.compile("".join( group.getRegex() ))
+                for message in group.getMessages():
+                    print message.getStringData()
+                    data = message.getStringData()
+                    m = compiledRegex.match(data)
+                    if m == None:
+                        print "".join( group.getRegex() )
+                        print message.getStringData()
+                        print "PAN"
+                    else:
+                        print "."
+                
+
+
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :

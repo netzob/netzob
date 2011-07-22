@@ -102,19 +102,12 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 				regex1.regex = p_group.messages[0].message;
 				regex1.mask = p_group.messages[0].mask;
 
-				//				dumpRegex(regex1);
-
 				for (m = 1; m < p_group.len; ++m) {
 					regex2.len = p_group.messages[m].len;
 					regex2.regex = p_group.messages[m].message;
 					regex2.mask = p_group.messages[m].mask;
 
-					//					dumpRegex(regex2);
-
 					alignTwoSequences(doInternalSlick, regex1, regex2, &regex);
-
-					//					dumpRegex(regex);
-					//					printf("\n");
 
 					regex1.len = regex.len;
 					regex1.mask = regex.mask;
@@ -338,6 +331,23 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	  --iReg2;
 	}
 
+	for( i = 0; i < seq1.len + seq2.len; i++)
+	  if( regex1Mask[i] == 1 )
+	    printf("--");
+	  else if ( regex1Mask[i] == 2 )
+	    printf("##");
+	  else
+	    printf("%02x", regex1[i]);
+	printf("\n");
+	for( i = 0; i < seq1.len + seq2.len; i++)
+	  if( regex2Mask[i] == 1 )
+	    printf("--");
+	  else if ( regex2Mask[i] == 2 )
+	    printf("--");
+	  else
+	    printf("%02x", regex2[i]);
+	printf("\n");
+
 	// Compute the common regex
 	unsigned char *regexTmp = calloc( seq1.len + seq2.len, sizeof(unsigned char));
 	unsigned char *regexMaskTmp = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
@@ -396,12 +406,11 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 		if( regex->mask[i + 1] == 1 )
 		  regex->mask[i] = 1;
 
-	/*
 	dumpRegex(seq1);
 	dumpRegex(seq2);
 	dumpRegex(*regex);
 	printf("\n");
-	*/
+
 
 	// Room service
 	for (i = 0; i < (seq1.len + 1); i++) {
