@@ -331,6 +331,7 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	  --iReg2;
 	}
 
+	/*
 	for( i = 0; i < seq1.len + seq2.len; i++)
 	  if( regex1Mask[i] == 1 )
 	    printf("--");
@@ -347,6 +348,7 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	  else
 	    printf("%02x", regex2[i]);
 	printf("\n");
+	*/
 
 	// Compute the common regex
 	unsigned char *regexTmp = calloc( seq1.len + seq2.len, sizeof(unsigned char));
@@ -406,11 +408,12 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 		if( regex->mask[i + 1] == 1 )
 		  regex->mask[i] = 1;
 
+	/*
 	dumpRegex(seq1);
 	dumpRegex(seq2);
 	dumpRegex(*regex);
 	printf("\n");
-
+	*/
 
 	// Room service
 	for (i = 0; i < (seq1.len + 1); i++) {
