@@ -221,6 +221,8 @@ class TreeMessageGenerator():
         # Define cellRenderer objects
         self.textCellRenderer = gtk.CellRendererText()
         self.textCellRenderer.set_property('background-set' , True)
+        self.textCellRenderer.connect('edited', self.toggled_callback, self.treestore)
+
 
         for i in range(4, 4 + len(self.group.getRegex()) ) :
             # Column Messages
@@ -232,6 +234,19 @@ class TreeMessageGenerator():
         # Updates the treeview with the newly created treestore
         self.treeview.set_model(self.treestore)
         self.treeview.set_reorderable(True)
+
+    def toggled_callback(self, cell, path_string, new_text, model):
+        iter = model.get_iter_from_string(path_string)
+        path = model.get_path(iter)[0]
+        print iter
+        print model
+        
+        
+        
+        self.log.warning("Clicked "+": "+str(path)+" , "+str(path_string)+" :: "+str(new_text))
+        iter = model.get_iter(path_string)
+        
+
 
     def updateDefault(self):
         self.default(self.group)
