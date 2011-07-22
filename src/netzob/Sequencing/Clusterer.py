@@ -44,7 +44,7 @@ class Clusterer(object):
         self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
 
         if not explodeGroups:
-            self.groups= groups
+            self.groups = groups
         else:
             # Create a group for each message
             self.groups= []
@@ -71,16 +71,33 @@ class Clusterer(object):
         serialGroups = ""
         format = ""
         typer = TypeIdentifier.TypeIdentifier()
-#        t1 = time.time()
         for group in groups:
-            format += str(len(group.getMessages())) + "G"
-            for m in group.getMessages():
-                format += str(len(m.getReducedStringData())/2) + "M"
-                serialGroups += typer.toBinary( m.getReducedStringData() )
+            if group.getAlignment() != "": # If we already computed the alignement of the group, then use it
+
+                format += "1" + "G"
+                messageTmp = ""
+                alignmentTmp = ""
+                for i in range(0, len( group.getAlignment(), 2)):
+                    if group.getAlignment()[i:i+2] == "--":
+                        messageTmp += "\xff"
+                        alignmentTmp += "\x01"
+                    else:
+                        messageTmp += typer.toBinary( group.getAlignment()[i:i+2] )
+                        alignmentTmp += "\x00"
+                format += str(len(group.getAlignment())/2) + "M"
+                serialGroups += messageTmp
+                serialGroups += alignmentTmp
+            else:
+                format += str(len(group.getMessages())) + "G"
+                for m in group.getMessages():
+                    format += str(len(m.getReducedStringData())/2) + "M"
+                    serialGroups += typer.toBinary( m.getReducedStringData() ) # The message
+#                    print m.getReducedStringData()
+                    serialGroups +=  "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ) # The alignement == "\x00" * len(the message), the first time
+#                    print "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ).encode("hex")
 
         # Execute the Clustering part in C :) (thx fgy)
         (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(groups), format, serialGroups)
-#        print str(time.time() - t1) + " nbGroups: " + str(len(self.groups)) + " format: " + format
         return (i_max, j_max, maxScore)
     
     def retrieveMaxIJ(self):

@@ -18,6 +18,7 @@ typedef enum {
 typedef struct {
 	unsigned short int len; // length of the message
 	unsigned char *message; // a message
+	unsigned char *mask; // its mask
 } t_message;
 
 typedef struct {

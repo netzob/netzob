@@ -52,7 +52,8 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 			// Retrieve the data of each message
 			t_groups[i].messages[j].len = sizeMessage;
 			t_groups[i].messages[j].message = serialGroups + l;
-			l += sizeMessage;
+			t_groups[i].messages[j].mask = serialGroups + l + sizeMessage;
+			l += sizeMessage * 2;
 			free( tmp2 );
 		}
 		free( tmp );
@@ -99,20 +100,15 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 				// Align the messages of the current group
 				regex1.len = p_group.messages[0].len;
 				regex1.regex = p_group.messages[0].message;
-				regex1.mask = malloc(p_group.messages[0].len * sizeof(char));
-				memset(regex1.mask, 0, p_group.messages[0].len);
+				regex1.mask = p_group.messages[0].mask;
 
 				for (m = 1; m < p_group.len; ++m) {
 					regex2.len = p_group.messages[m].len;
 					regex2.regex = p_group.messages[m].message;
-					regex2.mask = malloc(
-							p_group.messages[m].len * sizeof(char));
-					memset(regex2.mask, 0, p_group.messages[m].len);
+					regex2.mask = p_group.messages[m].mask;
 
 					alignTwoSequences(doInternalSlick, regex1, regex2, &regex);
 
-					free(regex1.mask);
-					free(regex2.mask);
 					regex1.len = regex.len;
 					regex1.mask = regex.mask;
 					regex1.regex = regex.regex;
@@ -393,7 +389,7 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 		if( regex->mask[i + 1] == 1 )
 		  regex->mask[i] = 1;
 
-	/*	
+	/*
 	dumpRegex(seq1);
 	dumpRegex(seq2);
 	dumpRegex(*regex);

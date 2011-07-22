@@ -77,6 +77,7 @@ class MessageGroup(object):
         if len(self.getMessages()) == 1:
             self.regex = [self.getMessages()[0].getStringData()]
             self.align = self.getMessages()[0].getStringData()
+            self.columnNames = ["Prout"]
             return
 
         # Serialize the messages before sending them to the C library
