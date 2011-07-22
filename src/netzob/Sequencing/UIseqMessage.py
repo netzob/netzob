@@ -623,36 +623,53 @@ class UIseqMessage:
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
         modele = treeview.get_model()
-        donnees = selection.data
+        msg_id = selection.data
         info_depot = treeview.get_dest_row_at_pos(x, y)
         
+        # First we search for the message to move
+        message = None
+        message_grp = None
+        for group in self.treeGroupGenerator.getGroups() :
+            for msg in group.getMessages() :
+                if str(msg.getID()) == msg_id :
+                    message = msg
+                    message_grp = group
+        
+        # Break if the message to move was not found
+        if message == None :
+            self.log.warning("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id))
+            return
+        
+        self.log.debug("The message having the ID [{0}] has been found !".format(msg_id))
+        
+        # Now we search for the new group of the message
         if info_depot :
             chemin, position = info_depot
             iter = modele.get_iter(chemin)
-            new_grp_name = str(modele.get_value(iter, 0))
-        
-            found = False
+            new_grp_id = str(modele.get_value(iter, 0))
+                            
+            new_message_grp = None
             for tmp_group in self.treeGroupGenerator.getGroups() :
-                if (tmp_group.getName() == new_grp_name) :
-                    new_grp = tmp_group
-                for tmp_message in tmp_group.getMessages() :
-                    if (str(tmp_message.getID()) == donnees) :
-                        msg = tmp_message
-                        old_grp = tmp_group
-                        found = True
+                if (str(tmp_group.getID()) == new_grp_id) :
+                    new_message_grp = tmp_group
+                
+        if new_message_grp == None :
+            self.log.warning("Impossible to retrieve the group in which the selected message must be moved out.")
+            return
         
-        if (found) :
-            self.log.debug("The message {0} must be moved out its current group {1} to the new group {2}".format(msg.getID(), old_grp.getName(), new_grp.getName()))
-            #Removing from its old group
-            old_grp.removeMessage(msg)
-            #Adding to its new group
-            new_grp.addMessage(msg)
-            
-            #Update Left and Right
-            self.updateTreeStoreGroup()
-            self.updateTreeStoreMessage()
-        else :
-            self.log.warning("Impossible to retrieve the message to Drop")
+        self.log.debug("The new group of the message is {0}".format(str(new_message_grp.getID())))
+        #Removing from its old group
+        message_grp.removeMessage(message)
+        message_grp.buildRegexAndAlignment()
+        #Adding to its new group
+        new_message_grp.addMessage(message)
+        new_message_grp.buildRegexAndAlignment()
+        #Update Left and Right
+        self.log.debug("Updating tree store group")
+        self.updateTreeStoreGroup()
+        self.log.debug("Updating tree store message")
+        self.updateTreeStoreMessage()
+   
         return
    
     #+---------------------------------------------- 
