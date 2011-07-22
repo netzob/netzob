@@ -90,7 +90,7 @@ class TracesExtractor(object):
         
         # Now we execute the second part of Netzob Magical Algorithms :)
         # clean the single groups
-        clusterer.mergeOrphanGroups()
+#        clusterer.mergeOrphanGroups()
 
         self.log.info("Time of parsing : " + str(time.time() - t1))
 
