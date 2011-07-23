@@ -3,11 +3,11 @@
 #include "headers/NeedlemanWunsch.h"
 
 static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
-	char *serialGroups;
-	char *format;
-	char *tmp;
-	char *tmp2;
-	char *p;
+	unsigned char *serialGroups;
+	unsigned char *format;
+	unsigned char *tmp;
+	unsigned char *tmp2;
+	unsigned char *p;
 	unsigned short int nbGroups;
 	unsigned short int doInternalSlick;
 	unsigned short int nbMessages;
@@ -29,7 +29,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 		// Retrieve the nb of messages for the current group
 		p = strchr(format + k, 'G');
 		len = (unsigned short int) (p - (format + k));
-		tmp = malloc((len + 1) * sizeof(char));
+		tmp = malloc((len + 1) * sizeof(unsigned char));
 		memcpy(tmp, format + k, len);
 		tmp[len] = '\0';
 		nbMessages = atoi(tmp);
@@ -43,7 +43,7 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 			// Retrieve the size of each message
 			p = strchr(format + k, 'M');
 			len = (unsigned short int) (p - (format + k));
-			tmp2 = malloc((len + 1) * sizeof(char));
+			tmp2 = malloc((len + 1) * sizeof(unsigned char));
 			memcpy(tmp2, format + k, len);
 			tmp2[len] = '\0';
 			sizeMessage = atoi(tmp2);
@@ -148,10 +148,10 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 }
 
 static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
-	char *serialMessages;
-	char *format;
-	char *tmp2;
-	char *p;
+	unsigned char *serialMessages;
+	unsigned char *format;
+	unsigned char *tmp2;
+	unsigned char *p;
 	unsigned short int nbMessages;
 	unsigned short int doInternalSlick;
 	unsigned short int sizeMessage;
@@ -176,7 +176,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	  // Retrieve the size of each message
 	  p = strchr(format + k, 'M');
 	  len = (unsigned short int) (p - (format + k));
-	  tmp2 = malloc((len + 1) * sizeof(char));
+	  tmp2 = malloc((len + 1) * sizeof(unsigned char));
 	  memcpy(tmp2, format + k, len);
 	  tmp2[len] = '\0';
 	  sizeMessage = atoi(tmp2);
@@ -192,7 +192,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	// Align the messages
 	regex1.len = p_group.messages[0].len;
 	regex1.regex = p_group.messages[0].message;
-	regex1.mask = malloc(p_group.messages[0].len * sizeof(char));
+	regex1.mask = malloc(p_group.messages[0].len * sizeof(unsigned char));
 	memset(regex1.mask, 0, p_group.messages[0].len);
 
 	// Only usefull in case of nbMessages == 1
@@ -204,7 +204,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	for (k = 1; k < p_group.len; ++k) {
 	  regex2.len = p_group.messages[k].len;
 	  regex2.regex = p_group.messages[k].message;
-	  regex2.mask = malloc(p_group.messages[k].len * sizeof(char));
+	  regex2.mask = malloc(p_group.messages[k].len * sizeof(unsigned char));
 	  memset(regex2.mask, 0, p_group.messages[k].len);
 	    
 	  alignTwoSequences(doInternalSlick, regex1, regex2, &regex);
@@ -232,6 +232,9 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	const short int match = 10;
 	const short int mismatch = -10;
 	const short int gap = 0;
+
+	//	dumpRegex(seq1);
+	//	dumpRegex(seq2);
 
 	// initiliaze the matrix with 0
 	short int **matrix;
@@ -291,16 +294,19 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 
 		if ((eltL > eltD) && (eltL > eltT)) {
 			--j;
-			regex1[iReg1] = 0xff;
-			regex2[iReg2] = seq2.regex[j];
+			regex1[iReg1] = 0xf1;
 			regex1Mask[iReg1] = 1;
+
+			regex2[iReg2] = seq2.regex[j];
 			regex2Mask[iReg2] = 0;
 		} else if ((eltT >= eltL) && (eltT > eltD)) {
 			--i;
-			regex2[iReg2] = 0xff;
+			regex2[iReg2] = 0xf2;
+			regex2Mask[iReg2] = 1;
+
 			regex1[iReg1] = seq1.regex[i];
 			regex1Mask[iReg1] = 0;
-			regex2Mask[iReg2] = 1;
+
 		} else {
 			--i;
 			--j;
@@ -314,16 +320,17 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	}
 	while (i > 0) {
 	  --i;
-	  regex2[iReg2] = 0xff;
+	  regex2[iReg2] = 0xf3;
+	  regex2Mask[iReg2] = 1;
+
 	  regex1[iReg1] = seq1.regex[i];
 	  regex1Mask[iReg1] = 0;
-	  regex2Mask[iReg2] = 1;
 	  --iReg1;
 	  --iReg2;
 	}
 	while (j > 0) {
 	  --j;
-	  regex1[iReg1] = 0xff;
+	  regex1[iReg1] = 0xf4;
 	  regex2[iReg2] = seq2.regex[j];
 	  regex1Mask[iReg1] = 1;
 	  regex2Mask[iReg2] = 0;
@@ -333,20 +340,20 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 
 	/*
 	for( i = 0; i < seq1.len + seq2.len; i++)
-	  if( regex1Mask[i] == 1 )
-	    printf("--");
+	  if( regex1Mask[i] == 0 )
+	    printf("%02x", regex1[i]);
 	  else if ( regex1Mask[i] == 2 )
 	    printf("##");
 	  else
-	    printf("%02x", regex1[i]);
+	    printf("--");
 	printf("\n");
 	for( i = 0; i < seq1.len + seq2.len; i++)
-	  if( regex2Mask[i] == 1 )
-	    printf("--");
-	  else if ( regex2Mask[i] == 2 )
-	    printf("--");
-	  else
+	  if( regex2Mask[i] == 0 )
 	    printf("%02x", regex2[i]);
+	  else if ( regex2Mask[i] == 2 )
+	    printf("##");
+	  else
+	    printf("--");
 	printf("\n");
 	*/
 
@@ -358,13 +365,20 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	while (i > 0) {
 	  --i;
 	  if ((regex1Mask[i] == 2) && (regex2Mask[i] == 2)) {
-	    break;
-	  } else if ((regex1Mask[i] != 0) || (regex2Mask[i] != 0) || (regex1[i] != regex2[i])) {
-	    regexTmp[i] = 0xff;
+	    regexTmp[i] = 0xf9;
+	    regexMaskTmp[i] = 2;
+	  }
+	  else if ((regex1Mask[i] != 0) || (regex2Mask[i] != 0) ) {
+	    regexTmp[i] = 0xf8;
 	    regexMaskTmp[i] = 1;
-	  } else {
+	  }
+	  else if (regex1[i] == regex2[i]) {
 	    regexTmp[i] = regex1[i];
 	    regexMaskTmp[i] = 0;
+	  }
+	  else {
+	    regexTmp[i] = 0xf5;
+	    regexMaskTmp[i] = 1;
 	  }
 	}
 
@@ -394,8 +408,8 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	while( regexMaskTmp[i] == 2 )
 	  i++;
 	regex->len = seq1.len + seq2.len - i;
-	regex->regex = malloc(regex->len * sizeof(char));
-	regex->mask = malloc(regex->len * sizeof(char));
+	regex->regex = malloc(regex->len * sizeof(unsigned char));
+	regex->mask = malloc(regex->len * sizeof(unsigned char));
 	// TODO: (fgy) free regex.mask and regex.regex
 	memcpy(regex->regex, regexTmp + i, regex->len);
 	memcpy(regex->mask, regexMaskTmp + i, regex->len);
@@ -405,15 +419,15 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	  for(i = 1; i < regex->len - 1; i++)
 	    if( regex->mask[i] == 0 )
 	      if( regex->mask[i - 1] == 1 )
-		if( regex->mask[i + 1] == 1 )
+		if( regex->mask[i + 1] == 1 ) {
+		  regex->regex[i] = 0xf6;
 		  regex->mask[i] = 1;
+		}
 
-	/*
-	dumpRegex(seq1);
-	dumpRegex(seq2);
-	dumpRegex(*regex);
-	printf("\n");
-	*/
+	
+	//	dumpRegex(*regex);
+	//	printf("\n");
+	
 
 	// Room service
 	for (i = 0; i < (seq1.len + 1); i++) {

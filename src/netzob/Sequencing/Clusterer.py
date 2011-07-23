@@ -121,6 +121,7 @@ class Clusterer(object):
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             # Create the score matrix for each group
             (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ(groups)
+
             """
             for group in self.groups:
                 compiledRegex = re.compile("".join( group.getRegex() ))
@@ -134,7 +135,7 @@ class Clusterer(object):
                         print "PAN"
                     else:
                         print "."
-            """    
+            """   
 
 
             gobject.idle_add(self.doProgressBarStep, progressionStep)
