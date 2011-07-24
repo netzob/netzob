@@ -231,12 +231,28 @@ class Clusterer(object):
             group2 = groups.pop(j_maximum)
             group1 = groups.pop(i_maximum)
 
-        # Merge the groups i and j and append it to the "groups" structure
+        # Merge the groups i and j
         messages = []
         messages.extend( group1.getMessages() )
         messages.extend( group2.getMessages() )
-        group = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
-        groups.append(group)
+        newGroup = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
+        # Try to see if other messages match this new group
+        newGroup.buildRegexAndAlignment()
+        for g in groups:
+            if len(g.getMessages()) == 1:
+                compiledRegex = re.compile("".join( newGroup.getRegex() ))
+                m = compiledRegex.match( g.getMessages()[0].getStringData() )
+                if m != None:
+                    self.log.debug("The regex match the message => merging")
+                    newGroup.addMessages( g.getMessages() )
+                    groups.remove(g)
+            elif "".join(newGroup.getRegex()) == "".join(g.getRegex()):
+                self.log.debug("The regex is equivalent to another group regex => merging")
+                newGroup.addMessages( g.getMessages() )
+                groups.remove(g)
+                    
+        # Append th new group to the "groups" structure
+        groups.append(newGroup)
     
     def mergeRowCol(self, i_maximum, j_maximum):
         self.mergeEffectiveRowCol(i_maximum, j_maximum, self.groups)

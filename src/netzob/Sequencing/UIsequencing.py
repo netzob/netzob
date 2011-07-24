@@ -30,12 +30,12 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| UIseqMessage :
+#| UIsequencing :
 #|     GUI for message sequencing
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class UIseqMessage:
+class UIsequencing:
     TARGET_TYPE_TEXT = 80
     TARGETS = [('text/plain', 0, TARGET_TYPE_TEXT)]
     
@@ -69,7 +69,7 @@ class UIseqMessage:
     #+----------------------------------------------   
     def __init__(self, zob):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
+        self.log = logging.getLogger('netzob.Sequencing.UIsequencing.py')
         self.zob = zob
         self.selectedGroup = ""
         self.selectedMessage = ""
@@ -708,7 +708,7 @@ class UIseqMessage:
         else :
             # Default display of the groups
             self.treeGroupGenerator.default()
-            self.zob.uiDumpingMessage.updateGoups( self.treeGroupGenerator.getGroups() )
+            self.zob.dumping.updateGoups( self.treeGroupGenerator.getGroups() )
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages

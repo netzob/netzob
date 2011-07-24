@@ -17,13 +17,16 @@ import sys
 #| Configure the Python path
 #+----------------------------------------------
 import sys
-sys.path.append('lib/libNeedleman')
+sys.path.append('lib/libNeedleman/')
+sys.path.append('resources/scapy/')
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Sequencing import UIseqMessage
+from netzob.Sequencing import UIsequencing
 from netzob.Dumping import UIDumpingMessage
+from netzob.Capturing import UIcapturing
+from netzob.Fuzzing import UIfuzzing
 from netzob.Common import ConfigurationParser
 
 #+---------------------------------------------- 
@@ -98,13 +101,16 @@ class Netzob:
         vbox.pack_start(self.notebook, True, True, 0)
 
         self.pageList = []
-        # Adding the message sequencing "onglet"
-        self.uiseqmessage = UIseqMessage.UIseqMessage(self)
-        self.pageList.append(["Message Sequencing", self.uiseqmessage])
-        
-        # Adding the message dumping "onglet"
-        self.uiDumpingMessage = UIDumpingMessage.UIDumpingMessage(self)
-        self.pageList.append(["Message XML Dumping", self.uiDumpingMessage])
+        # Adding the different notebook
+        self.capturing = UIcapturing.UIcapturing(self)
+        self.sequencing = UIsequencing.UIsequencing(self)
+        self.dumping = UIDumpingMessage.UIDumpingMessage(self)
+        self.fuzzing = UIfuzzing.UIfuzzing(self)
+
+        self.pageList.append(["Capturing", self.capturing])
+        self.pageList.append(["Sequencing", self.sequencing])
+        self.pageList.append(["Dumping", self.dumping])
+        self.pageList.append(["Fuzzing", self.fuzzing])
         
         for page in self.pageList:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
@@ -153,7 +159,6 @@ class Netzob:
         for page in self.pageList:
             if page[0] == nameTab:
                 page[1].update()
-
 
     #+---------------------------------------------- 
     #| Called when user select a new trace for analysis

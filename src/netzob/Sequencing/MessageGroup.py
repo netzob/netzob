@@ -209,28 +209,10 @@ class MessageGroup(object):
     #+----------------------------------------------
     def addMessage(self, message):
         self.messages.append(message)
-        # Compute the regex
-        self.computeRegex()
-        # Compute the score
-        self.computeScore()
         
     def addMessages(self, _messages) :
-        msgs = []
-        for msg in _messages :
-            found = False
-            for message in self.messages :
-                if message.getID() == msg.getID():
-                    found = True;
-            if found == False :
-                msgs.append(msg)
-        if (self.alignment == "") :
-            for m in msgs :
-                self.messages.append(m)
-            self.computeRegex()
-            self.computeScore()
-        else :
-            self.computeRegex2(msgs)
-            self.computeScore()
+        for m in _messages:
+            self.messages.append(m)
     
     #+---------------------------------------------- 
     #| getXMLDefinition : 
