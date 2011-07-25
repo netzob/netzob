@@ -196,13 +196,43 @@ class Network:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, selection, dialog):
-        pass
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
+        # Create the new XML structure
+        res = "<datas>\n"
+        (model, paths) = selection.get_selected_rows()
+        for path in paths:
+            iter = model.get_iter(path)
+            if(model.iter_is_valid(iter)):
+                packetID = model.get_value(iter, 0)
+                proto = model.get_value(iter, 1)
+                timestamp = str(model.get_value(iter, 6))
+                IPsrc = self.packets[packetID].sprintf("%IP.src%")
+                IPdst = self.packets[packetID].sprintf("%IP.dst%")
+                if scapyy.TCP in self.packets[packetID]:
+                    sport = self.packets[packetID].sprintf("%TCP.sport%")
+                    dport = self.packets[packetID].sprintf("%TCP.dport%")
+                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
+                elif scapyy.UDP in self.packets[packetID]:
+                    sport = self.packets[packetID].sprintf("%UDP.sport%")
+                    dport = self.packets[packetID].sprintf("%UDP.dport%")
+                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
+                if rawPayload == "":
+                    continue
+                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
+                res += rawPayload.encode("hex") + "\n"
+                res += "</data>\n"
+        res += "</datas>\n"
+        # Dump into a random XML file
+        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".txt"  , "w")
+        fd.write(res)
+        fd.close()
+        dialog.destroy()
 
     #+---------------------------------------------- 
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, selection, dialog):
-        pass
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
