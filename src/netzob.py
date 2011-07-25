@@ -107,10 +107,10 @@ class Netzob:
         self.dumping = UIDumpingMessage.UIDumpingMessage(self)
         self.fuzzing = UIfuzzing.UIfuzzing(self)
 
-        self.pageList.append(["Capturing", self.capturing])
+        self.pageList.append(["Import", self.capturing])
         self.pageList.append(["Sequencing", self.sequencing])
-        self.pageList.append(["Dumping", self.dumping])
         self.pageList.append(["Fuzzing", self.fuzzing])
+        self.pageList.append(["Export", self.dumping])
         
         for page in self.pageList:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
