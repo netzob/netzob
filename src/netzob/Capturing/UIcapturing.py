@@ -18,7 +18,7 @@ import threading
 #+----------------------------------------------
 from ..Common import ConfigurationParser
 #from scapy.all import send, UDP, conf, packet
-import scapy.all
+import scapyy.all as scapyy
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -186,9 +186,8 @@ class UIcapturing:
     def launch_sniff(self, button, filter, count, time):
         button.set_sensitive(False)
         self.packets = []
-        scapy.all.send(scapy.all.UDP(), verbose=False)
         try: # Just see if scapy is correctly working
-            scapy.all.send(scapy.all.UDP(), verbose=False)
+            scapyy.send(scapyy.UDP(), verbose=False)
         except:
             self.log.error("Scapy does not have the capability to sniff packets on your system")
             self.log.error("If you want capturing capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/bin/python2.6\"")
@@ -203,17 +202,17 @@ class UIcapturing:
     #+----------------------------------------------
     def scapyThread(self, button, filter, count, time):
         self.log.info("Launching sniff process with : count="+count.get_text()+", timeout="+time.get_text()+", filter=\""+filter.get_text()+"\"")
-        scapy.all.sniff(prn=self.callback_scapy, filter=filter.get_text(), store=0, count=int(count.get_text()), timeout=int(time.get_text()))
+        scapyy.sniff(prn=self.callback_scapy, filter=filter.get_text(), store=0, count=int(count.get_text()), timeout=int(time.get_text()))
         button.set_sensitive(True)
 
     #+---------------------------------------------- 
     #| Called when scapy reiceve a message
     #+----------------------------------------------
     def callback_scapy(self, pkt):
-        if scapy.all.TCP in pkt:
+        if scapyy.TCP in pkt:
             self.packets.append( pkt )
             self.treestore.append(None, [len(self.packets) + 1, "TCP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.sport%"), pkt.sprintf("%TCP.dport%")])
-        elif scapy.all.UDP in pkt:
+        elif scapyy.UDP in pkt:
             self.packets.append( pkt )
             self.treestore.append(None, [len(self.packets) + 1, "UDP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%UDP.sport%"), pkt.sprintf("%UDP.dport%")])
 #        print pkt.sprintf("%TCP.payload%")
