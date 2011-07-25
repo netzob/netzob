@@ -1,0 +1,20 @@
+### Dependencies ###
+
+Python2.6
+
+### Installation ###
+
+$ cd lib/libNeedleman/
+$ gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
+
+### Scapy requirements ###
+
+Dependencies : tcpdump
+Configuration : 
+
+$ sudo setcap cap_net_raw=ep /usr/bin/python2.6
+$ sudo setcap cap_net_raw=ep /usr/sbin/tcpdump
+
+### Running Netzob ###
+
+$ python src/netzob.py
