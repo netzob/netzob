@@ -12,12 +12,14 @@ import pygtk
 pygtk.require('2.0')
 import logging
 import threading
+import os
+import time
+import random
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-#from scapy.all import send, UDP, conf, packet
 import scapyy.all as scapyy
 
 #+---------------------------------------------- 
@@ -55,10 +57,10 @@ class IPC:
     #+----------------------------------------------   
     def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
+        self.log = logging.getLogger('netzob.Capturing.ipc.py')
         self.packets = []
 
-        # IPC Capturing Panel
+        # Network Capturing Panel
         self.panel = gtk.Table(rows=6, columns=4, homogeneous=False)
         self.panel.show()
 
@@ -98,7 +100,7 @@ class IPC:
 
         # Packet list
         scroll = gtk.ScrolledWindow()
-        self.treestore = gtk.TreeStore(int, str, str, str, str, str)
+        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int) # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         treeview = gtk.TreeView(self.treestore)
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         treeview.connect("cursor-changed", self.packet_details)
@@ -134,9 +136,9 @@ class IPC:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
-        but = gtk.Button(label="Select packets for analysis")
+        but = gtk.Button(label="Save selected packets as a new trace")
         but.show()
-        but.connect("clicked", self.select_packets, treeview)
+        but.connect("clicked", self.save_packets, treeview)
         self.panel.attach(but, 1, 2, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet detail
@@ -151,8 +153,128 @@ class IPC:
     #+---------------------------------------------- 
     #| Called when user select a list of packet
     #+----------------------------------------------
-    def select_packets(self, button, treeview):
-        print treeview.get_selection().count_selected_rows()
+    def save_packets(self, button, treeview):
+        dialog = gtk.Dialog(title="Save selected packet as a new trace", flags=0, buttons=None)
+        dialog.show()
+        table = gtk.Table(rows=2, columns=3, homogeneous=False)
+        table.show()
+        # Add to an existing trace
+        label = gtk.Label("Add to an existing trace")
+        label.show()
+        entry = gtk.combo_box_entry_new_text()
+        entry.show()
+        entry.set_size_request(300, -1)
+        entry.set_model(gtk.ListStore(str))
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        for tmpDir in os.listdir(tracesDirectoryPath):
+            if tmpDir == '.svn':
+                continue
+            entry.append_text(tmpDir)
+        but = gtk.Button("Save")
+        but.connect("clicked", self.add_packets_to_existing_trace, entry, treeview.get_selection(), dialog)
+        but.show()
+        table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+
+        # Create a new trace
+        label = gtk.Label("Create a new trace")
+        label.show()
+        entry = gtk.Entry()
+        entry.show()
+        but = gtk.Button("Save")
+        but.connect("clicked", self.create_new_trace, entry, treeview.get_selection(), dialog)
+        but.show()
+        table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 2, 3, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.action_area.pack_start(table, True, True, 0)
+
+    #+---------------------------------------------- 
+    #| Add a selection of packets to an existing trace
+    #+----------------------------------------------
+    def add_packets_to_existing_trace(self, button, entry, selection, dialog):
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
+        # Create the new XML structure
+        res = "<datas>\n"
+        (model, paths) = selection.get_selected_rows()
+        for path in paths:
+            iter = model.get_iter(path)
+            if(model.iter_is_valid(iter)):
+                packetID = model.get_value(iter, 0)
+                proto = model.get_value(iter, 1)
+                timestamp = str(model.get_value(iter, 6))
+                IPsrc = self.packets[packetID].sprintf("%IP.src%")
+                IPdst = self.packets[packetID].sprintf("%IP.dst%")
+                if scapyy.TCP in self.packets[packetID]:
+                    sport = self.packets[packetID].sprintf("%TCP.sport%")
+                    dport = self.packets[packetID].sprintf("%TCP.dport%")
+                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
+                elif scapyy.UDP in self.packets[packetID]:
+                    sport = self.packets[packetID].sprintf("%UDP.sport%")
+                    dport = self.packets[packetID].sprintf("%UDP.dport%")
+                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
+                if rawPayload == "":
+                    continue
+                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
+                res += rawPayload.encode("hex") + "\n"
+                res += "</data>\n"
+        res += "</datas>\n"
+        # Dump into a random XML file
+        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".txt"  , "w")
+        fd.write(res)
+        fd.close()
+        dialog.destroy()
+
+    #+---------------------------------------------- 
+    #| Creation of a new trace from a selection of packets
+    #+----------------------------------------------
+    def create_new_trace(self, button, entry, selection, dialog):
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        for tmpDir in os.listdir(tracesDirectoryPath):
+            if tmpDir == '.svn':
+                continue
+            if entry.get_text() == tmpDir:
+                dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
+                dialogBis.set_size_request(400, 50)
+                dialogBis.show()
+                return
+
+        # Create the dest Dir
+        newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
+        os.mkdir( newTraceDir )
+        # Create the new XML structure
+        res = "<datas>\n"
+        (model, paths) = selection.get_selected_rows()
+        for path in paths:
+            iter = model.get_iter(path)
+            if(model.iter_is_valid(iter)):
+                packetID = model.get_value(iter, 0)
+                proto = model.get_value(iter, 1)
+                timestamp = str(model.get_value(iter, 6))
+                IPsrc = self.packets[packetID].sprintf("%IP.src%")
+                IPdst = self.packets[packetID].sprintf("%IP.dst%")
+                if scapyy.TCP in self.packets[packetID]:
+                    sport = self.packets[packetID].sprintf("%TCP.sport%")
+                    dport = self.packets[packetID].sprintf("%TCP.dport%")
+                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
+                elif scapyy.UDP in self.packets[packetID]:
+                    sport = self.packets[packetID].sprintf("%UDP.sport%")
+                    dport = self.packets[packetID].sprintf("%UDP.dport%")
+                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
+                if rawPayload == "":
+                    continue
+                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
+                res += rawPayload.encode("hex") + "\n"
+                res += "</data>\n"
+        res += "</datas>\n"
+        # Dump into a random XML file
+        fd = open(newTraceDir +"/"+ str(random.randint(10000, 90000)) + ".txt"  , "w")
+        fd.write(res)
+        fd.close()
+        dialog.destroy()
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details
@@ -171,6 +293,8 @@ class IPC:
     def launch_sniff(self, button, filter, count, time):
         button.set_sensitive(False)
         self.packets = []
+        self.treestore.clear()
+        self.textview.get_buffer().set_text("")
         try: # Just see if scapy is correctly working
             scapyy.send(scapyy.UDP(), verbose=False)
         except:
@@ -194,11 +318,11 @@ class IPC:
     #| Called when scapy reiceve a message
     #+----------------------------------------------
     def callback_scapy(self, pkt):
-        if scapyy.TCP in pkt:
-            self.treestore.append(None, [len(self.packets), "TCP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.sport%"), pkt.sprintf("%TCP.dport%")])
+        if scapyy.TCP in pkt and scapyy.Raw in pkt:
+            self.treestore.append(None, [len(self.packets), "TCP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.sport%"), pkt.sprintf("%TCP.dport%"), int(time.time())])
             self.packets.append( pkt )
-        elif scapyy.UDP in pkt:
-            self.treestore.append(None, [len(self.packets), "UDP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%UDP.sport%"), pkt.sprintf("%UDP.dport%")])
+        elif scapyy.UDP in pkt and scapyy.Raw in pkt:
+            self.treestore.append(None, [len(self.packets), "UDP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%UDP.sport%"), pkt.sprintf("%UDP.dport%"), int(time.time())])
             self.packets.append( pkt )
 
     #+---------------------------------------------- 
