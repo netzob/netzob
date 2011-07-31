@@ -238,7 +238,7 @@ class XML:
                 continue
             if entry.get_text() == tmpDir:
                 dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
-                dialogBis.set_size_request(400, 50)
+                dialogBis.set_size_request(250, 50)
                 dialogBis.show()
                 return
 

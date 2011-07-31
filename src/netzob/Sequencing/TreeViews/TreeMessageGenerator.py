@@ -62,7 +62,7 @@ class TreeMessageGenerator():
         self.treeview.append_column(column)
         self.treeview.show()
         self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_size_request(1000, 400)
+#        self.scroll.set_size_request(1000, 400)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
         self.scroll.add(self.treeview)
         self.scroll.show()

@@ -51,7 +51,7 @@ class Netzob:
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
-        window.set_size_request(1200, 800) 
+#        window.set_size_request(1200, 800) 
         window.connect("delete_event", self.evnmt_delete)
         window.connect("destroy", self.destroy)
         
