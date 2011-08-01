@@ -125,9 +125,10 @@ class Clusterer(object):
             """
             ## Just for debug purpose
             for group in self.groups:
+                group.buildRegexAndAlignment()
                 compiledRegex = re.compile("".join( group.getRegex() ))
                 for message in group.getMessages():
-                    print message.getStringData()
+#                    print message.getStringData()
                     data = message.getStringData()
                     m = compiledRegex.match(data)
                     if m == None:
@@ -135,7 +136,7 @@ class Clusterer(object):
                         print message.getStringData()
                         print "PAN"
                     else:
-                        print "."
+                        pass
             """   
 
 

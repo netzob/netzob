@@ -74,9 +74,9 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	    }
 	}
 
-	omp_lock_t my_lock;
-	omp_set_num_threads(8);
-	omp_init_lock(&my_lock);
+	//	omp_lock_t my_lock;
+	//	omp_set_num_threads(8);
+	//	omp_init_lock(&my_lock);
 
 #pragma omp parallel for shared(t_groups, nbGroups, matrix)
 	for (i = 0; i < nbGroups; i++) {
@@ -113,9 +113,9 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 					regex1.mask = regex.mask;
 					regex1.regex = regex.regex;
 				}
-				omp_set_lock(&my_lock);
+				//				omp_set_lock(&my_lock);
 				matrix[i][p] = regex.score;
-				omp_unset_lock(&my_lock);
+				//				omp_unset_lock(&my_lock);
 
 				free( regex.regex );
 				free( regex.mask );				
@@ -296,24 +296,46 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 			--j;
 			regex1[iReg1] = 0xf1;
 			regex1Mask[iReg1] = 1;
-
-			regex2[iReg2] = seq2.regex[j];
-			regex2Mask[iReg2] = 0;
+			if( seq2.mask[j] == 0) {
+			  regex2[iReg2] = seq2.regex[j];
+			  regex2Mask[iReg2] = 0;
+			}
+			else {
+			  regex2[iReg2] = 0xf1;
+			  regex2Mask[iReg2] = 1;
+			}
 		} else if ((eltT >= eltL) && (eltT > eltD)) {
 			--i;
 			regex2[iReg2] = 0xf2;
 			regex2Mask[iReg2] = 1;
-
-			regex1[iReg1] = seq1.regex[i];
-			regex1Mask[iReg1] = 0;
-
+			if( seq1.mask[i] == 0) {
+			  regex1[iReg1] = seq1.regex[i];
+			  regex1Mask[iReg1] = 0;
+			}
+			else {
+			  regex1[iReg1] = 0xf2;
+			  regex1Mask[iReg1] = 1;
+			}
 		} else {
 			--i;
 			--j;
-			regex1[iReg1] = seq1.regex[i];
-			regex2[iReg2] = seq2.regex[j];
-			regex1Mask[iReg1] = 0;
-			regex2Mask[iReg2] = 0;
+			if( seq1.mask[i] == 0) {
+			  regex1[iReg1] = seq1.regex[i];
+			  regex1Mask[iReg1] = 0;
+			}
+			else {
+			  regex1[iReg1] = 0xf2;
+			  regex1Mask[iReg1] = 1;
+			}
+
+			if( seq2.mask[j] == 0) {
+			  regex2[iReg2] = seq2.regex[j];
+			  regex2Mask[iReg2] = 0;
+			}
+			else {
+			  regex2[iReg2] = 0xf2;
+			  regex2Mask[iReg2] = 1;
+			}
 		}
 		--iReg1;
 		--iReg2;
@@ -325,23 +347,26 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 
 	  regex1[iReg1] = seq1.regex[i];
 	  regex1Mask[iReg1] = 0;
+
 	  --iReg1;
 	  --iReg2;
 	}
 	while (j > 0) {
 	  --j;
 	  regex1[iReg1] = 0xf4;
-	  regex2[iReg2] = seq2.regex[j];
 	  regex1Mask[iReg1] = 1;
+
+	  regex2[iReg2] = seq2.regex[j];
 	  regex2Mask[iReg2] = 0;
+
 	  --iReg1;
 	  --iReg2;
 	}
 
-	/*
+	/*	
 	for( i = 0; i < seq1.len + seq2.len; i++)
 	  if( regex1Mask[i] == 0 )
-	    printf("%02x", regex1[i]);
+	    printf("%02x", (unsigned char) regex1[i]);
 	  else if ( regex1Mask[i] == 2 )
 	    printf("##");
 	  else
@@ -349,7 +374,7 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	printf("\n");
 	for( i = 0; i < seq1.len + seq2.len; i++)
 	  if( regex2Mask[i] == 0 )
-	    printf("%02x", regex2[i]);
+	    printf("%02x", (unsigned char) regex2[i]);
 	  else if ( regex2Mask[i] == 2 )
 	    printf("##");
 	  else
@@ -364,15 +389,11 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	i = seq1.len + seq2.len;
 	while (i > 0) {
 	  --i;
-	  if ((regex1Mask[i] == 2) && (regex2Mask[i] == 2)) {
+	  if ((regex1Mask[i] == 2) || (regex2Mask[i] == 2)) {
 	    regexTmp[i] = 0xf9;
 	    regexMaskTmp[i] = 2;
 	  }
-	  else if ((regex1Mask[i] != 0) || (regex2Mask[i] != 0) ) {
-	    regexTmp[i] = 0xf8;
-	    regexMaskTmp[i] = 1;
-	  }
-	  else if (regex1[i] == regex2[i]) {
+	  else if ((regex1Mask[i] == 0) && (regex2Mask[i] == 0) && (regex1[i] == regex2[i])) {
 	    regexTmp[i] = regex1[i];
 	    regexMaskTmp[i] = 0;
 	  }
