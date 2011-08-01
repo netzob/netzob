@@ -218,35 +218,26 @@ class TreeMessageGenerator():
         for col in self.treeview.get_columns() :
             self.treeview.remove_column(col)
             
-        # Define cellRenderer objects
-        self.textCellRenderer = gtk.CellRendererText()
-        self.textCellRenderer.set_property('background-set' , True)
-        self.textCellRenderer.connect('edited', self.toggled_callback, self.treestore)
-
-
-        for i in range(4, 4 + len(self.group.getRegex()) ) :
+        for iCol in range(4, 4 + len(self.group.getRegex()) ) :
+            # Define cellRenderer object
+            textCellRenderer = gtk.CellRendererText()
+            textCellRenderer.set_property('background-set' , True)
+            textCellRenderer.connect('edited', self.column_renaming_cb, iCol - 4)
             # Column Messages
-            lvcolumn = gtk.TreeViewColumn('Col'+str(i-4))
-            lvcolumn.pack_start(self.textCellRenderer, True)
-            lvcolumn.set_attributes(self.textCellRenderer, markup=i, background=1, weight=2, editable=3)
+            lvcolumn = gtk.TreeViewColumn('Col'+str(iCol - 4))
+            lvcolumn.pack_start(textCellRenderer, True)
+            lvcolumn.set_attributes(textCellRenderer, markup=iCol, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
 
         # Updates the treeview with the newly created treestore
         self.treeview.set_model(self.treestore)
         self.treeview.set_reorderable(True)
 
-    def toggled_callback(self, cell, path_string, new_text, model):
-        iter = model.get_iter_from_string(path_string)
-        path = model.get_path(iter)[0]
-        print iter
-        print model
-        
-        
-        
-        self.log.warning("Clicked "+": "+str(path)+" , "+str(path_string)+" :: "+str(new_text))
-        iter = model.get_iter(path_string)
-        
+    def column_renaming_cb(self, cell, path_string, new_text, iCol):
+        self.treestore[path_string][iCol + 4] = new_text
+        self.group.setColumnName(iCol, new_text)
 
+        ### update TreeType !!
 
     def updateDefault(self):
         self.default(self.group)

@@ -237,6 +237,8 @@ class Clusterer(object):
         messages.extend( group2.getMessages() )
         newGroup = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
         # Try to see if other messages match this new group
+        # => (fgy) That's not a good idea, as it abstracts to much the created groups
+        """
         newGroup.buildRegexAndAlignment()
         for g in groups:
             if len(g.getMessages()) == 1:
@@ -250,6 +252,7 @@ class Clusterer(object):
                 self.log.debug("The regex is equivalent to another group regex => merging")
                 newGroup.addMessages( g.getMessages() )
                 groups.remove(g)
+        """
                     
         # Append th new group to the "groups" structure
         groups.append(newGroup)

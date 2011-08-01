@@ -77,7 +77,7 @@ class MessageGroup(object):
         if len(self.getMessages()) == 1:
             self.regex = [self.getMessages()[0].getStringData()]
             self.align = self.getMessages()[0].getStringData()
-            self.columnNames = ["Prout"]
+            self.columnNames = ["Name"]
             return
 
         # Serialize the messages before sending them to the C library
@@ -164,7 +164,7 @@ class MessageGroup(object):
         # Fill columnNames with a default name
         self.columnNames = []
         for i in range(len(self.getRegex())):
-            self.columnNames.append("Prout")
+            self.columnNames.append("Name")
     
     #+---------------------------------------------- 
     #| computeScore : given the messages, 
@@ -457,8 +457,11 @@ class MessageGroup(object):
         self.alignment = alignment
     def setScore(self, score):
         self.score = score
-        
-    
+    def setColumnNames(self, columnNames):
+        self.columnNames = columnNames
+    def setColumnName(self, iCol, value):
+        if len(self.columnNames) > iCol:
+            self.columnNames[iCol] = value
 
     #+---------------------------------------------- 
     #| Inner thread for regex computation

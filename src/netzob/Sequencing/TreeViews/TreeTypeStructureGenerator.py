@@ -108,7 +108,7 @@ class TreeTypeStructureGenerator():
                 fake = ""
             messageElt = messageTable[i]
             regexElt = self.getGroup().getRegex()[i]
-            if regexElt.find("{"):
+            if regexElt.find("{") != -1:
                 iter = self.treestore.append(None, [fake + self.getGroup().getColumnNames()[i] + ":", regexElt + " / " + messageElt, ""])
             else:
                 iter = self.treestore.append(None, [fake + self.getGroup().getColumnNames()[i] + ":", regexElt, ""])

@@ -184,8 +184,6 @@ class UIsequencing:
         but.connect("clicked", self.findSizeFields)
         but.show()
         table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
-        
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TREEVIEW MESSAGE OUTPUT
@@ -425,11 +423,19 @@ class UIsequencing:
         else:
             regex2 = "(.{," + str(lenDyn2) + "})"
 
+        # Build the new columnName and apply it
+        newColumnNames = self.treeMessageGenerator.getGroup().getColumnNames()
+        newColumnNames.pop(iCol)
+        newColumnNames.insert(iCol, "Name")
+        newColumnNames.insert(iCol + 1, "Name")
+        self.treeMessageGenerator.getGroup().setColumnNames(newColumnNames)
+
         # Build the new regex and apply it
         newRegex = self.treeMessageGenerator.getGroup().getRegex()
         newRegex.pop(iCol)
         newRegex.insert(iCol, regex1)
         newRegex.insert(iCol + 1, regex2)
+
         self.treeMessageGenerator.getGroup().setRegex( newRegex )
         self.treeMessageGenerator.updateDefault()            
         dialog.destroy()
