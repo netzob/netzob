@@ -62,7 +62,7 @@ class TreeMessageGenerator():
         self.treeview.append_column(column)
         self.treeview.show()
         self.scroll = gtk.ScrolledWindow()
-#        self.scroll.set_size_request(1000, 400)
+        self.scroll.set_size_request(-1, 200)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
         self.scroll.add(self.treeview)
         self.scroll.show()
@@ -236,8 +236,6 @@ class TreeMessageGenerator():
     def column_renaming_cb(self, cell, path_string, new_text, iCol):
         self.treestore[path_string][iCol + 4] = new_text
         self.group.setColumnName(iCol, new_text)
-
-        ### update TreeType !!
 
     def updateDefault(self):
         self.default(self.group)

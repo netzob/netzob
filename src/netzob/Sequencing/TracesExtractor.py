@@ -91,6 +91,7 @@ class TracesExtractor(object):
         # Now we execute the second part of Netzob Magical Algorithms :)
         # clean the single groups
         if ConfigurationParser.ConfigurationParser().getInt("clustering", "orphan_reduction") == 1 :
+            self.log.info("Merging the orphan groups") 
             clusterer.mergeOrphanGroups()
 
         self.log.info("Time of parsing : " + str(time.time() - t1))

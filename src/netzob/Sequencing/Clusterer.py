@@ -66,7 +66,7 @@ class Clusterer(object):
     #|                   the groups to merge
     #|                    max score of the two groups
     #+----------------------------------------------
-    def retrieveEffectiveMaxIJ(self, groups):
+    def retrieveEffectiveMaxIJ(self):
         self.log.debug("Computing the associated matrix")
         # Serialize the groups before feeding the C library
         configParser = ConfigurationParser.ConfigurationParser()
@@ -74,7 +74,7 @@ class Clusterer(object):
         serialGroups = ""
         format = ""
         typer = TypeIdentifier.TypeIdentifier()
-        for group in groups:
+        for group in self.groups:
             if group.getAlignment() != "": # If we already computed the alignement of the group, then use it
                 format += "1" + "G"
                 messageTmp = ""
@@ -99,16 +99,16 @@ class Clusterer(object):
 #                    print "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ).encode("hex")
 
         # Execute the Clustering part in C :) (thx fgy)
-        (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(groups), format, serialGroups)
+        (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(self.groups), format, serialGroups)
         return (i_max, j_max, maxScore)
     
     def retrieveMaxIJ(self):
-        return self.retrieveEffectiveMaxIJ(self.groups)
+        return self.retrieveEffectiveMaxIJ()
     
     def mergeGroups(self):
-        self.mergeEffectiveGroups(self.groups)
+        self.mergeEffectiveGroups()
     
-    def mergeEffectiveGroups(self, groups):
+    def mergeEffectiveGroups(self):
         # retrieves the following parameters from the configuration file
         configParser = ConfigurationParser.ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
@@ -120,9 +120,10 @@ class Clusterer(object):
         for iteration in range(0, nbIteration) :                 
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             # Create the score matrix for each group
-            (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ(groups)
+            (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ()
 
             """
+            ## Just for debug purpose
             for group in self.groups:
                 compiledRegex = re.compile("".join( group.getRegex() ))
                 for message in group.getMessages():
@@ -142,15 +143,15 @@ class Clusterer(object):
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= min_equivalence) :
                 self.log.info("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
-                self.mergeEffectiveRowCol(i_maximum, j_maximum, groups)        
+                self.mergeEffectiveRowCol(i_maximum, j_maximum)        
             else :
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
 
         # Compute the regex/alignment of each group
         gobject.idle_add(self.resetProgressBar)
-        progressionStep = 1.0 / len(groups)
-        for g in groups :
+        progressionStep = 1.0 / len(self.groups)
+        for g in self.groups :
             g.buildRegexAndAlignment()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
         gobject.idle_add(self.resetProgressBar)
@@ -182,54 +183,56 @@ class Clusterer(object):
                 if len(group.getMessages())>1 :
                     tmp_groups.append(group)
             
-            
             if len(orphans)<=1 :
                 self.log.info("Number of orphan groups : {0}. The orphan merging op. is finished !".format(len(orphans)))
                 break;
-            
+
+            self.groups = orphans            
             if currentReductionIsLeft :
                 leftReductionFactor = leftReductionFactor + increment
                 # Reduce the size of the messages by 50% from the left
-                for orphan in orphans:
+                for orphan in self.groups:
                     orphan.getMessages()[0].setLeftReductionFactor(leftReductionFactor)
 
                 self.log.warning("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
-                self.mergeEffectiveGroups(orphans)
+                self.mergeEffectiveGroups()
                 currentReductionIsLeft = False
                 
             if not currentReductionIsLeft :
                 rightReductionFactor = rightReductionFactor + increment
                 # Reduce the size of the messages from the right
-                for orphan in orphans:
+                for orphan in self.groups:
                     orphan.getMessages()[0].setRightReductionFactor(rightReductionFactor)
 
                 self.log.warning("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
-                self.mergeEffectiveGroups(orphans)
+                self.mergeEffectiveGroups()
                 currentReductionIsLeft = True
             
         
-            for orphan in orphans :
+            for orphan in self.groups :
                 tmp_groups.append(orphan)
             self.groups = tmp_groups 
-            
-            
-         
-            
-                
 
+        # Compute the regex/alignment of each group
+        gobject.idle_add(self.resetProgressBar)
+        progressionStep = 1.0 / len(self.groups)
+        for g in self.groups :
+            g.buildRegexAndAlignment()
+            gobject.idle_add(self.doProgressBarStep, progressionStep)
+        gobject.idle_add(self.resetProgressBar)
 
     #+---------------------------------------------- 
     #| mergeRowCol :
     #|   Merge the groups i and j in the "groups" structure
     #+----------------------------------------------    
-    def mergeEffectiveRowCol(self, i_maximum, j_maximum, groups):
+    def mergeEffectiveRowCol(self, i_maximum, j_maximum):
         # Extract groups i and j
         if i_maximum > j_maximum:
-            group1 = groups.pop(i_maximum)
-            group2 = groups.pop(j_maximum)
+            group1 = self.groups.pop(i_maximum)
+            group2 = self.groups.pop(j_maximum)
         else:
-            group2 = groups.pop(j_maximum)
-            group1 = groups.pop(i_maximum)
+            group2 = self.groups.pop(j_maximum)
+            group1 = self.groups.pop(i_maximum)
 
         # Merge the groups i and j
         messages = []
@@ -240,25 +243,25 @@ class Clusterer(object):
         # => (fgy) That's not a good idea, as it abstracts to much the created groups
         """
         newGroup.buildRegexAndAlignment()
-        for g in groups:
+        for g in self.groups:
             if len(g.getMessages()) == 1:
                 compiledRegex = re.compile("".join( newGroup.getRegex() ))
                 m = compiledRegex.match( g.getMessages()[0].getStringData() )
                 if m != None:
                     self.log.debug("The regex match the message => merging")
                     newGroup.addMessages( g.getMessages() )
-                    groups.remove(g)
+                    self.groups.remove(g)
             elif "".join(newGroup.getRegex()) == "".join(g.getRegex()):
                 self.log.debug("The regex is equivalent to another group regex => merging")
                 newGroup.addMessages( g.getMessages() )
-                groups.remove(g)
+                self.groups.remove(g)
         """
                     
         # Append th new group to the "groups" structure
-        groups.append(newGroup)
+        self.groups.append(newGroup)
     
     def mergeRowCol(self, i_maximum, j_maximum):
-        self.mergeEffectiveRowCol(i_maximum, j_maximum, self.groups)
+        self.mergeEffectiveRowCol(i_maximum, j_maximum)
         
 
     #+---------------------------------------------- 
