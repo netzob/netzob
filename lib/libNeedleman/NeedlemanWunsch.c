@@ -345,9 +345,14 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	  regex2[iReg2] = 0xf3;
 	  regex2Mask[iReg2] = 1;
 
-	  regex1[iReg1] = seq1.regex[i];
-	  regex1Mask[iReg1] = 0;
-
+	  if( seq1.mask[i] == 0) {
+	    regex1[iReg1] = seq1.regex[i];
+	    regex1Mask[iReg1] = 0;
+	  }
+	  else {
+	    regex1[iReg1] = 0xf3;
+	    regex1Mask[iReg1] = 1;
+	  }
 	  --iReg1;
 	  --iReg2;
 	}
@@ -356,14 +361,20 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	  regex1[iReg1] = 0xf4;
 	  regex1Mask[iReg1] = 1;
 
-	  regex2[iReg2] = seq2.regex[j];
-	  regex2Mask[iReg2] = 0;
+	  if( seq2.mask[j] == 0) {
+	    regex2[iReg2] = seq2.regex[j];
+	    regex2Mask[iReg2] = 0;
+	  }
+	  else {
+	    regex2[iReg2] = 0xf4;
+	    regex2Mask[iReg2] = 1;
+	  }
 
 	  --iReg1;
 	  --iReg2;
 	}
 
-	/*	
+	/* // For debug only
 	for( i = 0; i < seq1.len + seq2.len; i++)
 	  if( regex1Mask[i] == 0 )
 	    printf("%02x", (unsigned char) regex1[i]);
