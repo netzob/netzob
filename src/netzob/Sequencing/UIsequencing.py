@@ -18,6 +18,7 @@ import threading
 #+----------------------------------------------
 import MessageGroup
 import TracesExtractor
+import ConfigParser
 from ..Common import ConfigurationParser
 from TreeViews import TreeGroupGenerator
 from TreeViews import TreeMessageGenerator
@@ -62,6 +63,14 @@ class UIsequencing:
 
     def kill(self):
         pass
+    
+    def save(self, file):
+        self.log = logging.getLogger('netzob.Sequencing.UIsequencing.py')
+        self.log.info("Saving the Sequencing")
+        
+        configParser = ConfigParser.ConfigParser(file)
+        configParser.saveInConfiguration(self.treeGroupGenerator.getGroups())
+        
     
     #+---------------------------------------------- 
     #| Constructor :

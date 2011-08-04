@@ -214,7 +214,7 @@ class Pcap:
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".txt"  , "w")
+        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()

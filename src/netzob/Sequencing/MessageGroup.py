@@ -132,9 +132,16 @@ class MessageGroup(object):
             
         
         self.setAlignment( align )
-        
-        
+        # Compute and store the regex based on alignment
+        self.setRegex(self.extractRegexFromAlignment(align))
 
+
+        # Fill columnNames with a default name
+        self.columnNames = []
+        for i in range(len(self.getRegex())):
+            self.columnNames.append("Name")
+    
+    def extractRegexFromAlignment(self, align):
         # Build regex from alignment
         i = 0
         start = 0
@@ -159,12 +166,7 @@ class MessageGroup(object):
         if (found == True) :
             nbTiret = i - start
             regex.append( "(.{," + str(nbTiret) + "})" )
-        self.setRegex( regex )
-
-        # Fill columnNames with a default name
-        self.columnNames = []
-        for i in range(len(self.getRegex())):
-            self.columnNames.append("Name")
+        return regex
     
     #+---------------------------------------------- 
     #| computeScore : given the messages, 
@@ -421,6 +423,99 @@ class MessageGroup(object):
         else :
             return raw
     
+    def storeInXmlConfig(self):
+        log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
+        
+        members = ""
+        for message in self.getMessages() :
+            members += str(message.getID())+";"
+        
+        xml  = "<group id=\""+str(self.getID())+"\" name=\""+self.getName()+"\" score=\""+str(self.getScore())+"\" members=\""+members+"\" alignment=\""+self.getAlignment()+"\">\n"
+        
+        xml += "\t<regex>\n"
+        for re in self.getRegex() :
+            xml += "\t\t<re>"+re+"</re>\n"
+        xml += "\t</regex>\n"
+        
+        
+        xml += "\t<cols>\n"
+        for colName in self.getColumnNames() :
+            xml += "\t\t<col>"+colName+"</col>\n"
+        xml += "\t</cols>\n"
+        xml += "</group>\n"
+        return xml
+        
+    
+    @staticmethod
+    def loadFromXmlConfig(xml, messages):        
+        log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
+        
+        
+        
+        if not xml.hasAttribute("id") :
+            log.warn("Impossible to load group from xml config file (no \"id\" attribute)")
+            return None
+        if not xml.hasAttribute("name") :
+            log.warn("Impossible to load group from xml config file (no \"name\" attribute)")
+            return None
+        if not xml.hasAttribute("alignment") :
+            log.warn("Impossible to load group from xml config file (no \"alignment\" attribute)")
+            return None
+        if not xml.hasAttribute("score") :
+            log.warn("Impossible to load group from xml config file (no \"score\" attribute)")
+            return None
+        if not xml.hasAttribute("members") :
+            log.warn("Impossible to load group from xml config file (no \"members\" attribute)")
+            return None
+        
+        xmlRes = xml.getElementsByTagName("re")
+        regex = []
+        for xmlRe in xmlRes :
+            for node in xmlRe.childNodes:
+                re = node.data.split()
+            regex.append("".join(re))
+        
+        xmlCols = xml.getElementsByTagName("col")
+        colNames = []
+        for xmlCol in xmlCols :
+            for node in xmlCol.childNodes:
+                colName = node.data.split()
+            
+            colNames.append("".join(colName))
+            
+            
+        
+        group = MessageGroup(xml.attributes["name"].value, [])    
+        
+        idMessages = xml.attributes["members"].value.split(";")
+        for idMessage in idMessages :
+            if len(idMessage) > 0 :
+                found = False
+                
+                for message in messages :
+                    if str(message.getID()) == idMessage :
+                        group.addMessage(message)
+                        found = True
+                
+                if found == False :
+                    log.warn("Impossible to load the group since a message is not found.")
+                    return None
+                
+        
+        group.setID(xml.attributes["id"].value)
+        
+        group.setAlignment(xml.attributes["alignment"].value)
+        group.setRegex(group.extractRegexFromAlignment(group.getAlignment()))
+        group.setScore(xml.attributes["score"].value)
+        group.setColumnNames(colNames)
+        group.setRegex(regex)
+        
+        
+        return group
+    
+    
+    
+    
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
@@ -447,6 +542,8 @@ class MessageGroup(object):
     #+---------------------------------------------- 
     #| SETTERS : 
     #+----------------------------------------------
+    def setID(self, id):
+        self.id = id
     def setName(self, name):
         self.name = name
     def setMessages(self, messages): 

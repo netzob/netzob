@@ -52,6 +52,9 @@ class UIDumpingMessage:
     def kill(self):
         pass
     
+    def save(self, file):
+        pass
+    
     #+---------------------------------------------- 
     #| updateGroups :
     #|  update the content of the UI with new groups

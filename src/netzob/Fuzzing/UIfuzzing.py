@@ -47,6 +47,9 @@ class UIfuzzing:
     def kill(self):
         pass
     
+    def save(self, file):
+        pass
+    
     #+---------------------------------------------- 
     #| Constructor :
     #| @param groups: list of all groups 

@@ -48,6 +48,8 @@ class Netzob:
     #| @param path: path of the directory containing traces to parse 
     #+----------------------------------------------   
     def __init__(self):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.py')
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
@@ -58,7 +60,7 @@ class Netzob:
         # UI Header definition
         vbox = gtk.VBox(False, spacing=10)
         toolbar = gtk.HBox(False, spacing=0)
-        vbox.pack_start(toolbar, False, False, 5)
+        vbox.pack_start(toolbar, False, False, 6)
 
         label = gtk.Label("Select target : ")
         entry = gtk.combo_box_entry_new_text()
@@ -75,9 +77,14 @@ class Netzob:
 
         self.label_analyse = gtk.Label("...")
         button_valid = gtk.Button(gtk.STOCK_OK)
-        button_valid.set_label("Select")
+        button_valid.set_label("Start analysis")
         button_valid.connect("clicked", self.traceSelected, entry)
-        label_text = gtk.Label("     Current target : ")
+        
+        button_save = gtk.Button(gtk.STOCK_OK)
+        button_save.set_label("Save analysis")
+        button_save.connect("clicked", self.saveTrace, entry)
+        
+        label_text = gtk.Label("     Current trace : ")
 
         # Progress Bar handling inside UI Header
         progressBox = gtk.VBox(False, 5)
@@ -90,6 +97,7 @@ class Netzob:
         toolbar.pack_start(label, False, False, 0)
         toolbar.pack_start(entry, False, False, 0)
         toolbar.pack_start(button_valid, False, False, 0)
+        toolbar.pack_start(button_save, False, False, 0)
         toolbar.pack_start(label_text, False, False, 0)
         toolbar.pack_start(self.label_analyse, False, False, 0)
         toolbar.pack_start(progressBox, False, False, 0)
@@ -122,6 +130,7 @@ class Netzob:
         label_text.show()
         self.label_analyse.show()
         button_valid.show()
+        button_save.show()
         self.notebook.show()
         vbox.show()
         window.add(vbox)
@@ -159,6 +168,23 @@ class Netzob:
         for page in self.pageList:
             if page[0] == nameTab:
                 page[1].update()
+                
+    def saveTrace(self, null, entry):
+        self.log.info("Starting the saving process of all the application")
+        
+        # retrieve the new trace path
+        target = entry.get_active_text()
+        if target == "":
+            return
+
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        configPath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target+ os.sep +"config.xml"
+        
+        
+        
+        for page in self.pageList:
+            page[1].save(configPath)
+            
 
     #+---------------------------------------------- 
     #| Called when user select a new trace for analysis

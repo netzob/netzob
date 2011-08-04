@@ -142,6 +142,52 @@ class Message(object):
             
         return "".join(self.getStringData()[start:end]) 
     
+    def storeInXmlConfig(self):
+        log = logging.getLogger('netzob.Sequencing.Message.py')
+        
+        xml  = "<data id=\""+str(self.getID())+"\" timestamp=\""+self.getTimestamp()+"\" " 
+        xml += "rightReductionFactor=\""+str(self.getRightReductionFactor())+"\" leftReductionFactor=\""+str(self.getLeftReductionFactor())+"\">"
+        xml += self.getStringData()
+        xml += "</data>\n" 
+        return xml
+    
+    
+    @staticmethod
+    def loadFromXmlConfig(xml):        
+        log = logging.getLogger('netzob.Sequencing.Message.py')
+        
+        message = Message()
+        
+        if not xml.hasAttribute("id") :
+            log.warn("Impossible to load message from xml config file (no \"id\" attribute)")
+            return None
+        if not xml.hasAttribute("timestamp") :
+            log.warn("Impossible to load message from xml config file (no \"timestamp\" attribute)")
+            return None
+        if not xml.hasAttribute("rightReductionFactor") :
+            log.warn("Impossible to load message from xml config file (no \"rightReductionFactor\" attribute)")
+            return None
+        if not xml.hasAttribute("leftReductionFactor") :
+            log.warn("Impossible to load message from xml config file (no \"leftReductionFactor\" attribute)")
+            return None
+        
+        
+        message.setID(xml.attributes["id"].value)
+        message.setTimestamp(xml.attributes["timestamp"].value)
+        message.setRightReductionFactor(xml.attributes["rightReductionFactor"].value)
+        message.setLeftReductionFactor(xml.attributes["leftReductionFactor"].value)
+        
+        for node in xml.childNodes:
+            message.setData(node.data.split())
+        
+        return message
+        
+        
+        
+        
+        
+    
+    
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
@@ -189,3 +235,5 @@ class Message(object):
     def setLeftReductionFactor(self, factor):
         self.leftReductionFactor = factor
         self.rightReductionFactor = 0
+    def setID(self, id):
+        self.id = id
