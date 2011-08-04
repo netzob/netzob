@@ -4,11 +4,8 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
-import uuid
-import re
 import logging
 import xml.dom.minidom
-
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -40,7 +37,12 @@ class ConfigParser(object):
         self.configFile = configFile
         self.groups = []
         
-        
+    #+---------------------------------------------- 
+    #| saveInConfiguration :
+    #|    Dump in self.configFile the current configuration
+    #|    of the analysis
+    #| @param groups: list of the groups to save 
+    #+----------------------------------------------    
     def saveInConfiguration(self, groups):
         self.log.info("Save configuration in file {0}".format(self.configFile))
         messages = []
@@ -59,14 +61,21 @@ class ConfigParser(object):
         xml += "\t</datas>\n"
         xml += "</netzob>"
         
+        self.log.debug("The generated configuration file is :")
+        self.log.debug(xml)
+        
         file = open(self.configFile, 'w')
         file.write(xml)
         file.close()
+       
+        self.log.debug("Configuration successfully saved.")
         
-        
-        print xml
-        
-    
+    #+---------------------------------------------- 
+    #| loadConfiguration :
+    #|    Load self.configFile and parse its content
+    #|    in order to retrieve the group definitions
+    #| @return the extracted groups 
+    #+----------------------------------------------
     def loadConfiguration(self):
         self.log.info("Extract configuration from file {0}".format(self.configFile))
         
@@ -88,13 +97,14 @@ class ConfigParser(object):
             if group != None :
                 self.groups.append(group)
             
-            
-        
-        self.log.info("Found : {0} messages ".format(len(messages)))
-        self.log.info("Found : {0} groups ".format(len(self.groups)))
+
+        self.log.debug("Found in config file : {0} messages ".format(len(messages)))
+        self.log.debug("Found in config file : {0} groups ".format(len(self.groups)))
         return self.groups
         
-        
+    #+---------------------------------------------- 
+    #| GETTERS & SETTERS
+    #+----------------------------------------------    
     def getGroups(self):
         return self.groups
    
