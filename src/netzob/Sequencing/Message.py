@@ -174,8 +174,8 @@ class Message(object):
         
         message.setID(xml.attributes["id"].value)
         message.setTimestamp(xml.attributes["timestamp"].value)
-        message.setRightReductionFactor(xml.attributes["rightReductionFactor"].value)
-        message.setLeftReductionFactor(xml.attributes["leftReductionFactor"].value)
+        message.setRightReductionFactor(int(xml.attributes["rightReductionFactor"].value))
+        message.setLeftReductionFactor(int(xml.attributes["leftReductionFactor"].value))
         
         for node in xml.childNodes:
             message.setData(node.data.split())

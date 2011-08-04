@@ -232,6 +232,7 @@ class TreeMessageGenerator():
         # Updates the treeview with the newly created treestore
         self.treeview.set_model(self.treestore)
         self.treeview.set_reorderable(True)
+        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 
     def column_renaming_cb(self, cell, path_string, new_text, iCol):
         self.treestore[path_string][iCol + 4] = new_text

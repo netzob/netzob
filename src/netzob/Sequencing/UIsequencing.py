@@ -89,6 +89,7 @@ class UIsequencing:
         # First we create an HPaned which hosts the two main children
         self.panel = gtk.HPaned()
         self.panel.show()
+        self.defer_select = False
 
         configParser = ConfigurationParser.ConfigurationParser()
         
@@ -100,7 +101,7 @@ class UIsequencing:
         vb_left_panel.set_size_request(-1, -1)
         vb_left_panel.show()
         # Initialize the treeview generator for the groups
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator( [] )
+        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator([])
         self.treeGroupGenerator.initialization()
         vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
@@ -210,6 +211,7 @@ class UIsequencing:
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected)
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
+        self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
 
         #+---------------------------------------------- 
@@ -233,12 +235,30 @@ class UIsequencing:
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_groups(event)
 
+
+    def button_release_on_treeview_messages(self, treeview, event):
+        # re-enable selection
+        treeview.get_selection().set_select_function(lambda * ignore: True)
+        
+        target = treeview.get_path_at_pos(int(event.x), int(event.y))
+        if (self.defer_select and target and self.defer_select == target[0] and not (event.x == 0 and event.y == 0)): # certain drag and drop
+            treeview.set_cursor(target[0], target[1], False)
+            self.defer_select = False
+
     #+---------------------------------------------- 
     #| button_press_on_treeview_messages :
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
     def button_press_on_treeview_messages(self, treeview, event):
+        
+        target = treeview.get_path_at_pos(int(event.x), int(event.y))
+        if (target and event.type == gtk.gdk.BUTTON_PRESS and not (event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK)) and treeview.get_selection().path_is_selected(target[0])):
+            # disable selection
+            treeview.get_selection().set_select_function(lambda * ignore: False)
+            self.defer_select = target[0]
+        
+        
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.log.debug("User requested a contextual menu (treeview messages)")
             x = int(event.x)
@@ -259,7 +279,7 @@ class UIsequencing:
             for aType in typesList:
                 item = gtk.MenuItem("Render in : " + str(aType))
                 item.show()
-                item.connect("activate",self.rightClickToChangeType, iCol, aType)   
+                item.connect("activate", self.rightClickToChangeType, iCol, aType)   
                 typeMenu.append(item)
             item = gtk.MenuItem("Change Type")
             item.set_submenu(typeMenu)
@@ -326,7 +346,7 @@ class UIsequencing:
             eltResult = self.concatRegexElts(elt1, elt2)
             newRegex.insert(iCol, eltResult)
 
-        self.treeMessageGenerator.getGroup().setRegex( newRegex )
+        self.treeMessageGenerator.getGroup().setRegex(newRegex)
         self.treeMessageGenerator.updateDefault()
 
     #+---------------------------------------------- 
@@ -393,7 +413,7 @@ class UIsequencing:
         textview.set_size_request(400, 300)
         messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m, iCol) + "\n", "greenTag" )
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m, iCol) + "\n", "greenTag")
         textview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -445,7 +465,7 @@ class UIsequencing:
         newRegex.insert(iCol, regex1)
         newRegex.insert(iCol + 1, regex2)
 
-        self.treeMessageGenerator.getGroup().setRegex( newRegex )
+        self.treeMessageGenerator.getGroup().setRegex(newRegex)
         self.treeMessageGenerator.updateDefault()            
         dialog.destroy()
 
@@ -469,8 +489,8 @@ class UIsequencing:
         # Colorize text according to position
         textview.get_buffer().set_text("")
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[:self.positionToSplit], iCol) + "  ", "redTag" )
-            textview.get_buffer().insert_with_tags_by_name( textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[self.positionToSplit:], iCol) + "\n", "greenTag" )
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[:self.positionToSplit], iCol) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[self.positionToSplit:], iCol) + "\n", "greenTag")
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :
@@ -510,7 +530,7 @@ class UIsequencing:
         x = int(event.x)
         y = int(event.y)
         
-        selectedGroup = self.treeGroupGenerator.getGroupAtPosition(x,y)        
+        selectedGroup = self.treeGroupGenerator.getGroupAtPosition(x, y)        
         entries = [        
                   (gtk.STOCK_EDIT, self.displayPopupToEditGroup, (selectedGroup != None)),
                   (gtk.STOCK_ADD, self.displayPopupToCreateGroup, (selectedGroup == None)),
@@ -607,7 +627,7 @@ class UIsequencing:
             self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
             newGroup = MessageGroup.MessageGroup(newGroupName, [])
-            self.treeGroupGenerator.addGroup( newGroup )
+            self.treeGroupGenerator.addGroup(newGroup)
             #Update Left and Right
             self.updateTreeStoreGroup()
             self.updateTreeStoreMessage()
@@ -629,13 +649,13 @@ class UIsequencing:
             result = md.run()
             md.destroy()
             if result == gtk.RESPONSE_YES:
-                self.treeGroupGenerator.removeGroup( group )
-                self.log.debug("The group "+group.getName()+" has been deleted !")
+                self.treeGroupGenerator.removeGroup(group)
+                self.log.debug("The group " + group.getName() + " has been deleted !")
                 #Update Left and Right
                 self.updateTreeStoreGroup()
                 self.updateTreeStoreMessage()
             else :
-                self.log.debug("The user didn't confirm the deletion of the group "+group.getName())                
+                self.log.debug("The user didn't confirm the deletion of the group " + group.getName())                
             
         else :
             self.log.debug("Can't remove the group {0} since its not an empty one.".format(group.getName()))
@@ -650,48 +670,51 @@ class UIsequencing:
     #|   is dropped out current group to the selected group 
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
-        modele = treeview.get_model()
-        msg_id = selection.data
-        info_depot = treeview.get_dest_row_at_pos(x, y)
+        ids = selection.data
+        for msg_id in ids.split(";") :
+            
+            modele = treeview.get_model()
+            info_depot = treeview.get_dest_row_at_pos(x, y)
+            
+            # First we search for the message to move
+            message = None
+            message_grp = None
+            for group in self.treeGroupGenerator.getGroups() :
+                for msg in group.getMessages() :
+                    if str(msg.getID()) == msg_id :
+                        message = msg
+                        message_grp = group
+            
+            # Break if the message to move was not found
+            if message == None :
+                self.log.warning("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id))
+                return
+            
+            self.log.debug("The message having the ID [{0}] has been found !".format(msg_id))
+            
+            # Now we search for the new group of the message
+            if info_depot :
+                chemin, position = info_depot
+                iter = modele.get_iter(chemin)
+                new_grp_id = str(modele.get_value(iter, 0))
+                                
+                new_message_grp = None
+                for tmp_group in self.treeGroupGenerator.getGroups() :
+                    if (str(tmp_group.getID()) == new_grp_id) :
+                        new_message_grp = tmp_group
+                    
+            if new_message_grp == None :
+                self.log.warning("Impossible to retrieve the group in which the selected message must be moved out.")
+                return
+            
+            self.log.debug("The new group of the message is {0}".format(str(new_message_grp.getID())))
+            #Removing from its old group
+            message_grp.removeMessage(message)
+            message_grp.buildRegexAndAlignment()
+            #Adding to its new group
+            new_message_grp.addMessage(message)
+            new_message_grp.buildRegexAndAlignment()
         
-        # First we search for the message to move
-        message = None
-        message_grp = None
-        for group in self.treeGroupGenerator.getGroups() :
-            for msg in group.getMessages() :
-                if str(msg.getID()) == msg_id :
-                    message = msg
-                    message_grp = group
-        
-        # Break if the message to move was not found
-        if message == None :
-            self.log.warning("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id))
-            return
-        
-        self.log.debug("The message having the ID [{0}] has been found !".format(msg_id))
-        
-        # Now we search for the new group of the message
-        if info_depot :
-            chemin, position = info_depot
-            iter = modele.get_iter(chemin)
-            new_grp_id = str(modele.get_value(iter, 0))
-                            
-            new_message_grp = None
-            for tmp_group in self.treeGroupGenerator.getGroups() :
-                if (str(tmp_group.getID()) == new_grp_id) :
-                    new_message_grp = tmp_group
-                
-        if new_message_grp == None :
-            self.log.warning("Impossible to retrieve the group in which the selected message must be moved out.")
-            return
-        
-        self.log.debug("The new group of the message is {0}".format(str(new_message_grp.getID())))
-        #Removing from its old group
-        message_grp.removeMessage(message)
-        message_grp.buildRegexAndAlignment()
-        #Adding to its new group
-        new_message_grp.addMessage(message)
-        new_message_grp.buildRegexAndAlignment()
         #Update Left and Right
         self.log.debug("Updating tree store group")
         self.updateTreeStoreGroup()
@@ -705,11 +728,15 @@ class UIsequencing:
     #|   defines the operation executed when a message is
     #|   is dragged out current group 
     #+----------------------------------------------
-    def drag_fromDND(self, treeview, contexte, selection, info, dateur):
-        treeselection = treeview.get_selection()
-        modele, iter = treeselection.get_selected()
-        texte = str(modele.get_value(iter, 0))
-        selection.set(selection.target, 8, texte)
+    def drag_fromDND(self, treeview, contexte, selection, info, dateur):   
+        ids = []             
+        treeview.get_selection().selected_foreach(self.foreach_drag_fromDND, ids)
+        selection.set(selection.target, 8, ";".join(ids))
+    
+    def foreach_drag_fromDND(self, model, path, iter,  ids):
+        texte = str(model.get_value(iter, 0))
+        ids.append(texte)
+#        
         return
     
     #+---------------------------------------------- 
@@ -723,7 +750,7 @@ class UIsequencing:
         else :
             # Default display of the groups
             self.treeGroupGenerator.default()
-            self.zob.dumping.updateGoups( self.treeGroupGenerator.getGroups() )
+            self.zob.dumping.updateGoups(self.treeGroupGenerator.getGroups())
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
@@ -761,22 +788,29 @@ class UIsequencing:
         self.treeTypeStructureGenerator.default()
        
     #+---------------------------------------------- 
-    #| Called when a message is selected
+    #| Called when messages are selected
+    #| accept MULTIPLE SELECTION
     #+----------------------------------------------
     def messageSelected(self, treeview) :
-        (model, iter) = treeview.get_selection().get_selected()
-        if(iter):
-            if(model.iter_is_valid(iter)):
-                msg_id = model.get_value(iter, 0)
-                group = self.treeMessageGenerator.getGroup()
-                message = group.getMessageByID( msg_id )
-                self.treeTypeStructureGenerator.setGroup( group )
-                self.treeTypeStructureGenerator.setMessage( message )
-                messageTable = []
-                for i in range(len(group.getRegex())):
-                    messageTable.append( model.get_value(iter, i + 4) )
-                self.treeTypeStructureGenerator.buildTypeStructure(messageTable, msg_id) # Not very clean :)
-                self.updateTreeStoreTypeStructure()
+        # Retrieves all the selections
+#        (model, pathlist) = treeview.get_selection().get_selected_rows()
+        pathlist = []
+        treeview.get_selection().selected_foreach(self.foreach_cb, pathlist)
+
+    def foreach_cb(self, model, path, iter, pathlist):
+        for iter in pathlist :
+            if(iter):
+                if(model.iter_is_valid(iter)):
+                    msg_id = model.get_value(iter, 0)
+                    group = self.treeMessageGenerator.getGroup()
+                    message = group.getMessageByID(msg_id)
+                    self.treeTypeStructureGenerator.setGroup(group)
+                    self.treeTypeStructureGenerator.setMessage(message)
+                    messageTable = []
+                    for i in range(len(group.getRegex())):
+                        messageTable.append(model.get_value(iter, i + 4))
+                    self.treeTypeStructureGenerator.buildTypeStructure(messageTable, msg_id) # Not very clean :)
+                    self.updateTreeStoreTypeStructure()
 
                 """
                 group_regex = modele.get_value(iter, 1)
@@ -839,7 +873,7 @@ class UIsequencing:
         else:
             aType = "binary"
         if self.treeMessageGenerator != None and self.treeMessageGenerator.getGroup() != None:
-            self.treeMessageGenerator.getGroup().setTypeForCols( aType )
+            self.treeMessageGenerator.getGroup().setTypeForCols(aType)
             self.update()
 
     #+---------------------------------------------- 
@@ -863,7 +897,7 @@ class UIsequencing:
         foundSizeFields = self.treeGroupGenerator.findSizeFields()
         if foundSizeFields != None:
             for sizeField in foundSizeFields:
-                textview.get_buffer().insert( textview.get_buffer().get_end_iter(), sizeField + "\n" )
+                textview.get_buffer().insert(textview.get_buffer().get_end_iter(), sizeField + "\n")
         textview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
