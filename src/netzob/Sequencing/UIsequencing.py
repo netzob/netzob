@@ -710,11 +710,13 @@ class UIsequencing:
             self.log.debug("The new group of the message is {0}".format(str(new_message_grp.getID())))
             #Removing from its old group
             message_grp.removeMessage(message)
-            message_grp.buildRegexAndAlignment()
+            
             #Adding to its new group
             new_message_grp.addMessage(message)
-            new_message_grp.buildRegexAndAlignment()
+            
         
+        message_grp.buildRegexAndAlignment()
+        new_message_grp.buildRegexAndAlignment()
         #Update Left and Right
         self.log.debug("Updating tree store group")
         self.updateTreeStoreGroup()
