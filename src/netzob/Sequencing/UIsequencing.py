@@ -12,11 +12,13 @@ import pygtk
 pygtk.require('2.0')
 import logging
 import threading
+import copy
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 import MessageGroup
+import Message
 import TracesExtractor
 import ConfigParser
 from ..Common import ConfigurationParser
@@ -819,6 +821,7 @@ class UIsequencing:
     #+----------------------------------------------
     def findSizeFields(self, button):
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
+        dialog.connect("destroy", self.find_size_field_destroy)
         ## ListStore format :
         # str: group.id
         # int: size field column
@@ -866,10 +869,18 @@ class UIsequencing:
         if(iter):
             if(model.iter_is_valid(iter)):
                 group_id = model.get_value(iter, 0)
+                size_field = model.get_value(iter, 1)
+                size_field_len = model.get_value(iter, 2)
+                start_field = model.get_value(iter, 3)
+                start_field_len = model.get_value(iter, 4)
+                end_field = model.get_value(iter, 5)
+                end_field_len = model.get_value(iter, 6)
+                
                 ## Select the related group
                 self.selectedGroup = group_id
                 self.treeGroupGenerator.select_group_by_id(group_id)
                 self.updateTreeStoreMessage()
+
                 ## Select the first message for details (after the 3 header rows)
                 it = self.treeMessageGenerator.treestore.get_iter_first()
                 if it == None:
@@ -884,11 +895,47 @@ class UIsequencing:
                 if it == None:
                     return
                 message_id = self.treeMessageGenerator.treestore.get_value(it, 0)
-                group = self.treeMessageGenerator.getGroup()
+
+                # Build a temporary group
+                group = MessageGroup.MessageGroup('tmp_group', [])
+                for message in self.treeMessageGenerator.getGroup().getMessages():
+                    tmp_message = Message.Message()
+                    tmp_message.setData( message.getData() )
+                    group.addMessage( tmp_message )
+                group.setAlignment( copy.deepcopy(self.treeMessageGenerator.getGroup().getAlignment()) )
+                group.setColumns( copy.deepcopy(list(self.treeMessageGenerator.getGroup().getColumns())) )
+
                 self.treeTypeStructureGenerator.setGroup(group)
-                self.treeTypeStructureGenerator.setMessageByID(message_id)
+                self.treeTypeStructureGenerator.setMessageByID( group.getMessages()[-1].getID() )
+
+                # Optionaly splits the columns if needed, and handles propagation
+                if group.splitColumn(size_field, size_field_len) == True:
+                    if size_field < start_field:
+                        start_field += 1
+                    if not (end_field == -1):
+                        end_field += 1
+                group.setDescriptionByCol(size_field, "Size field")
+                if group.splitColumn(start_field, start_field_len) == True:
+                    start_field += 1
+                    if not (end_field == -1):
+                        end_field += 1
+                group.setDescriptionByCol(start_field, "Start of payload")
+                group.splitColumn(end_field, end_field_len)
+
+                # Adapt tabulation for encapsulated payloads
+                for iCol in range(start_field, end_field + 1):
+                    group.setTabulationByCol(iCol, 10)
+
+                # View the proposed protocol structuration
                 self.treeTypeStructureGenerator.buildTypeStructure()
+                self.updateTreeStoreMessage()
                 self.updateTreeStoreTypeStructure()
+
+    #+---------------------------------------------- 
+    #| Called when user quit the find size fields window
+    #+----------------------------------------------
+    def find_size_field_destroy(self, dialog):
+        pass
         
     #+---------------------------------------------- 
     #| Called when user wants to apply a size field on a group

@@ -59,7 +59,7 @@ class MessageGroup(object):
             message.setGroup(self)
         self.score = 0
         self.alignment = ""
-        self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tab'}
+        self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tabulation', 'description'}
 
     def __repr__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
@@ -87,7 +87,8 @@ class MessageGroup(object):
             self.columns.append({'name' : "Name",
                                   'regex' : self.getMessages()[0].getStringData(),
                                  'selectedType' : aType,
-                                 'tab' : 0
+                                 'tabulation' : 0,
+                                 'description' : ""
                                  })
             return
 
@@ -182,7 +183,8 @@ class MessageGroup(object):
             self.columns.append({'name' : "Name",
                                  'regex' : regexElt,
                                  'selectedType' : aType,
-                                 'tab' : 0
+                                 'tabulation' : 0,
+                                 'description' : ""
                                  })
    
     #+---------------------------------------------- 
@@ -248,7 +250,8 @@ class MessageGroup(object):
                             self.columns.insert(i - 1, {'name' : "Name",
                                                         'regex' : "(.{," + str(lenColResult) + "})",
                                                         'selectedType' : aType,
-                                                        'tab' : 0
+                                                        'tabulation' : 0,
+                                                        'description' : ""
                                                         })
             i += 1
 
@@ -303,7 +306,7 @@ class MessageGroup(object):
                             res = False
                             break
                     if res:
-                        store.append([self.id, iCol, -1, j, -1, j, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")"])
+                        store.append([self.id, iCol, -1, j, -1, -1, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")"])
                         self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
                 j += 1
             iCol += 1
@@ -408,16 +411,20 @@ class MessageGroup(object):
             aType = "binary"
 
         self.getColumns().insert(iCol, {'name' : "Name",
-                                            'regex' : newRegex,
-                                            'selectedType' : aType,
-                                            'tab' : 0
+                                        'regex' : newRegex,
+                                        'selectedType' : aType,
+                                        'tabulation' : 0,
+                                        'description' : ""
                                             })
 
     #+---------------------------------------------- 
     #| splitColumn:
     #|  Split a column in two columns
+    #|  return False if the split does not occure, else True
     #+----------------------------------------------
     def splitColumn(self, iCol, split_position):
+        if not (split_position > 0):
+            return False
         # Find the static/dynamic cols
         cells = self.getCellsByCol(iCol)
         ref1 = cells[0][:split_position]
@@ -446,6 +453,11 @@ class MessageGroup(object):
         else:
             regex2 = "(.{," + str(lenDyn2) + "})"
 
+        if regex1 == "":
+            return False
+        if regex2 == "":
+            return False
+
         # Use the default protocol type for representation
         configParser = ConfigurationParser.ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
@@ -459,13 +471,16 @@ class MessageGroup(object):
         self.getColumns().insert(iCol, {'name' : "Name",
                                         'regex' : regex1,
                                         'selectedType' : aType,
-                                        'tab' : 0
+                                        'tabulation' : 0,
+                                        'description' : ""
                                         })
         self.getColumns().insert(iCol + 1, {'name' : "Name",
                                             'regex' : regex2,
                                             'selectedType' : aType,
-                                            'tab' : 0
+                                            'tabulation' : 0,
+                                            'description' : ""
                                             })
+        return True
 
     #+---------------------------------------------- 
     #| Type handling
@@ -630,6 +645,12 @@ class MessageGroup(object):
             messageTable = message.applyRegex()
             res.append( messageTable[iCol] )
         return res
+    def getTabulationByCol(self, iCol):
+        if iCol>=0 and iCol<len(self.columns) :
+            return self.columns[iCol]['tabulation']
+    def getDescriptionByCol(self, iCol):
+        if iCol>=0 and iCol<len(self.columns) :
+            return self.columns[iCol]['description']
 
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -647,3 +668,11 @@ class MessageGroup(object):
     def setColumnNameByCol(self, iCol, name):
         if len(self.columns) > iCol:
             self.columns[iCol]['name'] = name
+    def setColumns(self, columns):
+        self.columns = columns
+    def setTabulationByCol(self, iCol, n):
+        if iCol>=0 and iCol<len(self.columns) :
+            self.columns[iCol]['tabulation'] = int(n)
+    def setDescriptionByCol(self, iCol, descr):
+        if iCol>=0 and iCol<len(self.columns) :
+            self.columns[iCol]['description'] = descr

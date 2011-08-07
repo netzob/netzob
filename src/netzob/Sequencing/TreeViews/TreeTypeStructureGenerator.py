@@ -107,13 +107,13 @@ class TreeTypeStructureGenerator():
         iCol = 0
         for col in self.getGroup().getColumns():
             tab = ""
-            for k in range(int(col['tab'])):
+            for k in range(int(col['tabulation'])):
                 tab += " "
             messageElt = splittedMessage[iCol]
             if col['regex'].find("{") != -1:
-                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'] + " / " + messageElt, ""])
+                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'] + " / " + messageElt, col['description']])
             else:
-                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'], ""])
+                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'], col['description']])
             iCol += 1
 
     #+---------------------------------------------- 
