@@ -8,13 +8,11 @@ import uuid
 import re
 import logging
 
-
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 import NeedlemanWunsch
 from ..Common import ConfigurationParser
-
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -58,46 +56,7 @@ class Message(object):
         self.data = ""
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-    
-    #+---------------------------------------------- 
-    #|`getPangoData : compute a colored representation    
-    #|  following the given regex
-    #| @param regex : the regex which colors the text
-    #| @return string(data)
-    #+----------------------------------------------
-    def getPangoData(self, regex):
-        # Compute the score of the regex
-        needle = NeedlemanWunsch.NeedlemanWunsch()
-        score = needle.computeScore(regex)
-
-        # if score > 75 : apply regex
-        if (score < 75) :
-            return self.getStringData()
-        
-        data = self.getStringData()
-        compiledRegex = re.compile(regex)
-        m = compiledRegex.match(data)
-    
-        if (m == None) :
-            self.log.warning("The regex of the group doesn't match one of its message")
-            return self.getStringData()
-        
-        
-        result = ""
-        current = 0
-        
-        nbGroup = len(m.groups())
-        
-        for i_group in range(1, nbGroup+1) :
-            start = m.start(i_group)
-            end = m.end(i_group)
-            
-            result += '<span >' + data[current:start] + '</span>'
-            result += '<span foreground="blue" font_family="monospace" >' + data[start:end] + '</span>'
-            
-            current = end
-        
-        return result
+        self.group = None
     
     #+---------------------------------------------- 
     #|`getStringData : compute a string representation
@@ -105,7 +64,7 @@ class Message(object):
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
-        return "".join(self.data) 
+        return "".join(self.data)
     
     def getReducedSize(self):
         start = 0
@@ -125,11 +84,9 @@ class Message(object):
             
         return len(self.getStringData()) - (end-start)
     
-    def getReducedStringData(self):
-        
+    def getReducedStringData(self):        
         start = 0
-        end = len(self.getStringData())
-        
+        end = len(self.getStringData())        
         if self.getLeftReductionFactor()>0 :
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
             if (end-start)%2 == 1 :
@@ -137,25 +94,20 @@ class Message(object):
         if self.getRightReductionFactor()>0 :
             end   = self.getRightReductionFactor() * len(self.getStringData()) / 100 
             if (end-start)%2 == 1 :
-                end=end+1 
-        
-            
+                end=end+1
         return "".join(self.getStringData()[start:end]) 
     
     def storeInXmlConfig(self):
         log = logging.getLogger('netzob.Sequencing.Message.py')
-        
         xml  = "<data id=\""+str(self.getID())+"\" timestamp=\""+self.getTimestamp()+"\" " 
         xml += "rightReductionFactor=\""+str(self.getRightReductionFactor())+"\" leftReductionFactor=\""+str(self.getLeftReductionFactor())+"\">"
         xml += self.getStringData()
         xml += "</data>\n" 
         return xml
     
-    
     @staticmethod
     def loadFromXmlConfig(xml):        
         log = logging.getLogger('netzob.Sequencing.Message.py')
-        
         message = Message()
         
         if not xml.hasAttribute("id") :
@@ -171,7 +123,6 @@ class Message(object):
             log.warn("Impossible to load message from xml config file (no \"leftReductionFactor\" attribute)")
             return None
         
-        
         message.setID(xml.attributes["id"].value)
         message.setTimestamp(xml.attributes["timestamp"].value)
         message.setRightReductionFactor(int(xml.attributes["rightReductionFactor"].value))
@@ -181,13 +132,53 @@ class Message(object):
             message.setData(node.data.split())
         
         return message
-        
-        
-        
-        
-        
-    
-    
+
+    #+---------------------------------------------- 
+    #| applyRegex: apply the current regex on the message
+    #|  and return a table
+    #+----------------------------------------------
+    def applyRegex(self, styled=False, encoded=False):
+        regex = []
+        for col in self.group.getColumns():
+            regex.append( col['regex'] )
+        compiledRegex = re.compile("".join( regex ))
+        data = self.getStringData()
+        m = compiledRegex.match(data)
+        if m == None:
+            self.log.warning("The regex of the group doesn't match one of its message")
+            return [ self.getStringData() ]
+        res = []
+        iCol = 0
+        dynamicCol = 1
+        for col in self.group.getColumns():
+            if col['regex'].find("(") != -1: # Means this column is not static
+                start = m.start(dynamicCol)
+                end = m.end(dynamicCol)
+                if styled:
+                    if encoded:
+                        res.append( '<span foreground="blue" font_family="monospace">' + self.group.getRepresentation( data[start:end], iCol ) + '</span>' )
+                    else:
+                        res.append( '<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>' )
+                else:
+                    if encoded:
+                        res.append( self.group.getRepresentation( data[start:end], iCol ) )
+                    else:
+                        res.append( data[start:end] )
+                dynamicCol += 1
+            else:
+                if styled:
+                    if encoded:
+                        res.append( '<span>' + self.group.getRepresentation( col['regex'], iCol ) + '</span>')
+                    else:
+                        res.append( '<span>' + col['regex'] + '</span>')
+                else:
+                    if encoded:
+                        res.append( self.group.getRepresentation( col['regex'], iCol ) )
+                    else:
+                        res.append( col['regex'] )
+            iCol = iCol + 1
+        return res
+
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
@@ -211,6 +202,8 @@ class Message(object):
         return self.rightReductionFactor
     def getLeftReductionFactor(self):
         return self.leftReductionFactor
+    def getGroup(self):
+        return self.group
        
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -237,3 +230,5 @@ class Message(object):
         self.rightReductionFactor = 0
     def setID(self, id):
         self.id = id
+    def setGroup(self, group):
+        self.group = group

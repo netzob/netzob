@@ -240,23 +240,6 @@ class Clusterer(object):
         messages.extend( group1.getMessages() )
         messages.extend( group2.getMessages() )
         newGroup = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
-        # Try to see if other messages match this new group
-        # => (fgy) That's not a good idea, as it abstracts to much the created groups
-        """
-        newGroup.buildRegexAndAlignment()
-        for g in self.groups:
-            if len(g.getMessages()) == 1:
-                compiledRegex = re.compile("".join( newGroup.getRegex() ))
-                m = compiledRegex.match( g.getMessages()[0].getStringData() )
-                if m != None:
-                    self.log.debug("The regex match the message => merging")
-                    newGroup.addMessages( g.getMessages() )
-                    self.groups.remove(g)
-            elif "".join(newGroup.getRegex()) == "".join(g.getRegex()):
-                self.log.debug("The regex is equivalent to another group regex => merging")
-                newGroup.addMessages( g.getMessages() )
-                self.groups.remove(g)
-        """
                     
         # Append th new group to the "groups" structure
         self.groups.append(newGroup)
@@ -283,7 +266,8 @@ class Clusterer(object):
     #+----------------------------------------------
     def getGroups(self):
         return self.groups
-        
+
+"""        
 #+---------------------------------------------- 
 #| UNIT TESTS
 #+----------------------------------------------
@@ -359,3 +343,4 @@ if __name__ == "__main__":
         for message in g.getMessages() :
             print "\t- " + message.getStringData()
 #            print "\t: " + binascii.unhexlify(''.join(message.getStringData().split()))
+"""

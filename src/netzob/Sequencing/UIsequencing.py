@@ -274,7 +274,7 @@ class UIsequencing:
 
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific column
-            typesList = self.treeMessageGenerator.getGroup().getAllDiscoveredTypes(iCol)
+            typesList = self.treeMessageGenerator.getGroup().getPossibleTypesByCol(iCol)
             typeMenu = gtk.Menu()
             for aType in typesList:
                 item = gtk.MenuItem("Render in : " + str(aType))
@@ -316,7 +316,7 @@ class UIsequencing:
     #+----------------------------------------------
     def rightClickToChangeType(self, event, iCol, aType):
         self.treeMessageGenerator.getGroup().setTypeForCol(iCol, aType)
-        self.treeMessageGenerator.updateDefault()
+        self.updateTreeStoreMessage()
 
     #+---------------------------------------------- 
     #|  rightClickToConcatColumns:
@@ -329,47 +329,15 @@ class UIsequencing:
             self.log.debug("Can't concatenate the first column with its left column")
             return
 
-        if iCol + 1 == len(self.treeMessageGenerator.getGroup().getRegex())  and strOtherCol == "right":
+        if iCol + 1 == len(self.treeMessageGenerator.getGroup().getColumns()) and strOtherCol == "right":
             self.log.debug("Can't concatenate the last column with its right column")
             return
 
-        newRegex = self.treeMessageGenerator.getGroup().getRegex()
-
         if strOtherCol == "left":
-            elt1 = newRegex.pop(iCol - 1)
-            elt2 = newRegex.pop(iCol - 1)
-            eltResult = self.concatRegexElts(elt1, elt2)
-            newRegex.insert(iCol - 1, eltResult)
+            self.treeMessageGenerator.getGroup().concatColumns(iCol - 1)
         else:
-            elt1 = newRegex.pop(iCol)
-            elt2 = newRegex.pop(iCol)
-            eltResult = self.concatRegexElts(elt1, elt2)
-            newRegex.insert(iCol, eltResult)
-
-        self.treeMessageGenerator.getGroup().setRegex(newRegex)
+            self.treeMessageGenerator.getGroup().concatColumns(iCol)
         self.treeMessageGenerator.updateDefault()
-
-    #+---------------------------------------------- 
-    #| concatRegexElts :
-    #|   Concatenate two elements of a regex
-    #+----------------------------------------------
-    def concatRegexElts(self, elt1, elt2):
-        if elt1 == "":
-            return elt2
-        if elt2 == "":
-            return elt1
-
-        if elt1[0] == "(" and elt2[0] != "(": # Dyn + Static fields
-            return elt1[:-1] + elt2 + ")"
-
-        if elt1[0] != "(" and elt2[0] == "(": # Static + Dyn fields
-            return "(" + elt1 + elt2[1:]
-
-        if elt1[0] == "(" and elt2[0] == "(": # Dyn + Dyn fields
-            return elt1[:-1] + elt2[1:]
-
-        if elt1[0] != "(" and elt2[0] != "(": # Static + Static fields (should not happen...)
-            return elt1 + elt2
 
     #+---------------------------------------------- 
     #|  rightClickToSplitColumn:
@@ -378,9 +346,17 @@ class UIsequencing:
     def rightClickToSplitColumn(self, event, iCol):
         dialog = gtk.Dialog(title="Split column " + str(iCol), flags=0, buttons=None)
         textview = gtk.TextView()
+        textview.set_editable(False)
         textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
         textview.get_buffer().create_tag("greenTag", weight=pango.WEIGHT_BOLD, foreground="#006400", family="Courier")
-        self.positionToSplit = 0
+        self.split_position = 2
+        self.split_max_len = 0
+
+        # Find the size of the longest message
+        cells = self.treeMessageGenerator.getGroup().getCellsByCol(iCol)
+        for m in cells:
+            if len(m) > self.split_max_len:
+                self.split_max_len = len(m)
 
         # Left arrow
         arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
@@ -411,9 +387,11 @@ class UIsequencing:
         frame.set_label("Content of the column to split")
         frame.show()
         textview.set_size_request(400, 300)
-        messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
-        for m in messages:
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m, iCol) + "\n", "greenTag")
+        cells = self.treeMessageGenerator.getGroup().getCellsByCol(iCol)
+
+        for m in cells:
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[:self.split_position], iCol) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[self.split_position:], iCol) + "\n", "greenTag")
         textview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -424,73 +402,34 @@ class UIsequencing:
         dialog.show()
 
     def doSplitColumn(self, widget, textview, iCol, dialog):
-        # Find the static/dynamic cols
-        messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
-        ref1 = messages[0][:self.positionToSplit]
-        ref2 = messages[0][self.positionToSplit:]
-        isStatic1 = True
-        isStatic2 = True
-        lenDyn1 = 0
-        lenDyn2 = 0
-        for m in messages[1:]:
-            if m[:self.positionToSplit] != ref1:
-                isStatic1 = False
-                if len(m[:self.positionToSplit]) > lenDyn1:
-                    lenDyn1 = len(m[:self.positionToSplit])
-            if m[self.positionToSplit:] != ref2:
-                isStatic2 = False
-                if len(m[self.positionToSplit:]) > lenDyn2:
-                    lenDyn2 = len(m[self.positionToSplit:])
+        if self.split_max_len <= 2:
+            dialog.destroy()
+            return
 
-        # Build the new sub-regex
-        if isStatic1:
-            regex1 = ref1
-        else:
-            regex1 = "(.{," + str(lenDyn1) + "})"
-        if isStatic2:
-            regex2 = ref2
-        else:
-            regex2 = "(.{," + str(lenDyn2) + "})"
-
-        # Build the new columnName and apply it
-        newColumnNames = self.treeMessageGenerator.getGroup().getColumnNames()
-        newColumnNames.pop(iCol)
-        newColumnNames.insert(iCol, "Name")
-        newColumnNames.insert(iCol + 1, "Name")
-        self.treeMessageGenerator.getGroup().setColumnNames(newColumnNames)
-
-        # Build the new regex and apply it
-        newRegex = self.treeMessageGenerator.getGroup().getRegex()
-        newRegex.pop(iCol)
-        newRegex.insert(iCol, regex1)
-        newRegex.insert(iCol + 1, regex2)
-
-        self.treeMessageGenerator.getGroup().setRegex(newRegex)
+        self.treeMessageGenerator.getGroup().splitColumn(iCol, self.split_position)
         self.treeMessageGenerator.updateDefault()            
         dialog.destroy()
 
     def adjustSplitColumn(self, widget, textview, direction, iCol):
-        messages = self.treeMessageGenerator.getGroup().getMessagesFromCol(iCol)
+        if self.split_max_len <= 2:
+            return
+        messages = self.treeMessageGenerator.getGroup().getCellsByCol(iCol)
 
         # Bounds checking
         if direction == "left":
-            self.positionToSplit -= 2
-            if self.positionToSplit < 0:
-                self.positionToSplit = 0
+            self.split_position -= 2
+            if self.split_position < 2:
+                self.split_position = 2
         else:
-            self.positionToSplit += 2
-            maxLen = 0
-            for m in messages: # Find maxLen
-                if len(m) > maxLen:
-                    maxLen = len(m)
-            if self.positionToSplit > maxLen:
-                self.positionToSplit = maxLen
+            self.split_position += 2
+            if self.split_position > self.split_max_len - 2:
+                self.split_position = self.split_max_len - 2
 
         # Colorize text according to position
         textview.get_buffer().set_text("")
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[:self.positionToSplit], iCol) + "  ", "redTag")
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[self.positionToSplit:], iCol) + "\n", "greenTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[:self.split_position], iCol) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), self.treeMessageGenerator.getGroup().getRepresentation(m[self.split_position:], iCol) + "\n", "greenTag")
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :
@@ -506,9 +445,9 @@ class UIsequencing:
             iCol += 1
 
         # Find the next possible type for this column
-        possibleTypes = self.treeMessageGenerator.getGroup().getAllDiscoveredTypes(iCol)
+        possibleTypes = self.treeMessageGenerator.getGroup().getPossibleTypesByCol(iCol)
         i = 0
-        chosedType = self.treeMessageGenerator.getGroup().getSelectedType(iCol)
+        chosedType = self.treeMessageGenerator.getGroup().getSelectedTypeByCol(iCol)
         for aType in possibleTypes:
             if aType == chosedType:
                 chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
@@ -712,8 +651,7 @@ class UIsequencing:
             message_grp.removeMessage(message)
             
             #Adding to its new group
-            new_message_grp.addMessage(message)
-            
+            new_message_grp.addMessage(message)            
         
         message_grp.buildRegexAndAlignment()
         new_message_grp.buildRegexAndAlignment()
@@ -781,7 +719,7 @@ class UIsequencing:
 
             # Else, quite weird so throw a warning
             else :
-                self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name " + self.selectedGroup)
+                self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name " + str(self.selectedGroup))
 
     #+---------------------------------------------- 
     #| Update the content of the tree store for type structure
@@ -800,18 +738,16 @@ class UIsequencing:
         treeview.get_selection().selected_foreach(self.foreach_cb, pathlist)
 
     def foreach_cb(self, model, path, iter, pathlist):
+        pathlist.append(iter)
         for iter in pathlist :
             if(iter):
                 if(model.iter_is_valid(iter)):
-                    msg_id = model.get_value(iter, 0)
+                    # Show the detail structure of the selected message
+                    message_id = model.get_value(iter, 0)
                     group = self.treeMessageGenerator.getGroup()
-                    message = group.getMessageByID(msg_id)
                     self.treeTypeStructureGenerator.setGroup(group)
-                    self.treeTypeStructureGenerator.setMessage(message)
-                    messageTable = []
-                    for i in range(len(group.getRegex())):
-                        messageTable.append(model.get_value(iter, i + 4))
-                    self.treeTypeStructureGenerator.buildTypeStructure(messageTable, msg_id) # Not very clean :)
+                    self.treeTypeStructureGenerator.setMessageByID(message_id)
+                    self.treeTypeStructureGenerator.buildTypeStructure()
                     self.updateTreeStoreTypeStructure()
 
                 """
@@ -874,37 +810,88 @@ class UIsequencing:
             aType = "ascii"
         else:
             aType = "binary"
-        if self.treeMessageGenerator != None and self.treeMessageGenerator.getGroup() != None:
-            self.treeMessageGenerator.getGroup().setTypeForCols(aType)
-            self.update()
+        for group in self.treeGroupGenerator.getGroups():
+            group.setTypeForCols(aType)
+        self.update()
 
     #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
-        textview = gtk.TextView()
+        ## ListStore format :
+        # str: group.id
+        # int: size field column
+        # int: size field size
+        # int: start column
+        # int: substart column
+        # int: end column
+        # int: subend column
+        # str: message rendered in cell
+        treeview = gtk.TreeView(gtk.ListStore(str, int, int, int, int, int, int, str)) 
+        cell = gtk.CellRendererText()
+        treeview.connect("cursor-changed", self.sizeField_selected)
+        column = gtk.TreeViewColumn('Size field and related payload')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=7)
+        treeview.append_column(column)
 
         # Chose button
         but = gtk.Button(label="Apply size field")
         but.show()
-#        but.connect("clicked", self.doSplitColumn, textview, iCol, dialog)
+        but.connect("clicked", self.applySizeField)
         dialog.action_area.pack_start(but, True, True, 0)
 
+        # Just to each group with its associated messages
+        for group in self.treeGroupGenerator.getGroups():
+            self.selectedGroup = str(group.getID())
+            self.treeMessageGenerator.default(group)
+
         # Text view containing potential size fields
-        frame = gtk.Frame()
-        frame.set_label("Potential size fields and related payload")
-        frame.show()
-        textview.set_size_request(800, 300)
-        foundSizeFields = self.treeGroupGenerator.findSizeFields()
-        if foundSizeFields != None:
-            for sizeField in foundSizeFields:
-                textview.get_buffer().insert(textview.get_buffer().get_end_iter(), sizeField + "\n")
-        textview.show()
+        treeview.set_size_request(800, 300)
+        self.treeGroupGenerator.findSizeFields( treeview.get_model() )
+        treeview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
-        scroll.add(textview)
-        frame.add(scroll)
-        dialog.vbox.pack_start(frame, True, True, 0)
+        scroll.add(treeview)
+        dialog.vbox.pack_start(scroll, True, True, 0)
         dialog.show()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to try to apply a size field on a group
+    #+----------------------------------------------
+    def sizeField_selected(self, treeview):
+        (model, iter) = treeview.get_selection().get_selected()
+        if(iter):
+            if(model.iter_is_valid(iter)):
+                group_id = model.get_value(iter, 0)
+                ## Select the related group
+                self.selectedGroup = group_id
+                self.treeGroupGenerator.select_group_by_id(group_id)
+                self.updateTreeStoreMessage()
+                ## Select the first message for details (after the 3 header rows)
+                it = self.treeMessageGenerator.treestore.get_iter_first()
+                if it == None:
+                    return
+                it = self.treeMessageGenerator.treestore.iter_next(it)
+                if it == None:
+                    return
+                it = self.treeMessageGenerator.treestore.iter_next(it)
+                if it == None:
+                    return
+                it = self.treeMessageGenerator.treestore.iter_next(it)
+                if it == None:
+                    return
+                message_id = self.treeMessageGenerator.treestore.get_value(it, 0)
+                group = self.treeMessageGenerator.getGroup()
+                self.treeTypeStructureGenerator.setGroup(group)
+                self.treeTypeStructureGenerator.setMessageByID(message_id)
+                self.treeTypeStructureGenerator.buildTypeStructure()
+                self.updateTreeStoreTypeStructure()
+        
+    #+---------------------------------------------- 
+    #| Called when user wants to apply a size field on a group
+    #+----------------------------------------------
+    def applySizeField(self, button):
+        pass

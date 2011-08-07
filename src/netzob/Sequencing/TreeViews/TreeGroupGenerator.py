@@ -162,28 +162,30 @@ class TreeGroupGenerator():
     #|  try to merge identical regexes
     #+----------------------------------------------
     def mergeCommonRegexes(self, button, ui):
-        res = False
-        for group in self.getGroups():
-            regex = "".join( group.getRegex() )
-            for group2 in self.getGroups():
-                if group != group2 and regex == group2.getRegex():
-                    self.log.debug("Common regexes found !")
-                    res = True
-                    # TODO: merge regexes
-        if res:
-            # TODO: loop on mergeRegexes until no more merge
-            pass
-        ui.update()
+        self.log.info("Merging not implemented yet")
+
+    #+---------------------------------------------- 
+    #| select_group_by_id:
+    #|  Select the given group in the treestore
+    #+----------------------------------------------
+    def select_group_by_id(self, group_id):
+        it = self.treestore.get_iter_first()
+        while True:
+            if it == None:
+                break
+            tmp_group_id = self.treestore.get_value(it, 0)
+            if tmp_group_id == group_id:
+                self.treeview.get_selection().select_iter(it)                
+                break
+            it = self.treestore.iter_next(it)
 
     #+---------------------------------------------- 
     #| findSizeField:
     #|  try to find the size field of each regex
     #+----------------------------------------------    
-    def findSizeFields(self):
-        res = []
+    def findSizeFields(self, store):
         for group in self.getGroups():
-            res.extend( group.findSizeFields() )
-        return res
+            group.findSizeFields(store)
             
     #+---------------------------------------------- 
     #| GETTERS : 

@@ -55,12 +55,11 @@ class MessageGroup(object):
         self.id = uuid.uuid4() 
         self.name = name
         self.messages = messages
+        for message in self.messages:
+            message.setGroup(self)
         self.score = 0
-        self.regex = []
-        self.columnNames = []
         self.alignment = ""
-        self.selectedType = []
-        self.msgByCol = {}
+        self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tab'}
 
     def __repr__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
@@ -69,15 +68,27 @@ class MessageGroup(object):
         return self.name+"("+str(round(self.score,2))+")"
 
     #+---------------------------------------------- 
-    #| buildRegexAndAlignment : compute self.regex and 
+    #| buildRegexAndAlignment : compute regex and 
     #| self.alignment from the binary strings computed 
     #| in the C Needleman library
     #+----------------------------------------------
     def buildRegexAndAlignment(self):
+        self.log.debug("Build the regex and alignement of the group " + str(self.getID()))
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        self.columns = []
         if len(self.getMessages()) == 1:
-            self.regex = [self.getMessages()[0].getStringData()]
-            self.align = self.getMessages()[0].getStringData()
-            self.columnNames = ["Name"]
+            self.columns.append({'name' : "Name",
+                                  'regex' : self.getMessages()[0].getStringData(),
+                                 'selectedType' : aType,
+                                 'tab' : 0
+                                 })
             return
 
         # Serialize the messages before sending them to the C library
@@ -122,26 +133,18 @@ class MessageGroup(object):
         if maxRightReducedStringData > 0 :
             self.log.warning("add on the right part adding a bit of --")
             for i in range(0, maxReducedSize):
-                align = align+"--"
-            
-            
+                align = align+"--"            
+
         # Updates the alignment by adding -- on its end
 #        if maxReducedStringData > 1 :
 #            for i in range(0, (maxReducedStringData*len(align) - len(align))) :
 #                align+="--"
-            
-        
+
         self.setAlignment( align )
-        # Compute and store the regex based on alignment
-        self.setRegex(self.extractRegexFromAlignment(align))
-
-
-        # Fill columnNames with a default name
-        self.columnNames = []
-        for i in range(len(self.getRegex())):
-            self.columnNames.append("Name")
+        # Initialized the self.columns structure based on alignement
+        self.buildRegexFromAlignment(align)
     
-    def extractRegexFromAlignment(self, align):
+    def buildRegexFromAlignment(self, align):
         # Build regex from alignment
         i = 0
         start = 0
@@ -166,55 +169,41 @@ class MessageGroup(object):
         if (found == True) :
             nbTiret = i - start
             regex.append( "(.{," + str(nbTiret) + "})" )
-        return regex
-    
-    #+---------------------------------------------- 
-    #| computeScore : given the messages, 
-    #| this function computes the score of equivalence
-    #| of the group
-    #+----------------------------------------------
-    def computeScore(self):
-        self.log.debug("Compute the score of group {0}".format(self.id))
-        alignator = NeedlemanWunsch.NeedlemanWunsch()
-        self.score = alignator.computeScore(self.regex)
+
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        for regexElt in regex:
+            self.columns.append({'name' : "Name",
+                                 'regex' : regexElt,
+                                 'selectedType' : aType,
+                                 'tab' : 0
+                                 })
    
-    #+---------------------------------------------- 
-    #| computeRegex : given the messages, 
-    #| this function computes the regex of the group
-    #+----------------------------------------------
-    def computeRegex(self):
-        innerThread = self.InnerMessageGroup(self) # parameter := the MessageGroup class object
-        innerThread.start()
-        innerThread.join()
-        
-    #+---------------------------------------------- 
-    #| computeRegex2 : given the messages, 
-    #| this function computes the new regex of the group
-    #+----------------------------------------------    
-    def computeRegex2(self, new_msgs):
-        innerThread = self.InnerMessageGroup2(self, new_msgs)
-        innerThread.start()
-        innerThread.join()
-    
     #+---------------------------------------------- 
     #| removeMessage : remove any ref to the given
     #| message and recompute regex and score
     #+----------------------------------------------
     def removeMessage(self, message):
         self.messages.remove(message)
-        self.computeRegex()
-        self.computeScore()
         
     #+---------------------------------------------- 
     #| addMessage : add a message in the list
     #| @param message : the message to add
     #+----------------------------------------------
     def addMessage(self, message):
-        self.messages.append(message)
+        message.setGroup(self)
+        self.messages.append( message )
         
-    def addMessages(self, _messages) :
-        for m in _messages:
-            self.messages.append(m)
+    def addMessages(self, messages):
+        for message in messages:
+            message.setGroup(self)
+            self.messages.append( message )
     
     #+---------------------------------------------- 
     #| getXMLDefinition : 
@@ -236,24 +225,34 @@ class MessageGroup(object):
     #|  sequences that are between big dynamic sequences
     #+----------------------------------------------
     def slickRegex(self):
-        newRegex = self.getRegex()
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
         res = False
         i = 1
-        while i < len(newRegex) - 1:
-            if newRegex[i].find("{") == -1: # Means the current element is static
-                if len(newRegex[i]) == 2: # Means a potential negligeable element
-                    if re.match("\(\.\{,\d+\}\)", newRegex[i-1]) != None: # Means the precedent element is purely dynamic (not complex)
-                        if re.match("\(\.\{,\d+\}\)", newRegex[i+1]) != None: # Means the next element is purely dynamic (not complex)
+        while i < len(self.columns) - 1:
+            if self.columns[i]['regex'].find("{") == -1: # Means the current element is static
+                if len(self.columns[i]['regex']) == 2: # Means a potential negligeable element
+                    if re.match("\(\.\{,\d+\}\)", self.columns[i-1]['regex']) != None: # Means the precedent element is purely dynamic (not complex)
+                        if re.match("\(\.\{,\d+\}\)", self.columns[i+1]['regex']) != None: # Means the next element is purely dynamic (not complex)
                             res = True
-                            elt1 = newRegex.pop(i - 1) # we retrieve the precedent regex
-                            elt2 = newRegex.pop(i - 1) # we retrieve the current regex
-                            elt3 = newRegex.pop(i - 1) # we retrieve the next regex
-                            lenEltResult = int(elt1[4:-2]) + 2 + int(elt3[4:-2]) # We compute the len of the aggregated regex
-                            newRegex.insert(i - 1, "(.{," + str(lenEltResult) + "})")
+                            col1 = self.columns.pop(i - 1) # we retrieve the precedent regex
+                            col2 = self.columns.pop(i - 1) # we retrieve the current regex
+                            col3 = self.columns.pop(i - 1) # we retrieve the next regex
+                            lenColResult = int(col1['regex'][4:-2]) + 2 + int(col3['regex'][4:-2]) # We compute the len of the aggregated regex
+                            self.columns.insert(i - 1, {'name' : "Name",
+                                                        'regex' : "(.{," + str(lenColResult) + "})",
+                                                        'selectedType' : aType,
+                                                        'tab' : 0
+                                                        })
             i += 1
 
         if res:
-            self.setRegex( newRegex )
             self.slickRegex() # Try to loop until no more merges are done
             self.log.debug("The regex has been slicked")
 
@@ -265,31 +264,30 @@ class MessageGroup(object):
     #| findSizeFields:
     #|  try to find the size fields of each regex
     #+----------------------------------------------    
-    def findSizeFields(self):
-        resTable = []
-        if len(self.msgByCol) == 0:
-            return resTable
+    def findSizeFields(self, store):
+        if len(self.columns) == 0:
+            return
 
         typer = TypeIdentifier.TypeIdentifier()
 
         # First step: try to find a size field for a uniq data column
         iCol = 0
-        for regexElt in self.getRegex():
-            if re.match("[0-9a-fA-F]{1,}", regexElt) != None: # Means the element is static
+        for col in self.getColumns():
+            if re.match("[0-9a-fA-F]{1,}", col['regex']) != None: # Means the element is static
                 iCol += 1
                 continue
-            msgsSize = self.getMessagesFromCol(iCol)
+            cellsSize = self.getCellsByCol(iCol)
             j = 0
-            while j < len(self.getRegex()):
-                if not (re.match("\(\.\{,\d+\}\)", self.getRegex()[j]) != None): # Means the element is not purely dynamic
+            while j < len(self.getColumns()):
+                if not (re.match("\(\.\{,\d+\}\)", self.getColumns()[j]['regex']) != None): # Means the element is not purely dynamic
                     j += 1
                     continue
                 if j != iCol:
-                    msgsData = self.getMessagesFromCol(j)
+                    cellsData = self.getCellsByCol(j)
                     res = True
-                    for k in range(len(msgsSize)):
+                    for k in range(len(cellsSize)):
                         # Handle big and little endian for size field of 1, 2 and 4 octets length
-                        rawMsgSize = typer.toBinary(msgsSize[k][:8])
+                        rawMsgSize = typer.toBinary(cellsSize[k][:8])
                         if len(rawMsgSize) == 1:
                             expectedSizeType = "B"
                         elif len(rawMsgSize) == 2:
@@ -301,53 +299,53 @@ class MessageGroup(object):
                             break
                         (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
                         (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
-                        if (expectedSizeLE != len(msgsData[k]) / 2) and (expectedSizeBE != len(msgsData[k]) / 2):
+                        if (expectedSizeLE != len(cellsData[k]) / 2) and (expectedSizeBE != len(cellsData[k]) / 2):
                             res = False
                             break
                     if res:
-                        resTable.append("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
+                        store.append([self.id, iCol, -1, j, -1, j, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")"])
                         self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
                 j += 1
             iCol += 1
 
         # Second step: try to find a size field for an aggregate of data columns
         iCol = 0
-        for regexElt in self.getRegex():
-            if re.match("[0-9a-fA-F]{2,}", regexElt) != None: # Means the element is static
+        for col in self.getColumns():
+            if re.match("[0-9a-fA-F]{2,}", col['regex']) != None: # Means the element is static
                 iCol += 1
                 continue
-            msgsSize = self.getMessagesFromCol(iCol)
+            cellsSize = self.getCellsByCol(iCol)
             j = 0
-            while j < len(self.getRegex()) - 1:
+            while j < len(self.getColumns()) - 1:
                 # Initialize the aggregate of messages from colJ to colK
-                aggregateMsgsData = []
-                for l in range(len(msgsSize)):
-                    aggregateMsgsData.append( "" )
+                aggregateCellsData = []
+                for l in range(len(cellsSize)):
+                    aggregateCellsData.append( "" )
 
                 # Fill the aggregate of messages and try to compare its length with the current expected length
                 k = j + 1
-                while k < len(self.getRegex()):
-                    for l in range(len(msgsSize)):
-                        aggregateMsgsData[l] += self.getMessagesFromCol(k)[l]
+                while k < len(self.getColumns()):
+                    for l in range(len(cellsSize)):
+                        aggregateCellsData[l] += self.getCellsByCol(k)[l]
 
                     # We try to aggregate the successive sub-parts of j if it's a static column
-                    if self.getRegex()[j].find("{") == -1: # Means the regex j element is static
-                        lenJ = len(self.getRegex()[j])
+                    if self.getColumns()[j]['regex'].find("{") == -1: # Means the regex j element is static
+                        lenJ = len(self.getColumns()[j]['regex'])
                         stop = 0
                     else:
                         lenJ = 2
                         stop = 0
                     for m in range(lenJ, stop, -2):
-                        for n in [1, 2, 4]: # loop over different possible encoding of size field
+                        for n in [4, 2, 1]: # loop over different possible encoding of size field
                             res = True
-                            for l in range(len(msgsSize)):
-                                if self.getRegex()[j].find("{") == -1: # Means the precedent regex element is static
-                                    targetData = self.getRegex()[j][lenJ - m:] + aggregateMsgsData[l]
+                            for l in range(len(cellsSize)):
+                                if self.getColumns()[j]['regex'].find("{") == -1: # Means the precedent regex element is static
+                                    targetData = self.getColumns()[j]['regex'][lenJ - m:] + aggregateCellsData[l]
                                 else:
-                                    targetData = self.getMessagesFromCol(j)[l] + aggregateMsgsData[l]
+                                    targetData = self.getCellsByCol(j)[l] + aggregateCellsData[l]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
-                                rawMsgSize = typer.toBinary(msgsSize[l][:n*2])
+                                rawMsgSize = typer.toBinary(cellsSize[l][:n*2])
                                 if len(rawMsgSize) == 1:
                                     expectedSizeType = "B"
                                 elif len(rawMsgSize) == 2:
@@ -363,47 +361,143 @@ class MessageGroup(object):
                                     res = False
                                     break
                             if res:
-                                if self.getRegex()[j].find("{") == -1: # Means the regex j element is static and a sub-part is concerned
-                                    resTable.append("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
+                                if self.getColumns()[j]['regex'].find("{") == -1: # Means the regex j element is static and a sub-part is concerned
+                                    store.append([self.id, iCol, n*2, j, lenJ-m, k, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                     self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:
-                                    resTable.append("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
+                                    store.append([self.id, iCol, n*2, j, -1, k, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
                                     self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
+                                break
                     k += 1
                 j += 1
             iCol += 1
 
-        return resTable
+    #+---------------------------------------------- 
+    #| concatColumns:
+    #|  Concatenate two columns starting from iCol
+    #+----------------------------------------------
+    def concatColumns(self, iCol):
+        col1 = self.getColumns().pop(iCol)
+        col2 = self.getColumns().pop(iCol)
+
+        # Build the merged regex
+        newRegex = ""
+        if col1['regex'] == "":
+            newRegex = col2['regex']
+        if col2['regex'] == "":
+            newRegex = col1['regex']
+
+        if col1['regex'][0] == "(" and col2['regex'][0] != "(": # Dyn + Static fields
+            newRegex = col1['regex'][:-1] + col2['regex'] + ")"
+
+        if col1['regex'][0] != "(" and col2['regex'][0] == "(": # Static + Dyn fields
+            newRegex = "(" + col1['regex'] + col2['regex'][1:]
+
+        if col1['regex'][0] == "(" and col2['regex'][0] == "(": # Dyn + Dyn fields
+            newRegex = col1['regex'][:-1] + col2['regex'][1:]
+
+        if col1['regex'][0] != "(" and col2['regex'][0] != "(": # Static + Static fields (should not happen...)
+            newRegex = col1['regex'] + col2['regex']
+
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        self.getColumns().insert(iCol, {'name' : "Name",
+                                            'regex' : newRegex,
+                                            'selectedType' : aType,
+                                            'tab' : 0
+                                            })
+
+    #+---------------------------------------------- 
+    #| splitColumn:
+    #|  Split a column in two columns
+    #+----------------------------------------------
+    def splitColumn(self, iCol, split_position):
+        # Find the static/dynamic cols
+        cells = self.getCellsByCol(iCol)
+        ref1 = cells[0][:split_position]
+        ref2 = cells[0][split_position:]
+        isStatic1 = True
+        isStatic2 = True
+        lenDyn1 = len(cells[0][:split_position])
+        lenDyn2 = len(cells[0][split_position:])
+        for m in cells[1:]:
+            if m[:split_position] != ref1:
+                isStatic1 = False
+                if len(m[:split_position]) > lenDyn1:
+                    lenDyn1 = len(m[:split_position])
+            if m[split_position:] != ref2:
+                isStatic2 = False
+                if len(m[split_position:]) > lenDyn2:
+                    lenDyn2 = len(m[split_position:])
+
+        # Build the new sub-regex
+        if isStatic1:
+            regex1 = ref1
+        else:
+            regex1 = "(.{," + str(lenDyn1) + "})"
+        if isStatic2:
+            regex2 = ref2
+        else:
+            regex2 = "(.{," + str(lenDyn2) + "})"
+
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        # Build the new regex and apply it
+        self.getColumns().pop(iCol)
+        self.getColumns().insert(iCol, {'name' : "Name",
+                                        'regex' : regex1,
+                                        'selectedType' : aType,
+                                        'tab' : 0
+                                        })
+        self.getColumns().insert(iCol + 1, {'name' : "Name",
+                                            'regex' : regex2,
+                                            'selectedType' : aType,
+                                            'tab' : 0
+                                            })
 
     #+---------------------------------------------- 
     #| Type handling
     #+----------------------------------------------
     def setTypeForCols(self, aType):
-        for iCol in range(len(self.getRegex())):
-            self.selectedType[iCol] = aType
+        for col in self.getColumns():
+            col['selectedType'] = aType
 
     def setTypeForCol(self, iCol, aType):
-        self.selectedType[iCol] = aType
-
-    def getSelectedType(self, colId):
-        if colId>=0 and colId<len(self.selectedType) :
-            return self.selectedType[colId]
+        if iCol>=0 and iCol<len(self.columns) :
+            self.columns[iCol]['selectedType'] = aType
         else :
-            self.log.warning("The type for the column "+str(colId)+" is not defined ! ")
+            self.log.warning("The type for the column "+str(iCol)+" is not defined ! ")
+
+    def getSelectedTypeByCol(self, iCol):
+        if iCol>=0 and iCol<len(self.columns) :
+            return self.columns[iCol]['selectedType']
+        else :
+            self.log.warning("The type for the column "+str(iCol)+" is not defined ! ")
             return "binary"
 
-    def getAllDiscoveredTypes(self, iCol):
-        typeIdentifier = TypeIdentifier.TypeIdentifier()        
-        return typeIdentifier.getTypes(self.msgByCol[iCol])
+    def getPossibleTypesByCol(self, iCol):
+        if iCol>=0 and iCol<len(self.columns) :
+            cells = self.getCellsByCol(iCol)
+            typeIdentifier = TypeIdentifier.TypeIdentifier()        
+            return typeIdentifier.getTypes( cells )
+        else :
+            self.log.warning("The possible types for the column "+str(iCol)+" are not defined ! ")
+            return ["binary"]
 
-    def getMessagesFromCol(self, iCol):
-        if iCol < len(self.msgByCol):
-            return self.msgByCol[iCol]
-        else:
-            return None
-
-    def getRepresentation(self, raw, colId) :
-        type = self.getSelectedType(colId)
+    def getRepresentation(self, raw, iCol) :
+        type = self.getSelectedTypeByCol(iCol)
         return self.encode(raw, type)
     
     def encode(self, raw, type):
@@ -422,8 +516,12 @@ class MessageGroup(object):
             return typer.toBase64Encoded(raw)
         else :
             return raw
-    
+
+    #+---------------------------------------------- 
+    #| XML store/load handling
+    #+----------------------------------------------    
     def storeInXmlConfig(self):
+        # TODO: also store the following information : tabulation and selectedType
         log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
         
         members = ""
@@ -433,24 +531,23 @@ class MessageGroup(object):
         xml  = "<group id=\""+str(self.getID())+"\" name=\""+self.getName()+"\" score=\""+str(self.getScore())+"\" members=\""+members+"\" alignment=\""+self.getAlignment()+"\">\n"
         
         xml += "\t<regex>\n"
-        for re in self.getRegex() :
-            xml += "\t\t<re>"+re+"</re>\n"
+        for col in self.columns():
+            xml += "\t\t<re>"+col['regex']+"</re>\n"
         xml += "\t</regex>\n"
         
         
         xml += "\t<cols>\n"
-        for colName in self.getColumnNames() :
-            xml += "\t\t<col>"+colName+"</col>\n"
+        for col in self.columns() :
+            xml += "\t\t<col>"+col['name']+"</col>\n"
         xml += "\t</cols>\n"
         xml += "</group>\n"
-        return xml
-        
+        return xml        
     
     @staticmethod
-    def loadFromXmlConfig(xml, messages):        
+    def loadFromXmlConfig(xml, messages):
+        # TODO: also load the following information : tabulation and selectedType
+        self.columns = []
         log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
-        
-        
         
         if not xml.hasAttribute("id") :
             log.warn("Impossible to load group from xml config file (no \"id\" attribute)")
@@ -469,22 +566,19 @@ class MessageGroup(object):
             return None
         
         xmlRes = xml.getElementsByTagName("re")
-        regex = []
         for xmlRe in xmlRes :
             for node in xmlRe.childNodes:
                 re = node.data.split()
-            regex.append("".join(re))
+            self.columns.append( {'regex' : "".join(re)} )
         
         xmlCols = xml.getElementsByTagName("col")
-        colNames = []
+        iCol = 0
         for xmlCol in xmlCols :
             for node in xmlCol.childNodes:
                 colName = node.data.split()
-            
-            colNames.append("".join(colName))
-            
-            
-        
+            self.columns[iCol]['name'] = "".join(colName)
+            iCol += 1
+
         group = MessageGroup(xml.attributes["name"].value, [])    
         
         idMessages = xml.attributes["members"].value.split(";")
@@ -500,22 +594,16 @@ class MessageGroup(object):
                 if found == False :
                     log.warn("Impossible to load the group since a message is not found.")
                     return None
-                
-        
+
         group.setID(xml.attributes["id"].value)
         
         group.setAlignment(xml.attributes["alignment"].value)
-        group.setRegex(group.extractRegexFromAlignment(group.getAlignment()))
+#         group.setRegex(group.extractRegexFromAlignment(group.getAlignment()))
+#        group.setColumnNames(colNames)
+#        group.setRegex(regex)
         group.setScore(xml.attributes["score"].value)
-        group.setColumnNames(colNames)
-        group.setRegex(regex)
-        
-        
         return group
-    
-    
-    
-    
+
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
@@ -529,15 +617,19 @@ class MessageGroup(object):
         return self.alignment
     def getScore(self):
         return self.score
-    def getRegex(self):
-        return self.regex
     def getMessageByID(self, messageID):
         for message in self.getMessages():
             if str(message.getID()) == str(messageID):
                 return message
         return None
-    def getColumnNames(self):
-        return self.columnNames
+    def getColumns(self):
+        return self.columns
+    def getCellsByCol(self, iCol):
+        res = []
+        for message in self.getMessages():
+            messageTable = message.applyRegex()
+            res.append( messageTable[iCol] )
+        return res
 
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -548,65 +640,10 @@ class MessageGroup(object):
         self.name = name
     def setMessages(self, messages): 
         self.messages = messages
-    def setRegex(self, regex):
-        self.regex = regex
     def setAlignment(self, alignment):
         self.alignment = alignment
     def setScore(self, score):
         self.score = score
-    def setColumnNames(self, columnNames):
-        self.columnNames = columnNames
-    def setColumnName(self, iCol, value):
-        if len(self.columnNames) > iCol:
-            self.columnNames[iCol] = value
-
-    #+---------------------------------------------- 
-    #| Inner thread for regex computation
-    #+----------------------------------------------
-    class InnerMessageGroup(threading.Thread):
-        #+---------------------------------------------- 
-        #| Constructor :
-        #| @param group : the manipulated group
-        #+----------------------------------------------  
-        def __init__(self, group):
-            threading.Thread.__init__(self)
-            self.group = group
-
-        def run(self):
-            alignator = NeedlemanWunsch.NeedlemanWunsch()
-            sequences = []
-            for message in self.group.getMessages() :
-                sequences.append(message.getStringData())
-            if (len(sequences) >=2) :
-                (regex, alignment) = alignator.getRegex(sequences) 
-                self.group.regex = regex
-                self.group.alignment = alignment
-            else :
-                self.group.regex = ""
-                self.group.alignment = ""
-     
-    class InnerMessageGroup2(threading.Thread):
-        #+---------------------------------------------- 
-        #| Constructor :
-        #| @param group : the manipulated group
-        #+----------------------------------------------  
-        def __init__(self, group, new_msgs):
-            threading.Thread.__init__(self)
-            self.group = group
-            self.new_msgs = new_msgs
-
-        def run(self):
-            alignator = NeedlemanWunsch.NeedlemanWunsch()
-            sequences = []
-            sequences.append(str(self.group.getAlignment()))
-            for message in self.new_msgs :
-                sequences.append(message.getStringData())
-            
-            
-            if (len(sequences) >=2) :
-                (regex, alignment) = alignator.getRegex(sequences) 
-                self.group.regex = regex
-                self.group.alignment = alignment
-            else :
-                self.group.regex = ""
-                self.group.alignment = ""
+    def setColumnNameByCol(self, iCol, name):
+        if len(self.columns) > iCol:
+            self.columns[iCol]['name'] = name

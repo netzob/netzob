@@ -61,6 +61,8 @@ class TreeMessageGenerator():
         column.set_attributes(cell, markup=0)
         self.treeview.append_column(column)
         self.treeview.show()
+        self.treeview.set_reorderable(True)
+        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.scroll = gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 200)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
@@ -93,132 +95,62 @@ class TreeMessageGenerator():
         self.treestore.clear()
 
         # Verifies we have everything needed for the creation of the treeview
-        if (self.group == None or len(self.group.getMessages())<1) or len(self.group.getRegex()) == 0 :
+        if (self.group == None or len(self.group.getMessages())<1) or len(self.group.getColumns()) == 0 :
             self.error()
             return
-        
-        # configuration of the representation format
-        # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
-        valID = configParser.getInt("clustering", "protocol_type")
-        if valID == 0:
-            aType = "ascii"
-        else:
-            aType = "binary"
-        for i in range(0, len(self.group.getRegex())) :
-            self.group.selectedType.append(aType)
 
-        # Create a TreeStore with N cols, with N := len(self.group.getRegex())
+        # Create a TreeStore with N cols, with N := len(self.group.getColumns())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for i in range( len(self.group.getRegex()) ):
-            treeStoreTypes.append(str)           
+        for i in range( len(self.group.getColumns()) ):
+            treeStoreTypes.append(str)
         self.treestore = gtk.TreeStore(*treeStoreTypes)
-        
-        
-        
-        compiledRegex = re.compile("".join( self.group.getRegex() ))
 
-        self.group.msgByCol = {}
+        # Build the name row
+        name_line = []
+        name_line.append("HEADER NAME")
+        name_line.append("#ababab")
+        name_line.append(pango.WEIGHT_BOLD)
+        name_line.append(True)
+        for col in self.group.getColumns():
+            name_line.append( col['name'] )
+        self.treestore.append(None, name_line)
 
-        # Apply the content matrix to the treestore
-        for i in range(0, len(self.group.getMessages())) :
-            message = self.group.getMessages()[i]
+        # Build the regex row
+        regex_row = []
+        regex_row.append("HEADER REGEX")
+        regex_row.append("#c8c8c8")
+        regex_row.append(pango.WEIGHT_BOLD)
+        regex_row.append(True)
+        for col in self.group.getColumns():
+            regex_row.append( col['regex'] )
+        self.treestore.append(None, regex_row)
 
+        # Build the types row
+        types_line = []
+        types_line.append("HEADER TYPE")
+        types_line.append("#DEDEDE")
+        types_line.append(pango.WEIGHT_BOLD)
+        types_line.append(True)        
+        for iCol in range(len( self.getGroup().getColumns() )):
+            types_line.append( self.getGroup().getPossibleTypesByCol(iCol) )
+        self.treestore.append(None, types_line)
+        
+        # Build the next rows from messages after applying the regex
+        for message in self.group.getMessages():
             # for each message we create a line and computes its cols
             line = []
             line.append(message.getID())
             line.append("#ffffff")
             line.append(pango.WEIGHT_NORMAL)
             line.append(False)
-
-            # We apply the regex to the message
-            data = message.getStringData()
-            
-            
-            m = compiledRegex.match(data)
-
-            # If the regex doesn't match the message, we activate the error mode
-            if (m == None) :
-                self.log.warning("The regex of the group doesn't match the message : " + data)
-                self.log.warning("The regex of the group is : " + "".join(self.group.getRegex()))
-                self.error()
-                return 
-            
-            iCol = 0
-            dynamicCol = 1
-            for regexElt in self.group.getRegex():
-                # (init) Aggregate the cells content to a structure dedicacted to identify the column type
-                if not iCol in self.group.msgByCol:
-                    self.group.msgByCol[iCol] = []
-
-                # Append styled data to the treestore
-                if regexElt.find("(") != -1: # Means this column is not static
-                    start = m.start(dynamicCol)
-                    end = m.end(dynamicCol)
-                    line.append('<span foreground="blue" font_family="monospace">' + self.group.getRepresentation( data[start:end], iCol ) + '</span>')
-                    self.group.msgByCol[iCol].append( data[start:end] )
-                    dynamicCol += 1
-                else:
-                    line.append('<span font_family="monospace">' + self.group.getRepresentation( regexElt, iCol ) + '</span>')
-                    self.group.msgByCol[iCol].append( regexElt )
-
-                iCol = iCol + 1
+            line.extend( message.applyRegex(styled=True, encoded=True) )
             self.treestore.append(None, line)
-      
-        # Creates the header (a line with the type displayed)
-        header_line = []
-        header_line.append("HEADER TYPE")
-        header_line.append("#DEDEDE")
-        header_line.append(pango.WEIGHT_BOLD)
-        header_line.append(True)        
-
-        # Get the possible types of each column
-        for iCol in range( len(self.group.getRegex()) ):
-            header_line.append(", ".join(self.group.getAllDiscoveredTypes(iCol)))
-        self.treestore.prepend(None, header_line)
-
-        # Creates the header line for the regex
-        regex_row = []
-        regex_row.append("HEADER REGEX")
-        regex_row.append("#c8c8c8")
-        regex_row.append(pango.WEIGHT_BOLD)
-        regex_row.append(True)
-
-        # Get the Sub-Regex of each column
-        for iCol in range( len(self.group.getRegex()) ):
-            # Split the regex (this is scrapy...)
-            tmpRegex = self.group.getRegex()[iCol]
-            if len(tmpRegex) > 0 and tmpRegex[0] == "(": # Means a complex regex (static + dyn)
-                tmpRegex = tmpRegex[1:-1] # We exclude the parenthesis
-
-            splittedRegex = re.findall('(,?[0-9a-f]+)', self.group.getRegex()[iCol])
-
-            resRegex = ""
-            for elt in splittedRegex:
-                if elt[0] == ",":
-                    resRegex += ".{" + elt + "}"
-                else:
-                    resRegex += self.group.getRepresentation( elt, iCol )
-            regex_row.append( resRegex )
-        self.treestore.prepend(None, regex_row)
-
-        # Creates the header for naming the column
-        name_line = []
-        name_line.append("HEADER NAME")
-        name_line.append("#ababab")
-        name_line.append(pango.WEIGHT_BOLD)
-        name_line.append(True)        
-
-        # Get the possible types of each column
-        for iCol in range( len(self.group.getRegex()) ):
-            name_line.append(self.getGroup().getColumnNames()[iCol])
-        self.treestore.prepend(None, name_line)
 
         # Remove all the columns of the current treeview
         for col in self.treeview.get_columns() :
             self.treeview.remove_column(col)
             
-        for iCol in range(4, 4 + len(self.group.getRegex()) ) :
+        for iCol in range(4, 4 + len(self.group.getColumns()) ) :
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property('background-set' , True)
@@ -228,19 +160,14 @@ class TreeMessageGenerator():
             lvcolumn.pack_start(textCellRenderer, True)
             lvcolumn.set_attributes(textCellRenderer, markup=iCol, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
-
-        # Updates the treeview with the newly created treestore
         self.treeview.set_model(self.treestore)
-        self.treeview.set_reorderable(True)
-        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 
     def column_renaming_cb(self, cell, path_string, new_text, iCol):
         self.treestore[path_string][iCol + 4] = new_text
-        self.group.setColumnName(iCol, new_text)
+        self.group.setColumnNameByCol(iCol, new_text)
 
     def updateDefault(self):
         self.default(self.group)
-    
     
     #+---------------------------------------------- 
     #| GETTERS : 

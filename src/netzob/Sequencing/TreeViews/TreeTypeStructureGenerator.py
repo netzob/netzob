@@ -92,26 +92,29 @@ class TreeTypeStructureGenerator():
     def default(self):
         pass
 
-    def buildTypeStructure(self, messageTable, msg_id):
-        if self.getGroup() == None:
+    def buildTypeStructure(self):
+        if self.getGroup() == None or self.getMessage() == None:
             self.clear()
             return
-        if str(msg_id).find("HEADER") != -1:
+
+        splittedMessage = self.getMessage().applyRegex(styled=True, encoded=True)
+
+        if str(self.message.getID).find("HEADER") != -1:
             self.clear()
             return
 
         self.treestore.clear()
-        for i in range(len(self.getGroup().getRegex())):
-            if i > 5:
-                fake = "         "
+        iCol = 0
+        for col in self.getGroup().getColumns():
+            tab = ""
+            for k in range(int(col['tab'])):
+                tab += " "
+            messageElt = splittedMessage[iCol]
+            if col['regex'].find("{") != -1:
+                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'] + " / " + messageElt, ""])
             else:
-                fake = ""
-            messageElt = messageTable[i]
-            regexElt = self.getGroup().getRegex()[i]
-            if regexElt.find("{") != -1:
-                iter = self.treestore.append(None, [fake + self.getGroup().getColumnNames()[i] + ":", regexElt + " / " + messageElt, ""])
-            else:
-                iter = self.treestore.append(None, [fake + self.getGroup().getColumnNames()[i] + ":", regexElt, ""])
+                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'], ""])
+            iCol += 1
 
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -136,3 +139,6 @@ class TreeTypeStructureGenerator():
         self.group = group
     def setMessage(self, message):
         self.message = message
+    def setMessageByID(self, message_id):
+        self.message = self.group.getMessageByID(message_id)
+
