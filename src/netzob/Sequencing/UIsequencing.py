@@ -915,6 +915,7 @@ class UIsequencing:
                     if not (end_field == -1):
                         end_field += 1
                 group.setDescriptionByCol(size_field, "Size field")
+                group.setColorByCol(size_field, "red")
                 if group.splitColumn(start_field, start_field_len) == True:
                     start_field += 1
                     if not (end_field == -1):

@@ -59,7 +59,7 @@ class MessageGroup(object):
             message.setGroup(self)
         self.score = 0
         self.alignment = ""
-        self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tabulation', 'description'}
+        self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tabulation', 'description', 'color'}
 
     def __repr__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
@@ -88,7 +88,8 @@ class MessageGroup(object):
                                   'regex' : self.getMessages()[0].getStringData(),
                                  'selectedType' : aType,
                                  'tabulation' : 0,
-                                 'description' : ""
+                                 'description' : "",
+                                 'color' : ""
                                  })
             return
 
@@ -184,7 +185,8 @@ class MessageGroup(object):
                                  'regex' : regexElt,
                                  'selectedType' : aType,
                                  'tabulation' : 0,
-                                 'description' : ""
+                                 'description' : "",
+                                 'color' : ""
                                  })
    
     #+---------------------------------------------- 
@@ -251,7 +253,8 @@ class MessageGroup(object):
                                                         'regex' : "(.{," + str(lenColResult) + "})",
                                                         'selectedType' : aType,
                                                         'tabulation' : 0,
-                                                        'description' : ""
+                                                        'description' : "",
+                                                        'color' : ""
                                                         })
             i += 1
 
@@ -414,8 +417,9 @@ class MessageGroup(object):
                                         'regex' : newRegex,
                                         'selectedType' : aType,
                                         'tabulation' : 0,
-                                        'description' : ""
-                                            })
+                                        'description' : "",
+                                        'color' : ""
+                                        })
 
     #+---------------------------------------------- 
     #| splitColumn:
@@ -472,13 +476,15 @@ class MessageGroup(object):
                                         'regex' : regex1,
                                         'selectedType' : aType,
                                         'tabulation' : 0,
-                                        'description' : ""
+                                        'description' : "",
+                                        'color' : ""
                                         })
         self.getColumns().insert(iCol + 1, {'name' : "Name",
                                             'regex' : regex2,
                                             'selectedType' : aType,
                                             'tabulation' : 0,
-                                            'description' : ""
+                                            'description' : "",
+                                            'color' : ""
                                             })
         return True
 
@@ -651,6 +657,9 @@ class MessageGroup(object):
     def getDescriptionByCol(self, iCol):
         if iCol>=0 and iCol<len(self.columns) :
             return self.columns[iCol]['description']
+    def getColorByCol(self, iCol):
+        if iCol>=0 and iCol<len(self.columns) :
+            return self.columns[iCol]['color']
 
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -676,3 +685,6 @@ class MessageGroup(object):
     def setDescriptionByCol(self, iCol, descr):
         if iCol>=0 and iCol<len(self.columns) :
             self.columns[iCol]['description'] = descr
+    def setColorByCol(self, iCol, color):
+        if iCol>=0 and iCol<len(self.columns) :
+            self.columns[iCol]['color'] = color

@@ -154,11 +154,15 @@ class Message(object):
             if col['regex'].find("(") != -1: # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
+                if self.group.getColorByCol(iCol) == "":
+                    color = 'blue'
+                else:
+                    color = self.group.getColorByCol(iCol)
                 if styled:
                     if encoded:
-                        res.append( '<span foreground="blue" font_family="monospace">' + self.group.getRepresentation( data[start:end], iCol ) + '</span>' )
+                        res.append( '<span foreground="'+color+'" font_family="monospace">' + self.group.getRepresentation( data[start:end], iCol ) + '</span>' )
                     else:
-                        res.append( '<span foreground="blue" font_family="monospace">' + data[start:end] + '</span>' )
+                        res.append( '<span foreground="'+color+'" font_family="monospace">' + data[start:end] + '</span>' )
                 else:
                     if encoded:
                         res.append( self.group.getRepresentation( data[start:end], iCol ) )
