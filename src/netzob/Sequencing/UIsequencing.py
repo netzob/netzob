@@ -914,20 +914,23 @@ class UIsequencing:
                 if group.splitColumn(size_field, size_field_len) == True:
                     if size_field < start_field:
                         start_field += 1
-                    if not (end_field == -1):
+                    if end_field != -1:
                         end_field += 1
                 group.setDescriptionByCol(size_field, "Size field")
                 group.setColorByCol(size_field, "red")
                 if group.splitColumn(start_field, start_field_len) == True:
                     start_field += 1
-                    if not (end_field == -1):
+                    if end_field != -1:
                         end_field += 1
                 group.setDescriptionByCol(start_field, "Start of payload")
                 group.splitColumn(end_field, end_field_len)
 
                 # Adapt tabulation for encapsulated payloads
-                for iCol in range(start_field, end_field + 1):
-                    group.setTabulationByCol(iCol, group.getTabulationByCol(iCol) + 10)
+                if end_field != -1:
+                    for iCol in range(start_field, end_field + 1):
+                        group.setTabulationByCol(iCol, group.getTabulationByCol(iCol) + 10)
+                else:
+                    group.setTabulationByCol(start_field, group.getTabulationByCol(start_field) + 10)
 
                 # View the proposed protocol structuration
                 self.treeTypeStructureGenerator.buildTypeStructure()
