@@ -67,6 +67,11 @@ class MessageGroup(object):
     def __str__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
 
+    def clear(self):
+        self.columns = []
+        self.alignment = ""
+        del self.messages[:]
+
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
     #| self.alignment from the binary strings computed 
@@ -462,27 +467,22 @@ class MessageGroup(object):
         if regex2 == "":
             return False
 
-        # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
-        valID = configParser.getInt("clustering", "protocol_type")
-        if valID == 0:
-            aType = "ascii"
-        else:
-            aType = "binary"
+        aType = self.getSelectedTypeByCol(iCol)
+        aTab = self.getTabulationByCol(iCol)
 
         # Build the new regex and apply it
         self.getColumns().pop(iCol)
         self.getColumns().insert(iCol, {'name' : "Name",
                                         'regex' : regex1,
                                         'selectedType' : aType,
-                                        'tabulation' : 0,
+                                        'tabulation' : aTab,
                                         'description' : "",
                                         'color' : ""
                                         })
         self.getColumns().insert(iCol + 1, {'name' : "Name",
                                             'regex' : regex2,
                                             'selectedType' : aType,
-                                            'tabulation' : 0,
+                                            'tabulation' : aTab,
                                             'description' : "",
                                             'color' : ""
                                             })

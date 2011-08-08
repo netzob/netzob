@@ -820,8 +820,10 @@ class UIsequencing:
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
+        # Create a temporary group for testing size fields
+        group = MessageGroup.MessageGroup('tmp_group', [])
+
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
-        dialog.connect("destroy", self.find_size_field_destroy)
         ## ListStore format :
         # str: group.id
         # int: size field column
@@ -833,7 +835,7 @@ class UIsequencing:
         # str: message rendered in cell
         treeview = gtk.TreeView(gtk.ListStore(str, int, int, int, int, int, int, str)) 
         cell = gtk.CellRendererText()
-        treeview.connect("cursor-changed", self.sizeField_selected)
+        treeview.connect("cursor-changed", self.sizeField_selected, group)
         column = gtk.TreeViewColumn('Size field and related payload')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=7)
@@ -842,7 +844,7 @@ class UIsequencing:
         # Chose button
         but = gtk.Button(label="Apply size field")
         but.show()
-        but.connect("clicked", self.applySizeField)
+        but.connect("clicked", self.applySizeField, dialog, group)
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Just to each group with its associated messages
@@ -864,7 +866,7 @@ class UIsequencing:
     #+---------------------------------------------- 
     #| Called when user wants to try to apply a size field on a group
     #+----------------------------------------------
-    def sizeField_selected(self, treeview):
+    def sizeField_selected(self, treeview, group):
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
@@ -897,7 +899,7 @@ class UIsequencing:
                 message_id = self.treeMessageGenerator.treestore.get_value(it, 0)
 
                 # Build a temporary group
-                group = MessageGroup.MessageGroup('tmp_group', [])
+                group.clear()
                 for message in self.treeMessageGenerator.getGroup().getMessages():
                     tmp_message = Message.Message()
                     tmp_message.setData( message.getData() )
@@ -908,7 +910,7 @@ class UIsequencing:
                 self.treeTypeStructureGenerator.setGroup(group)
                 self.treeTypeStructureGenerator.setMessageByID( group.getMessages()[-1].getID() )
 
-                # Optionaly splits the columns if needed, and handles propagation
+                # Optionaly splits the columns if needed, and handles columns propagation
                 if group.splitColumn(size_field, size_field_len) == True:
                     if size_field < start_field:
                         start_field += 1
@@ -925,7 +927,7 @@ class UIsequencing:
 
                 # Adapt tabulation for encapsulated payloads
                 for iCol in range(start_field, end_field + 1):
-                    group.setTabulationByCol(iCol, 10)
+                    group.setTabulationByCol(iCol, group.getTabulationByCol(iCol) + 10)
 
                 # View the proposed protocol structuration
                 self.treeTypeStructureGenerator.buildTypeStructure()
@@ -933,13 +935,8 @@ class UIsequencing:
                 self.updateTreeStoreTypeStructure()
 
     #+---------------------------------------------- 
-    #| Called when user quit the find size fields window
-    #+----------------------------------------------
-    def find_size_field_destroy(self, dialog):
-        pass
-        
-    #+---------------------------------------------- 
     #| Called when user wants to apply a size field on a group
     #+----------------------------------------------
-    def applySizeField(self, button):
-        pass
+    def applySizeField(self, button, dialog, group):
+        self.treeMessageGenerator.getGroup().setColumns( copy.deepcopy(list(group.getColumns())) )
+        dialog.destroy()
