@@ -11,7 +11,6 @@ import logging
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import NeedlemanWunsch
 from ..Common import ConfigurationParser
 
 #+---------------------------------------------- 

@@ -79,9 +79,7 @@ class ConfigParser(object):
     def loadConfiguration(self):
         self.log.info("Extract configuration from file {0}".format(self.configFile))
         
-        messages = []
-        
-        
+        messages = []        
         dom = xml.dom.minidom.parse(self.configFile)
         # parse all the declared messages
         xmlDatas = dom.getElementsByTagName("data")
@@ -96,7 +94,6 @@ class ConfigParser(object):
             group = MessageGroup.MessageGroup.loadFromXmlConfig(xmlGroup, messages)
             if group != None :
                 self.groups.append(group)
-            
 
         self.log.debug("Found in config file : {0} messages ".format(len(messages)))
         self.log.debug("Found in config file : {0} groups ".format(len(self.groups)))
@@ -107,5 +104,3 @@ class ConfigParser(object):
     #+----------------------------------------------    
     def getGroups(self):
         return self.groups
-   
-   

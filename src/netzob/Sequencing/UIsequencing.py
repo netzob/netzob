@@ -233,15 +233,12 @@ class UIsequencing:
     #+----------------------------------------------
     def button_press_on_treeview_groups(self, obj, event):
         self.log.debug("User requested a contextual menu (treeview group)")
-        
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_groups(event)
-
 
     def button_release_on_treeview_messages(self, treeview, event):
         # re-enable selection
         treeview.get_selection().set_select_function(lambda * ignore: True)
-        
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
         if (self.defer_select and target and self.defer_select == target[0] and not (event.x == 0 and event.y == 0)): # certain drag and drop
             treeview.set_cursor(target[0], target[1], False)
@@ -678,7 +675,6 @@ class UIsequencing:
     def foreach_drag_fromDND(self, model, path, iter,  ids):
         texte = str(model.get_value(iter, 0))
         ids.append(texte)
-#        
         return
     
     #+---------------------------------------------- 
@@ -693,6 +689,7 @@ class UIsequencing:
             # Default display of the groups
             self.treeGroupGenerator.default()
             self.zob.dumping.updateGoups(self.treeGroupGenerator.getGroups())
+            self.zob.fuzzing.updateGoups(self.treeGroupGenerator.getGroups())
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages

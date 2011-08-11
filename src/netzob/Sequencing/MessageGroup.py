@@ -13,7 +13,6 @@ import struct
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import NeedlemanWunsch
 from ..Common import ConfigurationParser, TypeIdentifier
 
 #+---------------------------------------------- 

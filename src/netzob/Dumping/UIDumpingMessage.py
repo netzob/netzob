@@ -27,7 +27,6 @@ from ..Sequencing.TreeViews import TreeGroupGenerator
 loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
 logging.config.fileConfig(loggingFilePath)
 
-
 #+---------------------------------------------- 
 #| UIDumpingMessage :
 #|     GUI for message dumping process
@@ -36,7 +35,6 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------- 
 class UIDumpingMessage:
 
-    
     #+---------------------------------------------- 
     #| Called when user select a new trace
     #+----------------------------------------------
@@ -124,10 +122,10 @@ class UIDumpingMessage:
         self.bottomFrame.add(sw)
 
     def groupSelected(self, treeview):
-        (modele, iter) = treeview.get_selection().get_selected()
+        (model, iter) = treeview.get_selection().get_selected()
         if(iter):
-            if(modele.iter_is_valid(iter)):
-                idGroup = modele.get_value(iter, 0)
+            if(model.iter_is_valid(iter)):
+                idGroup = model.get_value(iter, 0)
                 self.selectedGroup = idGroup
                 self.updateTextArea()
                 

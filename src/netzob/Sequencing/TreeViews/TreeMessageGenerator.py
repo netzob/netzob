@@ -17,7 +17,6 @@ from numpy.core.numeric import zeros
 from ...Common import ConfigurationParser
 from ...Common import TypeIdentifier
 from ..Message import Message
-from ..NeedlemanWunsch import NeedlemanWunsch
 
 #+---------------------------------------------- 
 #| Configuration of the logger

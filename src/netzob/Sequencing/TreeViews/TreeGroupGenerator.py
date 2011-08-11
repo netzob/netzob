@@ -11,7 +11,6 @@ import gtk
 #| Local Imports
 #+----------------------------------------------
 from ...Common import ConfigurationParser
-from ..NeedlemanWunsch import NeedlemanWunsch
 from ...Sequencing import TracesExtractor
        
 #+---------------------------------------------- 
