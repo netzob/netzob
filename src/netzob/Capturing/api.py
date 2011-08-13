@@ -11,7 +11,6 @@ import re
 import pygtk
 pygtk.require('2.0')
 import logging
-import threading
 import os
 import time
 import random
@@ -35,7 +34,7 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class Network:
+class Api:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace
@@ -58,12 +57,21 @@ class Network:
     #+----------------------------------------------   
     def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
+        self.log = logging.getLogger('netzob.Capturing.api.py')
         self.packets = []
 
         # Network Capturing Panel
-        self.panel = gtk.Table(rows=6, columns=4, homogeneous=False)
+        self.panel = gtk.Table(rows=5, columns=4, homogeneous=False)
         self.panel.show()
+
+        # Scapy filter
+        but = gtk.Button("Import API")
+        but.show()
+        label_file = gtk.Label("...")
+        label_file.show()
+        but.connect("clicked", self.import_pcap, label_file)
+        self.panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(label_file, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Scapy filter
         label = gtk.Label("Scapy filter")
@@ -72,32 +80,14 @@ class Network:
         entry_filter.set_width_chars(50)
         entry_filter.show()
         entry_filter.set_text("tcp port 80")
-        self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_filter, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Count capturing limit
-        label = gtk.Label("Count limit")
-        label.show()
-        entry_count = gtk.Entry()
-        entry_count.show()
-        entry_count.set_text("10")
-        self.panel.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_count, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Time capturing limit
-        label = gtk.Label("Timeout (s)")
-        label.show()
-        entry_time = gtk.Entry()
-        entry_time.show()
-        entry_time.set_text("10")
-        self.panel.attach(label, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_time, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Sniff launching button
-        but = gtk.Button(label="Sniff traffic")
+        but = gtk.Button(label="Import traffic")
         but.show()
-        but.connect("clicked", self.launch_sniff, entry_filter, entry_count, entry_time)
-        self.panel.attach(but, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        but.connect("clicked", self.launch_sniff, entry_filter, label_file)
+        self.panel.attach(but, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet list
         scroll = gtk.ScrolledWindow()
@@ -135,12 +125,12 @@ class Network:
         scroll.add(treeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
-        but = gtk.Button(label="Save selected packets")
+        but = gtk.Button(label="Save selected packets as a new trace")
         but.show()
         but.connect("clicked", self.save_packets, treeview)
-        self.panel.attach(but, 1, 2, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(but, 1, 2, 4, 5, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet detail
         scroll = gtk.ScrolledWindow()
@@ -149,7 +139,7 @@ class Network:
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 6, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet
@@ -224,7 +214,7 @@ class Network:
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -272,7 +262,7 @@ class Network:
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(newTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -289,9 +279,20 @@ class Network:
                 self.textview.get_buffer().set_text( self.packets[packetID].show() )
 
     #+---------------------------------------------- 
+    #| Called when user import a pcap file
+    #+----------------------------------------------
+    def import_pcap(self, button, label):
+        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+        res = chooser.run()
+        if res == gtk.RESPONSE_OK:
+            label.set_text(chooser.get_filename())
+        chooser.destroy()
+
+    #+---------------------------------------------- 
     #| Called when launching sniffing process
     #+----------------------------------------------
-    def launch_sniff(self, button, filter, count, time):
+    def launch_sniff(self, button, aFilter, label_file):
         button.set_sensitive(False)
         self.packets = []
         self.treestore.clear()
@@ -304,15 +305,8 @@ class Network:
             self.log.error("And if you want filtering capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/sbin/tcpdump\"")
             return
 
-        aScapyThread = threading.Thread(None, self.scapyThread, None, (button, filter, count, time), {})
-        aScapyThread.start()
-
-    #+---------------------------------------------- 
-    #| Thread for scapy work
-    #+----------------------------------------------
-    def scapyThread(self, button, filter, count, time):
-        self.log.info("Launching sniff process with : count="+count.get_text()+", timeout="+time.get_text()+", filter=\""+filter.get_text()+"\"")
-        scapyy.sniff(prn=self.callback_scapy, filter=filter.get_text(), store=0, count=int(count.get_text()), timeout=int(time.get_text()))
+        self.log.info("Launching sniff process with : filter=\""+aFilter.get_text()+"\"")
+        scapyy.sniff(offline=label_file.get_text(), prn=self.callback_scapy, filter=aFilter.get_text(), store=0)
         button.set_sensitive(True)
 
     #+---------------------------------------------- 

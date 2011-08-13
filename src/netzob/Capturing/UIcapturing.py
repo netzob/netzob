@@ -16,6 +16,7 @@ import logging
 from ..Common import ConfigurationParser
 import network
 import pcap
+import api
 import ipc
 import xml
 
@@ -81,6 +82,10 @@ class UIcapturing:
         # IPC Capturing Panel
         ipcPanel = ipc.IPC()
         notebook.append_page(ipcPanel.getPanel(), gtk.Label("IPC Capturing"))
+
+        # API Panel
+        apiPanel = api.Api()
+        notebook.append_page(apiPanel.getPanel(), gtk.Label("API capturing"))
 
         # PCAP Panel
         pcapPanel = pcap.Pcap()

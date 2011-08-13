@@ -127,7 +127,7 @@ class Pcap:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
-        but = gtk.Button(label="Save selected packets as a new trace")
+        but = gtk.Button(label="Save selected packets")
         but.show()
         but.connect("clicked", self.save_packets, treeview)
         self.panel.attach(but, 1, 2, 4, 5, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -214,7 +214,7 @@ class Pcap:
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
+        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -262,7 +262,7 @@ class Pcap:
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
+        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
