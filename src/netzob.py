@@ -152,12 +152,19 @@ class Netzob():
     def updateListOfAvailableTraces(self):
         self.entry.get_model().clear()
         # retrieves the trace directory path
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")        
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")       
+        # a temporary list in which all the folders will be stored and after sorted
+        temporaryListOfFolders = []
+         
         # list all the directories (except .svn)
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
-            self.entry.append_text(tmpDir)
+            temporaryListOfFolders.append(tmpDir)
+        
+        # Sort and add to the entry
+        for folder in sorted(temporaryListOfFolders) :
+            self.entry.append_text(folder)
             
             
 
