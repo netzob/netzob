@@ -244,10 +244,10 @@ class MessageGroup(object):
         res = False
         i = 1
         while i < len(self.columns) - 1:
-            if self.columns[i]['regex'].find("{") == -1: # Means the current element is static
+            if self.isRegexStatic( self.columns[i]['regex'] ):
                 if len(self.columns[i]['regex']) == 2: # Means a potential negligeable element
-                    if re.match("\(\.\{,\d+\}\)", self.columns[i-1]['regex']) != None: # Means the precedent element is purely dynamic (not complex)
-                        if re.match("\(\.\{,\d+\}\)", self.columns[i+1]['regex']) != None: # Means the next element is purely dynamic (not complex)
+                    if self.isRegexOnlyDynamic( self.columns[i-1]['regex'] ):
+                        if self.isRegexOnlyDynamic( self.columns[i+1]['regex'] ):
                             res = True
                             col1 = self.columns.pop(i - 1) # we retrieve the precedent regex
                             col2 = self.columns.pop(i - 1) # we retrieve the current regex
@@ -283,13 +283,10 @@ class MessageGroup(object):
         # First step: try to find a size field for a uniq data column
         iCol = 0
         for col in self.getColumns():
-            if re.match("[0-9a-fA-F]{1,}", col['regex']) != None: # Means the element is static
-                iCol += 1
-                continue
             cellsSize = self.getCellsByCol(iCol)
             j = 0
             while j < len(self.getColumns()):
-                if not (re.match("\(\.\{,\d+\}\)", self.getColumns()[j]['regex']) != None): # Means the element is not purely dynamic
+                if not (self.isRegexOnlyDynamic(self.getColumns()[j]['regex']) != None):
                     j += 1
                     continue
                 if j != iCol:
@@ -321,9 +318,6 @@ class MessageGroup(object):
         # Second step: try to find a size field for an aggregate of data columns
         iCol = 0
         for col in self.getColumns():
-            if re.match("[0-9a-fA-F]{2,}", col['regex']) != None: # Means the element is static
-                iCol += 1
-                continue
             cellsSize = self.getCellsByCol(iCol)
             j = 0
             while j < len(self.getColumns()) - 1:
@@ -339,7 +333,7 @@ class MessageGroup(object):
                         aggregateCellsData[l] += self.getCellsByCol(k)[l]
 
                     # We try to aggregate the successive sub-parts of j if it's a static column
-                    if self.getColumns()[j]['regex'].find("{") == -1: # Means the regex j element is static
+                    if self.isRegexStatic( self.getColumns()[j]['regex'] ):
                         lenJ = len(self.getColumns()[j]['regex'])
                         stop = 0
                     else:
@@ -349,7 +343,7 @@ class MessageGroup(object):
                         for n in [4, 2, 1]: # loop over different possible encoding of size field
                             res = True
                             for l in range(len(cellsSize)):
-                                if self.getColumns()[j]['regex'].find("{") == -1: # Means the precedent regex element is static
+                                if self.isRegexStatic( self.getColumns()[j]['regex'] ):
                                     targetData = self.getColumns()[j]['regex'][lenJ - m:] + aggregateCellsData[l]
                                 else:
                                     targetData = self.getCellsByCol(j)[l] + aggregateCellsData[l]
@@ -371,7 +365,7 @@ class MessageGroup(object):
                                     res = False
                                     break
                             if res:
-                                if self.getColumns()[j]['regex'].find("{") == -1: # Means the regex j element is static and a sub-part is concerned
+                                if isRegexStatic( self.getColumns()[j]['regex'] ): # Means the regex j element is static and a sub-part is concerned
                                     store.append([self.id, iCol, n*2, j, lenJ-m, k, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                     self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:
@@ -536,6 +530,30 @@ class MessageGroup(object):
             return typer.toBase64Encoded(raw)
         else :
             return raw
+
+    #+---------------------------------------------- 
+    #| Regex handling
+    #+----------------------------------------------
+    def refineRegexes(self):
+        for col in self.columns():
+            tmpRegex = col['regex']
+            if self.isRegexStatic( tmpRegex ):
+                continue
+            if self.isRegexOnlyDynamic( tmpRegex ):
+                continue
+            # TODO: handle complex regex
+
+    def isRegexStatic(self, regex):
+        if regex.find("{") == -1:
+            return True
+        else:
+            return False
+
+    def isRegexOnlyDynamic(self, regex):
+        if re.match("\(\.\{,\d+\}\)", regex) != None:
+            return True
+        else:
+            return False
 
     #+---------------------------------------------- 
     #| XML store/load handling

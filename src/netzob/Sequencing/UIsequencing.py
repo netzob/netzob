@@ -197,6 +197,12 @@ class UIsequencing:
         but.show()
         table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Widget button refine regex
+        but = gtk.Button("Refine regexes")
+        but.connect("clicked", self.refineRegexes)
+        but.show()
+        table.attach(but, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TREEVIEW MESSAGE OUTPUT
         #+----------------------------------------------
@@ -812,6 +818,13 @@ class UIsequencing:
         for group in self.treeGroupGenerator.getGroups():
             group.setTypeForCols(aType)
         self.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to refine regexes
+    #+----------------------------------------------
+    def refineRegexes(self, button):
+        for group in self.treeGroupGenerator.getGroups():
+            group.refineRegexes()
 
     #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields
