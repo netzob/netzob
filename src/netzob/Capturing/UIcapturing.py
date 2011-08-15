@@ -76,7 +76,7 @@ class UIcapturing:
         #| LEFT PART OF THE GUI : Capturing panels
         #+----------------------------------------------
         # Network Capturing Panel
-        netPanel = network.Network()
+        netPanel = network.Network(self.zob)
         notebook.append_page(netPanel.getPanel(), gtk.Label("Network Capturing"))
 
         # IPC Capturing Panel

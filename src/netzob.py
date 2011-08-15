@@ -1,28 +1,38 @@
 #!/usr/bin/python
-# coding: utf8
+# -*- coding: utf-8 -*-
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#|         01001110 01100101 01110100 01111010 01101111 01100010             | 
+#+---------------------------------------------------------------------------+
+#| NETwork protocol modeliZatiOn By reverse engineering                      |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @license      : GNU GPL v3                                                |
+#| @copyright    : Georges Bossert and Frederic Guihery                      |
+#| @url          : http://code.google.com/p/netzob/                          |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @author       : {gbt,fgy}@amossys.fr                                      |
+#| @organization : Amossys, http://www.amossys.fr                            |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+ 
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import gtk
 import gobject
 import os
-import pygtk
-pygtk.require('2.0')
 import logging.config
 import threading
 import sys
 
-#+---------------------------------------------- 
-#| Configure the Python path
-#+----------------------------------------------
-import sys
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
 sys.path.append('lib/libNeedleman/')
 sys.path.append('resources/scapy/')
 
-#+---------------------------------------------- 
-#| Local Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 from netzob.Sequencing import UIsequencing
 from netzob.Dumping import UIDumpingMessage
 from netzob.Capturing import UIcapturing
@@ -41,7 +51,7 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class Netzob:
+class Netzob():
 
     #+---------------------------------------------- 
     #| Constructor :
@@ -63,26 +73,20 @@ class Netzob:
         vbox.pack_start(toolbar, False, False, 6)
 
         label = gtk.Label("Select target : ")
-        entry = gtk.combo_box_entry_new_text()
-        entry.set_size_request(300, -1)
-        entry.set_model(gtk.ListStore(str))
+        self.entry = gtk.combo_box_entry_new_text()
+        self.entry.set_size_request(300, -1)
+        self.entry.set_model(gtk.ListStore(str))
 
-        # retrieves the trace directory path
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")        
-        
-        for tmpDir in os.listdir(tracesDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            entry.append_text(tmpDir)
+        self.updateListOfAvailableTraces()       
 
         self.label_analyse = gtk.Label("...")
         button_valid = gtk.Button(gtk.STOCK_OK)
         button_valid.set_label("Start analysis")
-        button_valid.connect("clicked", self.traceSelected, entry)
+        button_valid.connect("clicked", self.traceSelected, self.entry)
         
         button_save = gtk.Button(gtk.STOCK_OK)
         button_save.set_label("Save analysis")
-        button_save.connect("clicked", self.saveTrace, entry)
+        button_save.connect("clicked", self.saveTrace, self.entry)
         
         label_text = gtk.Label("     Current trace : ")
 
@@ -95,7 +99,7 @@ class Netzob:
         align.add(self.progressBar)
 
         toolbar.pack_start(label, False, False, 0)
-        toolbar.pack_start(entry, False, False, 0)
+        toolbar.pack_start(self.entry, False, False, 0)
         toolbar.pack_start(button_valid, False, False, 0)
         toolbar.pack_start(button_save, False, False, 0)
         toolbar.pack_start(label_text, False, False, 0)
@@ -125,7 +129,7 @@ class Netzob:
 
         # Show every widgets
         toolbar.show()
-        entry.show()
+        self.entry.show()
         label.show()
         label_text.show()
         self.label_analyse.show()
@@ -138,6 +142,24 @@ class Netzob:
         progressBox.show()
         align.show()
         self.progressBar.show()
+
+        
+    #+------------------------------------------------------------------------ 
+    #| updateListOfAvailableTraces :
+    #| @param entry the GTK entry in which the name of the available traces
+    #|              will be added
+    #+------------------------------------------------------------------------
+    def updateListOfAvailableTraces(self):
+        self.entry.get_model().clear()
+        # retrieves the trace directory path
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")        
+        # list all the directories (except .svn)
+        for tmpDir in os.listdir(tracesDirectoryPath):
+            if tmpDir == '.svn':
+                continue
+            self.entry.append_text(tmpDir)
+            
+            
 
     def startGui(self):
         # UI thread launching
@@ -178,7 +200,7 @@ class Netzob:
             return
 
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        configPath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target+ os.sep +"config.xml"
+        configPath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target + os.sep + "config.xml"
         
         
         

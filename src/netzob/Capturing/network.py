@@ -1,13 +1,23 @@
 #!/usr/bin/python
-# coding: utf8
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------- 
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#|         01001110 01100101 01110100 01111010 01101111 01100010             | 
+#+---------------------------------------------------------------------------+
+#| NETwork protocol modeliZatiOn By reverse engineering                      |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @license      : GNU GPL v3                                                |
+#| @copyright    : Georges Bossert and Frederic Guihery                      |
+#| @url          : http://code.google.com/p/netzob/                          |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @author       : {gbt,fgy}@amossys.fr                                      |
+#| @organization : Amossys, http://www.amossys.fr                            |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+ 
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 pygtk.require('2.0')
 import logging
@@ -16,30 +26,33 @@ import os
 import time
 import random
 
-#+---------------------------------------------- 
-#| Local Imports
-#+----------------------------------------------
-from ..Common import ConfigurationParser
-#from scapy.all import send, UDP, conf, packet
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
 import scapyy.all as scapyy
 
-#+---------------------------------------------- 
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from ..Common import ConfigurationParser
+
+#+---------------------------------------------------------------------------+
 #| Configuration of the logger
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
 logging.config.fileConfig(loggingFilePath)
 
-#+---------------------------------------------- 
-#| UIcapturing :
-#|     GUI for capturing messages
+#+---------------------------------------------------------------------------+ 
+#| Network :
+#|     This class offers the capability to capture pcaps from live network 
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
-#+---------------------------------------------- 
+#+---------------------------------------------------------------------------+
 class Network:
     
-    #+---------------------------------------------- 
+    #+-----------------------------------------------------------------------+
     #| Called when user select a new trace
-    #+----------------------------------------------
+    #+-----------------------------------------------------------------------+
     def new(self):
         pass
 
@@ -52,11 +65,13 @@ class Network:
     def kill(self):
         pass
     
-    #+---------------------------------------------- 
+    #+-----------------------------------------------------------------------+
     #| Constructor :
-    #| @param groups: list of all groups 
-    #+----------------------------------------------   
-    def __init__(self):
+    #| @param zob: a reference to the main netzob.py 
+    #+-----------------------------------------------------------------------+  
+    def __init__(self, zob):        
+        self.zob = zob
+        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
         self.packets = []
@@ -135,7 +150,7 @@ class Network:
         scroll.add(treeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
         but = gtk.Button(label="Save selected packets")
         but.show()
@@ -149,7 +164,7 @@ class Network:
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 6, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 2, 4, 0, 6, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet
@@ -219,15 +234,16 @@ class Network:
                     rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
                 if rawPayload == "":
                     continue
-                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
+                res += "<data proto=\"" + proto + "\" sourceIp=\"" + IPsrc + "\" sourcePort=\"" + sport + "\" targetIp=\"" + IPdst + "\" targetPort=\"" + dport + "\" timestamp=\"" + timestamp + "\">\n"
                 res += rawPayload.encode("hex") + "\n"
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
+        
 
     #+---------------------------------------------- 
     #| Creation of a new trace from a selection of packets
@@ -245,7 +261,7 @@ class Network:
 
         # Create the dest Dir
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
-        os.mkdir( newTraceDir )
+        os.mkdir(newTraceDir)
         # Create the new XML structure
         res = "<datas>\n"
         (model, paths) = selection.get_selected_rows()
@@ -267,15 +283,16 @@ class Network:
                     rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
                 if rawPayload == "":
                     continue
-                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
+                res += "<data proto=\"" + proto + "\" sourceIp=\"" + IPsrc + "\" sourcePort=\"" + sport + "\" targetIp=\"" + IPdst + "\" targetPort=\"" + dport + "\" timestamp=\"" + timestamp + "\">\n"
                 res += rawPayload.encode("hex") + "\n"
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
+        self.zob.updateListOfAvailableTraces()
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details
@@ -286,7 +303,7 @@ class Network:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
                 packetID = model.get_value(iter, 0)
-                self.textview.get_buffer().set_text( self.packets[packetID].show() )
+                self.textview.get_buffer().set_text(self.packets[packetID].show())
 
     #+---------------------------------------------- 
     #| Called when launching sniffing process
@@ -311,7 +328,7 @@ class Network:
     #| Thread for scapy work
     #+----------------------------------------------
     def scapyThread(self, button, filter, count, time):
-        self.log.info("Launching sniff process with : count="+count.get_text()+", timeout="+time.get_text()+", filter=\""+filter.get_text()+"\"")
+        self.log.info("Launching sniff process with : count=" + count.get_text() + ", timeout=" + time.get_text() + ", filter=\"" + filter.get_text() + "\"")
         scapyy.sniff(prn=self.callback_scapy, filter=filter.get_text(), store=0, count=int(count.get_text()), timeout=int(time.get_text()))
         button.set_sensitive(True)
 
@@ -321,10 +338,10 @@ class Network:
     def callback_scapy(self, pkt):
         if scapyy.TCP in pkt and scapyy.Raw in pkt:
             self.treestore.append(None, [len(self.packets), "TCP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.sport%"), pkt.sprintf("%TCP.dport%"), int(time.time())])
-            self.packets.append( pkt )
+            self.packets.append(pkt)
         elif scapyy.UDP in pkt and scapyy.Raw in pkt:
             self.treestore.append(None, [len(self.packets), "UDP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%UDP.sport%"), pkt.sprintf("%UDP.dport%"), int(time.time())])
-            self.packets.append( pkt )
+            self.packets.append(pkt)
 
     #+---------------------------------------------- 
     #| GETTERS
