@@ -1,9 +1,22 @@
 #!/usr/bin/python
-# coding: utf8
+# -*- coding: utf-8 -*-
 
-#+---------------------------------------------- 
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#|         01001110 01100101 01110100 01111010 01101111 01100010             | 
+#+---------------------------------------------------------------------------+
+#| NETwork protocol modeliZatiOn By reverse engineering                      |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @license      : GNU GPL v3                                                |
+#| @copyright    : Georges Bossert and Frederic Guihery                      |
+#| @url          : http://code.google.com/p/netzob/                          |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @author       : {gbt,fgy}@amossys.fr                                      |
+#| @organization : Amossys, http://www.amossys.fr                            |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+ 
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import gtk
 import pango
 import gobject
@@ -31,8 +44,8 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| UIcapturing :
-#|     GUI for capturing messages
+#| IPC :
+#|     ensures the capture of informations through IPC proxing
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
@@ -60,7 +73,8 @@ class IPC:
     #| Constructor :
     #| @param groups: list of all groups 
     #+----------------------------------------------   
-    def __init__(self):
+    def __init__(self, zob):
+        self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.ipc.py')
         self.packets = []
@@ -84,7 +98,7 @@ class IPC:
         self.processStore.set_size_request(300, -1)
         self.processStore.set_model(gtk.ListStore(str))
         for pid in readProcesses():
-            self.processStore.append_text( str(pid) + "\t" + readProcessCmdline(pid)[0] )
+            self.processStore.append_text(str(pid) + "\t" + readProcessCmdline(pid)[0])
         self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(self.processStore, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -130,7 +144,7 @@ class IPC:
         scroll.add(self.fdTreeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
        
         # Sniff launching button
         butStart = gtk.Button(label="Start sniffing")
@@ -172,7 +186,7 @@ class IPC:
         scroll.add(treeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # Button save selected packets
         but = gtk.Button(label="Save selected packets")
@@ -186,11 +200,11 @@ class IPC:
     def showFileDescriptors_cb(self, widget, f1, f2, f3):
         self.fdTreeview.get_model().clear()
         processSelected = self.processStore.get_active_text()        
-        self.pid = int( processSelected.split()[0] )
+        self.pid = int(processSelected.split()[0])
         name = processSelected.split()[1]
         fds = self.retrieveFDs(f1.get_active(), f2.get_active(), f3.get_active())
         for fd in fds:
-            self.fdTreeview.get_model().append( None, fd )
+            self.fdTreeview.get_model().append(None, fd)
 
     #+---------------------------------------------- 
     #| Retrieve the filtered FD
@@ -280,12 +294,12 @@ class IPC:
                 rawPayload = self.packets[packetID]
                 if rawPayload == "":
                     continue
-                res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\""+timestamp+"\">\n"
+                res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + timestamp + "\">\n"
                 res += rawPayload.encode("hex") + "\n"
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -306,7 +320,7 @@ class IPC:
 
         # Create the dest Dir
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
-        os.mkdir( newTraceDir )
+        os.mkdir(newTraceDir)
         # Create the new XML structure
         res = "<datas>\n"
         (model, paths) = selection.get_selected_rows()
@@ -318,15 +332,16 @@ class IPC:
                 rawPayload = self.packets[packetID]
                 if rawPayload == "":
                     continue
-                res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\""+timestamp+"\">\n"
+                res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + timestamp + "\">\n"
                 res += rawPayload.encode("hex") + "\n"
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
+        self.zob.updateListOfAvailableTraces()
 
     #+---------------------------------------------- 
     #| Called when launching sniffing process
@@ -341,7 +356,7 @@ class IPC:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
                 # Extract the fd number
-                self.selected_fds.add( int(re.match( "(\d+)", model.get_value(iter, 0) ).group(1)) )
+                self.selected_fds.add(int(re.match("(\d+)", model.get_value(iter, 0)).group(1)))
         self.packets = []
         self.pktTreestore.clear()
         self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
@@ -366,7 +381,7 @@ class IPC:
     #| Thread for sniffing a process
     #+----------------------------------------------
     def sniffThread(self):
-        self.log.info("Launching sniff process with : fd="+str(self.selected_fds))
+        self.log.info("Launching sniff process with : fd=" + str(self.selected_fds))
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         gobject.io_add_watch(self.stracePid.stderr, gobject.IO_IN | gobject.IO_HUP, self.handle_new_pkt)
 
@@ -379,9 +394,9 @@ class IPC:
         m = compiledRegex.match(data)
         if m == None:
             return self.doSniff
-        direction  =     data[ m.start(1) : m.end(1) ]
-        fd         = int(data[ m.start(2) : m.end(2) ])
-        pkt        =     data[ m.start(3) : m.end(3) ]
+        direction = data[ m.start(1) : m.end(1) ]
+        fd = int(data[ m.start(2) : m.end(2) ])
+        pkt = data[ m.start(3) : m.end(3) ]
         returnCode = int(data[ m.start(4) : m.end(4) ])
 
         if fd in self.selected_fds:
@@ -389,8 +404,8 @@ class IPC:
                 tmp_pkt = pkt[:255] + "..."
             else:
                 tmp_pkt = pkt
-            self.pktTreestore.append( None, [len(self.packets), fd, direction, tmp_pkt.encode("hex"), int(time.time())] )
-            self.packets.append( pkt )
+            self.pktTreestore.append(None, [len(self.packets), fd, direction, tmp_pkt.encode("hex"), int(time.time())])
+            self.packets.append(pkt)
         return self.doSniff
 
     #+---------------------------------------------- 

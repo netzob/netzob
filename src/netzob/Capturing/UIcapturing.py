@@ -80,7 +80,7 @@ class UIcapturing:
         notebook.append_page(netPanel.getPanel(), gtk.Label("Network Capturing"))
 
         # IPC Capturing Panel
-        ipcPanel = ipc.IPC()
+        ipcPanel = ipc.IPC(self.zob)
         notebook.append_page(ipcPanel.getPanel(), gtk.Label("IPC Capturing"))
 
         # API Panel
