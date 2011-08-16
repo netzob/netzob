@@ -16,7 +16,6 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import array
 import logging.config
 import uuid
 
@@ -44,7 +43,6 @@ class AbstractMessage():
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         self.id = uuid.uuid4() 
         self.type = type
-        self.data = array.array('B', [0] * 10000)
         
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
@@ -55,3 +53,9 @@ class AbstractMessage():
         return self.type
     def getData(self):
         return self.data
+    def setID(self, id):
+        self.id = id
+    def setType(self, type):
+        self.type = type
+    def setData(self, data):
+        self.data = data

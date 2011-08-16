@@ -18,22 +18,55 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
+from netzob.Common.Models.NetworkMessage import NetworkMessage
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+from xml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
-class NetzobTestCase2(unittest.TestCase):
+class NetworkMessageTest(unittest.TestCase):
+    
     def setUp(self):
         pass
+    
+    def test_loadFromXml(self):
         
-    def test_getName(self):
-        self.assertEqual("without_name name", "without_name")
+        id = str(uuid.uuid4()) 
+        ipSource = "192.168.0.10"
+        ipTarget = "192.168.0.20"
+        protocol = "TCP"
+        l4SourcePort = 5799
+        l4TargetPort = 80
+        strData = "NETwork protocol modeliZatiOn By reverse engineering"
+        data = str(bytearray(strData)).encode('hex')
         
-    def test_average(self):
-        self.assertEqual(1, 1)
+        xml = '''
+        <message type="network" id="{0}">            
+            <ipSource>{1}</ipSource>
+            <ipTarget>{2}</ipTarget>
+            <protocol>{3}</protocol>
+            <l4SourcePort>{4}</l4SourcePort>
+            <l4TargetPort>{5}</l4TargetPort>
+            <data>{6}</data>
+        </message>
+        '''.format(id, ipSource, ipTarget, protocol, l4SourcePort, l4TargetPort, data)
+        
+        
+        rootElement = ElementTree.XML(xml)
+        self.message = NetworkMessage.loadFromXML(rootElement)
+        
+        self.assertEqual(id, self.message.getID())
+        self.assertEqual(ipSource, self.message.getIPSource())
+        self.assertEqual(ipTarget, self.message.getIPTarget())
+        self.assertEqual(l4SourcePort, self.message.getL4SourcePort())
+        self.assertEqual(l4TargetPort, self.message.getL4TargetPort())
+        self.assertEqual(bytearray(strData.encode('hex')), self.message.getData())
+        
+   
 

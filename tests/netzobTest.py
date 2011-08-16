@@ -18,8 +18,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-from models.netzobTestCase1 import NetzobTestCase1
-from models.netzobTestCase2 import NetzobTestCase2
+from models.NetworkMessageTest import NetworkMessageTest
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -30,10 +29,7 @@ from models.netzobTestCase2 import NetzobTestCase2
 #+---------------------------------------------------------------------------+
 
 def addTestsForModels(suite):    
-    suite.addTest(NetzobTestCase1('test_getName'))
-    suite.addTest(NetzobTestCase1('test_average'))
-    suite.addTest(NetzobTestCase2('test_getName'))
-    suite.addTest(NetzobTestCase2('test_average'))
+    suite.addTest(NetworkMessageTest('test_loadFromXml'))
 
 if __name__ == "__main__":
     
