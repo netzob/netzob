@@ -365,7 +365,7 @@ class MessageGroup(object):
                                     res = False
                                     break
                             if res:
-                                if isRegexStatic( self.getColumns()[j]['regex'] ): # Means the regex j element is static and a sub-part is concerned
+                                if self.isRegexStatic( self.getColumns()[j]['regex'] ): # Means the regex j element is static and a sub-part is concerned
                                     store.append([self.id, iCol, n*2, j, lenJ-m, k, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                     self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + "[:" + str(n*2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:

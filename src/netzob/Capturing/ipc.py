@@ -295,7 +295,7 @@ class IPC:
                 if rawPayload == "":
                     continue
                 res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + timestamp + "\">\n"
-                res += rawPayload.encode("hex") + "\n"
+                res += rawPayload.replace("\\x", "") + "\n"
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
@@ -333,7 +333,7 @@ class IPC:
                 if rawPayload == "":
                     continue
                 res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + timestamp + "\">\n"
-                res += rawPayload.encode("hex") + "\n"
+                res += rawPayload.replace("\\x", "") + "\n"
                 res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
@@ -404,7 +404,7 @@ class IPC:
                 tmp_pkt = pkt[:255] + "..."
             else:
                 tmp_pkt = pkt
-            self.pktTreestore.append(None, [len(self.packets), fd, direction, tmp_pkt.encode("hex"), int(time.time())])
+            self.pktTreestore.append(None, [len(self.packets), fd, direction, tmp_pkt.replace("\\x", ""), int(time.time())])
             self.packets.append(pkt)
         return self.doSniff
 
