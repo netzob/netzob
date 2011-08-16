@@ -99,7 +99,7 @@ class UIsequencing:
 
         ## Widget for launching the analysis
         but = gtk.Button(gtk.STOCK_OK)
-        but.set_label("Start analysis")
+        but.set_label("Start alignment")
         but.connect("clicked", self.startAnalysis_cb)
         but.show()
         topPanel.pack_start(but, False, False, 0)
