@@ -46,14 +46,7 @@ class UIsequencing:
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
-        # Parse the traces and store the results
-        self.selectedGroup = ""
-        self.treeMessageGenerator.clear()
-        self.treeGroupGenerator.clear()
-        self.treeTypeStructureGenerator.clear()
-        self.update()
-        self.parseThread = threading.Thread(None, self.treeGroupGenerator.initTreeGroupWithTraces, None, (self.zob, self), {})
-        self.parseThread.start()
+        pass
 
     def update(self):
         self.updateTreeStoreGroup()
@@ -86,42 +79,127 @@ class UIsequencing:
         self.selectedMessage = ""
         self.treeMessageGenerator = None
         self.treeTypeStructureGenerator = None
+        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator([])
+        self.treeGroupGenerator.initialization()
         
         # Definition of the Sequence Onglet
-        # First we create an HPaned which hosts the two main children
-        self.panel = gtk.HPaned()
+        # First we create an VBox which hosts the two main children
+        self.panel = gtk.VBox(False, spacing=0)
         self.panel.show()
         self.defer_select = False
 
         configParser = ConfigurationParser.ConfigurationParser()
         
         #+---------------------------------------------- 
-        #| LEFT PART OF THE GUI : TREEVIEW
-        #+----------------------------------------------           
-        vb_left_panel = gtk.VBox(False, spacing=0)
-        self.panel.add(vb_left_panel)
-        vb_left_panel.set_size_request(-1, -1)
-        vb_left_panel.show()
-        # Initialize the treeview generator for the groups
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator([])
-        self.treeGroupGenerator.initialization()
-        vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
-        # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeGroupGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-        self.treeGroupGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
-        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupChanged)
-        self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
-       
-        #+---------------------------------------------- 
-        #| RIGHT PART OF THE GUI : TOP BUTTONS
+        #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
-        vb_right_panel = gtk.VBox(False, spacing=0)
-        self.panel.add(vb_right_panel)
-        vb_right_panel.show()
+        topPanel = gtk.HBox(False, spacing=5)
+        topPanel.show()
+        self.panel.pack_start(topPanel, False, False, 0)
+
+        ## Widget for launching the analysis
+        but = gtk.Button(gtk.STOCK_OK)
+        but.set_label("Start analysis")
+        but.connect("clicked", self.startAnalysis_cb)
+        but.show()
+        topPanel.pack_start(but, False, False, 0)
+
+        ## Options during alignment process
+        frame = gtk.Frame()
+        frame.set_label("Options during alignment process")
+        frame.show()
+        topPanel.pack_start(frame, True, True, 0)
+
         # Sub-panel for specific buttions
-        table = gtk.Table(rows=3, columns=8, homogeneous=False)
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
-        vb_right_panel.pack_start(table, False, False, 0)
+        frame.add(table)
+
+        # Widget entry for chosing the alignment score sub-limit
+        label = gtk.Label("Similarity threshold : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_size_request(60, -1)
+        combo.set_model(gtk.ListStore(str))
+        combo.connect("changed", self.updateScoreLimit)
+        possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
+        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
+        for i in range(len(possible_choices)):
+            combo.append_text(str(possible_choices[i]))
+            if str(possible_choices[i]) == str(int(min_equivalence)):
+                combo.set_active(i)
+        combo.show()
+        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button activate orphan reduction
+        butOrphanReduction = gtk.CheckButton("Orphan reduction")
+        doOrphanReduction = configParser.getInt("clustering", "orphan_reduction")
+        if doOrphanReduction == 1:
+            butOrphanReduction.set_active(True)
+        else:
+            butOrphanReduction.set_active(False)
+        butOrphanReduction.connect("toggled", self.activeOrphanReduction)
+        butOrphanReduction.show()
+        table.attach(butOrphanReduction, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget checkbox for selecting the slickery during alignement process
+        but = gtk.CheckButton("Slick regexes")
+        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
+        if doInternalSlick == 1:
+            but.set_active(True)
+        else:
+            but.set_active(False)
+        but.connect("toggled", self.activeInternalSlickRegexes)
+        but.show()
+        table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        ## Options after alignment process
+        frame = gtk.Frame()
+        frame.set_label("Analyses after alignment process")
+        frame.show()
+        topPanel.pack_start(frame, True, True, 0)
+
+        # Sub-panel for specific buttions
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget button slick regexes
+        but = gtk.Button("Slick regexes")
+        but.connect("clicked", self.treeGroupGenerator.slickRegexes, self)
+        but.show()
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button merge common regexes
+        but = gtk.Button("Merge common regexes")
+        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
+        but.show()
+        table.attach(but, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button find size fields
+        but = gtk.Button("Find size fields")
+        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
+        but.connect("clicked", self.findSizeFields)
+        but.show()
+        table.attach(but, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button refine regex
+        but = gtk.Button("Refine regexes")
+        but.connect("clicked", self.refineRegexes)
+        but.show()
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        ## Visualization options
+        frame = gtk.Frame()
+        frame.set_label("Visualization options")
+        frame.show()
+        topPanel.pack_start(frame, False, False, 0)
+
+        # Sub-panel for specific buttions
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
 
         # Widget for choosing the analysed protocole type
         label = gtk.Label("Protocol type : ")
@@ -137,82 +215,36 @@ class UIsequencing:
         combo.set_active(protocol_type_ID)
         combo.show()
         table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget entry for chosing the alignment score sub-limit
-        label = gtk.Label("Score limit : ")
-        label.show()
-        combo = gtk.combo_box_entry_new_text()
-        combo.set_size_request(60, -1)
-        combo.set_model(gtk.ListStore(str))
-        combo.connect("changed", self.updateScoreLimit)
-        possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
-        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
-        for i in range(len(possible_choices)):
-            combo.append_text(str(possible_choices[i]))
-            if str(possible_choices[i]) == str(int(min_equivalence)):
-                combo.set_active(i)
-        combo.show()
-        table.attach(label, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 4, 5, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget checkbox for selecting the slickery during alignement process
-        but = gtk.CheckButton("Slick regexes during alignment")
-        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
-        if doInternalSlick == 1:
-            but.set_active(True)
-        else:
-            but.set_active(False)
-        but.connect("toggled", self.activeInternalSlickRegexes)
-        but.show()
-        table.attach(but, 6, 7, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
-        # Widget button activate orphan reduction
-        butOrphanReduction = gtk.CheckButton("Activate Orphan Reduction")
-        doOrphanReduction = configParser.getInt("clustering", "orphan_reduction")
-        if doOrphanReduction == 1:
-            butOrphanReduction.set_active(True)
-        else:
-            butOrphanReduction.set_active(False)
-        butOrphanReduction.connect("toggled", self.activeOrphanReduction)
-        butOrphanReduction.show()
-        table.attach(butOrphanReduction, 5, 6, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button slick regexes
-        but = gtk.Button("Slick regexes")
-        but.connect("clicked", self.treeGroupGenerator.slickRegexes, self)
-        but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button merge common regexes
-        but = gtk.Button("Merge common regexes")
-        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
-        but.show()
-        table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button find size fields
-        but = gtk.Button("Find size fields")
-        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
-        but.connect("clicked", self.findSizeFields)
-        but.show()
-        table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button refine regex
-        but = gtk.Button("Refine regexes")
-        but.connect("clicked", self.refineRegexes)
-        but.show()
-        table.attach(but, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #+---------------------------------------------- 
-        #| RIGHT PART OF THE GUI : TREEVIEW MESSAGE OUTPUT
+        #| LEFT PART OF THE GUI : GROUP TREEVIEW
+        #+----------------------------------------------           
+        bottomPanel = gtk.HPaned()
+        bottomPanel.show()
+        self.panel.pack_start(bottomPanel, True, True, 0)
+        leftPanel = gtk.VBox(False, spacing=0)
+        leftPanel.set_size_request(-1, -1)
+        leftPanel.show()
+        bottomPanel.add(leftPanel)
+        # Initialize the treeview generator for the groups
+        leftPanel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
+        # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
+        self.treeGroupGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+        self.treeGroupGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
+        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupChanged)
+        self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
+
+        #+---------------------------------------------- 
+        #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
         #+----------------------------------------------
-        right_sub_vpaned = gtk.VPaned()
-        right_sub_vpaned.show()
-        vb_right_panel.pack_start(right_sub_vpaned, True, True, 0)
+        rightPanel = gtk.VPaned()
+        rightPanel.show()
+        bottomPanel.add(rightPanel)
         # Initialize the treeview generator for the messages
         self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator()
         self.treeMessageGenerator.initialization()        
-        right_sub_vpaned.add(self.treeMessageGenerator.getScrollLib())
+        rightPanel.add(self.treeMessageGenerator.getScrollLib())
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
@@ -228,9 +260,25 @@ class UIsequencing:
         # Initialize the treeview for the type structure
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
-        right_sub_vpaned.add(self.treeTypeStructureGenerator.getScrollLib())
+        rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())
         
         self.log.debug("GUI for sequential part is created")
+
+    #+---------------------------------------------- 
+    #| startAnalysis :
+    #|   Parse the traces and store the results
+    #+----------------------------------------------
+    def startAnalysis_cb(self, widget):
+        if self.zob.tracePath == "":
+            self.log.info("No trace selected")
+            return
+        self.selectedGroup = ""
+        self.treeMessageGenerator.clear()
+        self.treeGroupGenerator.clear()
+        self.treeTypeStructureGenerator.clear()
+        self.update()
+        self.parseThread = threading.Thread(None, self.treeGroupGenerator.initTreeGroupWithTraces, None, (self.zob, self), {})
+        self.parseThread.start()
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_groups :
@@ -825,6 +873,7 @@ class UIsequencing:
     def refineRegexes(self, button):
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
+        self.updateTreeStoreMessage()
 
     #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields

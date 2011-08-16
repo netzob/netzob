@@ -60,11 +60,12 @@ class Netzob():
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
+        self.tracePath = ""
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
 #        window.set_size_request(1200, 800) 
-        window.connect("delete_event", self.evnmt_delete)
+        window.connect("delete_event", self.evnmtDelete)
         window.connect("destroy", self.destroy)
         
         # UI Header definition
@@ -72,23 +73,19 @@ class Netzob():
         toolbar = gtk.HBox(False, spacing=0)
         vbox.pack_start(toolbar, False, False, 6)
 
-        label = gtk.Label("Select target : ")
+        label = gtk.Label("Select trace : ")
         self.entry = gtk.combo_box_entry_new_text()
         self.entry.set_size_request(300, -1)
         self.entry.set_model(gtk.ListStore(str))
-
+        self.entry.connect("changed", self.traceSelected)
         self.updateListOfAvailableTraces()       
-
-        self.label_analyse = gtk.Label("...")
-        button_valid = gtk.Button(gtk.STOCK_OK)
-        button_valid.set_label("Start analysis")
-        button_valid.connect("clicked", self.traceSelected, self.entry)
-        
-        button_save = gtk.Button(gtk.STOCK_OK)
-        button_save.set_label("Save analysis")
-        button_save.connect("clicked", self.saveTrace, self.entry)
-        
+      
         label_text = gtk.Label("     Current trace : ")
+        self.label_analyse = gtk.Label("...")
+
+        button_save = gtk.Button(gtk.STOCK_OK)
+        button_save.set_label("Save trace")
+        button_save.connect("clicked", self.saveTrace)
 
         # Progress Bar handling inside UI Header
         progressBox = gtk.VBox(False, 5)
@@ -98,13 +95,12 @@ class Netzob():
         self.progressBar = gtk.ProgressBar()
         align.add(self.progressBar)
 
-        toolbar.pack_start(label, False, False, 0)
-        toolbar.pack_start(self.entry, False, False, 0)
-        toolbar.pack_start(button_valid, False, False, 0)
-        toolbar.pack_start(button_save, False, False, 0)
-        toolbar.pack_start(label_text, False, False, 0)
-        toolbar.pack_start(self.label_analyse, False, False, 0)
-        toolbar.pack_start(progressBox, False, False, 0)
+        toolbar.pack_start(label, False, False, 5)
+        toolbar.pack_start(self.entry, False, False, 5)
+        toolbar.pack_start(label_text, False, False, 5)
+        toolbar.pack_start(self.label_analyse, False, False, 5)
+        toolbar.pack_start(button_save, False, False, 5)
+        toolbar.pack_start(progressBox, False, False, 5)
 
         # Notebook definition
         self.notebook = gtk.Notebook()
@@ -133,7 +129,6 @@ class Netzob():
         label.show()
         label_text.show()
         self.label_analyse.show()
-        button_valid.show()
         button_save.show()
         self.notebook.show()
         vbox.show()
@@ -165,15 +160,13 @@ class Netzob():
         # Sort and add to the entry
         for folder in sorted(temporaryListOfFolders) :
             self.entry.append_text(folder)
-            
-            
 
     def startGui(self):
         # UI thread launching
         self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         self.uiThread.start()
 
-    def evnmt_delete(self, widget, event, data=None):
+    def evnmtDelete(self, widget, event, data=None):
         return False
 
     def destroy(self, widget, data=None):
@@ -198,18 +191,17 @@ class Netzob():
             if page[0] == nameTab:
                 page[1].update()
                 
-    def saveTrace(self, null, entry):
+    def saveTrace(self, null):
         self.log.info("Starting the saving process of all the application")
         
         # retrieve the new trace path
-        target = entry.get_active_text()
+        target = self.entry.get_active_text()
         if target == "":
+            self.log.info("No trace selected")
             return
 
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         configPath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target + os.sep + "config.xml"
-        
-        
         
         for page in self.pageList:
             page[1].save(configPath)
@@ -218,23 +210,21 @@ class Netzob():
     #+---------------------------------------------- 
     #| Called when user select a new trace for analysis
     #+----------------------------------------------
-    def traceSelected(self, null, entry):
+    def traceSelected(self, null):
         # retrieve the new trace path
-        target = entry.get_active_text()
+        target = self.entry.get_active_text()
         if target == "":
             return
-
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-
         self.label_analyse.set_text(tracesDirectoryPath + os.sep + target)
         self.tracePath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target
         
-        # clear past analysis and initialize the active notebook analysis
+        # clear past analysis and initialize the each notebook
         for page in self.pageList:
             page[1].clear()
-            nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
-            if page[0] == nameTab:
-                page[1].new()
+            #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
+            #if page[0] == nameTab:
+            page[1].new()
 
 
 #+---------------------------------------------- 
@@ -243,7 +233,7 @@ class Netzob():
 if __name__ == "__main__":
     # create logger with the given configuration
     logger = logging.getLogger('netzob.py')
-    logger.info("Logging module configured and loaded .")
+    logger.info("Logging module configured and loaded")
     
     # for handling GUI access from threads
     gobject.threads_init()

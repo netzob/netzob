@@ -510,6 +510,13 @@ class MessageGroup(object):
             self.log.warning("The possible types for the column "+str(iCol)+" are not defined ! ")
             return ["binary"]
 
+    def getStyledPossibleTypesByCol(self, iCol):
+        tmpTypes = self.getPossibleTypesByCol(iCol)
+        for i in range(len(tmpTypes)):
+            if tmpTypes[i] == self.getSelectedTypeByCol(iCol):
+                tmpTypes[i] = "<span foreground=\"red\">" + self.getSelectedTypeByCol(iCol) + "</span>"
+        return ", ".join(tmpTypes)
+
     def getRepresentation(self, raw, iCol) :
         type = self.getSelectedTypeByCol(iCol)
         return self.encode(raw, type)
@@ -535,13 +542,23 @@ class MessageGroup(object):
     #| Regex handling
     #+----------------------------------------------
     def refineRegexes(self):
-        for col in self.columns():
-            tmpRegex = col['regex']
+        for iCol in range(len(self.getColumns())):
+            tmpRegex = self.getRegexByCol(iCol)
             if self.isRegexStatic( tmpRegex ):
                 continue
-            if self.isRegexOnlyDynamic( tmpRegex ):
+            elif self.isRegexOnlyDynamic( tmpRegex ):
+                cells = self.getCellsByCol(iCol)
+                min = 999999
+                max = 0
+                for cell in cells:
+                    if len(cell) > max:
+                        max = len(cell)
+                    if len(cell) < min:
+                        min = len(cell)
+                self.setRegexByCol(iCol, "(.{"+str(min)+","+str(max)+"})")
+            else:
+                # TODO: handle complex regex
                 continue
-            # TODO: handle complex regex
 
     def isRegexStatic(self, regex):
         if regex.find("{") == -1:
@@ -671,6 +688,9 @@ class MessageGroup(object):
     def getTabulationByCol(self, iCol):
         if iCol>=0 and iCol<len(self.columns) :
             return self.columns[iCol]['tabulation']
+    def getRegexByCol(self, iCol):
+        if iCol>=0 and iCol<len(self.columns) :
+            return self.columns[iCol]['regex']
     def getDescriptionByCol(self, iCol):
         if iCol>=0 and iCol<len(self.columns) :
             return self.columns[iCol]['description']
@@ -702,6 +722,9 @@ class MessageGroup(object):
     def setDescriptionByCol(self, iCol, descr):
         if iCol>=0 and iCol<len(self.columns) :
             self.columns[iCol]['description'] = descr
+    def setRegexByCol(self, iCol, regex):
+        if iCol>=0 and iCol<len(self.columns) :
+            self.columns[iCol]['regex'] = regex
     def setColorByCol(self, iCol, color):
         if iCol>=0 and iCol<len(self.columns) :
             self.columns[iCol]['color'] = color

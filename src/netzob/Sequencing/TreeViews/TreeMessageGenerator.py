@@ -120,8 +120,11 @@ class TreeMessageGenerator():
         regex_row.append("#c8c8c8")
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
-        for col in self.group.getColumns():
-            regex_row.append( col['regex'] )
+        for iCol in range(len(self.group.getColumns())):
+            if self.group.isRegexStatic( self.group.getRegexByCol(iCol) ):
+                regex_row.append( self.group.getRepresentation( self.group.getRegexByCol(iCol), iCol ))
+            else:
+                regex_row.append( self.group.getRegexByCol(iCol) )
         self.treestore.append(None, regex_row)
 
         # Build the types row
@@ -131,7 +134,7 @@ class TreeMessageGenerator():
         types_line.append(pango.WEIGHT_BOLD)
         types_line.append(True)        
         for iCol in range(len( self.getGroup().getColumns() )):
-            types_line.append( self.getGroup().getPossibleTypesByCol(iCol) )
+            types_line.append( self.getGroup().getStyledPossibleTypesByCol(iCol) )
         self.treestore.append(None, types_line)
         
         # Build the next rows from messages after applying the regex

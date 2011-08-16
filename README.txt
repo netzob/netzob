@@ -27,4 +27,4 @@ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 
 ### Running Netzob ###
 
-$ python src/netzob.py
+$ ./run_netzob

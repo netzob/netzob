@@ -12,7 +12,6 @@ import logging
 #+----------------------------------------------
 from ..Common import ConfigurationParser
 
-
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
