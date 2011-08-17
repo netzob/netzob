@@ -8,6 +8,7 @@ User Manual
    :maxdepth: 2
 
    introduction/index
+   inputs/index
    
    API/index
    

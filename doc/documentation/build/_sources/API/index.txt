@@ -3,7 +3,7 @@
 .. _API:
 
 API
-============
+===
 
 API description
 

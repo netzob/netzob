@@ -61,6 +61,7 @@ The reference section has a complete list of all the classes, methods, attribute
 Some good starting points in the documentation are
 
 * :ref:`introduction`
+* :ref:`inputs`
 * :ref:`creation`
 * :ref:`reading`
 * :ref:`quick_reference`
