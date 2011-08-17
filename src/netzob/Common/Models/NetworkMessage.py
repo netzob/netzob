@@ -16,10 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import array
-import binascii
 import logging.config
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -64,7 +61,38 @@ class NetworkMessage(AbstractMessage):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
     
-    
+    #+-----------------------------------------------------------------------+
+    #| saveInXML
+    #|     Abstract method for the generation of an XML representation of
+    #|     a message
+    #| @return a string which include the xml definition of the network msg
+    #+-----------------------------------------------------------------------+    
+    def saveInXML(self):
+        root = ElementTree.Element("message")
+        root.set("type", "network")
+        root.set("id", self.getID())
+        # timestamp
+        subTimestamp = ElementTree.SubElement(root, "timestamp")
+        subTimestamp.text = str(self.getTimestamp())
+        # ipSource
+        subIpSource = ElementTree.SubElement(root, "ipSource")
+        subIpSource.text = self.getIPSource()
+        # ipTarget
+        subIpTarget = ElementTree.SubElement(root, "ipTarget")
+        subIpTarget.text = self.getIPTarget()
+        # protocol
+        subProtocol = ElementTree.SubElement(root, "protocol")
+        subProtocol.text = self.getProtocol()
+        # l4 source port
+        subL4SourcePort = ElementTree.SubElement(root, "l4SourcePort")
+        subL4SourcePort.text = str(self.getL4SourcePort())
+        # l4 target port
+        subL4TargetPort = ElementTree.SubElement(root, "l4TargetPort")
+        subL4TargetPort.text = str(self.getL4TargetPort())
+        # data
+        subData = ElementTree.SubElement(root, "data")
+        subData.text = str(self.getData())
+        return ElementTree.tostring(root)
         
 #+---------------------------------------------- 
     #| GETTERS : 

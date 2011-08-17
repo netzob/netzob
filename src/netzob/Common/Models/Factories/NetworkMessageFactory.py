@@ -78,7 +78,7 @@ class NetworkMessageFactory():
         
         # Retrieves the timestamp (default = 0 )
         if rootElement.find("timestamp") != None :
-            msg_timestamp = rootElement.find("timestamp").text
+            msg_timestamp = int(rootElement.find("timestamp").text)
         else :
             msg_timestamp = 0
         
@@ -124,3 +124,5 @@ class NetworkMessageFactory():
         result.setL4TargetPort(msg_l4TargetPort)
         
         return result
+    
+    
