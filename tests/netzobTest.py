@@ -20,6 +20,7 @@
 import unittest
 from models.NetworkMessageTest import NetworkMessageTest
 
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -30,6 +31,8 @@ from models.NetworkMessageTest import NetworkMessageTest
 
 def addTestsForModels(suite):    
     suite.addTest(NetworkMessageTest('test_loadFromXml'))
+    suite.addTest(NetworkMessageTest('test_saveInXML'))
+    
 
 if __name__ == "__main__":
     
