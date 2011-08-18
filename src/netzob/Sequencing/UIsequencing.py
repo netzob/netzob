@@ -201,9 +201,15 @@ class UIsequencing:
 
         # Widget button refine regex
         but = gtk.Button("Refine regexes")
-        but.connect("clicked", self.refineRegexes)
+        but.connect("clicked", self.refineRegexes_cb)
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button data carving
+        but = gtk.Button("Data carving")
+        but.connect("clicked", self.dataCarving_cb)
+        but.show()
+        table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         ## Visualization options
         frame = gtk.Frame()
@@ -879,10 +885,60 @@ class UIsequencing:
     #+---------------------------------------------- 
     #| Called when user wants to refine regexes
     #+----------------------------------------------
-    def refineRegexes(self, button):
+    def refineRegexes_cb(self, button):
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
         self.updateTreeStoreMessage()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to refine regexes
+    #+----------------------------------------------
+    def dataCarving_cb(self, button):
+        dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
+        ## ListStore format :
+        # str: group.id
+        # int: size field column
+        # int: size field size
+        # int: start column
+        # int: substart column
+        # int: end column
+        # int: subend column
+        # str: message rendered in cell
+        treeview = gtk.TreeView(gtk.ListStore(str, int, int, int, int, int, int, str)) 
+        cell = gtk.CellRendererText()
+        treeview.connect("cursor-changed", self.dataCarvingResultSelected_cb)
+        column = gtk.TreeViewColumn('Size field and related payload')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=7)
+        treeview.append_column(column)
+
+        # Chose button
+        but = gtk.Button(label="Apply result")
+        but.show()
+        but.connect("clicked", self.dataCarvingApplyResult_cb, dialog)
+        dialog.action_area.pack_start(but, True, True, 0)
+
+        # Just to force the calculation of the splitted messages by regex
+        for group in self.treeGroupGenerator.getGroups():
+            self.selectedGroup = str(group.getID())
+            self.treeMessageGenerator.default(group)
+
+        # Treeview containing potential data carving results
+        treeview.set_size_request(800, 300)
+        self.treeGroupGenerator.dataCarving( treeview.get_model() )
+        treeview.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        dialog.vbox.pack_start(scroll, True, True, 0)
+        dialog.show()
+
+    def dataCarvingResultSelected_cb(self):
+        pass
+
+    def dataCarvingApplyResult_cb(self):
+        pass
 
     #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields

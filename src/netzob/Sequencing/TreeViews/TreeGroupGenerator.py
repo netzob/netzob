@@ -198,6 +198,14 @@ class TreeGroupGenerator():
     def findSizeFields(self, store):
         for group in self.getGroups():
             group.findSizeFields(store)
+
+    #+---------------------------------------------- 
+    #| dataCarving:
+    #|  try to find the data hidden in the messages
+    #+----------------------------------------------    
+    def dataCarving(self, store):
+        for group in self.getGroups():
+            group.dataCarving(store)
             
     #+---------------------------------------------- 
     #| GETTERS : 

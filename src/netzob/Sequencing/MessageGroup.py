@@ -290,62 +290,30 @@ class MessageGroup(object):
     def findSizeFields(self, store):
         if len(self.columns) == 0:
             return
-
         typer = TypeIdentifier.TypeIdentifier()
-
-        # First step: try to find a size field for a uniq data column
         iCol = 0
+        # We cover each field for a potential size field
         for col in self.getColumns():
+            if self.isRegexStatic(col['regex']): # Means the element is static, and we exclude it for performance issue
+                iCol += 1
+                continue
             cellsSize = self.getCellsByCol(iCol)
             j = 0
+            # We cover each field and aggregate them for a potential payload
             while j < len(self.getColumns()):
-                if not (self.isRegexOnlyDynamic(self.getColumns()[j]['regex']) != None):
-                    j += 1
-                    continue
-                if j != iCol:
-                    cellsData = self.getCellsByCol(j)
-                    res = True
-                    for k in range(len(cellsSize)):
-                        # Handle big and little endian for size field of 1, 2 and 4 octets length
-                        rawMsgSize = typer.toBinary(cellsSize[k][:8])
-                        if len(rawMsgSize) == 1:
-                            expectedSizeType = "B"
-                        elif len(rawMsgSize) == 2:
-                            expectedSizeType = "H"
-                        elif len(rawMsgSize) == 4:
-                            expectedSizeType = "I"
-                        else: # Do not consider size field with len > 4
-                            res = False
-                            break
-                        (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
-                        (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
-                        if (expectedSizeLE != len(cellsData[k]) / 2) and (expectedSizeBE != len(cellsData[k]) / 2):
-                            res = False
-                            break
-                    if res:
-                        store.append([self.id, iCol, -1, j, -1, -1, -1, "Group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")"])
-                        self.log.info("In group " + self.name + " : found potential size field (col " + str(iCol) + ") for a data field (col " + str(j) + ")")
-                j += 1
-            iCol += 1
-
-        # Second step: try to find a size field for an aggregate of data columns
-        iCol = 0
-        for col in self.getColumns():
-            cellsSize = self.getCellsByCol(iCol)
-            j = 0
-            while j < len(self.getColumns()) - 1:
                 # Initialize the aggregate of messages from colJ to colK
                 aggregateCellsData = []
                 for l in range(len(cellsSize)):
                     aggregateCellsData.append( "" )
 
                 # Fill the aggregate of messages and try to compare its length with the current expected length
-                k = j + 1
+                k = j
                 while k < len(self.getColumns()):
-                    for l in range(len(cellsSize)):
-                        aggregateCellsData[l] += self.getCellsByCol(k)[l]
+                    if k != j:
+                        for l in range(len(cellsSize)):
+                            aggregateCellsData[l] += self.getCellsByCol(k)[l]
 
-                    # We try to aggregate the successive sub-parts of j if it's a static column
+                    # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
                     if self.isRegexStatic( self.getColumns()[j]['regex'] ):
                         lenJ = len(self.getColumns()[j]['regex'])
                         stop = 0
@@ -353,7 +321,7 @@ class MessageGroup(object):
                         lenJ = 2
                         stop = 0
                     for m in range(lenJ, stop, -2):
-                        for n in [4, 2, 1]: # loop over different possible encoding of size field
+                        for n in [4, 0, 1]: # loop over different possible encoding of size field
                             res = True
                             for l in range(len(cellsSize)):
                                 if self.isRegexStatic( self.getColumns()[j]['regex'] ):
@@ -388,6 +356,15 @@ class MessageGroup(object):
                     k += 1
                 j += 1
             iCol += 1
+
+    #+---------------------------------------------- 
+    #| dataCarving:
+    #|  try to find the size fields of each regex
+    #+----------------------------------------------    
+    def dataCarving(self, store):
+        self.log.info("Not yet implemented, stay tuned")
+        if len(self.columns) == 0:
+            return
 
     #+---------------------------------------------- 
     #| concatColumns:
