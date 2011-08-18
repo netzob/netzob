@@ -8,6 +8,9 @@
 * lsof
 * iptables
 
+for documentation purposes :
+* python-sphinx
+
 ### Installation ###
 
 $ cd lib/libNeedleman/
