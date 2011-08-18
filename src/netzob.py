@@ -64,14 +64,13 @@ class Netzob():
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
-#        window.set_size_request(1200, 800) 
         window.connect("delete_event", self.evnmtDelete)
         window.connect("destroy", self.destroy)
         
-        # UI Header definition
-        vbox = gtk.VBox(False, spacing=10)
+        ## UI Header definition
+        vbox = gtk.VBox(False, spacing=0)
         toolbar = gtk.HBox(False, spacing=0)
-        vbox.pack_start(toolbar, False, False, 6)
+        vbox.pack_start(toolbar, False, False, 2)
 
         label = gtk.Label("Select trace : ")
         self.entry = gtk.combo_box_entry_new_text()
@@ -88,8 +87,8 @@ class Netzob():
         button_save.connect("clicked", self.saveTrace)
 
         # Progress Bar handling inside UI Header
-        progressBox = gtk.VBox(False, 5)
-        progressBox.set_border_width(10)
+        progressBox = gtk.VBox(False, 0)
+        progressBox.set_border_width(0)
         align = gtk.Alignment(0.5, 0.5, 0, 0)
         progressBox.pack_start(align, False, False, 5)
         self.progressBar = gtk.ProgressBar()
@@ -216,7 +215,7 @@ class Netzob():
         if target == "":
             return
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        self.label_analyse.set_text(tracesDirectoryPath + os.sep + target)
+        self.label_analyse.set_text(target)
         self.tracePath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target
         
         # clear past analysis and initialize the each notebook

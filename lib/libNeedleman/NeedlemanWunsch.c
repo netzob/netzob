@@ -1,3 +1,20 @@
+// -*- coding: utf-8 -*-
+
+/*
+ +---------------------------------------------------------------------------+
+ |         01001110 01100101 01110100 01111010 01101111 01100010             | 
+ +---------------------------------------------------------------------------+
+ | NETwork protocol modeliZatiOn By reverse engineering                      |
+ | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+ | @license      : GNU GPL v3                                                |
+ | @copyright    : Georges Bossert and Frederic Guihery                      |
+ | @url          : http://code.google.com/p/netzob/                          |
+ | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+ | @author       : {gbt,fgy}@amossys.fr                                      |
+ | @organization : Amossys, http://www.amossys.fr                            |
+ +---------------------------------------------------------------------------+
+*/
+
 // Compilation : gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
 
 #include "headers/NeedlemanWunsch.h"
