@@ -1,5 +1,18 @@
 #!/usr/bin/python
-# coding: utf8
+# -*- coding: utf-8 -*-
+
+#+---------------------------------------------------------------------------+
+#|         01001110 01100101 01110100 01111010 01101111 01100010             | 
+#+---------------------------------------------------------------------------+
+#| NETwork protocol modeliZatiOn By reverse engineering                      |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @license      : GNU GPL v3                                                |
+#| @copyright    : Georges Bossert and Frederic Guihery                      |
+#| @url          : http://code.google.com/p/netzob/                          |
+#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| @author       : {gbt,fgy}@amossys.fr                                      |
+#| @organization : Amossys, http://www.amossys.fr                            |
+#+---------------------------------------------------------------------------+
 
 #+---------------------------------------------- 
 #| Global Imports
@@ -77,8 +90,10 @@ class UIsequencing:
         self.zob = zob
         self.selectedGroup = ""
         self.selectedMessage = ""
-        self.treeMessageGenerator = None
-        self.treeTypeStructureGenerator = None
+        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator()
+        self.treeMessageGenerator.initialization()
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator.initialization()
         self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator([])
         self.treeGroupGenerator.initialization()
         
@@ -241,9 +256,6 @@ class UIsequencing:
         rightPanel = gtk.VPaned()
         rightPanel.show()
         bottomPanel.add(rightPanel)
-        # Initialize the treeview generator for the messages
-        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator()
-        self.treeMessageGenerator.initialization()        
         rightPanel.add(self.treeMessageGenerator.getScrollLib())
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
@@ -257,11 +269,7 @@ class UIsequencing:
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
-        # Initialize the treeview for the type structure
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
-        self.treeTypeStructureGenerator.initialization()
-        rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())
-        
+        rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())        
         self.log.debug("GUI for sequential part is created")
 
     #+---------------------------------------------- 
@@ -742,8 +750,9 @@ class UIsequencing:
         else :
             # Default display of the groups
             self.treeGroupGenerator.default()
-            self.zob.dumping.updateGoups(self.treeGroupGenerator.getGroups())
-            self.zob.fuzzing.updateGoups(self.treeGroupGenerator.getGroups())
+            # TODO: remove the two following lines, as the groups are handled elsewhere
+#            self.zob.dumping.updateGoups(self.treeGroupGenerator.getGroups())
+#            self.zob.fuzzing.updateGoups(self.treeGroupGenerator.getGroups())
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
