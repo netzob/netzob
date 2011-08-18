@@ -28,3 +28,12 @@ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 ### Running Netzob ###
 
 $ ./run_netzob
+
+### Generates documentation ###
+
+The folder "doc/documentation" contains the documentation of Netzob in sphynx format (.rst).
+Therefore, if you want to have updated HTMLs in the "/doc/documentation/build/" directory
+based on the sources of the documentation which is located in "/doc/documentation/source/" you'll
+have to execute the following command :
+
+sphinx-build -b html doc/documentation/source/ doc/documentation/build/
