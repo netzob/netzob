@@ -33,7 +33,6 @@ import random
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-import scapyy.all as scapyy
 
 #+---------------------------------------------- 
 #| Configuration of the logger

@@ -35,7 +35,6 @@ import subprocess
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-import scapyy.all as scapyy
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -83,43 +82,50 @@ class IPC:
         self.aSniffThread = None
         self.doSniff = False
         self.selected_fds = set()
+        self.sniffOption = None
         
         # Network Capturing Panel
         self.panel = gtk.Table(rows=6, columns=4, homogeneous=False)
         self.panel.show()
 
-        ## TODO: add update_process_list button
-
         # Processfilter
-        label = gtk.Label("Chose process to trace")
-        label.show()
+        but = gtk.Button("Update processes list")
+        but.show()
+        but.connect("clicked", self.updateProcessList_cb)
         self.processStore = gtk.combo_box_entry_new_text()
         self.processStore.show()
         self.processStore.set_size_request(300, -1)
         self.processStore.set_model(gtk.ListStore(str))
-        for pid in readProcesses():
-            self.processStore.append_text(str(pid) + "\t" + readProcessCmdline(pid)[0])
-        self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(self.processStore, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # FD filter
         hbox = gtk.HBox(False, spacing=10)        
         hbox.show()
-        f1 = gtk.CheckButton("File system")
-        f2 = gtk.CheckButton("Network")
-        f3 = gtk.CheckButton("Interprocess")
-        f1.set_active(True)
-        f2.set_active(True)
-        f3.set_active(True)
-        f1.show()
-        f2.show()
-        f3.show()
-        hbox.pack_start(f1, False, False, 0)
-        hbox.pack_start(f2, False, False, 0)
-        hbox.pack_start(f3, False, False, 0)
+        self.filter1 = gtk.CheckButton("File system")
+        self.filter2 = gtk.CheckButton("Network")
+        self.filter3 = gtk.CheckButton("Interprocess")
+        self.filter1.set_active(True)
+        self.filter2.set_active(True)
+        self.filter3.set_active(True)
+        self.filter1.set_sensitive(False)
+        self.filter2.set_sensitive(False)
+        self.filter3.set_sensitive(False)
+        self.filter1.show()
+        self.filter2.show()
+        self.filter3.show()
+        hbox.pack_start(self.filter1, False, False, 0)
+        hbox.pack_start(self.filter2, False, False, 0)
+        hbox.pack_start(self.filter3, False, False, 0)
+        self.butUpdateFlows = gtk.Button("Update flows")
+        self.butUpdateFlows.show()
+        self.butUpdateFlows.set_sensitive(False)
+        self.butUpdateFlows.connect("clicked", self.processSelected_cb)
+        hbox.pack_start(self.butUpdateFlows, False, False, 0)
         self.panel.attach(hbox, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.processStore.connect("changed", self.showFileDescriptors_cb, f1, f2, f3)
-
+        self.handlerID = self.processStore.connect("changed", self.processSelected_cb)
+        self.updateProcessList_cb(None)
+        
         # File descriptor list
         scroll = gtk.ScrolledWindow()
         self.fdTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
@@ -145,21 +151,50 @@ class IPC:
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-       
-        # Sniff launching button
-        butStart = gtk.Button(label="Start sniffing")
-        butStart.show()
-        butStart.set_sensitive(False)
-        self.panel.attach(butStart, 0, 1, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.fdTreeview.connect("cursor-changed", self.fd_selected, butStart)
+
+        # Sniff launching button : all sniff
+        self.butSniffAll = gtk.Button(label="Sniff on every flows")
+        self.butSniffAll.show()
+        self.butSniffAll.set_sensitive(False)
+        self.panel.attach(self.butSniffAll, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.butSniffAll.connect("clicked", self.startSniff_cb, "all")
+
+        # Sniff launching button : FS sniff
+        self.butSniffFS = gtk.Button(label="Sniff on FS flows")
+        self.butSniffFS.show()
+        self.butSniffFS.set_sensitive(False)
+        self.panel.attach(self.butSniffFS, 0, 1, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.butSniffFS.connect("clicked", self.startSniff_cb, "fs")
+
+        # Sniff launching button : network sniff
+        self.butSniffNetwork = gtk.Button(label="Sniff on network flows")
+        self.butSniffNetwork.show()
+        self.butSniffNetwork.set_sensitive(False)
+        self.panel.attach(self.butSniffNetwork, 0, 1, 7, 8, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.butSniffNetwork.connect("clicked", self.startSniff_cb, "network")
+
+        # Sniff launching button ; interprocess sniff
+        self.butSniffIPC = gtk.Button(label="Sniff on IPC flows")
+        self.butSniffIPC.show()
+        self.butSniffIPC.set_sensitive(False)
+        self.panel.attach(self.butSniffIPC, 0, 1, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.butSniffIPC.connect("clicked", self.startSniff_cb, "ipc")
+
+        # Sniff launching button ; filtered sniff
+        self.butSniffFiltered = gtk.Button(label="Sniff on selected flows")
+        self.butSniffFiltered.show()
+        self.butSniffFiltered.set_sensitive(False)
+        self.panel.attach(self.butSniffFiltered, 0, 1, 9, 10, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.butSniffFiltered.connect("clicked", self.startSniff_cb, "filtered")
 
         # Sniff stopping button
-        butStop = gtk.Button(label="Stop sniffing")
-        butStop.show()
-        butStop.set_sensitive(False)
-        butStop.connect("clicked", self.stop_sniff, butStart)
-        butStart.connect("clicked", self.start_sniff, butStop)
-        self.panel.attach(butStop, 1, 2, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.butStop = gtk.Button(label="Stop sniffing")
+        self.butStop.show()
+        self.butStop.set_sensitive(False)
+        self.butStop.connect("clicked", self.stopSniff_cb)
+        self.panel.attach(self.butStop, 1, 2, 7, 8, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+
+        self.fdTreeview.connect("cursor-changed", self.fdSelected_cb)
 
         # Packet list
         scroll = gtk.ScrolledWindow()
@@ -195,14 +230,33 @@ class IPC:
         self.panel.attach(but, 2, 4, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
     #+---------------------------------------------- 
-    #| Called when user wants to see the FD opened by a process
+    #| Called when user wants to update the process list
     #+----------------------------------------------
-    def showFileDescriptors_cb(self, widget, f1, f2, f3):
+    def updateProcessList_cb(self, button):
+        self.processStore.handler_block(self.handlerID)
+        self.processStore.get_model().clear()
+        for pid in readProcesses():
+            self.processStore.append_text(str(pid) + "\t" + readProcessCmdline(pid)[0])        
+        self.processStore.handler_unblock(self.handlerID)
+
+    #+---------------------------------------------- 
+    #| Called when user select a process
+    #+----------------------------------------------
+    def processSelected_cb(self, widget):
+        self.butSniffAll.set_sensitive(True)
+        self.butSniffNetwork.set_sensitive(True)
+        self.butSniffFS.set_sensitive(True)
+        self.butSniffIPC.set_sensitive(True)
+        self.filter1.set_sensitive(True)
+        self.filter2.set_sensitive(True)
+        self.filter3.set_sensitive(True)
+        self.butUpdateFlows.set_sensitive(True)
+
         self.fdTreeview.get_model().clear()
         processSelected = self.processStore.get_active_text()        
         self.pid = int(processSelected.split()[0])
         name = processSelected.split()[1]
-        fds = self.retrieveFDs(f1.get_active(), f2.get_active(), f3.get_active())
+        fds = self.retrieveFDs(self.filter1.get_active(), self.filter2.get_active(), self.filter3.get_active())
         for fd in fds:
             self.fdTreeview.get_model().append(None, fd)
 
@@ -210,6 +264,8 @@ class IPC:
     #| Retrieve the filtered FD
     #+----------------------------------------------
     def retrieveFDs(self, f_fs=True, f_net=True, f_proc=True):
+        if self.pid == None:
+            return []
         if False: # f_net and (not f_fs) and (not f_proc): # -i for optimization
             cmd = "/usr/bin/lsof -i -a -d 0-1024 -a -p " + str(self.pid) + " | grep -v \"SIZE/OFF\" |awk -F \" \" {' print $5 \" \" $8 \" \" $9 \" \" $7'}"
         else:
@@ -233,8 +289,8 @@ class IPC:
     #+---------------------------------------------- 
     #| Called when user select a fd
     #+----------------------------------------------
-    def fd_selected(self, treeview, butStart):
-        butStart.set_sensitive(True)
+    def fdSelected_cb(self, treeview):
+        self.butSniffFiltered.set_sensitive(True)
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet
@@ -346,17 +402,24 @@ class IPC:
     #+---------------------------------------------- 
     #| Called when launching sniffing process
     #+----------------------------------------------
-    def start_sniff(self, butStart, butStop):
+    def startSniff_cb(self, button, sniffOption):
+        self.sniffOption = sniffOption
         self.selected_fds.clear()
         self.doSniff = True
-        butStop.set_sensitive(True)
-        butStart.set_sensitive(False)
-        (model, paths) = self.fdTreeview.get_selection().get_selected_rows()
-        for path in paths:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                # Extract the fd number
-                self.selected_fds.add(int(re.match("(\d+)", model.get_value(iter, 0)).group(1)))
+        self.butStop.set_sensitive(True)
+        self.butSniffAll.set_sensitive(False)
+        self.butSniffNetwork.set_sensitive(False)
+        self.butSniffFS.set_sensitive(False)
+        self.butSniffIPC.set_sensitive(False)
+        self.butSniffFiltered.set_sensitive(False)
+
+        if self.sniffOption == "filtered":
+            (model, paths) = self.fdTreeview.get_selection().get_selected_rows()
+            for path in paths:
+                iter = model.get_iter(path)
+                if(model.iter_is_valid(iter)):
+                    # Extract the fd number
+                    self.selected_fds.add(int(re.match("(\d+)", model.get_value(iter, 0)).group(1)))
         self.packets = []
         self.pktTreestore.clear()
         self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
@@ -365,10 +428,14 @@ class IPC:
     #+---------------------------------------------- 
     #| Called when stopping sniffing process
     #+----------------------------------------------
-    def stop_sniff(self, butStop, butStart):
+    def stopSniff_cb(self, button):
         self.doSniff = False
-        butStop.set_sensitive(False)
-        butStart.set_sensitive(True)
+        self.butStop.set_sensitive(False)
+        self.butSniffAll.set_sensitive(True)
+        self.butSniffNetwork.set_sensitive(True)
+        self.butSniffFS.set_sensitive(True)
+        self.butSniffIPC.set_sensitive(True)
+        self.butSniffFiltered.set_sensitive(True)
 
         if self.stracePid != None:
             self.stracePid.kill()
@@ -381,7 +448,7 @@ class IPC:
     #| Thread for sniffing a process
     #+----------------------------------------------
     def sniffThread(self):
-        self.log.info("Launching sniff process with : fd=" + str(self.selected_fds))
+        self.log.info("Launching sniff process")
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         gobject.io_add_watch(self.stracePid.stderr, gobject.IO_IN | gobject.IO_HUP, self.handle_new_pkt)
 
@@ -389,6 +456,7 @@ class IPC:
     #| Handle new packet received by strace
     #+----------------------------------------------
     def handle_new_pkt(self, src, event):
+        # Retrieve details from the captured paket
         data = src.readline()
         compiledRegex = re.compile("(read|write)\((\d+), \"(.*)\", \d+\)[ ]*=[ ]*(\d+)")
         m = compiledRegex.match(data)
@@ -399,14 +467,40 @@ class IPC:
         pkt = data[ m.start(3) : m.end(3) ]
         returnCode = int(data[ m.start(4) : m.end(4) ])
 
-        if fd in self.selected_fds:
-            if returnCode > 256:
-                tmp_pkt = pkt[:255] + "..."
-            else:
-                tmp_pkt = pkt
-            self.pktTreestore.append(None, [len(self.packets), fd, direction, tmp_pkt.replace("\\x", ""), int(time.time())])
-            self.packets.append(pkt)
+        # Apply filter
+        if self.sniffOption == "fs":
+            if not self.getTypeFromFD(int(fd)) == "fs":
+                return self.doSniff
+        elif self.sniffOption == "network":
+            if not self.getTypeFromFD(int(fd)) == "network":
+                return self.doSniff
+        elif self.sniffOption == "ipc":
+            if not self.getTypeFromFD(int(fd)) == "ipc":
+                return self.doSniff
+        elif self.sniffOption == "filtered":
+            if not fd in self.selected_fds:
+                return self.doSniff
+
+        # Add packet
+        if returnCode > 256:
+            tmp_pkt = pkt[:255] + "..."
+        else:
+            tmp_pkt = pkt
+        self.pktTreestore.append(None, [len(self.packets), fd, direction, tmp_pkt.replace("\\x", ""), int(time.time())])
+        self.packets.append(pkt)
         return self.doSniff
+
+    #+---------------------------------------------- 
+    #| GETTERS
+    #+----------------------------------------------
+    def getTypeFromFD(self, fd):
+        path = "/proc/" + str(self.pid) + "/fd/" + str(fd)
+        if os.path.realpath(path).find("socket:[", 0) != -1:
+            return "network"
+        elif os.path.isfile( os.path.realpath(path) ) or os.path.isdir( os.path.realpath(path) ):
+            return "fs"
+        else:
+            return "ipc"
 
     #+---------------------------------------------- 
     #| GETTERS

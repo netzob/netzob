@@ -113,7 +113,7 @@ class Network:
         self.panel.attach(entry_count, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Time capturing limit
-        label = gtk.Label("Timeout (s)")
+        label = gtk.Label("Timeout")
         label.show()
         entry_time = gtk.Entry()
         entry_time.show()

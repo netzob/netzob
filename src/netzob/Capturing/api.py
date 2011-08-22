@@ -32,8 +32,6 @@ import random
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-#from scapy.all import send, UDP, conf, packet
-import scapyy.all as scapyy
 
 #+---------------------------------------------- 
 #| Configuration of the logger

@@ -88,14 +88,14 @@ class Pcap:
 
         # Scapy filter
         label = gtk.Label("Scapy filter")
-        label.show()
+#        label.show() # TODO : implement the filter
         entry_filter = gtk.Entry()
         entry_filter.set_width_chars(50)
-        entry_filter.show()
+#        entry_filter.show()
         entry_filter.set_text("tcp port 80")
         self.panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
+
         # Sniff launching button
         but = gtk.Button(label="Import traffic")
         but.show()
@@ -107,6 +107,7 @@ class Pcap:
         self.treestore = gtk.TreeStore(int, str, str, str, str, str, int) # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         treeview = gtk.TreeView(self.treestore)
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        treeview.set_size_request(500, -1)
         treeview.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # Col proto
