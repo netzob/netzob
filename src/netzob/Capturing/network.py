@@ -255,8 +255,7 @@ class Network:
         fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
         fd.write(res)
         fd.close()
-        dialog.destroy()
-        
+        dialog.destroy()        
 
     #+---------------------------------------------- 
     #| Creation of a new trace from a selection of packets

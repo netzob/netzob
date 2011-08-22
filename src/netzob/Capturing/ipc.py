@@ -74,6 +74,7 @@ class IPC:
     #+----------------------------------------------   
     def __init__(self, zob):
         self.zob = zob
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.ipc.py')
         self.packets = []

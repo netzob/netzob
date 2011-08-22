@@ -66,7 +66,9 @@ class Api:
     #| Constructor :
     #| @param groups: list of all groups 
     #+----------------------------------------------   
-    def __init__(self):
+    def __init__(self, zob):        
+        self.zob = zob
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.api.py')
         self.packets = []
@@ -277,6 +279,7 @@ class Api:
         fd.write(res)
         fd.close()
         dialog.destroy()
+        self.zob.updateListOfAvailableTraces()
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details

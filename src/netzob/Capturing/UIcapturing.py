@@ -31,7 +31,7 @@ import network
 import pcap
 import api
 import ipc
-import xml
+import fileImport
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -97,16 +97,16 @@ class UIcapturing:
         notebook.append_page(ipcPanel.getPanel(), gtk.Label("IPC Capturing"))
 
         # API Panel
-        apiPanel = api.Api()
+        apiPanel = api.Api(self.zob)
         notebook.append_page(apiPanel.getPanel(), gtk.Label("API capturing"))
 
         # PCAP Panel
-        pcapPanel = pcap.Pcap()
+        pcapPanel = pcap.Pcap(self.zob)
         notebook.append_page(pcapPanel.getPanel(), gtk.Label("PCAP import"))
 
-        # XML Panel
-        xmlPanel = xml.XML()
-        notebook.append_page(xmlPanel.getPanel(), gtk.Label("XML import"))
+        # File Panel
+        filePanel = fileImport.FileImport(self.zob)
+        notebook.append_page(filePanel.getPanel(), gtk.Label("File import"))
 
     #+---------------------------------------------- 
     #| Called when user select a notebook

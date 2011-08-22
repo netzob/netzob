@@ -19,6 +19,7 @@
 #+----------------------------------------------
 import base64
 import logging
+import StringIO
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -226,3 +227,34 @@ class TypeIdentifier():
         for i in range(0, len(msg), 2):
             res = res + chr(int(msg[i: i+2], 16))
         return res
+
+    #+---------------------------------------------- 
+    #| Return a hexdump of a hex message
+    #+----------------------------------------------          
+    def hexdump(self, buf, start=0):
+        length = len(buf)
+        res = StringIO.StringIO()
+        def GetPrintableChar(str):
+            if str.isalnum():
+                return str
+            else:
+                return '.'
+
+        i = 0
+        while i < length:
+            if length - i > 16:
+                l = 16
+            else:
+                l = length - i
+            
+            res.write('0x%08x  ' % (i + start))
+            s = ' '.join(["%02x" % ord(c) for c in buf[i:i + l]])
+            res.write(s)
+            sp = 49 - len(s)
+            res.write(' ' * sp)
+            s = ''.join(["%c" % GetPrintableChar(c) for c in buf[i:i + l]])
+            res.write(s)
+            res.write('\n')
+            i = i + 16
+
+        return res.getvalue()
