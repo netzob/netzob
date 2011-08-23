@@ -33,6 +33,10 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 class TypeIdentifier():
+    """A really useful function.
+
+    Returns None
+    """
 
     def __init__(self):
         # create logger with the given configuration

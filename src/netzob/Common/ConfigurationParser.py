@@ -15,7 +15,15 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------- 
-#| Global Imports
+#| Standard library imports
+#+----------------------------------------------
+
+#+---------------------------------------------- 
+#| Related third party imports
+#+----------------------------------------------
+
+#+---------------------------------------------- 
+#| Local application imports
 #+----------------------------------------------
 import ConfigParser
 
@@ -28,6 +36,8 @@ import ConfigParser
 #+---------------------------------------------- 
 class ConfigurationParser(object):
     
+    #A really useful function.
+
     # The configuration file path
     configurationFilePath = "resources/global.conf"
     
@@ -49,7 +59,10 @@ class ConfigurationParser(object):
     #| @return the requested value
     #+---------------------------------------------- 
     def get(self, section, name):
-        return self.config.get(section, name)
+        if self.config.has_section(section) :
+            return self.config.get(section, name)
+        else :
+            return None
     
     def getInt(self, section, name):
         return self.config.getint(section, name)

@@ -53,10 +53,7 @@ logging.config.fileConfig(loggingFilePath)
 #|     <data></data>
 #| </message>
 #+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 class NetworkMessage(AbstractMessage):
-    
     def __init__(self):
         AbstractMessage.__init__(self, "Network")
         # create logger with the given configuration
@@ -95,7 +92,7 @@ class NetworkMessage(AbstractMessage):
         subData.text = str(self.getData())
         return ElementTree.tostring(root)
         
-#+---------------------------------------------- 
+    #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
     def getProtocol(self):
