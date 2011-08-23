@@ -26,6 +26,9 @@ pygtk.require('2.0')
 import logging
 import threading
 import copy
+import os
+import time
+import random
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -267,7 +270,6 @@ class UIsequencing:
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
-        self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected)
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
@@ -276,6 +278,7 @@ class UIsequencing:
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
         rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())        
+        self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
         self.log.debug("GUI for sequential part is created")
 
     #+---------------------------------------------- 
@@ -318,15 +321,28 @@ class UIsequencing:
     #|   mainly to open a contextual menu
     #+----------------------------------------------
     def button_press_on_treeview_messages(self, treeview, event):
-        
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
         if (target and event.type == gtk.gdk.BUTTON_PRESS and not (event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK)) and treeview.get_selection().path_is_selected(target[0])):
             # disable selection
             treeview.get_selection().set_select_function(lambda * ignore: False)
             self.defer_select = target[0]
-        
-        
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+
+        # Display the details of a packet
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
+            x = int(event.x)
+            y = int(event.y)
+            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            aIter = treeview.get_model().get_iter(path)
+            if aIter:
+                if treeview.get_model().iter_is_valid(aIter):
+                    message_id = treeview.get_model().get_value(aIter, 0)
+                    group = self.treeMessageGenerator.getGroup()
+                    self.treeTypeStructureGenerator.setGroup(group)
+                    self.treeTypeStructureGenerator.setMessageByID(message_id)
+                    self.updateTreeStoreTypeStructure()
+
+        # Popup a menu
+        elif event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.log.debug("User requested a contextual menu (treeview messages)")
             x = int(event.x)
             y = int(event.y)
@@ -355,11 +371,11 @@ class UIsequencing:
 
             # Add entries to concatenate column
             concatMenu = gtk.Menu()
-            item = gtk.MenuItem("with left column")
+            item = gtk.MenuItem("with precedent field")
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, iCol, "left")
             concatMenu.append(item)
-            item = gtk.MenuItem("with right column")
+            item = gtk.MenuItem("with next field")
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, iCol, "right")
             concatMenu.append(item)
@@ -377,13 +393,180 @@ class UIsequencing:
             menu.popup(None, None, None, event.button, event.time)
 
     #+---------------------------------------------- 
+    #| button_press_on_treeview_typeStructure :
+    #|   operation when the user click on the treeview.
+    #|   mainly to open a contextual menu
+    #+----------------------------------------------
+    def button_press_on_treeview_typeStructure(self, treeview, event):
+        if self.treeTypeStructureGenerator.getMessage() == None:
+            return
+
+        # Popup a menu
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+            self.log.debug("User requested a contextual menu (on treeview typeStructure)")
+            x = int(event.x)
+            y = int(event.y)
+            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            (iCol,) = path
+            menu = gtk.Menu()
+            # Add sub-entries to change the type of a specific field
+            typesList = self.treeMessageGenerator.getGroup().getPossibleTypesByCol(iCol)
+            typeMenu = gtk.Menu()
+            for aType in typesList:
+                item = gtk.MenuItem("Render in : " + str(aType))
+                item.show()
+                item.connect("activate", self.rightClickToChangeType, iCol, aType)   
+                typeMenu.append(item)
+            item = gtk.MenuItem("Change Type")
+            item.set_submenu(typeMenu)
+            item.show()
+            menu.append(item)
+
+            # Add entries to concatenate fields
+            concatMenu = gtk.Menu()
+            item = gtk.MenuItem("with precedent field")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, iCol, "left")
+            concatMenu.append(item)
+            item = gtk.MenuItem("with next field")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, iCol, "right")
+            concatMenu.append(item)
+            item = gtk.MenuItem("Concatenate")
+            item.set_submenu(concatMenu)
+            item.show()
+            menu.append(item)
+
+            # Add entry to split the field
+            item = gtk.MenuItem("Split column")
+            item.show()
+            item.connect("activate", self.rightClickToSplitColumn, iCol)
+            menu.append(item)
+
+            # Add entry to export fields
+            item = gtk.MenuItem("Export selected fields")
+            item.show()
+            item.connect("activate", self.exportSelectedFields_cb)
+            menu.append(item)
+
+            menu.popup(None, None, None, event.button, event.time)
+
+    #+---------------------------------------------- 
+    #| exportSelectedFields_cb :
+    #|   Callback to export the selected fields
+    #|   as a new trace
+    #+----------------------------------------------
+    def exportSelectedFields_cb(self, event):
+        # Retrieve associated messages of selected fields
+        aggregatedCells = {}
+        (model, paths) = self.treeTypeStructureGenerator.getTreeview().get_selection().get_selected_rows()
+        for path in paths:
+            aIter = model.get_iter(path)
+            if(model.iter_is_valid(aIter)):
+                iCol = model.get_value(aIter, 0)
+                cells = self.treeTypeStructureGenerator.getGroup().getCellsByCol(iCol)
+                for i in range(len(cells)):
+                    if not i in aggregatedCells:
+                        aggregatedCells[i] = ""
+                    aggregatedCells[i] += str(cells[i])
+
+        # Popup a menu to save the data
+        dialog = gtk.Dialog(title="Save selected data", flags=0, buttons=None)
+        dialog.show()
+        table = gtk.Table(rows=2, columns=3, homogeneous=False)
+        table.show()
+
+        # Add to an existing trace
+        label = gtk.Label("Add to an existing trace")
+        label.show()
+        entry = gtk.combo_box_entry_new_text()
+        entry.show()
+        entry.set_size_request(300, -1)
+        entry.set_model(gtk.ListStore(str))
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        for tmpDir in os.listdir(tracesDirectoryPath):
+            if tmpDir == '.svn':
+                continue
+            entry.append_text(tmpDir)
+        but = gtk.Button("Save")
+        but.connect("clicked", self.add_packets_to_existing_trace, entry, aggregatedCells, dialog)
+        but.show()
+        table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+
+        # Create a new trace
+        label = gtk.Label("Create a new trace")
+        label.show()
+        entry = gtk.Entry()
+        entry.show()
+        but = gtk.Button("Save")
+        but.connect("clicked", self.create_new_trace, entry, aggregatedCells, dialog)
+        but.show()
+        table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 2, 3, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.action_area.pack_start(table, True, True, 0)
+
+    #+---------------------------------------------- 
+    #| Add a selection of packets to an existing trace
+    #+----------------------------------------------
+    def add_packets_to_existing_trace(self, button, entry, messages, dialog):
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
+        # Create the new XML structure
+        res = "<datas>\n"
+        for message in messages:
+            res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
+            res += message + "\n"
+            res += "</data>\n"
+        res += "</datas>\n"
+        # Dump into a random XML file
+        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd.write(res)
+        fd.close()
+        dialog.destroy()
+
+    #+---------------------------------------------- 
+    #| Creation of a new trace from a selection of packets
+    #+----------------------------------------------
+    def create_new_trace(self, button, entry, messages, dialog):
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        for tmpDir in os.listdir(tracesDirectoryPath):
+            if tmpDir == '.svn':
+                continue
+            if entry.get_text() == tmpDir:
+                dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
+                dialogBis.set_size_request(250, 50)
+                dialogBis.show()
+                return
+
+        # Create the dest Dir
+        newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
+        os.mkdir(newTraceDir)
+        # Create the new XML structure
+        res = "<datas>\n"
+        for message in messages.values():
+            res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
+            res += message + "\n"
+            res += "</data>\n"
+        res += "</datas>\n"
+        # Dump into a random XML file
+        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd.write(res)
+        fd.close()
+        dialog.destroy()
+        self.zob.updateListOfAvailableTraces()
+
+    #+---------------------------------------------- 
     #| rightClickToChangeType :
     #|   Callback to change the column type
     #|   by doing a right click
     #+----------------------------------------------
     def rightClickToChangeType(self, event, iCol, aType):
         self.treeMessageGenerator.getGroup().setTypeForCol(iCol, aType)
-        self.updateTreeStoreMessage()
+        self.update()
 
     #+---------------------------------------------- 
     #|  rightClickToConcatColumns:
@@ -405,6 +588,7 @@ class UIsequencing:
         else:
             self.treeMessageGenerator.getGroup().concatColumns(iCol)
         self.treeMessageGenerator.updateDefault()
+        self.update()
 
     #+---------------------------------------------- 
     #|  rightClickToSplitColumn:
@@ -476,6 +660,7 @@ class UIsequencing:
         self.treeMessageGenerator.getGroup().splitColumn(iCol, self.split_position)
         self.treeMessageGenerator.updateDefault()            
         dialog.destroy()
+        self.update()
 
     def adjustSplitColumn(self, widget, textview, direction, iCol):
         if self.split_max_len <= 2:
@@ -524,6 +709,7 @@ class UIsequencing:
         # Apply the new chosed type for this column
         self.treeMessageGenerator.getGroup().setTypeForCol(iCol, chosedType)
         self.treeMessageGenerator.updateDefault()
+        self.update()
         
     #+---------------------------------------------- 
     #| build_context_menu_for_groups :
@@ -531,7 +717,6 @@ class UIsequencing:
     #|   on the treeview groups
     #+----------------------------------------------
     def build_context_menu_for_groups(self, event):
-        
         # Retrieves the group on which the user has clicked on
         x = int(event.x)
         y = int(event.y)
@@ -589,8 +774,7 @@ class UIsequencing:
         group.setName(text)
         dialog.destroy()
         #Update Left and Right
-        self.updateTreeStoreGroup()
-        self.updateTreeStoreMessage()
+        self.update()
 
     def responseToDialog(self, entry, dialog, response):
         dialog.response(response)
@@ -635,9 +819,7 @@ class UIsequencing:
             newGroup = MessageGroup.MessageGroup(newGroupName, [])
             self.treeGroupGenerator.addGroup(newGroup)
             #Update Left and Right
-            self.updateTreeStoreGroup()
-            self.updateTreeStoreMessage()
-        
+            self.update()
         
     #+---------------------------------------------- 
     #| displayPopupToRemoveGroup :
@@ -658,8 +840,7 @@ class UIsequencing:
                 self.treeGroupGenerator.removeGroup(group)
                 self.log.debug("The group " + group.getName() + " has been deleted !")
                 #Update Left and Right
-                self.updateTreeStoreGroup()
-                self.updateTreeStoreMessage()
+                self.update()
             else :
                 self.log.debug("The user didn't confirm the deletion of the group " + group.getName())                
             
@@ -723,11 +904,7 @@ class UIsequencing:
         message_grp.buildRegexAndAlignment()
         new_message_grp.buildRegexAndAlignment()
         #Update Left and Right
-        self.log.debug("Updating tree store group")
-        self.updateTreeStoreGroup()
-        self.log.debug("Updating tree store message")
-        self.updateTreeStoreMessage()
-   
+        self.update()
         return
    
     #+---------------------------------------------- 
@@ -776,15 +953,6 @@ class UIsequencing:
                 # enable dragging message out of current group
                 self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
                 self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
-
-
-
-
-#                self.treeMessageGenerator.getTreeview().connect("cursor-changed", self.messageSelected) 
-
-
-
-
             # Else, quite weird so throw a warning
             else :
                 self.log.warning("Impossible to update the treestore message since we cannot find the selected group according to its name " + str(self.selectedGroup))
@@ -793,43 +961,8 @@ class UIsequencing:
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreTypeStructure(self):
-        self.treeTypeStructureGenerator.default()
+        self.treeTypeStructureGenerator.update()
        
-    #+---------------------------------------------- 
-    #| Called when messages are selected
-    #| accept MULTIPLE SELECTION
-    #+----------------------------------------------
-    def messageSelected(self, treeview) :
-        # Retrieves all the selections
-#        (model, pathlist) = treeview.get_selection().get_selected_rows()
-        pathlist = []
-        treeview.get_selection().selected_foreach(self.foreach_cb, pathlist)
-
-    def foreach_cb(self, model, path, iter, pathlist):
-        pathlist.append(iter)
-        for iter in pathlist :
-            if(iter):
-                if(model.iter_is_valid(iter)):
-                    # Show the detail structure of the selected message
-                    message_id = model.get_value(iter, 0)
-                    group = self.treeMessageGenerator.getGroup()
-                    self.treeTypeStructureGenerator.setGroup(group)
-                    self.treeTypeStructureGenerator.setMessageByID(message_id)
-                    self.treeTypeStructureGenerator.buildTypeStructure()
-                    self.updateTreeStoreTypeStructure()
-
-                """
-                group_regex = modele.get_value(iter, 1)
-                pango = modele.get_value(iter, 2)
-                
-                for group in self.treeGroupGenerator.getGroups() :
-                    for message in group.getMessages() :
-                        if str(message.getID()) == msg_id :
-                            self.selectedMessage = message
-                            self.log.debug("selected message {0}".format(self.selectedMessage.getID()))     
-                            self.updateTreeStoreGroup()
-                """
-
     #+---------------------------------------------- 
     #| Called when user click on a group or on a message
     #+----------------------------------------------
@@ -840,9 +973,8 @@ class UIsequencing:
                 idGroup = modele.get_value(iter, 0)
                 score = modele.get_value(iter, 1)
                 self.selectedGroup = idGroup
-                self.updateTreeStoreMessage()
                 self.treeTypeStructureGenerator.clear()
-                self.updateTreeStoreTypeStructure()
+                self.update()
 
     #+---------------------------------------------- 
     #| Called when user select a new score limit
@@ -888,7 +1020,7 @@ class UIsequencing:
     def refineRegexes_cb(self, button):
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
-        self.updateTreeStoreMessage()
+        self.update()
 
     #+---------------------------------------------- 
     #| Called when user wants to refine regexes
@@ -1020,7 +1152,6 @@ class UIsequencing:
                 it = self.treeMessageGenerator.treestore.iter_next(it)
                 if it == None:
                     return
-                message_id = self.treeMessageGenerator.treestore.get_value(it, 0)
 
                 # Build a temporary group
                 group.clear()
@@ -1057,9 +1188,7 @@ class UIsequencing:
                     group.setTabulationByCol(start_field, group.getTabulationByCol(start_field) + 10)
 
                 # View the proposed protocol structuration
-                self.treeTypeStructureGenerator.buildTypeStructure()
-                self.updateTreeStoreMessage()
-                self.updateTreeStoreTypeStructure()
+                self.update()
 
     #+---------------------------------------------- 
     #| Called when user wants to apply a size field on a group

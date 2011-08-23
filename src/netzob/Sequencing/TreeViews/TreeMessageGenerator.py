@@ -178,6 +178,7 @@ class TreeMessageGenerator():
         self.treeview.set_model(self.treestore)
 
     def column_renaming_cb(self, cell, path_string, new_text, iCol):
+        print "2"
         self.treestore[path_string][iCol + 4] = new_text
         self.group.setColumnNameByCol(iCol, new_text)
 

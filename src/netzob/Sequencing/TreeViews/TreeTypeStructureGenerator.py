@@ -62,19 +62,20 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------     
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(str, str, str)     
+        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Data, Description
         # creation of the treeview   
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
-        columns = ["Name", "Value", "Description"]
-        for i in range(len(columns)):
+        columns = ["iCol", "Name", "Value", "Description"]
+        for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
             column.pack_start(cell, True)
             column.set_attributes(cell, markup=i)
             self.treeview.append_column(column)
         self.treeview.show()
+        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.scroll = gtk.ScrolledWindow()
 #        self.scroll.set_size_request(1000, 500)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
@@ -102,10 +103,7 @@ class TreeTypeStructureGenerator():
     #| default :
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
-    def default(self):
-        pass
-
-    def buildTypeStructure(self):
+    def update(self):
         if self.getGroup() == None or self.getMessage() == None:
             self.clear()
             return
@@ -123,10 +121,10 @@ class TreeTypeStructureGenerator():
             for k in range(int(col['tabulation'])):
                 tab += " "
             messageElt = splittedMessage[iCol]
-            if col['regex'].find("{") != -1:
-                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'] + " / " + messageElt, col['description']])
+            if not self.getGroup().isRegexStatic( col['regex'] ):
+                iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", col['regex'] + " / " + messageElt, col['description']])
             else:
-                iter = self.treestore.append(None, [tab + col['name'] + ":", col['regex'], col['description']])
+                iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", messageElt, col['description']])
             iCol += 1
 
     #+---------------------------------------------- 
