@@ -523,7 +523,7 @@ class UIsequencing:
             res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -553,7 +553,7 @@ class UIsequencing:
             res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".txt"  , "w")
+        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -1020,6 +1020,9 @@ class UIsequencing:
     def refineRegexes_cb(self, button):
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
+        dialogBis = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
+        dialogBis.set_size_request(250, 50)
+        dialogBis.show()
         self.update()
 
     #+---------------------------------------------- 

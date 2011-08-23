@@ -67,12 +67,10 @@ class TracesExtractor(object):
 
         # Retrieves all the files to parse
         files = []
-        
         foundConfigFile = False
         
         for file in os.listdir(self.path):
             filePath = self.path + "/" + file
-            
             if file == '.svn':
                 self.log.warning("[INFO] Do not parse file {0}".format(filePath))
             elif file == "config.xml":
@@ -80,13 +78,11 @@ class TracesExtractor(object):
             else :
                 files.append(file)
         
-        
         if foundConfigFile :
             self.log.info("A configuration file has been found.")
             configParser = ConfigParser.ConfigParser(self.path+"/config.xml")
             configParser.loadConfiguration()
             return configParser.getGroups()
-        
          
         else :            
             # Parse each file

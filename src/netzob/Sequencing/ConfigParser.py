@@ -92,7 +92,7 @@ class ConfigParser(object):
     def loadConfiguration(self):
         self.log.info("Extract configuration from file {0}".format(self.configFile))
         
-        messages = []        
+        messages = []
         dom = xml.dom.minidom.parse(self.configFile)
         # parse all the declared messages
         xmlDatas = dom.getElementsByTagName("data")

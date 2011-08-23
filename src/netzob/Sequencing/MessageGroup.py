@@ -576,13 +576,13 @@ class MessageGroup(object):
         xml  = "<group id=\""+str(self.getID())+"\" name=\""+self.getName()+"\" score=\""+str(self.getScore())+"\" members=\""+members+"\" alignment=\""+self.getAlignment()+"\">\n"
         
         xml += "\t<regex>\n"
-        for col in self.columns():
+        for col in self.getColumns():
             xml += "\t\t<re>"+col['regex']+"</re>\n"
         xml += "\t</regex>\n"
         
         
         xml += "\t<cols>\n"
-        for col in self.columns() :
+        for col in self.getColumns() :
             xml += "\t\t<col>"+col['name']+"</col>\n"
         xml += "\t</cols>\n"
         xml += "</group>\n"
