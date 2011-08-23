@@ -19,6 +19,7 @@
 #+---------------------------------------------------------------------------+
 import unittest
 from models.NetworkMessageTest import NetworkMessageTest
+from capturing.ParasiteGeneratorTest import ParasiteGeneratorTest
 
 
 #+---------------------------------------------------------------------------+
@@ -33,6 +34,9 @@ def addTestsForModels(suite):
     suite.addTest(NetworkMessageTest('test_loadFromXml'))
     suite.addTest(NetworkMessageTest('test_saveInXML'))
     
+def addTestsForGotPoisoning(suite):    
+    suite.addTest(ParasiteGeneratorTest('test_sourceCodeGenerator'))
+    
 
 if __name__ == "__main__":
     
@@ -41,6 +45,9 @@ if __name__ == "__main__":
     
     # add the tests dedicated to the models
     addTestsForModels(globalTestSuite)
+    
+    # add the tests dedicated to the GOT Poisoning
+    addTestsForGotPoisoning(globalTestSuite)
     
     # Execute the global test suite
     runner = unittest.TextTestRunner()
