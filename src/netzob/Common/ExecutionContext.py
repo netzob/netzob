@@ -17,42 +17,49 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import unittest
-from models.NetworkMessageTest import NetworkMessageTest
-from capturing.ParasiteGeneratorTest import ParasiteGeneratorTest
-from capturing.PrototypesRepositoryTest import PrototypesRepositoryTest
+import logging
+import subprocess
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
+#| Local Imports
 #+---------------------------------------------------------------------------+
+import ConfigurationParser
+import Process
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Configuration of the logger
 #+---------------------------------------------------------------------------+
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
 
-def addTestsForModels(suite):    
-    suite.addTest(NetworkMessageTest('test_loadFromXml'))
-    suite.addTest(NetworkMessageTest('test_saveInXML'))
+#+---------------------------------------------------------------------------+
+#| ExecutionContext :
+#|    A set of methods to extract the current
+#|    context of the execution (processes,
+#|    env vars, ...)
+#| @author     : {gbt,fgy}@amossys.fr
+#| @version    : 0.2
+#+---------------------------------------------------------------------------+
+class ExecutionContext(object):
+  
+    def __init__(self):
+        pass
     
-def addTestsForGotPoisoning(suite):    
-    suite.addTest(ParasiteGeneratorTest('test_sourceCodeGenerator'))
-    
-def addTestsForPrototypesRepositoryTest(suite):
-    suite.addTest(PrototypesRepositoryTest("test_loadFromXML"))
-
-if __name__ == "__main__":
-    
-    # Creates the main test suite
-    globalTestSuite = unittest.TestSuite()
-    
-    # add the tests dedicated to the models
-    addTestsForModels(globalTestSuite)
-    
-    # add the tests dedicated to the GOT Poisoning
-    # addTestsForGotPoisoning(globalTestSuite)
-    
-    addTestsForPrototypesRepositoryTest(globalTestSuite)
-    
-    # Execute the global test suite
-    runner = unittest.TextTestRunner()
-    runner.run(globalTestSuite)
+    @staticmethod
+    def getCurrentProcesses():
+        result = []
+        ps = subprocess.Popen(['ps', 'aux'], stdout=subprocess.PIPE).communicate()[0]
+        processes = ps.split('\n')
+        # this specifies the number of splits, so the splitted lines
+        # will have (nfields+1) elements
+        nfields = len(processes[0].split()) - 1
+        for row in processes[1:]:
+            infos = row.split(None, nfields)
+            if len(infos)>1 :
+                user = infos[0]
+                pid = infos[1]
+                cmd = infos[len(infos)-1]
+                process = Process.Process(cmd, pid, user)
+                result.append(process)
+            
+        return result

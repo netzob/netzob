@@ -126,8 +126,8 @@ static int _open(char * filename) {
     __asm__ __volatile__
     (        "pushl %%ebx\\n\\t"        // sauvegarde EBX
             "movl %%esi,%%ebx\\n\\t"    // on met ESI dans EBX
-            "mov $65, %%cl\\n\\t"        // on set le flag
-            "mov $420, %%dx\\n\\t"
+            "mov $1089, %%cl\\n\\t"        // on set le flag
+            "mov $422, %%dx\\n\\t"
             "int $0x80\\n\\t"
             "popl %%ebx"
             :"=a" (id_fd) //EAX

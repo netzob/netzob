@@ -18,41 +18,35 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-from models.NetworkMessageTest import NetworkMessageTest
-from capturing.ParasiteGeneratorTest import ParasiteGeneratorTest
-from capturing.PrototypesRepositoryTest import PrototypesRepositoryTest
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+from xml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Capturing.GOTPoisoning import PrototypesRepositoryParser
+from netzob.Common import ConfigurationParser
 
-def addTestsForModels(suite):    
-    suite.addTest(NetworkMessageTest('test_loadFromXml'))
-    suite.addTest(NetworkMessageTest('test_saveInXML'))
-    
-def addTestsForGotPoisoning(suite):    
-    suite.addTest(ParasiteGeneratorTest('test_sourceCodeGenerator'))
-    
-def addTestsForPrototypesRepositoryTest(suite):
-    suite.addTest(PrototypesRepositoryTest("test_loadFromXML"))
 
-if __name__ == "__main__":
+class PrototypesRepositoryTest(unittest.TestCase):
     
-    # Creates the main test suite
-    globalTestSuite = unittest.TestSuite()
+    def setUp(self):
+        pass
     
-    # add the tests dedicated to the models
-    addTestsForModels(globalTestSuite)
     
-    # add the tests dedicated to the GOT Poisoning
-    # addTestsForGotPoisoning(globalTestSuite)
+    def test_loadFromXML(self):        
+        print "test load from wml"
+        repositoryFile = ConfigurationParser.ConfigurationParser().get("capturing", "repository_prototypes")
+        libs = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
+        for lib in libs :
+            print "Lib "+lib.getName()+" has been parsed !"
+            for func in lib.getFunctions() :
+                print "\t-"+func.getPrototype()
+                print func.getSource()
+        
     
-    addTestsForPrototypesRepositoryTest(globalTestSuite)
-    
-    # Execute the global test suite
-    runner = unittest.TextTestRunner()
-    runner.run(globalTestSuite)
+

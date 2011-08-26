@@ -14,13 +14,10 @@
 #| @organization : Amossys, http://www.amossys.fr                            |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+ 
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 pygtk.require('2.0')
 import logging
@@ -28,28 +25,34 @@ import os
 import time
 import random
 
-#+---------------------------------------------- 
-#| Local Imports
-#+----------------------------------------------
-from ..Common import ConfigurationParser
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from ptrace.linux_proc import readProcesses, readProcessCmdline
 
-#+---------------------------------------------- 
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from ..Common import ConfigurationParser
+from ..Common import ExecutionContext
+
+#+---------------------------------------------------------------------------+
 #| Configuration of the logger
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
 logging.config.fileConfig(loggingFilePath)
 
-#+---------------------------------------------- 
-#| UIcapturing :
-#|     GUI for capturing messages
+#+---------------------------------------------------------------------------+
+#| Api :
+#|     GUI for capturing messages from api hooking
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
-#+---------------------------------------------- 
+#+---------------------------------------------------------------------------+
 class Api:
     
-    #+---------------------------------------------- 
+    #+-----------------------------------------------------------------------+ 
     #| Called when user select a new trace
-    #+----------------------------------------------
+    #+-----------------------------------------------------------------------+
     def new(self):
         pass
 
@@ -62,97 +65,172 @@ class Api:
     def kill(self):
         pass
     
-    #+---------------------------------------------- 
+    #+-----------------------------------------------------------------------+
     #| Constructor :
     #| @param groups: list of all groups 
-    #+----------------------------------------------   
+    #+-----------------------------------------------------------------------+ 
     def __init__(self, zob):        
         self.zob = zob
+        
+        self.listOfProcess = []
+
 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.api.py')
         self.packets = []
-
-        # Network Capturing Panel
-        self.panel = gtk.Table(rows=5, columns=4, homogeneous=False)
-        self.panel.show()
-
-        # Scapy filter
-        but = gtk.Button("Import API")
-        but.show()
-        label_file = gtk.Label("...")
-        label_file.show()
-        but.connect("clicked", self.import_pcap, label_file)
-        self.panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(label_file, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Scapy filter
-        label = gtk.Label("Scapy filter")
-        label.show()
-        entry_filter = gtk.Entry()
-        entry_filter.set_width_chars(50)
-        entry_filter.show()
-        entry_filter.set_text("tcp port 80")
-        self.panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
-        # Sniff launching button
-        but = gtk.Button(label="Import traffic")
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Main panel
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        self.panel = gtk.Table(rows=6, columns=5, homogeneous=False)
+        self.panel.show()
+        
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # List of processes
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        but = gtk.Button("Update processes list")
         but.show()
-        but.connect("clicked", self.launch_sniff, entry_filter, label_file)
-        self.panel.attach(but, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Packet list
+        but.connect("clicked", self.updateProcessList_cb)
+        self.processStore = gtk.combo_box_entry_new_text()
+        self.processStore.show()
+        self.processStore.set_size_request(500, -1)
+        self.processStore.set_model(gtk.ListStore(str))
+        self.panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.processStore, 1, 5, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        self.handlerID = self.processStore.connect("changed", self.processSelected_cb)
+        
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # List of DLL
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll = gtk.ScrolledWindow()
-        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int) # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
-        treeview = gtk.TreeView(self.treestore)
-        treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        treeview.connect("cursor-changed", self.packet_details)
+        self.dllTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
+        self.dllTreeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         cell = gtk.CellRendererText()
-        # Col proto
-        column = gtk.TreeViewColumn('Proto')
+        # Col file descriptor
+        column = gtk.TreeViewColumn('Name')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        self.dllTreeview.append_column(column)
+        # Col type
+        column = gtk.TreeViewColumn('Version')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
-        treeview.append_column(column)
-        # Col IP.src
-        column = gtk.TreeViewColumn('IP source')
+        self.dllTreeview.append_column(column)
+        # Col name
+        column = gtk.TreeViewColumn('Size')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
-        treeview.append_column(column)
-        # Col IP.dst
-        column = gtk.TreeViewColumn('IP dest')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
-        treeview.append_column(column)
-        # Col {TCP,UDP}.sport
-        column = gtk.TreeViewColumn('sport')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=4)
-        treeview.append_column(column)
-        # Col {TCP,UDP}.dport
-        column = gtk.TreeViewColumn('dport')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=5)
-        treeview.append_column(column)
-        treeview.show()
-        scroll.add(treeview)
+        self.dllTreeview.append_column(column)
+        self.dllTreeview.show()
+        scroll.add(self.dllTreeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
-        # Button select packets for further analysis
-        but = gtk.Button(label="Save selected packets as a new trace")
-        but.show()
-        but.connect("clicked", self.save_packets, treeview)
-        self.panel.attach(but, 1, 2, 4, 5, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 5, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-        # Packet detail
-        scroll = gtk.ScrolledWindow()
-        self.textview = gtk.TextView()
-        self.textview.show()
-        scroll.add(self.textview)
-        scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # List of prototypes
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        self.dllStore = gtk.combo_box_entry_new_text()
+        self.dllStore.show()
+        self.dllStore.set_size_request(300, -1)
+        self.dllStore.set_model(gtk.ListStore(str))
+        self.panel.attach(self.dllStore, 0, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        self.butAddPrototype = gtk.Button("Create prototype")
+        self.butAddPrototype.show()
+        self.butAddPrototype.connect("clicked", self.updateProcessList_cb)
+        self.panel.attach(self.butAddPrototype, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        self.butRemovePrototype = gtk.Button("Delete prototype")
+        self.butRemovePrototype.show()
+        self.butRemovePrototype.connect("clicked", self.updateProcessList_cb)
+        self.panel.attach(self.butRemovePrototype, 4, 5, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # List of selected prototypes
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        scroll2 = gtk.ScrolledWindow()
+        self.selectedPrototypeTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
+        self.selectedPrototypeTreeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        cell = gtk.CellRendererText()
+        # Col file descriptor
+        column = gtk.TreeViewColumn('Name')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        self.selectedPrototypeTreeview.append_column(column)
+        # Col type
+        column = gtk.TreeViewColumn('Version')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        self.selectedPrototypeTreeview.append_column(column)
+        # Col name
+        column = gtk.TreeViewColumn('Size')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=2)
+        self.selectedPrototypeTreeview.append_column(column)
+        self.selectedPrototypeTreeview.show()
+        scroll2.add(self.selectedPrototypeTreeview)
+        scroll2.show()
+        scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.panel.attach(scroll2, 0, 5, 5,6, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # List of buttons (start and stop capture)
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        self.startCapture = gtk.Button("Start capture")
+        self.startCapture.show()
+        self.startCapture.connect("clicked", self.updateProcessList_cb)
+        self.panel.attach(self.startCapture, 3, 4, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        self.stopCapture = gtk.Button("Stop capture")
+        self.stopCapture.show()
+        self.stopCapture.connect("clicked", self.updateProcessList_cb)
+        self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+    
+    #+---------------------------------------------- 
+    #| Called when user wants to update the process list
+    #+----------------------------------------------
+    def updateProcessList_cb(self, button):
+        self.processStore.handler_block(self.handlerID)
+        # clear the list of process
+        self.processStore.get_model().clear()
+        
+        # retrives the list of process
+        self.listOfProcess = ExecutionContext.ExecutionContext.getCurrentProcesses()
+        
+        # add in the list all the process
+        for process in self.listOfProcess :
+            self.processStore.append_text(str(process.getPid()) + "\t" + process.getName())        
+        self.processStore.handler_unblock(self.handlerID)
+
+    #+---------------------------------------------- 
+    #| Called when user select a process
+    #+----------------------------------------------
+    def processSelected_cb(self, widget):        
+        # Updates the list of shared lib
+        strProcessSelected = self.processStore.get_active_text()        
+        pid = int(strProcessSelected.split()[0])
+        selectedProcess = None
+        
+        for process in self.listOfProcess :
+            if process.getPid() == pid :
+                selectedProcess = process
+                
+        if selectedProcess != None :
+            libs = selectedProcess.getSharedLibs()            
+            
+            self.dllTreeview.get_model().clear()
+            for lib in libs :
+                self.dllTreeview.get_model().append(None, [lib.getName(), "", ""])        
+            
+     
+            
+        else :
+            print "not found"
+        
+        
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet

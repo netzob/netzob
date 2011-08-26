@@ -29,6 +29,7 @@ import unittest
 from netzob.Capturing.GOTPoisoning.ParasiteGenerator import ParasiteGenerator
 from netzob.Capturing.GOTPoisoning.HijackedFunction import HijackedFunction
 from netzob.Capturing.GOTPoisoning.InjectorGenerator import InjectorGenerator
+from netzob.Capturing.GOTPoisoning.GOTPoisoner import GOTPoisoner
 
 class ParasiteGeneratorTest(unittest.TestCase):
     
@@ -36,8 +37,10 @@ class ParasiteGeneratorTest(unittest.TestCase):
         pass
     
     def test_sourceCodeGenerator(self):
+        testFolder = "/home/gbt/Developpements/DLL_Injection/got_netzob"
+        
         # create the parasite generator
-        parasiteGenerator = ParasiteGenerator("/home/gbt/Developpements/Workspaces/Netzob/got")
+        parasiteGenerator = ParasiteGenerator(testFolder)
         
         # register the two following functions to hijack
         # int     SSL_read(void *ssl,char *buf,int num);
@@ -45,7 +48,11 @@ class ParasiteGeneratorTest(unittest.TestCase):
 #        sslReadFunc = HijackedFunction("SSL_read", "int", ["void *", "char *", "int"])
 #        sslWriteFunc = HijackedFunction("SSL_write", "int", ["void *", "char *", "int"])
         putsFunc = HijackedFunction("puts", "int", ["char *"])
-        putsFunc.setSource("_write (1, param0,5);")
+        putsFunc.setSource('''    int (*origfunc)(char *p) = 0x00000000;            
+            int fd = _open("/tmp/content2.log");
+            _write(fd, param0 , 3);
+            _close(fd);
+            origfunc("test");''')
 
 #        parasiteGenerator.addAnHijackedFunctions(sslReadFunc)
 #        parasiteGenerator.addAnHijackedFunctions(sslWriteFunc)
@@ -55,9 +62,12 @@ class ParasiteGeneratorTest(unittest.TestCase):
         parasiteGenerator.compileParasite()
         parasiteGenerator.linkParasite()
         
-        injectorGenerator = InjectorGenerator("/home/gbt/Developpements/Workspaces/Netzob/got", parasiteGenerator)
+        injectorGenerator = InjectorGenerator("/home/gbt/Developpements/DLL_Injection/got_netzob", parasiteGenerator)
         injectorGenerator.writeInjectorToFile()    
+        injectorGenerator.compileInjector()
         
+        poisoner = GOTPoisoner(parasiteGenerator, injectorGenerator) 
+        poisoner.injectProcess(24304)
         
         
    
