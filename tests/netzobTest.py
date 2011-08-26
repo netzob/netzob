@@ -21,6 +21,8 @@ import unittest
 from models.NetworkMessageTest import NetworkMessageTest
 from capturing.ParasiteGeneratorTest import ParasiteGeneratorTest
 from capturing.PrototypesRepositoryTest import PrototypesRepositoryTest
+from xmlrunner import XMLTestRunner
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -54,5 +56,9 @@ if __name__ == "__main__":
     addTestsForPrototypesRepositoryTest(globalTestSuite)
     
     # Execute the global test suite
-    runner = unittest.TextTestRunner()
-    runner.run(globalTestSuite)
+#    runner = unittest.TextTestRunner()
+#    testResult = runner.run(globalTestSuite)
+    FILE = open("tests/results.xml", "w")
+    reporter = XMLTestRunner(FILE)
+    reporter.run(globalTestSuite)
+    FILE.close()
