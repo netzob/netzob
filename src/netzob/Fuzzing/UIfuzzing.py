@@ -30,8 +30,8 @@ import threading
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-from ..Sequencing.TreeViews import TreeGroupGenerator
-from ..Sequencing.TreeViews import TreeTypeStructureGenerator
+from ..Modelization.TreeViews import TreeGroupGenerator
+from ..Modelization.TreeViews import TreeTypeStructureGenerator
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -80,7 +80,7 @@ class UIfuzzing:
     #+----------------------------------------------   
     def __init__(self, zob):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIfuzzing.py')
+        self.log = logging.getLogger('netzob.Fuzzing.UIfuzzing.py')
         self.zob = zob
         self.groups = []
         self.selectedGroup = None

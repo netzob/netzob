@@ -26,10 +26,10 @@ import unittest
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Capturing.GOTPoisoning.ParasiteGenerator import ParasiteGenerator
-from netzob.Capturing.GOTPoisoning.HijackedFunction import HijackedFunction
-from netzob.Capturing.GOTPoisoning.InjectorGenerator import InjectorGenerator
-from netzob.Capturing.GOTPoisoning.GOTPoisoner import GOTPoisoner
+from netzob.Import.GOTPoisoning.ParasiteGenerator import ParasiteGenerator
+from netzob.Import.GOTPoisoning.HijackedFunction import HijackedFunction
+from netzob.Import.GOTPoisoning.InjectorGenerator import InjectorGenerator
+from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 
 class ParasiteGeneratorTest(unittest.TestCase):
     

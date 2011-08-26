@@ -24,7 +24,7 @@ import gtk
 #| Local Imports
 #+----------------------------------------------
 from ...Common import ConfigurationParser
-from ...Sequencing import TracesExtractor
+from ...Modelization import TracesExtractor
        
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -50,7 +50,7 @@ class TreeGroupGenerator():
         self.treestore = None
         self.treeview = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeGroupGenerator.py')
+        self.log = logging.getLogger('netzob.Modelization.TreeStores.TreeGroupGenerator.py')
     
     #+---------------------------------------------- 
     #| initialization :
@@ -205,6 +205,9 @@ class TreeGroupGenerator():
     #+----------------------------------------------    
     def dataCarving(self, store):
         for group in self.getGroups():
+            group.getID()
+
+
             group.dataCarving(store)
             
     #+---------------------------------------------- 

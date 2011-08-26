@@ -40,14 +40,14 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| MessageGroup :
+#| Group :
 #|     definition of a group of messages
 #| all the messages in the same group must be 
 #| considered as equivalent
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class MessageGroup(object):
+class Group(object):
     
     #+----------------------------------------------
     #| Fields in a group message definition :
@@ -63,7 +63,7 @@ class MessageGroup(object):
     #+----------------------------------------------   
     def __init__(self, name, messages):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
+        self.log = logging.getLogger('netzob.Modelization.Group.py')
         self.id = uuid.uuid4() 
         self.name = name
         self.messages = messages
@@ -359,12 +359,25 @@ class MessageGroup(object):
 
     #+---------------------------------------------- 
     #| dataCarving:
-    #|  try to find the size fields of each regex
+    #|  try to find semantic elements in messages
     #+----------------------------------------------    
     def dataCarving(self, store):
-        self.log.info("Not yet implemented, stay tuned")
         if len(self.columns) == 0:
             return
+        typer = TypeIdentifier.TypeIdentifier()
+        urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
+        iCol = 0
+        for col in self.getColumns():
+            cells = self.getCellsByCol(iCol)
+            for cell in cells:
+                for match in urlRegex.finditer(typer.toASCII(cell)):
+                    start = match.start(0)
+                    end = match.end(0)
+                    store.append([self.getID(), iCol, "url", typer.toASCII(cell)[start:end]])
+            iCol += 1
+
+            
+#    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
 
     #+---------------------------------------------- 
     #| concatColumns:
@@ -545,7 +558,10 @@ class MessageGroup(object):
                         max = len(cell)
                     if len(cell) < min:
                         min = len(cell)
-                self.setRegexByCol(iCol, "(.{"+str(min)+","+str(max)+"})")
+                if min == max:
+                    self.setRegexByCol(iCol, "(.{"+str(min)+"})")
+                else:
+                    self.setRegexByCol(iCol, "(.{"+str(min)+","+str(max)+"})")
             else:
                 # TODO: handle complex regex
                 continue
@@ -567,7 +583,7 @@ class MessageGroup(object):
     #+----------------------------------------------    
     def storeInXmlConfig(self):
         # TODO: also store the following information : tabulation and selectedType
-        log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
+        log = logging.getLogger('netzob.Modelization.Group.py')
         
         members = ""
         for message in self.getMessages() :
@@ -592,7 +608,7 @@ class MessageGroup(object):
     def loadFromXmlConfig(xml, messages):
         # TODO: also load the following information : tabulation and selectedType
         self.columns = []
-        log = logging.getLogger('netzob.Sequencing.MessageGroup.py')
+        log = logging.getLogger('netzob.Modelization.Group.py')
         
         if not xml.hasAttribute("id") :
             log.warn("Impossible to load group from xml config file (no \"id\" attribute)")
@@ -624,7 +640,7 @@ class MessageGroup(object):
             self.columns[iCol]['name'] = "".join(colName)
             iCol += 1
 
-        group = MessageGroup(xml.attributes["name"].value, [])    
+        group = Group(xml.attributes["name"].value, [])    
         
         idMessages = xml.attributes["members"].value.split(";")
         for idMessage in idMessages :

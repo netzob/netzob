@@ -57,7 +57,7 @@ class Message(object):
     #+----------------------------------------------   
     def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.Message.py')
+        self.log = logging.getLogger('netzob.Modelization.Message.py')
         self.id = uuid.uuid4() 
         self.protocol = ""
         self.ipSource = ""
@@ -110,7 +110,7 @@ class Message(object):
         return "".join(self.getStringData()[start:end]) 
     
     def storeInXmlConfig(self):
-        log = logging.getLogger('netzob.Sequencing.Message.py')
+        log = logging.getLogger('netzob.Modelization.Message.py')
         xml  = "<data id=\""+str(self.getID())+"\" timestamp=\""+self.getTimestamp()+"\" " 
         xml += "rightReductionFactor=\""+str(self.getRightReductionFactor())+"\" leftReductionFactor=\""+str(self.getLeftReductionFactor())+"\">"
         xml += self.getStringData()
@@ -119,7 +119,7 @@ class Message(object):
     
     @staticmethod
     def loadFromXmlConfig(xml):        
-        log = logging.getLogger('netzob.Sequencing.Message.py')
+        log = logging.getLogger('netzob.Modelization.Message.py')
         message = Message()
         
         if not xml.hasAttribute("id") :

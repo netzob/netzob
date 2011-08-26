@@ -4,6 +4,7 @@
 * python
 * python-ptrace
 * python-nfqueue
+* python-hachoir
 * strace
 * lsof
 * iptables

@@ -54,7 +54,7 @@ class TreeTypeStructureGenerator():
         self.group = None
         self.message = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TreeViews.TreeTypeStructureGenerator.py')
+        self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeTypeStructureGenerator.py')
    
     #+---------------------------------------------- 
     #| initialization :

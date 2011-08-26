@@ -28,7 +28,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Capturing.GOTPoisoning import PrototypesRepositoryParser
+from netzob.Import.GOTPoisoning import PrototypesRepositoryParser
 from netzob.Common import ConfigurationParser
 
 
@@ -40,7 +40,7 @@ class PrototypesRepositoryTest(unittest.TestCase):
     
     def test_loadFromXML(self):        
         print "test load from wml"
-        repositoryFile = ConfigurationParser.ConfigurationParser().get("capturing", "repository_prototypes")
+        repositoryFile = ConfigurationParser.ConfigurationParser().get("import", "repository_prototypes")
         libs = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
         for lib in libs :
             print "Lib "+lib.getName()+" has been parsed !"

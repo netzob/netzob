@@ -53,7 +53,7 @@ class TreeMessageGenerator():
     def __init__(self):
         self.group = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TreeStores.TreeMessageGenerator.py')
+        self.log = logging.getLogger('netzob.Modelization.TreeStores.TreeMessageGenerator.py')
    
     #+---------------------------------------------- 
     #| initialization :

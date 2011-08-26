@@ -29,7 +29,7 @@ from xml.etree import ElementTree
 #| Local Imports
 #+---------------------------------------------------------------------------+
 import ConfigurationParser
-from netzob.Capturing.GOTPoisoning import HijackedFunction
+from netzob.Import.GOTPoisoning import HijackedFunction
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger

@@ -30,7 +30,7 @@ import time
 #+----------------------------------------------
 import Clusterer
 import TraceParser
-import MessageGroup
+import Group
 import ConfigParser
 from ..Common import ConfigurationParser
 
@@ -55,7 +55,7 @@ class TracesExtractor(object):
         self.zob = zob
         self.path = self.zob.tracePath
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TraceExtractor.py')
+        self.log = logging.getLogger('netzob.Modelization.TraceExtractor.py')
     
     #+---------------------------------------------- 
     #| Parse :
@@ -100,7 +100,7 @@ class TracesExtractor(object):
                 # Append retrieved message to the final list
                 tmpMessages = traceParser.parse()
                 # Save the extracted messages in a dedicated group
-                group = MessageGroup.MessageGroup(file, tmpMessages)            
+                group = Group.Group(file, tmpMessages)            
                 # Now we try to clusterize the newly created group
                 clusterer = Clusterer.Clusterer(self.zob, [group], explodeGroups=True)
                 clusterer.mergeGroups()

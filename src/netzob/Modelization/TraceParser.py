@@ -48,7 +48,7 @@ class TraceParser(object):
         self.path = path
         self.messages = []
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.TraceParser.py')
+        self.log = logging.getLogger('netzob.Modelization.TraceParser.py')
        
     #+---------------------------------------------- 
     #| Parse :  

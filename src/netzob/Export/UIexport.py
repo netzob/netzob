@@ -30,7 +30,7 @@ pygtk.require('2.0')
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-from ..Sequencing.TreeViews import TreeGroupGenerator
+from ..Modelization.TreeViews import TreeGroupGenerator
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -39,12 +39,12 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| UIDumpingMessage :
-#|     GUI for message dumping process
+#| UIexport :
+#|     GUI for exporting results
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class UIDumpingMessage:
+class UIexport:
 
     #+---------------------------------------------- 
     #| Called when user select a new trace
@@ -74,15 +74,14 @@ class UIDumpingMessage:
         self.treeGroupGenerator.groups = self.groups
         self.treeGroupGenerator.default()       
         
-        
     #+---------------------------------------------- 
     #| Constructor :
     #| @param groups: list of all groups 
     #+----------------------------------------------   
     def __init__(self, zob):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Dumping.UIDumpingMessage.py')
-        self.log.debug("Starting the UI Dumping GUI")
+        self.log = logging.getLogger('netzob.Export.UIexport.py')
+        self.log.debug("Starting the Export GUI")
         
         self.groups = []
         self.selectedGroup = None

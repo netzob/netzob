@@ -29,7 +29,7 @@ import time
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import MessageGroup
+import Group
 import Message
 from ..Common import ConfigurationParser, TypeIdentifier
 
@@ -56,7 +56,7 @@ class Clusterer(object):
         self.zob = zob
         self.groups= []
         # Create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.Clusterer.py')
+        self.log = logging.getLogger('netzob.Modelization.Clusterer.py')
 
         if explodeGroups == False:
             self.groups = groups
@@ -68,7 +68,7 @@ class Clusterer(object):
             for group in groups :
                 for m in group.getMessages():
                     i += 1
-                    self.groups.append( MessageGroup.MessageGroup(str(i), [m]) )
+                    self.groups.append( Group.Group(str(i), [m]) )
             self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
         
     #+---------------------------------------------- 
@@ -252,7 +252,7 @@ class Clusterer(object):
         messages = []
         messages.extend( group1.getMessages() )
         messages.extend( group2.getMessages() )
-        newGroup = MessageGroup.MessageGroup(group1.getName() + "-" + group2.getName(), messages)
+        newGroup = Group.Group(group1.getName() + "-" + group2.getName(), messages)
                     
         # Append th new group to the "groups" structure
         self.groups.append(newGroup)
@@ -326,7 +326,7 @@ if __name__ == "__main__":
         msg = Message.Message()
         msg.setData(sequence)
         messages.append(msg)    
-    group = MessageGroup.MessageGroup("group", messages)    
+    group = Group.Group("group", messages)    
     
     print "Execution started..."
     # Measure the time for clustering

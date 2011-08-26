@@ -25,7 +25,7 @@ import xml.dom.minidom
 #+----------------------------------------------
 from ..Common import ConfigurationParser
 import Message
-import MessageGroup
+import Group
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -35,7 +35,7 @@ logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| ConfigParser :
-#|     XML parser for saved sequencing operations
+#|     XML parser for saved modelization operations
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
@@ -46,7 +46,7 @@ class ConfigParser(object):
     #+----------------------------------------------   
     def __init__(self, configFile):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.ConfigParser.py')
+        self.log = logging.getLogger('netzob.Modelization.ConfigParser.py')
         self.configFile = configFile
         self.groups = []
         
@@ -104,7 +104,7 @@ class ConfigParser(object):
         # parse all the declared groups
         xmlGroups = dom.getElementsByTagName("group")
         for xmlGroup in xmlGroups :
-            group = MessageGroup.MessageGroup.loadFromXmlConfig(xmlGroup, messages)
+            group = Group.Group.loadFromXmlConfig(xmlGroup, messages)
             if group != None :
                 self.groups.append(group)
 

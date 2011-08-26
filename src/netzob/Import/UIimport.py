@@ -27,11 +27,11 @@ import logging
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-import network
-import pcap
-import api
-import ipc
-import fileImport
+import Network
+import Pcap
+import Api
+import Ipc
+import FileImport
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -45,7 +45,7 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class UIcapturing:
+class UIimport:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace
@@ -71,7 +71,7 @@ class UIcapturing:
     #+----------------------------------------------   
     def __init__(self, zob):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
+        self.log = logging.getLogger('netzob.Import.UIimport.py')
         self.zob = zob
         self.panel = gtk.HPaned()
         self.panel.show()
@@ -89,23 +89,23 @@ class UIcapturing:
         #| LEFT PART OF THE GUI : Capturing panels
         #+----------------------------------------------
         # Network Capturing Panel
-        netPanel = network.Network(self.zob)
+        netPanel = Network.Network(self.zob)
         notebook.append_page(netPanel.getPanel(), gtk.Label("Network Capturing"))
 
         # IPC Capturing Panel
-        ipcPanel = ipc.IPC(self.zob)
+        ipcPanel = Ipc.IPC(self.zob)
         notebook.append_page(ipcPanel.getPanel(), gtk.Label("IPC Capturing"))
 
         # API Panel
-        apiPanel = api.Api(self.zob)
+        apiPanel = Api.Api(self.zob)
         notebook.append_page(apiPanel.getPanel(), gtk.Label("API capturing"))
 
         # PCAP Panel
-        pcapPanel = pcap.Pcap(self.zob)
+        pcapPanel = Pcap.Pcap(self.zob)
         notebook.append_page(pcapPanel.getPanel(), gtk.Label("PCAP import"))
 
         # File Panel
-        filePanel = fileImport.FileImport(self.zob)
+        filePanel = FileImport.FileImport(self.zob)
         notebook.append_page(filePanel.getPanel(), gtk.Label("File import"))
 
     #+---------------------------------------------- 

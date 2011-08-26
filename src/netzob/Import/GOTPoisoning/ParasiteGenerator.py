@@ -45,7 +45,7 @@ class ParasiteGenerator():
     
     def __init__(self, tmp_folder):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Capturing.GOTPoisoning.py')
+        self.log = logging.getLogger('netzob.Import.GOTPoisoning.ParasiteGenerator.py')
         # temporary folder
         self.tmp_folder = tmp_folder
         # list of functions to hijacked

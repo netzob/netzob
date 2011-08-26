@@ -33,9 +33,9 @@ sys.path.append('resources/scapy/')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Sequencing import UIsequencing
-from netzob.Dumping import UIDumpingMessage
-from netzob.Capturing import UIcapturing
+from netzob.Modelization import UImodelization
+from netzob.Export import UIexport
+from netzob.Import import UIimport
 from netzob.Fuzzing import UIfuzzing
 from netzob.Common import ConfigurationParser
 
@@ -109,15 +109,15 @@ class Netzob():
 
         self.pageList = []
         # Adding the different notebook
-        self.capturing = UIcapturing.UIcapturing(self)
-        self.sequencing = UIsequencing.UIsequencing(self)
-        self.dumping = UIDumpingMessage.UIDumpingMessage(self)
+        self.Import = UIimport.UIimport(self)
+        self.modelization = UImodelization.UImodelization(self)
+        self.export = UIexport.UIexport(self)
         self.fuzzing = UIfuzzing.UIfuzzing(self)
 
-        self.pageList.append(["Import", self.capturing])
-        self.pageList.append(["Sequencing", self.sequencing])
+        self.pageList.append(["Import", self.Import])
+        self.pageList.append(["Modelization", self.modelization])
         self.pageList.append(["Fuzzing", self.fuzzing])
-        self.pageList.append(["Export", self.dumping])
+        self.pageList.append(["Export", self.export])
         
         for page in self.pageList:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))

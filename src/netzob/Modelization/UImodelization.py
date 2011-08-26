@@ -33,7 +33,7 @@ import random
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import MessageGroup
+import Group
 import Message
 import TracesExtractor
 import ConfigParser
@@ -49,12 +49,12 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| UIsequencing :
-#|     GUI for message sequencing
+#| UImodelization :
+#|     GUI for message modelization
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class UIsequencing:
+class UImodelization:
     TARGET_TYPE_TEXT = 80
     TARGETS = [('text/plain', 0, TARGET_TYPE_TEXT)]
     
@@ -76,8 +76,8 @@ class UIsequencing:
         pass
     
     def save(self, file):
-        self.log = logging.getLogger('netzob.Sequencing.UIsequencing.py')
-        self.log.info("Saving the Sequencing")
+        self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
+        self.log.info("Saving the modelization")
         
         configParser = ConfigParser.ConfigParser(file)
         configParser.saveInConfiguration(self.treeGroupGenerator.getGroups())
@@ -89,7 +89,7 @@ class UIsequencing:
     #+----------------------------------------------   
     def __init__(self, zob):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIsequencing.py')
+        self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
         self.zob = zob
         self.selectedGroup = ""
         self.selectedMessage = ""
@@ -816,7 +816,7 @@ class UIsequencing:
         if (len(newGroupName) > 0) :
             self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
-            newGroup = MessageGroup.MessageGroup(newGroupName, [])
+            newGroup = Group.Group(newGroupName, [])
             self.treeGroupGenerator.addGroup(newGroup)
             #Update Left and Right
             self.update()
@@ -1032,19 +1032,15 @@ class UIsequencing:
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
         ## ListStore format :
         # str: group.id
-        # int: size field column
-        # int: size field size
-        # int: start column
-        # int: substart column
-        # int: end column
-        # int: subend column
-        # str: message rendered in cell
-        treeview = gtk.TreeView(gtk.ListStore(str, int, int, int, int, int, int, str)) 
+        # int: iCol
+        # str: data type (url, ip, email, etc.)
+        # str: data
+        treeview = gtk.TreeView(gtk.ListStore(str, int, str, str))
         cell = gtk.CellRendererText()
         treeview.connect("cursor-changed", self.dataCarvingResultSelected_cb)
         column = gtk.TreeViewColumn('Size field and related payload')
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=7)
+        column.set_attributes(cell, text=3)
         treeview.append_column(column)
 
         # Chose button
@@ -1080,7 +1076,7 @@ class UIsequencing:
     #+----------------------------------------------
     def findSizeFields(self, button):
         # Create a temporary group for testing size fields
-        group = MessageGroup.MessageGroup('tmp_group', [])
+        group = Group.Group('tmp_group', [])
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :
