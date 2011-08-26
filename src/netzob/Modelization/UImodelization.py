@@ -967,11 +967,11 @@ class UImodelization:
     #| Called when user click on a group or on a message
     #+----------------------------------------------
     def groupChanged(self, treeview):
-        (modele, iter) = treeview.get_selection().get_selected()
+        (model, iter) = treeview.get_selection().get_selected()
         if(iter):
-            if(modele.iter_is_valid(iter)):
-                idGroup = modele.get_value(iter, 0)
-                score = modele.get_value(iter, 1)
+            if(model.iter_is_valid(iter)):
+                idGroup = model.get_value(iter, 0)
+                score = model.get_value(iter, 1)
                 self.selectedGroup = idGroup
                 self.treeTypeStructureGenerator.clear()
                 self.update()
@@ -1030,46 +1030,14 @@ class UImodelization:
     #+----------------------------------------------
     def dataCarving_cb(self, button):
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
-        ## ListStore format :
-        # str: group.id
-        # int: iCol
-        # str: data type (url, ip, email, etc.)
-        # str: data
-        treeview = gtk.TreeView(gtk.ListStore(str, int, str, str))
-        cell = gtk.CellRendererText()
-        treeview.connect("cursor-changed", self.dataCarvingResultSelected_cb)
-        column = gtk.TreeViewColumn('Size field and related payload')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
-        treeview.append_column(column)
-
-        # Chose button
-        but = gtk.Button(label="Apply result")
-        but.show()
-        but.connect("clicked", self.dataCarvingApplyResult_cb, dialog)
-        dialog.action_area.pack_start(but, True, True, 0)
 
         # Just to force the calculation of the splitted messages by regex
         for group in self.treeGroupGenerator.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
-        # Treeview containing potential data carving results
-        treeview.set_size_request(800, 300)
-        self.treeGroupGenerator.dataCarving( treeview.get_model() )
-        treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-        dialog.vbox.pack_start(scroll, True, True, 0)
+        dialog.vbox.pack_start(self.treeGroupGenerator.dataCarvingResults(), True, True, 0)
         dialog.show()
-
-    def dataCarvingResultSelected_cb(self):
-        pass
-
-    def dataCarvingApplyResult_cb(self):
-        pass
 
     #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields

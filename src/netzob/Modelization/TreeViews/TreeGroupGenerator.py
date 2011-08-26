@@ -200,16 +200,19 @@ class TreeGroupGenerator():
             group.findSizeFields(store)
 
     #+---------------------------------------------- 
-    #| dataCarving:
+    #| dataCarvingResults:
     #|  try to find the data hidden in the messages
     #+----------------------------------------------    
-    def dataCarving(self, store):
+    def dataCarvingResults(self):
+        notebook = gtk.Notebook()
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_TOP)
         for group in self.getGroups():
-            group.getID()
-
-
-            group.dataCarving(store)
-            
+            scroll = group.dataCarving()
+            if scroll != None:
+                notebook.append_page(scroll, gtk.Label(group.getName()))
+        return notebook
+    
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------

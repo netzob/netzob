@@ -22,6 +22,7 @@ import threading
 import logging
 import re
 import struct
+import gtk
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -359,25 +360,114 @@ class Group(object):
 
     #+---------------------------------------------- 
     #| dataCarving:
-    #|  try to find semantic elements in messages
+    #|  try to find semantic elements in each field
     #+----------------------------------------------    
-    def dataCarving(self, store):
+    def dataCarving(self):
         if len(self.columns) == 0:
-            return
-        typer = TypeIdentifier.TypeIdentifier()
+            return None
+
         urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
+
+        vbox = gtk.VBox(False, spacing=5)
+        vbox.show()
+        hbox = gtk.HBox(False, spacing=5)
+        hbox.show()
+        # Treeview containing potential data carving results ## ListStore format :
+        # int: iCol
+        # str: data type (url, ip, email, etc.)
+        store = gtk.ListStore(int, str)
+        treeviewRes = gtk.TreeView(store)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Column')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        treeviewRes.append_column(column)
+        column = gtk.TreeViewColumn('Data type')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        treeviewRes.append_column(column)
+        treeviewRes.set_size_request(200, 300)
+        treeviewRes.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeviewRes)
+        hbox.pack_start(scroll, True, True, 0)
+
+        typer = TypeIdentifier.TypeIdentifier()
         iCol = 0
         for col in self.getColumns():
-            cells = self.getCellsByCol(iCol)
-            for cell in cells:
+            matchElts = 0
+            for cell in self.getCellsByCol(iCol):
                 for match in urlRegex.finditer(typer.toASCII(cell)):
-                    start = match.start(0)
-                    end = match.end(0)
-                    store.append([self.getID(), iCol, "url", typer.toASCII(cell)[start:end]])
+                    matchElts += 1
+            if matchElts > 0:
+                store.append([iCol, "url"])
+            # typer.toASCII(cell)[start:end]]
             iCol += 1
 
-            
-#    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
+        # Preview of matching fields in a treeview ## ListStore format :
+        # str: data
+        store = gtk.ListStore(str)
+        treeview = gtk.TreeView(store)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Data')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, markup=0)
+        treeview.append_column(column)
+        treeview.set_size_request(500, 300)
+        treeview.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        hbox.pack_start(scroll, True, True, 0)
+        vbox.pack_start(hbox, True, True, 0)
+
+        # Apply button
+        but = gtk.Button(label="Apply data type")
+        but.show()
+        self.butDataCarvingHandle = None
+        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, store, but)
+        vbox.pack_start(but, False, False, 0)
+
+        return vbox
+        # TODO : use hachoir to retrieve subfiles
+        #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
+
+    #+---------------------------------------------- 
+    #| dataCarvingResultSelected_cb:
+    #|  Callback when clicking on a data carving result.
+    #|  It shows a preview of the carved data
+    #+----------------------------------------------
+    def dataCarvingResultSelected_cb(self, treeview, store, but):
+        urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
+        typer = TypeIdentifier.TypeIdentifier()
+        store.clear()
+        (model, it) = treeview.get_selection().get_selected()
+        if(it):
+            if(model.iter_is_valid(it)):
+                iCol = model.get_value(it, 0)
+                dataType = model.get_value(it, 1)
+                if self.butDataCarvingHandle != None:
+                    but.disconnect(self.butDataCarvingHandle)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, iCol, dataType)
+                for cell in self.getCellsByCol(iCol):
+                    cell = typer.toASCII(cell)
+                    for match in urlRegex.finditer(cell):
+                        if match == None:
+                            store.append([ cell ])
+                        start = match.start(0)
+                        end = match.end(0)
+                        data = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:end] + "</span>" + cell[end:]
+                        store.append([ data ])
+
+    #+---------------------------------------------- 
+    #| applyDataType_cb:
+    #|  Called when user wants to apply a data type to a field
+    #+----------------------------------------------
+    def applyDataType_cb(self, button, iCol, dataType):
+        self.setDescriptionByCol(iCol, dataType)
 
     #+---------------------------------------------- 
     #| concatColumns:
@@ -521,8 +611,8 @@ class Group(object):
         return ", ".join(tmpTypes)
 
     def getRepresentation(self, raw, iCol) :
-        type = self.getSelectedTypeByCol(iCol)
-        return self.encode(raw, type)
+        aType = self.getSelectedTypeByCol(iCol)
+        return self.encode(raw, aType)
     
     def encode(self, raw, type):
         typer = TypeIdentifier.TypeIdentifier()
