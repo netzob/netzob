@@ -18,6 +18,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
+import sys
+
 from models.NetworkMessageTest import NetworkMessageTest
 from capturing.ParasiteGeneratorTest import ParasiteGeneratorTest
 from capturing.PrototypesRepositoryTest import PrototypesRepositoryTest
@@ -44,6 +46,18 @@ def addTestsForPrototypesRepositoryTest(suite):
 
 if __name__ == "__main__":
     
+    # Output is given through argument.
+    # If no argument : output to stdout 
+    
+    outputStdout = True
+    
+    if (len(sys.argv) == 2) :
+        outputStdout = False
+        reportFile = sys.argv[1]
+    
+    
+    
+    
     # Creates the main test suite
     globalTestSuite = unittest.TestSuite()
     
@@ -55,10 +69,11 @@ if __name__ == "__main__":
     
     addTestsForPrototypesRepositoryTest(globalTestSuite)
     
-    # Execute the global test suite
-#    runner = unittest.TextTestRunner()
-#    testResult = runner.run(globalTestSuite)
-    FILE = open("tests/results.xml", "w")
-    reporter = XMLTestRunner(FILE)
-    reporter.run(globalTestSuite)
-    FILE.close()
+    if (outputStdout == True) :
+        runner = unittest.TextTestRunner()
+        testResult = runner.run(globalTestSuite)
+    else :
+        File = open(reportFile, "w")
+        reporter = XMLTestRunner(File)
+        reporter.run(globalTestSuite)
+        File.close()

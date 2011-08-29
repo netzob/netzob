@@ -39,8 +39,8 @@ class PrototypesRepositoryTest(unittest.TestCase):
     
     
     def test_loadFromXML(self):        
-        print "test load from wml"
         repositoryFile = ConfigurationParser.ConfigurationParser().get("import", "repository_prototypes")
+        print "Load Prototype repository from file : "+repositoryFile
         libs = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
         for lib in libs :
             print "Lib "+lib.getName()+" has been parsed !"
