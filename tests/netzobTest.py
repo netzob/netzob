@@ -21,8 +21,8 @@ import unittest
 import sys
 
 from models.NetworkMessageTest import NetworkMessageTest
-from capturing.ParasiteGeneratorTest import ParasiteGeneratorTest
-from capturing.PrototypesRepositoryTest import PrototypesRepositoryTest
+from importing.ParasiteGeneratorTest import ParasiteGeneratorTest
+from importing.PrototypesRepositoryTest import PrototypesRepositoryTest
 from xmlrunner import XMLTestRunner
 
 
