@@ -189,17 +189,18 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        # Widget button merge common regexes
-        but = gtk.Button("Merge common regexes")
-        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
-        but.show()
-        table.attach(but, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
         # Widget button find size fields
         but = gtk.Button("Find size fields")
         # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
         but.connect("clicked", self.findSizeFields)
         but.show()
+        table.attach(but, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button merge common regexes
+        but = gtk.Button("Merge common regexes")
+        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
+        ## TODO: merge common regexes (if it is usefull)
+#        but.show()
         table.attach(but, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button refine regex
@@ -576,12 +577,13 @@ class UImodelization:
             tmpDomain.add( self.treeMessageGenerator.getGroup().getRepresentation(cell, iCol) )
         domain = sorted(tmpDomain)
 
-        dialog = gtk.Dialog(title="Domain of definition of the column " + str(iCol), flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Domain of definition for the column " + str(iCol), flags=0, buttons=None)
         # Text view containing domain of definition ## ListStore format :
         # str: group.id
         treeview = gtk.TreeView(gtk.ListStore(str)) 
         treeview.set_size_request(800, 300)
         treeview.show()
+        treeview.get_selection().set_mode(gtk.SELECTION_NONE)
         cell = gtk.CellRendererText()
         column = gtk.TreeViewColumn("Column " + str(iCol))
         column.pack_start(cell, True)
@@ -1064,9 +1066,9 @@ class UImodelization:
     def refineRegexes_cb(self, button):
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
-        dialogBis = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
-        dialogBis.set_size_request(250, 50)
-        dialogBis.show()
+        dialog = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
+        dialog.set_size_request(250, 50)
+        dialog.show()
         self.update()
 
     #+---------------------------------------------- 
