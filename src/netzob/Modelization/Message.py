@@ -20,6 +20,7 @@
 import uuid
 import re
 import logging
+import glib
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -172,24 +173,24 @@ class Message(object):
                     color = self.group.getColorByCol(iCol)
                 if styled:
                     if encoded:
-                        res.append( '<span foreground="'+color+'" font_family="monospace">' + self.group.getRepresentation( data[start:end], iCol ) + '</span>' )
+                        res.append( '<span foreground="'+color+'" font_family="monospace">' + glib.markup_escape_text(self.group.getRepresentation( data[start:end], iCol )) + '</span>' )
                     else:
                         res.append( '<span foreground="'+color+'" font_family="monospace">' + data[start:end] + '</span>' )
                 else:
                     if encoded:
-                        res.append( self.group.getRepresentation( data[start:end], iCol ) )
+                        res.append( glib.markup_escape_text(self.group.getRepresentation( data[start:end], iCol )) )
                     else:
                         res.append( data[start:end] )
                 dynamicCol += 1
             else:
                 if styled:
                     if encoded:
-                        res.append( '<span>' + self.group.getRepresentation( col['regex'], iCol ) + '</span>')
+                        res.append( '<span>' + glib.markup_escape_text(self.group.getRepresentation( col['regex'], iCol )) + '</span>')
                     else:
                         res.append( '<span>' + col['regex'] + '</span>')
                 else:
                     if encoded:
-                        res.append( self.group.getRepresentation( col['regex'], iCol ) )
+                        res.append( glib.markup_escape_text(self.group.getRepresentation( col['regex'], iCol )) )
                     else:
                         res.append( col['regex'] )
             iCol = iCol + 1

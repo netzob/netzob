@@ -22,6 +22,7 @@ import logging
 import re
 import struct
 import gtk
+import glib
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -370,7 +371,7 @@ class Group(object):
 
         vbox = gtk.VBox(False, spacing=5)
         vbox.show()
-        hbox = gtk.HBox(False, spacing=5)
+        hbox = gtk.HPaned()
         hbox.show()
         # Treeview containing potential data carving results ## ListStore format :
         # int: iCol
@@ -382,7 +383,7 @@ class Group(object):
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Data type')
+        column = gtk.TreeViewColumn('Data type found')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeviewRes.append_column(column)
@@ -392,7 +393,7 @@ class Group(object):
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
         scroll.add(treeviewRes)
-        hbox.pack_start(scroll, True, True, 0)
+        hbox.add(scroll)
 
         typer = TypeIdentifier.TypeIdentifier()
         iCol = 0
@@ -408,27 +409,26 @@ class Group(object):
 
         # Preview of matching fields in a treeview ## ListStore format :
         # str: data
-        store = gtk.ListStore(str)
-        treeview = gtk.TreeView(store)
+        treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Data')
         column.pack_start(cell, True)
         column.set_attributes(cell, markup=0)
         treeview.append_column(column)
-        treeview.set_size_request(500, 300)
+        treeview.set_size_request(700, 300)
         treeview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
-        hbox.pack_start(scroll, True, True, 0)
+        hbox.add(scroll)
         vbox.pack_start(hbox, True, True, 0)
 
         # Apply button
-        but = gtk.Button(label="Apply data type")
+        but = gtk.Button(label="Apply data type on column")
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, store, but)
+        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
@@ -440,27 +440,32 @@ class Group(object):
     #|  Callback when clicking on a data carving result.
     #|  It shows a preview of the carved data
     #+----------------------------------------------
-    def dataCarvingResultSelected_cb(self, treeview, store, but):
+    def dataCarvingResultSelected_cb(self, treeview, treeviewTarget, but):
         urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
         typer = TypeIdentifier.TypeIdentifier()
-        store.clear()
+        treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
         if(it):
             if(model.iter_is_valid(it)):
                 iCol = model.get_value(it, 0)
                 dataType = model.get_value(it, 1)
+                treeviewTarget.get_column(0).set_title("Column " + str(iCol))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, iCol, dataType)
                 for cell in self.getCellsByCol(iCol):
-                    cell = typer.toASCII(cell)
+                    cell = glib.markup_escape_text( typer.toASCII(cell) )
+                    segments = []
                     for match in urlRegex.finditer(cell):
                         if match == None:
-                            store.append([ cell ])
-                        start = match.start(0)
-                        end = match.end(0)
-                        data = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:end] + "</span>" + cell[end:]
-                        store.append([ data ])
+                            treeviewTarget.get_model().append([ cell ])
+                        segments.append( (match.start(0), match.end(0)) )
+
+                    segments.reverse() # We start from the end
+                    for (start, end) in segments:
+                        cell = cell[:end] + "</span>" + cell[end:]
+                        cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
+                    treeviewTarget.get_model().append([ cell ])
 
     #+---------------------------------------------- 
     #| applyDataType_cb:

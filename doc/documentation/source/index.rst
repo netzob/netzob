@@ -62,6 +62,7 @@ Some good starting points in the documentation are
 
 * :ref:`introduction`
 * :ref:`inputs`
+* :ref:`modelization`
 * :ref:`creation`
 * :ref:`reading`
 * :ref:`quick_reference`

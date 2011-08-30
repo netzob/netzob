@@ -1072,10 +1072,6 @@ class UImodelization:
     #| Called when user wants to refine regexes
     #+----------------------------------------------
     def refineRegexes_cb(self, button):
-        if self.treeMessageGenerator.getGroup() == None:
-            self.log.info("No group selected")
-            return
-
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
         dialog = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
@@ -1087,9 +1083,6 @@ class UImodelization:
     #| Called when user wants to refine regexes
     #+----------------------------------------------
     def dataCarving_cb(self, button):
-        if self.treeMessageGenerator.getGroup() == None:
-            self.log.info("No group selected")
-            return
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
 
         # Just to force the calculation of the splitted messages by regex
@@ -1108,20 +1101,12 @@ class UImodelization:
             self.log.info("No group selected")
             return
         entropy = Entropy.Entropy(self.treeMessageGenerator.getGroup())
-        view = entropy.buildDistributionView()
-        dialog = gtk.Dialog(title="Entropy view", flags=0, buttons=None)
-        dialog.set_size_request(800, 600)
-        dialog.vbox.pack_start(view, True, True, 0)
-        dialog.show()
+        entropy.buildDistributionView()
 
     #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
-        if self.treeMessageGenerator.getGroup() == None:
-            self.log.info("No group selected")
-            return
-
         # Create a temporary group for testing size fields
         group = Group.Group('tmp_group', [])
 

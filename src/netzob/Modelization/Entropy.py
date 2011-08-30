@@ -18,14 +18,7 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
-import matplotlib
-matplotlib.use('Agg')
-from matplotlib.figure import Figure
-from matplotlib.axes import Subplot
-from matplotlib.backends.backend_gtkagg import FigureCanvasGTK
-from matplotlib import cm # colormap
-from matplotlib import pylab
-pylab.hold(False) # This will avoid memory leak
+from pylab import figure, show
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -73,12 +66,12 @@ class Entropy(object):
             i += maxCell
             segments.append( i )
 
-        figure = Figure(figsize=(800, 500), dpi=75)
-        axis = figure.add_subplot(111)
+        fig = figure()#figsize=(800, 500))#, dpi=75)
+        axis = fig.add_subplot(111, frame_on=False)
         axis.hold(True)
         axis.plot(resX, resY, '.')
         for segment in segments:
             axis.plot([segment, segment], [0, 255], 'k-')
-        canvas = FigureCanvasGTK(figure)
-        canvas.show()
-        return canvas
+        axis.set_xlim(0, 255)
+        axis.set_ylim(0, 255)
+        show()
