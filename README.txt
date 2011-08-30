@@ -5,6 +5,7 @@
 * python-ptrace
 * python-nfqueue
 * python-hachoir
+* python-matplotlib
 * strace
 * lsof
 * iptables

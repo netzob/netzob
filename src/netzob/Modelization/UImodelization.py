@@ -37,6 +37,7 @@ import Group
 import Message
 import TracesExtractor
 import ConfigParser
+import Entropy
 from ..Common import ConfigurationParser
 from TreeViews import TreeGroupGenerator
 from TreeViews import TreeMessageGenerator
@@ -199,8 +200,9 @@ class UImodelization:
         # Widget button merge common regexes
         but = gtk.Button("Merge common regexes")
         but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
-        ## TODO: merge common regexes (if it is usefull)
-#        but.show()
+        ## TODO: merge common regexes (if it is really usefull)
+        but.show()
+        but.set_sensitive(False)
         table.attach(but, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button refine regex
@@ -214,6 +216,12 @@ class UImodelization:
         but.connect("clicked", self.dataCarving_cb)
         but.show()
         table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button to show fields entropy
+        but = gtk.Button("Messages entropy")
+        but.connect("clicked", self.messagesEntropy_cb)
+        but.show()
+        table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         ## Visualization options
         frame = gtk.Frame()
@@ -1064,6 +1072,10 @@ class UImodelization:
     #| Called when user wants to refine regexes
     #+----------------------------------------------
     def refineRegexes_cb(self, button):
+        if self.treeMessageGenerator.getGroup() == None:
+            self.log.info("No group selected")
+            return
+
         for group in self.treeGroupGenerator.getGroups():
             group.refineRegexes()
         dialog = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
@@ -1075,6 +1087,9 @@ class UImodelization:
     #| Called when user wants to refine regexes
     #+----------------------------------------------
     def dataCarving_cb(self, button):
+        if self.treeMessageGenerator.getGroup() == None:
+            self.log.info("No group selected")
+            return
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
 
         # Just to force the calculation of the splitted messages by regex
@@ -1086,9 +1101,27 @@ class UImodelization:
         dialog.show()
 
     #+---------------------------------------------- 
+    #| Called when user wants to see the entropy of a group of messages
+    #+----------------------------------------------
+    def messagesEntropy_cb(self, but):
+        if self.treeMessageGenerator.getGroup() == None:
+            self.log.info("No group selected")
+            return
+        entropy = Entropy.Entropy(self.treeMessageGenerator.getGroup())
+        view = entropy.buildView()
+        dialog = gtk.Dialog(title="Entropy view", flags=0, buttons=None)
+        dialog.set_size_request(800, 600)
+        dialog.vbox.pack_start(view, True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
+        if self.treeMessageGenerator.getGroup() == None:
+            self.log.info("No group selected")
+            return
+
         # Create a temporary group for testing size fields
         group = Group.Group('tmp_group', [])
 
