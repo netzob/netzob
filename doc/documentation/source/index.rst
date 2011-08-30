@@ -66,6 +66,7 @@ Some good starting points in the documentation are
 * :ref:`reading`
 * :ref:`quick_reference`
 * :ref:`API`
+* :ref:`Annexes`
 
 A day NETZOB will have a proper and efficient documentation. But this day, PYTHON will also have one ! :)
 
