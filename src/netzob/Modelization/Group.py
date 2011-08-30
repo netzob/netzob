@@ -74,6 +74,13 @@ class Group(object):
         self.alignment = ""
         self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tabulation', 'description', 'color'}
 
+        ## TODO: put this things in a dedicated class
+        self.carvers = {
+            'url' : re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)"),
+            'email' : re.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}"),
+            'ip' : re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
+            }
+
     def __repr__(self, *args, **kwargs):
         return self.name+"("+str(round(self.score,2))+")"
 
@@ -366,9 +373,6 @@ class Group(object):
         if len(self.columns) == 0:
             return None
 
-        urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
-        emailRegex = re.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
-
         vbox = gtk.VBox(False, spacing=5)
         vbox.show()
         hbox = gtk.HPaned()
@@ -398,13 +402,14 @@ class Group(object):
         typer = TypeIdentifier.TypeIdentifier()
         iCol = 0
         for col in self.getColumns():
-            matchElts = 0
-            for cell in self.getCellsByCol(iCol):
-                for match in urlRegex.finditer(typer.toASCII(cell)):
-                    matchElts += 1
-            if matchElts > 0:
-                store.append([iCol, "url"])
-            # typer.toASCII(cell)[start:end]]
+            for (carver, regex) in self.carvers.items():
+                matchElts = 0
+                for cell in self.getCellsByCol(iCol):
+                    for match in regex.finditer(typer.toASCII(cell)):
+                        matchElts += 1
+                if matchElts > 0:
+                    store.append([iCol, carver])
+                # typer.toASCII(cell)[start:end]]
             iCol += 1
 
         # Preview of matching fields in a treeview ## ListStore format :
@@ -441,7 +446,6 @@ class Group(object):
     #|  It shows a preview of the carved data
     #+----------------------------------------------
     def dataCarvingResultSelected_cb(self, treeview, treeviewTarget, but):
-        urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
         typer = TypeIdentifier.TypeIdentifier()
         treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
@@ -456,7 +460,7 @@ class Group(object):
                 for cell in self.getCellsByCol(iCol):
                     cell = glib.markup_escape_text( typer.toASCII(cell) )
                     segments = []
-                    for match in urlRegex.finditer(cell):
+                    for match in self.carvers[dataType].finditer(cell):
                         if match == None:
                             treeviewTarget.get_model().append([ cell ])
                         segments.append( (match.start(0), match.end(0)) )
