@@ -54,10 +54,10 @@ class Entropy(object):
         self.group = group
 
     #+---------------------------------------------- 
-    #| show:
-    #|   show messages entropy
+    #| buildDistributionView :
+    #|   show messages distribution
     #+----------------------------------------------    
-    def buildView(self):
+    def buildDistributionView(self):
         resX = []
         resY = []
         segments = []

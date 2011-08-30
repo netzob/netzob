@@ -218,8 +218,8 @@ class UImodelization:
         table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button to show fields entropy
-        but = gtk.Button("Messages entropy")
-        but.connect("clicked", self.messagesEntropy_cb)
+        but = gtk.Button("Messages distribution")
+        but.connect("clicked", self.messagesDistribution_cb)
         but.show()
         table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -1101,14 +1101,14 @@ class UImodelization:
         dialog.show()
 
     #+---------------------------------------------- 
-    #| Called when user wants to see the entropy of a group of messages
+    #| Called when user wants to see the distribution of a group of messages
     #+----------------------------------------------
-    def messagesEntropy_cb(self, but):
+    def messagesDistribution_cb(self, but):
         if self.treeMessageGenerator.getGroup() == None:
             self.log.info("No group selected")
             return
         entropy = Entropy.Entropy(self.treeMessageGenerator.getGroup())
-        view = entropy.buildView()
+        view = entropy.buildDistributionView()
         dialog = gtk.Dialog(title="Entropy view", flags=0, buttons=None)
         dialog.set_size_request(800, 600)
         dialog.vbox.pack_start(view, True, True, 0)
