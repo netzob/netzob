@@ -35,7 +35,10 @@ from ptrace.linux_proc import readProcesses, readProcessCmdline
 #+---------------------------------------------------------------------------+
 from ..Common import ConfigurationParser
 from ..Common import ExecutionContext
-
+from GOTPoisoning import PrototypesRepositoryParser
+from GOTPoisoning import ParasiteGenerator
+from GOTPoisoning import InjectorGenerator
+from GOTPoisoning import GOTPoisoner
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
@@ -73,11 +76,15 @@ class Api:
         self.zob = zob
         
         self.listOfProcess = []
-
-
+        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.api.py')
         self.packets = []
+        
+        # First we parse the repository
+        repositoryFile = ConfigurationParser.ConfigurationParser().get("import", "repository_prototypes")
+        self.repositoryOfSharedLib = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
+        
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
@@ -118,11 +125,15 @@ class Api:
         column.set_attributes(cell, text=1)
         self.dllTreeview.append_column(column)
         # Col name
-        column = gtk.TreeViewColumn('Size')
+        column = gtk.TreeViewColumn('Path')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         self.dllTreeview.append_column(column)
         self.dllTreeview.show()
+        
+        self.dllTreeview.connect("cursor-changed", self.dllSelected_cb)
+#        self.dllHandlerID = self.dllTreeview.connect("changed", self.dllSelected_cb)        
+        
         scroll.add(self.dllTreeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -135,6 +146,9 @@ class Api:
         self.dllStore.show()
         self.dllStore.set_size_request(300, -1)
         self.dllStore.set_model(gtk.ListStore(str))
+        
+        self.dllStore.connect("changed", self.prototypeSelected_cb)
+        
         self.panel.attach(self.dllStore, 0, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         self.butAddPrototype = gtk.Button("Create prototype")
@@ -147,45 +161,18 @@ class Api:
         self.butRemovePrototype.connect("clicked", self.updateProcessList_cb)
         self.panel.attach(self.butRemovePrototype, 4, 5, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # List of selected prototypes
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll2 = gtk.ScrolledWindow()
-        self.selectedPrototypeTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
-        self.selectedPrototypeTreeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
-        cell = gtk.CellRendererText()
-        # Col file descriptor
-        column = gtk.TreeViewColumn('Name')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
-        self.selectedPrototypeTreeview.append_column(column)
-        # Col type
-        column = gtk.TreeViewColumn('Version')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
-        self.selectedPrototypeTreeview.append_column(column)
-        # Col name
-        column = gtk.TreeViewColumn('Size')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
-        self.selectedPrototypeTreeview.append_column(column)
-        self.selectedPrototypeTreeview.show()
-        scroll2.add(self.selectedPrototypeTreeview)
-        scroll2.show()
-        scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll2, 0, 5, 5,6, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-
+        
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of buttons (start and stop capture)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         self.startCapture = gtk.Button("Start capture")
         self.startCapture.show()
-        self.startCapture.connect("clicked", self.updateProcessList_cb)
+        self.startCapture.connect("clicked", self.startCaptureFunction)
         self.panel.attach(self.startCapture, 3, 4, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         self.stopCapture = gtk.Button("Stop capture")
         self.stopCapture.show()
-        self.stopCapture.connect("clicked", self.updateProcessList_cb)
+        self.stopCapture.connect("clicked", self.stopCaptureFunction)
         self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
     
@@ -197,7 +184,7 @@ class Api:
         # clear the list of process
         self.processStore.get_model().clear()
         
-        # retrives the list of process
+        # retrieves the list of process
         self.listOfProcess = ExecutionContext.ExecutionContext.getCurrentProcesses()
         
         # add in the list all the process
@@ -212,206 +199,120 @@ class Api:
         # Updates the list of shared lib
         strProcessSelected = self.processStore.get_active_text()        
         pid = int(strProcessSelected.split()[0])
-        selectedProcess = None
+        self.selectedProcess = None
         
         for process in self.listOfProcess :
             if process.getPid() == pid :
-                selectedProcess = process
+                self.selectedProcess = process
                 
-        if selectedProcess != None :
-            libs = selectedProcess.getSharedLibs()            
-            
+        if self.selectedProcess != None :
+            libs = self.selectedProcess.getSharedLibs()  
             self.dllTreeview.get_model().clear()
             for lib in libs :
-                self.dllTreeview.get_model().append(None, [lib.getName(), "", ""])        
-            
-     
+                self.dllTreeview.get_model().append(None, [lib.getName(), lib.getVersion(), lib.getPath()])        
             
         else :
-            print "not found"
+            self.log.error("A selected process cannot be found !")
         
+    #+---------------------------------------------- 
+    #| Called when user select a a DLL
+    #+----------------------------------------------
+    def dllSelected_cb(self, treeview): 
+        # Retrieve the dll selected    
+        treeselection = treeview.get_selection()
+        (model, pathlist) = treeselection.get_selected_rows()
+        iter = model.get_iter(pathlist[0])
         
-
+        found = False
+        
+        self.selectedDLL = None
+        
+        if(model.iter_is_valid(iter)):
+            libName = model.get_value(iter, 0)
+            libVersion = model.get_value(iter, 1)
+            libPath = model.get_value(iter, 2)
+            found = True
+        
+        if found == False :
+            self.log.error("The selected process cannot be find !")
+            return
+        
+        self.dllStore.get_model().clear()
+        
+        # search for available prototypes given lib in repository
+        for lib in self.repositoryOfSharedLib :
+            if lib.getName() == libName :
+                self.selectedDLL = lib
+                for func in lib.getFunctions() :
+                    self.dllStore.append_text(func.getPrototype())        
+  
     #+---------------------------------------------- 
-    #| Called when user select a list of packet
+    #| Called when user select a prototype
     #+----------------------------------------------
-    def save_packets(self, button, treeview):
-        dialog = gtk.Dialog(title="Save selected packet as a new trace", flags=0, buttons=None)
-        dialog.show()
-        table = gtk.Table(rows=2, columns=3, homogeneous=False)
-        table.show()
-        # Add to an existing trace
-        label = gtk.Label("Add to an existing trace")
-        label.show()
-        entry = gtk.combo_box_entry_new_text()
-        entry.show()
-        entry.set_size_request(300, -1)
-        entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        for tmpDir in os.listdir(tracesDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            entry.append_text(tmpDir)
-        but = gtk.Button("Save")
-        but.connect("clicked", self.add_packets_to_existing_trace, entry, treeview.get_selection(), dialog)
-        but.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Create a new trace
-        label = gtk.Label("Create a new trace")
-        label.show()
-        entry = gtk.Entry()
-        entry.show()
-        but = gtk.Button("Save")
-        but.connect("clicked", self.create_new_trace, entry, treeview.get_selection(), dialog)
-        but.show()
-        table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(but, 2, 3, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        dialog.action_area.pack_start(table, True, True, 0)
-
-    #+---------------------------------------------- 
-    #| Add a selection of packets to an existing trace
-    #+----------------------------------------------
-    def add_packets_to_existing_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
-        # Create the new XML structure
-        res = "<datas>\n"
-        (model, paths) = selection.get_selected_rows()
-        for path in paths:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                packetID = model.get_value(iter, 0)
-                proto = model.get_value(iter, 1)
-                timestamp = str(model.get_value(iter, 6))
-                IPsrc = self.packets[packetID].sprintf("%IP.src%")
-                IPdst = self.packets[packetID].sprintf("%IP.dst%")
-                if scapyy.TCP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%TCP.sport%")
-                    dport = self.packets[packetID].sprintf("%TCP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
-                elif scapyy.UDP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%UDP.sport%")
-                    dport = self.packets[packetID].sprintf("%UDP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
-                if rawPayload == "":
-                    continue
-                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
-                res += rawPayload.encode("hex") + "\n"
-                res += "</data>\n"
-        res += "</datas>\n"
-        # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
-        fd.write(res)
-        fd.close()
-        dialog.destroy()
-
-    #+---------------------------------------------- 
-    #| Creation of a new trace from a selection of packets
-    #+----------------------------------------------
-    def create_new_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        for tmpDir in os.listdir(tracesDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            if entry.get_text() == tmpDir:
-                dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
-                dialogBis.set_size_request(250, 50)
-                dialogBis.show()
-                return
-
-        # Create the dest Dir
-        newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
-        os.mkdir( newTraceDir )
-        # Create the new XML structure
-        res = "<datas>\n"
-        (model, paths) = selection.get_selected_rows()
-        for path in paths:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                packetID = model.get_value(iter, 0)
-                proto = model.get_value(iter, 1)
-                timestamp = str(model.get_value(iter, 6))
-                IPsrc = self.packets[packetID].sprintf("%IP.src%")
-                IPdst = self.packets[packetID].sprintf("%IP.dst%")
-                if scapyy.TCP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%TCP.sport%")
-                    dport = self.packets[packetID].sprintf("%TCP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
-                elif scapyy.UDP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%UDP.sport%")
-                    dport = self.packets[packetID].sprintf("%UDP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
-                if rawPayload == "":
-                    continue
-                res += "<data proto=\""+proto+"\" sourceIp=\""+IPsrc+"\" sourcePort=\""+sport+"\" targetIp=\""+IPdst+"\" targetPort=\""+dport+"\" timestamp=\""+timestamp+"\">\n"
-                res += rawPayload.encode("hex") + "\n"
-                res += "</data>\n"
-        res += "</datas>\n"
-        # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(10000, 90000)) + ".xml"  , "w")
-        fd.write(res)
-        fd.close()
-        dialog.destroy()
-        self.zob.updateListOfAvailableTraces()
-
-    #+---------------------------------------------- 
-    #| Called when user select a packet for details
-    #+----------------------------------------------
-    def packet_details(self, treeview):
-        (model, paths) = treeview.get_selection().get_selected_rows()
-        for path in paths[:1]:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                packetID = model.get_value(iter, 0)
-                self.textview.get_buffer().set_text( self.packets[packetID].show() )
-
-    #+---------------------------------------------- 
-    #| Called when user import a pcap file
-    #+----------------------------------------------
-    def import_pcap(self, button, label):
-        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
-        res = chooser.run()
-        if res == gtk.RESPONSE_OK:
-            label.set_text(chooser.get_filename())
-        chooser.destroy()
-
+    def prototypeSelected_cb(self, widget):     
+        if self.selectedProcess == None :
+            self.log.warning("You have to select a process if you want to capture it")        
+            return
+        if self.selectedDLL == None :
+            self.log.warning("You have to select a DLL if you want to capture it")        
+            return
+        
+           
+        # Updates the list of shared lib
+        prototype = self.dllStore.get_active_text()        
+        self.selectedFunction = None
+        
+        for function in self.selectedDLL.getFunctions():
+            if function.getPrototype() == prototype :
+                self.selectedFunction = function
+        
+        if self.selectedFunction == None :
+            self.log.error("Impossible to retrieve the selected function")
+        else :
+            self.log.info("Selected function done!")
+            
     #+---------------------------------------------- 
     #| Called when launching sniffing process
     #+----------------------------------------------
-    def launch_sniff(self, button, aFilter, label_file):
-        button.set_sensitive(False)
-        self.packets = []
-        self.treestore.clear()
-        self.textview.get_buffer().set_text("")
-        try: # Just see if scapy is correctly working
-            scapyy.send(scapyy.UDP(), verbose=False)
-        except:
-            self.log.error("Scapy does not have the capability to sniff packets on your system")
-            self.log.error("If you want capturing capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/bin/python2.6\"")
-            self.log.error("And if you want filtering capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/sbin/tcpdump\"")
+    def startCaptureFunction(self, button):
+        if self.selectedProcess == None :
+            self.log.warning("You have to select a process if you want to capture it")        
             return
-
-        self.log.info("Launching sniff process with : filter=\""+aFilter.get_text()+"\"")
-        scapyy.sniff(offline=label_file.get_text(), prn=self.callback_scapy, filter=aFilter.get_text(), store=0)
-        button.set_sensitive(True)
-
+        if self.selectedDLL == None :
+            self.log.warning("You have to select a DLL if you want to capture it")        
+            return
+        if self.selectedFunction == None :
+            self.log.warning("You have to select a function if you want to capture it")        
+            return
+        
+        testFolder = "/home/gbt/Developpements/DLL_Injection/got_netzob"
+        parasiteGenerator = ParasiteGenerator.ParasiteGenerator(testFolder)
+        parasiteGenerator.addAnHijackedFunctions(self.selectedFunction)
+        
+        parasiteGenerator.writeParasiteToFile()
+        parasiteGenerator.compileParasite()
+        parasiteGenerator.linkParasite()
+        
+        injectorGenerator = InjectorGenerator.InjectorGenerator(testFolder, parasiteGenerator)
+        injectorGenerator.writeInjectorToFile()    
+        injectorGenerator.compileInjector()
+        
+        poisoner = GOTPoisoner.GOTPoisoner(parasiteGenerator, injectorGenerator) 
+        poisoner.injectProcess(self.selectedProcess.getPid())
+        
+        
+        self.log.info("Starting the capture of [{0}]".format(self.selectedProcess.getPid()))
+        self.log.info("DLL [{0}]".format(self.selectedDLL.getName()))
+        self.log.info("Function [{0}]".format(self.selectedFunction.getPrototype()))
+        
     #+---------------------------------------------- 
-    #| Called when scapy reiceve a message
+    #| Called when launching sniffing process
     #+----------------------------------------------
-    def callback_scapy(self, pkt):
-        if scapyy.TCP in pkt and scapyy.Raw in pkt:
-            self.treestore.append(None, [len(self.packets), "TCP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.sport%"), pkt.sprintf("%TCP.dport%"), int(time.time())])
-            self.packets.append( pkt )
-        elif scapyy.UDP in pkt and scapyy.Raw in pkt:
-            self.treestore.append(None, [len(self.packets), "UDP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%UDP.sport%"), pkt.sprintf("%UDP.dport%"), int(time.time())])
-            self.packets.append( pkt )
+    def stopCaptureFunction(self, button):
+        print "stoping capture"
+        
 
+    
     #+---------------------------------------------- 
     #| GETTERS
     #+----------------------------------------------

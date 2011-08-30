@@ -66,10 +66,14 @@ class Process(object):
             path = ar[2][:len(ar[2])-1]
             found = False
             for l in libs :
-                if l.getName() == path :
+                if l.getPath() == path :
                     found = True
             if found == False :
-                lib = SharedLib.SharedLib(path)
+                (libName,libVersion) = SharedLib.SharedLib.findNameAndVersion(path)
+                
+                
+                
+                lib = SharedLib.SharedLib(libName, libVersion, path)
                 libs.append(lib)
         return libs
         

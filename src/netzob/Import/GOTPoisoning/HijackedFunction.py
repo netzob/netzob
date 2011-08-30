@@ -65,7 +65,7 @@ class HijackedFunction():
         i = 0
         params = ""
         for param in self.parameters :
-            params += param[0] + " "+param[1]
+            params += param[0] + " "+param[1]+"_"
             if i != len(self.parameters) - 1 :
                 params += ", "            
             i = i + 1
@@ -79,7 +79,7 @@ class HijackedFunction():
                 paramNames += ", "    
             i = i + 1
         
-        source += "\torigfunc(" + paramNames + ");"
+        #source += "\torigfunc(\"test\");"
         
         return source
     
@@ -172,7 +172,7 @@ class HijackedFunction():
             
             
             
-        source = source + "\t_close(fd);\n\torigfunc(\"test\");";    
+        source = source + "\t_close(fd);\n\t";    
             
         result = HijackedFunction(funcName, funcReturnType, funcParams)    
         result.setSource(source)
