@@ -390,6 +390,12 @@ class UImodelization:
             item.connect("activate", self.rightClickToSplitColumn, iCol)
             menu.append(item)
 
+            # Add entry to retrieve the field domain of definition
+            item = gtk.MenuItem("Domain of definition")
+            item.show()
+            item.connect("activate", self.rightClickDomainOfDefinition, iCol)
+            menu.append(item)
+
             menu.popup(None, None, None, event.button, event.time)
 
     #+---------------------------------------------- 
@@ -558,6 +564,44 @@ class UImodelization:
         fd.close()
         dialog.destroy()
         self.zob.updateListOfAvailableTraces()
+
+    #+---------------------------------------------- 
+    #| rightClickDomainOfDefinition :
+    #|   Retrieve the domain of definition of the selected column
+    #+----------------------------------------------
+    def rightClickDomainOfDefinition(self, event, iCol):
+        cells = self.treeMessageGenerator.getGroup().getCellsByCol(iCol)
+        tmpDomain = set()
+        for cell in cells:
+            tmpDomain.add( self.treeMessageGenerator.getGroup().getRepresentation(cell, iCol) )
+        domain = sorted(tmpDomain)
+
+        dialog = gtk.Dialog(title="Domain of definition of the column " + str(iCol), flags=0, buttons=None)
+        # Text view containing domain of definition ## ListStore format :
+        # str: group.id
+        treeview = gtk.TreeView(gtk.ListStore(str)) 
+        treeview.set_size_request(800, 300)
+        treeview.show()
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn("Column " + str(iCol))
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        treeview.append_column(column)
+
+        # Just to force the calculation of each group with its associated messages
+        for group in self.treeGroupGenerator.getGroups():
+            self.selectedGroup = str(group.getID())
+            self.treeMessageGenerator.default(group)
+
+        for elt in domain:
+            treeview.get_model().append( [elt] )
+
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        dialog.vbox.pack_start(scroll, True, True, 0)
+        dialog.show()
 
     #+---------------------------------------------- 
     #| rightClickToChangeType :
@@ -1070,7 +1114,7 @@ class UImodelization:
         but.connect("clicked", self.applySizeField, dialog, group)
         dialog.action_area.pack_start(but, True, True, 0)
 
-        # Just to each group with its associated messages
+        # Just to force the calculation of each group with its associated messages
         for group in self.treeGroupGenerator.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)

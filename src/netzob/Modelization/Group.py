@@ -18,7 +18,6 @@
 #| Global Imports
 #+----------------------------------------------
 import uuid
-import threading
 import logging
 import re
 import struct
@@ -178,7 +177,7 @@ class Group(object):
             else :
                 if (found == True) :
                     found = False
-                    nbTiret = i - start                                   
+                    nbTiret = i - start
                     regex.append( "(.{," + str(nbTiret) + "})")
                     regex.append( align[i] )
                 else :
@@ -259,7 +258,7 @@ class Group(object):
         i = 1
         while i < len(self.columns) - 1:
             if self.isRegexStatic( self.columns[i]['regex'] ):
-                if len(self.columns[i]['regex']) == 2: # Means a potential negligeable element
+                if len(self.columns[i]['regex']) == 2: # Means a potential negligeable element that can be merged with its neighbours
                     if self.isRegexOnlyDynamic( self.columns[i-1]['regex'] ):
                         if self.isRegexOnlyDynamic( self.columns[i+1]['regex'] ):
                             res = True
@@ -367,6 +366,7 @@ class Group(object):
             return None
 
         urlRegex = re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-zA-Z0-9\-]){2,}\.){1,4}([a-zA-Z]){2,6}(\/([a-zA-Z\-_\/\.0-9#:?+%=&;,])*)?)")
+        emailRegex = re.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
 
         vbox = gtk.VBox(False, spacing=5)
         vbox.show()
@@ -663,7 +663,7 @@ class Group(object):
             return False
 
     def isRegexOnlyDynamic(self, regex):
-        if re.match("\(\.\{,\d+\}\)", regex) != None:
+        if re.match("\(\.\{\d?,\d+\}\)", regex) != None:
             return True
         else:
             return False
