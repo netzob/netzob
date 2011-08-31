@@ -252,7 +252,7 @@ class Clusterer(object):
         messages = []
         messages.extend( group1.getMessages() )
         messages.extend( group2.getMessages() )
-        newGroup = Group.Group(group1.getName() + "-" + group2.getName(), messages)
+        newGroup = Group.Group(group1.getName() + group2.getName(), messages)
                     
         # Append th new group to the "groups" structure
         self.groups.append(newGroup)
