@@ -97,7 +97,8 @@ class TreeGroupGenerator():
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
         for group in self.groups :
-            iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', '#FF00FF'])
+            
+            iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0} [{1}]".format(group.getName(), str(len(group.getMessages()))),"{0}".format(group.getScore()), '#000000', '#DEEEF0'])
 
     #+---------------------------------------------- 
     #| messageSelected :
