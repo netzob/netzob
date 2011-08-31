@@ -9,6 +9,7 @@
 * strace
 * lsof
 * iptables
+* python-matplotlib
 
 for documentation purposes :
 * python-sphinx
