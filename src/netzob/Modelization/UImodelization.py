@@ -223,6 +223,12 @@ class UImodelization:
         but.show()
         table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Widget button for search
+        but = gtk.Button("Search")
+        but.connect("clicked", self.search_cb)
+        but.show()
+        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
         ## Visualization options
         frame = gtk.Frame()
         frame.set_label("Visualization options")
@@ -1091,6 +1097,20 @@ class UImodelization:
             self.treeMessageGenerator.default(group)
 
         dialog.vbox.pack_start(self.treeGroupGenerator.dataCarvingResults(), True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to search data in messages
+    #+----------------------------------------------
+    def search_cb(self, button):
+        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
+
+        # Just to force the calculation of the splitted messages by regex ## TODO: put this at the end of the alignement process
+        for group in self.treeGroupGenerator.getGroups():
+            self.selectedGroup = str(group.getID())
+            self.treeMessageGenerator.default(group)
+
+        dialog.vbox.pack_start(self.treeGroupGenerator.searchView(), True, True, 0)
         dialog.show()
 
     #+---------------------------------------------- 

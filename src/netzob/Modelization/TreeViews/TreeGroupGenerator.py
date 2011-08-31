@@ -213,6 +213,51 @@ class TreeGroupGenerator():
             if scroll != None:
                 notebook.append_page(scroll, gtk.Label(group.getName()))
         return notebook
+
+    #+---------------------------------------------- 
+    #| searchView:
+    #|  search data in messages, for each group
+    #+----------------------------------------------    
+    def searchView(self):
+        hbox = gtk.HBox(False, spacing=5)
+        hbox.show()
+
+        ## Search form
+        vbox = gtk.VBox(False, spacing=5)
+        vbox.show()
+        hbox.pack_start(vbox, False, False, 0)
+        entry = gtk.Entry()
+        entry.show()
+        vbox.pack_start(entry, False, False, 0)
+        but = gtk.Button("Search")
+        but.show()
+        vbox.pack_start(but, False, False, 0)
+
+        ## Notebook for the results per groups
+        notebook = gtk.Notebook()
+        but.connect("clicked", self.search_cb, entry, notebook)
+        hbox.pack_start(notebook, False, False, 0)
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_TOP)
+        return hbox
+
+    #+---------------------------------------------- 
+    #| search_cb:
+    #|  launch the search
+    #+----------------------------------------------    
+    def search_cb(self, but, entry, notebook):
+        if entry.get_text() == "":
+            return
+
+        # Clear the notebook
+        for i in range(notebook.get_n_pages()):
+            notebook.remove_page(i)
+
+        # Fill the notebook
+        for group in self.getGroups():
+            vbox = group.search( entry.get_text() )
+            if vbox != None:
+                notebook.append_page(vbox, gtk.Label(group.getName()))
     
     #+---------------------------------------------- 
     #| GETTERS : 
