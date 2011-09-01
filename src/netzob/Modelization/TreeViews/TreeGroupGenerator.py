@@ -43,10 +43,9 @@ class TreeGroupGenerator():
     
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param groups : the groups of messages
     #+---------------------------------------------- 
-    def __init__(self, groups):
-        self.groups = groups
+    def __init__(self, netzob):
+        self.netzob = netzob
         self.treestore = None
         self.treeview = None
         # create logger with the given configuration
@@ -87,7 +86,7 @@ class TreeGroupGenerator():
     #|         Clear the class
     #+---------------------------------------------- 
     def clear(self):
-        del self.groups[:]
+        pass
 
     #+---------------------------------------------- 
     #| default :
@@ -96,8 +95,7 @@ class TreeGroupGenerator():
     def default(self):
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
-        for group in self.groups :
-            
+        for group in self.netzob.groups.getGroups():            
             iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0} [{1}]".format(group.getName(), str(len(group.getMessages()))),"{0}".format(group.getScore()), '#000000', '#DEEEF0'])
 
     #+---------------------------------------------- 
@@ -109,7 +107,7 @@ class TreeGroupGenerator():
     def messageSelected(self, selectedMessage):
         self.log.debug("Updating the treestore of the group with a selected message")
         self.treestore.clear()
-        for group in self.groups :
+        for group in self.netzob.groups.getGroups():
             tmp_sequences = []
             if (len(group.getRegex())>0) :
                     tmp_sequences.append(group.getRegex())
@@ -144,38 +142,11 @@ class TreeGroupGenerator():
             idGroup = str(self.treeview.get_model().get_value(iter, 0))
             if idGroup is not None :
                 self.log.debug("An entry with the ID {0} has been found.".format(idGroup))                
-                for group in self.groups :
+                for group in self.netzob.groups.getGroups():
                     if (str(group.getID()) == idGroup) :
                         self.log.debug("The requested group with ID {0} has been found".format(group.getID()))
                         return group
         return None
-
-    def initTreeGroupWithTraces(self, zob, ui):
-        tracesExtractor = TracesExtractor.TracesExtractor(zob)
-        self.setGroups(  tracesExtractor.parse() )
-        ui.update()
-
-    def addGroup(self, group):
-        self.groups.append( group )
-    def removeGroup(self, group):
-        self.groups.remove( group )
-
-    #+---------------------------------------------- 
-    #| slickRegexes:
-    #|  try to make smooth the regexes, by deleting tiny static
-    #|  sequences that are between big dynamic sequences
-    #+----------------------------------------------
-    def slickRegexes(self, button, ui):
-        for group in self.getGroups():
-            group.slickRegex()
-        ui.update()
-
-    #+---------------------------------------------- 
-    #| mergeCommonRegexes:
-    #|  try to merge identical regexes
-    #+----------------------------------------------
-    def mergeCommonRegexes(self, button, ui):
-        self.log.info("Merging not implemented yet")
 
     #+---------------------------------------------- 
     #| select_group_by_id:
@@ -191,73 +162,6 @@ class TreeGroupGenerator():
                 self.treeview.get_selection().select_iter(it)                
                 break
             it = self.treestore.iter_next(it)
-
-    #+---------------------------------------------- 
-    #| findSizeField:
-    #|  try to find the size field of each regex
-    #+----------------------------------------------    
-    def findSizeFields(self, store):
-        for group in self.getGroups():
-            group.findSizeFields(store)
-
-    #+---------------------------------------------- 
-    #| dataCarvingResults:
-    #|  try to find the data hidden in the messages
-    #+----------------------------------------------    
-    def dataCarvingResults(self):
-        notebook = gtk.Notebook()
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        for group in self.getGroups():
-            scroll = group.dataCarving()
-            if scroll != None:
-                notebook.append_page(scroll, gtk.Label(group.getName()))
-        return notebook
-
-    #+---------------------------------------------- 
-    #| searchView:
-    #|  search data in messages, for each group
-    #+----------------------------------------------    
-    def searchView(self):
-        hbox = gtk.HBox(False, spacing=5)
-        hbox.show()
-
-        ## Search form
-        vbox = gtk.VBox(False, spacing=5)
-        vbox.show()
-        hbox.pack_start(vbox, False, False, 0)
-        entry = gtk.Entry()
-        entry.show()
-        vbox.pack_start(entry, False, False, 0)
-        but = gtk.Button("Search")
-        but.show()
-        vbox.pack_start(but, False, False, 0)
-
-        ## Notebook for the results per groups
-        notebook = gtk.Notebook()
-        but.connect("clicked", self.search_cb, entry, notebook)
-        hbox.pack_start(notebook, False, False, 0)
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        return hbox
-
-    #+---------------------------------------------- 
-    #| search_cb:
-    #|  launch the search
-    #+----------------------------------------------    
-    def search_cb(self, but, entry, notebook):
-        if entry.get_text() == "":
-            return
-
-        # Clear the notebook
-        for i in range(notebook.get_n_pages()):
-            notebook.remove_page(i)
-
-        # Fill the notebook
-        for group in self.getGroups():
-            vbox = group.search( entry.get_text() )
-            if vbox != None:
-                notebook.append_page(vbox, gtk.Label(group.getName()))
     
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -266,12 +170,3 @@ class TreeGroupGenerator():
         return self.treeview
     def getScrollLib(self):
         return self.scroll
-    def getGroups(self):
-        return self.groups
-
-    #+---------------------------------------------- 
-    #| SETTERS : 
-    #+----------------------------------------------    
-    def setGroups(self, groups):
-        self.groups = groups
-

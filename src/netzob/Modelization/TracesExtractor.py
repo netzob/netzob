@@ -51,11 +51,11 @@ class TracesExtractor(object):
     #| Constructor :
     #| @param path: path of the directory containing traces to parse 
     #+----------------------------------------------   
-    def __init__(self, zob):
-        self.zob = zob
-        self.path = self.zob.tracePath
+    def __init__(self, netzob):
+        self.netzob = netzob
+        self.path = self.netzob.tracePath
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.TraceExtractor.py')
+        self.log = logging.getLogger('netzob.Modelization.TracesExtractor.py')
     
     #+---------------------------------------------- 
     #| Parse :
@@ -102,14 +102,14 @@ class TracesExtractor(object):
                 # Save the extracted messages in a dedicated group
                 group = Group.Group(file, tmpMessages)            
                 # Now we try to clusterize the newly created group
-                clusterer = Clusterer.Clusterer(self.zob, [group], explodeGroups=True)
+                clusterer = Clusterer.Clusterer(self.netzob, [group], explodeGroups=True)
                 clusterer.mergeGroups()
                 groups.extend( clusterer.getGroups() )
                     
             # Now that all the groups are reorganized separately
             # we should consider merging them
             self.log.info("Merging the groups extracted from the different files")
-            clusterer = Clusterer.Clusterer(self.zob, groups, explodeGroups=False)
+            clusterer = Clusterer.Clusterer(self.netzob, groups, explodeGroups=False)
             clusterer.mergeGroups()
             
             # Now we execute the second part of Netzob Magical Algorithms :)

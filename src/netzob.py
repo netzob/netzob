@@ -38,6 +38,7 @@ from netzob.Export import UIexport
 from netzob.Import import UIimport
 from netzob.Fuzzing import UIfuzzing
 from netzob.Common import ConfigurationParser
+from netzob.Common import Groups
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -61,6 +62,10 @@ class Netzob():
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
         self.tracePath = ""
+
+        # Groups of messages are handled with the following object
+        self.groups = Groups.Groups(self)
+
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
@@ -136,7 +141,6 @@ class Netzob():
         progressBox.show()
         align.show()
         self.progressBar.show()
-
         
     #+------------------------------------------------------------------------ 
     #| updateListOfAvailableTraces :
@@ -176,11 +180,6 @@ class Netzob():
     def guiThread(self):
         gtk.main()
 
-
-#+---------------------------------------------- 
-#| Callbacks
-#+----------------------------------------------
-
     #+---------------------------------------------- 
     #| Called when user select a notebook
     #+----------------------------------------------
@@ -204,7 +203,6 @@ class Netzob():
         
         for page in self.pageList:
             page[1].save(configPath)
-            
 
     #+---------------------------------------------- 
     #| Called when user select a new trace for analysis
@@ -219,12 +217,19 @@ class Netzob():
         self.tracePath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target
         
         # clear past analysis and initialize the each notebook
+        self.groups.clear()
         for page in self.pageList:
             page[1].clear()
             #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
             #if page[0] == nameTab:
             page[1].new()
 
+    #+---------------------------------------------- 
+    #| Update each panels
+    #+----------------------------------------------
+    def update(self):
+        for page in self.pageList:
+            page[1].update()
 
 #+---------------------------------------------- 
 #| RUNTIME

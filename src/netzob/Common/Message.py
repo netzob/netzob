@@ -58,7 +58,7 @@ class Message(object):
     #+----------------------------------------------   
     def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.Message.py')
+        self.log = logging.getLogger('netzob.Common.Message.py')
         self.id = uuid.uuid4() 
         self.protocol = ""
         self.ipSource = ""

@@ -64,7 +64,7 @@ class Group(object):
     #+----------------------------------------------   
     def __init__(self, name, messages):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.Group.py')
+        self.log = logging.getLogger('netzob.Common.Group.py')
         self.id = uuid.uuid4() 
         self.name = name
         self.messages = messages

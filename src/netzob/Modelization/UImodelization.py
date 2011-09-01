@@ -81,24 +81,23 @@ class UImodelization:
         self.log.info("Saving the modelization")
         
         configParser = ConfigParser.ConfigParser(file)
-        configParser.saveInConfiguration(self.treeGroupGenerator.getGroups())
-        
+        configParser.saveInConfiguration( self.netzob.groups.getGroups() )
     
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param groups: list of all groups 
+    #| @param netzob: the netzob main class
     #+----------------------------------------------   
-    def __init__(self, zob):
+    def __init__(self, netzob):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
-        self.zob = zob
+        self.netzob = netzob
         self.selectedGroup = ""
         self.selectedMessage = ""
         self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator()
         self.treeMessageGenerator.initialization()
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator([])
+        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
         
         # Definition of the Sequence Onglet
@@ -186,7 +185,7 @@ class UImodelization:
 
         # Widget button slick regexes
         but = gtk.Button("Slick regexes")
-        but.connect("clicked", self.treeGroupGenerator.slickRegexes, self)
+        but.connect("clicked", self.netzob.groups.slickRegexes, self)
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -199,7 +198,7 @@ class UImodelization:
 
         # Widget button merge common regexes
         but = gtk.Button("Merge common regexes")
-        but.connect("clicked", self.treeGroupGenerator.mergeCommonRegexes, self)
+        but.connect("clicked", self.netzob.groups.mergeCommonRegexes, self)
         ## TODO: merge common regexes (if it is really usefull)
         but.show()
         but.set_sensitive(False)
@@ -301,7 +300,7 @@ class UImodelization:
     #|   Parse the traces and store the results
     #+----------------------------------------------
     def startAnalysis_cb(self, widget):
-        if self.zob.tracePath == "":
+        if self.netzob.tracePath == "":
             self.log.info("No trace selected")
             return
         self.selectedGroup = ""
@@ -309,7 +308,7 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.parseThread = threading.Thread(None, self.treeGroupGenerator.initTreeGroupWithTraces, None, (self.zob, self), {})
+        self.parseThread = threading.Thread(None, self.netzob.groups.initGroupsWithTraces, None, (), {})
         self.parseThread.start()
     
     #+---------------------------------------------- 
@@ -578,7 +577,7 @@ class UImodelization:
         fd.write(res)
         fd.close()
         dialog.destroy()
-        self.zob.updateListOfAvailableTraces()
+        self.netzob.updateListOfAvailableTraces()
 
     #+---------------------------------------------- 
     #| rightClickDomainOfDefinition :
@@ -605,7 +604,7 @@ class UImodelization:
         treeview.append_column(column)
 
         # Just to force the calculation of each group with its associated messages
-        for group in self.treeGroupGenerator.getGroups():
+        for group in self.netzob.groups.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
@@ -877,7 +876,7 @@ class UImodelization:
             self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
             newGroup = Group.Group(newGroupName, [])
-            self.treeGroupGenerator.addGroup(newGroup)
+            self.netzob.groups.addGroup(newGroup)
             #Update Left and Right
             self.update()
         
@@ -897,7 +896,7 @@ class UImodelization:
             result = md.run()
             md.destroy()
             if result == gtk.RESPONSE_YES:
-                self.treeGroupGenerator.removeGroup(group)
+                self.netzob.groups.removeGroup(group)
                 self.log.debug("The group " + group.getName() + " has been deleted !")
                 #Update Left and Right
                 self.update()
@@ -926,7 +925,7 @@ class UImodelization:
             # First we search for the message to move
             message = None
             message_grp = None
-            for group in self.treeGroupGenerator.getGroups() :
+            for group in self.netzob.groups.getGroups() :
                 for msg in group.getMessages() :
                     if str(msg.getID()) == msg_id :
                         message = msg
@@ -946,7 +945,7 @@ class UImodelization:
                 new_grp_id = str(modele.get_value(iter, 0))
                                 
                 new_message_grp = None
-                for tmp_group in self.treeGroupGenerator.getGroups() :
+                for tmp_group in self.netzob.groups.getGroups() :
                     if (str(tmp_group.getID()) == new_grp_id) :
                         new_message_grp = tmp_group
                     
@@ -993,9 +992,6 @@ class UImodelization:
         else :
             # Default display of the groups
             self.treeGroupGenerator.default()
-            # TODO: remove the two following lines, as the groups are handled elsewhere
-#            self.zob.dumping.updateGoups(self.treeGroupGenerator.getGroups())
-#            self.zob.fuzzing.updateGoups(self.treeGroupGenerator.getGroups())
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
@@ -1004,7 +1000,7 @@ class UImodelization:
         if (self.selectedGroup != "") :
             # Search for the selected group in groups list
             selectedGroup = None
-            for group in self.treeGroupGenerator.getGroups() :
+            for group in self.netzob.groups.getGroups() :
                 if str(group.getID()) == self.selectedGroup :
                     selectedGroup = group
             # If we found it we can update the content of the treestore        
@@ -1070,7 +1066,7 @@ class UImodelization:
             aType = "ascii"
         else:
             aType = "binary"
-        for group in self.treeGroupGenerator.getGroups():
+        for group in self.netzob.groups.getGroups():
             group.setTypeForCols(aType)
         self.update()
 
@@ -1078,7 +1074,7 @@ class UImodelization:
     #| Called when user wants to refine regexes
     #+----------------------------------------------
     def refineRegexes_cb(self, button):
-        for group in self.treeGroupGenerator.getGroups():
+        for group in self.netzob.groups.getGroups():
             group.refineRegexes()
         dialog = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
         dialog.set_size_request(250, 50)
@@ -1092,11 +1088,11 @@ class UImodelization:
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
 
         # Just to force the calculation of the splitted messages by regex
-        for group in self.treeGroupGenerator.getGroups():
+        for group in self.netzob.groups.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
-        dialog.vbox.pack_start(self.treeGroupGenerator.dataCarvingResults(), True, True, 0)
+        dialog.vbox.pack_start(self.netzob.groups.dataCarvingResults(), True, True, 0)
         dialog.show()
 
     #+---------------------------------------------- 
@@ -1106,11 +1102,11 @@ class UImodelization:
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
         # Just to force the calculation of the splitted messages by regex ## TODO: put this at the end of the alignement process
-        for group in self.treeGroupGenerator.getGroups():
+        for group in self.netzob.groups.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
-        dialog.vbox.pack_start(self.treeGroupGenerator.searchView(), True, True, 0)
+        dialog.vbox.pack_start(self.netzob.groups.searchView(), True, True, 0)
         dialog.show()
 
     #+---------------------------------------------- 
@@ -1155,13 +1151,13 @@ class UImodelization:
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Just to force the calculation of each group with its associated messages
-        for group in self.treeGroupGenerator.getGroups():
+        for group in self.netzob.groups.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
         # Text view containing potential size fields
         treeview.set_size_request(800, 300)
-        self.treeGroupGenerator.findSizeFields( treeview.get_model() )
+        self.netzob.groups.findSizeFields( treeview.get_model() )
         treeview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)

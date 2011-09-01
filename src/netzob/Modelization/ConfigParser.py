@@ -24,6 +24,8 @@ import xml.dom.minidom
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
+from ..Common import Message
+from ..Common import Group
 
 #+---------------------------------------------- 
 #| Configuration of the logger

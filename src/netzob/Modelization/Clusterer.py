@@ -46,8 +46,8 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self, zob, groups, explodeGroups=False):
-        self.zob = zob
+    def __init__(self, netzob, groups, explodeGroups=False):
+        self.netzob = netzob
         self.groups= []
         # Create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.Clusterer.py')
@@ -259,14 +259,14 @@ class Clusterer(object):
     #| doProgressBarStep :
     #+----------------------------------------------    
     def doProgressBarStep(self, step):
-        new_val = self.zob.progressBar.get_fraction() + step
-        self.zob.progressBar.set_fraction(new_val)
+        new_val = self.netzob.progressBar.get_fraction() + step
+        self.netzob.progressBar.set_fraction(new_val)
 
     #+---------------------------------------------- 
     #| resetProgressBar :
     #+----------------------------------------------
     def resetProgressBar(self):
-        self.zob.progressBar.set_fraction(0)
+        self.netzob.progressBar.set_fraction(0)
 
     #+---------------------------------------------- 
     #| GETTER/SETTER :
