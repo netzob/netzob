@@ -22,14 +22,12 @@ import re
 import pango
 import gobject
 import gtk
-from numpy.core.numeric import zeros
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from ...Common import ConfigurationParser
 from ...Common import TypeIdentifier
-from ..Message import Message
 
 #+---------------------------------------------- 
 #| Configuration of the logger

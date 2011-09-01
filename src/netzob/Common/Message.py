@@ -25,7 +25,7 @@ import glib
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
+import ConfigurationParser
 
 #+---------------------------------------------- 
 #| Configuration of the logger

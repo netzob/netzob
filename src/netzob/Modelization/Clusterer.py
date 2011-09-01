@@ -18,19 +18,13 @@
 #| Global Imports
 #+----------------------------------------------
 import gobject
-import time
-from numpy.numarray.numerictypes import Float
-from numpy.core.numeric import zeros
-import binascii
 import logging
 import re 
-import time
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import Group
-import Message
+from ..Common import Group
 from ..Common import ConfigurationParser, TypeIdentifier
 
 #+---------------------------------------------- 

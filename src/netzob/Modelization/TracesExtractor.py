@@ -30,8 +30,8 @@ import time
 #+----------------------------------------------
 import Clusterer
 import TraceParser
-import Group
 import ConfigParser
+from ..Common import Group
 from ..Common import ConfigurationParser
 
 #+---------------------------------------------- 

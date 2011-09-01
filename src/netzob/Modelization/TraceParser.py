@@ -23,9 +23,8 @@ import logging
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import Message
+from ..Common import Message
 from ..Common import ConfigurationParser
-
 
 #+---------------------------------------------- 
 #| Configuration of the logger

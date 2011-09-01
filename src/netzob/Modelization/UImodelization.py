@@ -33,12 +33,12 @@ import random
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import Group
-import Message
+from ..Common import Group
+from ..Common import Message
+from ..Common import ConfigurationParser
 import TracesExtractor
 import ConfigParser
 import Entropy
-from ..Common import ConfigurationParser
 from TreeViews import TreeGroupGenerator
 from TreeViews import TreeMessageGenerator
 from TreeViews import TreeTypeStructureGenerator

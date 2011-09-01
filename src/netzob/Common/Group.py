@@ -27,7 +27,7 @@ import glib
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser, TypeIdentifier
+import ConfigurationParser, TypeIdentifier
 
 #+---------------------------------------------- 
 #| C Imports
