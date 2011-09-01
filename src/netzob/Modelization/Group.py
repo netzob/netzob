@@ -776,32 +776,50 @@ class Group(object):
     #| XML store/load handling
     #+----------------------------------------------    
     def storeInXmlConfig(self):
-        # TODO: also store the following information : tabulation and selectedType
         log = logging.getLogger('netzob.Modelization.Group.py')
-        
+
         members = ""
         for message in self.getMessages() :
             members += str(message.getID())+";"
         
         xml  = "<group id=\""+str(self.getID())+"\" name=\""+self.getName()+"\" score=\""+str(self.getScore())+"\" members=\""+members+"\" alignment=\""+self.getAlignment()+"\">\n"
-        
-        xml += "\t<regex>\n"
-        for col in self.getColumns():
-            xml += "\t\t<re>"+col['regex']+"</re>\n"
-        xml += "\t</regex>\n"
-        
-        
-        xml += "\t<cols>\n"
+
+        xml += "\t<colsName>\n"
         for col in self.getColumns() :
-            xml += "\t\t<col>"+col['name']+"</col>\n"
-        xml += "\t</cols>\n"
+            xml += "\t\t<name>"+col['name']+"</name>\n"
+        xml += "\t</colsName>\n"
+        
+        xml += "\t<colsRegex>\n"
+        for col in self.getColumns():
+            xml += "\t\t<regex>"+col['regex']+"</regex>\n"
+        xml += "\t</colsRegex>\n"
+                
+        xml += "\t<colsSelectedType>\n"
+        for col in self.getColumns() :
+            xml += "\t\t<selectedType>"+col['selectedType']+"</selectedType>\n"
+        xml += "\t</colsSelectedType>\n"
+
+        xml += "\t<colsTabulation>\n"
+        for col in self.getColumns():
+            xml += "\t\t<tabulation>"+str(col['tabulation'])+"</tabulation>\n"
+        xml += "\t</colsTabulation>\n"
+
+        xml += "\t<colsDescription>\n"
+        for col in self.getColumns():
+            xml += "\t\t<description>"+col['description']+"</description>\n"
+        xml += "\t</colsDescription>\n"
+
+        xml += "\t<colsColor>\n"
+        for col in self.getColumns():
+            xml += "\t\t<color>"+col['color']+"</color>\n"
+        xml += "\t</colsColor>\n"
+
         xml += "</group>\n"
-        return xml        
+        return xml
     
     @staticmethod
     def loadFromXmlConfig(xml, messages):
-        # TODO: also load the following information : tabulation and selectedType
-        self.columns = []
+        columns = []
         log = logging.getLogger('netzob.Modelization.Group.py')
         
         if not xml.hasAttribute("id") :
@@ -820,18 +838,56 @@ class Group(object):
             log.warn("Impossible to load group from xml config file (no \"members\" attribute)")
             return None
         
-        xmlRes = xml.getElementsByTagName("re")
-        for xmlRe in xmlRes :
-            for node in xmlRe.childNodes:
-                re = node.data.split()
-            self.columns.append( {'regex' : "".join(re)} )
+        xmlCols = xml.getElementsByTagName("regex")
+        for xmlCol in xmlCols :
+            data = ""
+            for node in xmlCol.childNodes:
+                data = node.data.split()
+            columns.append( {'regex' : "".join(data)} )
         
-        xmlCols = xml.getElementsByTagName("col")
+        xmlCols = xml.getElementsByTagName("name")
         iCol = 0
         for xmlCol in xmlCols :
+            data = ""
             for node in xmlCol.childNodes:
-                colName = node.data.split()
-            self.columns[iCol]['name'] = "".join(colName)
+                data = node.data.split()
+            columns[iCol]['name'] = "".join(data)
+            iCol += 1
+
+        xmlCols = xml.getElementsByTagName("selectedType")
+        iCol = 0
+        for xmlCol in xmlCols :
+            data = ""
+            for node in xmlCol.childNodes:
+                data = node.data.split()
+            columns[iCol]['selectedType'] = "".join(data)
+            iCol += 1
+
+        xmlCols = xml.getElementsByTagName("tabulation")
+        iCol = 0
+        for xmlCol in xmlCols :
+            data = ""
+            for node in xmlCol.childNodes:
+                data = node.data.split()
+            columns[iCol]['tabulation'] = int("".join(data))
+            iCol += 1
+
+        xmlCols = xml.getElementsByTagName("description")
+        iCol = 0
+        for xmlCol in xmlCols :
+            data = ""
+            for node in xmlCol.childNodes:
+                data = node.data.split()
+            columns[iCol]['description'] = "".join(data)
+            iCol += 1
+
+        xmlCols = xml.getElementsByTagName("color")
+        iCol = 0
+        for xmlCol in xmlCols :
+            data = ""
+            for node in xmlCol.childNodes:
+                data = node.data.split()
+            columns[iCol]['color'] = "".join(data)
             iCol += 1
 
         group = Group(xml.attributes["name"].value, [])    
@@ -851,11 +907,8 @@ class Group(object):
                     return None
 
         group.setID(xml.attributes["id"].value)
-        
         group.setAlignment(xml.attributes["alignment"].value)
-#         group.setRegex(group.extractRegexFromAlignment(group.getAlignment()))
-#        group.setColumnNames(colNames)
-#        group.setRegex(regex)
+        group.setColumns(columns)
         group.setScore(xml.attributes["score"].value)
         return group
 
