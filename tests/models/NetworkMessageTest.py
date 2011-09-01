@@ -57,7 +57,7 @@ class NetworkMessageTest(unittest.TestCase):
         message.setL4TargetPort(l4TargetPort)
         message.setData(data)
         
-        outputXml = message.saveInXML()
+        outputXml = message.getFactory().saveInXML(message)
         
         rootElement2 = ElementTree.XML(outputXml)
         self.message2 = NetworkMessageFactory.loadFromXML(rootElement2)       

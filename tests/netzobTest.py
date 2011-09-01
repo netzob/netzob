@@ -21,6 +21,7 @@ import unittest
 import sys
 
 from models.NetworkMessageTest import NetworkMessageTest
+from models.FileMessageTest import FileMessageTest
 from importing.ParasiteGeneratorTest import ParasiteGeneratorTest
 from importing.PrototypesRepositoryTest import PrototypesRepositoryTest
 from xmlrunner import XMLTestRunner
@@ -37,6 +38,7 @@ from xmlrunner import XMLTestRunner
 def addTestsForModels(suite):    
     suite.addTest(NetworkMessageTest('test_loadFromXml'))
     suite.addTest(NetworkMessageTest('test_saveInXML'))
+    suite.addTest(FileMessageTest('test_loadFromXml'))
     
 def addTestsForGotPoisoning(suite):    
     suite.addTest(ParasiteGeneratorTest('test_sourceCodeGenerator'))
@@ -64,7 +66,7 @@ if __name__ == "__main__":
     # add the tests dedicated to the models
     addTestsForModels(globalTestSuite)
     
-    # add the tests dedicated to the GOT Poisoning
+    # add the tests dedicated to the GOT Poisoninget que tu fai
     # addTestsForGotPoisoning(globalTestSuite)
     
     addTestsForPrototypesRepositoryTest(globalTestSuite)

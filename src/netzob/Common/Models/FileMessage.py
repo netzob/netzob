@@ -29,7 +29,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from .. import ConfigurationParser
 from .AbstractMessage import AbstractMessage
-from Factories.NetworkMessageFactory import NetworkMessageFactory
+from Factories.FileMessageFactory import FileMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -38,73 +38,57 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| NetworkMessage :
-#|     Definition of a network message
+#| FileMessage :
+#|     Definition of a file message
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
-#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| XML Definition :
-#| <message type="network" id="">
-#|     <timestamp></timestamp>
-#|     <ipSource></ipSource>
-#|     <ipTarget></ipTarget>
-#|     <protocol></protocol>
-#|     <l4SourcePort></l4SourcePort>
-#|     <l4TargetPort></l4TargetPort>
-#|     <data></data>
-#| </message>
 #+---------------------------------------------------------------------------+
-class NetworkMessage(AbstractMessage):
+class FileMessage(AbstractMessage):
     def __init__(self):
-        AbstractMessage.__init__(self, "Network")
+        AbstractMessage.__init__(self, "File")
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
+        self.log = logging.getLogger('netzob.Common.Models.FileMessage.py')
     
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
-        return NetworkMessageFactory
+        return FileMessageFactory
         
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
-    def getProtocol(self):
-        return self.protocol
-    def getIPSource(self):
-        return self.ipSource
-    def getIPTarget(self):
-        return self.ipTarget
-    def getL4SourcePort(self):
-        return self.l4SourcePort
-    def getL4TargetPort(self):
-        return self.l4TargetPort
-    def getTimestamp(self):
-        return self.timestamp
+    def getLineNumber(self):
+        return self.lineNumber
+    def getFilename(self):
+        return self.filename
+    def getCreationDate(self):
+        return self.creationDate
+    def getModificationDate(self):
+        return self.modificationDate
+    def getOwner(self):
+        return self.owner
+    def getSize(self):
+        return self.size
        
-    #+----------------------------et que tu fai------------------ 
+    #+---------------------------------------------- 
     #| SETTERS : 
     #+----------------------------------------------
-    def setProtocol(self, protocol):
-        self.protocol = protocol
-    def setIPSource(self, ipSource):
-        self.ipSource = ipSource
-    def setIPTarget(self, ipTarget):
-        self.ipTarget = ipTarget
-    def setL4SourcePort(self, l4sourcePort):
+    def setLineNumber(self, lineNumber):
         try :
-            self.l4SourcePort = int(l4sourcePort)
+            self.lineNumber = int(lineNumber)
         except :
-            self.log.warning("Impossible to set the given L4 source port since its not an int !")
-            
-    def setL4TargetPort(self, l4targetPort):
-        try :
-            self.l4TargetPort = int(l4targetPort)
-        except :
-            self.log.warning("Impossible to set the given L4 target port since its not an int !")
-        
-    def setTimestamp(self, timestamp):
-        self.timestamp = timestamp
+            self.log.warning("Impossible to set the given line number since its not an int !")
+    def setFilename(self, filename):
+        self.filename = filename
+    def setCreationDate(self, creationDate):
+        self.creationDate = creationDate
+    def setModificationDate(self, modificationDate):
+        self.modificationDate = modificationDate
+    def setOwner(self, owner):
+        self.owner = owner
+    def setSize(self, size):
+        self.size = size
   
 

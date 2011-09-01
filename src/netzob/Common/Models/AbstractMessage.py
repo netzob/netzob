@@ -44,16 +44,16 @@ class AbstractMessage():
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         self.id = uuid.uuid4() 
         self.type = type
+        
     
     #+-----------------------------------------------------------------------+
-    #| saveInXML
-    #|     Abstract method for the generation of an XML representation of
-    #|     a message
+    #| getFactory
+    #|     Abstract method to retrieve the associated factory
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
-    #+-----------------------------------------------------------------------+    
-    def saveInXML(self):
-        self.log.error("A message class doesn't implement its own way of representing through XML")
-        raise NotImplementedError("A message class doesn't implement its own way of representing through XML")    
+    #+-----------------------------------------------------------------------+
+    def getFactory(self):
+        self.log.error("The message class doesn't have an associated factory !")
+        raise NotImplementedError("The message class doesn't have an associated factory !")
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

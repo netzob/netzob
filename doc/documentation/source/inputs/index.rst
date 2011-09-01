@@ -42,3 +42,28 @@ Definition of the factory for XML processing of a NetworkMessage :
 
     .. autoclass:: NetworkMessageFactory   
   
+FileMessage
+--------------
+A file message is defined with the following parameters :
+
+* a filename
+* the line number in the file
+* the creation date of the file
+* the last modification date of the file
+* the owner of the file
+* the size of the file
+
+
+Definition of a NetworkMessage :
+
+.. automodule:: src.netzob.Common.Models.FileMessage
+
+    .. autoclass:: FileMessage
+    	:members
+
+Definition of the factory for XML processing of a FileMessage :
+
+.. automodule:: src.netzob.Common.Models.Factories.FileMessageFactory
+
+    .. autoclass:: FileMessageFactory   
+  
