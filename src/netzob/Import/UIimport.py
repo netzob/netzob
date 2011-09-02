@@ -77,7 +77,7 @@ class UIimport:
         self.panel.show()
 
         #+----------------------------------------------
-        #| LEFT PART OF THE GUI : Capturing types
+        #| LEFT PART OF THE GUI : Capturing panels
         #+----------------------------------------------
         notebook = gtk.Notebook()
         notebook.show()
@@ -85,9 +85,6 @@ class UIimport:
         notebook.connect("switch-page", self.notebookFocus)
         self.panel.add(notebook)
 
-        #+----------------------------------------------
-        #| LEFT PART OF THE GUI : Capturing panels
-        #+----------------------------------------------
         # Network Capturing Panel
         netPanel = Network.Network(self.zob)
         notebook.append_page(netPanel.getPanel(), gtk.Label("Network Capturing"))

@@ -47,7 +47,7 @@ class TreeGroupGenerator():
         self.treestore = None
         self.treeview = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeGroupGenerator.py')
+        self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeGroupGenerator.py')
     
     #+---------------------------------------------- 
     #| initialization :
@@ -87,10 +87,10 @@ class TreeGroupGenerator():
         pass
 
     #+---------------------------------------------- 
-    #| default :
+    #| update :
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
-    def default(self):
+    def update(self):
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
         for group in self.netzob.groups.getGroups():            

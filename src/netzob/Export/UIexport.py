@@ -30,7 +30,7 @@ pygtk.require('2.0')
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-from ..Modelization.TreeViews import TreeGroupGenerator
+from TreeViews import TreeGroupGenerator
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -53,7 +53,7 @@ class UIexport:
         pass
 
     def update(self):
-        pass
+        self.treeGroupGenerator.update()
     
     def clear(self):
         pass
@@ -65,27 +65,16 @@ class UIexport:
         pass
     
     #+---------------------------------------------- 
-    #| updateGroups :
-    #|  update the content of the UI with new groups
-    #| @param groups: list of all groups 
-    #+----------------------------------------------   
-    def updateGoups(self, groups):
-        self.groups = groups
-        self.treeGroupGenerator.groups = self.groups
-        self.treeGroupGenerator.default()       
-        
-    #+---------------------------------------------- 
     #| Constructor :
-    #| @param groups: list of all groups 
+    #| @param netzob: the main netzob object
     #+----------------------------------------------   
-    def __init__(self, zob):
+    def __init__(self, netzob):
+        self.netzob = netzob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Export.UIexport.py')
         self.log.debug("Starting the Export GUI")
         
-        self.groups = []
         self.selectedGroup = None
-        
         
         # First we create an VPaned which hosts the two main children
         self.panel = gtk.VPaned()        
@@ -111,11 +100,10 @@ class UIexport:
 #        self.box_top.add(self.topFrame)
         
         # Create the treeview
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.groups)
+        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
         self.box_top.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
-        
         
         # Create the content hbox content
         self.bottomFrame = gtk.Frame()
@@ -138,7 +126,6 @@ class UIexport:
                 idGroup = model.get_value(iter, 0)
                 self.selectedGroup = idGroup
                 self.updateTextArea()
-                
 
     def updateTextArea(self):
         if self.selectedGroup == None :
@@ -147,10 +134,9 @@ class UIexport:
 
         else :
             found = False
-            for group in self.groups :
+            for group in self.netzob.groups.getGroups() :
                 if str(group.getID()) == self.selectedGroup :
                     self.textarea.get_buffer().set_text(group.getXMLDefinition())
                     found = True
             if found == False :
                 self.log.warning("Impossible to retrieve the group having the id {0}".format(str(self.selectedGroup)))
-                

@@ -30,8 +30,9 @@ import threading
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
-from ..Modelization.TreeViews import TreeGroupGenerator
-from ..Modelization.TreeViews import TreeTypeStructureGenerator
+import Network
+import Ipc
+import File
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -46,14 +47,16 @@ logging.config.fileConfig(loggingFilePath)
 #| @version    : 0.2
 #+---------------------------------------------- 
 class UIfuzzing:
-    #+---------------------------------------------- 
-    #| Called when user select a new trace
-    #+----------------------------------------------
     def new(self):
         pass
 
+    #+---------------------------------------------- 
+    #| Update each sub-panels
+    #+----------------------------------------------
     def update(self):
-        pass
+        self.netPanel.update()
+        self.ipcPanel.update()
+        self.filePanel.update()
 
     def clear(self):
         pass
@@ -65,95 +68,39 @@ class UIfuzzing:
         pass
 
     #+---------------------------------------------- 
-    #| updateGroups :
-    #|  update the content of the UI with new groups
-    #| @param groups: list of all groups 
-    #+----------------------------------------------   
-    def updateGoups(self, groups):
-        self.groups = groups
-        self.treeGroupGenerator.groups = self.groups
-        self.treeGroupGenerator.default()
-    
-    #+---------------------------------------------- 
     #| Constructor :
     #| @param groups: list of all groups 
     #+----------------------------------------------   
-    def __init__(self, zob):
+    def __init__(self, netzob):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.UIfuzzing.py')
-        self.zob = zob
-        self.groups = []
-        self.selectedGroup = None
- 
+        self.netzob = netzob
         self.panel = gtk.HPaned()
         self.panel.show()
 
-        #+---------------------------------------------- 
-        #| LEFT PART OF THE GUI : TREEVIEW
-        #+----------------------------------------------           
-        vb_left_panel = gtk.VBox(False, spacing=0)
-        self.panel.add(vb_left_panel)
-        vb_left_panel.set_size_request(-1, -1)
-        vb_left_panel.show()
-
-        # Initialize the treeview generator for the groups
-        # Create the treeview
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.groups)
-        self.treeGroupGenerator.initialization()
-        vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
-        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
-#        self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
-
-        #+---------------------------------------------- 
-        #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
-        vb_right_panel = gtk.VBox(False, spacing=0)
-        vb_right_panel.show()
-        # Initialize the treeview for the type structure
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
-        self.treeTypeStructureGenerator.initialization()
-        self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_field)
-        vb_right_panel.add(self.treeTypeStructureGenerator.getScrollLib())
-        self.panel.add(vb_right_panel)
+        #| LEFT PART OF THE GUI : Capturing panels
+        #+----------------------------------------------
+        notebook = gtk.Notebook()
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_LEFT)
+        notebook.connect("switch-page", self.notebookFocus)
+        self.panel.add(notebook)
 
-    def groupSelected(self, treeview):
-        (model, iter) = treeview.get_selection().get_selected()
-        if(iter):
-            if(model.iter_is_valid(iter)):
-                # Retrieve the selected group
-                idGroup = model.get_value(iter, 0)
-                self.selectedGroup = idGroup
-                group = None
-                for tmp_group in self.treeGroupGenerator.getGroups() :
-                    if str(tmp_group.getID()) == idGroup :
-                        group = tmp_group
+        # Network Capturing Panel
+        self.netPanel = Network.Network(self.netzob)
+        notebook.append_page(self.netPanel.getPanel(), gtk.Label("Network fuzzing"))
 
-                # Retrieve a random message in order to show a type structure
-                message = group.getMessages()[-1]
-                self.treeTypeStructureGenerator.setGroup(group)
-                self.treeTypeStructureGenerator.setMessage(message)
-                self.treeTypeStructureGenerator.buildTypeStructure()
-                self.treeTypeStructureGenerator.default()
+        # IPC Capturing Panel
+        self.ipcPanel = Ipc.IPC(self.netzob)
+        notebook.append_page(self.ipcPanel.getPanel(), gtk.Label("IPC fuzzing"))
+
+        # File Panel
+        self.filePanel = File.File(self.netzob)
+        notebook.append_page(self.filePanel.getPanel(), gtk.Label("File fuzzing"))
 
     #+---------------------------------------------- 
-    #| button_press_on_field :
-    #|   Create a menu to display available operations
-    #|   on the treeview groups
+    #| Called when user select a notebook
     #+----------------------------------------------
-    def button_press_on_field(self, button, event):
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:        
-            # Retrieves the group on which the user has clicked on
-            x = int(event.x)
-            y = int(event.y)
-            (path, treeviewColumn, x, y) = self.treeTypeStructureGenerator.getTreeview().get_path_at_pos(x, y)
-            aIter = self.treeTypeStructureGenerator.getTreeview().get_model().get_iter(path)
-            field = self.treeTypeStructureGenerator.getTreeview().get_model().get_value(aIter, 0)
-            menu = gtk.Menu()
-            item = gtk.MenuItem("Fuzz field")
-            item.connect("activate", self.fuzz_field_cb, field)
-            item.show()
-            menu.append(item)
-            menu.popup(None, None, None, event.button, event.time)
-
-    def fuzz_field_cb(self, widget, field):
-        print "Fuzz field : " + str(field)
+    def notebookFocus(self, notebook, page, pagenum):
+        nameTab = notebook.get_tab_label_text(notebook.get_nth_page(pagenum))
