@@ -79,9 +79,20 @@ class Netzob():
         vbox.pack_start(toolbar, False, False, 2)
 
         label = gtk.Label("Select trace : ")
-        self.entry = gtk.combo_box_entry_new_text()
+#        menu = gtk.Menu()
+#        gtk.MenuItem("")
+
+        liststore = gtk.ListStore(str, str)
+        self.entry = gtk.ComboBox(liststore)
+        cellText = gtk.CellRendererText()
+        self.entry.pack_start(cellText, True)
+        self.entry.add_attribute(cellText, 'text', 0)
+        cellImage = gtk.CellRendererPixbuf()
+        self.entry.pack_start(cellImage, False)
+        self.entry.add_attribute(cellImage, 'stock_id', 1)
+
+#        self.entry = gtk.combo_box_entry_new_text()
         self.entry.set_size_request(300, -1)
-        self.entry.set_model(gtk.ListStore(str))
         self.entry.connect("changed", self.traceSelected)
         self.updateListOfAvailableTraces()       
       
@@ -157,13 +168,21 @@ class Netzob():
          
         # list all the directories (except .svn)
         for tmpDir in os.listdir(tracesDirectoryPath):
+            stateSaved = False
             if tmpDir == '.svn':
                 continue
-            temporaryListOfFolders.append(tmpDir)
+            for aFile in os.listdir(tracesDirectoryPath + "/" + tmpDir):
+                if aFile == "config.xml":
+                    stateSaved = True
+                    continue
+            if stateSaved == True:
+                temporaryListOfFolders.append([tmpDir, gtk.STOCK_INFO])
+            else:
+                temporaryListOfFolders.append([tmpDir, ''])
         
         # Sort and add to the entry
         for folder in sorted(temporaryListOfFolders) :
-            self.entry.append_text(folder)
+            self.entry.get_model().append(folder)
 
     def startGui(self):
         # UI thread launching
