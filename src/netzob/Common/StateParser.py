@@ -23,9 +23,9 @@ import xml.dom.minidom
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from ..Common import Message
-from ..Common import Group
+import ConfigurationParser
+import Message
+import Group
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -39,14 +39,14 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class ConfigParser(object):
+class StateParser(object):
     
     #+---------------------------------------------- 
     #| Constructor : 
     #+----------------------------------------------   
     def __init__(self, configFile):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.ConfigParser.py')
+        self.log = logging.getLogger('netzob.Common.StateParser.py')
         self.configFile = configFile
         self.groups = []
         

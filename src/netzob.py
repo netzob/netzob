@@ -38,6 +38,7 @@ from netzob.Export import UIexport
 from netzob.Import import UIimport
 from netzob.Fuzzing import UIfuzzing
 from netzob.Common import ConfigurationParser
+from netzob.Common import StateParser
 from netzob.Common import Groups
 
 #+---------------------------------------------- 
@@ -223,6 +224,16 @@ class Netzob():
             #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
             #if page[0] == nameTab:
             page[1].new()
+
+        # If a state saving exists, loads it
+        for file in os.listdir(self.tracePath):
+            filePath = self.tracePath + "/" + file
+            if file == "config.xml":
+                self.log.info("A configuration file has been found.")
+                stateParser = StateParser.StateParser(self.tracePath+"/config.xml")
+                stateParser.loadConfiguration()
+                self.groups.setGroups( stateParser.getGroups() )
+                self.update()
 
     #+---------------------------------------------- 
     #| Update each panels

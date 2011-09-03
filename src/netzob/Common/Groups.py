@@ -66,12 +66,6 @@ class Groups(object):
         self.setGroups(  tracesExtractor.parse() )
         self.netzob.update()
 
-    def addGroup(self, group):
-        self.groups.append( group )
-
-    def removeGroup(self, group):
-        self.groups.remove( group )
-
     #+---------------------------------------------- 
     #| slickRegexes:
     #|  try to make smooth the regexes, by deleting tiny static
@@ -155,6 +149,15 @@ class Groups(object):
             vbox = group.search( entry.get_text() )
             if vbox != None:
                 notebook.append_page(vbox, gtk.Label(group.getName()))
+
+    #+---------------------------------------------- 
+    #| Groups management :
+    #+----------------------------------------------    
+    def addGroup(self, group):
+        self.groups.append( group )
+
+    def removeGroup(self, group):
+        self.groups.remove( group )
 
     #+---------------------------------------------- 
     #| GETTERS :
