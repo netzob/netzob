@@ -75,7 +75,6 @@ class TreeTypeStructureGenerator():
         self.treeview.show()
         self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.scroll = gtk.ScrolledWindow()
-#        self.scroll.set_size_request(1000, 500)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
         self.scroll.add(self.treeview)
         self.scroll.show()
@@ -120,7 +119,7 @@ class TreeTypeStructureGenerator():
                 tab += " "
             messageElt = splittedMessage[iCol]
             if not self.getGroup().isRegexStatic( col['regex'] ):
-                iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", col['regex'] + " / " + messageElt, col['description']])
+                iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", col['regex'] , col['description']])
             else:
                 iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", messageElt, col['description']])
             iCol += 1

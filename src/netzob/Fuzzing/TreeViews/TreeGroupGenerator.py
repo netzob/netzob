@@ -66,7 +66,7 @@ class TreeGroupGenerator():
         self.scroll = gtk.ScrolledWindow()
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll.show()
-        self.scroll.set_size_request(200, 300)
+        self.scroll.set_size_request(200, 200)
         self.scroll.add(self.treeview)        
 
         lvcolumn = gtk.TreeViewColumn('Groups')

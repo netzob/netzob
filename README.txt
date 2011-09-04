@@ -6,11 +6,16 @@
 * python-nfqueue
 * python-hachoir
 * python-matplotlib
+* python-dpkt
 * strace
 * lsof
 * iptables
 
-for documentation purposes :
+or, on Debian-like operating systems :
+
+$ sudo apt-get install tcpdump python python-ptrace python-nfqueue python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables
+
+and for documentation purposes :
 * python-sphinx
 
 ### Installation ###

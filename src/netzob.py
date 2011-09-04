@@ -92,7 +92,7 @@ class Netzob():
         self.entry.add_attribute(cellImage, 'stock_id', 1)
 
 #        self.entry = gtk.combo_box_entry_new_text()
-        self.entry.set_size_request(300, -1)
+        self.entry.set_size_request(200, -1)
         self.entry.connect("changed", self.traceSelected)
         self.updateListOfAvailableTraces()       
       
@@ -252,7 +252,7 @@ class Netzob():
                 stateParser = StateParser.StateParser(self.tracePath+"/config.xml")
                 stateParser.loadConfiguration()
                 self.groups.setGroups( stateParser.getGroups() )
-                self.update()
+        self.update()
 
     #+---------------------------------------------- 
     #| Update each panels

@@ -50,22 +50,25 @@ class UIfuzzing:
     def new(self):
         pass
 
-    #+---------------------------------------------- 
-    #| Update each sub-panels
-    #+----------------------------------------------
     def update(self):
         self.netPanel.update()
         self.ipcPanel.update()
         self.filePanel.update()
 
     def clear(self):
-        pass
+        self.netPanel.clear()
+        self.ipcPanel.clear()
+        self.filePanel.clear()
 
     def kill(self):
-        pass
+        self.netPanel.kill()
+        self.ipcPanel.kill()
+        self.filePanel.kill()
     
     def save(self, file):
-        pass
+        self.netPanel.save()
+        self.ipcPanel.save()
+        self.filePanel.save()
 
     #+---------------------------------------------- 
     #| Constructor :
@@ -84,7 +87,6 @@ class UIfuzzing:
         notebook = gtk.Notebook()
         notebook.show()
         notebook.set_tab_pos(gtk.POS_LEFT)
-        notebook.connect("switch-page", self.notebookFocus)
         self.panel.add(notebook)
 
         # Network Capturing Panel
@@ -98,9 +100,3 @@ class UIfuzzing:
         # File Panel
         self.filePanel = File.File(self.netzob)
         notebook.append_page(self.filePanel.getPanel(), gtk.Label("File fuzzing"))
-
-    #+---------------------------------------------- 
-    #| Called when user select a notebook
-    #+----------------------------------------------
-    def notebookFocus(self, notebook, page, pagenum):
-        nameTab = notebook.get_tab_label_text(notebook.get_nth_page(pagenum))
