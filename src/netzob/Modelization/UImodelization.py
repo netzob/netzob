@@ -37,7 +37,7 @@ from ..Common import Group
 from ..Common import Message
 from ..Common import ConfigurationParser
 import TracesExtractor
-import ConfigParser
+from ..Common import StateParser
 import Entropy
 from TreeViews import TreeGroupGenerator
 from TreeViews import TreeMessageGenerator
@@ -80,8 +80,8 @@ class UImodelization:
         self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
         self.log.info("Saving the modelization")
         
-        configParser = ConfigParser.ConfigParser(file)
-        configParser.saveInConfiguration( self.netzob.groups.getGroups() )
+        stateParser = StateParser.StateParser(file)
+        stateParser.saveInConfiguration( self.netzob.groups.getGroups() )
     
     #+---------------------------------------------- 
     #| Constructor :

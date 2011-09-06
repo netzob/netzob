@@ -65,12 +65,12 @@ class Network:
         pass
 
     def kill(self):
-        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
-        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
+#        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
+#        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
         if self.aFuzzThread != None and self.aFuzzThread.isAlive():
             self.aFuzzThread._Thread__stop()
     
-    def save(self, file):
+    def save(self):
         pass
    
     #+---------------------------------------------- 
@@ -262,8 +262,8 @@ class Network:
         self.log.info("Launching fuzzing process with : filter=\"" + aFilter.get_text() + "\"")
 
         ## Set Netfilter NFQUEUE
-        os.popen("sudo iptables -I OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
-        os.popen("sudo iptables -I OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
+#        os.popen("sudo iptables -I OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
+#        os.popen("sudo iptables -I OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
         q = nfqueue.queue()
         q.open()
         try:
@@ -285,8 +285,8 @@ class Network:
         q.unbind(socket.AF_INET)
         q.close()
 
-        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
-        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
+#        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
+#        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
         gobject.idle_add( button.set_sensitive, True )
 
     #+---------------------------------------------- 

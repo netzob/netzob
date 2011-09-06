@@ -68,6 +68,9 @@ class IPC:
     def kill(self):
         pass
 
+    def save(self):
+        pass
+
     #+---------------------------------------------- 
     #| Constructor :
     #| @param netzob: the netzob main object
