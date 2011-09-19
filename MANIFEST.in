@@ -1,0 +1,4 @@
+include COPYING.txt
+recursive-include doc *
+recursive-include resources *
+recursive-include lib *

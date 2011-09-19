@@ -46,7 +46,7 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class FileImport:
+class File:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace
@@ -69,25 +69,48 @@ class FileImport:
     #+----------------------------------------------   
     def __init__(self, zob):        
         self.zob = zob
+        
+        # Default line separator is <CR>
+        self.lineSeparator = [10]
 
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Capturing.FileImport.py')
+        self.log = logging.getLogger('netzob.Capturing.File.py')
         self.packets = []
-
-        # Network Capturing Panel
-        self.panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Main panel
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        self.panel = gtk.Table(rows=10, columns=8, homogeneous=True)
         self.panel.show()
-
-        # Scapy filter
+        
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Select a file
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         but = gtk.Button("Select file")
         but.show()
-        label_file = gtk.Label("...")
-        label_file.show()
-        but.connect("clicked", self.select_file, label_file)
+        entry_filepath = gtk.Entry()
+#        entry_filepath.set_width_chars(50)
+        entry_filepath.set_text("")
+        entry_filepath.show()
+        but.connect("clicked", self.select_file, entry_filepath)
         self.panel.attach(but, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(label_file, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filepath, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Separator
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        label_separator = gtk.Label("Line-separator :")
+        label_separator.show()
+        entry_separator = gtk.Entry()
+#        entry_separator.set_width_chars(50)
+        entry_separator.set_text(str(self.lineSeparator))
+        entry_separator.show()
+        self.panel.attach(label_separator, 2, 3, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_separator, 3, 4, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-        # Packet detail
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # File details
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll = gtk.ScrolledWindow()
         self.textview = gtk.TextView()
         self.textview.show()
@@ -95,13 +118,39 @@ class FileImport:
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 3, 1, 2, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 4, 1, 10, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+
+       
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Extracted data
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        scroll2 = gtk.ScrolledWindow()
+        self.lineView = gtk.TreeView(gtk.TreeStore(str, str)) # line number, content
+        self.lineView.get_selection().set_mode(gtk.SELECTION_NONE)
+        cell = gtk.CellRendererText()
+        # Col file descriptor
+        column = gtk.TreeViewColumn('Line number')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        self.lineView.append_column(column)
+        # Col type
+        column = gtk.TreeViewColumn('Content')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        self.lineView.append_column(column)
+        self.lineView.show()
+
+        scroll2.add(self.lineView)
+        scroll2.show()
+        scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.panel.attach(scroll2, 4, 8, 0, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
         but = gtk.Button(label="Import file")
         but.show()
         but.connect("clicked", self.import_file)
-        self.panel.attach(but, 0, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet
@@ -158,7 +207,7 @@ class FileImport:
         res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -179,7 +228,7 @@ class FileImport:
 
         # Create the dest Dir
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
-        os.mkdir( newTraceDir )
+        os.mkdir(newTraceDir)
         # Create the new XML structure
         res = "<datas>\n"
         res += "<data proto=\"file\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
@@ -187,36 +236,61 @@ class FileImport:
         res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
         self.zob.updateListOfAvailableTraces()
 
     #+---------------------------------------------- 
-    #| Called when user import a pcap file
+    #| Called when user import a file
     #+----------------------------------------------
     def select_file(self, button, label):
         aFile = ""
-        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        # Computes the selected file
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
             aFile = chooser.get_filename()
             label.set_text(aFile)
         chooser.destroy()
-
+        
+        # Reads the file
         if aFile != "" and aFile != None:
             pktFD = open(aFile, 'r')
-            self.packet =  pktFD.read()
+            self.content = pktFD.read()
             pktFD.close()
-
-            if len(self.packet) > 4096:
-                tmp_pkt = self.packet[:4095] + "..."
-            else:
-                tmp_pkt = self.packet
             typer = TypeIdentifier.TypeIdentifier()
-            self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), typer.hexdump( tmp_pkt ), "normalTag")
+            self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), typer.hexdump(self.content), "normalTag")
+            
+            # Fullfill the packets list
+            self.updatePacketList()
+            
+
+    def updatePacketList(self):
+        self.log.info("updating packet list")
+        typer = TypeIdentifier.TypeIdentifier()
+        hexValOfContent = typer.ascii2hex(self.content)
+        # split
+        result = []
+        indice = 0
+        
+        for h in hexValOfContent :
+            if h == self.lineSeparator[indice] :
+                
+        
+        for x in self.lineSeparator :
+            print int(x)
+        for h in hexValOfContent :
+            print int(h, 16)
+            
+#            if str(h) == "0x" + self.lineSeparator :
+#                print "FOUND"
+        
+        
+        
+        
 
     #+---------------------------------------------- 
     #| GETTERS

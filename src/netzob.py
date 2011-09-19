@@ -249,9 +249,9 @@ class Netzob():
             filePath = self.tracePath + "/" + file
             if file == "config.xml":
                 self.log.info("A configuration file has been found.")
-                stateParser = StateParser.StateParser(self.tracePath+"/config.xml")
+                stateParser = StateParser.StateParser(self.tracePath + "/config.xml")
                 stateParser.loadConfiguration()
-                self.groups.setGroups( stateParser.getGroups() )
+                self.groups.setGroups(stateParser.getGroups())
         self.update()
 
     #+---------------------------------------------- 

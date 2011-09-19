@@ -67,7 +67,7 @@ class TypeIdentifier():
         if aggregatedValues.isalnum():
             typesList.append("alphanum")
         if self.isAscii(aggregatedValues):
-            typesList.append( "ascii")
+            typesList.append("ascii")
         if self.isBase64(stringsTable):
             typesList.append("base64enc")
             typesList.append("base64dec")
@@ -114,7 +114,7 @@ class TypeIdentifier():
 
         res = ""
         for i in range(0, len(raw), 2):
-            v = int(raw[i: i+2], 16)
+            v = int(raw[i: i + 2], 16)
             if v >= 0x20 and v <= 0x7e: # means between ' ' and '~'
                 res += chr(v)
             else:
@@ -224,13 +224,19 @@ class TypeIdentifier():
     #+----------------------------------------------          
     def toBinary(self, msg):
         if len(msg) % 2 != 0:
-#            self.log.error("Hex string len not even")
+            self.log.error("Hex string len not even")
             return msg
 
         res = ""
         for i in range(0, len(msg), 2):
-            res = res + chr(int(msg[i: i+2], 16))
+            res = res + chr(int(msg[i: i + 2], 16))
         return res
+    
+    #+---------------------------------------------- 
+    #| Transforms "abcd" in ['0x23', 'Ox6c', ....]
+    #+----------------------------------------------
+    def ascii2hex(self, msg):
+        return [hex(ord(x)) for x in msg] 
 
     #+---------------------------------------------- 
     #| Return a hexdump of a hex message
@@ -241,6 +247,8 @@ class TypeIdentifier():
         def GetPrintableChar(str):
             if str.isalnum():
                 return str
+            elif str == '\n' :
+                return "<CR>"
             else:
                 return '.'
 
@@ -256,7 +264,7 @@ class TypeIdentifier():
             res.write(s)
             sp = 49 - len(s)
             res.write(' ' * sp)
-            s = ''.join(["%c" % GetPrintableChar(c) for c in buf[i:i + l]])
+            s = ''.join(["%s" % GetPrintableChar(c) for c in buf[i:i + l]])
             res.write(s)
             res.write('\n')
             i = i + 16

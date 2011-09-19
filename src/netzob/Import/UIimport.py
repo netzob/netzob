@@ -31,7 +31,7 @@ import Network
 import Pcap
 import Api
 import Ipc
-import FileImport
+import File
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -102,7 +102,7 @@ class UIimport:
         notebook.append_page(pcapPanel.getPanel(), gtk.Label("PCAP import"))
 
         # File Panel
-        filePanel = FileImport.FileImport(self.zob)
+        filePanel = File.File(self.zob)
         notebook.append_page(filePanel.getPanel(), gtk.Label("File import"))
 
     #+---------------------------------------------- 
