@@ -66,7 +66,7 @@ class FileMessageFactory():
     def saveInXML(message):
         root = ElementTree.Element("message")
         root.set("type", "file")
-        root.set("id", message.getID())
+        root.set("id", str(message.getID()))
         # line number
         subLineNumber = ElementTree.SubElement(root, "lineNumber")
         subLineNumber.text = str(message.getLineNumber())

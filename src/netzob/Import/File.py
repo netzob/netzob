@@ -22,6 +22,7 @@ import pango
 import gobject
 import re
 import pygtk
+import StringIO
 pygtk.require('2.0')
 import logging
 import os
@@ -31,8 +32,9 @@ import random
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
 from ..Common import ConfigurationParser, TypeIdentifier
+from ..Common.Models import FileMessage
+from ..Common.Models.Factories import FileMessageFactory
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -71,11 +73,12 @@ class File:
         self.zob = zob
         
         # Default line separator is <CR>
-        self.lineSeparator = [10]
+        self.lineSeparator = []
+        self.fileName = ""
 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.File.py')
-        self.packets = []
+        self.messages = []
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
@@ -103,8 +106,10 @@ class File:
         label_separator.show()
         entry_separator = gtk.Entry()
 #        entry_separator.set_width_chars(50)
-        entry_separator.set_text(str(self.lineSeparator))
+        entry_separator.set_text("".join(self.lineSeparator))
         entry_separator.show()
+        entry_separator.connect("activate", self.entry_separator_callback, entry_separator)
+
         self.panel.attach(label_separator, 2, 3, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         self.panel.attach(entry_separator, 3, 4, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
@@ -147,7 +152,7 @@ class File:
         self.panel.attach(scroll2, 4, 8, 0, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
-        but = gtk.Button(label="Import file")
+        but = gtk.Button(label="Import")
         but.show()
         but.connect("clicked", self.import_file)
         self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -200,15 +205,14 @@ class File:
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
-        # Create the new XML structure
-        res = "<datas>\n"
-        res += "<data proto=\"file\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
-        res += self.packet.encode("hex") + "\n"
-        res += "</data>\n"
-        res += "</datas>\n"
+        res = []
+        res.append("<messages>")
+        for message in self.messages :
+            res.append(FileMessageFactory.FileMessageFactory.saveInXML(message))
+        res.append("</messages>")
         # Dump into a random XML file
         fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
+        fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
 
@@ -230,14 +234,14 @@ class File:
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
         os.mkdir(newTraceDir)
         # Create the new XML structure
-        res = "<datas>\n"
-        res += "<data proto=\"file\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
-        res += self.packet.encode("hex") + "\n"
-        res += "</data>\n"
-        res += "</datas>\n"
+        res = []
+        res.append("<messages>")
+        for message in self.messages :
+            res.append(FileMessageFactory.FileMessageFactory.saveInXML(message))
+        res.append("</messages>")
         # Dump into a random XML file
         fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
+        fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
         self.zob.updateListOfAvailableTraces()
@@ -258,36 +262,85 @@ class File:
         
         # Reads the file
         if aFile != "" and aFile != None:
+            self.fileName = aFile
+            self.size = os.path.getsize(aFile)
+            self.creationDate = str(os.path.getctime(aFile))
+            self.modificationDate = str(os.path.getmtime(aFile))
+            self.owner= "none"
             pktFD = open(aFile, 'r')
             self.content = pktFD.read()
             pktFD.close()
             typer = TypeIdentifier.TypeIdentifier()
+           
             self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), typer.hexdump(self.content), "normalTag")
             
             # Fullfill the packets list
             self.updatePacketList()
             
+            # 
+    def entry_separator_callback(self, widget, entry):
+        entry_text = widget.get_text()
+        # transforms ; 2043 in [0x20; 0x43]
+        i = 0
+        self.lineSeparator = []
+        while (i < len(entry_text)) :
+            d = entry_text[i]+entry_text[i+1]
+            self.lineSeparator.append(int(d, 16))
+            i= i + 2
+            
+        self.updatePacketList()    
+        
+
+        print "Entry contents: %s\n" % entry_text
+        
 
     def updatePacketList(self):
         self.log.info("updating packet list")
         typer = TypeIdentifier.TypeIdentifier()
-        hexValOfContent = typer.ascii2hex(self.content)
-        # split
-        result = []
-        indice = 0
-        
-        for h in hexValOfContent :
-            if h == self.lineSeparator[indice] :
+        hexValOfContent = ";".join(str(int(i, 16)) for i in typer.ascii2hex(self.content))
+        separator = ";".join(str(i) for i in self.lineSeparator)       
+        print ";"+separator+";"
+        print hexValOfContent
+        ar = hexValOfContent.split(";"+separator+";")
+        # Create a FileMessage for each line
+        lineNumber = 1
+        self.messages = []        
+        ps = []
+        i = 0
+        for a in ar :
+            if i<len(ar)-1 :
+                ps.append(a+";"+separator)
+            else :
+                ps.append(a)
+            i = i +1
                 
-        
-        for x in self.lineSeparator :
-            print int(x)
-        for h in hexValOfContent :
-            print int(h, 16)
+        self.lineView.get_model().clear()
             
-#            if str(h) == "0x" + self.lineSeparator :
-#                print "FOUND"
+        for a in ps :
+            # Create a message for each
+            message = FileMessage.FileMessage()
+            message.setLineNumber(lineNumber)
+            message.setFilename(self.fileName)
+            message.setCreationDate(self.creationDate)
+            message.setOwner(self.owner)
+            message.setModificationDate(self.modificationDate)
+            message.setSize(self.size)
+            
+            test = a.split(";")
+            fe = []
+            for t in test :
+                fe.append(hex(int(t)))
+                
+                
+            message.setData(";".join(fe))
+            
+            self.lineView.get_model().append(None, [lineNumber, ";".join(fe)])
+            
+            self.messages.append(message)
+            lineNumber = lineNumber +1
         
+        for message in self.messages :
+            print FileMessageFactory.FileMessageFactory.saveInXML(message)
         
         
         
