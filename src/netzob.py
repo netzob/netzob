@@ -169,9 +169,13 @@ class Netzob():
         # list all the directories (except .svn)
         for tmpDir in os.listdir(tracesDirectoryPath):
             stateSaved = False
-            if tmpDir == '.svn':
+            pathOfTrace = tracesDirectoryPath + "/" + tmpDir
+            
+            if os.path.isfile(pathOfTrace) or tmpDir == '.svn':
                 continue
-            for aFile in os.listdir(tracesDirectoryPath + "/" + tmpDir):
+            
+            
+            for aFile in os.listdir(pathOfTrace):
                 if aFile == "config.xml":
                     stateSaved = True
                     continue
