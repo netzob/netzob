@@ -29,7 +29,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from .. import ConfigurationParser
 from .AbstractMessage import AbstractMessage
-from Factories.NetworkMessageFactory import NetworkMessageFactory
+from Factories.IPCMessageFactory import IPCMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -38,75 +38,53 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| NetworkMessage :
-#|     Definition of a network message
+#| IPCMessage :
+#|     Definition of an IPC message
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
-#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| XML Definition :
-#| <message type="network" id="">
-#|     <timestamp></timestamp>
-#|     <ipSource></ipSource>
-#|     <ipTarget></ipTarget>
-#|     <protocol></protocol>
-#|     <l4SourcePort></l4SourcePort>
-#|     <l4TargetPort></l4TargetPort>
-#|     <data></data>
-#| </message>
 #+---------------------------------------------------------------------------+
-class NetworkMessage(AbstractMessage):
+class IPCMessage(AbstractMessage):
     def __init__(self):
-        AbstractMessage.__init__(self, "Network")
+        AbstractMessage.__init__(self, "IPC")
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
+        self.log = logging.getLogger('netzob.Common.Models.IPCMessage.py')
     
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
-        return NetworkMessageFactory
+        return IPCMessageFactory
         
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
-    def getProtocol(self):
-        return self.protocol
-    def getIPSource(self):
-        return self.ipSource
-    def getIPTarget(self):
-        return self.ipTarget
-    def getL4SourcePort(self):
-        return self.l4SourcePort
-    def getL4TargetPort(self):
-        return self.l4TargetPort
+    def getCategory(self):
+        return self.category
+    def getKey(self):
+        return self.key
+    def getName(self):
+        return self.name
+    def getType(self):
+        return self.type
+    def getDirection(self):
+        return self.direction
     def getTimestamp(self):
         return self.timestamp
        
-    #+----------------------------et que tu fai------------------ 
+    #+---------------------------------------------- 
     #| SETTERS : 
     #+----------------------------------------------
-    def setProtocol(self, protocol):
-        self.protocol = protocol
-    def setIPSource(self, ipSource):
-        self.ipSource = ipSource
-    def setIPTarget(self, ipTarget):
-        self.ipTarget = ipTarget
-    def setL4SourcePort(self, l4sourcePort):
-        try :
-            self.l4SourcePort = int(l4sourcePort)
-        except :
-            self.log.warning("Impossible to set the given L4 source port since its not an int ! " +l4sourcePort)
-            self.l4SourcePort = -1
-            
-    def setL4TargetPort(self, l4targetPort):
-        try :
-            self.l4TargetPort = int(l4targetPort)
-        except :
-            self.log.warning("Impossible to set the given L4 target port since its not an int !")
-            self.l4TargetPort = -1
-        
+    def setCategory(self, category):
+        self.category = category
+    def setKey(self, key):
+        self.key = key
+    def setName(self, name):
+        self.name = name
+    def setType(self, type):
+        self.type = type
+    def setDirection(self, direction):
+        self.direction = direction
     def setTimestamp(self, timestamp):
         self.timestamp = timestamp
-  
 

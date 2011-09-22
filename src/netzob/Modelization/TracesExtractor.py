@@ -87,6 +87,7 @@ class TracesExtractor(object):
             traceParser = TraceParser.TraceParser(filePath)
             # Append retrieved message to the final list
             tmpMessages = traceParser.parse()
+            
             # Save the extracted messages in a dedicated group
             group = Group.Group(file, tmpMessages)            
             # Now we try to clusterize the newly created group

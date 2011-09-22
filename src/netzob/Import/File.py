@@ -299,7 +299,6 @@ class File:
         typer = TypeIdentifier.TypeIdentifier()
         hexValOfContent = ";".join(str(int(i, 16)) for i in typer.ascii2hex(self.content))
         separator = ";".join(str(i) for i in self.lineSeparator)       
-        print ";"+separator+";"
         print hexValOfContent
         ar = hexValOfContent.split(";"+separator+";")
         # Create a FileMessage for each line
@@ -329,10 +328,14 @@ class File:
             test = a.split(";")
             fe = []
             for t in test :
-                fe.append(hex(int(t)))
+                h = hex(int(t))[2:]
+                # Add a 0 before an hex value to always have two digit in a hex
+                if len(h)==1 :
+                    h = "0"+h
+                fe.append(h)
                 
-                
-            message.setData(";".join(fe))
+            
+            message.setData("".join(fe))
             
             self.lineView.get_model().append(None, [lineNumber, ";".join(fe)])
             

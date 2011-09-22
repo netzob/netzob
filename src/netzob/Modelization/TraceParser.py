@@ -17,14 +17,19 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
-import xml.dom.minidom
 import logging
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from xml.etree import ElementTree
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from ..Common import Message
 from ..Common import ConfigurationParser
+from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -57,20 +62,24 @@ class TraceParser(object):
     def parse(self):
         self.log.info("Extract traces from file {0}".format(self.path))
         
-        dom = xml.dom.minidom.parse(self.path)
-        xmlMessages = dom.getElementsByTagName("data")
+        tree = ElementTree.ElementTree()
+        tree.parse(self.path)
+        xmlMessages = tree.findall("message")
         for xmlMessage in xmlMessages:
+            message = AbstractMessageFactory.loadFromXML(xmlMessage)
             
-            # create a new message for each entry
-            message = Message.Message()
-            message.setProtocol(xmlMessage.attributes["proto"].value)
-            message.setIPSource(xmlMessage.attributes["sourceIp"].value)
-            message.setIPTarget(xmlMessage.attributes["targetIp"].value)
-            message.setL4SourcePort(xmlMessage.attributes["sourcePort"].value)
-            message.setL4TargetPort(xmlMessage.attributes["targetPort"].value)
-            message.setTimestamp(xmlMessage.attributes["timestamp"].value)
-            for node in xmlMessage.childNodes:
-                message.setData(node.data.split())
+#            
+#            # create a new message for each entry
+#            message = Message.Message()
+#            message.setProtocol(xmlMessage.attributes["proto"].value)
+#            message.setIPSource(xmlMessage.attributes["sourceIp"].value)
+#            message.setIPTarget(xmlMessage.attributes["targetIp"].value)
+#            message.setL4SourcePort(xmlMessage.attributes["sourcePort"].value)
+#            message.setL4TargetPort(xmlMessage.attributes["targetPort"].value)
+#            message.setTimestamp(xmlMessage.attributes["timestamp"].value)
+#            for node in xmlMessage.childNodes:
+#                message.setData(node.data.split())
+
             self.messages.append(message)     
         
         self.log.info("Found : {0} messages ".format(len(self.messages)))

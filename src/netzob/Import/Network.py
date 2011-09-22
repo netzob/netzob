@@ -14,19 +14,6 @@
 #| @organization : Amossys, http://www.amossys.fr                            |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#|         01001110 01100101 01110100 01111010 01101111 01100010             | 
-#+---------------------------------------------------------------------------+
-#| NETwork protocol modeliZatiOn By reverse engineering                      |
-#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| @license      : GNU GPL v3                                                |
-#| @copyright    : Georges Bossert and Frederic Guihery                      |
-#| @url          : http://code.google.com/p/netzob/                          |
-#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| @author       : {gbt,fgy}@amossys.fr                                      |
-#| @organization : Amossys, http://www.amossys.fr                            |
-#+---------------------------------------------------------------------------+
-
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
@@ -48,6 +35,8 @@ import scapyy.all as scapyy
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from ..Common import ConfigurationParser
+from ..Common.Models import NetworkMessage
+from ..Common.Models.Factories import NetworkMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -227,7 +216,9 @@ class Network:
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
-        res = "<datas>\n"
+        messages = []
+        
+        
         (model, paths) = selection.get_selected_rows()
         for path in paths:
             iter = model.get_iter(path)
@@ -247,13 +238,29 @@ class Network:
                     rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
                 if rawPayload == "":
                     continue
-                res += "<data proto=\"" + proto + "\" sourceIp=\"" + IPsrc + "\" sourcePort=\"" + sport + "\" targetIp=\"" + IPdst + "\" targetPort=\"" + dport + "\" timestamp=\"" + timestamp + "\">\n"
-                res += rawPayload.encode("hex") + "\n"
-                res += "</data>\n"
-        res += "</datas>\n"
+                
+                #Compute the messages
+                message = NetworkMessage.NetworkMessage()
+                message.setProtocol(proto)
+                message.setIPSource(IPsrc)
+                message.setIPTarget(IPdst)
+                message.setL4SourcePort(sport)
+                message.setL4TargetPort(dport)
+                message.setTimestamp(timestamp)
+                message.setData(rawPayload.encode("hex"))
+                messages.append(message)
+    
+        
+        # Create the xml content of the file
+        res = []
+        res.append("<messages>")
+        for message in messages :
+            res.append(NetworkMessageFactory.NetworkMessageFactory.saveInXML(message))
+        res.append("</messages>")
+        
         # Dump into a random XML file
         fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
+        fd.write("\n".join(res))
         fd.close()
         dialog.destroy()        
 
@@ -274,8 +281,11 @@ class Network:
         # Create the dest Dir
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
         os.mkdir(newTraceDir)
+        
         # Create the new XML structure
-        res = "<datas>\n"
+        messages = []
+        
+        
         (model, paths) = selection.get_selected_rows()
         for path in paths:
             iter = model.get_iter(path)
@@ -295,13 +305,28 @@ class Network:
                     rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
                 if rawPayload == "":
                     continue
-                res += "<data proto=\"" + proto + "\" sourceIp=\"" + IPsrc + "\" sourcePort=\"" + sport + "\" targetIp=\"" + IPdst + "\" targetPort=\"" + dport + "\" timestamp=\"" + timestamp + "\">\n"
-                res += rawPayload.encode("hex") + "\n"
-                res += "</data>\n"
-        res += "</datas>\n"
+                #Compute the messages
+                message = NetworkMessage.NetworkMessage()
+                message.setProtocol(proto)
+                message.setIPSource(IPsrc)
+                message.setIPTarget(IPdst)
+                message.setL4SourcePort(sport)
+                message.setL4TargetPort(dport)
+                message.setTimestamp(timestamp)
+                message.setData(rawPayload.encode("hex"))
+                messages.append(message)
+        
+        
+        # Create the xml content of the file
+        res = []
+        res.append("<messages>")
+        for message in messages :
+            res.append(NetworkMessageFactory.NetworkMessageFactory.saveInXML(message))
+        res.append("</messages>")
+        
         # Dump into a random XML file
         fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
+        fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
         self.zob.updateListOfAvailableTraces()

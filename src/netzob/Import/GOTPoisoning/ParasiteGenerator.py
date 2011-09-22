@@ -109,7 +109,9 @@ class ParasiteGenerator():
             signatures.append(signature)
         return signatures   
         
+   
     
+        
     
     def getSourceCodeOfWriteFunction(self):
         function = '''
@@ -188,8 +190,8 @@ static int _write(int fd, void *buf, int count) {
         coreFunctions = ""
         
         for function in self.hijackedFunctions :
-#            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getSource() + "\n"+function.getEndOfFunction()+"\n}\n"
-            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getEndOfFunction()+"\n}\n"
+            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getSource() + "\n"+function.getEndOfFunction()+"\n}\n"
+#            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getEndOfFunction()+"\n}\n"
         return coreFunctions
         
     def getFunctions(self):

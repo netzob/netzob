@@ -78,8 +78,21 @@ class HijackedFunction():
             if i != len(self.parameters) - 1 :
                 paramNames += ", "    
             i = i + 1
+            
+            
+        source += "\tchar new_string[5];\n"
+        source += "\tnew_string[0] = 'e';\n"
+        source += "\tnew_string[1] = '.';\n"
+        source += "\tnew_string[2] = 'l';\n"
+        source += "\tnew_string[3] = 'g';\n"
+        source += "\tnew_string[4] = 0;\n"
         
-        #source += "\torigfunc(\"test\");"
+        source += "\tint fd = _open(new_string);\n"
+        source += "\t_write(fd,new_string,4);\n"
+        source += "\t_close(fd);\n"
+        
+        
+        source += "\torigfunc(new_string);\n"
         
         return source
     

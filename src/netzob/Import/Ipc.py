@@ -35,6 +35,8 @@ import subprocess
 #| Local Imports
 #+----------------------------------------------
 from ..Common import ConfigurationParser
+from ..Common.Models import IPCMessage
+from ..Common.Models.Factories import IPCMessageFactory
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -340,24 +342,43 @@ class IPC:
     def add_packets_to_existing_trace(self, button, entry, selection, dialog):
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
-        # Create the new XML structure
-        res = "<datas>\n"
+        
+        messages = []
+        
         (model, paths) = selection.get_selected_rows()
         for path in paths:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
                 packetID = model.get_value(iter, 0)
-                timestamp = str(model.get_value(iter, 4))
-                rawPayload = self.packets[packetID]
-                if rawPayload == "":
+                msg_fd = model.get_value(iter, 1)
+                msg_direction = model.get_value(iter, 2)
+                msg_timestamp = str(model.get_value(iter, 4))
+                msg_rawPayload = self.packets[packetID]
+                if msg_rawPayload == "":
                     continue
-                res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + timestamp + "\">\n"
-                res += rawPayload.replace("\\x", "") + "\n"
-                res += "</data>\n"
-        res += "</datas>\n"
+                
+                #Compute the messages
+                message = IPCMessage.IPCMessage()
+                message.setCategory("none")
+                message.setKey(msg_fd)
+                message.setName("none")
+                message.setType("none")
+                message.setDirection(msg_direction)
+                message.setTimestamp(msg_timestamp)        
+                message.setData(msg_rawPayload.replace("\\x", ""))
+                messages.append(message)
+        
+        
+        # Create the xml content of the file
+        res = []
+        res.append("<messages>")
+        for message in messages :
+            res.append(IPCMessageFactory.IPCMessageFactory.saveInXML(message))
+        res.append("</messages>")
+        
         # Dump into a random XML file
         fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
+        fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
 
@@ -378,24 +399,42 @@ class IPC:
         # Create the dest Dir
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
         os.mkdir(newTraceDir)
-        # Create the new XML structure
-        res = "<datas>\n"
+        # Create the new XML structure        
+        messages = []
+        
         (model, paths) = selection.get_selected_rows()
         for path in paths:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
                 packetID = model.get_value(iter, 0)
-                timestamp = str(model.get_value(iter, 4))
-                rawPayload = self.packets[packetID]
-                if rawPayload == "":
+                msg_fd = model.get_value(iter, 1)
+                msg_direction = model.get_value(iter, 2)
+                msg_timestamp = str(model.get_value(iter, 4))
+                msg_rawPayload = self.packets[packetID]
+                if msg_rawPayload == "":
                     continue
-                res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + timestamp + "\">\n"
-                res += rawPayload.replace("\\x", "") + "\n"
-                res += "</data>\n"
-        res += "</datas>\n"
+                
+                #Compute the messages
+                message = IPCMessage.IPCMessage()
+                message.setCategory("none")
+                message.setKey(msg_fd)
+                message.setName("none")
+                message.setType("none")
+                message.setDirection(msg_direction)
+                message.setTimestamp(msg_timestamp)        
+                message.setData(msg_rawPayload.replace("\\x", ""))
+                messages.append(message)
+
+        # Create the xml content of the file
+        res = []
+        res.append("<messages>")
+        for message in messages :
+            res.append(IPCMessageFactory.IPCMessageFactory.saveInXML(message))
+        res.append("</messages>")
+
         # Dump into a random XML file
         fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
+        fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
         self.zob.updateListOfAvailableTraces()
@@ -502,6 +541,8 @@ class IPC:
             return "fs"
         else:
             return "ipc"
+        
+        
 
     #+---------------------------------------------- 
     #| GETTERS
