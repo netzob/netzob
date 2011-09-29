@@ -234,7 +234,7 @@ class Netzob():
     def traceSelected(self, null):
         # retrieve the new trace path
         target = self.entry.get_active_text()
-        if target == "":
+        if target == "" or target == None:
             return
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         self.label_analyse.set_text(target)
