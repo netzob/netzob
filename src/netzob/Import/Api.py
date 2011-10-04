@@ -19,11 +19,13 @@
 #+---------------------------------------------------------------------------+
 import gtk
 import pygtk
+import tempfile
 pygtk.require('2.0')
 import logging
 import os
 import time
 import random
+import threading
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -174,6 +176,34 @@ class Api:
         self.stopCapture.show()
         self.stopCapture.connect("clicked", self.stopCaptureFunction)
         self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        
+        # Packet list
+        scroll = gtk.ScrolledWindow()
+        self.pktTreestore = gtk.TreeStore(int, str, str, str, int) # pktID, Function, Parameter, data, timestamp
+        treeview = gtk.TreeView(self.pktTreestore)
+        treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        cell = gtk.CellRendererText()
+        # Col fd
+        column = gtk.TreeViewColumn('Function')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        treeview.append_column(column)
+        # Col direction
+        column = gtk.TreeViewColumn('Parameter')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=2)
+        treeview.append_column(column)
+        # Col Data
+        column = gtk.TreeViewColumn('Data')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=3)
+        treeview.append_column(column)
+        treeview.show()
+        scroll.add(treeview)
+        scroll.show()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.panel.attach(scroll, 6, 7, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
     
     #+---------------------------------------------- 
@@ -285,15 +315,18 @@ class Api:
             self.log.warning("You have to select a function if you want to capture it")        
             return
         
-        testFolder = "/home/gbt/Developpements/DLL_Injection/got_netzob"
-        parasiteGenerator = ParasiteGenerator.ParasiteGenerator(testFolder)
+        # Create a temporary folder (secure way) <- hihihihi
+        tmpFolder = tempfile.mkdtemp()
+        self.log.info("Temporary folder : "+tmpFolder)
+        
+        parasiteGenerator = ParasiteGenerator.ParasiteGenerator(tmpFolder)
         parasiteGenerator.addAnHijackedFunctions(self.selectedFunction)
         
         parasiteGenerator.writeParasiteToFile()
         parasiteGenerator.compileParasite()
         parasiteGenerator.linkParasite()
         
-        injectorGenerator = InjectorGenerator.InjectorGenerator(testFolder, parasiteGenerator)
+        injectorGenerator = InjectorGenerator.InjectorGenerator(tmpFolder, parasiteGenerator)
         injectorGenerator.writeInjectorToFile()    
         injectorGenerator.compileInjector()
         
@@ -301,15 +334,73 @@ class Api:
         poisoner.injectProcess(self.selectedProcess.getPid())
         
         
+        self.fifoFile = parasiteGenerator.getFifoFile()
+        
+        self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
+        self.aSniffThread.start()
+                
         self.log.info("Starting the capture of [{0}]".format(self.selectedProcess.getPid()))
         self.log.info("DLL [{0}]".format(self.selectedDLL.getName()))
         self.log.info("Function [{0}]".format(self.selectedFunction.getPrototype()))
+    
+    
+    def readFromFifo(self):
+        self.fifo = open(self.fifoFile, 'r')
+        receivedMessage = self.readline(self.fifo)
+        self.log.info("FIFO : "+receivedMessage)
+        while (receivedMessage != "STOP\n") :
+            self.pktTreestore.append(None, [len(self.packets), "NONE", "NC", receivedMessage, int(time.time())])
+            receivedMessage = self.readline(self.fifo)
+            self.log.info("FIFO : "+receivedMessage)
+            
+        
+    
+        
+    def createFifo(self):
+        self.log.info("Creating the FIFO file : " + self.fifoFile)
+        # Create the fifo
+        try :
+            os.mkfifo(self.fifoFile)
+        except OSError, e:
+            self.log.error("Failed to create FIFO: %s" % e)
+            return False
+        else :
+            self.log.info("The fifo has been created...")
+            return True
+    
+    def readline(self,f):
+        s = f.readline()
+        while s == "":
+            time.sleep(0.0001)
+            s = f.readline()
+        return s  
+    
+    def sniffThread(self):
+        # Create the receptor (FIFO creation)
+        if not self.createFifo() :
+            self.log.error("Cannot execute GOT Poisoning since FIFO file was not created !")
+            return
+        
+        # Read from the fifo
+        self.readFromFifo()
         
     #+---------------------------------------------- 
     #| Called when launching sniffing process
     #+----------------------------------------------
     def stopCaptureFunction(self, button):
-        print "stoping capture"
+        self.log.debug("Stoping the capture...")
+        
+        # We first stop the thread
+        if self.aSniffThread != None and self.aSniffThread.isAlive():
+            self.aSniffThread._Thread__stop()
+        self.aSniffThread = None
+        
+        # now we clean everything
+        print "Reading finish, we close the FIFO."
+        # Close and remove fifo
+        self.fifo.close()
+        os.remove(self.fifoFile)
+    
         
 
     

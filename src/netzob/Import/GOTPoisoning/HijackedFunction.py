@@ -46,13 +46,13 @@ logging.config.fileConfig(loggingFilePath)
 #|     - a set of parameter 
 #+---------------------------------------------------------------------------+
 class HijackedFunction():
-    def __init__(self, name, returnType, parameters):
+    def __init__(self, name, returnType, parameters, source):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.GOTPoisoning.HijackedFunction.py')
         self.name = name
         self.returnType = returnType
         self.parameters = parameters
-        self.source = ""
+        self.source = source
     
     
     def getSource(self):
@@ -60,8 +60,9 @@ class HijackedFunction():
 
 
     def getEndOfFunction(self):
+        source = ""
         # add the return part of the function
-        source = "\t" + self.returnType + " (*origfunc)("
+        source += "\t" + self.returnType + " (*origfunc)("
         i = 0
         params = ""
         for param in self.parameters :
@@ -80,19 +81,13 @@ class HijackedFunction():
             i = i + 1
             
             
-        source += "\tchar new_string[5];\n"
-        source += "\tnew_string[0] = 'e';\n"
-        source += "\tnew_string[1] = '.';\n"
-        source += "\tnew_string[2] = 'l';\n"
-        source += "\tnew_string[3] = 'g';\n"
-        source += "\tnew_string[4] = 0;\n"
-        
-        source += "\tint fd = _open(new_string);\n"
-        source += "\t_write(fd,new_string,4);\n"
-        source += "\t_close(fd);\n"
-        
-        
-        source += "\torigfunc(new_string);\n"
+#        source += "\tchar new_string[5];\n"
+#        source += "\tnew_string[0] = 'e';\n"
+#        source += "\tnew_string[1] = '.';\n"
+#        source += "\tnew_string[2] = 'l';\n"
+#        source += "\tnew_string[3] = 'g';\n"
+#        source += "\tnew_string[4] = 0;\n"
+        source += "\torigfunc("+paramNames+");\n"
         
         return source
     
@@ -169,26 +164,27 @@ class HijackedFunction():
             p = [pType, pName]
             funcParams.append(p)
         
-        source = "\tint fd = _open(\"/tmp/content2.log\");\n"
         
-        # parse the exports
-        for xmlExport in rootElement.findall("exports//export") :
-            if xmlExport.get("var", "none") == "none" :
-                raise NameError("The exported var should have a name")
+        source = rootElement.find("source").text
+#        source = "\tint fd = _open(\"/tmp/content2.log\");\n"
+#        
+#        # parse the exports
+#        for xmlExport in rootElement.findall("exports//export") :
+#            if xmlExport.get("var", "none") == "none" :
+#                raise NameError("The exported var should have a name")
+#            
+#            exportVar = xmlExport.get("var", "none")
+#            exportSize = ""
+#            if (xmlExport.get("size", "none")!="none") :
+#                exportSize = xmlExport.get("size", "none")
+#            
+#            source = source + "\t _write(fd, "+exportVar+" , "+exportSize+");\n"
+#            
+#            
+#            
+#        source = source + "\t_close(fd);\n\t";    
             
-            exportVar = xmlExport.get("var", "none")
-            exportSize = ""
-            if (xmlExport.get("size", "none")!="none") :
-                exportSize = xmlExport.get("size", "none")
-            
-            source = source + "\t _write(fd, "+exportVar+" , "+exportSize+");\n"
-            
-            
-            
-        source = source + "\t_close(fd);\n\t";    
-            
-        result = HijackedFunction(funcName, funcReturnType, funcParams)    
-        result.setSource(source)
+        result = HijackedFunction(funcName, funcReturnType, funcParams, source)    
         return result
     
     #+------------------------------------------------------------------------

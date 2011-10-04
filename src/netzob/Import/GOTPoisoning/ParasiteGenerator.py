@@ -48,6 +48,9 @@ class ParasiteGenerator():
         self.log = logging.getLogger('netzob.Import.GOTPoisoning.ParasiteGenerator.py')
         # temporary folder
         self.tmp_folder = tmp_folder
+        # fifo file 
+        self.fifoFile=  self.tmp_folder + "/netzob.fifo"
+        
         # list of functions to hijacked
         self.hijackedFunctions = []
         
@@ -128,14 +131,14 @@ static int _open(char * filename) {
     __asm__ __volatile__
     (        "pushl %%ebx\\n\\t"        // sauvegarde EBX
             "movl %%esi,%%ebx\\n\\t"    // on met ESI dans EBX
-            "mov $1089, %%cl\\n\\t"        // on set le flag
+            "mov $0x441, %%cx\\n\\t"        // on set le flag
             "mov $422, %%dx\\n\\t"
             "int $0x80\\n\\t"
             "popl %%ebx"
             :"=a" (id_fd) //EAX
             :"a" (SYS_open),
             "S" ((long) filename),//ESI
-            "d" ((long) 0)//EDX
+            "d" ((long) 0)//EDX    
     );
 
     if (id_fd >= 0) {
@@ -145,7 +148,6 @@ static int _open(char * filename) {
 }
 
 static void _close(int fd) {
-
     /**
      * sys_close :
      * %eax <- 6
@@ -183,6 +185,24 @@ static int _write(int fd, void *buf, int count) {
     }
     return -1;
 }        
+
+static void _saveString(char * param0) {
+    int tailleParam = 0;
+    int i = 0;
+    while (param0[tailleParam]!='\\0') {
+        tailleParam = tailleParam + 1;
+    }
+        
+    int fd = _open("'''+self.fifoFile+'''");
+     _write(fd, param0 , tailleParam);
+    _close(fd);
+}  
+
+static void _saveStringWithSize(char * param0, int size) {
+    int fd = _open("'''+self.fifoFile+'''");
+     _write(fd, param0 , size);
+    _close(fd);
+}  
 '''
         return function
     
@@ -197,7 +217,8 @@ static int _write(int fd, void *buf, int count) {
     def getFunctions(self):
         return self.hijackedFunctions    
         
-        
+    def getFifoFile(self):
+        return self.fifoFile    
     
     #+-----------------------------------------------------------------------+
     #| getSourceCodeHeader

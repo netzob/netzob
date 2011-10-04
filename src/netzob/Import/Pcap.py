@@ -96,7 +96,7 @@ class Pcap:
 #        label.show() # TODO : implement the filter
         entry_filter = gtk.Entry()
         entry_filter.set_width_chars(50)
-#        entry_filter.show()
+        entry_filter.show()
         entry_filter.set_text("tcp port 80")
         self.panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
