@@ -226,8 +226,6 @@ class TypeIdentifier():
         if len(msg) % 2 != 0:
             self.log.error("Hex string len not even")
             return msg
-        print "---->"
-        print msg
 
         res = ""
         for i in range(0, len(msg), 2):

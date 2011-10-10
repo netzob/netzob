@@ -38,7 +38,9 @@ class SequencingTest(unittest.TestCase):
     def test_alignment(self):
         class innerNetzob():
             def __init__(self):
-                self.tracePath = "resources/traces/http2/"
+#               self.tracePath = "resources/traces/http_test2/"
+#               self.tracePath = "resources/traces/test_rand/"
+                self.tracePath = "resources/traces/test_p2p/"
 
             def update(self):
                 pass

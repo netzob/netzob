@@ -71,7 +71,7 @@ if __name__ == "__main__":
     globalTestSuite = unittest.TestSuite()
     
     # add the tests dedicated to the models
-    addTestsForModels(globalTestSuite)
+#    addTestsForModels(globalTestSuite)
 
     # add the tests dedicated to the inference process
     addTestsForInference(globalTestSuite)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     # add the tests dedicated to the GOT Poisoninget que tu fai
     # addTestsForGotPoisoning(globalTestSuite)
     
-    addTestsForPrototypesRepositoryTest(globalTestSuite)
+#    addTestsForPrototypesRepositoryTest(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()
