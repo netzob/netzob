@@ -126,7 +126,7 @@ class TypeIdentifier():
     #+----------------------------------------------
     def toNum(self, raw):
         if len(raw) % 2 != 0:
-            self.log.error("Hex string len not even")
+            self.log.error("(toNum) Hex string len not even : " + raw)
             return raw
 
         s = ""
@@ -144,7 +144,7 @@ class TypeIdentifier():
     #+----------------------------------------------
     def toAlpha(self, raw):
         if len(raw) % 2 != 0:
-            self.log.error("Hex string len not even")
+            self.log.error("(toAlpha) Hex string len not even : " + raw)
             return raw
 
         s = ""
@@ -162,7 +162,7 @@ class TypeIdentifier():
     #+----------------------------------------------
     def toAlphanum(self, raw):
         if len(raw) % 2 != 0:
-            self.log.error("Hex string len not even")
+            self.log.error("(toAlphanum) Hex string len not even : " + raw)
             return raw
 
         s = ""
@@ -180,7 +180,7 @@ class TypeIdentifier():
     #+----------------------------------------------
     def toBase64Encoded(self, raw):
         if len(raw) % 2 != 0:
-            self.log.error("Hex string len not even")
+            self.log.error("(toBase64Encoded) Hex string len not even : " + raw)
             return raw
 
         s = ""
@@ -202,7 +202,7 @@ class TypeIdentifier():
     #+----------------------------------------------
     def toBase64Decoded(self, raw):
         if len(raw) % 2 != 0:
-            self.log.error("Hex string len not even")
+            self.log.error("(toBase64Decoded) Hex string len not even : " + raw)
             return raw
 
         s = ""
@@ -223,13 +223,14 @@ class TypeIdentifier():
     #| Transform the current hex message ( '1fdf' ) in binary ( '\x1f\xdf' )
     #+----------------------------------------------          
     def toBinary(self, msg):
-        if len(msg) % 2 != 0:
-            self.log.error("Hex string len not even")
-            return msg
-
         res = ""
-        for i in range(0, len(msg), 2):
-            res = res + chr(int(msg[i: i + 2], 16))
+        if len(msg) % 2 == 0: # Even length
+            for i in range(0, len(msg), 2):
+                res = res + chr(int(msg[i: i + 2], 16))
+        else: # Odd length
+            for i in range(0, len(msg) - 1, 2):
+                res = res + chr(int(msg[i: i + 2], 16))
+            res = res + chr(int(msg[-1], 16))
         return res
     
     #+---------------------------------------------- 

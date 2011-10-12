@@ -77,7 +77,7 @@ class Message(object):
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
-        return "".join(self.data)
+        return "".join(str(i) for i in self.data)
     
     def getReducedSize(self):
         start = 0
