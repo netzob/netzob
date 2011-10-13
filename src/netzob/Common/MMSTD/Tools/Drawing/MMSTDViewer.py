@@ -18,16 +18,18 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
+import gtk
 
 #+---------------------------------------------- 
 #| Related third party imports
 #+----------------------------------------------
+from xml.etree import ElementTree
+from xdot import DotWindow
 
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from .. import ConfigurationParser
-
+from .... import ConfigurationParser
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
@@ -35,34 +37,20 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
-#| MMSTD :
-#|    Definition of an "Machine de Mealy Stochastiques
-#|    à Transitions Déterministes"
+#| MMSTDViewer :
+#|    Generates a viewer for the selected MMSTD
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------- 
-class MMSTD(object):
-  
-        
+class MMSTDViewer():
     
-    #+---------------------------------------------- 
-    #| Constructor :
-    #+---------------------------------------------- 
-    def __init__(self, initialState):
+    def __init__(self, automata):
+        self.automata = automata
         
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.MMSTD.py')
-       
-        # Initial state
-        self.initialState = initialState
-       
-       
-    def getDotCode(self):
-        return """
-digraph G {
-  "Initial State" [URL="http://en.wikipedia.org/wiki/Hello"]
-  "Example of state" [URL="http://en.wikipedia.org/wiki/World"]
-    "Initial State"  -> "Example of state"
-}
-"""
-    
+    def display(self):
+        dotCode = self.automata.getDotCode()
+        window = DotWindow()
+        window.set_dotcode(dotCode)
+        window.connect('destroy', gtk.main_quit)
+        gtk.main() 
+   

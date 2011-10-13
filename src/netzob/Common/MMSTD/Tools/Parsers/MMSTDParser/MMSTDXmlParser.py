@@ -30,6 +30,8 @@ from xml.etree import ElementTree
 from ..... import ConfigurationParser
 from ....States.impl import NormalState
 from ..DictionaryParser import DictionaryXmlParser
+from .... import MMSTD
+
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
@@ -75,7 +77,7 @@ class MMSTDXmlParser(object):
             idState = int(xmlState.get("id", "-1"))
             classState = xmlState.get("class", "NormalState")
             nameState = xmlState.get("name", "none")
-            states.append(NormalState.NormalState(idState,nameState))
+            states.append(NormalState.NormalState(idState, nameState))
             
         # parse for all the transitions
         for xmlTransition in rootElement.findall("transition") :
@@ -90,7 +92,9 @@ class MMSTDXmlParser(object):
             inputId = xmlInput.text
             #inputSymbol = DictionarySymbol.DictionarySymbol(inputId, dictionary) 
             
-            print xmlState
+
            
-    
+        # create an MMSTD
+        automata = MMSTD.MMSTD(None)
+        return automata
     

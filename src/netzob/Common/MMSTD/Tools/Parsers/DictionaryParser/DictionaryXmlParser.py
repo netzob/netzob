@@ -29,6 +29,9 @@ from xml.etree import ElementTree
 #+----------------------------------------------
 from ..... import ConfigurationParser
 from ....States.impl import NormalState
+from ....Dictionary import Variable
+from ....Dictionary import DictionaryEntry
+from ....Dictionary import MMSTDDictionary
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -54,49 +57,31 @@ class DictionaryXmlParser(object):
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement):     
-        if rootElement.tag != "automata" :
-            raise NameError("The parsed XML doesn't represent an automata.")
+        if rootElement.tag != "dictionary" :
+            raise NameError("The parsed XML doesn't represent a dictionary.")
         
-        if rootElement.get("type", "none") != "mmstd" :
-            raise NameError("The parsed XML doesn't represent an MMSTD")
-        
-        if rootElement.get("dictionary", "none") == "none" :
-            raise NameError("The MMSTD doesn't have any dictionary declared")
-        
-        
+        # First we identify all the variables
         variables = []
-        
         for xmlVariable in rootElement.findall("var") :
             idVar = int(xmlVariable.get("id", "-1"))
             nameVar = xmlVariable.get("name", "none")
             typeVar = xmlVariable.get("type", "none")
             defaultValue = xmlVariable.text
-        
-        entries = []
-        
-        
-        # parse for all the states
-        states = [] 
-        for xmlState in rootElement.findall("state") :
-            idState = int(xmlState.get("id", "-1"))
-            classState = xmlState.get("class", "NormalState")
-            nameState = xmlState.get("name", "none")
-            states.append(NormalState.NormalState(idState,nameState))
+            variable = Variable.Variable(idVar, nameVar, typeVar, defaultValue)
+            variables.append(variable)
             
-        # parse for all the transitions
-        for xmlTransition in rootElement.findall("transition") :
-            idTransition = int(xmlTransition.get("id", "-1"))
-            nameTransition = xmlTransition.get("name", "none")
-            classTransition = xmlTransition.get("class", "none")
-            idStartTransition = int(xmlTransition.get("idStart", "-1"))
-            idEndTransition = int(xmlTransition.get("idEnd", "-1"))
+        # Parse the entries declared in dictionary
+        entries = []        
+        for xmlEntry in rootElement.findall("entry") :
+            idEntry = int(xmlEntry.get("id", "-1"))
+            nameEntry = xmlEntry.get("name", "none")
+            entry = DictionaryEntry.DictionaryEntry(idEntry, nameEntry)
             
-            xmlInput = xmlTransition.find("input")
-            inputClass = xmlInput.get("class", "none")
-            inputId = xmlInput.text
-            #inputSymbol = DictionarySymbol.DictionarySymbol(inputId, dictionary) 
-            
-            print xmlState
+            entries.append(entry)
+        
+        # Create a dictionary based on the variables and the entries
+        dictionary = MMSTDDictionary.MMSTDDictionary(variables, entries)
+        return dictionary
            
     
     
