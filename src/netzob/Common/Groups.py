@@ -17,12 +17,8 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
-import uuid
 import logging
-import re
 import gtk
-import pango
-import gobject
 import pygtk
 pygtk.require('2.0')
 
