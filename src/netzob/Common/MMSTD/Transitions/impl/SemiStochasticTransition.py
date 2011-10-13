@@ -45,8 +45,8 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------------------------------------+
 class SemiStochasticTransition(AbstractTransition):
     
-    def __init__(self, id, name, outputState, inputSymbol):
-        AbstractTransition.__init__(self, id, name, outputState)
+    def __init__(self, id, name, inputState, outputState, inputSymbol):
+        AbstractTransition.__init__(self, id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition.py')
         self.inputSymbol = inputSymbol
@@ -60,6 +60,14 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def getOutputSymbols(self):
         return self.outputSymbols
+    
+    #+-----------------------------------------------------------------------+
+    #| getInputSymbol
+    #|     Return the associated oinput symbol
+    #| @return the input symbol
+    #+-----------------------------------------------------------------------+
+    def getInputSymbol(self):
+        return self.inputSymbol
     
     #+-----------------------------------------------------------------------+
     #| addOutputSymbol
@@ -99,8 +107,8 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, inputSymbol, output):
         self.activate()
-        self.log.debug("Executing transition "+self.name+" with input : "+self.inputSymbol)
-        if (len(self.outputSymbols)>0) :
+        self.log.debug("Executing transition " + self.name + " with input : " + self.inputSymbol)
+        if (len(self.outputSymbols) > 0) :
             [outputSymbol, probability, time] = self.pickOutputSymbol()
             output.writeSymbol(outputSymbol)
         self.deactivate()
@@ -115,7 +123,7 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsServer(self, input, output):
         self.activate()
-        self.log.debug("Executing transition "+self.name)
+        self.log.debug("Executing transition " + self.name)
         # write the input symbol on the output channel
         output.writeSymbol(self.inputSymbol)
         finish = False
@@ -123,8 +131,8 @@ class SemiStochasticTransition(AbstractTransition):
             receivedSymbol = input.getToken()
             
             if (not (isinstance(receivedSymbol, EmptySymbol))):
-                self.log.debug("The server consider the reception of symbol "+receivedSymbol)
-                if (len(self.outputSymbols)==0) :
+                self.log.debug("The server consider the reception of symbol " + receivedSymbol)
+                if (len(self.outputSymbols) == 0) :
                     self.log.debug("Nothing is considered since the server didn't expect anything.")
                     finish = True
                 
@@ -137,6 +145,16 @@ class SemiStochasticTransition(AbstractTransition):
         self.deactivate()
         return self.outputState
      
+    
+    def getDescription(self):
+        inputSymbolId = self.getInputSymbol().getID()
+        
+        desc = []
+        for outSymbolDesc in self.getOutputSymbols() :
+            desc.append("(" + str(outSymbolDesc[0].getID()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
+        
+         
+        return "(" + str(inputSymbolId) + ";{" + ",".join(desc) + "})"
     
     #+-----------------------------------------------------------------------+
     #| toXMLString

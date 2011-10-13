@@ -57,12 +57,33 @@ class MMSTD(object):
         self.initialState = initialState
        
        
-    def getDotCode(self):
-        return """
-digraph G {
-  "Initial State" [URL="http://en.wikipedia.org/wiki/Hello"]
-  "Example of state" [URL="http://en.wikipedia.org/wiki/World"]
-    "Initial State"  -> "Example of state"
-}
-"""
+  
+    def getAllStates(self):
+        states = []
+        toAnalyze = []
+        toAnalyze.append(self.initialState)        
+        while (len(toAnalyze) > 0) :        
+                
+            currentState = toAnalyze.pop()
+            if currentState != None :
+                found = False
+                for tmpState in states :
+                        if tmpState.getID() == currentState.getID() :
+                            found = True 
+                if not found :
+                    for transition in currentState.getTransitions() :
+                        outputState = transition.getOutputState()
+                        found = False
+                        for tmpState in states :
+                            if tmpState.getID() == outputState.getID() :
+                                found = True
+                        for tmpState in toAnalyze :
+                            if tmpState.getID() == outputState.getID() :
+                                found = True
+                        if not found :
+                            toAnalyze.append(outputState)
+                    states.append(currentState)
+      
+        return states
+
     

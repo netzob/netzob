@@ -50,6 +50,13 @@ class MMSTDDictionary():
         self.entries = entries
     
     
+    def getEntry(self, id):
+        for entry in self.entries :
+            if entry.getID() == id :
+                return entry
+            
+        return None
+    
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

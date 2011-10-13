@@ -29,6 +29,8 @@ from xml.etree import ElementTree
 #+----------------------------------------------
 from ..... import ConfigurationParser
 from ....States.impl import NormalState
+from ....Symbols.impl import DictionarySymbol
+from ....Transitions.impl import SemiStochasticTransition
 from ..DictionaryParser import DictionaryXmlParser
 from .... import MMSTD
 
@@ -72,12 +74,16 @@ class MMSTDXmlParser(object):
         dictionary = DictionaryXmlParser.DictionaryXmlParser.loadFromXML(dicoTree.getroot())
         
         # parse for all the states
-        states = [] 
+        states = []
+        initialState = None 
         for xmlState in rootElement.findall("state") :
             idState = int(xmlState.get("id", "-1"))
             classState = xmlState.get("class", "NormalState")
             nameState = xmlState.get("name", "none")
-            states.append(NormalState.NormalState(idState, nameState))
+            state = NormalState.NormalState(idState, nameState)
+            states.append(state)
+            if idState == 0 :
+                initialState = state
             
         # parse for all the transitions
         for xmlTransition in rootElement.findall("transition") :
@@ -87,14 +93,40 @@ class MMSTDXmlParser(object):
             idStartTransition = int(xmlTransition.get("idStart", "-1"))
             idEndTransition = int(xmlTransition.get("idEnd", "-1"))
             
+            
             xmlInput = xmlTransition.find("input")
             inputClass = xmlInput.get("class", "none")
-            inputId = xmlInput.text
-            #inputSymbol = DictionarySymbol.DictionarySymbol(inputId, dictionary) 
+            inputId = int(xmlInput.text)
+            inputSymbol = DictionarySymbol.DictionarySymbol(dictionary.getEntry(inputId)) 
             
-
+            
+            # searches for the output and input state
+            inputStateTransition = None
+            outputStateTransition = None
+            for state in states :
+                if state.getID() == idStartTransition :
+                    inputStateTransition = state
+                if state.getID() == idEndTransition :
+                    outputStateTransition = state
+            
+            transition = SemiStochasticTransition.SemiStochasticTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, inputSymbol)
+            
+            xmlOutputs = xmlTransition.findall("output")
+            for xmlOutput in xmlOutputs :
+                outputClass = xmlOutput.get("class", "none")
+                outputId = int(xmlOutput.text)
+                outputTime = int(xmlOutput.get("time", "0"))
+                outputProbability = float(xmlOutput.get("probability", "0"))
+                outputSymbol = DictionarySymbol.DictionarySymbol(dictionary.getEntry(outputId))
+                transition.addOutputSymbol(outputSymbol, outputProbability, outputTime)
+                
+            inputStateTransition.registerTransition(transition)
+            
            
+           
+        
+        
         # create an MMSTD
-        automata = MMSTD.MMSTD(None)
+        automata = MMSTD.MMSTD(initialState)
         return automata
     

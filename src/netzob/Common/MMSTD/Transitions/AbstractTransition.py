@@ -37,13 +37,17 @@ logging.config.fileConfig(loggingFilePath)
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AbstractTransition():
-    
-    def __init__(self, id, name, outputState):
+    #+-----------------------------------------------------------------------+
+    #| WARNING :
+    #|     it does not register the transition on the input state !!!!!!!
+    #+-----------------------------------------------------------------------+
+    def __init__(self, id, name, inputState, outputState):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.AbstractTransition.py')
         self.id = id
         self.name = name
         self.outputState = outputState
+        self.inputState = inputState
         self.active = False
     
     #+-----------------------------------------------------------------------+
@@ -81,6 +85,17 @@ class AbstractTransition():
         raise NotImplementedError("The transition class doesn't support 'executeAsServer'.")
     
     #+-----------------------------------------------------------------------+
+    #| getDescription
+    #|     computes and return a description for the current transition
+    #| @return a string composed of a description
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def getDescription(self):
+        self.log.error("The transition class doesn't support 'getDescription'.")
+        raise NotImplementedError("The transition class doesn't support 'getDescription'.")
+    
+    
+    #+-----------------------------------------------------------------------+
     #| toXMLString
     #|     Abstract method to retrieve the XML definition of current transition
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
@@ -112,6 +127,8 @@ class AbstractTransition():
         return self.name
     def getOutputState(self):
         return self.outputState
+    def getInputState(self):
+        return self.inputState
     def isActive(self):
         return self.active
         
@@ -121,5 +138,7 @@ class AbstractTransition():
         self.name = name
     def setOutputState(self, outputState):
         self.outputState = outputState
+    def setInputState(self, inputState):
+        self.inputState = inputState
     
     

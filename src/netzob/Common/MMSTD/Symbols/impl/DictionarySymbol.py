@@ -17,38 +17,46 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import unittest
-import gtk
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+import logging.config
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.States.impl.NormalState import NormalState
-from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
-from netzob.Common.MMSTD.Tools.Drawing import MMSTDViewer
+from .... import ConfigurationParser
 
-class ModelTest(unittest.TestCase):
+#+---------------------------------------------------------------------------+
+#| Configuration of the logger
+#+---------------------------------------------------------------------------+
+loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+logging.config.fileConfig(loggingFilePath)
+
+#+---------------------------------------------------------------------------+
+#| DictionarySymbol :
+#|     Definition of a symbol based on a dictionary
+#| @author     : {gbt,fgy}@amossys.fr
+#| @version    : 0.3
+#+---------------------------------------------------------------------------+
+class DictionarySymbol():
     
-    def setUp(self):
-        pass
+    def __init__(self, dictionaryEntry):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
+        
+        self.entry = dictionaryEntry
+        
     
-    def test_GraphCreation(self):
-        print "Graph created !"
+    
+    #+-----------------------------------------------------------------------+
+    #| GETTERS AND SETTERS
+    #+-----------------------------------------------------------------------+
+    def getID(self):
+        return self.entry.getID()
+    def getEntry(self):
+        return self.entry
+  
         
-        xmlFile = "resources/automaton/example1.xml"     
-        tree = ElementTree.ElementTree()
-        tree.parse(xmlFile)
-           
-        automata = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
-        viewer = MMSTDViewer.MMSTDViewer(automata)
-        viewer.display()
-        
-        
-      
-        
-      
+    def setID(self, id):
+        self.id = id
+    def setEntry(self, entry):
+        self.entry = entry
+    

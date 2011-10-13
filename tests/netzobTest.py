@@ -28,6 +28,7 @@ from models.FileMessageTest import FileMessageTest
 from inference.SequencingTest import SequencingTest  
 from importing.ParasiteGeneratorTest import ParasiteGeneratorTest
 from importing.PrototypesRepositoryTest import PrototypesRepositoryTest
+from MMSTD.ModelTest import ModelTest
 from xmlrunner import XMLTestRunner
 
 
@@ -52,6 +53,9 @@ def addTestsForGotPoisoning(suite):
     
 def addTestsForPrototypesRepositoryTest(suite):
     suite.addTest(PrototypesRepositoryTest("test_loadFromXML"))
+    
+def addTestsForMMSTD(suite):
+    suite.addTest(ModelTest("test_GraphCreation"))
 
 if __name__ == "__main__":
     
@@ -71,15 +75,16 @@ if __name__ == "__main__":
     globalTestSuite = unittest.TestSuite()
     
     # add the tests dedicated to the models
-#    addTestsForModels(globalTestSuite)
+    # addTestsForModels(globalTestSuite)
 
     # add the tests dedicated to the inference process
-    addTestsForInference(globalTestSuite)
+    # addTestsForInference(globalTestSuite)
     
     # add the tests dedicated to the GOT Poisoninget que tu fai
     # addTestsForGotPoisoning(globalTestSuite)
     
-#    addTestsForPrototypesRepositoryTest(globalTestSuite)
+    # addTestsForPrototypesRepositoryTest(globalTestSuite)
+    addTestsForMMSTD(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()
