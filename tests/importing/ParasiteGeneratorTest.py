@@ -47,12 +47,8 @@ class ParasiteGeneratorTest(unittest.TestCase):
         # int     SSL_write(void *ssl,char *buf,int num);        
 #        sslReadFunc = HijackedFunction("SSL_read", "int", ["void *", "char *", "int"])
 #        sslWriteFunc = HijackedFunction("SSL_write", "int", ["void *", "char *", "int"])
-        putsFunc = HijackedFunction("puts", "int", ["char *"])
-        putsFunc.setSource('''    int (*origfunc)(char *p) = 0x00000000;            
-            int fd = _open("/tmp/content2.log");
-            _write(fd, param0 , 3);
-            _close(fd);
-            origfunc("test");''')
+        putsFunc = HijackedFunction("puts", "int", [ ["char *", "param0"]])
+        putsFunc.setSource('''''')
 
 #        parasiteGenerator.addAnHijackedFunctions(sslReadFunc)
 #        parasiteGenerator.addAnHijackedFunctions(sslWriteFunc)
@@ -67,7 +63,7 @@ class ParasiteGeneratorTest(unittest.TestCase):
         injectorGenerator.compileInjector()
         
         poisoner = GOTPoisoner(parasiteGenerator, injectorGenerator) 
-        poisoner.injectProcess(24304)
+        poisoner.injectProcess(20121)
         
         
    

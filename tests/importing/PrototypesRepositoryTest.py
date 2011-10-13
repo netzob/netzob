@@ -30,6 +30,8 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from netzob.Import.GOTPoisoning import PrototypesRepositoryParser
 from netzob.Common import ConfigurationParser
+from netzob.Common import SharedLib
+from netzob.Import.GOTPoisoning import HijackedFunction
 
 
 class PrototypesRepositoryTest(unittest.TestCase):
@@ -47,6 +49,19 @@ class PrototypesRepositoryTest(unittest.TestCase):
             for func in lib.getFunctions() :
                 print "\t-"+func.getPrototype()
                 print func.getSource()
-        
-    
 
+        
+    def test_saveInXML(self):
+        libName = "testLib"
+        funcName = "testFunc"
+        returnType = "int"
+        parameters = [["char *", "buffer"], ["int", "taille_buffer"]]
+        newlib = SharedLib.SharedLib(libName)
+        func = HijackedFunction.HijackedFunction(funcName, returnType, parameters)
+        newlib.setFunctions([func])
+        
+        
+        
+        
+        
+        
