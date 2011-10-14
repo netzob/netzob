@@ -67,11 +67,10 @@ class AbstractState():
     #| executeAsClient
     #|     Abstract method to execute the current state as a client given the
     #|     the input and the output method access
-    #| @param input method access to the input flow
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the layer between the MMSTD and the world
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def executeAsClient(self, input, output):
+    def executeAsClient(self, abstractionLayer):
         self.log.error("The state class doesn't support 'executeAsClient'.")
         raise NotImplementedError("The state class doesn't support 'executeAsClient'.")
     
@@ -79,11 +78,10 @@ class AbstractState():
     #| executeAsServer
     #|     Abstract method to execute the current state as a server given the
     #|     the input and the output method access
-    #| @param input method access to the input flow
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the layer between the MMSTD and the world 
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, input, output):
+    def executeAsServer(self, abstractionLayer):
         self.log.error("The state class doesn't support 'executeAsServer'.")
         raise NotImplementedError("The state class doesn't support 'executeAsServer'.")
     

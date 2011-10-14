@@ -18,7 +18,11 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
-from threading import Thread
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -32,68 +36,31 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| MMSTDVisitor :
-#|     Definition of a visitor of an MMSTD automata
+#| AbstractionLayer :
+#|     Definition of an abstractionLayer
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class MMSTDVisitor():
+class AbstractionLayer():
     
-    def __init__(self, mmstd, isMaster, abstractionLayer):
+    def __init__(self, input, output, dictionary):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.MMSTDVisitor.py')
-        self.mmstd = mmstd
-        self.isMaster = isMaster
-        self.abstractionLayer = abstractionLayer
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.AbstractionLayer.py')
+        self.input = input
+        self.output = output
+        self.dictionary = dictionary
         
-    def run(self):
-        if self.isMaster :
-            self.runAsMaster()
-        else :
-            self.runAsClient()
+    
+    def receiveSymbol(self):
+        # First we read from the input the message
+        receivedData = self.rfile.readline().strip()
+        
+        
     
     
-    def runAsMaster(self):
-        self.log.info("The MMSTD Visitor is running as a master")
-#        # self.rfile is a file-like object created by the handler;
-#        # we can now use e.g. readline() instead of raw recv() calls
-#        data = self.inputFile.readline().strip()
-#        while data != "quit" :
-#            print data
-#            # Likewise, self.wfile is a file-like object used to write back
-#            # to the client
-#            self.outputFile.write(data.upper())
-#            data = self.inputFile.readline().strip()
-        
-        
-        
-    def runAsClient(self):
-        self.log.info("The MMSTD Visitor is running as a client")
-        
-        active = True
-        
-        currentState = self.mmstd.getInitialState()
-        while active :
-            currentState = currentState.executeAsClient(self.abstractionLayer)
-            if currentState == None :
-                active = False
-        
-        
-        
-                
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-    def getName(self):
-        return self.name
-    def getModel(self):
-        return self.model
-    def isMaster(self):
-        return self.isMaster
     
-    def setModel(self, model):
-        self.model = model
-    def setName(self, name):
-        self.name = name
     
     

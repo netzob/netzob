@@ -39,13 +39,13 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------------------------------------+
 class AbstractActor(Thread):
     
-    def __init__(self, name, model, isMaster):
+    def __init__(self, name, model, master):
         Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.AbstractActor.py')
         self.name = name
         self.model = model
-        self.isMaster = isMaster
+        self.master = master
 
     
 
@@ -58,7 +58,7 @@ class AbstractActor(Thread):
     def getModel(self):
         return self.model
     def isMaster(self):
-        return self.isMaster
+        return self.master
     
     def setModel(self, model):
         self.model = model

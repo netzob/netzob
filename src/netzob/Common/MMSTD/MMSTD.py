@@ -48,15 +48,28 @@ class MMSTD(object):
     #+---------------------------------------------- 
     #| Constructor :
     #+---------------------------------------------- 
-    def __init__(self, initialState):
+    def __init__(self, initialState, dictionary):
         
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.MMSTD.py')
        
         # Initial state
         self.initialState = initialState
-       
-       
+        
+        # The dictionary
+        self.dictionary = dictionary
+    
+    #+---------------------------------------------------------------------------+
+    #| getInitialState :
+    #|     Returns the initial state of the MMSTD
+    #| @return the initial state of the MMSTD
+    #+---------------------------------------------------------------------------+
+    def getInitialState(self):
+        return self.initialState
+    
+    def getDictionary(self):
+        return self.dictionary
+    
     #+---------------------------------------------------------------------------+
     #| getAllStates :
     #|     Visits the automata to discover all the available states

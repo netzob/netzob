@@ -27,6 +27,7 @@ import threading
 from .... import ConfigurationParser
 from ..AbstractActor import AbstractActor
 from ..MMSTDVisitor import MMSTDVisitor
+from ...Dictionary.AbstractionLayer import AbstractionLayer
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -39,16 +40,16 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------------------------------------+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     
-    def setIsMaster(self, isMaster):
-        self.isMaster = isMaster
+    def setIsMaster(self, master):
+        self.master = master
     def isMaster(self):
-        return self.isMaster
+        return self.master
     
     
-    def setAutomata(self, automata):
-        self.automata = automata
-    def getAutomata(self):
-        return self.automata
+    def setModel(self, model):
+        self.model = model
+    def getModel(self):
+        return self.model
 
 class ConnectionHandler(SocketServer.StreamRequestHandler):
       
@@ -56,8 +57,11 @@ class ConnectionHandler(SocketServer.StreamRequestHandler):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
         
+        # Create the input and output abstraction layer
+        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getDictionary())
+        
         # Initialize a dedicated automata and creates a visitor
-        modelVisitor = MMSTDVisitor(self.server.getAutomata(), self.server.isMaster(), self.rfile, self.wfile)
+        modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
         modelVisitor.run()
 
@@ -81,8 +85,8 @@ class NetworkServer(AbstractActor):
     def run (self):
         # Instantiates the server
         self.server = ThreadedTCPServer((self.host, self.port), ConnectionHandler)        
-        self.server.setAutomata(self.getModel())
-#        self.server.setIsMaster(self.isMaster())
+        self.server.setModel(self.getModel())
+        self.server.setIsMaster(self.isMaster())
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.log.info("Starts a TCP Network Server listening on " + self.host + ":" + str(self.port) + ".")
         self.server_thread.start()

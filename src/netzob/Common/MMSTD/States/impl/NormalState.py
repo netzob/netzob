@@ -68,23 +68,45 @@ class NormalState(AbstractState):
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Execute the state as a client
-    #| @param input method access to the input flow
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the layer between the MMSTD and the world
     #| @return the next state after execution of current one
     #+-----------------------------------------------------------------------+
-    def executeAsClient(self, input, output):
-        self.log.info("Execute state "+self.name+" as a client")
+    def executeAsClient(self, abstractionLayer):
+        self.log.info("Execute state " + self.name + " as a client")
+        
+        # Wait for a message
+        receivedSymbol = abstractionLayer.receiveSymbol()
+        if not receivedSymbol == None :
+            self.log.info("The following symbol has been received : " + receivedSymbol.getName())
+#        
+#        # Abstraction of the message into symbols
+#        
+#        
+#        
+#        
+#        for transition in self.getTransitions() :
+#            if transition.isValid(receivedData) :
+#                self.log.info("Received data " + receivedData + " is valid for transition " + transition.getID())
+#                newState = transition.executeAsClient(input, output)
+#                return newState
+#        self.log.info("Error, the received data is not valid")
+        
+        
+        
+        
+        
+        
+        
         return self
     
     #+-----------------------------------------------------------------------+
     #| executeAsServer
     #|     Execute the state as a server
-    #| @param input method access to the input flow
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the layer between the MMSTD and the world
     #| @return the next state after execution of current one
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, input, output):
-        self.log.info("Execute state "+self.name+" as a server")
+    def executeAsServer(self, abstractionLayer):
+        self.log.info("Execute state " + self.name + " as a server")
         return self
     
     #+-----------------------------------------------------------------------+
