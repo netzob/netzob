@@ -57,13 +57,16 @@ class MMSTD(object):
         self.initialState = initialState
        
        
-  
+    #+---------------------------------------------------------------------------+
+    #| getAllStates :
+    #|     Visits the automata to discover all the available states
+    #| @return a list containing all the discovered states
+    #+---------------------------------------------------------------------------+
     def getAllStates(self):
         states = []
         toAnalyze = []
         toAnalyze.append(self.initialState)        
-        while (len(toAnalyze) > 0) :        
-                
+        while (len(toAnalyze) > 0) :
             currentState = toAnalyze.pop()
             if currentState != None :
                 found = False
@@ -82,8 +85,7 @@ class MMSTD(object):
                                 found = True
                         if not found :
                             toAnalyze.append(outputState)
-                    states.append(currentState)
-      
+                    states.append(currentState)      
         return states
 
     
