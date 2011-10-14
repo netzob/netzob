@@ -50,10 +50,41 @@ class AbstractionLayer():
         self.output = output
         self.dictionary = dictionary
         
-    
+    #+-----------------------------------------------------------------------+
+    #| receiveSymbol
+    #|     Manage the reception of a message and its transformation in a symbol
+    #| @return a tupple containing the symbol and the associated received message
+    #+-----------------------------------------------------------------------+
     def receiveSymbol(self):
         # First we read from the input the message
-        receivedData = self.rfile.readline().strip()
+        receivedData = self.input.readline().strip()
+        self.log.info("Received following message : " + receivedData)
+        
+        # Now we abstract the message
+        symbol = self.abstract(receivedData)
+        
+        return (symbol, receivedData)
+    
+    #+-----------------------------------------------------------------------+
+    #| abstract
+    #|     Searches in the dictionary the symbol which abstract the received message
+    #| @return a possible symbol or None if none exist in the dictionary
+    #+-----------------------------------------------------------------------+    
+    def abstract(self, message):
+        
+        # we search in the dictionary an entry which match the message
+        for entry in self.dictionary.getEntries() :            
+            if entry.compare(message, 0, False) :
+                self.log.info("Entry in the dictionary found")
+                return entry
+            else :
+                self.log.info("Entry " + entry.getID() + " doesn't match")
+            
+            
+            print entry
+        
+        return None
+        
         
         
     
