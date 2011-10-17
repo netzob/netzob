@@ -19,6 +19,8 @@
 #+----------------------------------------------
 import logging
 import gtk
+import time
+from threading import Thread
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -42,18 +44,22 @@ logging.config.fileConfig(loggingFilePath)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------- 
-class MMSTDViewer():
+class MMSTDViewer(Thread):
     
     def __init__(self, automata):
+        Thread.__init__(self)
+        self.terminated = False
         self.automata = automata
         
-    def display(self):
-        dotCode = self.getDotCode()
-        window = DotWindow()
-        window.set_dotcode(dotCode)
-        window.connect('destroy', gtk.main_quit)
-        gtk.main() 
-   
+    def run(self): 
+        pass       
+#        dotCode = self.getDotCode()
+#        window = DotWindow()
+#        window.set_dotcode(dotCode)
+#        window.connect('destroy', gtk.main_quit)
+#        gtk.main() 
+        
+  
     def getDotCode(self):
         
         dotCode = "digraph G {\n"

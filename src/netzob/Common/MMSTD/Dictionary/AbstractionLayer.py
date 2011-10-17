@@ -65,27 +65,35 @@ class AbstractionLayer():
         
         return (symbol, receivedData)
     
+    def writeSymbol(self, symbol):
+        # First we specialize the symbol in a message
+        message = self.specialize(symbol)
+        
+        # now we send it
+        self.output.write(message)
+        
+    
+    
     #+-----------------------------------------------------------------------+
     #| abstract
     #|     Searches in the dictionary the symbol which abstract the received message
     #| @return a possible symbol or None if none exist in the dictionary
     #+-----------------------------------------------------------------------+    
-    def abstract(self, message):
-        
+    def abstract(self, message):        
         # we search in the dictionary an entry which match the message
         for entry in self.dictionary.getEntries() :            
-            if entry.compare(message, 0, False) :
+            if entry.compare(message, 0, False) != -1:
                 self.log.info("Entry in the dictionary found")
                 return entry
             else :
-                self.log.info("Entry " + entry.getID() + " doesn't match")
-            
-            
+                self.log.info("Entry " + str(entry.getID()) + " doesn't match")
             print entry
         
         return None
         
-        
+    def specialize(self, symbol):
+        value = symbol.getValueToSend()
+        return value     
         
     
     

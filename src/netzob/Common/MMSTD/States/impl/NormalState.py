@@ -75,9 +75,17 @@ class NormalState(AbstractState):
         self.log.info("Execute state " + self.name + " as a client")
         
         # Wait for a message
-        receivedSymbol = abstractionLayer.receiveSymbol()
+        (receivedSymbol, message) = abstractionLayer.receiveSymbol()
         if not receivedSymbol == None :
             self.log.info("The following symbol has been received : " + receivedSymbol.getName())
+            # Now we verify this symbol is an accepted one
+            for transition in self.getTransitions() :
+                if transition.isValid(receivedSymbol) :
+                    self.log.info("Received data '" + message + "' is valid for transition " + str(transition.getID()))
+                    return transition.executeAsClient(abstractionLayer)
+            self.log.warn("The message abstracted in a symbol is not valid according to the automata")       
+            
+            
 #        
 #        # Abstraction of the message into symbols
 #        
@@ -86,7 +94,7 @@ class NormalState(AbstractState):
 #        
 #        for transition in self.getTransitions() :
 #            if transition.isValid(receivedData) :
-#                self.log.info("Received data " + receivedData + " is valid for transition " + transition.getID())
+#                
 #                newState = transition.executeAsClient(input, output)
 #                return newState
 #        self.log.info("Error, the received data is not valid")

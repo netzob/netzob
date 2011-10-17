@@ -43,12 +43,12 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------------------------------------+
 class DictionaryEntry():
     
-    def __init__(self, id, name):
+    def __init__(self, id, name, value):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.DictionaryEntry.py')
         self.id = id
         self.name = name
-        self.value = None
+        self.value = value
         
     #+---------------------------------------------------------------------------+
     #| generate :
@@ -84,7 +84,7 @@ class DictionaryEntry():
     #| @return the result to send (ValueResult)
     #+---------------------------------------------------------------------------+
     def send(self, negative):
-        self.log.debug("Send (negative="+str(negative)+" ...")
+        self.log.debug("Send (negative=" + str(negative) + " ...")
         return self.value.send(negative)
     
     #+---------------------------------------------------------------------------+
@@ -97,7 +97,7 @@ class DictionaryEntry():
     #| @return the result of the comparaison
     #+---------------------------------------------------------------------------+
     def compare(self, val, indice, negative):
-        self.log.debug("Compare (val="+val+", i="+str(indice)+" neg="+str(negative)+"...")
+        self.log.debug("Compare (val=" + val + ", i=" + str(indice) + " neg=" + str(negative) + "...")
         return self.value.compare(val, indice, negative)
 
     #+---------------------------------------------------------------------------+
@@ -108,7 +108,7 @@ class DictionaryEntry():
     #| @return the result of the learning process
     #+---------------------------------------------------------------------------+
     def learn(self, val, indice):
-        self.log.debug("Learn (val="+val+", i="+str(indice)+"...")
+        self.log.debug("Learn (val=" + val + ", i=" + str(indice) + "...")
         return self.value.learn(val, indice)
 
     

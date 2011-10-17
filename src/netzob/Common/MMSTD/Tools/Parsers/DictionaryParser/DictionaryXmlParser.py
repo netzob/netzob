@@ -33,6 +33,13 @@ from ....Dictionary import Variable
 from ....Dictionary import DictionaryEntry
 from ....Dictionary import MMSTDDictionary
 
+from ....Dictionary.Values import Aggregate
+from ....Dictionary.Values import TextValue
+from ....Dictionary.Values import EndValue
+from ....Dictionary.Values import VarValue
+
+
+
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
@@ -56,7 +63,9 @@ class DictionaryXmlParser(object):
     #| @return an instance of a dictionary
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement):     
+    def loadFromXML(rootElement):   
+        log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
+          
         if rootElement.tag != "dictionary" :
             raise NameError("The parsed XML doesn't represent a dictionary.")
         
@@ -75,13 +84,72 @@ class DictionaryXmlParser(object):
         for xmlEntry in rootElement.findall("entry") :
             idEntry = int(xmlEntry.get("id", "-1"))
             nameEntry = xmlEntry.get("name", "none")
-            entry = DictionaryEntry.DictionaryEntry(idEntry, nameEntry)
+            
+            initialValue = Aggregate.Aggregate()
+            
+            currentValue = initialValue
+            
+            # Let's rock baby !
+            # We start the parsing process of the dictionary
+            for xmlValue in list(xmlEntry) :
+                if xmlValue.tag == "text" :
+                    currentValue.registerValue(DictionaryXmlParser.getTextValue(xmlValue))
+                elif xmlValue.tag == "end" :
+                    currentValue.registerValue(DictionaryXmlParser.getEndValue(xmlValue))
+                elif xmlValue.tag == "var" :
+                    currentValue.registerValue(DictionaryXmlParser.getVarValue(xmlValue, variables))
+                else :
+                    log.warn("The tag " + xmlValue.tag + " has not been parsed !")
+            
+            
+            
+            
+            
+            entry = DictionaryEntry.DictionaryEntry(idEntry, nameEntry, initialValue)
             
             entries.append(entry)
         
         # Create a dictionary based on the variables and the entries
         dictionary = MMSTDDictionary.MMSTDDictionary(variables, entries)
         return dictionary
-           
     
     
+    @staticmethod       
+    def getTextValue(xmlElement):
+        value = None
+        if xmlElement.tag == "text" and len(xmlElement.text) > 0 :
+            value = TextValue.TextValue(xmlElement.text)
+        else :
+            # create logger with the given configuration
+            log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
+            log.warn("Error in the XML Dictionary, the xmlElement is not a text value")
+        return value
+    
+    @staticmethod       
+    def getEndValue(xmlElement):
+        value = None
+        if xmlElement.tag == "end" :
+            value = EndValue.EndValue()
+        else :
+            # create logger with the given configuration
+            log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
+            log.warn("Error in the XML Dictionary, the xmlElement is not an end value")
+        return value
+    
+    @staticmethod       
+    def getVarValue(xmlElement, variables):
+        value = None
+        if xmlElement.tag == "var" and xmlElement.get("id", "none") != "none" :
+            idVariable = int(xmlElement.get("id", "-1"))
+            resetCondition = xmlElement.get("reset", "normal")
+            variable = None
+            for tmp_var in variables :
+                if tmp_var.getID() == idVariable :
+                    variable = tmp_var
+            
+            value = VarValue.VarValue(variable, resetCondition)
+        else :
+            # create logger with the given configuration
+            log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
+            log.warn("Error in the XML Dictionary, the xmlElement is not a var value")
+        return value

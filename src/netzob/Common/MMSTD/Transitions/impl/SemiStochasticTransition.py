@@ -101,16 +101,15 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Randomly pick an outputSymbol and send it
-    #| @param inputSymbol the received input symbol
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #| @return the new state
     #+-----------------------------------------------------------------------+
-    def executeAsClient(self, inputSymbol, output):
+    def executeAsClient(self, abstractionLayer):
         self.activate()
-        self.log.debug("Executing transition " + self.name + " with input : " + self.inputSymbol)
+        self.log.debug("Executing transition " + self.name + " with input : " + str(self.inputSymbol))
         if (len(self.outputSymbols) > 0) :
             [outputSymbol, probability, time] = self.pickOutputSymbol()
-            output.writeSymbol(outputSymbol)
+            abstractionLayer.writeSymbol(outputSymbol)
         self.deactivate()
         return self.outputState
     
@@ -118,31 +117,31 @@ class SemiStochasticTransition(AbstractTransition):
     #| executeAsServer
     #|     Send input symbol and waits to received one of the output symbol
     #| @param input method access to the input flow
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #| @return the new state
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, input, output):
-        self.activate()
-        self.log.debug("Executing transition " + self.name)
-        # write the input symbol on the output channel
-        output.writeSymbol(self.inputSymbol)
-        finish = False
-        while (not finish) :
-            receivedSymbol = input.getToken()
-            
-            if (not (isinstance(receivedSymbol, EmptySymbol))):
-                self.log.debug("The server consider the reception of symbol " + receivedSymbol)
-                if (len(self.outputSymbols) == 0) :
-                    self.log.debug("Nothing is considered since the server didn't expect anything.")
-                    finish = True
-                
-                for arSymbol in self.outputSymbols :
-                    [symbol, proba, time] = arSymbol
-                    if symbol.isEquivalent(receivedSymbol) :
-                        self.log.debug("Received symbol is understood !!")
-                        finish = True
-            input.eatToken(receivedSymbol)
-        self.deactivate()
+    def executeAsServer(self, abstractionLayer):
+#        self.activate()
+#        self.log.debug("Executing transition " + self.name)
+#        # write the input symbol on the output channel
+#        output.writeSymbol(self.inputSymbol)
+#        finish = False
+#        while (not finish) :
+#            receivedSymbol = input.getToken()
+#            
+#            if (not (isinstance(receivedSymbol, EmptySymbol))):
+#                self.log.debug("The server consider the reception of symbol " + receivedSymbol)
+#                if (len(self.outputSymbols) == 0) :
+#                    self.log.debug("Nothing is considered since the server didn't expect anything.")
+#                    finish = True
+#                
+#                for arSymbol in self.outputSymbols :
+#                    [symbol, proba, time] = arSymbol
+#                    if symbol.isEquivalent(receivedSymbol) :
+#                        self.log.debug("Received symbol is understood !!")
+#                        finish = True
+#            input.eatToken(receivedSymbol)
+#        self.deactivate()
         return self.outputState
      
     

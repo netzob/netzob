@@ -18,10 +18,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
-import socket
-import random
-from random import choice
-import string
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -30,7 +27,8 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ... import ConfigurationParser
+from .... import ConfigurationParser
+from .AbstractValue import AbstractValue
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -39,84 +37,55 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| Variable :
-#|     Definition of a variable defined in a dictionary
+#| VarValue :
+#|     Represents a var value
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class Variable():
+class VarValue(AbstractValue):
     
-    def __init__(self, id, name, type, defaultValue):
+    def __init__(self, variable, resetCondition):
+        AbstractValue.__init__(self, "VarValue")
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
-        self.id = id
-        self.name = name
-        self.value = defaultValue
-        self.type = type
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.VarValue.py')
+        self.variable = variable
+        self.resetCondition = resetCondition
+    
+    def compare(self, val, indice, negative):        
+        # first we retrieve the value stored in the variable
+        value = self.variable.getValue(negative)
         
+        if value == None or self.resetCondition == "force":
+            # We execute the learning process
+            self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")
+            
+            new_indice = self.variable.learn(val, indice)
+            
+            return new_indice
+        else :
+            self.log.info("Compare " + val[indice:] + " with " + value)
+            if val[indice:].startswith(value) :
+                self.log.info("Compare successful")                
+                return indice + len(value)
+            else :
+                self.log.info("Compare fail")
+             
         
-    def learn(self, val, indice):
-        if self.type == "Word" :
-            return self.learnAsText(val, indice)
-        elif self.type == "IP" :
-            return self.learnAsIP(val, indice)
-        return False
+            
+        
+        return -1
     
-    def learnAsText(self, val, indice):
-        return False
-    def learnAsIP(self, val, indice):
-        self.log.info("Learn IP from " + val[indice:])
-        for i in range(len(val[indice:]), 0, -1) :
-            tmp = val[indice:indice + i]
-            self.log.info("Tries to learn " + tmp + " (i=" + str(i) + ") as an IP")
-            try: 
-                socket.inet_aton(tmp)
-            except socket.error: 
-                pass
-            else:
-                if tmp.count('.') == 3 :
-                    self.log.info("Value learnt is " + tmp)
-                    self.value = tmp
-                    return indice + len(tmp)
-                
-
-    
-    def generateValue(self):
-        if self.type == "Word" :
-            self.generateWordValue()
-        elif self.type == "IP" :
-            self.generateIPValue()
-    
-    def generateIPValue(self):        
-        elt1 = str(random.randint(0, 255))
-        elt2 = str(random.randint(0, 255))
-        elt3 = str(random.randint(0, 255))
-        elt4 = str(random.randint(0, 255))
-        self.value = elt1 + "." + elt2 + "." + elt3 + "." + elt4
-    
-    def generateWordValue(self):
-        length = random.randint(5, 8)
-        self.value = ''.join([choice(string.letters + string.digits) for i in range(length)])
+    def send(self, negative):
+        val = self.variable.getValue(negative)
+        if val == None or self.resetCondition == "force":
+            self.variable.generateValue()
+            return self.variable.getValue(negative)
+            
+        return val
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.id
-    def getName(self):
-        return self.name
-    def getType(self):
-        return self.type
-    def getValue(self, negative):
-        return self.value
-        
-    def setID(self, id):
-        self.id = id
-    def setName(self, name):
-        self.name = name
-    def setType(self, type):
-        self.type = type
-    def setValue(self, value):
-        self.value = value
+  
     
     

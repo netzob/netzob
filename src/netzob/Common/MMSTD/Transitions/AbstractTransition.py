@@ -64,11 +64,10 @@ class AbstractTransition():
     #| executeAsClient
     #|     Abstract method to execute the current transition as a client given the
     #|     the input and the output method access
-    #| @param inputSymbol the received input symbol
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def executeAsClient(self, inputSymbol, output):
+    def executeAsClient(self, abstractionLayer):
         self.log.error("The transition class doesn't support 'executeAsClient'.")
         raise NotImplementedError("The transition class doesn't support 'executeAsClient'.")
     
@@ -76,11 +75,10 @@ class AbstractTransition():
     #| executeAsServer
     #|     Abstract method to execute the current transition as a server given the
     #|     the input and the output method access
-    #| @param input method access to the input flow
-    #| @param output method access to the output flow
+    #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, input, output):
+    def executeAsServer(self, abstractLayer):
         self.log.error("The transition class doesn't support 'executeAsServer'.")
         raise NotImplementedError("The transition class doesn't support 'executeAsServer'.")
     
