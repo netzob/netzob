@@ -37,6 +37,7 @@ from netzob.Modelization import UImodelization
 from netzob.Export import UIexport
 from netzob.Import import UIimport
 from netzob.Fuzzing import UIfuzzing
+from netzob.Simulator import UISimulator
 from netzob.Common import ConfigurationParser
 from netzob.Common import StateParser
 from netzob.Common import Groups
@@ -130,11 +131,13 @@ class Netzob():
         self.modelization = UImodelization.UImodelization(self)
         self.export = UIexport.UIexport(self)
         self.fuzzing = UIfuzzing.UIfuzzing(self)
+        self.simulator = UISimulator.UISimulator(self)
 
         self.pageList.append(["Import", self.Import])
         self.pageList.append(["Modelization", self.modelization])
         self.pageList.append(["Fuzzing", self.fuzzing])
         self.pageList.append(["Export", self.export])
+        self.pageList.append(["Simulator", self.simulator])
         
         for page in self.pageList:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
