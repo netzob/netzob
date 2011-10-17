@@ -31,6 +31,7 @@ from xml.etree import ElementTree
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
 from netzob.Common.MMSTD.Tools.Drawing import MMSTDViewer
+from netzob.Common.MMSTD.Actors.Network import NetworkServer 
 
 class ModelTest(unittest.TestCase):
     
@@ -46,7 +47,16 @@ class ModelTest(unittest.TestCase):
            
         automata = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
         viewer = MMSTDViewer.MMSTDViewer(automata)
-        viewer.display()
+        viewer.start()
+        
+        # now we create two network actors, one is a client and the other is a server
+        actor1 = NetworkServer.NetworkServer("Server", automata, False, "localhost", 7010)
+        actor1.start()
+        
+#        actor2 = NetworkServer.NetworkServer("Server2", automata, True, "localhost", 7001)
+#        actor2.start()
+        
+        
         
         
       
