@@ -19,6 +19,7 @@
 #+---------------------------------------------------------------------------+
 import logging.config
 import random
+import time
 
 
 #+---------------------------------------------------------------------------+
@@ -111,7 +112,11 @@ class SemiStochasticTransition(AbstractTransition):
         self.activate()
         self.log.debug("Executing transition " + self.name + " with input : " + str(self.inputSymbol))
         if (len(self.outputSymbols) > 0) :
-            [outputSymbol, probability, time] = self.pickOutputSymbol()
+            [outputSymbol, probability, reactionTime] = self.pickOutputSymbol()
+            
+            # before sending it we simulate the reaction time
+            time.sleep(int(reactionTime) / 1000)
+            
             abstractionLayer.writeSymbol(outputSymbol)
         self.deactivate()
         return self.outputState

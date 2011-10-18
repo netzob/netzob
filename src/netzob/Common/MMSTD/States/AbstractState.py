@@ -94,7 +94,6 @@ class AbstractState():
         self.log.error("The state class doesn't support 'toXMLString'.")
         raise NotImplementedError("The state class doesn't support 'toXMLString'.")
     
-    
     #+-----------------------------------------------------------------------+
     #| active
     #|    active the current state

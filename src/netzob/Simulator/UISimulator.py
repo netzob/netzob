@@ -22,6 +22,8 @@ import pygtk
 pygtk.require('2.0')
 import logging
 import os
+import threading
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -82,6 +84,7 @@ class UISimulator:
         self.netzob = netzob
         
         self.actors = []
+        self.selectedActor = None
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
@@ -334,8 +337,16 @@ class UISimulator:
         self.tableForBreakAndStop.attach(self.button_stopActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableForBreakAndStop.show()        
         self.panel.attach(self.tableForBreakAndStop, 1, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-
-
+        
+        # Update the GUI
+        self.refreshGUI(1)
+        
+    #+---------------------------------------------- 
+    #| getAvailableGrammars :
+    #| Retrieves the available grammars represented by
+    #| a dedicated xml file in the ressources directory
+    #| @return a list of xml files
+    #+----------------------------------------------   
     def getAvailableGrammars(self):
         # Scan the directory of grammars and retrieve them
         grammar_directory = ConfigurationParser.ConfigurationParser().get("automata", "path")  
@@ -352,9 +363,33 @@ class UISimulator:
         # Sort and add to the entry
         return sorted(temporaryListOfFiles)
     
+    #+---------------------------------------------- 
+    #| startSelectedActor :
+    #| Starts the selected actor
+    #+----------------------------------------------
     def startSelectedActor(self, widget):
+        if self.selectedActor == None :
+            return
+        
+        self.log.info("Start the actor " + self.selectedActor.getName())
         self.selectedActor.start()
+        
+    #+---------------------------------------------- 
+    #| stopSelectedActor :
+    #| Stops the selected actor
+    #+----------------------------------------------
+    def stopSelectedActor(self, widget):
+        if self.selectedActor == None :
+            return
+        
+        self.log.info("Stop the actor " + self.selectedActor.getName())
+        self.selectedActor.stop()
     
+        
+    #+---------------------------------------------- 
+    #| addActor :
+    #| Creates and registers an actor based on the form
+    #+----------------------------------------------
     def addActor(self, widget):
         # Retrieves the value of the form to create the actor
         actorName = self.entry_actorName.get_text()
@@ -431,6 +466,9 @@ class UISimulator:
     
         
     def updateGUIForActor(self):
+        if self.selectedActor == None :
+            return
+        
         # First we display its model 
         automata = self.selectedActor.getModel()    
         self.xdotWidget.drawAutomata(automata)
@@ -450,4 +488,7 @@ class UISimulator:
         self.treestore_memory.clear()
         for memory in self.selectedActor.getMemory() :
             self.treestore_memory.append(None, memory)
-        
+    
+    def refreshGUI(self, tempo=1.0):
+        threading.Timer(tempo, self.refreshGUI, [tempo]).start()
+        self.updateGUIForActor()

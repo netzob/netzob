@@ -46,9 +46,11 @@ class AbstractActor(Thread):
         self.name = name
         self.model = model
         self.master = master
+        self.Terminated = False
 
     
-
+    def stop(self):
+        self.Terminated = True
         
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

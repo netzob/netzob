@@ -110,13 +110,20 @@ class MMSTD(object):
         # first we include all the states declared in the automata
         states = self.getAllStates()        
         for state in states :
-            dotCode = dotCode + "\"" + state.getName() + "\"\n"            
+            if state.isActive() :
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"  
+            else :
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"  
+            
+                      
             
         for inputState in states :
             for transition in inputState.getTransitions() :
                 outputState = transition.getOutputState()                
                 dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
         
-        dotCode = dotCode + "}"        
+        dotCode = dotCode + "}"      
+
+          
         return dotCode
     

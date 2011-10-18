@@ -19,6 +19,7 @@
 #+---------------------------------------------------------------------------+
 import logging.config
 import time
+import datetime
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -66,8 +67,14 @@ class AbstractionLayer():
         self.log.info("Waiting for the reception of a message")
         # First we read from the input the message        
         receivedData = self.input.readline().strip()
+        
+        now = datetime.datetime.now()
+        receptionTime = now.strftime("%H:%M:%S")
         self.log.info("Received following message : " + receivedData)
-        self.inputMessages.append(["00:00:00", receivedData])
+        
+        
+        
+        self.inputMessages.append([receptionTime, receivedData])
         
         # Now we abstract the message
         symbol = self.abstract(receivedData)
@@ -78,11 +85,13 @@ class AbstractionLayer():
         # First we specialize the symbol in a message
         message = self.specialize(symbol)
         self.log.info("Sending message : '" + message + "'")
-        self.outputMessages.append(["00:00:00", message])
         # now we send it
-        self.output.write(message)
         self.output.flush()
-        
+        now = datetime.datetime.now()
+        self.output.write(message + '\n')
+        self.output.flush()
+        sendingTime = now.strftime("%H:%M:%S")
+        self.outputMessages.append([sendingTime, message])
     
     
     #+-----------------------------------------------------------------------+

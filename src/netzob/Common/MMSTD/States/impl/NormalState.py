@@ -49,6 +49,7 @@ class NormalState(AbstractState):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.NormalState.py')
         self.transitions = []
+
     
     #+-----------------------------------------------------------------------+
     #| getTransitions
@@ -74,18 +75,20 @@ class NormalState(AbstractState):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
         self.log.info("Execute state " + self.name + " as a client")
-        
+        self.activate()
         # Wait for a message
         (receivedSymbol, message) = abstractionLayer.receiveSymbol()
         if not receivedSymbol == None :
-            self.log.info("The following symbol has been received : " + receivedSymbol.getName())
+            self.log.info("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one
             for transition in self.getTransitions() :
                 if transition.isValid(receivedSymbol) :
                     self.log.info("Received data '" + message + "' is valid for transition " + str(transition.getID()))
-                    return transition.executeAsClient(abstractionLayer)
+                    newState = transition.executeAsClient(abstractionLayer)
+                    self.deactivate()
+                    return newState
             self.log.warn("The message abstracted in a symbol is not valid according to the automata")       
-       
+        self.deactivate()
         return self
     
     #+-----------------------------------------------------------------------+
@@ -95,6 +98,7 @@ class NormalState(AbstractState):
     #| @return the next state after execution of current one
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):
+        self.activate()
         self.log.info("Execute state " + self.name + " as a master")
         
         # given the current state, pick randomly a message and send it after having wait
@@ -103,8 +107,9 @@ class NormalState(AbstractState):
         pickedTransition = self.getTransitions()[idRandom]
         self.log.info("Randomly picked the transition " + pickedTransition.getName())
         
-        return pickedTransition.executeAsMaster(abstractionLayer)
-
+        newState = pickedTransition.executeAsMaster(abstractionLayer)
+        self.deactivate()
+        return newState
     
     #+-----------------------------------------------------------------------+
     #| toXMLString
@@ -119,18 +124,7 @@ class NormalState(AbstractState):
         return ElementTree.tostring(root)
     
     
-    #+-----------------------------------------------------------------------+
-    #| active
-    #|    active the current state
-    #+-----------------------------------------------------------------------+
-    def activate(self):
-        self.active = True
-    #+-----------------------------------------------------------------------+
-    #| deactivate
-    #|    deactivate the current state
-    #+-----------------------------------------------------------------------+
-    def deactivate(self):
-        self.active = False
+    
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
@@ -139,8 +133,6 @@ class NormalState(AbstractState):
         return self.id
     def getName(self):
         return self.name
-    def isActive(self):
-        return self.active
         
     def setID(self, id):
         self.id = id
