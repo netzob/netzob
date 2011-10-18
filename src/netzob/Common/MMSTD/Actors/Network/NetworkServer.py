@@ -20,6 +20,7 @@
 import logging.config
 import SocketServer
 import threading
+import time
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -50,12 +51,16 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         self.model = model
     def getModel(self):
         return self.model
+    
+    
 
 class ConnectionHandler(SocketServer.StreamRequestHandler):
       
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
+        
+        time.sleep(2)
         
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getDictionary())
@@ -91,6 +96,12 @@ class NetworkServer(AbstractActor):
         self.log.info("Starts a TCP Network Server listening on " + self.host + ":" + str(self.port) + ".")
         self.server_thread.start()
         
+    def getInputMessages(self):
+        return []
+    def getOutputMessages(self):
+        return []
+    def getMemory(self):
+        return []
     
     
     #+-----------------------------------------------------------------------+

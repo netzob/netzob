@@ -18,12 +18,11 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
-from threading import Thread
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ... import ConfigurationParser
+from .... import ConfigurationParser
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -32,65 +31,40 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| MMSTDVisitor :
-#|     Definition of a visitor of an MMSTD automata
+#| EmptySymbol :
+#|     Definition of an empty symbol
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class MMSTDVisitor():
+class EmptySymbol():
     
-    def __init__(self, mmstd, isMaster, abstractionLayer):
+    def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.MMSTDVisitor.py')
-        self.mmstd = mmstd
-        self.isMaster = isMaster
-        self.abstractionLayer = abstractionLayer
+        self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.EmptySymbol.py')
         
-    def run(self):
-        if self.isMaster :
-            self.runAsMaster()
+    
+    def isEquivalent(self, symbol):
+        if self.entry.getID() == symbol.getID() :
+            self.log.info("The symbols are equivalents")
+            return True
         else :
-            self.runAsClient()
+            self.log.info("The symbols are not equivalents")
+            return False
     
+    def getValueToSend(self):
+        return ""
     
-    def runAsMaster(self):
-        self.log.info("The MMSTD Visitor is running as a master")
-        active = True        
-        currentState = self.mmstd.getInitialState()
-        while active :
-            currentState = currentState.executeAsMaster(self.abstractionLayer)
-            if currentState == None :
-                active = False
-        
-        
-        
-    def runAsClient(self):
-        self.log.info("The MMSTD Visitor is running as a client")
-        
-        active = True
-        
-        currentState = self.mmstd.getInitialState()
-        while active :
-            currentState = currentState.executeAsClient(self.abstractionLayer)
-            if currentState == None :
-                active = False
-        
-        
-        
-                
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-    def getName(self):
-        return self.name
-    def getModel(self):
-        return self.model
-    def isMaster(self):
-        return self.isMaster
-    
-    def setModel(self, model):
-        self.model = model
-    def setName(self, name):
-        self.name = name
-    
+    def getID(self):
+        return self.entry.getID()
+    def getEntry(self):
+        return self.entry
+  
+        
+    def setID(self, id):
+        self.id = id
+    def setEntry(self, entry):
+        self.entry = entry
     

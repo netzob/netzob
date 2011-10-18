@@ -57,8 +57,7 @@ class VarValue(AbstractValue):
         
         if value == None or self.resetCondition == "force":
             # We execute the learning process
-            self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")
-            
+            self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")            
             new_indice = self.variable.learn(val, indice)
             
             return new_indice

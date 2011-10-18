@@ -18,6 +18,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -84,38 +85,26 @@ class NormalState(AbstractState):
                     self.log.info("Received data '" + message + "' is valid for transition " + str(transition.getID()))
                     return transition.executeAsClient(abstractionLayer)
             self.log.warn("The message abstracted in a symbol is not valid according to the automata")       
-            
-            
-#        
-#        # Abstraction of the message into symbols
-#        
-#        
-#        
-#        
-#        for transition in self.getTransitions() :
-#            if transition.isValid(receivedData) :
-#                
-#                newState = transition.executeAsClient(input, output)
-#                return newState
-#        self.log.info("Error, the received data is not valid")
-        
-        
-        
-        
-        
-        
-        
+       
         return self
     
     #+-----------------------------------------------------------------------+
-    #| executeAsServer
+    #| executeAsMaster
     #|     Execute the state as a server
     #| @param abstractionLayer the layer between the MMSTD and the world
     #| @return the next state after execution of current one
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, abstractionLayer):
-        self.log.info("Execute state " + self.name + " as a server")
-        return self
+    def executeAsMaster(self, abstractionLayer):
+        self.log.info("Execute state " + self.name + " as a master")
+        
+        # given the current state, pick randomly a message and send it after having wait
+        # the normal reaction time
+        idRandom = random.randint(0, len(self.getTransitions()) - 1)
+        pickedTransition = self.getTransitions()[idRandom]
+        self.log.info("Randomly picked the transition " + pickedTransition.getName())
+        
+        return pickedTransition.executeAsMaster(abstractionLayer)
+
     
     #+-----------------------------------------------------------------------+
     #| toXMLString

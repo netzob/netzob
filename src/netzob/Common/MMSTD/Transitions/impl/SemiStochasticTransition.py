@@ -31,6 +31,9 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
 from ..AbstractTransition import AbstractTransition
+from ...Symbols.impl.EmptySymbol import EmptySymbol
+
+
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
@@ -114,34 +117,35 @@ class SemiStochasticTransition(AbstractTransition):
         return self.outputState
     
     #+-----------------------------------------------------------------------+
-    #| executeAsServer
+    #| executeAsMaster
     #|     Send input symbol and waits to received one of the output symbol
     #| @param input method access to the input flow
     #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #| @return the new state
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, abstractionLayer):
-#        self.activate()
-#        self.log.debug("Executing transition " + self.name)
-#        # write the input symbol on the output channel
-#        output.writeSymbol(self.inputSymbol)
-#        finish = False
-#        while (not finish) :
-#            receivedSymbol = input.getToken()
-#            
-#            if (not (isinstance(receivedSymbol, EmptySymbol))):
-#                self.log.debug("The server consider the reception of symbol " + receivedSymbol)
-#                if (len(self.outputSymbols) == 0) :
-#                    self.log.debug("Nothing is considered since the server didn't expect anything.")
-#                    finish = True
-#                
-#                for arSymbol in self.outputSymbols :
-#                    [symbol, proba, time] = arSymbol
-#                    if symbol.isEquivalent(receivedSymbol) :
-#                        self.log.debug("Received symbol is understood !!")
-#                        finish = True
-#            input.eatToken(receivedSymbol)
-#        self.deactivate()
+    def executeAsMaster(self, abstractionLayer):
+        self.activate()
+        self.log.debug("Executing transition " + self.name)
+        # write the input symbol on the output channel
+        abstractionLayer.writeSymbol(self.inputSymbol)
+        finish = False
+        while (not finish) :
+            # Wait for a message
+            (receivedSymbol, message) = abstractionLayer.receiveSymbol()
+            
+            if (not (isinstance(receivedSymbol, EmptySymbol))):
+                self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
+                if (len(self.outputSymbols) == 0) :
+                    self.log.debug("Nothing is considered since the server didn't expect anything.")
+                    finish = True
+                
+                for arSymbol in self.outputSymbols :
+                    [symbol, proba, time] = arSymbol
+                    if symbol.isEquivalent(receivedSymbol) :
+                        self.log.debug("Received symbol is understood !!")
+                        finish = True
+            
+        self.deactivate()
         return self.outputState
      
     

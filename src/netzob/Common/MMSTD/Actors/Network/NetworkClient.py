@@ -18,12 +18,17 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
-from threading import Thread
+import asyncore
+import threading
+import socket
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ... import ConfigurationParser
+from .... import ConfigurationParser
+from ..AbstractActor import AbstractActor
+from ..MMSTDVisitor import MMSTDVisitor
+from ...Dictionary.AbstractionLayer import AbstractionLayer
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -32,65 +37,61 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| MMSTDVisitor :
-#|     Definition of a visitor of an MMSTD automata
+#| NetworkClient :
+#|     Definition of aclient which follows the definition of the provided 
+#|     automata.
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class MMSTDVisitor():
+class NetworkClient(AbstractActor):
     
-    def __init__(self, mmstd, isMaster, abstractionLayer):
+    def __init__(self, name, model, isMaster, host, port):
+        AbstractActor.__init__(self, name, model, isMaster)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.MMSTDVisitor.py')
-        self.mmstd = mmstd
-        self.isMaster = isMaster
-        self.abstractionLayer = abstractionLayer
+        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
+        self.port = port
+        self.host = host
+        self.abstractionLayer = None
         
-    def run(self):
-        if self.isMaster :
-            self.runAsMaster()
-        else :
-            self.runAsClient()
+    def run (self):
+        
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((self.host, self.port))
+        
+        inputFile = self.socket.makefile('r', -1)
+        outputFile = self.socket.makefile('w', -1)
+        
+        # Create the input and output abstraction layer
+        self.abstractionLayer = AbstractionLayer(inputFile, outputFile, self.getModel().getDictionary())
+        
+        # Initialize a dedicated automata and creates a visitor
+        modelVisitor = MMSTDVisitor(self.getModel(), self.isMaster(), self.abstractionLayer)
+        self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
+        modelVisitor.run()
+        
+        
+        
+    def getInputMessages(self):
+        if self.abstractionLayer == None :
+            return []
+        
+        return self.abstractionLayer.getInputMessages()
+    def getOutputMessages(self):
+        if self.abstractionLayer == None :
+            return []
+        return self.abstractionLayer.getOutputMessages()
+    def getMemory(self):
+        if self.abstractionLayer == None :
+            return []
+        return self.abstractionLayer.getMemory()
     
     
-    def runAsMaster(self):
-        self.log.info("The MMSTD Visitor is running as a master")
-        active = True        
-        currentState = self.mmstd.getInitialState()
-        while active :
-            currentState = currentState.executeAsMaster(self.abstractionLayer)
-            if currentState == None :
-                active = False
-        
-        
-        
-    def runAsClient(self):
-        self.log.info("The MMSTD Visitor is running as a client")
-        
-        active = True
-        
-        currentState = self.mmstd.getInitialState()
-        while active :
-            currentState = currentState.executeAsClient(self.abstractionLayer)
-            if currentState == None :
-                active = False
-        
-        
-        
-                
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-    def getName(self):
-        return self.name
-    def getModel(self):
-        return self.model
-    def isMaster(self):
-        return self.isMaster
+    def getPort(self):
+        return self.port
     
-    def setModel(self, model):
-        self.model = model
-    def setName(self, name):
-        self.name = name
-    
+    def setPort(self, port):
+        self.port = port
     

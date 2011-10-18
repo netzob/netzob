@@ -57,13 +57,24 @@ class Variable():
         
     def learn(self, val, indice):
         if self.type == "Word" :
-            return self.learnAsText(val, indice)
+            return self.learnAsWord(val, indice)
         elif self.type == "IP" :
             return self.learnAsIP(val, indice)
-        return False
+        return -1
     
-    def learnAsText(self, val, indice):
-        return False
+    def learnAsWord(self, val, indice):        
+        tmp = val[indice:]
+        
+        i = tmp.find(" ")
+        self.log.info("Learn word from " + tmp + " i=" + str(i))
+        if i > 0 :
+            self.value = val[indice:indice + i]
+            return indice + i
+        elif i == -1 and len(tmp) > 0:
+            self.value = tmp
+            return indice + len(tmp)
+        else :
+            return -1
     def learnAsIP(self, val, indice):
         self.log.info("Learn IP from " + val[indice:])
         for i in range(len(val[indice:]), 0, -1) :

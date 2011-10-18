@@ -72,15 +72,15 @@ class AbstractTransition():
         raise NotImplementedError("The transition class doesn't support 'executeAsClient'.")
     
     #+-----------------------------------------------------------------------+
-    #| executeAsServer
+    #| executeAsMaster
     #|     Abstract method to execute the current transition as a server given the
     #|     the input and the output method access
     #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, abstractLayer):
-        self.log.error("The transition class doesn't support 'executeAsServer'.")
-        raise NotImplementedError("The transition class doesn't support 'executeAsServer'.")
+    def executeAsMaster(self, abstractLayer):
+        self.log.error("The transition class doesn't support 'executeAsMaster'.")
+        raise NotImplementedError("The transition class doesn't support 'executeAsMaster'.")
     
     #+-----------------------------------------------------------------------+
     #| getDescription

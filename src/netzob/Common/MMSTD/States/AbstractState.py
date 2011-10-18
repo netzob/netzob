@@ -75,15 +75,15 @@ class AbstractState():
         raise NotImplementedError("The state class doesn't support 'executeAsClient'.")
     
     #+-----------------------------------------------------------------------+
-    #| executeAsServer
-    #|     Abstract method to execute the current state as a server given the
+    #| executeAsMaster
+    #|     Abstract method to execute the current state as a master given the
     #|     the input and the output method access
     #| @param abstractionLayer the layer between the MMSTD and the world 
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def executeAsServer(self, abstractionLayer):
-        self.log.error("The state class doesn't support 'executeAsServer'.")
-        raise NotImplementedError("The state class doesn't support 'executeAsServer'.")
+    def executeAsMaster(self, abstractionLayer):
+        self.log.error("The state class doesn't support 'executeAsMaster'.")
+        raise NotImplementedError("The state class doesn't support 'executeAsMaster'.")
     
     #+-----------------------------------------------------------------------+
     #| toXMLString

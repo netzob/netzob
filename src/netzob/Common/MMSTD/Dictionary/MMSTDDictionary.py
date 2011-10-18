@@ -65,5 +65,6 @@ class MMSTDDictionary():
     #+-----------------------------------------------------------------------+
     def getEntries(self):
         return self.entries 
-    
+    def getVariables(self):
+        return self.variables
     
