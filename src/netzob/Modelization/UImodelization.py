@@ -81,7 +81,7 @@ class UImodelization:
         self.log.info("Saving the modelization")
         
         stateParser = StateParser.StateParser(file)
-        stateParser.saveInConfiguration( self.netzob.groups.getGroups() )
+        stateParser.saveInConfiguration(self.netzob.groups.getGroups())
     
     #+---------------------------------------------- 
     #| Constructor :
@@ -227,6 +227,7 @@ class UImodelization:
         but.connect("clicked", self.search_cb)
         but.show()
         table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
 
         ## Visualization options
         frame = gtk.Frame()
@@ -361,6 +362,14 @@ class UImodelization:
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            
+            # Retrieve the selected message
+            message_id = None
+            aIter = treeview.get_model().get_iter(path)
+            if aIter:
+                if treeview.get_model().iter_is_valid(aIter):
+                    message_id = treeview.get_model().get_value(aIter, 0)
+            
 
             # Retrieve the selected column number
             iCol = 0
@@ -408,6 +417,12 @@ class UImodelization:
             item = gtk.MenuItem("Domain of definition")
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, iCol)
+            menu.append(item)
+            
+            # Add entry to delete the message
+            item = gtk.MenuItem("Delete message")
+            item.show()
+            item.connect("activate", self.rightClickDeleteMessage, message_id)
             menu.append(item)
 
             menu.popup(None, None, None, event.button, event.time)
@@ -587,17 +602,18 @@ class UImodelization:
         cells = self.treeMessageGenerator.getGroup().getCellsByCol(iCol)
         tmpDomain = set()
         for cell in cells:
-            tmpDomain.add( self.treeMessageGenerator.getGroup().getRepresentation(cell, iCol) )
+            tmpDomain.add(self.treeMessageGenerator.getGroup().getRepresentation(cell, iCol))
         domain = sorted(tmpDomain)
 
         dialog = gtk.Dialog(title="Domain of definition for the column " + str(iCol), flags=0, buttons=None)
         # Text view containing domain of definition ## ListStore format :
         # str: group.id
         treeview = gtk.TreeView(gtk.ListStore(str)) 
-        treeview.set_size_request(800, 300)
+        treeview.set_size_request(500, 300)
         treeview.show()
         treeview.get_selection().set_mode(gtk.SELECTION_NONE)
         cell = gtk.CellRendererText()
+        cell.set_sensitive(True)
         column = gtk.TreeViewColumn("Column " + str(iCol))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
@@ -609,7 +625,7 @@ class UImodelization:
             self.treeMessageGenerator.default(group)
 
         for elt in domain:
-            treeview.get_model().append( [elt] )
+            treeview.get_model().append([elt])
 
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -617,6 +633,35 @@ class UImodelization:
         scroll.add(treeview)
         dialog.vbox.pack_start(scroll, True, True, 0)
         dialog.show()
+
+    #+---------------------------------------------- 
+    #| rightClickDeleteMessage :
+    #|   Delete the requested message
+    #+----------------------------------------------
+    def rightClickDeleteMessage(self, event, id_message):
+        self.log.debug("The user wants to delete the message " + id_message)
+        message = None
+        message_grp = None
+        for group in self.netzob.groups.getGroups() :
+            for msg in group.getMessages() :
+                if str(msg.getID()) == id_message :
+                    message = msg
+                    message_grp = group
+            
+            # Break if the message to move was not found
+            if message == None :
+                self.log.warning("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message))
+                return
+        
+        questionMsg = "Click yes to confirm the deletion of message {0}".format(id_message)
+        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == gtk.RESPONSE_YES:
+            self.log.debug("The user has confirmed !")
+            message_grp.removeMessage(message)
+            self.update()
+            
 
     #+---------------------------------------------- 
     #| rightClickToChangeType :
@@ -976,7 +1021,7 @@ class UImodelization:
         treeview.get_selection().selected_foreach(self.foreach_drag_fromDND, ids)
         selection.set(selection.target, 8, ";".join(ids))
     
-    def foreach_drag_fromDND(self, model, path, iter,  ids):
+    def foreach_drag_fromDND(self, model, path, iter, ids):
         texte = str(model.get_value(iter, 0))
         ids.append(texte)
         return
@@ -1082,7 +1127,7 @@ class UImodelization:
         self.update()
 
     #+---------------------------------------------- 
-    #| Called when user wants to refine regexes
+    #| Called when user wants to execute data carving
     #+----------------------------------------------
     def dataCarving_cb(self, button):
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
@@ -1157,7 +1202,7 @@ class UImodelization:
 
         # Text view containing potential size fields
         treeview.set_size_request(800, 300)
-        self.netzob.groups.findSizeFields( treeview.get_model() )
+        self.netzob.groups.findSizeFields(treeview.get_model())
         treeview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -1204,13 +1249,13 @@ class UImodelization:
                 group.clear()
                 for message in self.treeMessageGenerator.getGroup().getMessages():
                     tmp_message = Message.Message()
-                    tmp_message.setData( message.getData() )
-                    group.addMessage( tmp_message )
-                group.setAlignment( copy.deepcopy(self.treeMessageGenerator.getGroup().getAlignment()) )
-                group.setColumns( copy.deepcopy(list(self.treeMessageGenerator.getGroup().getColumns())) )
+                    tmp_message.setData(message.getData())
+                    group.addMessage(tmp_message)
+                group.setAlignment(copy.deepcopy(self.treeMessageGenerator.getGroup().getAlignment()))
+                group.setColumns(copy.deepcopy(list(self.treeMessageGenerator.getGroup().getColumns())))
 
                 self.treeTypeStructureGenerator.setGroup(group)
-                self.treeTypeStructureGenerator.setMessageByID( group.getMessages()[-1].getID() )
+                self.treeTypeStructureGenerator.setMessageByID(group.getMessages()[-1].getID())
 
                 # Optionaly splits the columns if needed, and handles columns propagation
                 if group.splitColumn(size_field, size_field_len) == True:
@@ -1241,5 +1286,5 @@ class UImodelization:
     #| Called when user wants to apply a size field on a group
     #+----------------------------------------------
     def applySizeField(self, button, dialog, group):
-        self.treeMessageGenerator.getGroup().setColumns( copy.deepcopy(list(group.getColumns())) )
+        self.treeMessageGenerator.getGroup().setColumns(copy.deepcopy(list(group.getColumns())))
         dialog.destroy()
