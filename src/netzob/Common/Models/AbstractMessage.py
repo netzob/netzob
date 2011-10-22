@@ -74,32 +74,32 @@ class AbstractMessage():
         start = 0
         end = len(self.getStringData())
         
-        if self.getLeftReductionFactor()>0 :
+        if self.getLeftReductionFactor() > 0 :
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
-            if (end-start)%2 == 1 :
-                start=start-1
-        if self.getRightReductionFactor()>0 :
-            end   = self.getRightReductionFactor() * len(self.getStringData()) / 100 
-            if (end-start)%2 == 1 :
-                end=end+1 
+            if (end - start) % 2 == 1 :
+                start = start - 1
+        if self.getRightReductionFactor() > 0 :
+            end = self.getRightReductionFactor() * len(self.getStringData()) / 100 
+            if (end - start) % 2 == 1 :
+                end = end + 1 
         
-        if (end-start)%2 == 1 :
-            end=end+1 
+        if (end - start) % 2 == 1 :
+            end = end + 1 
             
-        return len(self.getStringData()) - (end-start)
+        return len(self.getStringData()) - (end - start)
     
     def getReducedStringData(self):        
         start = 0
         end = len(self.getStringData())
         
-        if self.getLeftReductionFactor()>0 :
+        if self.getLeftReductionFactor() > 0 :
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
-            if (end-start)%2 == 1 :
-                start=start-1 
-        if self.getRightReductionFactor()>0 :
-            end   = self.getRightReductionFactor() * len(self.getStringData()) / 100 
-            if (end-start)%2 == 1 :
-                end=end+1
+            if (end - start) % 2 == 1 :
+                start = start - 1 
+        if self.getRightReductionFactor() > 0 :
+            end = self.getRightReductionFactor() * len(self.getStringData()) / 100 
+            if (end - start) % 2 == 1 :
+                end = end + 1
                 
                   
         return "".join(self.getStringData()[start:end]) 
@@ -111,8 +111,8 @@ class AbstractMessage():
     def applyRegex(self, styled=False, encoded=False):
         regex = []
         for col in self.group.getColumns():
-            regex.append( col['regex'] )
-        compiledRegex = re.compile("".join( regex ))
+            regex.append(col['regex'])
+        compiledRegex = re.compile("".join(regex))
         data = self.getStringData()
         m = compiledRegex.match(data)
         if m == None:
@@ -125,34 +125,36 @@ class AbstractMessage():
             if col['regex'].find("(") != -1: # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
-                if self.group.getColorByCol(iCol) == "":
+                if self.group.getColorByCol(iCol) == "" or self.group.getColorByCol(iCol) == None:
                     color = 'blue'
                 else:
                     color = self.group.getColorByCol(iCol)
                 if styled:
                     if encoded:
-                        res.append( '<span foreground="'+color+'" font_family="monospace">' + glib.markup_escape_text(self.group.getRepresentation( data[start:end], iCol )) + '</span>' )
+                        res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(self.group.getRepresentation(data[start:end], iCol)) + '</span>')
                     else:
-                        res.append( '<span foreground="'+color+'" font_family="monospace">' + data[start:end] + '</span>' )
+                        res.append('<span foreground="' + color + '" font_family="monospace">' + data[start:end] + '</span>')
                 else:
                     if encoded:
-                        res.append( glib.markup_escape_text(self.group.getRepresentation( data[start:end], iCol )) )
+                        res.append(glib.markup_escape_text(self.group.getRepresentation(data[start:end], iCol)))
                     else:
-                        res.append( data[start:end] )
+                        res.append(data[start:end])
                 dynamicCol += 1
             else:
                 if styled:
                     if encoded:
-                        res.append( '<span>' + glib.markup_escape_text(self.group.getRepresentation( col['regex'], iCol )) + '</span>')
+                        res.append('<span>' + glib.markup_escape_text(self.group.getRepresentation(col['regex'], iCol)) + '</span>')
                     else:
-                        res.append( '<span>' + col['regex'] + '</span>')
+                        res.append('<span>' + col['regex'] + '</span>')
                 else:
                     if encoded:
-                        res.append( glib.markup_escape_text(self.group.getRepresentation( col['regex'], iCol )) )
+                        res.append(glib.markup_escape_text(self.group.getRepresentation(col['regex'], iCol)))
                     else:
-                        res.append( col['regex'] )
+                        res.append(col['regex'])
             iCol = iCol + 1
         return res
+    
+    
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
@@ -162,7 +164,7 @@ class AbstractMessage():
     def getType(self):
         return self.type
     def getData(self):
-        return self.data
+        return self.data.strip()
     def getGroup(self):
         return self.group
     def getRightReductionFactor(self):

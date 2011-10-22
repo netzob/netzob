@@ -255,7 +255,7 @@ class Netzob():
         for file in os.listdir(self.tracePath):
             filePath = self.tracePath + "/" + file
             if file == "config.xml":
-                self.log.info("A configuration file has been found.")
+                self.log.info("A configuration file has been found, so we analyze and load it")
                 stateParser = StateParser.StateParser(self.tracePath + "/config.xml")
                 stateParser.loadConfiguration()
                 self.groups.setGroups(stateParser.getGroups())

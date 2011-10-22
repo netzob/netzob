@@ -71,9 +71,7 @@ class AbstractionLayer():
         now = datetime.datetime.now()
         receptionTime = now.strftime("%H:%M:%S")
         self.log.info("Received following message : " + receivedData)
-        
-        
-        
+                
         self.inputMessages.append([receptionTime, receivedData])
         
         # Now we abstract the message

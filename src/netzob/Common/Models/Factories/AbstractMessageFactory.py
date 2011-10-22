@@ -50,6 +50,24 @@ logging.config.fileConfig(loggingFilePath)
 class AbstractMessageFactory():
     
     @staticmethod
+    #+-----------------------------------------------------------------------+
+    #| saveInXML
+    #|     Generate an XML representation of a message
+    #| @return a string which include the xml definition of the msg
+    #+-----------------------------------------------------------------------+
+    def saveInXML(message):
+        if message.getType() == "File" :
+            return FileMessageFactory.saveInXML(message)
+        elif message.getType() == "Network" :
+            return NetworkMessageFactory.saveInXML(message)
+        elif message.getType() == "IPC" :
+            return IPCMessageFactory.saveInXML(message)
+        else :
+            raise NameError('''There is no factory which would support 
+            the generation of an xml representation of the message : ''' + str(message))
+    
+    
+    @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML :
     #|     Function which parses an XML and extract from it
@@ -59,7 +77,6 @@ class AbstractMessageFactory():
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement):        
-        print rootElement
         # First we verify rootElement is a message
         if rootElement.tag != "message" :
             raise NameError("The parsed xml doesn't represent a message.")

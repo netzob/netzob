@@ -18,7 +18,7 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
-import xml.dom.minidom
+from xml.etree import ElementTree
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -26,6 +26,8 @@ import xml.dom.minidom
 import ConfigurationParser
 import Message
 import Group
+from Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from GroupFactory import GroupFactory
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -63,19 +65,18 @@ class StateParser(object):
         xml = "<netzob>\n"
         xml += "\t<groups>\n"
         for group in groups :
-            xml += group.storeInXmlConfig()+"\n"
+            xml += GroupFactory.saveInXML(group) + "\n"
             for message in group.getMessages() :
                 messages.append(message)
         xml += "\t</groups>\n"
         xml += "\t<datas>\n";
         
         for message in messages :
-            xml += "\t\t"+message.storeInXmlConfig()
+            xml += "\t\t" + AbstractMessageFactory.saveInXML(message) + "\n"
         xml += "\t</datas>\n"
         xml += "</netzob>"
         
-        self.log.debug("The generated configuration file is :")
-        self.log.debug(xml)
+        self.log.debug("The generated configuration file is : " + xml)
         
         file = open(self.configFile, 'w')
         file.write(xml)
@@ -93,18 +94,20 @@ class StateParser(object):
         self.log.info("Extract configuration from file {0}".format(self.configFile))
         
         messages = []
-        dom = xml.dom.minidom.parse(self.configFile)
-        # parse all the declared messages
-        xmlDatas = dom.getElementsByTagName("data")
-        for data in xmlDatas :
-            message = Message.Message.loadFromXmlConfig(data)
+        
+        # Parse the config file associated
+        configTree = ElementTree.ElementTree()
+        configTree.parse(self.configFile)  
+        # Retrieves the root of the config file
+        rootConfigTree = configTree.getroot()
+        for xmlData in rootConfigTree.findall("datas/message") :
+            message = AbstractMessageFactory.loadFromXML(xmlData)
             if message != None :
                 messages.append(message)
         
         # parse all the declared groups
-        xmlGroups = dom.getElementsByTagName("group")
-        for xmlGroup in xmlGroups :
-            group = Group.Group.loadFromXmlConfig(xmlGroup, messages)
+        for xmlGroup in rootConfigTree.findall("groups/group") :
+            group = GroupFactory.loadFromXML(xmlGroup, messages)
             if group != None :
                 self.groups.append(group)
 
