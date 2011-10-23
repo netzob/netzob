@@ -55,6 +55,26 @@ class FileMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return FileMessageFactory
+    
+    #+-----------------------------------------------------------------------+
+    #| getProperties
+    #|     Computes and returns the properties of the current message
+    #| @return an array with all the properties [[key,val],...]
+    #+-----------------------------------------------------------------------+
+    def getProperties(self):
+        properties = []        
+        properties.append(['ID', str(self.getID())])
+        properties.append(['Type', self.getType()])
+        properties.append(['Timestamp', self.getTimestamp()])
+        properties.append(['Filename', self.getFilename()])
+        properties.append(['Creation Date', self.getCreationDate()])
+        properties.append(['Modification Date', self.getModificationDate()])
+        properties.append(['Owner', self.getOwner()])
+        properties.append(['Size', self.getSize()])
+        properties.append(['Line number', self.getDirection()])        
+        properties.append(['Data', self.getStringData()])
+        
+        return properties 
         
     #+---------------------------------------------- 
     #| GETTERS : 

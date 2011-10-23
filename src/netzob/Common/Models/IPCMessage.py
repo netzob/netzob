@@ -55,6 +55,23 @@ class IPCMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return IPCMessageFactory
+    
+    #+-----------------------------------------------------------------------+
+    #| getProperties
+    #|     Computes and returns the properties of the current message
+    #| @return an array with all the properties [[key,val],...]
+    #+-----------------------------------------------------------------------+
+    def getProperties(self):
+        properties = []        
+        properties.append(['ID', str(self.getID())])
+        properties.append(['Type', self.getType()])
+        properties.append(['Timestamp', self.getTimestamp()])
+        properties.append(['Category', self.getCategory()])
+        properties.append(['Key', self.getKey()])
+        properties.append(['Direction', self.getDirection()])
+        properties.append(['Data', self.getStringData()])
+        
+        return properties   
         
     #+---------------------------------------------- 
     #| GETTERS : 

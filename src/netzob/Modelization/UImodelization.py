@@ -419,6 +419,12 @@ class UImodelization:
             item.connect("activate", self.rightClickDomainOfDefinition, iCol)
             menu.append(item)
             
+            # Add entry to show properties of the message
+            item = gtk.MenuItem("Properties")
+            item.show()
+            item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
+            menu.append(item)
+            
             # Add entry to delete the message
             item = gtk.MenuItem("Delete message")
             item.show()
@@ -606,17 +612,22 @@ class UImodelization:
         domain = sorted(tmpDomain)
 
         dialog = gtk.Dialog(title="Domain of definition for the column " + str(iCol), flags=0, buttons=None)
+         
         # Text view containing domain of definition ## ListStore format :
         # str: group.id
         treeview = gtk.TreeView(gtk.ListStore(str)) 
         treeview.set_size_request(500, 300)
         treeview.show()
-        treeview.get_selection().set_mode(gtk.SELECTION_NONE)
+        
         cell = gtk.CellRendererText()
         cell.set_sensitive(True)
+        cell.set_property('editable', True)
+        
         column = gtk.TreeViewColumn("Column " + str(iCol))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
+        
+        
         treeview.append_column(column)
 
         # Just to force the calculation of each group with its associated messages
@@ -631,15 +642,63 @@ class UImodelization:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
+        
         dialog.vbox.pack_start(scroll, True, True, 0)
         dialog.show()
 
+    #+---------------------------------------------- 
+    #| rightClickShowPropertiesOfMessage :
+    #|   Show a popup to present the properties of the selected message
+    #+----------------------------------------------
+    def rightClickShowPropertiesOfMessage(self, event, id_message):
+        self.log.debug("The user wants to see the properties of message " + str(id_message))
+        
+        # Retrieve the selected message
+        message = self.netzob.groups.getMessageByID(id_message)
+        if message == None :
+            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            return
+        
+        # Create the dialog
+        dialog = gtk.Dialog(title="Properties of message " + str(message.getID()), flags=0, buttons=None)
+        ## ListStore format : (str=key, str=value)
+        treeview = gtk.TreeView(gtk.ListStore(str, str)) 
+        treeview.set_size_request(500, 300)
+        treeview.show()
+        
+        cell = gtk.CellRendererText()
+        
+        columnProperty = gtk.TreeViewColumn("Property")
+        columnProperty.pack_start(cell, True)
+        columnProperty.set_attributes(cell, text=0)
+        
+        columnValue = gtk.TreeViewColumn("Value")
+        columnValue.pack_start(cell, True)
+        columnValue.set_attributes(cell, text=1)        
+        
+        treeview.append_column(columnProperty)
+        treeview.append_column(columnValue)
+         
+        # Retrieves all the properties of current message and 
+        # insert them in the treeview
+        for property in message.getProperties():
+            treeview.get_model().append(property)
+                
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        
+        dialog.vbox.pack_start(scroll, True, True, 0)
+        dialog.show()
+            
+        
     #+---------------------------------------------- 
     #| rightClickDeleteMessage :
     #|   Delete the requested message
     #+----------------------------------------------
     def rightClickDeleteMessage(self, event, id_message):
-        self.log.debug("The user wants to delete the message " + id_message)
+        self.log.debug("The user wants to delete the message " + str(id_message))
         message = None
         message_grp = None
         for group in self.netzob.groups.getGroups() :

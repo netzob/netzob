@@ -66,6 +66,25 @@ class NetworkMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return NetworkMessageFactory
+    
+    #+-----------------------------------------------------------------------+
+    #| getProperties
+    #|     Computes and returns the properties of the current message
+    #| @return an array with all the properties [[key,val],...]
+    #+-----------------------------------------------------------------------+
+    def getProperties(self):
+        properties = []        
+        properties.append(['ID', str(self.getID())])
+        properties.append(['Type', self.getType()])
+        properties.append(['Timestamp', self.getTimestamp()])
+        properties.append(['Protocol', self.getProtocol()])
+        properties.append(['IP source', self.getIPSource()])
+        properties.append(['IP target', self.getIPTarget()])
+        properties.append(['Source port', self.getL4SourcePort()])
+        properties.append(['Target port', self.getL4TargetPort()])
+        properties.append(['Data', self.getStringData()])
+        
+        return properties    
         
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -83,7 +102,7 @@ class NetworkMessage(AbstractMessage):
     def getTimestamp(self):
         return self.timestamp
        
-    #+----------------------------et que tu fai------------------ 
+    #+---------------------------------------------- 
     #| SETTERS : 
     #+----------------------------------------------
     def setProtocol(self, protocol):
@@ -96,7 +115,7 @@ class NetworkMessage(AbstractMessage):
         try :
             self.l4SourcePort = int(l4sourcePort)
         except :
-            self.log.warning("Impossible to set the given L4 source port since its not an int ! " +l4sourcePort)
+            self.log.warning("Impossible to set the given L4 source port since its not an int ! " + l4sourcePort)
             self.l4SourcePort = -1
             
     def setL4TargetPort(self, l4targetPort):

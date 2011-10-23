@@ -60,7 +60,14 @@ class AbstractMessage():
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
     
-    
+    #+-----------------------------------------------------------------------+
+    #| getProperties
+    #|     Abstract method to retrieve the properties of the message
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def getProperties(self):
+        self.log.error("The message class doesn't have a method 'getProperties' !")
+        raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
     
     #+---------------------------------------------- 
     #|`getStringData : compute a string representation

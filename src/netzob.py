@@ -74,6 +74,7 @@ class Netzob():
         window.connect("delete_event", self.evnmtDelete)
         window.connect("destroy", self.destroy)
         
+        
         ## UI Header definition
         vbox = gtk.VBox(False, spacing=0)
         toolbar = gtk.HBox(False, spacing=0)
@@ -93,7 +94,7 @@ class Netzob():
         self.entry.add_attribute(cellImage, 'stock_id', 1)
 
 #        self.entry = gtk.combo_box_entry_new_text()
-        self.entry.set_size_request(200, -1)
+#        self.entry.set_size_request(200, -1)
         self.entry.connect("changed", self.traceSelected)
         self.updateListOfAvailableTraces()       
       
@@ -150,12 +151,14 @@ class Netzob():
         self.label_analyse.show()
         button_save.show()
         self.notebook.show()
-        vbox.show()
-        window.add(vbox)
-        window.show()
         progressBox.show()
         align.show()
         self.progressBar.show()
+        vbox.show()
+        window.add(vbox)
+        window.show()
+        
+        
         
     #+------------------------------------------------------------------------ 
     #| updateListOfAvailableTraces :

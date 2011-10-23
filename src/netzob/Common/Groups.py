@@ -59,7 +59,7 @@ class Groups(object):
 
     def initGroupsWithTraces(self):
         tracesExtractor = TracesExtractor.TracesExtractor(self.netzob)
-        self.setGroups(  tracesExtractor.parse() )
+        self.setGroups(tracesExtractor.parse())
         self.netzob.update()
 
     #+---------------------------------------------- 
@@ -142,7 +142,7 @@ class Groups(object):
 
         # Fill the notebook
         for group in self.getGroups():
-            vbox = group.search( entry.get_text() )
+            vbox = group.search(entry.get_text())
             if vbox != None:
                 notebook.append_page(vbox, gtk.Label(group.getName()))
 
@@ -150,10 +150,23 @@ class Groups(object):
     #| Groups management :
     #+----------------------------------------------    
     def addGroup(self, group):
-        self.groups.append( group )
+        self.groups.append(group)
 
     def removeGroup(self, group):
-        self.groups.remove( group )
+        self.groups.remove(group)
+    #+---------------------------------------------- 
+    #| getMessageByID:
+    #|     Retrieves the message given its ID
+    #| @param id_message the id of the message to retrieve
+    #| @return the message or None if not found
+    #+----------------------------------------------    
+    def getMessageByID(self, id_message):
+        for group in self.getGroups() :
+            for msg in group.getMessages() :
+                if str(msg.getID()) == id_message :
+                    return msg
+        return None
+                    
 
     #+---------------------------------------------- 
     #| GETTERS :
