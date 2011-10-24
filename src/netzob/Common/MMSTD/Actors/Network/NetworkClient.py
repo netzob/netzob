@@ -45,17 +45,23 @@ logging.config.fileConfig(loggingFilePath)
 #+---------------------------------------------------------------------------+
 class NetworkClient(AbstractActor):
     
-    def __init__(self, name, model, isMaster, host, port):
+    def __init__(self, name, model, isMaster, host, protocol, port):
         AbstractActor.__init__(self, name, model, isMaster)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
         self.port = port
         self.host = host
+        self.protocol = protocol
         self.abstractionLayer = None
         
     def run (self):
         
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if (self.protocol == "UDP") :
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        else :
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+        
         self.socket.connect((self.host, self.port))
         
         inputFile = self.socket.makefile('r', -1)

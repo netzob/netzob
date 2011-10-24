@@ -60,6 +60,12 @@ class MMSTDDictionary():
         return None
     
     
+    def getVariableByID(self, id):
+        for variable in self.variables :            
+            if variable.getID() == id :
+                return variable
+        return None
+    
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+

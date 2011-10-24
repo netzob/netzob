@@ -101,6 +101,10 @@ class NormalState(AbstractState):
         self.activate()
         self.log.info("Execute state " + self.name + " as a master")
         
+        # Verify we can do something now
+        if (len(self.getTransitions()) == 0) :
+            return None
+        
         # given the current state, pick randomly a message and send it after having wait
         # the normal reaction time
         idRandom = random.randint(0, len(self.getTransitions()) - 1)

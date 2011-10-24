@@ -37,6 +37,7 @@ from ..Common import Group
 from ..Common import Message
 from ..Common import ConfigurationParser
 import TracesExtractor
+from SearchView import SearchView
 from ..Common import StateParser
 import Entropy
 from TreeViews import TreeGroupGenerator
@@ -1205,12 +1206,14 @@ class UImodelization:
     def search_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        # Just to force the calculation of the splitted messages by regex ## TODO: put this at the end of the alignement process
+        # Just to force the calculation of the splitted messages by regex 
+        ## TODO: put this at the end of the alignement process
         for group in self.netzob.groups.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
-        dialog.vbox.pack_start(self.netzob.groups.searchView(), True, True, 0)
+        searchPanel = SearchView(self.netzob.groups.getMessages())
+        dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
         dialog.show()
 
     #+---------------------------------------------- 

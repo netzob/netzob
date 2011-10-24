@@ -41,7 +41,6 @@ class DictionarySymbol():
     def __init__(self, dictionaryEntry):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
-        
         self.entry = dictionaryEntry
         
     
@@ -53,8 +52,8 @@ class DictionarySymbol():
             self.log.info("The symbols are not equivalents")
             return False
     
-    def getValueToSend(self):
-        result = self.entry.send(False)
+    def getValueToSend(self, dictionary):
+        result = self.entry.send(False, dictionary)
         return result
     
     #+-----------------------------------------------------------------------+

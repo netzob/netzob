@@ -28,7 +28,7 @@ import logging.config
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
-from .AbstractValue import AbstractValue
+from ..Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -37,62 +37,34 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| Aggregate :
-#|     Definition of an aggregation
+#| AggregrateVariable :
+#|     Definition of an aggregation of variables defined in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class Aggregate(AbstractValue):
+class AggregateVariable(Variable):
     
-    def __init__(self):
-        AbstractValue.__init__(self, "Aggregate")
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.Aggregate.py')
-        
-        self.values = []
-        
-    def registerValue(self, value):
-        self.values.append(value)
+    def __init__(self, id, name, vars):
+        Variable.__init__(self, id, name, "AGGREGATE")
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
+        self.vars = vars
     
-    def send(self, negative, dictionary):
+    
+    def getValue(self, negative, dictionary):
         binResult = []
-        strResult = []
-        for value in self.values :
-            (binVal, strVal) = value.send(negative, dictionary)
-            binResult.append(binVal)
-            strResult.append(strVal)
-        return ("".join(binResult), "".join(strResult))         
-    
-    def compare(self, val, indice, negative, dictionary):
-        result = indice        
-        for value in self.values :
-            self.log.info(value.getType())
-            result = value.compare(val, result, negative, dictionary)
-            if result == -1 :
-                self.log.info("Compare fail")
-                return -1
+        strResult = []        
+        for idVar in self.vars :
+            var = dictionary.getVariableByID(int(idVar))
+            (binVal, strVal) = var.getValue(negative, dictionary)
+            if binVal == None :
+                return (None, None)
             else :
-                self.log.info("Compare successfull")
-        
-        return result
+                binResult.append(binVal)
+                strResult.append(strVal)
+        return ("".join(binResult), "".join(strResult))       
     
-    
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.id
-    def getName(self):
-        return self.name
-    def getType(self):
-        return self.type
-
-        
-    def setID(self, id):
-        self.id = id
-    def setName(self, name):
-        self.name = name
-    def setType(self, type):
-        self.type = type
-    
-    
+    def generateValue(self, negative, dictionary):
+        for idVar in self.vars :
+            var = dictionary.getVariableByID(int(idVar))
+            var.generateValue(negative, dictionary)
+   

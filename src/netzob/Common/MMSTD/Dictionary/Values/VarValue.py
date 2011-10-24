@@ -51,36 +51,32 @@ class VarValue(AbstractValue):
         self.variable = variable
         self.resetCondition = resetCondition
     
-    def compare(self, val, indice, negative):        
+    def compare(self, val, indice, negative, dictionary):        
         # first we retrieve the value stored in the variable
-        value = self.variable.getValue(negative)
+        (binvalue, strvalue) = self.variable.getValue(negative, dictionary)
         
-        if value == None or self.resetCondition == "force":
+        if binvalue == None or self.resetCondition == "force":
             # We execute the learning process
             self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")            
-            new_indice = self.variable.learn(val, indice)
+            new_indice = self.variable.learn(val, indice, dictionary)
             
             return new_indice
         else :
-            self.log.info("Compare " + val[indice:] + " with " + value)
-            if val[indice:].startswith(value) :
+            self.log.info("Compare " + val[indice:] + " with " + strvalue)
+            if val[indice:].startswith(strvalue) :
                 self.log.info("Compare successful")                
-                return indice + len(value)
+                return indice + len(strvalue)
             else :
                 self.log.info("Compare fail")
-             
-        
-            
-        
         return -1
     
-    def send(self, negative):
-        val = self.variable.getValue(negative)
+    def send(self, negative, dictionary):        
+        (val, strval) = self.variable.getValue(negative, dictionary)
         if val == None or self.resetCondition == "force":
-            self.variable.generateValue()
-            return self.variable.getValue(negative)
+            self.variable.generateValue(negative, dictionary)
+            (val, strval) = self.variable.getValue(negative, dictionary)
             
-        return val
+        return (val, strval)
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

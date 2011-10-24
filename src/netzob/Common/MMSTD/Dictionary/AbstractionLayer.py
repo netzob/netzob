@@ -65,8 +65,29 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+
     def receiveSymbol(self):
         self.log.info("Waiting for the reception of a message")
-        # First we read from the input the message        
-        receivedData = self.input.readline().strip()
+        # First we read from the input the message 
+        finish = False
+        receivedChars = []
+#        while not finish :
+#            char = self.input.read(1)
+#            self.log.info("Received : " + char)
+#            receivedChars.append(hex(ord(char)))
+#            if char == '\n' or char == '\r' or char == '\0' :
+#                finish = True
+
+        chars = self.input.read(22)
+        self.log.info("Received : " + str(chars))
+        for c in chars :
+            v = str(hex(ord(c))).replace("0x", "")
+            if len(str(v)) != 2 : 
+                v = "0" + str(v)
+            receivedChars.append(v)
+#        receivedData = "".join(receivedChars)
+            
+        
+        receivedData = ''.join(receivedChars)
+        
+        self.log.info("Received : " + receivedData)
         
         now = datetime.datetime.now()
         receptionTime = now.strftime("%H:%M:%S")
@@ -81,15 +102,15 @@ class AbstractionLayer():
     
     def writeSymbol(self, symbol):
         # First we specialize the symbol in a message
-        message = self.specialize(symbol)
-        self.log.info("Sending message : '" + message + "'")
+        (binMessage, strMessage) = self.specialize(symbol)
+        self.log.info("Sending message : bin('" + strMessage + "')")
         # now we send it
         self.output.flush()
         now = datetime.datetime.now()
-        self.output.write(message + '\n')
+        self.output.write(binMessage)
         self.output.flush()
         sendingTime = now.strftime("%H:%M:%S")
-        self.outputMessages.append([sendingTime, message])
+        self.outputMessages.append([sendingTime, strMessage])
     
     
     #+-----------------------------------------------------------------------+
@@ -100,7 +121,7 @@ class AbstractionLayer():
     def abstract(self, message):        
         # we search in the dictionary an entry which match the message
         for entry in self.dictionary.getEntries() :            
-            if entry.compare(message, 0, False) != -1:
+            if entry.compare(message, 0, False, self.dictionary) != -1:
                 self.log.info("Entry in the dictionary found")
                 return entry
             else :
@@ -110,13 +131,13 @@ class AbstractionLayer():
         return EmptySymbol()
         
     def specialize(self, symbol):
-        value = symbol.getValueToSend()
-        return value     
+        (value, strvalue) = symbol.getValueToSend(self.dictionary)
+        return (value, strvalue)     
         
     def getMemory(self):
         memory = []
         for variable in self.dictionary.getVariables() :
-            memory.append([variable.getName(), variable.getType(), variable.getValue(False)])
+            memory.append([variable.getName(), variable.getType(), variable.getValue(False, self.dictionary)])
         return memory
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

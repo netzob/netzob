@@ -81,11 +81,12 @@ class DictionaryEntry():
     #|     Prepare to send this entry
     #| @param negative a flag which indicates if we send or not the negative 
     #|        value of the entry
+    #| @param current dictionnary
     #| @return the result to send (ValueResult)
     #+---------------------------------------------------------------------------+
-    def send(self, negative):
+    def send(self, negative, dictionary):
         self.log.debug("Send (negative=" + str(negative) + " ...")
-        return self.value.send(negative)
+        return self.value.send(negative, dictionary)
     
     #+---------------------------------------------------------------------------+
     #| compare :
@@ -96,9 +97,9 @@ class DictionaryEntry():
     #|        value of the entry
     #| @return the result of the comparaison
     #+---------------------------------------------------------------------------+
-    def compare(self, val, indice, negative):
+    def compare(self, val, indice, negative, dictionary):
         self.log.debug("Compare (val=" + val + ", i=" + str(indice) + " neg=" + str(negative) + "...")
-        return self.value.compare(val, indice, negative)
+        return self.value.compare(val, indice, negative, dictionary)
 
     #+---------------------------------------------------------------------------+
     #| learn :

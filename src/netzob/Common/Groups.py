@@ -101,32 +101,6 @@ class Groups(object):
                 notebook.append_page(scroll, gtk.Label(group.getName()))
         return notebook
 
-    #+---------------------------------------------- 
-    #| searchView:
-    #|  search data in messages, for each group
-    #+----------------------------------------------    
-    def searchView(self):
-        hbox = gtk.HBox(False, spacing=5)
-        hbox.show()
-
-        ## Search form
-        vbox = gtk.VBox(False, spacing=5)
-        vbox.show()
-        hbox.pack_start(vbox, False, False, 0)
-        entry = gtk.Entry()
-        entry.show()
-        vbox.pack_start(entry, False, False, 0)
-        but = gtk.Button("Search")
-        but.show()
-        vbox.pack_start(but, False, False, 0)
-
-        ## Notebook for the results per groups
-        notebook = gtk.Notebook()
-        but.connect("clicked", self.search_cb, entry, notebook)
-        hbox.pack_start(notebook, False, False, 0)
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        return hbox
 
     #+---------------------------------------------- 
     #| search_cb:
@@ -166,7 +140,20 @@ class Groups(object):
                 if str(msg.getID()) == id_message :
                     return msg
         return None
-                    
+    #+---------------------------------------------- 
+    #| getMessages:
+    #|     Retrieves all the messages
+    #| @param id_message the id of the message to retrieve
+    #| @return the message or None if not found
+    #+----------------------------------------------                   
+    def getMessages(self):
+        messages = []
+        for group in self.getGroups() :
+            for msg in group.getMessages() :
+                messages.append(msg)
+        
+        return messages
+
 
     #+---------------------------------------------- 
     #| GETTERS :

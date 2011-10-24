@@ -139,8 +139,19 @@ class UISimulator:
         self.combo_typeOfNetworkActor.append_text("CLIENT")
         self.combo_typeOfNetworkActor.append_text("SERVER")
         self.combo_typeOfNetworkActor.show()
-        self.tableFormNewActor.attach(label_typeOfNetworkActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.tableFormNewActor.attach(self.combo_typeOfNetworkActor, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(label_typeOfNetworkActor, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.combo_typeOfNetworkActor, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Network protocol
+        label_protocolOfNetworkActor = gtk.Label("Network Protocol : ")
+        label_protocolOfNetworkActor.show()
+        self.combo_protocolOfNetworkActor = gtk.combo_box_entry_new_text()
+        self.combo_protocolOfNetworkActor.set_model(gtk.ListStore(str))
+        self.combo_protocolOfNetworkActor.append_text("TCP")
+        self.combo_protocolOfNetworkActor.append_text("UDP")
+        self.combo_protocolOfNetworkActor.show()
+        self.tableFormNewActor.attach(label_protocolOfNetworkActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.combo_protocolOfNetworkActor, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # IP
         label_IP = gtk.Label("IP : ")
@@ -395,6 +406,7 @@ class UISimulator:
         actorName = self.entry_actorName.get_text()
         actorGrammar = self.combo_grammar.get_active_text()
         actorGrammarType = self.combo_typeOfActor.get_active_text()
+        actorNetworkProtocol = self.combo_protocolOfNetworkActor.get_active_text()
         actorNetworkType = self.combo_typeOfNetworkActor.get_active_text()
         actorIP = self.entry_IP.get_text()
         actorPort = self.entry_Port.get_text()
@@ -423,9 +435,9 @@ class UISimulator:
             
         # Create the network layer
         if actorNetworkType == "SERVER" :
-            actor = NetworkServer.NetworkServer(actorName, automata, isMaster, actorIP, int(actorPort))
+            actor = NetworkServer.NetworkServer(actorName, automata, isMaster, actorIP, actorNetworkProtocol, int(actorPort))
         else :
-            actor = NetworkClient.NetworkClient(actorName, automata, isMaster, actorIP, int(actorPort))
+            actor = NetworkClient.NetworkClient(actorName, automata, isMaster, actorIP, actorNetworkProtocol, int(actorPort))
             
         # add the actor to the list
         self.actors.append(actor)

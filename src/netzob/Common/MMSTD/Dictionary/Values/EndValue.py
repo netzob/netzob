@@ -50,10 +50,10 @@ class EndValue(AbstractValue):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.EndValue.py')
         
     
-    def send(self, negative):
-        return ""
+    def send(self, negative, dictionary):
+        return ("", "")
     
-    def compare(self, val, indice, negative):
+    def compare(self, val, indice, negative, dictionary):
         if len(val[indice:]) == 0 :
             self.log.info("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
             return indice

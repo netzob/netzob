@@ -18,6 +18,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+import binascii
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -28,7 +30,7 @@ import logging.config
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
-from .AbstractValue import AbstractValue
+from ..Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -37,62 +39,49 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| Aggregate :
-#|     Definition of an aggregation
+#| HexVariable :
+#|     Definition of an hex variable defined in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class Aggregate(AbstractValue):
+class HexVariable(Variable):
     
-    def __init__(self):
-        AbstractValue.__init__(self, "Aggregate")
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.Aggregate.py')
+    def __init__(self, id, name, value):
+        Variable.__init__(self, id, name, "HEX")
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
+        self.value = value
+        self.size = -1
+        self.min = -1
+        self.max = -1        
         
-        self.values = []
-        
-    def registerValue(self, value):
-        self.values.append(value)
+    def getValue(self, negative, dictionary):
+        if self.value == None :
+            return (None, None)
+                    
+        return (binascii.unhexlify(self.value), self.value)
     
-    def send(self, negative, dictionary):
-        binResult = []
-        strResult = []
-        for value in self.values :
-            (binVal, strVal) = value.send(negative, dictionary)
-            binResult.append(binVal)
-            strResult.append(strVal)
-        return ("".join(binResult), "".join(strResult))         
-    
-    def compare(self, val, indice, negative, dictionary):
-        result = indice        
-        for value in self.values :
-            self.log.info(value.getType())
-            result = value.compare(val, result, negative, dictionary)
-            if result == -1 :
-                self.log.info("Compare fail")
-                return -1
-            else :
-                self.log.info("Compare successfull")
-        
-        return result
-    
-    
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.id
-    def getName(self):
-        return self.name
-    def getType(self):
-        return self.type
+    def generateValue(self, negative, dictionary) :
+        if self.min != -1 and self.max != 1 :
+            r = random.randint(self.min, self.max)
+            v = str(hex(r)).replace("0x", "")
+            if (len(v) % 2 == 1) :
+                v = "0" + v
+            self.value = v
+       
+    def learn(self, val, indice, dictionary):
+        tmp = val[indice:]
+        self.log.info("Learn hex given its size : " + str(self.size) + " from " + tmp) 
+        if len(tmp) >= self.size :
+            self.value = val[indice:indice + self.size]
+            self.log.info("learning value : " + self.value)
+            return indice + self.size
+        else :
+            return -1
 
-        
-    def setID(self, id):
-        self.id = id
-    def setName(self, name):
-        self.name = name
-    def setType(self, type):
-        self.type = type
-    
-    
+   
+    def setSize(self, size):
+        self.size = size
+    def setMin(self, min):
+        self.min = int(min)
+    def setMax(self, max):
+        self.max = int(max) 

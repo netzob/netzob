@@ -48,7 +48,7 @@ class AbstractValue():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.AbstractValue.py')
         self.type = type
         
-    
+       
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+

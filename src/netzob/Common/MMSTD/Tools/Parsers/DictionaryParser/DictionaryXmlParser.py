@@ -37,6 +37,9 @@ from ....Dictionary.Values import Aggregate
 from ....Dictionary.Values import TextValue
 from ....Dictionary.Values import EndValue
 from ....Dictionary.Values import VarValue
+from ....Dictionary.Variables.HexVariable import HexVariable
+from ....Dictionary.Variables.MD5Variable import MD5Variable
+from ....Dictionary.Variables.AggregateVariable import AggregateVariable
 
 
 
@@ -75,9 +78,31 @@ class DictionaryXmlParser(object):
             idVar = int(xmlVariable.get("id", "-1"))
             nameVar = xmlVariable.get("name", "none")
             typeVar = xmlVariable.get("type", "none")
-            defaultValue = xmlVariable.text
-            variable = Variable.Variable(idVar, nameVar, typeVar, defaultValue)
-            variables.append(variable)
+            
+            variable = None
+            if typeVar == "HEX" :
+                size = int(xmlVariable.get("size", "-1"))
+                min = int(xmlVariable.get("min", "-1"))
+                max = int(xmlVariable.get("max", "-1"))
+                variable = HexVariable(idVar, nameVar, xmlVariable.text)
+                if size != -1 :
+                    variable.setSize(size)
+                if min != -1 :
+                    variable.setMin(min)
+                if max != -1 :
+                    variable.setMax(max)
+                    
+                
+            elif typeVar == "MD5" :
+                initVar = xmlVariable.get("init", "")
+                valVar = int(xmlVariable.get("idVariable", "0"))
+                variable = MD5Variable(idVar, nameVar, initVar, valVar)
+            elif typeVar == "AGGREGATE" :
+                variable = AggregateVariable(idVar, nameVar, xmlVariable.text.split(';'))
+           
+            if variable != None :
+                variables.append(variable)
+            
             
         # Parse the entries declared in dictionary
         entries = []        

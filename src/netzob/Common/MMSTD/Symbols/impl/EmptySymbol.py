@@ -44,7 +44,8 @@ class EmptySymbol():
         
     
     def isEquivalent(self, symbol):
-        if self.entry.getID() == symbol.getID() :
+        
+        if symbol.__class__.__name__ == EmptySymbol.__name__:
             self.log.info("The symbols are equivalents")
             return True
         else :
@@ -58,13 +59,13 @@ class EmptySymbol():
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
-        return self.entry.getID()
+        return 0
     def getEntry(self):
-        return self.entry
+        return None
   
         
-    def setID(self, id):
-        self.id = id
-    def setEntry(self, entry):
-        self.entry = entry
+#    def setID(self, id):
+#        self.id = id
+#    def setEntry(self, entry):
+#        self.entry = entry
     

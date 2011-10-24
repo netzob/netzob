@@ -50,10 +50,10 @@ class TextValue(AbstractValue):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.TextValue.py')
         self.text = text
     
-    def send(self, negative):
-        return self.text
+    def send(self, negative, dictionary):
+        return (self.text, self.text)
         
-    def compare(self, val, indice, negative):
+    def compare(self, val, indice, negative, dictionary):
         self.log.info("Compare received : '" + val[indice:] + "' with '" + self.text + "' ")
         if val[indice:].startswith(self.text) or val[indice:] == self.text :
             self.log.info("Compare successful")                

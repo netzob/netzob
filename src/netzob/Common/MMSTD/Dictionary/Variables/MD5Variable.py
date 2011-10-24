@@ -18,6 +18,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+import hashlib
+import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -28,7 +30,7 @@ import logging.config
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
-from .AbstractValue import AbstractValue
+from ..Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -37,62 +39,34 @@ loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path
 logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| Aggregate :
-#|     Definition of an aggregation
+#| MD5Variable :
+#|     Definition of an md5 variable defined in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class Aggregate(AbstractValue):
+class MD5Variable(Variable):
     
-    def __init__(self):
-        AbstractValue.__init__(self, "Aggregate")
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.Aggregate.py')
+    def __init__(self, id, name, init, id_var):
+        Variable.__init__(self, id, name, "MD5")
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
+        self.init = init
+        self.id_var = id_var
+        self.binVal = None
+        self.strVal = None
         
-        self.values = []
+    def getValue(self, negative, dictionary):
+        return (self.binVal, self.strVal)
         
-    def registerValue(self, value):
-        self.values.append(value)
-    
-    def send(self, negative, dictionary):
-        binResult = []
-        strResult = []
-        for value in self.values :
-            (binVal, strVal) = value.send(negative, dictionary)
-            binResult.append(binVal)
-            strResult.append(strVal)
-        return ("".join(binResult), "".join(strResult))         
-    
-    def compare(self, val, indice, negative, dictionary):
-        result = indice        
-        for value in self.values :
-            self.log.info(value.getType())
-            result = value.compare(val, result, negative, dictionary)
-            if result == -1 :
-                self.log.info("Compare fail")
-                return -1
-            else :
-                self.log.info("Compare successfull")
+   
+    def generateValue(self, negative, dictionary):
+        var = dictionary.getVariableByID(self.id_var)
+        (binToHash, strToHash) = var.getValue(negative, dictionary)
         
-        return result
+        md5core = hashlib.md5(self.init)
+        md5core.update(binToHash)
+        md5 = md5core.hexdigest()
+        self.binVal = binascii.unhexlify(md5)
+        self.strVal = md5
     
-    
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.id
-    def getName(self):
-        return self.name
-    def getType(self):
-        return self.type
-
-        
-    def setID(self, id):
-        self.id = id
-    def setName(self, name):
-        self.name = name
-    def setType(self, type):
-        self.type = type
-    
-    
+   
+   
