@@ -27,6 +27,7 @@ import sys
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+sys.path.append('lib/')
 sys.path.append('lib/libNeedleman/')
 sys.path.append('resources/scapy/')
 
