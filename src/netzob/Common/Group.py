@@ -249,6 +249,34 @@ class Group(object):
         return result
 
     #+---------------------------------------------- 
+    #| getScapyDissector : 
+    #| @return a string containing the scapy dissector of the group
+    #+----------------------------------------------
+    def getScapyDissector(self):
+        self.refineRegexes() # In order to force the calculation of each field limits
+        s = ""
+        s += "class "+ self.getName() +"(Packet):\n"
+        s += "    name = \""+ self.getName() +"\"\n"
+        s += "    fields_desc = [ \n"
+
+        iCol = 0
+        for col in self.getColumns():
+            if self.isRegexStatic(col['regex']):
+                s += "                    StrFixedLenField(\""+ col['name'] +"\", "+ self.getRepresentation(col['regex'], iCol) +")\n"
+            else: # Variable field of fixed size
+                s += "                    StrFixedLenField(\""+ col['name'] +"\", None)\n"                
+            ## If this is a variable field
+                # StrLenField("the_varfield", "the_default_value", length_from = lambda pkt: pkt.the_lenfield)
+            iCol += 1
+        s += "                  ]\n"
+
+        ## Bind current layer with the underlying one
+        # bind_layers( TCP, HTTP, sport=80 )
+        # bind_layers( TCP, HTTP, dport=80 )
+
+        return s
+
+    #+---------------------------------------------- 
     #| slickRegex:
     #|  try to make smooth the regex, by deleting tiny static
     #|  sequences that are between big dynamic sequences

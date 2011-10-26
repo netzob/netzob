@@ -542,10 +542,5 @@ class IPC:
         else:
             return "ipc"
         
-        
-
-    #+---------------------------------------------- 
-    #| GETTERS
-    #+----------------------------------------------
     def getPanel(self):
         return self.panel
