@@ -52,6 +52,7 @@ setup(
     package_dir = {"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
     data_files = [],
+    scripts = ["netzob"],
     version="0.3.0",
     description="Network protocol modelization by reverse engineering",
     author="Georges Bossert, Frederic Guihery",
