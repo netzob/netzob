@@ -23,10 +23,8 @@ from distutils.core import setup, Extension
 #| Definition of the extensions
 #+----------------------------------------------------------------------------
 moduleLibNeedleman = Extension('libNeedleman',
-                               libraries=['python2.6'],
                                extra_compile_args=["-fopenmp"],
                                extra_link_args=["-fopenmp"],
-                               include_dirs=['/usr/include/python2.6'],
                                sources=['lib/libNeedleman/NeedlemanWunsch.c'])
 
 #+---------------------------------------------------------------------------- 
