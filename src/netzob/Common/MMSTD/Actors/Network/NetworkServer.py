@@ -33,8 +33,8 @@ from ...Dictionary.AbstractionLayer import AbstractionLayer
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| Container 
@@ -73,10 +73,8 @@ class TCPConnectionHandler(SocketServer.StreamRequestHandler):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
         
-        time.sleep(2)
-        
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getDictionary())
+        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getNewDictionary()())
         
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
@@ -88,8 +86,6 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
-        
-        time.sleep(2)
         
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getDictionary())

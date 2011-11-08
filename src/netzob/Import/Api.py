@@ -44,8 +44,8 @@ from GOTPoisoning import GOTPoisoner
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| Api :
@@ -85,7 +85,10 @@ class Api:
         
         # First we parse the repository
         repositoryFile = ConfigurationParser.ConfigurationParser().get("import", "repository_prototypes")
-        self.repositoryOfSharedLib = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
+        if repositoryFile == "" or not os.path.isfile(repositoryFile) :
+            self.log.warn("Unable to find a repository file for API injector.")
+        else :
+            self.repositoryOfSharedLib = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
         
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -317,7 +320,7 @@ class Api:
         
         # Create a temporary folder (secure way) <- hihihihi
         tmpFolder = tempfile.mkdtemp()
-        self.log.info("Temporary folder : "+tmpFolder)
+        self.log.info("Temporary folder : " + tmpFolder)
         
         parasiteGenerator = ParasiteGenerator.ParasiteGenerator(tmpFolder)
         parasiteGenerator.addAnHijackedFunctions(self.selectedFunction)
@@ -347,11 +350,11 @@ class Api:
     def readFromFifo(self):
         self.fifo = open(self.fifoFile, 'r')
         receivedMessage = self.readline(self.fifo)
-        self.log.info("FIFO : "+receivedMessage)
+        self.log.info("FIFO : " + receivedMessage)
         while (receivedMessage != "STOP\n") :
             self.pktTreestore.append(None, [len(self.packets), "NONE", "NC", receivedMessage, int(time.time())])
             receivedMessage = self.readline(self.fifo)
-            self.log.info("FIFO : "+receivedMessage)
+            self.log.info("FIFO : " + receivedMessage)
             
         
     
@@ -368,7 +371,7 @@ class Api:
             self.log.info("The fifo has been created...")
             return True
     
-    def readline(self,f):
+    def readline(self, f):
         s = f.readline()
         while s == "":
             time.sleep(0.0001)

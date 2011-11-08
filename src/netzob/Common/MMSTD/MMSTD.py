@@ -31,8 +31,8 @@ from .. import ConfigurationParser
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| MMSTD :
@@ -69,6 +69,7 @@ class MMSTD(object):
     
     def getDictionary(self):
         return self.dictionary
+    
     
     #+---------------------------------------------------------------------------+
     #| getAllStates :

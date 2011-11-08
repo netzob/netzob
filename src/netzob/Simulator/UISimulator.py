@@ -42,8 +42,8 @@ from ..Common.MMSTD.Actors.Network import NetworkClient
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| UISimulator :
@@ -361,6 +361,11 @@ class UISimulator:
     def getAvailableGrammars(self):
         # Scan the directory of grammars and retrieve them
         grammar_directory = ConfigurationParser.ConfigurationParser().get("automata", "path")  
+        
+        if grammar_directory == "" or not os.path.isdir(grammar_directory) :
+            self.log.warn("Unable to load the grammar directory")
+            return []
+        
         # a temporary list in which all the files
         temporaryListOfFiles = []
          

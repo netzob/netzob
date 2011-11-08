@@ -35,8 +35,8 @@ from ..Variable import Variable
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| HexVariable :
@@ -52,7 +52,8 @@ class HexVariable(Variable):
         self.value = value
         self.size = -1
         self.min = -1
-        self.max = -1        
+        self.max = -1   
+        self.reset = "normal"     
         
     def getValue(self, negative, dictionary):
         if self.value == None :
@@ -68,7 +69,12 @@ class HexVariable(Variable):
                 v = "0" + v
             self.value = v
        
-    def learn(self, val, indice, dictionary):
+    def learn(self, val, indice, isForced, dictionary):
+        
+        if self.value != None and not isForced :
+            self.log.info("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.value)) + ")")
+            return indice + len(self.value)
+        
         tmp = val[indice:]
         self.log.info("Learn hex given its size : " + str(self.size) + " from " + tmp) 
         if len(tmp) >= self.size :
@@ -78,7 +84,8 @@ class HexVariable(Variable):
         else :
             return -1
 
-   
+    def setReset(self, reset) :
+        self.reset = reset
     def setSize(self, size):
         self.size = size
     def setMin(self, min):

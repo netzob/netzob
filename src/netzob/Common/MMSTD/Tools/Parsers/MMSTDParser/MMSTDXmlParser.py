@@ -37,8 +37,8 @@ from .... import MMSTD
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| MMSTDXmlParser :
@@ -71,7 +71,7 @@ class MMSTDXmlParser(object):
         # Parsing dictionary file
         dicoTree = ElementTree.ElementTree()
         dicoTree.parse(dictionaryFile)           
-        dictionary = DictionaryXmlParser.DictionaryXmlParser.loadFromXML(dicoTree.getroot())
+        dictionary = DictionaryXmlParser.DictionaryXmlParser.loadFromXML(dicoTree.getroot(), dictionaryFile)
         
         # parse for all the states
         states = []

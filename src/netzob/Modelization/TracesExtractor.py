@@ -36,8 +36,8 @@ from ..Common import ConfigurationParser
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TracesExtractor :
@@ -93,7 +93,7 @@ class TracesExtractor(object):
             # Now we try to clusterize the newly created group
             clusterer = Clusterer.Clusterer(self.netzob, [group], explodeGroups=True)
             clusterer.mergeGroups()
-            groups.extend( clusterer.getGroups() )
+            groups.extend(clusterer.getGroups())
                 
         # Now that all the groups are reorganized separately
         # we should consider merging them
@@ -112,6 +112,6 @@ class TracesExtractor(object):
         for group in clusterer.getGroups() :
             self.log.debug("Group {0}".format(group.getName()))
             for message in group.getMessages() :
-                self.log.debug("- "+message.getStringData())
+                self.log.debug("- " + message.getStringData())
 
         return clusterer.getGroups()

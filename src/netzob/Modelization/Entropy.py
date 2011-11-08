@@ -28,8 +28,8 @@ from ..Common import ConfigurationParser
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Entropy :
@@ -58,13 +58,13 @@ class Entropy(object):
         for iCol in range(len(self.group.getColumns())):
             maxCell = -1
             for cell in self.group.getCellsByCol(iCol):
-                for j in range(len(cell)/2):
-                    resX.append( i + j )
-                    resY.append( int(cell[j*2:j*2+2], 16) )
-                if len(cell)/2 > maxCell:
-                    maxCell = len(cell)/2
+                for j in range(len(cell) / 2):
+                    resX.append(i + j)
+                    resY.append(int(cell[j * 2:j * 2 + 2], 16))
+                if len(cell) / 2 > maxCell:
+                    maxCell = len(cell) / 2
             i += maxCell
-            segments.append( i )
+            segments.append(i)
 
         fig = figure()#figsize=(800, 500))#, dpi=75)
         axis = fig.add_subplot(111, frame_on=False)

@@ -37,8 +37,8 @@ import libNeedleman
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Group :
@@ -255,16 +255,16 @@ class Group(object):
     def getScapyDissector(self):
         self.refineRegexes() # In order to force the calculation of each field limits
         s = ""
-        s += "class "+ self.getName() +"(Packet):\n"
-        s += "    name = \""+ self.getName() +"\"\n"
+        s += "class " + self.getName() + "(Packet):\n"
+        s += "    name = \"" + self.getName() + "\"\n"
         s += "    fields_desc = [ \n"
 
         iCol = 0
         for col in self.getColumns():
             if self.isRegexStatic(col['regex']):
-                s += "                    StrFixedLenField(\""+ col['name'] +"\", "+ self.getRepresentation(col['regex'], iCol) +")\n"
+                s += "                    StrFixedLenField(\"" + col['name'] + "\", " + self.getRepresentation(col['regex'], iCol) + ")\n"
             else: # Variable field of fixed size
-                s += "                    StrFixedLenField(\""+ col['name'] +"\", None)\n"                
+                s += "                    StrFixedLenField(\"" + col['name'] + "\", None)\n"                
             ## If this is a variable field
                 # StrLenField("the_varfield", "the_default_value", length_from = lambda pkt: pkt.the_lenfield)
             iCol += 1

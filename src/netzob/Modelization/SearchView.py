@@ -31,8 +31,8 @@ from Searcher import Searcher
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| SearchView :
@@ -52,8 +52,8 @@ class SearchView(object):
     
     def getPanel(self):
         # Create the main panel
-        panel = gtk.Table(rows=2, columns=3, homogeneous=False)
-        panel.show()
+        self.panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        self.panel.show()
         
         # Create the header (first row) with the search form
         # Search entry
@@ -76,14 +76,13 @@ class SearchView(object):
         searchButton.show()
         searchButton.connect("clicked", self.prepareSearchingOperation)
 
-        panel.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(self.typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(searchButton, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(searchButton, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
-        return panel
+        return self.panel
     
-    def prepareSearchingOperation(self, button):
-        
+    def prepareSearchingOperation(self, button):        
         searchedPattern = self.searchEntry.get_text()
         if len(searchedPattern) == 0 :
             self.log.info("Do not start the searching process since no pattern was provided by the user")
@@ -102,19 +101,61 @@ class SearchView(object):
         # Initialize the searcher
         searcher = Searcher(self.messages)
         
+        searchResults = []
         if typeOfPattern == "IP" :
-            searcher.searchIP(pattern)
+            searchResults = searcher.searchIP(pattern)
         elif typeOfPattern == "Binary":
-            searcher.searchBinary(pattern)
+            searchResults = searcher.searchBinary(pattern)
         elif typeOfPattern == "Octal":
-            searcher.searchOctal(pattern)
+            searchResults = searcher.searchOctal(pattern)
         elif typeOfPattern == "Hexadecimal":
-            searcher.searchHexdecimal(pattern)
+            searchResults = searcher.searchHexdecimal(pattern)
         elif typeOfPattern == "ASCII":
-            searcher.searchASCII(pattern)
+            searchResults = searcher.searchASCII(pattern)
         else :
             self.log.warn("The provided type of the searched pattern is not yet supported")
         
+        self.log.debug("A number of " + str(len(searchResults)) + " results were found")
+        
+        self.updateView(searchResults)
+        
+    def updateView(self, results):
+        
+        self.tree = gtk.TreeView()
+        
+        colResult = gtk.TreeViewColumn()
+        colResult.set_title("Search results")
+ 
+        cell = gtk.CellRendererText()
+        colResult.pack_start(cell, True)
+        colResult.add_attribute(cell, "text", 0)
+ 
+        treestore = gtk.TreeStore(str)
+        
+        
+        for result in results :
+            it = treestore.append(None, [result.getGroup().getName()])
+            it2 = treestore.append(it, [result.getMessage().getID()])
+            treestore.append(it2, [result.getStringResult()])
+ 
+#        it = treestore.append(None, ["Groupe REQUEST"])
+#        it2 = treestore.append(it, ["Message 1"])
+#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
+#        it2 = treestore.append(it, ["Message 2"])
+#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
+# 
+#        it = treestore.append(None, ["Groupe RESPONSE"])
+#        it2 = treestore.append(it, ["Message 1"])
+#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
+#        it2 = treestore.append(it, ["Message 2"])
+#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
+ 
+        self.tree.append_column(colResult)
+        self.tree.set_model(treestore)
+        self.tree.show()
+        
+        self.panel.attach(self.tree, 0, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+            
         
         
         

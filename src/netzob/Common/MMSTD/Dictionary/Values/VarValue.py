@@ -33,8 +33,8 @@ from .AbstractValue import AbstractValue
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| VarValue :
@@ -57,8 +57,13 @@ class VarValue(AbstractValue):
         
         if binvalue == None or self.resetCondition == "force":
             # We execute the learning process
-            self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")            
-            new_indice = self.variable.learn(val, indice, dictionary)
+            self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")  
+            
+            isForced = False
+            if self.resetCondition == "force": 
+                isForced = True
+                          
+            new_indice = self.variable.learn(val, indice, isForced, dictionary)
             
             return new_indice
         else :

@@ -46,8 +46,8 @@ from ....Dictionary.Variables.AggregateVariable import AggregateVariable
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| DictionaryXmlParser :
@@ -66,7 +66,7 @@ class DictionaryXmlParser(object):
     #| @return an instance of a dictionary
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement):   
+    def loadFromXML(rootElement, file):   
         log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
           
         if rootElement.tag != "dictionary" :
@@ -84,6 +84,7 @@ class DictionaryXmlParser(object):
                 size = int(xmlVariable.get("size", "-1"))
                 min = int(xmlVariable.get("min", "-1"))
                 max = int(xmlVariable.get("max", "-1"))
+                reset = xmlVariable.get("reset", "normal")
                 variable = HexVariable(idVar, nameVar, xmlVariable.text)
                 if size != -1 :
                     variable.setSize(size)
@@ -91,6 +92,7 @@ class DictionaryXmlParser(object):
                     variable.setMin(min)
                 if max != -1 :
                     variable.setMax(max)
+                variable.setReset(reset)
                     
                 
             elif typeVar == "MD5" :

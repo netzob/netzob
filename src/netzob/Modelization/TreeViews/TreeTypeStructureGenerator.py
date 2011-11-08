@@ -32,8 +32,8 @@ from ...Common import TypeIdentifier
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TreeTypeStructureGenerator :
@@ -119,7 +119,7 @@ class TreeTypeStructureGenerator():
             for k in range(int(col['tabulation'])):
                 tab += " "
             messageElt = splittedMessage[iCol]
-            if not self.getGroup().isRegexStatic( col['regex'] ):
+            if not self.getGroup().isRegexStatic(col['regex']):
                 iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", col['regex'] + " / " + messageElt, col['description']])
             else:
                 iter = self.treestore.append(None, [iCol, tab + col['name'] + ":", messageElt, col['description']])

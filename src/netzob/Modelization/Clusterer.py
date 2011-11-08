@@ -35,8 +35,8 @@ import libNeedleman
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Clusterer :
@@ -48,7 +48,7 @@ class Clusterer(object):
  
     def __init__(self, netzob, groups, explodeGroups=False):
         self.netzob = netzob
-        self.groups= []
+        self.groups = []
         # Create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.Clusterer.py')
 
@@ -57,12 +57,12 @@ class Clusterer(object):
             self.log.debug("A number of {0} already aligned groups will be clustered.".format(str(len(groups))))
         else:
             # Create a group for each message
-            self.groups= []
+            self.groups = []
             i = 0
             for group in groups :
                 for m in group.getMessages():
                     i += 1
-                    self.groups.append( Group.Group(str(i), [m]) )
+                    self.groups.append(Group.Group(str(i), [m]))
             self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
         
     #+---------------------------------------------- 
@@ -86,23 +86,23 @@ class Clusterer(object):
                 format += "1" + "G"
                 messageTmp = ""
                 alignmentTmp = ""
-                for i in range(0, len( group.getAlignment()), 2):
-                    if group.getAlignment()[i:i+2] == "--":
+                for i in range(0, len(group.getAlignment()), 2):
+                    if group.getAlignment()[i:i + 2] == "--":
                         messageTmp += "\xff"
                         alignmentTmp += "\x01"
                     else:
-                        messageTmp += typer.toBinary( group.getAlignment()[i:i+2] )
+                        messageTmp += typer.toBinary(group.getAlignment()[i:i + 2])
                         alignmentTmp += "\x00"
-                format += str(len(group.getAlignment())/2) + "M"
+                format += str(len(group.getAlignment()) / 2) + "M"
                 serialGroups += messageTmp
                 serialGroups += alignmentTmp
             else:
                 format += str(len(group.getMessages())) + "G"
                 for m in group.getMessages():
-                    format += str(len(m.getReducedStringData())/2) + "M"
-                    serialGroups += typer.toBinary( m.getReducedStringData() ) # The message
+                    format += str(len(m.getReducedStringData()) / 2) + "M"
+                    serialGroups += typer.toBinary(m.getReducedStringData()) # The message
 #                    print m.getReducedStringData()
-                    serialGroups +=  "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ) # The alignement == "\x00" * len(the message), the first time
+                    serialGroups += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]) # The alignement == "\x00" * len(the message), the first time
 #                    print "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ).encode("hex")
 
         # Execute the Clustering part in C :) (thx fgy)
@@ -177,21 +177,21 @@ class Clusterer(object):
         currentReductionIsLeft = False
         increment = 10
         
-        while leftReductionFactor<80 and rightReductionFactor<80 :
+        while leftReductionFactor < 80 and rightReductionFactor < 80 :
             
             # First we retrieve the current orphans
             orphans = []
             tmp_groups = []
             # extract orphans
             for group in self.groups :
-                if len(group.getMessages())==1 :
+                if len(group.getMessages()) == 1 :
                     orphans.append(group)
             # create a tmp groups array where groups will be added once computed    
             for group in self.groups :
-                if len(group.getMessages())>1 :
+                if len(group.getMessages()) > 1 :
                     tmp_groups.append(group)
             
-            if len(orphans)<=1 :
+            if len(orphans) <= 1 :
                 self.log.info("Number of orphan groups : {0}. The orphan merging op. is finished !".format(len(orphans)))
                 break;
 
@@ -244,8 +244,8 @@ class Clusterer(object):
 
         # Merge the groups i and j
         messages = []
-        messages.extend( group1.getMessages() )
-        messages.extend( group2.getMessages() )
+        messages.extend(group1.getMessages())
+        messages.extend(group2.getMessages())
         newGroup = Group.Group(group1.getName() + group2.getName(), messages)
                     
         # Append th new group to the "groups" structure

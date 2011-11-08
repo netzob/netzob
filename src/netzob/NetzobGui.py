@@ -20,9 +20,11 @@
 import gtk
 import gobject
 import os
-import logging.config
 import threading
 import sys
+import logging
+from time import sleep
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -31,6 +33,7 @@ sys.path.append('lib/')
 sys.path.append('lib/libNeedleman/')
 sys.path.append('resources/scapy/')
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -38,16 +41,14 @@ from netzob.Modelization import UImodelization
 from netzob.Export import UIexport
 from netzob.Import import UIimport
 from netzob.Fuzzing import UIfuzzing
+from netzob.Common import LoggingConfiguration
 from netzob.Simulator import UISimulator
 from netzob.Common import ConfigurationParser
 from netzob.Common import StateParser
 from netzob.Common import Groups
+from netzob.Common import ResourcesConfiguration
+from netzob.Common import SplashScreen
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Netzob :
@@ -64,6 +65,8 @@ class Netzob():
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
+        
+        self.log.info("Starting netzob")
         self.tracePath = ""
 
         # Groups of messages are handled with the following object
@@ -169,7 +172,11 @@ class Netzob():
     def updateListOfAvailableTraces(self):
         self.entry.get_model().clear()
         # retrieves the trace directory path
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")       
+        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        if tracesDirectoryPath == "" :
+            self.log.warn("No available traces directory was found.")
+            return 
+               
         # a temporary list in which all the folders will be stored and after sorted
         temporaryListOfFolders = []
          
@@ -245,7 +252,7 @@ class Netzob():
             return
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         self.label_analyse.set_text(target)
-        self.tracePath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target
+        self.tracePath = tracesDirectoryPath + os.sep + target
         
         # clear past analysis and initialize the each notebook
         self.groups.clear()
@@ -254,6 +261,8 @@ class Netzob():
             #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
             #if page[0] == nameTab:
             page[1].new()
+            
+            
 
         # If a state saving exists, loads it
         for file in os.listdir(self.tracePath):
@@ -276,12 +285,25 @@ class Netzob():
 #| RUNTIME
 #+----------------------------------------------
 if __name__ == "__main__":
-    # create logger with the given configuration
-    logger = logging.getLogger('netzob.py')
-    logger.info("Logging module configured and loaded")
     
-    # for handling GUI access from threads
-    gobject.threads_init()
-    
-    netZob = Netzob()
-    netZob.startGui()
+    # First we initialize and verify all the resources
+    if not ResourcesConfiguration.ResourcesConfiguration.initializeResources() :
+        logging.fatal("Error while configuring the resources of NETZOB")
+    else :    
+        
+        splashScreen = SplashScreen.SplashScreen()
+        while gtk.events_pending():
+            gtk.main_iteration()
+        sleep(3) 
+        splashScreen.window.destroy() 
+        
+        # Second we create the logging infrastructure
+        LoggingConfiguration.LoggingConfiguration().initializeLogging()
+        
+        # for handling GUI access from threads
+        gobject.threads_init()
+        
+        netZob = Netzob()
+        netZob.startGui()
+        
+        

@@ -35,8 +35,8 @@ from ..Variable import Variable
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| MD5Variable :
@@ -68,5 +68,19 @@ class MD5Variable(Variable):
         self.binVal = binascii.unhexlify(md5)
         self.strVal = md5
     
+    def learn(self, val, indice, isForced, dictionary):
+        
+        if self.strVal == None or isForced :
+                tmp = val[indice:]
+                if (len(tmp) >= 32) :
+                    self.strVal = tmp[0:32]
+                    self.binVal = binascii.unhexlify(self.strVal)
+                    return indice + 32
+                else :
+                    return -1
+            
+        
+        self.log.info("value = " + str(self.strVal) + ", isForced = " + str(isForced))
+        return -1
    
    

@@ -37,17 +37,17 @@ from ..AbstractState import AbstractState
 #logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
-#| NormalState :
-#|     Definition of a normal state
+#| StartState :
+#|     Definition of a starting state (open the communication layer)
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class NormalState(AbstractState):
+class StartState(AbstractState):
     
     def __init__(self, id, name):
         AbstractState.__init__(self, id, name)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.NormalState.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.StartState.py')
         self.transitions = []
 
     
@@ -80,8 +80,12 @@ class NormalState(AbstractState):
         if len(self.getTransitions()) == 0 :
             return None
         
-        
         self.activate()
+        
+        # We open the connection
+        abstractionLayer.connect()
+        
+        
         # Wait for a message
         (receivedSymbol, message) = abstractionLayer.receiveSymbol()
         if not receivedSymbol == None :
@@ -104,12 +108,15 @@ class NormalState(AbstractState):
     #| @return the next state after execution of current one
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):
-        self.activate()
-        self.log.info("Execute state " + self.name + " as a master")
-        
         # Verify we can do something now
         if (len(self.getTransitions()) == 0) :
             return None
+        
+        self.activate()
+        self.log.info("Execute state " + self.name + " as a master")
+        
+        # We open the connection
+        abstractionLayer.connect()
         
         # given the current state, pick randomly a message and send it after having wait
         # the normal reaction time

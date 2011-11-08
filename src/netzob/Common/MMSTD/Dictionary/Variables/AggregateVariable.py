@@ -33,8 +33,8 @@ from ..Variable import Variable
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable :
@@ -67,4 +67,12 @@ class AggregateVariable(Variable):
         for idVar in self.vars :
             var = dictionary.getVariableByID(int(idVar))
             var.generateValue(negative, dictionary)
-   
+            
+    def learn(self, val, indice, isForced, dictionary):
+        new_indice = indice
+        for idVar in self.vars :
+            var = dictionary.getVariableByID(int(idVar))
+            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
+            if tmp_indice != -1 :
+                new_indice = tmp_indice
+        return new_indice

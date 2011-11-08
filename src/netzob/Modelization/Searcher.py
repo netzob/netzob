@@ -28,8 +28,8 @@ from ..Common import ConfigurationParser
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Searcher :
@@ -55,7 +55,7 @@ class Searcher(object):
     #| @param value the value to search for
     #+---------------------------------------------- 
     def searchBinary(self, value):
-        return None
+        return []
     
     #+---------------------------------------------- 
     #| searchOctal :
@@ -63,7 +63,7 @@ class Searcher(object):
     #| @param value the value to search for
     #+---------------------------------------------- 
     def searchOctal(self, value):
-        return None
+        return []
     
     #+---------------------------------------------- 
     #| searchHexadecimal :
@@ -71,7 +71,7 @@ class Searcher(object):
     #| @param value the value to search for
     #+---------------------------------------------- 
     def searchHexadecimal(self, value):
-        return None
+        return []
     
     #+---------------------------------------------- 
     #| searchASCII :
@@ -79,7 +79,7 @@ class Searcher(object):
     #| @param value the value to search for
     #+---------------------------------------------- 
     def searchASCII(self, value):
-        return None
+        return []
     
     #+---------------------------------------------- 
     #| searchIP :
@@ -87,7 +87,7 @@ class Searcher(object):
     #| @param value the value to search for
     #+---------------------------------------------- 
     def searchIP(self, value):
-        return None
+        return []
         
 
 

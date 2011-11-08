@@ -35,8 +35,8 @@ from netzob.Common import SharedLib
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| PrototypesRepositoryParser :
@@ -58,7 +58,6 @@ class PrototypesRepositoryParser():
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(file):
-        
         libs = []        
         # first we parse the file to retrieve its root element
         rootElement = ElementTree.parse(file).getroot()

@@ -35,8 +35,8 @@ from ..Symbols.impl.EmptySymbol import EmptySymbol
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
 #+---------------------------------------------------------------------------+
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 class TimeoutException(Exception): 
     pass 
@@ -57,6 +57,20 @@ class AbstractionLayer():
         self.dictionary = dictionary
         self.inputMessages = []
         self.outputMessages = []
+        self.connected = False
+        
+    def connect(self):
+        if self.connected :
+            self.log.warn("Impossible to connect : already connected")
+        else :
+            self.log.info("Connecting ...")
+    
+    def disconnect(self):
+        if self.connected :
+            self.log.info("Disconnecting ...")
+        else :
+            self.log.warn("Impossible to disconnect : not connected")
+            
 
     #+-----------------------------------------------------------------------+
     #| receiveSymbol
@@ -75,8 +89,12 @@ class AbstractionLayer():
 #            if char == '\n' or char == '\r' or char == '\0' :
 #                finish = True
 
-        chars = self.input.read(22)
-        self.log.info("Received : " + str(chars))
+        chars = ""
+        
+        chars = self.input.read(4096)
+        if (len(chars) == 0) : 
+            return (EmptySymbol(), "") 
+        
         for c in chars :
             v = str(hex(ord(c))).replace("0x", "")
             if len(str(v)) != 2 : 
@@ -104,10 +122,12 @@ class AbstractionLayer():
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
         self.log.info("Sending message : bin('" + strMessage + "')")
+        self.log.info(str(binMessage))
         # now we send it
         self.output.flush()
         now = datetime.datetime.now()
         self.output.write(binMessage)
+        self.log.info("Write down !")
         self.output.flush()
         sendingTime = now.strftime("%H:%M:%S")
         self.outputMessages.append([sendingTime, strMessage])
@@ -137,7 +157,8 @@ class AbstractionLayer():
     def getMemory(self):
         memory = []
         for variable in self.dictionary.getVariables() :
-            memory.append([variable.getName(), variable.getType(), variable.getValue(False, self.dictionary)])
+            (binVal, strVal) = variable.getValue(False, self.dictionary)
+            memory.append([variable.getName(), variable.getType(), strVal])
         return memory
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

@@ -32,8 +32,8 @@ from ...Common import TypeIdentifier
 #+---------------------------------------------- 
 #| Configuration of the logger
 #+----------------------------------------------
-loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-logging.config.fileConfig(loggingFilePath)
+#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
+#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TreeMessageGenerator :
@@ -101,17 +101,17 @@ class TreeMessageGenerator():
     #+---------------------------------------------- 
     def default(self, group):
         self.group = group
-        self.log.debug("Updating the treestore of the messages in default mode with the messages from the group "+self.group.getName())
+        self.log.debug("Updating the treestore of the messages in default mode with the messages from the group " + self.group.getName())
         self.treestore.clear()
 
         # Verifies we have everything needed for the creation of the treeview
-        if (self.group == None or len(self.group.getMessages())<1) or len(self.group.getColumns()) == 0 :
+        if (self.group == None or len(self.group.getMessages()) < 1) or len(self.group.getColumns()) == 0 :
             self.error()
             return
 
         # Create a TreeStore with N cols, with N := len(self.group.getColumns())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for i in range( len(self.group.getColumns()) ):
+        for i in range(len(self.group.getColumns())):
             treeStoreTypes.append(str)
         self.treestore = gtk.TreeStore(*treeStoreTypes)
 
@@ -122,7 +122,7 @@ class TreeMessageGenerator():
         name_line.append(pango.WEIGHT_BOLD)
         name_line.append(True)
         for col in self.group.getColumns():
-            name_line.append( col['name'] )
+            name_line.append(col['name'])
         self.treestore.append(None, name_line)
 
         # Build the regex row
@@ -132,10 +132,10 @@ class TreeMessageGenerator():
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
         for iCol in range(len(self.group.getColumns())):
-            if self.group.isRegexStatic( self.group.getRegexByCol(iCol) ):
-                regex_row.append( self.group.getRepresentation( self.group.getRegexByCol(iCol), iCol ))
+            if self.group.isRegexStatic(self.group.getRegexByCol(iCol)):
+                regex_row.append(self.group.getRepresentation(self.group.getRegexByCol(iCol), iCol))
             else:
-                regex_row.append( self.group.getRegexByCol(iCol) )
+                regex_row.append(self.group.getRegexByCol(iCol))
         self.treestore.append(None, regex_row)
 
         # Build the types row
@@ -144,8 +144,8 @@ class TreeMessageGenerator():
         types_line.append("#DEDEDE")
         types_line.append(pango.WEIGHT_BOLD)
         types_line.append(True)        
-        for iCol in range(len( self.getGroup().getColumns() )):
-            types_line.append( self.getGroup().getStyledPossibleTypesByCol(iCol) )
+        for iCol in range(len(self.getGroup().getColumns())):
+            types_line.append(self.getGroup().getStyledPossibleTypesByCol(iCol))
         self.treestore.append(None, types_line)
         
         # Build the next rows from messages after applying the regex
@@ -156,20 +156,20 @@ class TreeMessageGenerator():
             line.append("#ffffff")
             line.append(pango.WEIGHT_NORMAL)
             line.append(False)
-            line.extend( message.applyRegex(styled=True, encoded=True) )
+            line.extend(message.applyRegex(styled=True, encoded=True))
             self.treestore.append(None, line)
 
         # Remove all the columns of the current treeview
         for col in self.treeview.get_columns() :
             self.treeview.remove_column(col)
             
-        for iCol in range(4, 4 + len(self.group.getColumns()) ) :
+        for iCol in range(4, 4 + len(self.group.getColumns())) :
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property('background-set' , True)
             textCellRenderer.connect('edited', self.column_renaming_cb, iCol - 4)
             # Column Messages
-            lvcolumn = gtk.TreeViewColumn('Col'+str(iCol - 4))
+            lvcolumn = gtk.TreeViewColumn('Col' + str(iCol - 4))
             lvcolumn.pack_start(textCellRenderer, True)
             lvcolumn.set_attributes(textCellRenderer, markup=iCol, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
