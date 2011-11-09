@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: NETZOB
+Version: 0.3
+Summary: Framework for the reverse engineering of communication protocols
+Home-page: http://www.netzob.org
+Author: Georges Bossert, Frédéric Guihéry
+Author-email: contact@netzob.org
+License: GPLv3
+Description: UNKNOWN
+Platform: UNKNOWN

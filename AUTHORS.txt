@@ -1,0 +1,10 @@
+Authors
+-------
+ 
+  * Georges Bossert
+  * Frédéric Guihéry
+
+Contributors
+------------
+
+  * Olivier Tétard (Debian package maintainer)
