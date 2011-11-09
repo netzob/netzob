@@ -1,1 +1,15 @@
-v0.1, 16/08/2011 -- Initial release.
+v0.3 -- 2011-11-30
+
+    * Add simulation module
+    * Add import modules : files and library calls
+    * Add export module : Scapy dissector
+
+v0.2 -- 2011-09-01 --
+
+    * Add import modules : IPC, PCAP and Live network flows
+    * Add export module : raw XML format
+    * Improvment of Needleman-Wunsh performance with OpenMP
+
+v0.1 -- 2011-08-16 --
+
+    * Initial release
