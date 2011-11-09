@@ -63,11 +63,14 @@ setup(
         "netzob.Import.TreeViews",
         "netzob.Modelization",
         "netzob.Modelization.TreeViews",
-        "netzob.Simulator"
+        "netzob.Simulator",
+	"netzob.ExternalLibs"
         ],
     package_dir = {"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
-    data_files = [],
+    data_files = [
+        ('share/netzob', ['resources/static/logo.png'])
+        ],
     scripts = ["netzob"],
     version="0.3.0",
     description="Network protocol modelization by reverse engineering",
