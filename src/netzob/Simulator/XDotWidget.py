@@ -23,7 +23,7 @@ import logging
 #+---------------------------------------------- 
 #| Related third party imports
 #+----------------------------------------------
-from xdot import DotWidget
+from netzob.ExternalLibs.xdot import DotWidget
 
 #+---------------------------------------------- 
 #| Local application imports
