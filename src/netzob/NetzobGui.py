@@ -62,6 +62,25 @@ class Netzob():
     #| @param path: path of the directory containing traces to parse 
     #+----------------------------------------------   
     def __init__(self):
+        
+        # First we initialize and verify all the resources
+        if not ResourcesConfiguration.ResourcesConfiguration.initializeResources() :
+            logging.fatal("Error while configuring the resources of NETZOB")
+            sys.exit()
+           
+        splashScreen = SplashScreen.SplashScreen()
+        while gtk.events_pending():
+            gtk.main_iteration()
+        sleep(3) 
+        splashScreen.window.destroy() 
+        
+        # Second we create the logging infrastructure
+        LoggingConfiguration.LoggingConfiguration().initializeLogging()
+        
+        
+        
+        
+        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
         
@@ -284,25 +303,10 @@ class Netzob():
 #| RUNTIME
 #+----------------------------------------------
 if __name__ == "__main__":
-    
-    # First we initialize and verify all the resources
-    if not ResourcesConfiguration.ResourcesConfiguration.initializeResources() :
-        logging.fatal("Error while configuring the resources of NETZOB")
-    else :    
+    # for handling GUI access from threads
+    gobject.threads_init()
         
-        splashScreen = SplashScreen.SplashScreen()
-        while gtk.events_pending():
-            gtk.main_iteration()
-        sleep(3) 
-        splashScreen.window.destroy() 
-        
-        # Second we create the logging infrastructure
-        LoggingConfiguration.LoggingConfiguration().initializeLogging()
-        
-        # for handling GUI access from threads
-        gobject.threads_init()
-        
-        netZob = Netzob()
-        netZob.startGui()
+    netZob = Netzob()
+    netZob.startGui()
         
         

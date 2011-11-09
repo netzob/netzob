@@ -62,7 +62,6 @@ class ResourcesConfiguration(object):
         if userPath == None :
             logging.info("The user resources were not found, we ask to the user its NETZOB home directory")
             userPath = ResourcesConfiguration.askForUserDir()
-            logging.warn(userPath)
             if userPath == None :
                 return False
             else :
@@ -88,7 +87,8 @@ class ResourcesConfiguration(object):
             workspacePath = chooser.get_filename()
         chooser.destroy()
         
-        ResourcesConfiguration.createWorkspace(workspacePath)
+        if workspacePath != None :
+            ResourcesConfiguration.createWorkspace(workspacePath)
         
         return workspacePath
     

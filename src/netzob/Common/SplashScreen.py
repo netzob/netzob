@@ -57,8 +57,10 @@ class SplashScreen(object):
         hbox = gtk.HBox(False, 0)
         
         workspace = ResourcesConfiguration.ResourcesConfiguration.getWorkspace()
-        
-        self.lbl = gtk.Label("Current workspace : " + workspace)
+        if workspace != None :
+            self.lbl = gtk.Label("Current workspace : " + workspace)
+        else :
+            self.lbl = gtk.Label("Current workspace : NO WORKSPACE COMPUTED !")
         self.lbl.set_alignment(0, 0.5)
         main_vbox.pack_start(self.lbl, True, True)
         self.window.show_all()
