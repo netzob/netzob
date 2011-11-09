@@ -28,6 +28,13 @@ import os
 import time
 import random
 
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+import pcapy
+import impacket.ImpactDecoder as Decoders
+import impacket.ImpactPacket as Packets
+
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
@@ -35,18 +42,9 @@ from ..Common import ConfigurationParser
 from ..Common.Models import NetworkMessage
 from ..Common.Models.Factories import NetworkMessageFactory
 
-#from scapy.all import send, UDP, conf, packet
-import scapyy.all as scapyy
-
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
-#| UIcapturing :
-#|     GUI for capturing messages
+#| Pcap :
+#|     GUI for capturing messages imported through a provided PCAP
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
@@ -144,7 +142,7 @@ class Pcap:
         scroll.add(treeview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
         but = gtk.Button(label="Save selected packets")
         but.show()
@@ -158,7 +156,7 @@ class Pcap:
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL|gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet
@@ -217,28 +215,46 @@ class Pcap:
                 packetID = model.get_value(iter, 0)
                 proto = model.get_value(iter, 1)
                 timestamp = str(model.get_value(iter, 6))
-                IPsrc = self.packets[packetID].sprintf("%IP.src%")
-                IPdst = self.packets[packetID].sprintf("%IP.dst%")
-                if scapyy.TCP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%TCP.sport%")
-                    dport = self.packets[packetID].sprintf("%TCP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
-                elif scapyy.UDP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%UDP.sport%")
-                    dport = self.packets[packetID].sprintf("%UDP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
-                if rawPayload == "":
-                    continue
+                packetPayload = self.packets[packetID]
+                
+                eth_decoder = Decoders.EthDecoder()
+                ip_decoder = Decoders.IPDecoder()
+                udp_decoder = Decoders.UDPDecoder()
+                tcp_decoder = Decoders.TCPDecoder()
+        
+                IPsrc = None
+                IPdst = None
+                Sport = None
+                Dport = None
+                Data = None
+                
+                
+                ethernet = eth_decoder.decode(packetPayload)
+                if ethernet.get_ether_type() == Packets.IP.ethertype:
+                    ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
+                    IPsrc = ip.get_ip_src()
+                    IPdst = ip.get_ip_dst()
+                    
+                    if ip.get_ip_p() == Packets.UDP.protocol: 
+                        udp = udp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
+                        Sport = udp.get_uh_sport()
+                        Dport = udp.get_uh_dport()
+                        Data = udp.get_data_as_string()
+                    if ip.get_ip_p() == Packets.TCP.protocol :
+                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
+                        Sport = tcp.get_th_sport()
+                        Dport = tcp.get_th_dport()
+                        Data = tcp.get_data_as_string()
                 
                 # Compute the messages
                 message = NetworkMessage.NetworkMessage()
                 message.setProtocol(proto)
                 message.setIPSource(IPsrc)
                 message.setIPTarget(IPdst)
-                message.setL4SourcePort(sport)
-                message.setL4TargetPort(dport)
+                message.setL4SourcePort(Sport)
+                message.setL4TargetPort(Dport)
                 message.setTimestamp(timestamp)
-                message.setData(rawPayload.encode("hex"))
+                message.setData(Data.encode("hex"))
                 messages.append(message)
                 
                 
@@ -250,7 +266,7 @@ class Pcap:
         res.append("</messages>")
         
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
@@ -271,7 +287,7 @@ class Pcap:
 
         # Create the dest Dir
         newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
-        os.mkdir( newTraceDir )
+        os.mkdir(newTraceDir)
         
         # List of captured messages
         messages = []        
@@ -284,28 +300,48 @@ class Pcap:
                 packetID = model.get_value(iter, 0)
                 proto = model.get_value(iter, 1)
                 timestamp = str(model.get_value(iter, 6))
-                IPsrc = self.packets[packetID].sprintf("%IP.src%")
-                IPdst = self.packets[packetID].sprintf("%IP.dst%")
-                if scapyy.TCP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%TCP.sport%")
-                    dport = self.packets[packetID].sprintf("%TCP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,TCP.payload%")
-                elif scapyy.UDP in self.packets[packetID]:
-                    sport = self.packets[packetID].sprintf("%UDP.sport%")
-                    dport = self.packets[packetID].sprintf("%UDP.dport%")
-                    rawPayload = self.packets[packetID].sprintf("%r,UDP.payload%")
-                if rawPayload == "":
-                    continue
+                packetPayload = self.packets[packetID]
                 
+                eth_decoder = Decoders.EthDecoder()
+                ip_decoder = Decoders.IPDecoder()
+                udp_decoder = Decoders.UDPDecoder()
+                tcp_decoder = Decoders.TCPDecoder()
+        
+                IPsrc = None
+                IPdst = None
+                Sport = None
+                Dport = None
+                Data = None
+                
+                
+                ethernet = eth_decoder.decode(packetPayload)
+                if ethernet.get_ether_type() == Packets.IP.ethertype:
+                    ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
+                    IPsrc = ip.get_ip_src()
+                    IPdst = ip.get_ip_dst()
+                    
+                    if ip.get_ip_p() == Packets.UDP.protocol: 
+                        udp = udp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
+                        Sport = udp.get_uh_sport()
+                        Dport = udp.get_uh_dport()
+                        Data = udp.get_data_as_string()
+
+                                
+                    if ip.get_ip_p() == Packets.TCP.protocol :
+                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
+                        Sport = tcp.get_th_sport()
+                        Dport = tcp.get_th_dport()
+                        Data = tcp.get_data_as_string()
+
                 # Compute the messages
                 message = NetworkMessage.NetworkMessage()
                 message.setProtocol(proto)
                 message.setIPSource(IPsrc)
                 message.setIPTarget(IPdst)
-                message.setL4SourcePort(sport)
-                message.setL4TargetPort(dport)
+                message.setL4SourcePort(Sport)
+                message.setL4TargetPort(Dport)
                 message.setTimestamp(timestamp)
-                message.setData(rawPayload.encode("hex"))
+                message.setData(Data.encode("hex"))
                 messages.append(message)
                 
         # Create the xml content of the file
@@ -316,7 +352,7 @@ class Pcap:
         res.append("</messages>")
         
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
@@ -327,18 +363,20 @@ class Pcap:
     #+----------------------------------------------
     def packet_details(self, treeview):
         (model, paths) = treeview.get_selection().get_selected_rows()
+        decoder = Decoders.EthDecoder()
         for path in paths[:1]:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
                 packetID = model.get_value(iter, 0)
-                self.textview.get_buffer().set_text( self.packets[packetID].show() )
+                payload = self.packets[packetID]
+                self.textview.get_buffer().set_text(str(decoder.decode(payload)))
 
     #+---------------------------------------------- 
     #| Called when user import a pcap file
     #+----------------------------------------------
     def import_pcap(self, button, label):
-        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
             label.set_text(chooser.get_filename())
@@ -352,28 +390,50 @@ class Pcap:
         self.packets = []
         self.treestore.clear()
         self.textview.get_buffer().set_text("")
-        try: # Just see if scapy is correctly working
-            scapyy.send(scapyy.UDP(), verbose=False)
-        except:
-            self.log.error("Scapy does not have the capability to sniff packets on your system")
-            self.log.error("If you want capturing capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/bin/python2.6\"")
-            self.log.error("And if you want filtering capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/sbin/tcpdump\"")
+        
+        # retrieve the choosen pcap file
+        pcapFile = label_file.get_text()
+        # read it with pcapy
+        reader = pcapy.open_offline(pcapFile)
+        
+        
+        filter = aFilter.get_text()
+#        reader.setfilter(r'ip proto \tcp or \udp')
+        try :
+            reader.setfilter(filter)
+        except :
+            self.logging.warn("The provided filter is not valid (it should respects the BPF format")
+            button.set_sensitive(True)
             return
-
-        self.log.info("Launching sniff process with : filter=\""+aFilter.get_text()+"\"")
-        scapyy.sniff(offline=label_file.get_text(), prn=self.callback_scapy, filter=aFilter.get_text(), store=0)
+        
+        self.log.info("Starting import from " + pcapFile + " (linktype:" + str(reader.datalink()) + ")")
+        reader.loop(0, self.packetHandler)
         button.set_sensitive(True)
+        
+    def packetHandler(self, header, payload):
+        # Definition of the protocol decoders (impacket)
+        eth_decoder = Decoders.EthDecoder()
+        ip_decoder = Decoders.IPDecoder()
+        udp_decoder = Decoders.UDPDecoder()
+        tcp_decoder = Decoders.TCPDecoder()
 
-    #+---------------------------------------------- 
-    #| Called when scapy reiceve a message
-    #+----------------------------------------------
-    def callback_scapy(self, pkt):
-        if scapyy.TCP in pkt and scapyy.Raw in pkt:
-            self.treestore.append(None, [len(self.packets), "TCP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.sport%"), pkt.sprintf("%TCP.dport%"), int(time.time())])
-            self.packets.append( pkt )
-        elif scapyy.UDP in pkt and scapyy.Raw in pkt:
-            self.treestore.append(None, [len(self.packets), "UDP", pkt.sprintf("%IP.src%"), pkt.sprintf("%IP.dst%"), pkt.sprintf("%UDP.sport%"), pkt.sprintf("%UDP.dport%"), int(time.time())])
-            self.packets.append( pkt )
+        
+        ethernet = eth_decoder.decode(payload)
+        if ethernet.get_ether_type() == Packets.IP.ethertype:
+            ip = ip_decoder.decode(payload[ethernet.get_header_size():])
+            if ip.get_ip_p() == Packets.UDP.protocol: 
+                udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
+                self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
+                self.packets.append(payload)
+                        
+            if ip.get_ip_p() == Packets.TCP.protocol :
+                tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])  
+                self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
+                self.packets.append(payload)
+                        
+           
+        
+
 
     #+---------------------------------------------- 
     #| GETTERS

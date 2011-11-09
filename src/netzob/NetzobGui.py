@@ -31,7 +31,6 @@ from time import sleep
 #+---------------------------------------------------------------------------+
 sys.path.append('lib/')
 sys.path.append('lib/libNeedleman/')
-sys.path.append('resources/scapy/')
 
 
 #+---------------------------------------------------------------------------+
