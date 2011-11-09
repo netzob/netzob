@@ -92,8 +92,14 @@ class Network:
         listNetworkDevice.set_size_request(300, -1)
         listNetworkDevice.set_model(gtk.ListStore(str))
         listNetworkDevice.get_model().clear()
-        for dev in pcapy.findalldevs():
-            listNetworkDevice.append_text(str(dev))        
+        
+        # list of interfaces
+        interfaces = pcapy.findalldevs()
+        if 0 == len(interfaces) :
+            self.log.warn("You don't have enough permissions to open any interface on this system.")
+        
+        for interface in interfaces :
+            listNetworkDevice.append_text(str(interface))        
         
         self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(listNetworkDevice, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
