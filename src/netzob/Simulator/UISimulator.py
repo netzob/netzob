@@ -67,6 +67,7 @@ class UISimulator:
         pass
 
     def kill(self):
+        self.finish = True
         pass
     
     def save(self, file):
@@ -85,6 +86,7 @@ class UISimulator:
         
         self.actors = []
         self.selectedActor = None
+        self.finish = False
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
@@ -507,5 +509,6 @@ class UISimulator:
             self.treestore_memory.append(None, memory)
     
     def refreshGUI(self, tempo=1.0):
-        threading.Timer(tempo, self.refreshGUI, [tempo]).start()
-        self.updateGUIForActor()
+        if not self.finish :
+            threading.Timer(tempo, self.refreshGUI, [tempo]).start()
+            self.updateGUIForActor()
