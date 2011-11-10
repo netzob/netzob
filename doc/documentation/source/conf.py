@@ -13,8 +13,7 @@
 
 import sys, os
 
-sys.path.insert(0, os.path.abspath('../../../'))
-
+sys.path.insert(0, os.path.abspath('../../../src/'))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -44,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Netzob'
-copyright = u'2011, Frederic Guihery, Georges Bossert'
+copyright = u'2011, Frédéric Guihéry, Georges Bossert'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -182,7 +181,7 @@ htmlhelp_basename = 'Netzobdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'Netzob.tex', u'Netzob Documentation',
-   u'Frederic Guihery, Georges Bossert', 'manual'),
+   u'Frédéric Guihéry, Georges Bossert', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -215,5 +214,5 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'netzob', u'Netzob Documentation',
-     [u'Frederic Guihery, Georges Bossert'], 1)
+     [u'Frédéric Guihéry, Georges Bossert'], 1)
 ]

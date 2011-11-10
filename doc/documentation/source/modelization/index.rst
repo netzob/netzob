@@ -1,4 +1,4 @@
-.. currentmodule:: src
+.. currentmodule:: netzob
 
 .. _modelization:
 
@@ -48,9 +48,10 @@ The function "Find Size Fields", as its name suggests, is dedicated to find fiel
 
 [INCLUDE ALGORITHM]
 
-The following picture represents the application of the function on a trace example, and the associated effect when selecting a field/payload entry.
+The following picture represents the application of the function on a trace example. It shows the automated extraction of the IP and UDP payloads from an Ethernet frame.
 
-[INCLUDE FIGURE]
+.. image:: payload_extraction.png
+    :alt: Payload extraction
 
 Messages distribution
 ---------------------

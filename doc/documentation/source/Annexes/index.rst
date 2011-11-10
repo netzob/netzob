@@ -1,4 +1,4 @@
-.. currentmodule:: src
+.. currentmodule:: netzob
 
 .. _annexes:
 

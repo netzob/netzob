@@ -39,15 +39,9 @@ from ..Common import ConfigurationParser
 from ..Common.Models import NetworkMessage
 from ..Common.Models.Factories import NetworkMessageFactory
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
 #+---------------------------------------------------------------------------+ 
 #| Network :
-#|     This class offers the capability to capture pcaps from live network 
+#|     This class offers the capability to capture traffic from live network 
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------------------------------------+
@@ -76,7 +70,7 @@ class Network:
         self.zob = zob
         
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Sequencing.UIseqMessage.py')
+        self.log = logging.getLogger('netzob.Import.Network.py')
         self.packets = []
 
         # Network Capturing Panel
@@ -93,16 +87,17 @@ class Network:
         listNetworkDevice.get_model().clear()
         
         # list of interfaces
-        interfaces = pcapy.findalldevs()
-        if 0 == len(interfaces) :
-            self.log.warn("You don't have enough permissions to open any interface on this system.")
+        try:
+            interfaces = pcapy.findalldevs()
+        except:
+            self.log.warn("You don't have enough permissions to open any network interface on this system.")
+            interfaces = []
         
         for interface in interfaces :
             listNetworkDevice.append_text(str(interface))        
         
         self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(listNetworkDevice, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
 
         # BPF filter
         label = gtk.Label("BPF filter")

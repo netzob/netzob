@@ -1,5 +1,4 @@
-.. currentmodule:: src 
-
+.. currentmodule:: netzob
 
 Welcome to Netzob's documentation!
 ==================================
@@ -7,7 +6,6 @@ Welcome to Netzob's documentation!
 **Netzob** simplifies the work for security auditors by providing a complete framework for the reverse engineering of communication protocols. It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP) and variable fields protocols (like ASN.1 based formats). Netzob is therefore suitable for reversing network protocols, stuctured files and system and process flows (IPC and communication with drivers). 
 
 Netzob is provided with modules dedicated to capture data in multiple contexts (network, file, process and kernel data acquisition).
-
 
 Features
 --------
@@ -51,38 +49,28 @@ Features
 	* XML meta representations of infered protocol,
 	* Dedicated New Wireshark Disector 
 
-Documentation
--------------
+Table of content
+----------------
 
 The manual provides an introduction to the module and details most its capabilities.
 
-The reference section has a complete list of all the classes, methods, attributes and functions of the :mod:`src` module, together with short examples for many items.
+.. toctree::
+   :maxdepth: 2
 
-Some good starting points in the documentation are
+   introduction/index
+   import/index
+   modelization/index
+   export/index
+   simulation/index
+   fuzzing/index
+   API/index
+   Annexes/index
 
-* :ref:`introduction`
-* :ref:`inputs`
-* :ref:`modelization`
-* :ref:`creation`
-* :ref:`reading`
-* :ref:`quick_reference`
-* :ref:`API`
-* :ref:`Annexes`
+The API section has a complete list of all the classes, methods,
+attributes and functions of the :mod:`netzob` module, together with short
+examples for many items.
 
 A day NETZOB will have a proper and efficient documentation. But this day, PYTHON will also have one ! :)
-
-.. toctree::
-   :hidden:
-
-   contents
-
-.. toctree::
-   :hidden:
-
-
-
-	
-   
 
 Indices and tables
 ==================

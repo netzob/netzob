@@ -7,11 +7,11 @@ API
 
 API description
 
-.. automodule:: src.netzob.Common.ConfigurationParser
+.. automodule:: netzob.Common.ConfigurationParser
 
     .. autoclass:: ConfigurationParser
 
-.. automodule:: src.netzob.Common.TypeIdentifier
+.. automodule:: netzob.Common.TypeIdentifier
     
     .. autoclass:: TypeIdentifier
     

@@ -23,11 +23,7 @@ sys.path.append('src/')
 import netzob.NetzobGui as NetzobGui
 
 if __name__ == "__main__":
-    # create logger with the given configuration
-    logger = logging.getLogger('netzob.py')
-    logger.info("Logging module configured and loaded")
-
-    # for handling GUI access from threads
+    # for handling concurrent GUI access from threads
     gobject.threads_init()
 
     netZob = NetzobGui.Netzob()
