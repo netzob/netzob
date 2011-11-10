@@ -2,117 +2,33 @@
 
 .. _modelization:
 
+************
 Modelization
-============
+************
 
-Netzob provides a framework for the modelization of communication protocols. This framework includes the following function :
+A communication protocol can be defined through its :
 
+* Vocabulary (set of valid words)
+* Grammar (set of valid sentences)
 
+Netzob provides a framework for the modelization (inference) of communication protocols, i.e. inferring its vocabular and grammar.
 
-Options during alignment process
---------------------------------
-aaa
+[INCLURE GRAPH]
 
+* Vocabular inference
+   * Message structure inference (based on sequence alignment)
+   * Regoupment of similar message structures
+   * Field type inference
+   * Field dependencies from the same message and from the environment
+   * Field semantic inference
+* Grammar inference
+   * Identification of the automata of the protocol
+   * Fields dependencies with messages of previous states
 
-Analyses after alignment process
---------------------------------
-aaa
+All the functionalities of the framework are detailled in this chapter.
 
+.. toctree::
+   :maxdepth: 2
 
-Visualization options
----------------------
-aaa
-
-Message contextual menu
------------------------
-aaa
-
-Group contextual menu
----------------------
-aaa
-
-Type structure contextual menu
-------------------------------
-aaa
-
-
-
-
-
-
-
-Payload extraction
-------------------
-
-The function "Find Size Fields", as its name suggests, is dedicated to find fields that contain any length value as well as the associated payload. It does this on each group. Netzob supports different encoding of the size field : big and little endian binary values are supported through size of 1, 2 and 4 bytes. The algorithm used to find the size fields and their associated payloads is desribed in the table XXX.
-
-[INCLUDE ALGORITHM]
-
-The following picture represents the application of the function on a trace example. It shows the automated extraction of the IP and UDP payloads from an Ethernet frame.
-
-.. image:: payload_extraction.png
-    :alt: Payload extraction
-
-Messages distribution
----------------------
-
-This function shows a graphical representation of the distribution of bytes per offset for each message of the current group. This function helps to identify entropy variation of each fields. Entropy variation combined with byte distribution help the user to infer the field type.
-
-[INCLUDE GRAPH]
-
-Data typing
------------
-
-
-
-Data carving
-------------
-
-Data carving is the process of extracting semantic information from fields or messages. Netzob allows the extraction of the following semantic information :
-
-* URL
-* email
-* IP address
-
-[INCLUDE FIGURE]
-
-Refine regexes
---------------
-aaa
-
-Search
-------
-aaa
-
-Slick regexes
--------------
-aaa
-
-Domain of definition
---------------------
-aaa
-
-Change type representation
---------------------------
-aaa
-
-Concatenate
------------
-aaa
-
-Split column
-------------
-aaa
-
-Merge columns
--------------
-aaa
-
-Properties
-----------
-aaa
-
-Delete message
---------------
-aaa
-
+   vocabular
+   grammar

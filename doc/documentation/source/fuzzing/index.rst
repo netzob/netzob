@@ -5,4 +5,7 @@
 Fuzzing
 =======
 
-Todo
+* Live instrumentation through a dedicated proxy
+* Possibilities of variations :
+   * ...
+   * ...
