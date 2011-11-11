@@ -41,7 +41,7 @@ class ModelTest(unittest.TestCase):
     def test_GraphCreation(self):
         print "Graph created !"
         
-        xmlFile = "resources/automaton/example1.xml"     
+        xmlFile = "resources/workspace/automaton/example1.xml"     
         tree = ElementTree.ElementTree()
         tree.parse(xmlFile)
            

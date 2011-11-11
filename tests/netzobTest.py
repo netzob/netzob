@@ -22,6 +22,7 @@ import sys
 
 sys.path.append('lib/libNeedleman/')
 sys.path.append('src')
+sys.path.append('/usr/share/xdot/')
 
 from models.NetworkMessageTest import NetworkMessageTest
 from models.FileMessageTest import FileMessageTest
@@ -68,23 +69,20 @@ if __name__ == "__main__":
         outputStdout = False
         reportFile = sys.argv[1]
     
-    
-    
-    
     # Creates the main test suite
     globalTestSuite = unittest.TestSuite()
     
     # add the tests dedicated to the models
-    # addTestsForModels(globalTestSuite)
+    addTestsForModels(globalTestSuite)
 
     # add the tests dedicated to the inference process
     addTestsForInference(globalTestSuite)
     
     # add the tests dedicated to the GOT Poisoninget que tu fai
-    # addTestsForGotPoisoning(globalTestSuite)
+#    addTestsForGotPoisoning(globalTestSuite)
     
     # addTestsForPrototypesRepositoryTest(globalTestSuite)
-    #addTestsForMMSTD(globalTestSuite)
+#    addTestsForMMSTD(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()

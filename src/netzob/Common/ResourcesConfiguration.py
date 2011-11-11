@@ -134,8 +134,7 @@ class ResourcesConfiguration(object):
             userDir = localFile.readline().split("=")[1]  # arf... i know ! A chocolate for finding it :)
             localFile.close()
             return userDir
-        return None
-            
+        return ""            
         
     @staticmethod        
     def getStaticResources():
