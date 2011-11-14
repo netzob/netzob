@@ -6,12 +6,50 @@
 Modelization
 ************
 
-A communication protocol can be defined through its :
+Definition of a communication protocol
+======================================
 
-* Vocabulary (set of valid words)
-* Grammar (set of valid sentences)
+A communication protocol can be defined through~:
 
-Netzob provides a framework for the modelization (inference) of communication protocols, i.e. inferring its vocabular and grammar.
+* its vocabulary (the set of valid words or, in our context, the set of valid messages) ;
+* its grammar (set of valid sentences which, in our context, is related to a protocol state machine).
+
+A word of a protocol's vocabular is called a symbol. A symbol
+represents an abstract view of a set of similar messages. Similar
+messages refer to messages belonging to the same state of the
+protocol.
+
+A symbol (or a message) is structured following a format, which
+specifies a sequence of fields. A field can be splitted into
+sub-fields. For example, a payload is a field of a TCP
+message. Therefore, by defining a layer as a kind of payload (which is
+a specific field), we can retrieve the so-called Ethernet, IP, TCP and
+HTTP layers from a raw packet ; each layer having its own vocabular
+and grammar.
+
+Field's size can be fixed or variable.
+Field's content can be static of dynamic.
+Field's content can be basic (a 32 bits integer) of complex (an array).
+A field has a type, a data description, a data encoding and a semantic~:
+
+* the type defines its definition domain or set of valid values (16 bits integer, string, etc.) ;
+* the data description defines ... (ASN.1, TSN.1, EBML, etc.) ;
+* the data encoding defines ... (ASCII, little endian, big endian, XML, EBML, DER, XER, PER, etc.) ;
+* the semantic defines ... (IP address, port number, URL, email, checksum, etc.).
+
+Field's content can be~:
+
+* static ;
+* dependant of another field (or a set of fields) of the same message (intra-field dependancy) ;
+* dependant of a field (or a set of fields) of a previous message in the grammar (inter-field dependancy) ;
+* dependant of the environment ;
+* dependant of the application behaviour (which could depend on the user behaviour) ;
+* random (the initial value of the TCP sequence number for example).
+
+Modelization in Netzob
+======================
+
+Netzob provides a framework for the semi-automated modelization (inference) of communication protocols, i.e. inferring its vocabular and grammar.
 
 [INCLURE GRAPH]
 
