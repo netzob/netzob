@@ -16,8 +16,8 @@ A communication protocol can be defined through~:
 
 A word of a protocol's vocabular is called a symbol. A symbol
 represents an abstract view of a set of similar messages. Similar
-messages refer to messages belonging to the same state of the
-protocol.
+messages refer to messages belonging to the same position in the
+grammar.
 
 A symbol (or a message) is structured following a format, which
 specifies a sequence of fields. A field can be splitted into
@@ -29,7 +29,7 @@ and grammar.
 
 Field's size can be fixed or variable.
 Field's content can be static of dynamic.
-Field's content can be basic (a 32 bits integer) of complex (an array).
+Field's content can be basic (a 32 bits integer) or complex (an array).
 A field has a type, a data description, a data encoding and a semantic~:
 
 * the type defines its definition domain or set of valid values (16 bits integer, string, etc.) ;
