@@ -17,3 +17,8 @@
 #| Establishes the path for static resources
 #+---------------------------------------------------------------------------+
 STATIC_DIR = "resources/static"
+
+#+---------------------------------------------------------------------------+ 
+#| Establishes the path for workspace resources (only used by testing)
+#+---------------------------------------------------------------------------+
+WORKSPACE_DIR = None

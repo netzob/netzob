@@ -134,13 +134,16 @@ class ResourcesConfiguration(object):
             userDir = localFile.readline().split("=")[1]  # arf... i know ! A chocolate for finding it :)
             localFile.close()
             return userDir
-        return ""            
+        return None            
         
     @staticmethod        
     def getStaticResources():
         return NetzobResources.STATIC_DIR
     @staticmethod        
     def getWorkspace():
-        return ResourcesConfiguration.verifyUserResources()
+        if NetzobResources.WORKSPACE_DIR == None :
+            return ResourcesConfiguration.verifyUserResources()
+        else :
+            return NetzobResources.WORKSPACE_DIR
 
         

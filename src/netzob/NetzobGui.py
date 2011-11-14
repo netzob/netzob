@@ -50,12 +50,12 @@ from netzob.Common import SplashScreen
 
 
 #+---------------------------------------------- 
-#| Netzob :
-#|     runtime class
+#| NetzobGUI :
+#|     Graphical runtime class
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class Netzob():
+class NetzobGui():
 
     #+---------------------------------------------- 
     #| Constructor :
@@ -68,19 +68,15 @@ class Netzob():
             logging.fatal("Error while configuring the resources of NETZOB")
             sys.exit()
            
-        splashScreen = SplashScreen.SplashScreen()
-        while gtk.events_pending():
-            gtk.main_iteration()
-        sleep(3) 
-        splashScreen.window.destroy() 
+#        splashScreen = SplashScreen.SplashScreen()
+#        while gtk.events_pending():
+#            gtk.main_iteration()
+#        sleep(3) 
+#        splashScreen.window.destroy() 
         
         # Second we create the logging infrastructure
         LoggingConfiguration.LoggingConfiguration().initializeLogging()
-        
-        
-        
-        
-        
+                
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
         
@@ -306,7 +302,7 @@ if __name__ == "__main__":
     # for handling GUI access from threads
     gobject.threads_init()
         
-    netZob = Netzob()
-    netZob.startGui()
+    netZobGUI = NetzobGui()
+    netZobGUI.startGui()
         
         

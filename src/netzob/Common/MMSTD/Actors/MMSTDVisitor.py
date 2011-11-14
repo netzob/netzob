@@ -60,7 +60,7 @@ class MMSTDVisitor():
             currentState = currentState.executeAsMaster(self.abstractionLayer)
             if currentState == None :
                 active = False
-        
+        self.log.info("The MASTER stops !")
         
         
     def runAsClient(self):
@@ -73,6 +73,7 @@ class MMSTDVisitor():
             currentState = currentState.executeAsClient(self.abstractionLayer)
             if currentState == None :
                 active = False
+        self.log.info("The CLIENT stops !")
         
         
         

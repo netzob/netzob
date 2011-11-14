@@ -17,6 +17,7 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
+import os
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -30,6 +31,8 @@ from ..... import ConfigurationParser
 from ....States.impl import NormalState
 from ....Symbols.impl import DictionarySymbol
 from ....Transitions.impl import SemiStochasticTransition
+from ....Transitions.impl import OpenChannelTransition
+from ....Transitions.impl import CloseChannelTransition
 from ..DictionaryParser import DictionaryXmlParser
 from .... import MMSTD
 
@@ -66,7 +69,9 @@ class MMSTDXmlParser(object):
         if rootElement.get("dictionary", "none") == "none" :
             raise NameError("The MMSTD doesn't have any dictionary declared")
         
-        dictionaryFile = rootElement.get("dictionary", "none")
+        
+        automatonDir = ConfigurationParser.ConfigurationParser().get("automata", "path")
+        dictionaryFile = os.path.join(automatonDir, rootElement.get("dictionary", "none"))
         # Parsing dictionary file
         dicoTree = ElementTree.ElementTree()
         dicoTree.parse(dictionaryFile)           
@@ -86,40 +91,25 @@ class MMSTDXmlParser(object):
             
         # parse for all the transitions
         for xmlTransition in rootElement.findall("transition") :
-            idTransition = int(xmlTransition.get("id", "-1"))
-            nameTransition = xmlTransition.get("name", "none")
+            
             classTransition = xmlTransition.get("class", "none")
-            idStartTransition = int(xmlTransition.get("idStart", "-1"))
-            idEndTransition = int(xmlTransition.get("idEnd", "-1"))
+            
+            transition = None
+            if classTransition == "SemiStochasticTransition" :
+                transition = SemiStochasticTransition.SemiStochasticTransition.parse(xmlTransition, dictionary, states)
+            elif classTransition == "OpenChannelTransition" :
+                transition = OpenChannelTransition.OpenChannelTransition.parse(xmlTransition, states)
+            elif classTransition == "CloseChannelTransition" :
+                transition = CloseChannelTransition.CloseChannelTransition.parse(xmlTransition, states)
             
             
-            xmlInput = xmlTransition.find("input")
-            inputClass = xmlInput.get("class", "none")
-            inputId = int(xmlInput.text)
-            inputSymbol = DictionarySymbol.DictionarySymbol(dictionary.getEntry(inputId)) 
-            
-            
-            # searches for the output and input state
-            inputStateTransition = None
-            outputStateTransition = None
-            for state in states :
-                if state.getID() == idStartTransition :
-                    inputStateTransition = state
-                if state.getID() == idEndTransition :
-                    outputStateTransition = state
-            
-            transition = SemiStochasticTransition.SemiStochasticTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, inputSymbol)
-            
-            xmlOutputs = xmlTransition.findall("output")
-            for xmlOutput in xmlOutputs :
-                outputClass = xmlOutput.get("class", "none")
-                outputId = int(xmlOutput.text)
-                outputTime = int(xmlOutput.get("time", "0"))
-                outputProbability = float(xmlOutput.get("probability", "0"))
-                outputSymbol = DictionarySymbol.DictionarySymbol(dictionary.getEntry(outputId))
-                transition.addOutputSymbol(outputSymbol, outputProbability, outputTime)
                 
-            inputStateTransition.registerTransition(transition)
+            
+            
+            
+            
+            
+            
             
            
            

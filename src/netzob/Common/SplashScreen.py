@@ -16,10 +16,11 @@
 #+---------------------------------------------- 
 #| Standard library imports
 #+----------------------------------------------
+import pygtk
+pygtk.require('2.0')
 import gtk
-import cairo
-from math import pi
-
+import os
+import logging
 #+---------------------------------------------- 
 #| Related third party imports
 #+----------------------------------------------
@@ -43,17 +44,26 @@ class SplashScreen(object):
         self.window.set_default_size(268, 501)
         self.window.set_events(gtk.gdk.ALL_EVENTS_MASK)
         
-        color = gtk.gdk.color_parse('#ffffff')
-        self.window.modify_bg(gtk.STATE_NORMAL, color)
+       
         
+        # Retrieve static resources
+        staticPath = ResourcesConfiguration.ResourcesConfiguration.getStaticResources()
+        logoPath = os.path.abspath(os.path.join(staticPath, "logo.png"))
+
+
+        hbox = gtk.HBox()
+        hbox.show()
+        self.window.add(hbox)
+
         self.image = gtk.Image()
-        self.image.set_from_file("resources/static/logo.png")
+        self.image.set_from_file(logoPath)
         self.image.show()
         
         main_vbox = gtk.VBox(False, 1) 
-        self.window.add(main_vbox)
-        main_vbox.pack_start(self.image, True, True)
-        hbox = gtk.HBox(False, 0)
+        
+#        main_vbox.pack_start(self.image, True, True)
+        
+        
         
         workspace = ResourcesConfiguration.ResourcesConfiguration.getWorkspace()
         if workspace != None :
@@ -61,6 +71,10 @@ class SplashScreen(object):
         else :
             self.lbl = gtk.Label("Current workspace : NO WORKSPACE COMPUTED !")
         self.lbl.set_alignment(0, 0.5)
-        main_vbox.pack_start(self.lbl, True, True)
+        
+        
+        main_vbox.pack_start(self.image, True, True, 2)
+        
+        self.window.add(main_vbox)
         self.window.show_all()
  

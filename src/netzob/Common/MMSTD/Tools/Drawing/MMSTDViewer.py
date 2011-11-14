@@ -25,7 +25,7 @@ from threading import Thread
 #| Related third party imports
 #+----------------------------------------------
 from xml.etree import ElementTree
-from xdot import DotWindow
+from .....ExternalLibs.xdot import DotWindow
 
 #+---------------------------------------------- 
 #| Local application imports

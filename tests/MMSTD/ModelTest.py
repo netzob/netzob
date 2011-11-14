@@ -19,6 +19,7 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import gtk
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -32,6 +33,7 @@ from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
 from netzob.Common.MMSTD.Tools.Drawing import MMSTDViewer
 from netzob.Common.MMSTD.Actors.Network import NetworkServer 
+from netzob.Common.MMSTD.Actors.Network import NetworkClient
 
 class ModelTest(unittest.TestCase):
     
@@ -41,21 +43,22 @@ class ModelTest(unittest.TestCase):
     def test_GraphCreation(self):
         print "Graph created !"
         
-        xmlFile = "resources/workspace/automaton/example1.xml"     
+        xmlFile = "resources/workspace/automaton/reputation.xml"     
         tree = ElementTree.ElementTree()
         tree.parse(xmlFile)
-           
-        automata = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
-        viewer = MMSTDViewer.MMSTDViewer(automata)
-        viewer.start()
         
-        # now we create two network actors, one is a client and the other is a server
-        actor1 = NetworkServer.NetworkServer("Server", automata, False, "localhost", 7010)
-        actor1.start()
+          
+        automataServer = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
+        automataClient = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
         
-#        actor2 = NetworkServer.NetworkServer("Server2", automata, True, "localhost", 7001)
-#        actor2.start()
+        actor = NetworkServer.NetworkServer("Server", automataServer, False, "10.94.0.100", "UDP", 8007)
+#        actor = NetworkClient.NetworkClient("Client1", automataClient, True, "79.125.11.244", "UDP", 8007)
+        actor.start()
+
+        time.sleep(2)
+
         
+#        actor.start()
         
         
         

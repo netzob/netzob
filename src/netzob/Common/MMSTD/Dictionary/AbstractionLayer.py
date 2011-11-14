@@ -48,27 +48,31 @@ class TimeoutException(Exception):
 #+---------------------------------------------------------------------------+
 class AbstractionLayer():
     
-    def __init__(self, input, output, dictionary):
+    def __init__(self, communicationChannel, dictionary):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.AbstractionLayer.py')
-        self.input = input
-        self.output = output
+        self.communicationChannel = communicationChannel
         self.dictionary = dictionary
         self.inputMessages = []
         self.outputMessages = []
         self.connected = False
         
+    def isConnected(self):
+        return self.connected    
+    
     def connect(self):
         if self.connected :
             self.log.warn("Impossible to connect : already connected")
         else :
+            self.connected = self.communicationChannel.open()
             self.log.info("Connecting ...")
     
     def disconnect(self):
         if self.connected :
             self.log.info("Disconnecting ...")
+            self.connected = not self.communicationChannel.close()
         else :
-            self.log.warn("Impossible to disconnect : not connected")
+            self.log.info("Impossible to disconnect : not connected")
             
 
     #+-----------------------------------------------------------------------+
@@ -78,33 +82,9 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+
     def receiveSymbol(self):
         self.log.info("Waiting for the reception of a message")
+        
         # First we read from the input the message 
-        finish = False
-        receivedChars = []
-#        while not finish :
-#            char = self.input.read(1)
-#            self.log.info("Received : " + char)
-#            receivedChars.append(hex(ord(char)))
-#            if char == '\n' or char == '\r' or char == '\0' :
-#                finish = True
-
-        chars = ""
-        
-        chars = self.input.read(4096)
-        if (len(chars) == 0) : 
-            return (EmptySymbol(), "") 
-        
-        for c in chars :
-            v = str(hex(ord(c))).replace("0x", "")
-            if len(str(v)) != 2 : 
-                v = "0" + str(v)
-            receivedChars.append(v)
-#        receivedData = "".join(receivedChars)
-            
-        
-        receivedData = ''.join(receivedChars)
-        
-        self.log.info("Received : " + receivedData)
+        receivedData = self.communicationChannel.read()
         
         now = datetime.datetime.now()
         receptionTime = now.strftime("%H:%M:%S")
@@ -121,14 +101,12 @@ class AbstractionLayer():
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
         self.log.info("Sending message : bin('" + strMessage + "')")
-        self.log.info(str(binMessage))
+        
         # now we send it
-        self.output.flush()
         now = datetime.datetime.now()
-        self.output.write(binMessage)
-        self.log.info("Write down !")
-        self.output.flush()
         sendingTime = now.strftime("%H:%M:%S")
+        self.communicationChannel.write(binMessage)
+        
         self.outputMessages.append([sendingTime, strMessage])
     
     

@@ -30,12 +30,6 @@ from ..MMSTDVisitor import MMSTDVisitor
 from ...Dictionary.AbstractionLayer import AbstractionLayer
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| Container 
 #+---------------------------------------------------------------------------+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):

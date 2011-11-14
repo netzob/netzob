@@ -372,7 +372,7 @@ class UISimulator:
          
         # list all the files (except .svn)
         for file in os.listdir(grammar_directory):
-            pathOfAutomata = grammar_directory + "/" + file
+            pathOfAutomata = os.path.join(grammar_directory, file)
             
             if os.path.isfile(pathOfAutomata) :
                 temporaryListOfFiles.append(file)
@@ -426,8 +426,8 @@ class UISimulator:
         self.log.info("Will add an actor named " + actorName + " (" + actorGrammar + ")")
         
         # First we load the xml definition of the automata     
-        grammar_directory = ConfigurationParser.ConfigurationParser().get("automata", "path")    
-        xmlFile = grammar_directory + "/" + actorGrammar
+        grammar_directory = ConfigurationParser.ConfigurationParser().get("automata", "path") 
+        xmlFile = os.path.join(grammar_directory, actorGrammar)
         tree = ElementTree.ElementTree()
         tree.parse(xmlFile)
         # Load the automata based on its XML definition

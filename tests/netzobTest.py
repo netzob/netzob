@@ -19,10 +19,10 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import sys
+import logging
 
 sys.path.append('lib/libNeedleman/')
 sys.path.append('src')
-sys.path.append('/usr/share/xdot/')
 
 from models.NetworkMessageTest import NetworkMessageTest
 from models.FileMessageTest import FileMessageTest
@@ -30,9 +30,10 @@ from inference.SequencingTest import SequencingTest
 from importing.ParasiteGeneratorTest import ParasiteGeneratorTest
 from importing.PrototypesRepositoryTest import PrototypesRepositoryTest
 from MMSTD.ModelTest import ModelTest
-from xmlrunner import XMLTestRunner
-
-
+from netzob.ExternalLibs.xmlrunner import XMLTestRunner
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.LoggingConfiguration import LoggingConfiguration
+from netzob import NetzobResources
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -69,6 +70,15 @@ if __name__ == "__main__":
         outputStdout = False
         reportFile = sys.argv[1]
     
+    
+    # Configure the environment of execution
+    NetzobResources.STATIC_DIR = "resources/static"
+    NetzobResources.WORKSPACE_DIR = "resources/workspace"
+    
+    
+    # Second we create the logging infrastructure
+    LoggingConfiguration().initializeLogging()
+    
     # Creates the main test suite
     globalTestSuite = unittest.TestSuite()
     
@@ -79,10 +89,10 @@ if __name__ == "__main__":
     addTestsForInference(globalTestSuite)
     
     # add the tests dedicated to the GOT Poisoninget que tu fai
-#    addTestsForGotPoisoning(globalTestSuite)
+    # addTestsForGotPoisoning(globalTestSuite)
     
     # addTestsForPrototypesRepositoryTest(globalTestSuite)
-#    addTestsForMMSTD(globalTestSuite)
+    #addTestsForMMSTD(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()

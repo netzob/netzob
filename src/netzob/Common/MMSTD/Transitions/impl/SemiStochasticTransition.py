@@ -32,7 +32,7 @@ from xml.etree import ElementTree
 from .... import ConfigurationParser
 from ..AbstractTransition import AbstractTransition
 from ...Symbols.impl.EmptySymbol import EmptySymbol
-
+from ...Symbols.impl.DictionarySymbol import DictionarySymbol
 
 #+---------------------------------------------------------------------------+
 #| Configuration of the logger
@@ -135,8 +135,9 @@ class SemiStochasticTransition(AbstractTransition):
         finish = False
         while (not finish) :
             # Wait for a message
+            self.log.info("Start waiting for something")
             (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-            
+            self.log.info("The MASTER received " + str(receivedSymbol))
             if (not (isinstance(receivedSymbol, EmptySymbol))):
                 self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
                 if (len(self.outputSymbols) == 0) :
@@ -189,10 +190,48 @@ class SemiStochasticTransition(AbstractTransition):
             output.set("probability", str(proba))
             output.set("time", str(time))
             output.text = str(symbol.getID())
-                      
-                      
-                 
                  
         return ElementTree.tostring(root)
     
-    
+    #+-----------------------------------------------------------------------+
+    #| parse
+    #|     Extract from an XML declaration the definition of the transition
+    #| @param dictionary the dictionary which is used in the current MMSTD 
+    #| @param states the states already parsed while analyzing the MMSTD
+    #| @return the instanciated object declared in the XML
+    #+-----------------------------------------------------------------------+
+    @staticmethod
+    def parse(xmlTransition, dictionary, states):
+        idTransition = int(xmlTransition.get("id", "-1"))
+        nameTransition = xmlTransition.get("name", "none")
+            
+        idStartTransition = int(xmlTransition.get("idStart", "-1"))
+        idEndTransition = int(xmlTransition.get("idEnd", "-1"))
+                    
+        xmlInput = xmlTransition.find("input")
+        inputClass = xmlInput.get("class", "none")
+        inputId = int(xmlInput.text)
+        inputSymbol = DictionarySymbol(dictionary.getEntry(inputId)) 
+            
+        # searches for the output and input state
+        inputStateTransition = None
+        outputStateTransition = None
+        for state in states :
+            if state.getID() == idStartTransition :
+                inputStateTransition = state
+            if state.getID() == idEndTransition :
+                outputStateTransition = state
+            
+        transition = SemiStochasticTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, inputSymbol)
+            
+        xmlOutputs = xmlTransition.findall("output")
+        for xmlOutput in xmlOutputs :
+            outputClass = xmlOutput.get("class", "none")
+            outputId = int(xmlOutput.text)
+            outputTime = int(xmlOutput.get("time", "0"))
+            outputProbability = float(xmlOutput.get("probability", "0"))
+            outputSymbol = DictionarySymbol(dictionary.getEntry(outputId))
+            transition.addOutputSymbol(outputSymbol, outputProbability, outputTime)
+                
+        inputStateTransition.registerTransition(transition)
+        return transition
