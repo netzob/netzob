@@ -40,8 +40,8 @@ A field has a type, a data description, a data encoding and a semantic~:
 Field's content can be~:
 
 * static ;
-* dependant of another field (or a set of fields) of the same message (intra-field dependancy) ;
-* dependant of a field (or a set of fields) of a previous message in the grammar (inter-field dependancy) ;
+* dependant of another field (or a set of fields) of the same message (intra-message dependancy) ;
+* dependant of a field (or a set of fields) of a previous message in the grammar (inter-message dependancy) ;
 * dependant of the environment ;
 * dependant of the application behaviour (which could depend on the user behaviour) ;
 * random (the initial value of the TCP sequence number for example).
