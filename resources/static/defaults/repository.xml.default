@@ -1,0 +1,32 @@
+<libs>
+	<lib name="libc">
+		<functions>
+			<function name="puts" returnType="int">
+				<params>
+					<param name="param0" type="char *" />
+				</params>
+				<source>_saveString(param0);</source>
+			</function>
+		</functions>
+	</lib>
+	<lib name="libssl.so.0.9.8">
+		<functions>
+			<function name="SSL_read" returnType="int">
+				<params>
+					<param name="ssl" type="void *" />
+					<param name="buf" type="char *" />
+					<param name="num" type="int" />
+				</params>
+				<source>_saveStringWithSize(ssl, num);</source>
+			</function>
+			<function name="SSL_write" returnType="int">
+				<params>
+					<param name="ssl" type="void *" />
+					<param name="buf" type="char *" />
+					<param name="num" type="int" />
+				</params>
+				<source>_saveStringWithSize(buf, num);</source>
+			</function>
+		</functions>
+	</lib>
+</libs>
