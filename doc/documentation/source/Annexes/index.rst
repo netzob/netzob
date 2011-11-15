@@ -177,3 +177,16 @@ Step8 : Reset register, replace original code and allow process to resume
 * wait for the end of application using * wait(NULL);* ;
 * retrieves the values of the registers and reset them to default ones
 * detach from process using *ptrace(PTRACE_DETACH*
+
+
+What is a workspace ?
+-------------------
+A workspace contains all the resources files associated with the current analysis which includes :
+* the repository of automaton,
+* the logging configuration,
+* the list of available prototypes of functions which can be hijacked,
+* the repository of imported traces,
+* the global configuration file.
+
+
+
