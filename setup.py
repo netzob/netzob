@@ -66,15 +66,16 @@ setup(
         "netzob.Simulator",
 	"netzob.ExternalLibs"
         ],
-    package_dir = {"netzob": "src/netzob" },
+    package_dir={"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
-    data_files = [
+    data_files=[
         ('share/netzob', ['resources/static/logo.png']),
         ('share/icons/hicolor/22x22/apps/', ["resources/static/icons/22x22/netzob.png"]),
         ('share/icons/hicolor/48x48/apps/', ["resources/static/icons/48x48/netzob.png"]),
-        ('share/icons/hicolor/64x64/apps/', ["resources/static/icons/64x64/netzob.png"])
+        ('share/icons/hicolor/64x64/apps/', ["resources/static/icons/64x64/netzob.png"]),
+        ('share/netzob/defaults', ["resources/static/defaults/repository.xml.default"])
         ],
-    scripts = ["netzob"],
+    scripts=["netzob"],
     version="0.3.0",
     description="Network protocol modelization by reverse engineering",
     author="Georges Bossert, Frederic Guihery",

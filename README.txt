@@ -11,10 +11,10 @@
 * strace
 * lsof
 * iptables
-
+* python-bitarray
 or, on Debian-like operating systems :
 
-$ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables python-pcapy
+$ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables python-pcapy python-bitarray
 
 and for documentation purposes :
 * python-sphinx
