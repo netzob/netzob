@@ -9,18 +9,22 @@ Modelization
 Definition of a communication protocol
 ======================================
 
-A communication protocol can be defined through~:
+A communication protocol is as language. A language is defined
+through~:
 
-* its vocabulary (the set of valid words or, in our context, the set of valid messages) ;
-* its grammar (set of valid sentences which, in our context, is related to a protocol state machine).
+* its vocabulary (the set of valid words or, in our context, the set
+  of valid messages) ;
+* its grammar (the set of valid sentences which, in our context, can
+  be represented as a protocol state machine, like the TCP state
+  machine).
 
-A word of a protocol's vocabular is called a symbol. A symbol
-represents an abstract view of a set of similar messages. Similar
-messages refer to messages belonging to the same position in the
-grammar.
+A word of the vocabular is called a symbol. A symbol represents an
+abstract view of a set of similar messages. Similar messages refer to
+messages having the same semantic (for example, a TCP SYN message, a
+SMTP HELLO message, an ICMP ECHO REQUEST message, etc.).
 
-A symbol (or a message) is structured following a format, which
-specifies a sequence of fields. A field can be splitted into
+A symbol is structured following a format, which specifies a sequence
+of fields (like the IP format). A field can be splitted into
 sub-fields. For example, a payload is a field of a TCP
 message. Therefore, by defining a layer as a kind of payload (which is
 a specific field), we can retrieve the so-called Ethernet, IP, TCP and
@@ -30,10 +34,10 @@ and grammar.
 Field's size can be fixed or variable.
 Field's content can be static of dynamic.
 Field's content can be basic (a 32 bits integer) or complex (an array).
-A field has a type, a data description, a data encoding and a semantic~:
+A field has four attributes~:
 
 * the type defines its definition domain or set of valid values (16 bits integer, string, etc.) ;
-* the data description defines ... (ASN.1, TSN.1, EBML, etc.) ;
+* the data description defines the structuration of the field (ASN.1, TSN.1, EBML, etc.) ;
 * the data encoding defines ... (ASCII, little endian, big endian, XML, EBML, DER, XER, PER, etc.) ;
 * the semantic defines ... (IP address, port number, URL, email, checksum, etc.).
 
