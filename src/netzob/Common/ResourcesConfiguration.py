@@ -19,6 +19,7 @@
 import os.path
 import logging
 import gtk
+import shutil
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -106,7 +107,15 @@ class ResourcesConfiguration(object):
             automatonPath = os.path.join(path, "automaton")
             if not os.path.isdir(automatonPath) :
                 os.mkdir(automatonPath)
-            
+                
+            # we create the "prototypes" directory if it doesn't yet exist
+            prototypesPath = os.path.join(path, "prototypes")
+            if not os.path.isdir(prototypesPath) :
+                os.mkdir(prototypesPath)
+                # we upload in it the default repository file
+                staticRepositoryPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "repository.xml.default")
+                shutil.copy(staticRepositoryPath, os.path.join(prototypesPath, "repository.xml"))
+                
             
             
         

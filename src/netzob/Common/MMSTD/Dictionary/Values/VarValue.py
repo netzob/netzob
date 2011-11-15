@@ -29,11 +29,6 @@ import logging.config
 from .... import ConfigurationParser
 from .AbstractValue import AbstractValue
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| VarValue :
@@ -47,6 +42,7 @@ class VarValue(AbstractValue):
         AbstractValue.__init__(self, "VarValue")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.VarValue.py')
+        self.log.info("VarValue : " + str(variable))
         self.variable = variable
         self.resetCondition = resetCondition
     
@@ -56,7 +52,7 @@ class VarValue(AbstractValue):
         
         if binvalue == None or self.resetCondition == "force":
             # We execute the learning process
-            self.log.info("Variable " + self.variable.getName() + " will be learnt from input.")  
+            self.log.info("Variable " + self.variable.getName() + " will be learnt from input. (" + str(indice) + ")")  
             
             isForced = False
             if self.resetCondition == "force": 
@@ -66,10 +62,10 @@ class VarValue(AbstractValue):
             
             return new_indice
         else :
-            self.log.info("Compare " + val[indice:] + " with " + strvalue)
-            if val[indice:].startswith(strvalue) :
+            self.log.info("Compare " + val[indice:] + " with " + strvalue + "[" + ''.join(binvalue) + "]")
+            if val[indice:].startswith(''.join(binvalue)) :
                 self.log.info("Compare successful")                
-                return indice + len(strvalue)
+                return indice + len(binvalue)
             else :
                 self.log.info("Compare fail")
         return -1

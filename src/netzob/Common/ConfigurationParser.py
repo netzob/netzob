@@ -38,17 +38,15 @@ from ResourcesConfiguration import ResourcesConfiguration
 #+---------------------------------------------- 
 class ConfigurationParser(object):
     
-    # The configuration file path
-    # configurationFilePath = NetzobResources.DATA_DIR
-    
     #+---------------------------------------------- 
     #| Constructor :
     #+---------------------------------------------- 
     def __init__(self):
         self.configurationFilePath = os.path.join(ResourcesConfiguration.getWorkspace(), "global.conf")
+        
         # If the config file exists we parse it
         # if not we create an in-memory default one
-        if self.configurationFilePath != "" or not os.path.isfile(self.configurationFilePath) :
+        if self.configurationFilePath == "" or not os.path.isfile(self.configurationFilePath) :
             # create default in memory file
             self.config = ConfigurationParser.createDefault()
             self.config.write(open(self.configurationFilePath, "w"))
@@ -73,7 +71,11 @@ class ConfigurationParser(object):
             return None
     
     def getInt(self, section, name):
-        return self.config.getint(section, name)
+        if self.config.has_section(section) :
+            return self.config.getint(section, name)
+        else :
+            return None
+        
     
     def getFloat(self, section, name):
         return self.config.getfloat(section, name)
@@ -82,6 +84,10 @@ class ConfigurationParser(object):
     #| SETTERS
     #+----------------------------------------------     
     def set(self, section, name, value):
+        
+        if not self.config.has_section(section) :
+            self.config.add_section(section)
+        
         self.config.set(section, name, value)
         if self.configurationFilePath != "" and os.path.isfile(self.configurationFilePath) :
             self.config.write(open(self.configurationFilePath, "w"))
@@ -89,6 +95,7 @@ class ConfigurationParser(object):
     
     @staticmethod
     def createDefault():
+        logging.info("Create a default configuration file")
         defaultConfig = ConfigParser.RawConfigParser()
         defaultConfig.add_section('clustering')
         defaultConfig.add_section('traces')

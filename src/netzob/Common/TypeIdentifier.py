@@ -32,11 +32,7 @@ from ..Common import ConfigurationParser
 #logging.config.fileConfig(loggingFilePath)
 
 class TypeIdentifier():
-    """A really useful function.
-
-    Returns None
-    """
-
+    
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.TypeIdentifier.py')

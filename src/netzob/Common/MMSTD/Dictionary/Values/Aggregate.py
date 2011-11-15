@@ -17,6 +17,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -54,13 +55,15 @@ class Aggregate(AbstractValue):
         self.values.append(value)
     
     def send(self, negative, dictionary):
-        binResult = []
+        binResult = bitarray(endian='big')
         strResult = []
         for value in self.values :
             (binVal, strVal) = value.send(negative, dictionary)
-            binResult.append(binVal)
+            binResult.extend(binVal)
             strResult.append(strVal)
-        return ("".join(binResult), "".join(strResult))         
+            self.log.info("Aggregate : " + str(binVal))
+            self.log.info("Aggregate : " + str(strVal))
+        return (binResult, "".join(strResult))         
     
     def compare(self, val, indice, negative, dictionary):
         result = indice        

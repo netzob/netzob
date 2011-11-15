@@ -28,12 +28,7 @@ import logging.config
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
 from .AbstractValue import AbstractValue
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from ....TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| TextValue :
@@ -47,16 +42,21 @@ class TextValue(AbstractValue):
         AbstractValue.__init__(self, "TextValue")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.TextValue.py')
-        self.text = text
-    
+        
+        self.strtext = text
+        self.bintext = TypeConvertor.ascii2bin(self.strtext, 'big')
+        
     def send(self, negative, dictionary):
-        return (self.text, self.text)
+        return (self.bintext, self.strtext)
         
     def compare(self, val, indice, negative, dictionary):
-        self.log.info("Compare received : '" + val[indice:] + "' with '" + self.text + "' ")
-        if val[indice:].startswith(self.text) or val[indice:] == self.text :
-            self.log.info("Compare successful")                
-            return indice + len(self.text)
+        self.log.info("Compare received : '" + str(val[indice:]) + "' with '" + str(self.bintext) + "' ")
+        
+        tmp = val[indice:]
+        if len(tmp) >= len(self.bintext) :
+            if tmp[:len(self.bintext)] == self.bintext :
+                self.log.info("Compare successful")
+                return indice + len(self.bintext)                                
         else :
             self.log.info("Compare fail")
             return -1

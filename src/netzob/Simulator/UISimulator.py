@@ -37,6 +37,8 @@ from . import XDotWidget
 from ..Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
 from ..Common.MMSTD.Actors.Network import NetworkServer
 from ..Common.MMSTD.Actors.Network import NetworkClient
+from ..Common.MMSTD.Dictionary import AbstractionLayer 
+from ..Common.MMSTD.Actors import MMSTDVisitor 
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -87,6 +89,9 @@ class UISimulator:
         self.selectedActor = None
         self.finish = False
         
+        # Init each field with its saved value if it exist
+        config = ConfigurationParser.ConfigurationParser()
+        
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,8 +108,12 @@ class UISimulator:
         label_actorName = gtk.Label("Actor's name : ")
         label_actorName.show()
         self.entry_actorName = gtk.Entry()
-#        self.entry_actorName.set_width_chars(50)
-        self.entry_actorName.set_text("")
+
+        if config.get("simulating", "actorName") != None :
+            self.entry_actorName.set_text(config.get("simulating", "actorName"))
+        else :
+            self.entry_actorName.set_text("")
+        
         self.entry_actorName.show()
         self.tableFormNewActor.attach(label_actorName, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.entry_actorName, 1, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
@@ -117,6 +126,10 @@ class UISimulator:
         possible_grammars = self.getAvailableGrammars()
         for i in range(len(possible_grammars)):
             self.combo_grammar.append_text(possible_grammars[i])
+            
+            if config.get("simulating", "grammar") != None and  config.get("simulating", "grammar") == possible_grammars[i] :
+                self.combo_grammar.set_active(i)
+            
         self.combo_grammar.show()
         self.tableFormNewActor.attach(label_grammar, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.combo_grammar, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -128,6 +141,12 @@ class UISimulator:
         self.combo_typeOfActor.set_model(gtk.ListStore(str))
         self.combo_typeOfActor.append_text("CLIENT")
         self.combo_typeOfActor.append_text("MASTER")
+        
+        if (config.get("simulating", "typeOfActor") == "CLIENT") :
+            self.combo_typeOfActor.set_active(0)
+        if (config.get("simulating", "typeOfActor") == "MASTER") :
+            self.combo_typeOfActor.set_active(1)
+        
         self.combo_typeOfActor.show()
         self.tableFormNewActor.attach(label_typeOfActor, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.combo_typeOfActor, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -139,6 +158,12 @@ class UISimulator:
         self.combo_typeOfNetworkActor.set_model(gtk.ListStore(str))
         self.combo_typeOfNetworkActor.append_text("CLIENT")
         self.combo_typeOfNetworkActor.append_text("SERVER")
+        
+        if (config.get("simulating", "networkLayer") == "CLIENT") :
+            self.combo_typeOfNetworkActor.set_active(0)
+        if (config.get("simulating", "networkLayer") == "SERVER") :
+            self.combo_typeOfNetworkActor.set_active(1)
+        
         self.combo_typeOfNetworkActor.show()
         self.tableFormNewActor.attach(label_typeOfNetworkActor, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.combo_typeOfNetworkActor, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -150,6 +175,12 @@ class UISimulator:
         self.combo_protocolOfNetworkActor.set_model(gtk.ListStore(str))
         self.combo_protocolOfNetworkActor.append_text("TCP")
         self.combo_protocolOfNetworkActor.append_text("UDP")
+        
+        if (config.get("simulating", "networkProtocol") == "TCP") :
+            self.combo_protocolOfNetworkActor.set_active(0)
+        if (config.get("simulating", "networkProtocol") == "UDP") :
+            self.combo_protocolOfNetworkActor.set_active(1)
+        
         self.combo_protocolOfNetworkActor.show()
         self.tableFormNewActor.attach(label_protocolOfNetworkActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.combo_protocolOfNetworkActor, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -158,8 +189,11 @@ class UISimulator:
         label_IP = gtk.Label("IP : ")
         label_IP.show()
         self.entry_IP = gtk.Entry()
-#        self.entry_IP.set_width_chars(50)
-        self.entry_IP.set_text("")
+        if (config.get("simulating", "ip") != None) :
+            self.entry_IP.set_text(config.get("simulating", "ip")) 
+        else :
+            self.entry_IP.set_text("")
+        
         self.entry_IP.show()
         self.tableFormNewActor.attach(label_IP, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.entry_IP, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -168,8 +202,13 @@ class UISimulator:
         label_Port = gtk.Label("Port : ")
         label_Port.show()
         self.entry_Port = gtk.Entry()
-#        self.entry_Port.set_width_chars(50)
-        self.entry_Port.set_text("")
+        
+        
+        if (config.getInt("simulating", "port") != None) :
+            self.entry_Port.set_text(str(config.getInt("simulating", "port")))
+        else :        
+            self.entry_Port.set_text("")
+        
         self.entry_Port.show()
         self.tableFormNewActor.attach(label_Port, 2, 3, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.entry_Port, 3, 4, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -216,7 +255,7 @@ class UISimulator:
         # Inputs
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll_inputs = gtk.ScrolledWindow()
-        self.treestore_inputs = gtk.TreeStore(str, str) # date, input message
+        self.treestore_inputs = gtk.TreeStore(str, str, str) # date, input message symbol
         
 #        self.treestore_inputs.append(None, ["12:45:01", "message 1"])
 #        self.treestore_inputs.append(None, ["12:45:11", "message 2"])
@@ -237,8 +276,13 @@ class UISimulator:
         column_inputs_message = gtk.TreeViewColumn('Received message')
         column_inputs_message.pack_start(cell, True)
         column_inputs_message.set_attributes(cell, text=1)
+        # col symbol
+        column_inputs_symbol = gtk.TreeViewColumn('Symbol')
+        column_inputs_symbol.pack_start(cell, True)
+        column_inputs_symbol.set_attributes(cell, text=2)
         treeview_inputs.append_column(column_inputs_date)
         treeview_inputs.append_column(column_inputs_message)
+        treeview_inputs.append_column(column_inputs_symbol)
         treeview_inputs.show()
         scroll_inputs.add(treeview_inputs)
         scroll_inputs.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -250,7 +294,7 @@ class UISimulator:
         # Outputs
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll_outputs = gtk.ScrolledWindow()
-        self.treestore_outputs = gtk.TreeStore(str, str) # date, output message
+        self.treestore_outputs = gtk.TreeStore(str, str, str) # date, output message, symbol
         
 #        self.treestore_outputs.append(None, ["12:45:01", "message 1"])
 #        self.treestore_outputs.append(None, ["12:45:11", "message 2"])
@@ -271,8 +315,13 @@ class UISimulator:
         column_outputs_message = gtk.TreeViewColumn('Emitted message')
         column_outputs_message.pack_start(cell, True)
         column_outputs_message.set_attributes(cell, text=1)
+        # col symbol
+        column_outputs_symbol = gtk.TreeViewColumn('Emitted message')
+        column_outputs_symbol.pack_start(cell, True)
+        column_outputs_symbol.set_attributes(cell, text=2)
         treeview_outputs.append_column(column_outputs_date)
         treeview_outputs.append_column(column_outputs_message)
+        treeview_outputs.append_column(column_outputs_symbol)
         treeview_outputs.show()
         scroll_outputs.add(treeview_outputs)
         scroll_outputs.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -441,15 +490,31 @@ class UISimulator:
             
         # Create the network layer
         if actorNetworkType == "SERVER" :
-            actor = NetworkServer.NetworkServer(actorName, automata, isMaster, actorIP, actorNetworkProtocol, int(actorPort))
+            communicationChannel = NetworkServer.NetworkServer(actorIP, actorNetworkProtocol, int(actorPort))
         else :
-            actor = NetworkClient.NetworkClient(actorName, automata, isMaster, actorIP, actorNetworkProtocol, int(actorPort))
+            communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
+        
+        # Create the abstraction layer for this connection
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, automata.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        visitor = MMSTDVisitor.MMSTDVisitor(actorName, automata, isMaster, abstractionLayer) 
             
         # add the actor to the list
-        self.actors.append(actor)
+        self.actors.append(visitor)
         
         # update the list of actors
         self.updateListOfActors()
+        
+        # we save the form in the configuration considering its a valid one
+        config = ConfigurationParser.ConfigurationParser()
+        config.set("simulating", "actorName", actorName)
+        config.set("simulating", "grammar", actorGrammar)
+        config.set("simulating", "typeOfActor", actorGrammarType)
+        config.set("simulating", "networkLayer", actorNetworkType)
+        config.set("simulating", "networkProtocol", actorNetworkProtocol)
+        config.set("simulating", "ip", actorIP)
+        config.set("simulating", "port", int(actorPort))
         
     def updateListOfActors(self):        
         self.treestore_listActiveActors.clear()

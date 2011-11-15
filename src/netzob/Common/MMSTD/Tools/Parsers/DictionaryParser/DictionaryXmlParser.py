@@ -38,15 +38,14 @@ from ....Dictionary.Values import EndValue
 from ....Dictionary.Values import VarValue
 from ....Dictionary.Variables.HexVariable import HexVariable
 from ....Dictionary.Variables.MD5Variable import MD5Variable
+from ....Dictionary.Variables.WordVariable import WordVariable
+from ....Dictionary.Variables.IPVariable import IPVariable
 from ....Dictionary.Variables.AggregateVariable import AggregateVariable
+from ....Dictionary.Variables.DynLenStringVariable import DynLenStringVariable
 
 
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+
 
 #+---------------------------------------------- 
 #| DictionaryXmlParser :
@@ -100,6 +99,12 @@ class DictionaryXmlParser(object):
                 variable = MD5Variable(idVar, nameVar, initVar, valVar)
             elif typeVar == "AGGREGATE" :
                 variable = AggregateVariable(idVar, nameVar, xmlVariable.text.split(';'))
+            elif typeVar == "WORD" :
+                variable = WordVariable(idVar, nameVar, xmlVariable.text)
+            elif typeVar == "IP" :
+                variable = IPVariable(idVar, nameVar, xmlVariable.text)
+            elif typeVar == "DYN_LEN_STRING" :
+                variable = DynLenStringVariable(idVar, nameVar, int(xmlVariable.text))
            
             if variable != None :
                 variables.append(variable)

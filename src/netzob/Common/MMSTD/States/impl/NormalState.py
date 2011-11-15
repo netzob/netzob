@@ -79,6 +79,13 @@ class NormalState(AbstractState):
         if len(self.getTransitions()) == 0 :
             return None
         
+        # If there is a "special" transition we execute them
+        for transition in self.getTransitions() :
+            if transition.getType() == "OpenChannel" or transition.getType() == "CloseChannel":
+                newState = transition.executeAsClient(abstractionLayer)
+                return newState
+        
+        
         
         self.activate()
         # Wait for a message
@@ -88,7 +95,7 @@ class NormalState(AbstractState):
             # Now we verify this symbol is an accepted one
             for transition in self.getTransitions() :
                 if transition.isValid(receivedSymbol) :
-                    self.log.info("Received data '" + message + "' is valid for transition " + str(transition.getID()))
+                    self.log.info("Received data '" + str(message) + "' is valid for transition " + str(transition.getID()))
                     newState = transition.executeAsClient(abstractionLayer)
                     self.deactivate()
                     return newState

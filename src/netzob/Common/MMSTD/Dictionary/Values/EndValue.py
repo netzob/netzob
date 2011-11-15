@@ -17,6 +17,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -28,12 +29,6 @@ import logging.config
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
 from .AbstractValue import AbstractValue
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| EndValue :
@@ -50,14 +45,20 @@ class EndValue(AbstractValue):
         
     
     def send(self, negative, dictionary):
-        return ("", "")
+        return (bitarray(endian='big'), "")
     
     def compare(self, val, indice, negative, dictionary):
         if len(val[indice:]) == 0 :
             self.log.info("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
             return indice
         else :
-            self.log.info("Compare Fail, received '" + val[indice:] + "'")
+            cr = bitarray('00001010', endian='big')
+            
+            if val[indice:] == cr :
+                self.log.info("Compare successfull we consider \\n as the end")
+                return indice + len(cr)
+                
+            self.log.info("Compare Fail, received '" + str(val[indice:]) + "'")
             return -1
     
     

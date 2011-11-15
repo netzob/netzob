@@ -44,7 +44,7 @@ from ...Symbols.impl.EmptySymbol import EmptySymbol
 class OpenChannelTransition(AbstractTransition):
     
     def __init__(self, id, name, inputState, outputState, connectionTime, maxNumberOfAttempt):
-        AbstractTransition.__init__(self, id, name, inputState, outputState)
+        AbstractTransition.__init__(self, "OpenChannel", id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition.py')
         self.connectionTime = connectionTime

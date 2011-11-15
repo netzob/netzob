@@ -17,55 +17,60 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+import hashlib
+import binascii
+import random
+import string
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ... import ConfigurationParser
+from .... import ConfigurationParser
+from ..Variable import Variable
+from ....TypeConvertor import TypeConvertor
+
 
 #+---------------------------------------------------------------------------+
-#| MMSTDDictionary :
-#|     Definition of a dictionary
+#| DynLenStringVariable :
+#|     Definition of a dynamic sized string variable defined in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class MMSTDDictionary():
+class DynLenStringVariable(Variable):
     
-    def __init__(self, variables, entries):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.MMSTDDictionary.py')
-        self.variables = variables
-        self.entries = entries
-    
-    
+    def __init__(self, id, name, idVar):
+        Variable.__init__(self, id, name, "DynLenString")
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
+        self.idVar = idVar
+        self.binVal = None
+        self.strVal = None
+            
+    def getValue(self, negative, dictionary):
+        return (self.binVal, self.strVal)
+        
+   
+    def generateValue(self, negative, dictionary):
+        
+        variable = dictionary.getVariableByID(self.idVar)
+        (binValue, strValue) = variable.getValue(negative, dictionary)
+        
+        self.log.info("GENERATE VALUE of size : " + str(binValue))
+        nb_letter = int(binValue.tostring(), 16)
+        self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
+        self.binVal = TypeConvertor.ascii2bin(self.strVal, 'big')
+        self.log.info("Generated value = " + self.strVal)
+        self.log.info("Generated value = " + str(self.binVal))
+        
+        
         
     
-    def getEntry(self, id):
-        for entry in self.entries :
-            if entry.getID() == id :
-                return entry
-            
-        return None
-    
-    
-    def getVariableByID(self, id):
-        for variable in self.variables :            
-            if variable.getID() == id :
-                return variable
-        return None
-    
-    
-    
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getEntries(self):
-        return self.entries 
-    def getVariables(self):
-        return self.variables
-    
+    def learn(self, val, indice, isForced, dictionary):
+        self.log.info("LEARN")
+        return -1
+   
+   

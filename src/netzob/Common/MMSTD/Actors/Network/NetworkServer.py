@@ -34,29 +34,11 @@ from ...Dictionary.AbstractionLayer import AbstractionLayer
 #+---------------------------------------------------------------------------+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     
-    def setIsMaster(self, master):
-        self.master = master
-    def isMaster(self):
-        return self.master
-    
-    
-    def setModel(self, model):
-        self.model = model
-    def getModel(self):
-        return self.model
+    pass
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
     
-    def setIsMaster(self, master):
-        self.master = master
-    def isMaster(self):
-        return self.master
-    
-    
-    def setModel(self, model):
-        self.model = model
-    def getModel(self):
-        return self.model
+    pass
     
     
 
@@ -98,8 +80,8 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 #+---------------------------------------------------------------------------+
 class NetworkServer(AbstractActor):
     
-    def __init__(self, name, model, isMaster, host, protocol, port):
-        AbstractActor.__init__(self, name, model, isMaster)
+    def __init__(self, host, protocol, port):
+        AbstractActor.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer.py')
         self.port = port
@@ -115,9 +97,7 @@ class NetworkServer(AbstractActor):
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
         
-                
-        self.server.setModel(self.getModel())
-        self.server.setIsMaster(self.isMaster())
+        
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.log.info("Start the server")
         self.server_thread.start()

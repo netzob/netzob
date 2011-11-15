@@ -62,6 +62,9 @@ class EmptySymbol():
     def getEntry(self):
         return None
   
+  
+    def __str__(self):
+        return "EmptySymbol"
         
 #    def setID(self, id):
 #        self.id = id

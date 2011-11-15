@@ -17,7 +17,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
-from threading import Thread
+import threading
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -25,57 +25,60 @@ from threading import Thread
 from ... import ConfigurationParser
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| MMSTDVisitor :
 #|     Definition of a visitor of an MMSTD automata
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class MMSTDVisitor():
+class MMSTDVisitor(threading.Thread):
     
-    def __init__(self, mmstd, isMaster, abstractionLayer):
+    def __init__(self, name, mmstd, isMaster, abstractionLayer):
+        threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.MMSTDVisitor.py')
-        self.mmstd = mmstd
+        self.name = name
+        self.model = mmstd
         self.isMaster = isMaster
         self.abstractionLayer = abstractionLayer
-        
+        self.active = False
+    
     def run(self):
+        self.active = True
         if self.isMaster :
             self.runAsMaster()
         else :
             self.runAsClient()
+   
+    def stop(self):
+        self.active = False
     
     
     def runAsMaster(self):
-        self.log.info("The MMSTD Visitor is running as a master")
-        active = True        
-        currentState = self.mmstd.getInitialState()
-        while active :
+        self.log.info("The MMSTD Visitor is running as a master")    
+        currentState = self.model.getInitialState()
+        while self.active :
             currentState = currentState.executeAsMaster(self.abstractionLayer)
             if currentState == None :
-                active = False
+                self.active = False
         self.log.info("The MASTER stops !")
         
         
     def runAsClient(self):
         self.log.info("The MMSTD Visitor is running as a client")
-        
-        active = True
-        
-        currentState = self.mmstd.getInitialState()
-        while active :
+       
+        currentState = self.model.getInitialState()
+        while self.active :
             currentState = currentState.executeAsClient(self.abstractionLayer)
             if currentState == None :
-                active = False
+                self.active = False
         self.log.info("The CLIENT stops !")
         
-        
+    def getInputMessages(self):
+        return self.abstractionLayer.getInputMessages()
+    def getOutputMessages(self):
+        return self.abstractionLayer.getOutputMessages()  
+    def getMemory(self):
+        return self.abstractionLayer.getMemory()
         
                 
     #+-----------------------------------------------------------------------+
@@ -87,7 +90,7 @@ class MMSTDVisitor():
         return self.model
     def isMaster(self):
         return self.isMaster
-    
+   
     def setModel(self, model):
         self.model = model
     def setName(self, name):

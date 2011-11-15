@@ -34,11 +34,6 @@ from ..AbstractTransition import AbstractTransition
 from ...Symbols.impl.EmptySymbol import EmptySymbol
 from ...Symbols.impl.DictionarySymbol import DictionarySymbol
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| SemiStochasticTransition :
@@ -49,7 +44,7 @@ from ...Symbols.impl.DictionarySymbol import DictionarySymbol
 class SemiStochasticTransition(AbstractTransition):
     
     def __init__(self, id, name, inputState, outputState, inputSymbol):
-        AbstractTransition.__init__(self, id, name, inputState, outputState)
+        AbstractTransition.__init__(self, "SemiStochastic", id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition.py')
         self.inputSymbol = inputSymbol

@@ -44,7 +44,7 @@ from ...Symbols.impl.EmptySymbol import EmptySymbol
 class CloseChannelTransition(AbstractTransition):
     
     def __init__(self, id, name, inputState, outputState, disconnectionTime):
-        AbstractTransition.__init__(self, id, name, inputState, outputState)
+        AbstractTransition.__init__(self, "CloseChannel", id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition.py')
         self.disconnectionTime = disconnectionTime
@@ -96,8 +96,8 @@ class CloseChannelTransition(AbstractTransition):
     def closeConnection(self, abstractionLayer):
         self.log.debug("CloseChannelTransition executed.")
         
-        time.sleep(int(self.disconnectionTime) / 1000)
         abstractionLayer.disconnect()
+        time.sleep(int(self.disconnectionTime) / 1000)
         return True
     
     def getDescription(self):

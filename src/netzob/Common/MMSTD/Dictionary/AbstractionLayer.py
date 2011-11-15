@@ -31,11 +31,6 @@ import datetime
 from ... import ConfigurationParser
 from ..Symbols.impl.EmptySymbol import EmptySymbol
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 class TimeoutException(Exception): 
     pass 
@@ -88,26 +83,32 @@ class AbstractionLayer():
         
         now = datetime.datetime.now()
         receptionTime = now.strftime("%H:%M:%S")
-        self.log.info("Received following message : " + receivedData)
-                
-        self.inputMessages.append([receptionTime, receivedData])
+        self.log.info("Received following message : " + str(receivedData))
         
         # Now we abstract the message
         symbol = self.abstract(receivedData)
+        
+        # We store the received messages its time and its abstract representation
+        self.inputMessages.append([receptionTime, receivedData, symbol])
         
         return (symbol, receivedData)
     
     def writeSymbol(self, symbol):
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
-        self.log.info("Sending message : bin('" + strMessage + "')")
+        self.log.info("Sending message : str = '" + strMessage + "'")
+        self.log.info("Sending message : bin = '" + str(binMessage) + "'")
+        
+        # transform the binMessage to a real binary message
+        
+        
         
         # now we send it
         now = datetime.datetime.now()
         sendingTime = now.strftime("%H:%M:%S")
         self.communicationChannel.write(binMessage)
         
-        self.outputMessages.append([sendingTime, strMessage])
+        self.outputMessages.append([sendingTime, strMessage, symbol])
     
     
     #+-----------------------------------------------------------------------+

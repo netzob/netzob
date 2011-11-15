@@ -19,6 +19,7 @@
 import logging.config
 import binascii
 import random
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -30,12 +31,7 @@ import random
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
 from ..Variable import Variable
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from ....TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| HexVariable :
@@ -45,6 +41,8 @@ from ..Variable import Variable
 #+---------------------------------------------------------------------------+
 class HexVariable(Variable):
     
+    
+    
     def __init__(self, id, name, value):
         Variable.__init__(self, id, name, "HEX")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
@@ -52,13 +50,19 @@ class HexVariable(Variable):
         self.size = -1
         self.min = -1
         self.max = -1   
-        self.reset = "normal"     
+        self.reset = "normal"    
+        if self.value != None :
+            self.binValue = TypeConvertor.hex2bin(self.value, 'big')
+            self.strValue = value
+        else :
+            self.binValue = None
+            self.strValue = None
+            
+        self.log.info("Bin-value = " + str(self.binValue) + ", str-value = " + str(self.strValue))
         
     def getValue(self, negative, dictionary):
-        if self.value == None :
-            return (None, None)
-                    
-        return (binascii.unhexlify(self.value), self.value)
+        return (self.binValue, self.strValue)
+        
     
     def generateValue(self, negative, dictionary) :
         if self.min != -1 and self.max != 1 :
@@ -69,16 +73,21 @@ class HexVariable(Variable):
             self.value = v
        
     def learn(self, val, indice, isForced, dictionary):
-        
-        if self.value != None and not isForced :
-            self.log.info("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.value)) + ")")
-            return indice + len(self.value)
+        self.log.info("Learn on " + str(indice) + " : " + str(val[indice:]))
+        if self.binValue != None and not isForced :
+            self.log.info("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
+            return indice + len(self.binValue)
         
         tmp = val[indice:]
-        self.log.info("Learn hex given its size : " + str(self.size) + " from " + tmp) 
+        self.log.info("Learn hex given its size : " + str(self.size) + " from " + str(tmp)) 
         if len(tmp) >= self.size :
-            self.value = val[indice:indice + self.size]
-            self.log.info("learning value : " + self.value)
+            
+            self.binValue = val[indice:indice + self.size]
+            self.strValue = TypeConvertor.bin2hex(self.binValue)
+            
+            self.log.info("learning value : " + str(self.binValue))
+            self.log.info("learning value : " + str(self.strValue))
+            self.log.info("learning value : " + str(int(self.strValue, 16)))
             return indice + self.size
         else :
             return -1

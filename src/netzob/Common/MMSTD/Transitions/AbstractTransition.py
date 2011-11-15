@@ -40,9 +40,10 @@ class AbstractTransition():
     #| WARNING :
     #|     it does not register the transition on the input state !!!!!!!
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name, inputState, outputState):
+    def __init__(self, type, id, name, inputState, outputState):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.AbstractTransition.py')
+        self.type = type
         self.id = id
         self.name = name
         self.outputState = outputState
@@ -128,6 +129,8 @@ class AbstractTransition():
         return self.inputState
     def isActive(self):
         return self.active
+    def getType(self):
+        return self.type
         
     def setID(self, id):
         self.id = id

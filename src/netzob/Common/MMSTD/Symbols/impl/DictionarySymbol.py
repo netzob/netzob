@@ -69,3 +69,5 @@ class DictionarySymbol():
     def setEntry(self, entry):
         self.entry = entry
     
+    def __str__(self):
+        return str(self.entry)

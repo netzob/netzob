@@ -20,6 +20,7 @@ import logging.config
 import asyncore
 import threading
 import socket
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -38,16 +39,16 @@ from ...Dictionary.AbstractionLayer import AbstractionLayer
 #+---------------------------------------------------------------------------+
 class NetworkClient(AbstractActor):
     
-    def __init__(self, name, model, isMaster, host, protocol, port):
-        AbstractActor.__init__(self, name, model, isMaster)
+    def __init__(self, host, protocol, port):
+        AbstractActor.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
         self.port = port
         self.host = host
         self.protocol = protocol
         self.socket = None
-        self.inputFile = None
-        self.outputFile = None
+        self.inputMessages = []
+        self.outputMessages = []
         
         
     def open(self):
@@ -64,7 +65,7 @@ class NetworkClient(AbstractActor):
             self.log.warn("Impossible to open the socket created in the NetworkClient")
             return False
         
-        self.inputFile = self.socket.makefile('r', -1)
+#        self.inputFile = self.socket.makefile('r', -1)
         self.outputFile = self.socket.makefile('w', -1)
         return True
     
@@ -72,57 +73,36 @@ class NetworkClient(AbstractActor):
         if self.socket == None:
             self.log.info("No need to close the socket since it's not even open")
             return True
-        
+        self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
         return True
     
     def read(self):
+        result = bitarray(endian='big')        
+        
         receivedChars = []
-        self.input.flush()
-        chars = self.input.read(4096)
+        chars = self.socket.recv(4096)
+        self.log.info("Read finished")
         if (len(chars) == 0) : 
-            return "" 
+            return result
+        result.fromstring(chars)
         
-        for c in chars :
-            v = str(hex(ord(c))).replace("0x", "")
-            if len(str(v)) != 2 : 
-                v = "0" + str(v)
-            receivedChars.append(v)
-        receivedData = ''.join(receivedChars)
+#        self.inputMessages.append(receivedData)
         
-        self.log.info("Received : " + receivedData)
-        return receivedData
+        self.log.info("Received : " + str(result))
+        return result
         
     def write(self, message):
-        self.output.flush()
-        self.output.write(message)
-        self.log.info("Write down !")
-        self.output.flush()
-            
-#        
-#        # Create the input and output abstraction layer
-#        self.abstractionLayer = AbstractionLayer(inputFile, outputFile, self.getModel().getDictionary())
-#        
-#        # Initialize a dedicated automata and creates a visitor
-#        modelVisitor = MMSTDVisitor(self.getModel(), self.isMaster(), self.abstractionLayer)
-#        self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
-#        modelVisitor.run()
-#        
-        
+        self.outputMessages.append(message)
+        self.outputFile.flush()
+        self.outputFile.write(message.tostring())
+        self.outputFile.flush()
+        self.log.info("Write down !")        
         
     def getInputMessages(self):
-        if self.abstractionLayer == None :
-            return []
-        
-        return self.abstractionLayer.getInputMessages()
+        return self.inputMessages
     def getOutputMessages(self):
-        if self.abstractionLayer == None :
-            return []
-        return self.abstractionLayer.getOutputMessages()
-    def getMemory(self):
-        if self.abstractionLayer == None :
-            return []
-        return self.abstractionLayer.getMemory()
+        return self.outputMessages
     
     
     #+-----------------------------------------------------------------------+

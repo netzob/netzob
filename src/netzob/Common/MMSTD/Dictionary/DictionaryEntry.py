@@ -29,12 +29,6 @@ from xml.etree import ElementTree
 from ... import ConfigurationParser
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| DictionaryEntry :
 #|     Definition of an entry in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr
@@ -97,7 +91,7 @@ class DictionaryEntry():
     #| @return the result of the comparaison
     #+---------------------------------------------------------------------------+
     def compare(self, val, indice, negative, dictionary):
-        self.log.debug("Compare (val=" + val + ", i=" + str(indice) + " neg=" + str(negative) + "...")
+        self.log.debug("Compare (val=" + str(val) + ", i=" + str(indice) + " neg=" + str(negative) + "...")
         return self.value.compare(val, indice, negative, dictionary)
 
     #+---------------------------------------------------------------------------+
@@ -132,4 +126,5 @@ class DictionaryEntry():
     def setName(self, name):
         self.name = name
     
-    
+    def __str__(self):
+        return self.name
