@@ -115,16 +115,9 @@ class UImodelization:
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
 
-        ## Widget for launching the analysis
-        but = gtk.Button(gtk.STOCK_OK)
-        but.set_label("Start alignment")
-        but.connect("clicked", self.startAnalysis_cb)
-        but.show()
-        topPanel.pack_start(but, False, False, 0)
-
         ## Options during alignment process
         frame = gtk.Frame()
-        frame.set_label("Options during alignment process")
+        frame.set_label("Message format inference")
         frame.show()
         topPanel.pack_start(frame, True, True, 0)
 
@@ -159,7 +152,7 @@ class UImodelization:
             butOrphanReduction.set_active(False)
         butOrphanReduction.connect("toggled", self.activeOrphanReduction)
         butOrphanReduction.show()
-        table.attach(butOrphanReduction, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Slick regexes")
@@ -170,7 +163,29 @@ class UImodelization:
             but.set_active(False)
         but.connect("toggled", self.activeInternalSlickRegexes)
         but.show()
-        table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget for launching the analysis
+        but = gtk.Button(gtk.STOCK_OK)
+        but.set_label("Discover alignment")
+        but.connect("clicked", self.startAnalysis_cb)
+        but.show()
+        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+
+        # Widget entry for chosing the alignment delimiter
+        label = gtk.Label("Set the delimiter : ")
+        label.show()
+        entry = gtk.Entry(4)
+        entry.show()
+        table.attach(label, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget for forcing alignment delimiter
+        but = gtk.Button(gtk.STOCK_OK)
+        but.set_label("Force alignment")
+        but.connect("clicked", self.forceAlignment_cb)
+        but.show()
+        table.attach(but, 2, 4, 2, 3, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
         
         ## Options after alignment process
         frame = gtk.Frame()
@@ -311,6 +326,34 @@ class UImodelization:
         self.update()
         self.parseThread = threading.Thread(None, self.netzob.groups.initGroupsWithTraces, None, (), {})
         self.parseThread.start()
+
+    #+---------------------------------------------- 
+    #| forceAlignment :
+    #|   Force the delimiter for sequence alignment
+    #+----------------------------------------------
+    def forceAlignment_cb(self, widget, delimiter):
+        if self.netzob.tracePath == "":
+            self.log.info("No trace selected")
+            return
+        self.selectedGroup = ""
+        self.treeMessageGenerator.clear()
+        self.treeGroupGenerator.clear()
+        self.treeTypeStructureGenerator.clear()
+        self.update()
+        self.parseThread = threading.Thread(None, self.netzob.groups.initGroupsWithTraces, None, (), {})
+        self.parseThread.start()
+
+        entry_text = entry.get_text()
+        # transforms ; 2043 in [0x20; 0x43]
+        i = 0
+        self.lineSeparator = []
+        while (i < len(entry_text)) :
+            d = entry_text[i]+entry_text[i+1]
+            self.lineSeparator.append(int(d, 16))
+            i= i + 2
+        self.updatePacketList()    
+        print "Entry contents: %s\n" % entry_text
+
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_groups :
