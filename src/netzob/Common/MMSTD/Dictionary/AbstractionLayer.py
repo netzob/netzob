@@ -55,14 +55,26 @@ class AbstractionLayer():
     def isConnected(self):
         return self.connected    
     
+    def openServer(self, dictionary, outputState, isMaster):
+        self.log.info("OpenServer ...")
+        self.communicationChannel.openServer(dictionary, outputState, isMaster)
+    
     def connect(self):
+        self.log.info("Connect ...")
         if self.connected :
             self.log.warn("Impossible to connect : already connected")
         else :
-            self.connected = self.communicationChannel.open()
-            self.log.info("Connecting ...")
+            # if its a server :
+            if self.communicationChannel.isServer() :
+                self.log.info("Opening the server to outside connections")      
+                          
+            else :
+            # if its a client :
+                self.log.info("Connecting the client...")
+                self.connected = self.communicationChannel.open()
     
     def disconnect(self):
+        self.log.info("Disconnect ...")
         if self.connected :
             self.log.info("Disconnecting ...")
             self.connected = not self.communicationChannel.close()
@@ -145,5 +157,8 @@ class AbstractionLayer():
         return self.inputMessages
     def getOutputMessages(self):
         return self.outputMessages
-    
+    def getCommunicationLayer(self):
+        return self.communicationChannel
+    def getDictionary(self):
+        return self.dictionary
     

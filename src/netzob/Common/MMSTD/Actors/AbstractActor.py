@@ -38,16 +38,19 @@ from ... import ConfigurationParser
 #+---------------------------------------------------------------------------+
 class AbstractActor(Thread):
     
-    def __init__(self,):
+    def __init__(self, server):
         Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.AbstractActor.py')
         self.Terminated = False
-
+        self.server = server
     
     def stop(self):
         self.Terminated = True
         
+    def isServer(self):
+        return self.server    
+    
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+

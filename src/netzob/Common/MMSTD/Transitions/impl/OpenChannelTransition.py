@@ -65,14 +65,22 @@ class OpenChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
-        self.activate()        
-        result = self.openConnection(abstractionLayer)
-        self.deactivate()
-        if result :
-            return self.outputState
-        else :
+         
+        if abstractionLayer.getCommunicationLayer().isServer() :
+            # start a specific listening network thread
+            self.activate()     
+            abstractionLayer.getCommunicationLayer().openServer(abstractionLayer.getDictionary(), self.outputState, False)
+            self.deactivate()
             return None
-        
+        else :  
+            self.activate()     
+            result = self.openConnection(abstractionLayer)
+            self.deactivate()
+            if result :
+                return self.outputState
+            else :
+                return None
+            
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Open the connection
@@ -80,13 +88,20 @@ class OpenChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):    
-        self.activate()        
-        result = self.openConnection(abstractionLayer)
-        self.deactivate()
-        if result :
-            return self.outputState
-        else :
+        if abstractionLayer.getCommunicationLayer().isServer() :
+            # start a specific listening network thread
+            self.activate()     
+            abstractionLayer.getCommunicationLayer().openServer(abstractionLayer.getDictionary(), self.outputState, True)
+            self.deactivate()
             return None
+        else :  
+            self.activate()     
+            result = self.openConnection(abstractionLayer)
+            self.deactivate()
+            if result :
+                return self.outputState
+            else :
+                return None
         
     #+-----------------------------------------------------------------------+
     #| openConnection

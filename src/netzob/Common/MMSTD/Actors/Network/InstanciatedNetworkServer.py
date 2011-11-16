@@ -32,57 +32,43 @@ from ...Dictionary.AbstractionLayer import AbstractionLayer
 
 
 #+---------------------------------------------------------------------------+
-#| NetworkClient :
-#|     Definition of a network client
+#| InstanciatedNetworkServer :
+#|     Definition of an instanciated network server
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class NetworkClient(AbstractActor):
+class InstanciatedNetworkServer(AbstractActor):
     
-    def __init__(self, host, protocol, port):
+    def __init__(self, socket):
         AbstractActor.__init__(self, False)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
-        self.port = port
-        self.host = host
-        self.protocol = protocol
-        self.socket = None
+        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer.py')
+        self.socket = socket
         self.inputMessages = []
         self.outputMessages = []        
     
         
     def open(self):
-        try :
-            if (self.protocol == "UDP") :
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            else :
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)            
-            self.socket.connect((self.host, self.port))
-        except :
-            self.socket = None
-            
-        if self.socket == None :
-            self.log.warn("Impossible to open the socket created in the NetworkClient")
-            return False
-        
-#        self.inputFile = self.socket.makefile('r', -1)
-        self.outputFile = self.socket.makefile('w', -1)
-        return True
+        self.log.warn("Impossible to open an InstanciatedNetworkServer")
+        return False
     
     def close(self):
         if self.socket == None:
             self.log.info("No need to close the socket since it's not even open")
             return True
+        self.log.info("SHUTDOWN THE SOCKET")
         self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
         return True
     
     def read(self):
-        result = bitarray(endian='big')        
+        result = bitarray(endian='big')       
         
         receivedChars = []
+        chars = []
+        
         chars = self.socket.recv(4096)
-        self.log.info("Read finished")
+            
         if (len(chars) == 0) : 
             return result
         result.fromstring(chars)
@@ -94,9 +80,8 @@ class NetworkClient(AbstractActor):
         
     def write(self, message):
         self.outputMessages.append(message)
-        self.outputFile.flush()
-        self.outputFile.write(message.tostring())
-        self.outputFile.flush()
+        self.socket.send(message.tostring())
+        
         self.log.info("Write down !")        
         
     def getInputMessages(self):
