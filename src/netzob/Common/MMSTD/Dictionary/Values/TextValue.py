@@ -62,7 +62,8 @@ class TextValue(AbstractValue):
             return -1
      
     
-    
+    def restore(self):
+        return
     
     
     #+-----------------------------------------------------------------------+

@@ -22,6 +22,7 @@ import gtk
 import time
 import os
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -45,7 +46,57 @@ class ModelTest(unittest.TestCase):
     def setUp(self):
         pass
     
-    def test_GraphCreation(self):
+    def test_SimpleDynamic(self):
+        actorGrammar = "simple_dynamic.xml"
+        actorIP = "localhost"
+        actorPort = random.randint(9000, 9999)
+        actorNetworkProtocol = "TCP"
+        
+        isMaster = False
+        
+        serverName = "Server"
+        clientName = "Client"
+        
+        # Create a network server
+        grammar_directory = ConfigurationParser().get("automata", "path") 
+        xmlFile = os.path.join(grammar_directory, actorGrammar)
+        tree = ElementTree.ElementTree()
+        tree.parse(xmlFile)
+        # Load the automata based on its XML definition
+        automata = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
+            
+        # Create the network layer
+        communicationChannel = NetworkServer.NetworkServer(actorIP, actorNetworkProtocol, actorPort)
+        
+        # Create the abstraction layer for this connection
+        abstractionLayer = AbstractionLayer(communicationChannel, automata.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        server = MMSTDVisitor(serverName, automata, isMaster, abstractionLayer) 
+        server.run()     
+        
+        time.sleep(3)
+        
+        # CREATE CLIENT 1
+        
+        # Now we execute a client
+        automataClient = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
+            
+        # Create the network layer
+        communicationChannelClient = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, actorPort)
+        
+        # Create the abstraction layer for this connection
+        abstractionLayerClient = AbstractionLayer(communicationChannelClient, automataClient.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        client = MMSTDVisitor(clientName, automataClient, not isMaster, abstractionLayerClient) 
+        client.run()     
+           
+        time.sleep(20)
+        
+        server.stop()
+    
+    def test_Simple(self):
         
         actorGrammar = "simple.xml"
         actorIP = "localhost"

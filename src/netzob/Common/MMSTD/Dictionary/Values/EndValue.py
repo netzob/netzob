@@ -48,6 +48,7 @@ class EndValue(AbstractValue):
         return (bitarray(endian='big'), "")
     
     def compare(self, val, indice, negative, dictionary):
+        self.log.info("Endvalue ? indice = " + str(indice))
         if len(val[indice:]) == 0 :
             self.log.info("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
             return indice
@@ -60,7 +61,9 @@ class EndValue(AbstractValue):
                 
             self.log.info("Compare Fail, received '" + str(val[indice:]) + "'")
             return -1
-    
+        
+    def restore(self):
+        return
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

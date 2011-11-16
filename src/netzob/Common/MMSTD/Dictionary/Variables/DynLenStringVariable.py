@@ -60,7 +60,7 @@ class DynLenStringVariable(Variable):
         (binValue, strValue) = variable.getValue(negative, dictionary)
         
         self.log.info("GENERATE VALUE of size : " + str(binValue))
-        nb_letter = int(binValue.tostring(), 16)
+        nb_letter = TypeConvertor.bin2int(binValue)
         self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
         self.binVal = TypeConvertor.ascii2bin(self.strVal, 'big')
         self.log.info("Generated value = " + self.strVal)
@@ -71,6 +71,19 @@ class DynLenStringVariable(Variable):
     
     def learn(self, val, indice, isForced, dictionary):
         self.log.info("LEARN")
+        variable = dictionary.getVariableByID(self.idVar)
+        (binValue, strValue) = variable.getValue(False, dictionary)
+        nb_letter = TypeConvertor.bin2int(binValue) * 8
+        self.log.info("nb_letter = " + str(nb_letter))
+        tmp = val[indice:]
+        self.log.info("tmp size : " + str(len(tmp)))
+        if (len(tmp) >= nb_letter) :
+            self.binVal = tmp[:nb_letter]
+            self.strVal = TypeConvertor.bin2ascii(self.binVal)
+            self.log.info("Value learnt : " + self.strVal)
+            return indice + nb_letter
+        
+        
         return -1
    
    

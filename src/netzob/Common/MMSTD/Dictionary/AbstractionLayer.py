@@ -113,17 +113,19 @@ class AbstractionLayer():
         # First we read from the input the message 
         receivedData = self.communicationChannel.read()
         
-        now = datetime.datetime.now()
-        receptionTime = now.strftime("%H:%M:%S")
-        self.log.info("Received following message : " + str(receivedData))
-        
-        # Now we abstract the message
-        symbol = self.abstract(receivedData)
-        
-        # We store the received messages its time and its abstract representation
-        self.inputMessages.append([receptionTime, receivedData, symbol])
-        
-        return (symbol, receivedData)
+        if len(receivedData) > 0 :        
+            now = datetime.datetime.now()
+            receptionTime = now.strftime("%H:%M:%S")
+            self.log.info("Received following message : " + str(receivedData))
+            
+            # Now we abstract the message
+            symbol = self.abstract(receivedData)
+            
+            # We store the received messages its time and its abstract representation
+            self.inputMessages.append([receptionTime, receivedData, symbol])
+            return (symbol, receivedData)
+        else :
+            return (EmptySymbol(), None)
     
     def writeSymbol(self, symbol):
         # First we specialize the symbol in a message
@@ -156,6 +158,9 @@ class AbstractionLayer():
                 return entry
             else :
                 self.log.info("Entry " + str(entry.getID()) + " doesn't match")
+                # we first restore possibly learnt value
+                self.log.info("Restore possibly learnt value")
+                entry.restore()
             
         
         return EmptySymbol()

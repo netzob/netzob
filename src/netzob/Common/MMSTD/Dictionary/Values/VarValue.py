@@ -46,8 +46,18 @@ class VarValue(AbstractValue):
         self.variable = variable
         self.resetCondition = resetCondition
     
+    
+    #+---------------------------------------------------------------------------+
+    #| restore :
+    #|     Simple !! :) Call this method if you want to forget the last learned value
+    #+---------------------------------------------------------------------------+
+    def restore(self):
+        self.variable.restore()
+    
     def compare(self, val, indice, negative, dictionary):        
         # first we retrieve the value stored in the variable
+        self.log.info("compare and so retrieve value of " + str(self.variable))
+        
         (binvalue, strvalue) = self.variable.getValue(negative, dictionary)
         
         if binvalue == None or self.resetCondition == "force":

@@ -34,34 +34,45 @@ from ..Variable import Variable
 from ....TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| HexVariable :
-#|     Definition of an hex variable defined in a dictionary
+#| IntVariable :
+#|     Definition of an int variable defined in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class HexVariable(Variable):
+class IntVariable(Variable):
     
     
     
-    def __init__(self, id, name, value):
-        Variable.__init__(self, id, name, "HEX")
+    def __init__(self, id, name, size, value):
+        Variable.__init__(self, id, name, "INT")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
         self.value = value
-        self.size = -1
+        
+        self.size = size
         self.min = -1
         self.max = -1   
         self.reset = "normal"    
         if self.value != None :
-            self.binValue = TypeConvertor.hex2bin(self.value, 'big')
-            self.strValue = value
+            self.binValue = TypeConvertor.int2bin(self.value, self.size)
+            self.strValue = TypeConvertor.int2ascii(self.value)
         else :
             self.binValue = None
             self.strValue = None
+        
+        self.binValueBeforeLearning = None
+        self.strValueBeforeLearning = None
             
         self.log.info("Bin-value = " + str(self.binValue) + ", str-value = " + str(self.strValue))
         
+    def restore(self):
+        self.log.info("Restore ...")
+        if self.binValueBeforeLearning != None and self.strValueBeforeLearning != None :
+            self.log.info("Restore the previsouly learned value")
+            self.binValue = self.binValueBeforeLearning
+            self.strValue = self.strValueBeforeLearning
+        
     def getValue(self, negative, dictionary):
-        self.log.info("Getvalue of hex")
+        self.log.info("Getvalue of int")
         return (self.binValue, self.strValue)
         
     
@@ -71,11 +82,8 @@ class HexVariable(Variable):
             # generate a value in int
             r = random.randint(self.min, self.max)
             self.log.info("Generating hex of value : " + str(r))
-            # encode the value in hex
-            v = hex(r)
-            self.log.info("Generating hex of value : " + str(v))
-            self.binValue = TypeConvertor.hex2bin(v, 'big')
-            self.strValue = str(v)
+            self.binValue = TypeConvertor.int2bin(r, self.size)
+            self.strValue = TypeConvertor.int2ascii(r)
        
     def learn(self, val, indice, isForced, dictionary):
         self.log.info("Learn on " + str(indice) + " : " + str(val[indice:]))
@@ -87,8 +95,11 @@ class HexVariable(Variable):
         self.log.info("Learn hex given its size : " + str(self.size) + " from " + str(tmp)) 
         if len(tmp) >= self.size :
             
+            self.binValueBeforeLearning = self.binValue
+            self.strValueBeforeLearning = self.strValue
+            
             self.binValue = val[indice:indice + self.size]
-            self.strValue = TypeConvertor.bin2hex(self.binValue)
+            self.strValue = str(TypeConvertor.bin2int(self.binValue))
             
             self.log.info("learning value : " + str(self.binValue))
             self.log.info("learning value : " + self.strValue)
@@ -96,6 +107,7 @@ class HexVariable(Variable):
             return indice + self.size
         else :
             return -1
+      
 
     def setReset(self, reset) :
         self.reset = reset

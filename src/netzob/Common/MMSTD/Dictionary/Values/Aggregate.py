@@ -59,18 +59,23 @@ class Aggregate(AbstractValue):
         strResult = []
         for value in self.values :
             (binVal, strVal) = value.send(negative, dictionary)
-            binResult.extend(binVal)
-            strResult.append(strVal)
             self.log.info("Aggregate : " + str(binVal))
             self.log.info("Aggregate : " + str(strVal))
+            binResult.extend(binVal)
+            strResult.append(strVal)
+            
         return (binResult, "".join(strResult))         
     
     def compare(self, val, indice, negative, dictionary):
-        result = indice        
+        result = indice
+        self.log.info("Will compare with :")        
         for value in self.values :
-            self.log.info(value.getType())
+            self.log.info(str(value.getType()))
+        
+        for value in self.values :
+            self.log.info("Indice = " + str(result) + " : " + value.getType())
             result = value.compare(val, result, negative, dictionary)
-            if result == -1 :
+            if result == -1 or result == None :
                 self.log.info("Compare fail")
                 return -1
             else :
@@ -78,6 +83,9 @@ class Aggregate(AbstractValue):
         
         return result
     
+    def restore(self):
+        for value in self.values :
+            value.restore()
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

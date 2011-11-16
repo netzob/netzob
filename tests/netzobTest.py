@@ -57,7 +57,7 @@ def addTestsForPrototypesRepositoryTest(suite):
     suite.addTest(PrototypesRepositoryTest("test_loadFromXML"))
     
 def addTestsForMMSTD(suite):
-    suite.addTest(ModelTest("test_GraphCreation"))
+    suite.addTest(ModelTest("test_SimpleDynamic"))
 
 if __name__ == "__main__":
     
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     addTestsForModels(globalTestSuite)
 
     # add the tests dedicated to the inference process
-    addTestsForInference(globalTestSuite)
+    #addTestsForInference(globalTestSuite)
     
     # add the tests dedicated to the GOT Poisoninget que tu fai
     # addTestsForGotPoisoning(globalTestSuite)

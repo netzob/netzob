@@ -37,6 +37,7 @@ from ....Dictionary.Values import TextValue
 from ....Dictionary.Values import EndValue
 from ....Dictionary.Values import VarValue
 from ....Dictionary.Variables.HexVariable import HexVariable
+from ....Dictionary.Variables.IntVariable import IntVariable
 from ....Dictionary.Variables.MD5Variable import MD5Variable
 from ....Dictionary.Variables.WordVariable import WordVariable
 from ....Dictionary.Variables.IPVariable import IPVariable
@@ -86,6 +87,17 @@ class DictionaryXmlParser(object):
                 variable = HexVariable(idVar, nameVar, xmlVariable.text)
                 if size != -1 :
                     variable.setSize(size)
+                if min != -1 :
+                    variable.setMin(min)
+                if max != -1 :
+                    variable.setMax(max)
+                variable.setReset(reset)
+            elif typeVar == "INT" :
+                size = int(xmlVariable.get("size", "-1"))
+                min = int(xmlVariable.get("min", "-1"))
+                max = int(xmlVariable.get("max", "-1"))
+                reset = xmlVariable.get("reset", "normal")
+                variable = IntVariable(idVar, nameVar, size, xmlVariable.text)
                 if min != -1 :
                     variable.setMin(min)
                 if max != -1 :
