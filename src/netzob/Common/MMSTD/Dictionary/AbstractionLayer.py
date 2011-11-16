@@ -57,7 +57,13 @@ class AbstractionLayer():
     
     def openServer(self, dictionary, outputState, isMaster):
         self.log.info("OpenServer ...")
+        self.connected = True
         self.communicationChannel.openServer(dictionary, outputState, isMaster)
+        
+    def closeServer(self):
+        self.log.info("CLoseServer ...")
+        self.connected = False
+        self.communicationChannel.close()
     
     def connect(self):
         self.log.info("Connect ...")
@@ -78,6 +84,20 @@ class AbstractionLayer():
         if self.connected :
             self.log.info("Disconnecting ...")
             self.connected = not self.communicationChannel.close()
+            
+            # if its a server :
+            if self.communicationChannel.isServer() :
+                self.log.info("Close the server")  
+                self.closeServer()
+                          
+            else :
+            # if its a client :
+                self.log.info("Close the client...")
+                try :
+                    self.connected = self.communicationChannel.close()
+                except :
+                    self.log.warn("Error while trying to disconnect")
+            
         else :
             self.log.info("Impossible to disconnect : not connected")
             

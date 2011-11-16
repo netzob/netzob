@@ -50,7 +50,9 @@ class MMSTDVisitor(threading.Thread):
             self.runAsClient()
    
     def stop(self):
+        self.abstractionLayer.disconnect()
         self.active = False
+        
     
     
     def runAsMaster(self):

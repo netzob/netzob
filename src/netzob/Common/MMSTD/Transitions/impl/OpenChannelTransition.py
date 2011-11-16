@@ -69,7 +69,7 @@ class OpenChannelTransition(AbstractTransition):
         if abstractionLayer.getCommunicationLayer().isServer() :
             # start a specific listening network thread
             self.activate()     
-            abstractionLayer.getCommunicationLayer().openServer(abstractionLayer.getDictionary(), self.outputState, False)
+            abstractionLayer.openServer(abstractionLayer.getDictionary(), self.outputState, False)
             self.deactivate()
             return None
         else :  
@@ -91,7 +91,7 @@ class OpenChannelTransition(AbstractTransition):
         if abstractionLayer.getCommunicationLayer().isServer() :
             # start a specific listening network thread
             self.activate()     
-            abstractionLayer.getCommunicationLayer().openServer(abstractionLayer.getDictionary(), self.outputState, True)
+            abstractionLayer.openServer(abstractionLayer.getDictionary(), self.outputState, True)
             self.deactivate()
             return None
         else :  

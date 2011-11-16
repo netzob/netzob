@@ -146,6 +146,9 @@ class NetworkServer(AbstractActor):
         self.log.info("Start the server")
         self.server_thread.start()
         
+    def close(self):
+        self.server.shutdown()
+        
     def getInputMessages(self):
         return []
     def getOutputMessages(self):

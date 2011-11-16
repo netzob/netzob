@@ -21,6 +21,7 @@ import unittest
 import gtk
 import time
 import os
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -50,9 +51,11 @@ class ModelTest(unittest.TestCase):
         actorIP = "localhost"
         actorPort = 9998
         actorNetworkProtocol = "TCP"
-        actorName = "SERVER"
+        
         isMaster = False
         
+        serverName = "Server"
+        clientName = "Client"
         
         # Create a network server
         grammar_directory = ConfigurationParser().get("automata", "path") 
@@ -69,14 +72,49 @@ class ModelTest(unittest.TestCase):
         abstractionLayer = AbstractionLayer(communicationChannel, automata.getDictionary())
         
         # And we create an MMSTD visitor for this
-        visitor = MMSTDVisitor(actorName, automata, isMaster, abstractionLayer) 
-        
-        visitor.start()
-        
-        
+        server = MMSTDVisitor(serverName, automata, isMaster, abstractionLayer) 
+        server.run()        
+        time.sleep(3)
         
         
+        # CREATE CLIENT 1
         
+        # Now we execute a client
+        automataClient = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
+            
+        # Create the network layer
+        communicationChannelClient = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, actorPort)
+        
+        # Create the abstraction layer for this connection
+        abstractionLayerClient = AbstractionLayer(communicationChannelClient, automataClient.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        client = MMSTDVisitor(clientName, automataClient, not isMaster, abstractionLayerClient) 
+        client.run()     
+        
+        
+        time.sleep(1)
+        
+        
+        # CREATE CLIENT 2
+        
+        # Now we execute a client
+        automataClient2 = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
+            
+        # Create the network layer
+        communicationChannelClient2 = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, actorPort)
+        
+        # Create the abstraction layer for this connection
+        abstractionLayerClient2 = AbstractionLayer(communicationChannelClient2, automataClient2.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        client2 = MMSTDVisitor(clientName, automataClient2, not isMaster, abstractionLayerClient2) 
+        client2.run()        
+                
+        time.sleep(10)
+        
+        server.stop()
+        logging.info("Server closed !")
       
         
       

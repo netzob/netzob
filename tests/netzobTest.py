@@ -92,7 +92,7 @@ if __name__ == "__main__":
     # addTestsForGotPoisoning(globalTestSuite)
     
     # addTestsForPrototypesRepositoryTest(globalTestSuite)
-    #addTestsForMMSTD(globalTestSuite)
+    addTestsForMMSTD(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()
