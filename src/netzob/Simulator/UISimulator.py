@@ -384,18 +384,21 @@ class UISimulator:
         self.button_startActor.connect("clicked", self.startSelectedActor)
         self.button_startActor.show()
         self.tableForBreakAndStop.attach(self.button_startActor, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        # Add break button
-        self.button_breakActor = gtk.Button(gtk.STOCK_OK)
-        self.button_breakActor.set_label("PAUSE")
-#        self.button_breakActor.connect("clicked", self.startAnalysis_cb)
-        self.button_breakActor.show()
-        self.tableForBreakAndStop.attach(self.button_breakActor, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
         # Add stop button
         self.button_stopActor = gtk.Button(gtk.STOCK_OK)
         self.button_stopActor.set_label("STOP")
-#        self.button_breakActor.connect("clicked", self.startAnalysis_cb)
+        self.button_stopActor.connect("clicked", self.stopSelectedActor)
         self.button_stopActor.show()
-        self.tableForBreakAndStop.attach(self.button_stopActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableForBreakAndStop.attach(self.button_stopActor, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        #Add delete actor button
+        self.button_delActor = gtk.Button(gtk.STOCK_OK)
+        self.button_delActor.set_label("DELETE")
+        self.button_delActor.connect("clicked", self.deleteSelectedActor)
+        self.button_delActor.show()
+        self.tableForBreakAndStop.attach(self.button_delActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
         self.tableForBreakAndStop.show()        
         self.panel.attach(self.tableForBreakAndStop, 1, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         
@@ -451,6 +454,23 @@ class UISimulator:
         self.log.info("Stop the actor " + self.selectedActor.getName())
         self.selectedActor.stop()
     
+    #+---------------------------------------------- 
+    #| deleteSelectedActor :
+    #| Delete the selected actor (if stopped)
+    #+----------------------------------------------
+    def deleteSelectedActor(self, widget):
+        if self.selectedActor == None :
+            return
+        
+        if self.selectedActor.isActive() :
+            self.log.info("Impossible to delete an active actor. It must be stopped before")
+            return
+        
+        self.log.info("Delete the actor " + self.selectedActor.getName())
+        self.actors.remove(self.selectedActor)
+        self.treestore_listActiveActors.clear()
+        self.selectedActor = None
+        
         
     #+---------------------------------------------- 
     #| addActor :

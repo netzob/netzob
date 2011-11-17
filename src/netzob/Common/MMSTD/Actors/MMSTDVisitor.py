@@ -93,6 +93,8 @@ class MMSTDVisitor(threading.Thread):
         return self.model
     def isMaster(self):
         return self.isMaster
+    def isActive(self):
+        return self.active
    
     def setModel(self, model):
         self.model = model

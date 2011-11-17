@@ -81,7 +81,11 @@ class NetworkClient(AbstractActor):
         result = bitarray(endian='big')        
         
         receivedChars = []
-        chars = self.socket.recv(4096)
+        try :
+            chars = self.socket.recv(4096)
+        except :
+            self.log.info("Impossible to read from the network socket")
+            
         self.log.info("Read finished")
         if (len(chars) == 0) : 
             return result
