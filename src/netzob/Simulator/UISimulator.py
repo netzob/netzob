@@ -517,12 +517,31 @@ class UISimulator:
         config.set("simulating", "port", int(actorPort))
         
     def updateListOfActors(self):        
-        self.treestore_listActiveActors.clear()
+#        self.treestore_listActiveActors.clear()
         for actor in self.actors :
-            type = "Server"
-            if not actor.isMaster :
-                type = "Client"            
-            self.treestore_listActiveActors.append(None, [actor.getName(), type])
+            
+            # Do we add this actor ?
+            treestoreActor = None
+            for line in self.treestore_listActiveActors :
+                if line[0] == actor.getName() :
+                    treestoreActor = self.treestore_listActiveActors.get_iter(line.path)
+                    found = True
+            
+            if treestoreActor == None :
+                treestoreActor = self.treestore_listActiveActors.append(None, [actor.getName(), "type"])
+                
+            # Retrieve generates instances by the communication channel
+            communicationChannel = actor.getAbstractionLayer().getCommunicationChannel()
+            instances = communicationChannel.getGeneratedInstances()
+            for instance in instances :
+                
+                # do we add this instance
+                found = False
+                for line in self.treestore_listActiveActors :
+                    if line[0] == instance.getName() :
+                        found = True
+                if not found :
+                    self.treestore_listActiveActors.append(treestoreActor, [instance.getName(), "type"])
     
     def actorDetails(self, treeview):
         self.selectedActor = None
@@ -533,11 +552,16 @@ class UISimulator:
             if(model.iter_is_valid(iter)):
                 actorName = model.get_value(iter, 0)
                 actorType = model.get_value(iter, 1)
-                self.log.info("Selected actor : " + actorName)
         
         for actor in self.actors :
             if actor.getName() == actorName :
                 self.selectedActor = actor
+            # Retrieve generates instances by the communication channel
+            communicationChannel = actor.getAbstractionLayer().getCommunicationChannel()
+            instances = communicationChannel.getGeneratedInstances()
+            for instance in instances :
+                if instance.getName() == actorName :
+                    self.selectedActor = instance
         
         if self.selectedActor == None :
             self.log.warn("Impossible to retrieve the requested actor")
@@ -572,7 +596,8 @@ class UISimulator:
         for memory in self.selectedActor.getMemory() :
             self.treestore_memory.append(None, memory)
     
-    def refreshGUI(self, tempo=1.0):
+    def refreshGUI(self, tempo=0.5):
         if not self.finish :
             threading.Timer(tempo, self.refreshGUI, [tempo]).start()
+            self.updateListOfActors()
             self.updateGUIForActor()

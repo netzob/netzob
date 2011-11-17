@@ -103,7 +103,8 @@ class NetworkClient(AbstractActor):
         return self.inputMessages
     def getOutputMessages(self):
         return self.outputMessages
-    
+    def getGeneratedInstances(self):
+        return []
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

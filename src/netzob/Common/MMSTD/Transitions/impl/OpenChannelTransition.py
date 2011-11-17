@@ -66,7 +66,9 @@ class OpenChannelTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
          
-        if abstractionLayer.getCommunicationLayer().isServer() :
+        self.log.info("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
+         
+        if abstractionLayer.getCommunicationChannel().isServer() :
             # start a specific listening network thread
             self.activate()     
             abstractionLayer.openServer(abstractionLayer.getDictionary(), self.outputState, False)
@@ -88,7 +90,7 @@ class OpenChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):    
-        if abstractionLayer.getCommunicationLayer().isServer() :
+        if abstractionLayer.getCommunicationChannel().isServer() :
             # start a specific listening network thread
             self.activate()     
             abstractionLayer.openServer(abstractionLayer.getDictionary(), self.outputState, True)

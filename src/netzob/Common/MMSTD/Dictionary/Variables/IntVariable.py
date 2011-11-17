@@ -72,7 +72,6 @@ class IntVariable(Variable):
             self.strValue = self.strValueBeforeLearning
         
     def getValue(self, negative, dictionary):
-        self.log.info("Getvalue of int")
         return (self.binValue, self.strValue)
         
     

@@ -81,7 +81,8 @@ class MMSTDVisitor(threading.Thread):
         return self.abstractionLayer.getOutputMessages()  
     def getMemory(self):
         return self.abstractionLayer.getMemory()
-        
+    def getAbstractionLayer(self):
+        return self.abstractionLayer
                 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

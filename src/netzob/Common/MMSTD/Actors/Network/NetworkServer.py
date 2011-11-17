@@ -20,6 +20,7 @@ import logging.config
 import SocketServer
 import threading
 import time
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -36,6 +37,11 @@ from .InstanciatedNetworkServer import InstanciatedNetworkServer
 #+---------------------------------------------------------------------------+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     
+    def __init__(self, connectionInfos, UDPConnectionHandler):
+        SocketServer.TCPServer.__init__(self, connectionInfos, UDPConnectionHandler)  
+        self.instances = []
+        
+    
     def getDictionary(self):
         return self.dictionary
     def getInitialState(self):
@@ -50,7 +56,13 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def setMaster(self, master):
         self.master = master
     
+    def addGeneratedInstance(self, instance):
+        self.instances.append(instance)
+    def removeGeneratedInstance(self, instance):
+        self.instances.remove(instance)    
     
+    def getGeneratedInstances(self):
+        return self.instances
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
     
@@ -70,7 +82,11 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
     
 
 class TCPConnectionHandler(SocketServer.BaseRequestHandler):
-      
+    
+    def __init__(self, request, client_address, server):
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        self.subVisitor = None
+    
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
@@ -89,9 +105,20 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         abstractionLayer = AbstractionLayer(instanciatedNetworkServer, dictionary)        
         
         # And we create an MMSTD visitor for this
-        subVisitor = MMSTDVisitor("InstanciatedNetworkServer", automata, isMaster, abstractionLayer) 
+        self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer) 
+        
+        # save it
+        self.server.addGeneratedInstance(self.subVisitor)
+        
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
-        subVisitor.run()
+        self.subVisitor.run()
+        
+    def finish(self):
+        SocketServer.BaseRequestHandler.finish(self)
+        self.subVisitor.stop()
+        
+            
+    
         
         
         
@@ -126,6 +153,7 @@ class NetworkServer(AbstractActor):
         self.port = port
         self.host = host
         self.protocol = protocol
+        self.server = None
         self.instantiatedServers = []
         
     def openServer(self, dictionary, initialState, master):
@@ -155,6 +183,10 @@ class NetworkServer(AbstractActor):
         return []
     def getMemory(self):
         return []
+    def getGeneratedInstances(self):
+        if self.server == None :
+            return []
+        return self.server.getGeneratedInstances()
     
     
     #+-----------------------------------------------------------------------+

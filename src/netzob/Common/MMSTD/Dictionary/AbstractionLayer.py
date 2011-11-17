@@ -182,8 +182,8 @@ class AbstractionLayer():
         return self.inputMessages
     def getOutputMessages(self):
         return self.outputMessages
-    def getCommunicationLayer(self):
-        return self.communicationChannel
     def getDictionary(self):
         return self.dictionary
+    def getCommunicationChannel(self):
+        return self.communicationChannel
     
