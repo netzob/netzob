@@ -180,7 +180,7 @@ Step8 : Reset register, replace original code and allow process to resume
 
 
 What is a workspace ?
--------------------
+---------------------
 A workspace contains all the resources files associated with the current analysis which includes :
 * the repository of automaton,
 * the logging configuration,
