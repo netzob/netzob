@@ -26,9 +26,12 @@ sys.path.append('src')
 
 from models.NetworkMessageTest import NetworkMessageTest
 from models.FileMessageTest import FileMessageTest
-from inference.SequencingTest import SequencingTest  
+from inference.SequencingTest import SequencingTest
+from inference.GrammarInferenceTest import GrammarInferenceTest
+  
 from importing.ParasiteGeneratorTest import ParasiteGeneratorTest
 from importing.PrototypesRepositoryTest import PrototypesRepositoryTest
+
 from MMSTD.ModelTest import ModelTest
 from netzob.ExternalLibs.xmlrunner import XMLTestRunner
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
@@ -59,6 +62,9 @@ def addTestsForPrototypesRepositoryTest(suite):
 def addTestsForMMSTD(suite):
     suite.addTest(ModelTest("test_SimpleDynamic"))
 
+def addTestsForGrammaticalInference(suite):
+    suite.addTest(GrammarInferenceTest("test_grammarInference"))
+    
 if __name__ == "__main__":
     
     # Output is given through argument.
@@ -83,16 +89,18 @@ if __name__ == "__main__":
     globalTestSuite = unittest.TestSuite()
     
     # add the tests dedicated to the models
-    addTestsForModels(globalTestSuite)
+    # addTestsForModels(globalTestSuite)
 
     # add the tests dedicated to the inference process
-    addTestsForInference(globalTestSuite)
+    # addTestsForInference(globalTestSuite)
     
     # add the tests dedicated to the GOT Poisoninget que tu fai
     # addTestsForGotPoisoning(globalTestSuite)
     
     # addTestsForPrototypesRepositoryTest(globalTestSuite)
-    addTestsForMMSTD(globalTestSuite)
+    # addTestsForMMSTD(globalTestSuite)
+    
+    addTestsForGrammaticalInference(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()

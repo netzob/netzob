@@ -101,18 +101,6 @@ class MMSTDXmlParser(object):
                 transition = OpenChannelTransition.OpenChannelTransition.parse(xmlTransition, states)
             elif classTransition == "CloseChannelTransition" :
                 transition = CloseChannelTransition.CloseChannelTransition.parse(xmlTransition, states)
-            
-            
-                
-            
-            
-            
-            
-            
-            
-            
-           
-           
         
         
         # create an MMSTD
