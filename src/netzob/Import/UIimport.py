@@ -33,12 +33,6 @@ import Ipc
 import File
 
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
 #| UIcapturing :
 #|     GUI for capturing messages
 #| @author     : {gbt,fgy}@amossys.fr

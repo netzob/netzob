@@ -27,12 +27,6 @@ import glib
 from .. import ConfigurationParser
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| AbstractMessage :
 #|     Definition of a message
 #| @author     : {gbt,fgy}@amossys.fr

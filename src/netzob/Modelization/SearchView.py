@@ -28,12 +28,6 @@ from ..Common import ConfigurationParser
 from Searcher import Searcher
 
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
 #| SearchView :
 #|     Class dedicated to host the search view
 #| @author     : {gbt,fgy}@amossys.fr
@@ -108,7 +102,7 @@ class SearchView(object):
         elif typeOfPattern == "Octal":
             searchResults = searcher.searchOctal(pattern)
         elif typeOfPattern == "Hexadecimal":
-            searchResults = searcher.searchHexdecimal(pattern)
+            searchResults = searcher.searchHexadecimal(pattern)
         elif typeOfPattern == "ASCII":
             searchResults = searcher.searchASCII(pattern)
         else :

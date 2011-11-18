@@ -242,7 +242,12 @@ class UImodelization:
         but.connect("clicked", self.search_cb)
         but.show()
         table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
+
+        # Widget button for environment dependancies
+        but = gtk.Button("Environment dependancies")
+        but.connect("clicked", self.env_dependancies_cb)
+        but.show()
+        table.attach(but, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)       
 
         ## Visualization options
         frame = gtk.Frame()
@@ -1235,6 +1240,7 @@ class UImodelization:
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
 
         # Just to force the calculation of the splitted messages by regex
+        ## TODO: put this at the end of the alignement process
         for group in self.netzob.groups.getGroups():
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
@@ -1256,6 +1262,21 @@ class UImodelization:
 
         searchPanel = SearchView(self.netzob.groups.getMessages())
         dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to identifies environment dependancies
+    #+----------------------------------------------
+    def env_dependancies_cb(self, button):
+        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
+
+        # Just to force the calculation of the splitted messages by regex 
+        ## TODO: put this at the end of the alignement process
+        for group in self.netzob.groups.getGroups():
+            self.selectedGroup = str(group.getID())
+            self.treeMessageGenerator.default(group)
+
+        dialog.vbox.pack_start(self.netzob.groups.envDependanciesResults(), True, True, 0)
         dialog.show()
 
     #+---------------------------------------------- 

@@ -180,6 +180,7 @@ class Network:
         scroll = gtk.ScrolledWindow()
         self.textview = gtk.TextView()
         self.textview.show()
+        self.textview.get_buffer().create_tag("normalTag", family="Courier")
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -402,7 +403,8 @@ class Network:
             if(model.iter_is_valid(iter)):
                 packetID = model.get_value(iter, 0)
                 payload = self.packets[packetID]
-                self.textview.get_buffer().set_text(str(decoder.decode(payload)))
+                self.textview.get_buffer().set_text("")
+                self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), str(decoder.decode(payload)), "normalTag")
 
     #+---------------------------------------------- 
     #| Called when launching sniffing process

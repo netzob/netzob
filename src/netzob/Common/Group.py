@@ -506,6 +506,120 @@ class Group(object):
         self.setDescriptionByCol(iCol, dataType)
 
     #+---------------------------------------------- 
+    #| envDependancies:
+    #|  try to find environmental dependancies
+    #+----------------------------------------------    
+    def envDependancies(self):
+        if len(self.columns) == 0:
+            return None
+
+        vbox = gtk.VBox(False, spacing=5)
+        vbox.show()
+        hbox = gtk.HPaned()
+        hbox.show()
+        # Treeview containing potential data carving results ## ListStore format :
+        # int: iCol
+        # str: data type (url, ip, email, etc.)
+        store = gtk.ListStore(int, str)
+        treeviewRes = gtk.TreeView(store)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Column')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        treeviewRes.append_column(column)
+        column = gtk.TreeViewColumn('Data type found')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        treeviewRes.append_column(column)
+        treeviewRes.set_size_request(200, 300)
+        treeviewRes.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeviewRes)
+        hbox.add(scroll)
+
+        ## Algo : for each column, and then for each cell, try to find environmental dependancy
+        typer = TypeIdentifier.TypeIdentifier()
+        iCol = 0
+        for col in self.getColumns():
+            for (carver, regex) in self.carvers.items():
+                matchElts = 0
+                for cell in self.getCellsByCol(iCol):
+                    for match in regex.finditer(typer.toASCII(cell)):
+                        matchElts += 1
+                if matchElts > 0:
+                    store.append([iCol, carver])
+            iCol += 1
+
+        # Preview of matching fields in a treeview ## ListStore format :
+        # str: data
+        treeview = gtk.TreeView(gtk.ListStore(str))
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Data')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, markup=0)
+        treeview.append_column(column)
+        treeview.set_size_request(700, 300)
+        treeview.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        hbox.add(scroll)
+        vbox.pack_start(hbox, True, True, 0)
+
+        # Apply button
+        but = gtk.Button(label="Apply data type on column")
+        but.show()
+        self.butDataCarvingHandle = None
+        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, treeview, but)
+        vbox.pack_start(but, False, False, 0)
+
+        return vbox
+        # TODO : use hachoir to retrieve subfiles
+        #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
+
+    #+---------------------------------------------- 
+    #| envDependanciesResultSelected_cb:
+    #|  Callback when clicking on a environmental dependancy result.
+    #+----------------------------------------------
+    def envDependanciesResultSelected_cb(self, treeview, treeviewTarget, but):
+        typer = TypeIdentifier.TypeIdentifier()
+        treeviewTarget.get_model().clear()
+        (model, it) = treeview.get_selection().get_selected()
+        if(it):
+            if(model.iter_is_valid(it)):
+                iCol = model.get_value(it, 0)
+                dataType = model.get_value(it, 1)
+                treeviewTarget.get_column(0).set_title("Column " + str(iCol))
+                if self.butDataCarvingHandle != None:
+                    but.disconnect(self.butDataCarvingHandle)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDependancy_cb, iCol, dataType)
+                for cell in self.getCellsByCol(iCol):
+                    cell = glib.markup_escape_text(typer.toASCII(cell))
+                    segments = []
+                    for match in self.carvers[dataType].finditer(cell):
+                        if match == None:
+                            treeviewTarget.get_model().append([ cell ])
+                        segments.append((match.start(0), match.end(0)))
+
+                    segments.reverse() # We start from the end to avoid shifting
+                    for (start, end) in segments:
+                        cell = cell[:end] + "</span>" + cell[end:]
+                        cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
+                    treeviewTarget.get_model().append([ cell ])
+
+    #+---------------------------------------------- 
+    #| applyDependancy_cb:
+    #|  Called when user wants to apply a dependancy to a field
+    #+----------------------------------------------
+    def applyDependancy_cb(self, button, iCol, dataType):
+        # self.setDescriptionByCol(iCol, dataType)
+        # TODO: handle dependancy !
+        pass
+
+    #+---------------------------------------------- 
     #| search:
     #|  search a specific data in messages
     #+----------------------------------------------    

@@ -100,6 +100,19 @@ class Groups(object):
                 notebook.append_page(scroll, gtk.Label(group.getName()))
         return notebook
 
+    #+---------------------------------------------- 
+    #| envDependanciesResults:
+    #|  try to find the environmental dependancies
+    #+----------------------------------------------    
+    def envDependanciesResults(self):
+        notebook = gtk.Notebook()
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_TOP)
+        for group in self.getGroups():
+            scroll = group.envDependancies()
+            if scroll != None:
+                notebook.append_page(scroll, gtk.Label(group.getName()))
+        return notebook
 
     #+---------------------------------------------- 
     #| search_cb:

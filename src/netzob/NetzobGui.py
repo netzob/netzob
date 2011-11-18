@@ -246,7 +246,7 @@ class NetzobGui():
         
         # retrieve the new trace path
         target = self.entry.get_active_text()
-        if target == "":
+        if target == "" or target == "..." or target == None:
             self.log.info("No trace selected")
             return
 
