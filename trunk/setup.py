@@ -18,6 +18,7 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 from distutils.core import setup, Extension
+from setuptools import setup, find_packages
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -32,40 +33,7 @@ moduleLibNeedleman = Extension('libNeedleman',
 #+----------------------------------------------------------------------------
 setup(
     name="Netzob",
-    packages=[
-        "netzob",
-        "netzob.Common",
-        "netzob.Common.MMSTD",
-        "netzob.Common.MMSTD.Actors",
-        "netzob.Common.MMSTD.Actors.Network",
-        "netzob.Common.MMSTD.Dictionary",
-        "netzob.Common.MMSTD.Dictionary.Values",
-        "netzob.Common.MMSTD.Dictionary.Variables",
-        "netzob.Common.MMSTD.States",
-        "netzob.Common.MMSTD.States.impl",
-        "netzob.Common.MMSTD.Symbols",
-        "netzob.Common.MMSTD.Symbols.impl",
-        "netzob.Common.MMSTD.Tools",
-        "netzob.Common.MMSTD.Tools.Drawing",
-        "netzob.Common.MMSTD.Tools.Parsers",
-        "netzob.Common.MMSTD.Tools.Parsers.DictionaryParser",
-        "netzob.Common.MMSTD.Tools.Parsers.MMSTDParser",
-        "netzob.Common.MMSTD.Transitions",
-        "netzob.Common.MMSTD.Transitions.impl",
-        "netzob.Common.Models",
-        "netzob.Common.Models.Factories",
-        "netzob.Export",
-        "netzob.Export.TreeViews",
-        "netzob.Fuzzing",
-        "netzob.Fuzzing.TreeViews",
-        "netzob.Import",
-        "netzob.Import.GOTPoisoning",
-        "netzob.Import.TreeViews",
-        "netzob.Modelization",
-        "netzob.Modelization.TreeViews",
-        "netzob.Simulator",
-	"netzob.ExternalLibs"
-        ],
+    packages=find_packages(where='src'),
     package_dir={"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
     data_files=[
