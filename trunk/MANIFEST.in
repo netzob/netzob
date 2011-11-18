@@ -2,6 +2,7 @@ include COPYING.txt
 include ChangeLog.txt
 include AUTHORS.txt
 include README.txt
+include NEWS.txt
 recursive-include doc *
 recursive-include resources *
 recursive-include lib *
