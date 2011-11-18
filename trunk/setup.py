@@ -56,15 +56,19 @@ setup(
         "netzob.Common.Models.Factories",
         "netzob.Export",
         "netzob.Export.TreeViews",
+        "netzob.ExternalLibs",
         "netzob.Fuzzing",
         "netzob.Fuzzing.TreeViews",
         "netzob.Import",
         "netzob.Import.GOTPoisoning",
         "netzob.Import.TreeViews",
+        "netzob.Inference",
+        "netzob.Inference.Grammar",
+        "netzob.Inference.Grammar.Oracles",
+        "netzob.Inference.Grammar.Queries",
         "netzob.Modelization",
         "netzob.Modelization.TreeViews",
-        "netzob.Simulator",
-	"netzob.ExternalLibs"
+        "netzob.Simulator"
         ],
     package_dir={"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
@@ -110,4 +114,4 @@ Netzob is therefore suitable for reversing network protocols, structured files a
 flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in 
 multiple contexts (network, file, process and kernel data acquisition). 
 """
-)
+    )
