@@ -63,7 +63,7 @@ class UImodelization:
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
-        print "toto"
+        self.netzob.groups.initGroupsWithTraces()
 
     def update(self):
         self.updateTreeStoreGroup()
@@ -341,8 +341,8 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.parseThread = threading.Thread(None, self.netzob.groups.initGroupsWithTraces, None, (), {})
-        self.parseThread.start()
+        self.alignThread = threading.Thread(None, self.netzob.groups.alignMessages, None, (), {})
+        self.alignThread.start()
 
     #+---------------------------------------------- 
     #| forceAlignment :
@@ -357,20 +357,7 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.parseThread = threading.Thread(None, self.netzob.groups.initGroupsWithTraces, None, (), {})
-        self.parseThread.start()
-
-        entry_text = entry.get_text()
-        # transforms ; 2043 in [0x20; 0x43]
-        i = 0
-        self.lineSeparator = []
-        while (i < len(entry_text)) :
-            d = entry_text[i]+entry_text[i+1]
-            self.lineSeparator.append(int(d, 16))
-            i= i + 2
-        self.updatePacketList()    
-        print "Entry contents: %s\n" % entry_text
-
+        self.netzob.groups.alignMessages( delimiter.get_text() )
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_groups :

@@ -17,6 +17,7 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
+import time
 import gtk
 import pygtk
 pygtk.require('2.0')
@@ -25,13 +26,8 @@ pygtk.require('2.0')
 #| Local Imports
 #+----------------------------------------------
 import ConfigurationParser, TypeIdentifier
-from ..Modelization import TracesExtractor
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common import TraceParser
+from netzob.Modelization import Clusterer
 
 #+---------------------------------------------- 
 #| Groups :
@@ -48,8 +44,7 @@ class Groups(object):
     #| Constructor :
     #+----------------------------------------------   
     def __init__(self, netzob):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.Groups.py')
+        self.log = logging.getLogger('netzob.Common.Groups.py') # Create logger with the given configuration
         self.netzob = netzob
         self.groups = []
 
@@ -57,8 +52,35 @@ class Groups(object):
         del self.groups[:] # Just clean the object without deleting it
 
     def initGroupsWithTraces(self):
-        tracesExtractor = TracesExtractor.TracesExtractor(self.netzob)
-        self.setGroups(tracesExtractor.parse())
+        traceParser = TraceParser.TraceParser(self.netzob)
+        self.setGroups( traceParser.parse() )
+        for g in self.groups :
+            g.buildInitRegex()
+
+    def alignMessages(self):
+        tmpGroups = []
+        t1 = time.time()
+
+        # We try to clusterize each group
+        for group in self.groups :
+            clusterer = Clusterer.Clusterer(self.netzob, [group], explodeGroups=True)
+            clusterer.mergeGroups()
+            tmpGroups.extend(clusterer.getGroups())
+                
+        # Now that all the groups are reorganized separately
+        # we should consider merging them
+        self.log.info("Merging the groups extracted from the different files")
+        clusterer = Clusterer.Clusterer(self.netzob, tmpGroups, explodeGroups=False)
+        clusterer.mergeGroups()
+        
+        # Now we execute the second part of Netzob Magical Algorithms :)
+        # clean the single groups
+        if ConfigurationParser.ConfigurationParser().getInt("clustering", "orphan_reduction") == 1 :
+            self.log.info("Merging the orphan groups") 
+            clusterer.mergeOrphanGroups()
+
+        self.log.info("Time of parsing : " + str(time.time() - t1))
+        self.setGroups( clusterer.getGroups() )
         self.netzob.update()
 
     #+---------------------------------------------- 

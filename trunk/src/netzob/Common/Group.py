@@ -34,12 +34,6 @@ import ConfigurationParser, TypeIdentifier
 import libNeedleman
 
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
 #| Group :
 #|     definition of a group of messages
 #| all the messages in the same group must be 
@@ -90,6 +84,29 @@ class Group(object):
         self.columns = []
         self.alignment = ""
         del self.messages[:]
+
+    #+---------------------------------------------- 
+    #| buildInitRegex :
+    #|  Build a init regex, when no Needleman Wunsh has been executed
+    #+----------------------------------------------
+    def buildInitRegex(self):
+        self.log.debug("Build the regex and alignement of the group " + str(self.getID()))
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        self.columns = []
+        self.columns.append({'name' : "Name",
+                             'regex' : "(.{,})",
+                             'selectedType' : aType,
+                             'tabulation' : 0,
+                             'description' : "",
+                             'color' : ""
+                             })
 
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
