@@ -203,7 +203,7 @@ class UImodelization:
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Force alignment")
-        but.connect("clicked", self.forceAlignment_cb)
+        but.connect("clicked", self.forceAlignment_cb, entry)
         but.show()
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
@@ -340,7 +340,7 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.alignThread = threading.Thread(None, self.netzob.groups.alignMessages, None, (), {})
+        self.alignThread = threading.Thread(None, self.netzob.groups.alignWithNeedlemanWunsh, None, (), {})
         self.alignThread.start()
 
     #+---------------------------------------------- 
@@ -356,7 +356,8 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.netzob.groups.alignMessages( delimiter.get_text() )
+        self.netzob.groups.alignWithDelimiter( delimiter.get_text() )
+        self.update()
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_groups :

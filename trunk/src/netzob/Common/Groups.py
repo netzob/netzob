@@ -57,7 +57,12 @@ class Groups(object):
         for g in self.groups :
             g.buildInitRegex()
 
-    def alignMessages(self):
+    #+---------------------------------------------- 
+    #| alignWithNeedlemanWunsh:
+    #|  Align each messages of each group with the
+    #|  Needleman Wunsh algorithm
+    #+----------------------------------------------
+    def alignWithNeedlemanWunsh(self):
         tmpGroups = []
         t1 = time.time()
 
@@ -82,6 +87,54 @@ class Groups(object):
         self.log.info("Time of parsing : " + str(time.time() - t1))
         self.setGroups( clusterer.getGroups() )
         self.netzob.update()
+
+    #+---------------------------------------------- 
+    #| alignWithDelimiter:
+    #|  Align each messages of each group with a specific delimiter
+    #+----------------------------------------------
+    def alignWithDelimiter(self, delimiter):
+        # Use the default protocol type for representation
+        configParser = ConfigurationParser.ConfigurationParser()
+        valID = configParser.getInt("clustering", "protocol_type")
+        if valID == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        for group in self.groups :
+            refMinElts = 999999999
+            for message in group.getMessages():
+                tmpTab = message.getStringData().split(delimiter)
+                if len(tmpTab) < refMinElts:
+                    refMinElts = len(tmpTab)
+
+            columns = []
+            for i in range(refMinElts):
+                columns.append({'name' : "Name",
+                                'regex' : "(.{,})",
+                                'selectedType' : aType,
+                                'tabulation' : 0,
+                                'description' : "",
+                                'color' : ""
+                                })
+                columns.append({'name' : "Sep",
+                                'regex' : delimiter,
+                                'selectedType' : aType,
+                                'tabulation' : 0,
+                                'description' : "",
+                                'color' : ""
+                                })
+            columns.append({'name' : "Name",
+                            'regex' : "(.{,})",
+                            'selectedType' : aType,
+                            'tabulation' : 0,
+                            'description' : "",
+                            'color' : ""
+                            })
+            group.setColumns(columns)
+            print refMinElts
+            print len(columns)
+            print columns
 
     #+---------------------------------------------- 
     #| slickRegexes:

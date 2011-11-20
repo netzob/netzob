@@ -954,7 +954,8 @@ class Group(object):
         res = []
         for message in self.getMessages():
             messageTable = message.applyRegex()
-            res.append(messageTable[iCol])
+            messageElt = messageTable[iCol]
+            res.append(messageElt)
         return res
     def getTabulationByCol(self, iCol):
         if iCol >= 0 and iCol < len(self.columns) :
