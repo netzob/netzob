@@ -101,15 +101,15 @@ class Groups(object):
         return notebook
 
     #+---------------------------------------------- 
-    #| envDependanciesResults:
-    #|  try to find the environmental dependancies
+    #| envDependenciesResults:
+    #|  try to find the environmental dependencies
     #+----------------------------------------------    
-    def envDependanciesResults(self):
+    def envDependenciesResults(self):
         notebook = gtk.Notebook()
         notebook.show()
         notebook.set_tab_pos(gtk.POS_TOP)
         for group in self.getGroups():
-            scroll = group.envDependancies()
+            scroll = group.envDependencies()
             if scroll != None:
                 notebook.append_page(scroll, gtk.Label(group.getName()))
         return notebook

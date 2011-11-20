@@ -251,7 +251,7 @@ class NetzobGui():
             return
 
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
-        configPath = os.path.abspath(".") + os.sep + tracesDirectoryPath + os.sep + target + os.sep + "config.xml"
+        configPath = tracesDirectoryPath + os.sep + target + os.sep + "config.xml"
         
         for page in self.pageList:
             page[1].save(configPath)
@@ -267,16 +267,6 @@ class NetzobGui():
         tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
         self.label_analyse.set_text(target)
         self.tracePath = tracesDirectoryPath + os.sep + target
-        
-        # clear past analysis and initialize the each notebook
-        self.groups.clear()
-        for page in self.pageList:
-            page[1].clear()
-            #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
-            #if page[0] == nameTab:
-            page[1].new()
-            
-            
 
         # If a state saving exists, loads it
         for file in os.listdir(self.tracePath):
@@ -286,6 +276,15 @@ class NetzobGui():
                 stateParser = StateParser.StateParser(self.tracePath + "/config.xml")
                 stateParser.loadConfiguration()
                 self.groups.setGroups(stateParser.getGroups())
+        
+        # clear past analysis and initialize the each notebook
+        self.groups.clear()
+        for page in self.pageList:
+            page[1].clear()
+            #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
+            #if page[0] == nameTab:
+            page[1].new()
+            
         self.update()
 
     #+---------------------------------------------- 

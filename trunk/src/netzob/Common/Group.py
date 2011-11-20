@@ -506,10 +506,10 @@ class Group(object):
         self.setDescriptionByCol(iCol, dataType)
 
     #+---------------------------------------------- 
-    #| envDependancies:
-    #|  try to find environmental dependancies
+    #| envDependencies:
+    #|  try to find environmental dependencies
     #+----------------------------------------------    
-    def envDependancies(self):
+    def envDependencies(self):
         if len(self.columns) == 0:
             return None
 
@@ -539,7 +539,7 @@ class Group(object):
         scroll.add(treeviewRes)
         hbox.add(scroll)
 
-        ## Algo : for each column, and then for each cell, try to find environmental dependancy
+        ## Algo : for each column, and then for each cell, try to find environmental dependency
         typer = TypeIdentifier.TypeIdentifier()
         iCol = 0
         for col in self.getColumns():
@@ -581,10 +581,10 @@ class Group(object):
         #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
 
     #+---------------------------------------------- 
-    #| envDependanciesResultSelected_cb:
-    #|  Callback when clicking on a environmental dependancy result.
+    #| envDependenciesResultSelected_cb:
+    #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
-    def envDependanciesResultSelected_cb(self, treeview, treeviewTarget, but):
+    def envDependenciesResultSelected_cb(self, treeview, treeviewTarget, but):
         typer = TypeIdentifier.TypeIdentifier()
         treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
@@ -595,7 +595,7 @@ class Group(object):
                 treeviewTarget.get_column(0).set_title("Column " + str(iCol))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDependancy_cb, iCol, dataType)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, iCol, dataType)
                 for cell in self.getCellsByCol(iCol):
                     cell = glib.markup_escape_text(typer.toASCII(cell))
                     segments = []
@@ -611,12 +611,12 @@ class Group(object):
                     treeviewTarget.get_model().append([ cell ])
 
     #+---------------------------------------------- 
-    #| applyDependancy_cb:
-    #|  Called when user wants to apply a dependancy to a field
+    #| applyDependency_cb:
+    #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
-    def applyDependancy_cb(self, button, iCol, dataType):
+    def applyDependency_cb(self, button, iCol, dataType):
         # self.setDescriptionByCol(iCol, dataType)
-        # TODO: handle dependancy !
+        # TODO: handle dependency !
         pass
 
     #+---------------------------------------------- 

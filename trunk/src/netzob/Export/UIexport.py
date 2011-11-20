@@ -65,8 +65,8 @@ class UIexport:
         self.scapyPanel.kill()
     
     def save(self, file):
-        self.rawPanel.save()
-        self.scapyPanel.save()
+        self.rawPanel.save(file)
+        self.scapyPanel.save(file)
     
     #+---------------------------------------------- 
     #| Constructor :

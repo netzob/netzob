@@ -63,7 +63,7 @@ class UImodelization:
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
-        pass
+        print "toto"
 
     def update(self):
         self.updateTreeStoreGroup()
@@ -115,19 +115,17 @@ class UImodelization:
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
 
-        ## Options during alignment process
+        ## Classification by similarity
         frame = gtk.Frame()
-        frame.set_label("Message format inference")
+        frame.set_label("1 - Classification by similarity")
         frame.show()
-        topPanel.pack_start(frame, True, True, 0)
-
-        # Sub-panel for specific buttions
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=3, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget entry for chosing the alignment score sub-limit
-        label = gtk.Label("Similarity threshold : ")
+        label = gtk.Label("Similarity threshold:")
         label.show()
         combo = gtk.combo_box_entry_new_text()
         combo.set_size_request(60, -1)
@@ -154,6 +152,29 @@ class UImodelization:
         butOrphanReduction.show()
         table.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Widget button merge common regexes
+        but = gtk.Button("Merge common regexes")
+        but.connect("clicked", self.netzob.groups.mergeCommonRegexes, self)
+        ## TODO: merge common regexes (if it is really usefull)
+        but.show()
+        but.set_sensitive(False)
+        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        ## Message format inferrence
+        frame = gtk.Frame()
+        frame.set_label("2 - Message format inferrence")
+        frame.show()
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=5, columns=2, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget button slick regexes
+        but = gtk.Button("Slick regexes")
+        but.connect("clicked", self.netzob.groups.slickRegexes, self)
+        but.show()
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Slick regexes")
         doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
@@ -163,7 +184,7 @@ class UImodelization:
             but.set_active(False)
         but.connect("toggled", self.activeInternalSlickRegexes)
         but.show()
-        table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for launching the analysis
         but = gtk.Button(gtk.STOCK_OK)
@@ -177,88 +198,36 @@ class UImodelization:
         label.show()
         entry = gtk.Entry(4)
         entry.show()
-        table.attach(label, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Force alignment")
         but.connect("clicked", self.forceAlignment_cb)
         but.show()
-        table.attach(but, 2, 4, 2, 3, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
-        
-        ## Options after alignment process
+        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+       
+        ## Field type inferrence
         frame = gtk.Frame()
-        frame.set_label("Analyses after alignment process")
+        frame.set_label("3 - Field type inferrence")
         frame.show()
-        topPanel.pack_start(frame, True, True, 0)
-
-        # Sub-panel for specific buttions
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=4, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
-
-        # Widget button slick regexes
-        but = gtk.Button("Slick regexes")
-        but.connect("clicked", self.netzob.groups.slickRegexes, self)
-        but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button find size fields
-        but = gtk.Button("Find size fields")
-        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
-        but.connect("clicked", self.findSizeFields)
-        but.show()
-        table.attach(but, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button merge common regexes
-        but = gtk.Button("Merge common regexes")
-        but.connect("clicked", self.netzob.groups.mergeCommonRegexes, self)
-        ## TODO: merge common regexes (if it is really usefull)
-        but.show()
-        but.set_sensitive(False)
-        table.attach(but, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button refine regex
         but = gtk.Button("Refine regexes")
         but.connect("clicked", self.refineRegexes_cb)
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button data carving
-        but = gtk.Button("Data carving")
-        but.connect("clicked", self.dataCarving_cb)
-        but.show()
-        table.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button to show fields entropy
         but = gtk.Button("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
         but.show()
-        table.attach(but, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button for search
-        but = gtk.Button("Search")
-        but.connect("clicked", self.search_cb)
-        but.show()
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button for environment dependancies
-        but = gtk.Button("Environment dependancies")
-        but.connect("clicked", self.env_dependancies_cb)
-        but.show()
-        table.attach(but, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)       
-
-        ## Visualization options
-        frame = gtk.Frame()
-        frame.set_label("Visualization options")
-        frame.show()
-        topPanel.pack_start(frame, False, False, 0)
-
-        # Sub-panel for specific buttions
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
-        table.show()
-        frame.add(table)
+        table.attach(but, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for choosing the analysed protocole type
         label = gtk.Label("Protocol type : ")
@@ -273,8 +242,51 @@ class UImodelization:
         protocol_type_ID = configParser.getInt("clustering", "protocol_type")
         combo.set_active(protocol_type_ID)
         combo.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        ## Dependencies inferrence
+        frame = gtk.Frame()
+        frame.set_label("4 - Dependencies inferrence")
+        frame.show()
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget button find size fields
+        but = gtk.Button("Find size fields")
+        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
+        but.connect("clicked", self.findSizeFields)
+        but.show()
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button for environment dependencies
+        but = gtk.Button("Environment dependencies")
+        but.connect("clicked", self.env_dependencies_cb)
+        but.show()
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        ## Semantic inferrence
+        frame = gtk.Frame()
+        frame.set_label("5 - Semantic inferrence")
+        frame.show()
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget button data carving
+        but = gtk.Button("Data carving")
+        but.connect("clicked", self.dataCarving_cb)
+        but.show()
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button for search
+        but = gtk.Button("Search")
+        but.connect("clicked", self.search_cb)
+        but.show()
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : GROUP TREEVIEW
@@ -1265,9 +1277,9 @@ class UImodelization:
         dialog.show()
 
     #+---------------------------------------------- 
-    #| Called when user wants to identifies environment dependancies
+    #| Called when user wants to identifies environment dependencies
     #+----------------------------------------------
-    def env_dependancies_cb(self, button):
+    def env_dependencies_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
         # Just to force the calculation of the splitted messages by regex 
@@ -1276,7 +1288,7 @@ class UImodelization:
             self.selectedGroup = str(group.getID())
             self.treeMessageGenerator.default(group)
 
-        dialog.vbox.pack_start(self.netzob.groups.envDependanciesResults(), True, True, 0)
+        dialog.vbox.pack_start(self.netzob.groups.envDependenciesResults(), True, True, 0)
         dialog.show()
 
     #+---------------------------------------------- 
