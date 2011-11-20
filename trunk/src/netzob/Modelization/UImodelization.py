@@ -35,7 +35,6 @@ import random
 from ..Common import Group
 from ..Common import Message
 from ..Common import ConfigurationParser
-import TracesExtractor
 from SearchView import SearchView
 from ..Common import StateParser
 import Entropy

@@ -23,13 +23,6 @@ import gtk
 #| Local Imports
 #+----------------------------------------------
 from ...Common import ConfigurationParser
-from ...Modelization import TracesExtractor
-       
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TreeGroupGenerator :
