@@ -20,6 +20,7 @@ import logging.config
 import asyncore
 import threading
 import socket
+import select
 from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
@@ -58,6 +59,7 @@ class NetworkClient(AbstractActor):
             else :
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)            
             self.socket.connect((self.host, self.port))
+            self.socket.setblocking(0)
         except :
             self.socket = None
             
@@ -70,21 +72,34 @@ class NetworkClient(AbstractActor):
         return True
     
     def close(self):
+        self.log.info("CLosing the network client")
         if self.socket == None:
             self.log.info("No need to close the socket since it's not even open")
             return True
-        self.socket.shutdown(socket.SHUT_RDWR)
-        self.socket.close()
+        try :
+            self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()
+        except :
+            self.log.info("No need to close the socket since it's not even open")
+            return True
         return True
     
-    def read(self):
+    def read(self, timeout):
         result = bitarray(endian='big')        
         
-        receivedChars = []
+#        receivedChars = []
+#        try :
+#            chars = self.socket.recv(4096)
+#        except :
+#            self.log.info("Impossible to read from the network socket")
+        chars = []    
         try :
-            chars = self.socket.recv(4096)
+            ready = select.select([self.socket], [], [], timeout)
+            if ready[0]:
+                chars = self.socket.recv(4096)
         except :
             self.log.info("Impossible to read from the network socket")
+            
             
         self.log.info("Read finished")
         if (len(chars) == 0) : 
@@ -98,9 +113,12 @@ class NetworkClient(AbstractActor):
         
     def write(self, message):
         self.outputMessages.append(message)
-        self.outputFile.flush()
-        self.outputFile.write(message.tostring())
-        self.outputFile.flush()
+        try :
+            self.outputFile.write(message.tostring())
+            self.outputFile.flush()
+        except :
+            self.log.warn("An error occured while trying to write on the communication channel")
+            
         self.log.info("Write down !")        
         
     def getInputMessages(self):
@@ -109,6 +127,10 @@ class NetworkClient(AbstractActor):
         return self.outputMessages
     def getGeneratedInstances(self):
         return []
+    
+    def stop(self):
+        self.log.info("Stopping the thread of the network client")
+        AbstractActor.stop(self)
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

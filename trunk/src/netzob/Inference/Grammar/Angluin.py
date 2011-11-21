@@ -19,6 +19,7 @@
 import logging
 import time
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -42,12 +43,13 @@ class Angluin(object):
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
         self.dictionary = dictionary
         self.oracle = oracle
-        
+        self.results = None
     
     def learn(self):
         self.log.info("Learn...")
-        
-        query = MembershipQuery()
+        entries = self.dictionary.getEntries()        
+        query = MembershipQuery([DictionarySymbol(entries[0]), DictionarySymbol(entries[4]), DictionarySymbol(entries[6])])
+        self.results = self.submitQuery(query)
         
         
     def submitQuery(self, query):
@@ -59,17 +61,21 @@ class Angluin(object):
         # start the oracle with the MMSTD
         self.oracle.start(mmstd)
         
-        # wait it has finished
-        while not self.oracle.hasFinish() :
-            time.sleep(1)
+#        # wait it has finished
+#        while not self.oracle.hasFinish() :
+        time.sleep(10)
         
         # stop the oracle and retrieve the query
-        resultQuery = self.oracle.stop()
+        self.oracle.stop()
+        
+        resultQuery = self.oracle.getResults()
+        
+        self.log.info("The following query has been computed : " + str(resultQuery))
         
         return resultQuery
         
         
         
     def getResult(self):
-        return None
+        return self.results
         

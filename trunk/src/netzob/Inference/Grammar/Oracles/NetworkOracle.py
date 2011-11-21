@@ -26,6 +26,8 @@ import logging
 #| Local application imports
 #+----------------------------------------------
 from AbstractOracle import AbstractOracle
+from ....Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from ....Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 
 #+---------------------------------------------- 
 #| NetworkOracle :
@@ -34,18 +36,32 @@ from AbstractOracle import AbstractOracle
 #+---------------------------------------------- 
 class NetworkOracle(AbstractOracle):
      
-    def __init__(self):
-        AbstractOracle.__init__("Network")
+    def __init__(self, communicationChannel):
+        AbstractOracle.__init__(self, "Network")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')       
-        
+        self.communicationChannel = communicationChannel
         
     def start(self, mmstd): 
         self.log.info("Start the network oracle based on given MMSTD")
         
+        # Create the abstraction layer for this connection
+        abstractionLayer = AbstractionLayer(self.communicationChannel, mmstd.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        self.oracle = MMSTDVisitor("NetworkOracle", mmstd, True, abstractionLayer) 
+        self.oracle.run()     
+        
         
     def stop(self):
         self.log.info("Stop the network oracle")
+        self.oracle.stop()
+    
+    def hasFinish(self):
+        return not self.oracle.isActive()
+        
         
     def getResults(self):
-        return []
+        # Retrieve all the IO from the abstraction layer
+        abstractionLayer = self.oracle.getAbstractionLayer()        
+        return abstractionLayer.getGeneratedInputAndOutputsSymbols()

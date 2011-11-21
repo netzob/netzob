@@ -20,6 +20,7 @@ import logging.config
 import asyncore
 import threading
 import socket
+
 from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
@@ -61,7 +62,7 @@ class InstanciatedNetworkServer(AbstractActor):
         self.socket.close()
         return True
     
-    def read(self):
+    def read(self, timeout):
         result = bitarray(endian='big')       
         
         receivedChars = []

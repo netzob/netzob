@@ -63,6 +63,10 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     
     def getGeneratedInstances(self):
         return self.instances
+    
+    def shutdown(self):
+        logging.info("shutingdown")
+        SocketServer.TCPServer.shutdown(self)
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
     
@@ -114,6 +118,7 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         self.subVisitor.run()
         
     def finish(self):
+        self.log.info("Closing the NetworkServer since the client is disconnected")
         SocketServer.BaseRequestHandler.finish(self)
         self.subVisitor.stop()
         
@@ -175,6 +180,7 @@ class NetworkServer(AbstractActor):
         self.server_thread.start()
         
     def close(self):
+        self.log.info("Shuting down the server")
         self.server.shutdown()
         
     def getInputMessages(self):
@@ -188,6 +194,9 @@ class NetworkServer(AbstractActor):
             return []
         return self.server.getGeneratedInstances()
     
+    def stop(self):
+        self.log.info("Stopping the thread of the network server")
+        AbstractActor.stop(self)
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

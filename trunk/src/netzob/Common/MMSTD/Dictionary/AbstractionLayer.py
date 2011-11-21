@@ -50,6 +50,7 @@ class AbstractionLayer():
         self.dictionary = dictionary
         self.inputMessages = []
         self.outputMessages = []
+        self.manipulatedSymbols = []
         self.connected = False
         
     def isConnected(self):
@@ -109,9 +110,12 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+
     def receiveSymbol(self):
         self.log.info("Waiting for the reception of a message")
+        return self.receiveSymbolWithTimeout(-1)
         
+        
+    def receiveSymbolWithTimeout(self, timeout):
         # First we read from the input the message 
-        receivedData = self.communicationChannel.read()
+        receivedData = self.communicationChannel.read(timeout)
         
         if len(receivedData) > 0 :        
             now = datetime.datetime.now()
@@ -123,9 +127,14 @@ class AbstractionLayer():
             
             # We store the received messages its time and its abstract representation
             self.inputMessages.append([receptionTime, receivedData, symbol])
+            self.manipulatedSymbols.append(symbol)
             return (symbol, receivedData)
         else :
-            return (EmptySymbol(), None)
+            symbol = EmptySymbol()
+            self.manipulatedSymbols.append(symbol)
+            return (symbol, None)
+        
+        
     
     def writeSymbol(self, symbol):
         # First we specialize the symbol in a message
@@ -143,7 +152,7 @@ class AbstractionLayer():
         self.communicationChannel.write(binMessage)
         
         self.outputMessages.append([sendingTime, strMessage, symbol])
-    
+        self.manipulatedSymbols.append(symbol)
     
     #+-----------------------------------------------------------------------+
     #| abstract
@@ -175,6 +184,15 @@ class AbstractionLayer():
             (binVal, strVal) = variable.getValue(False, self.dictionary)
             memory.append([variable.getName(), variable.getType(), strVal])
         return memory
+    
+    #+-----------------------------------------------------------------------+
+    #| getGeneratedInputAndOutputsSymbols
+    #|     Retrieves all the received and the sent symbols in their manipulation order
+    #| @return an array contening all the symbols
+    #+-----------------------------------------------------------------------+  
+    def getGeneratedInputAndOutputsSymbols(self):
+        return self.manipulatedSymbols
+        
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+

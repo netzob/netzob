@@ -75,6 +75,8 @@ class NormalState(AbstractState):
     def executeAsClient(self, abstractionLayer):
         self.log.info("Execute state " + self.name + " as a client")
         
+        
+        
         # if no transition exists we quit
         if len(self.getTransitions()) == 0 :
             return None
@@ -89,7 +91,14 @@ class NormalState(AbstractState):
         
         self.activate()
         # Wait for a message
-        (receivedSymbol, message) = abstractionLayer.receiveSymbol()
+        
+        tupleReception = abstractionLayer.receiveSymbol()
+        if tupleReception == None :
+            self.log.warn("Warning the abstraction layer returns null")
+            return None
+        
+        
+        (receivedSymbol, message) = tupleReception
         if not receivedSymbol == None :
             self.log.info("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one

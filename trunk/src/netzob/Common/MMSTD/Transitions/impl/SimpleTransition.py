@@ -99,6 +99,12 @@ class SimpleTransition(AbstractTransition):
     def executeAsMaster(self, abstractionLayer):
         self.activate()
         self.log.info("Execute as a master")
+        # write a message
+        abstractionLayer.writeSymbol(self.outputSymbol)
+        
+        # listen for input symbol for fex secondes
+        abstractionLayer.receiveSymbolWithTimeout(3)
+        
         self.deactivate()
         return self.outputState
      

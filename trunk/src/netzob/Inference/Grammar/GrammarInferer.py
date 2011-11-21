@@ -59,7 +59,7 @@ class GrammarInferer(object):
             hypotheticalAutomaton = learner.getResult()
             self.log.info("An hypothetical automaton has been computed")
             
-            counterExample = self.equivalenceOracle.findCounterExample(hypotheticalAutomaton)
+            counterExample = None #self.equivalenceOracle.findCounterExample(hypotheticalAutomaton)
             if counterExample == None :
                 self.log.info("No counter-example were found !")
                 equivalent = True
