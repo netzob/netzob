@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # addTestsForPrototypesRepositoryTest(globalTestSuite)
     addTestsForMMSTD(globalTestSuite)
     
-    #addTestsForGrammaticalInference(globalTestSuite)
+    addTestsForGrammaticalInference(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()
