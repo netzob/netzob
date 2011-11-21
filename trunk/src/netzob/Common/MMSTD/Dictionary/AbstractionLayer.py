@@ -81,11 +81,11 @@ class AbstractionLayer():
                 self.connected = self.communicationChannel.open()
     
     def disconnect(self):
-        self.log.info("Disconnect ...")
+        self.log.warn("Disconnect ...")
         if self.connected :
             self.log.info("Disconnecting ...")
             self.connected = not self.communicationChannel.close()
-            
+            self.log.info("Connected = " + str(self.connected))
             # if its a server :
             if self.communicationChannel.isServer() :
                 self.log.info("Close the server")  
@@ -117,6 +117,10 @@ class AbstractionLayer():
         # First we read from the input the message 
         receivedData = self.communicationChannel.read(timeout)
         
+        if receivedData == None :
+            self.log.warn("The communication channel seems to be closed !")
+            return (None, None)
+        
         if len(receivedData) > 0 :        
             now = datetime.datetime.now()
             receptionTime = now.strftime("%H:%M:%S")
@@ -130,6 +134,14 @@ class AbstractionLayer():
             self.manipulatedSymbols.append(symbol)
             return (symbol, receivedData)
         else :
+            if len(self.manipulatedSymbols) > 5 :
+                if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == "EmptySymbol" :                    
+                    self.log.warn("Consider client has disconnected since no valid symbol received for the second time")
+                    return (None, None)
+                    
+                
+            
+            
             symbol = EmptySymbol()
             self.manipulatedSymbols.append(symbol)
             return (symbol, None)

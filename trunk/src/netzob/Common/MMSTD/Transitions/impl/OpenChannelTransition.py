@@ -70,7 +70,8 @@ class OpenChannelTransition(AbstractTransition):
          
         if abstractionLayer.getCommunicationChannel().isServer() :
             # start a specific listening network thread
-            self.activate()     
+            self.activate()
+            self.log.info("We instanciate a new server and close the current MMSTD")     
             abstractionLayer.openServer(abstractionLayer.getDictionary(), self.outputState, False)
             self.deactivate()
             return None

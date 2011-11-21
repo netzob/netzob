@@ -24,11 +24,6 @@ from threading import Thread
 #+---------------------------------------------------------------------------+
 from ... import ConfigurationParser
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| AbstractActor :
@@ -36,20 +31,26 @@ from ... import ConfigurationParser
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class AbstractActor(Thread):
+class AbstractActor():
     
     def __init__(self, isServer):
-        Thread.__init__(self)
+#        Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.AbstractActor.py')
         self.Terminated = False
         self.is_server = isServer
-    
+        self.active = False
+        
+        
     def stop(self):
         self.Terminated = True
         
+        
     def isServer(self):
         return self.is_server    
+    
+    def isActive(self):
+        return self.active
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

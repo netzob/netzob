@@ -20,6 +20,7 @@ import logging.config
 import asyncore
 import threading
 import socket
+import select
 
 from bitarray import bitarray
 
@@ -54,6 +55,7 @@ class InstanciatedNetworkServer(AbstractActor):
         return False
     
     def close(self):
+        self.log.info("Closing the socket")
         if self.socket == None:
             self.log.info("No need to close the socket since it's not even open")
             return True
@@ -63,13 +65,27 @@ class InstanciatedNetworkServer(AbstractActor):
         return True
     
     def read(self, timeout):
+        self.log.info("Reading from the socket some data")
         result = bitarray(endian='big')       
         
-        receivedChars = []
-        chars = []
         
-        chars = self.socket.recv(4096)
-            
+        chars = []    
+        try :
+            if timeout > 0 :
+                ready = select.select([self.socket], [], [], timeout)
+                if ready[0]:
+                    chars = self.socket.recv(4096)
+            else :
+                ready = select.select([self.socket], [], [])
+                self.log.info("ready = " + str(ready[0]))
+                if ready[0]:
+                    chars = self.socket.recv(4096)
+        except :
+            self.log.info("Impossible to read from the network socket")
+            return None
+        
+        
+                
         if (len(chars) == 0) : 
             return result
         result.fromstring(chars)
@@ -80,6 +96,7 @@ class InstanciatedNetworkServer(AbstractActor):
         return result
         
     def write(self, message):
+        self.log.info("Writing to the socket")
         self.outputMessages.append(message)
         self.socket.send(message.tostring())
         
@@ -90,6 +107,8 @@ class InstanciatedNetworkServer(AbstractActor):
     def getOutputMessages(self):
         return self.outputMessages
     
+    def isOpen(self):
+        return self.open
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

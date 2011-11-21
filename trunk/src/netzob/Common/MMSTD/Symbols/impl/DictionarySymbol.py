@@ -22,12 +22,8 @@ import logging.config
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
+from ..AbstractSymbol import AbstractSymbol
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| DictionarySymbol :
@@ -35,9 +31,10 @@ from .... import ConfigurationParser
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------------------------------------+
-class DictionarySymbol():
+class DictionarySymbol(AbstractSymbol):
     
     def __init__(self, dictionaryEntry):
+        AbstractSymbol.__init__(self, "DictionarySymbol")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
         self.entry = dictionaryEntry

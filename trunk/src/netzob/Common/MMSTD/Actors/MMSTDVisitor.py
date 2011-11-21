@@ -43,16 +43,21 @@ class MMSTDVisitor(threading.Thread):
         self.active = False
     
     def run(self):
+        self.log.info("Starting the MMSTDVisitor")
         self.active = True
         if self.isMaster :
             self.runAsMaster()
         else :
             self.runAsClient()
+        self.log.info("End of execution for the MMSTDVisitor")
+            
+        
    
     def stop(self):
         self.log.info("Stops the MMSTDVisitor")
         self.abstractionLayer.disconnect()
         self.active = False
+        
         
     
     
@@ -71,8 +76,10 @@ class MMSTDVisitor(threading.Thread):
        
         currentState = self.model.getInitialState()
         while self.active :
+            self.log.info("Run as a client the state " + str(currentState.getName()))
             currentState = currentState.executeAsClient(self.abstractionLayer)
             if currentState == None :
+                self.log.warn("The execution of the transition didn't provide the next state")
                 self.active = False
         self.log.info("The CLIENT stops !")
         

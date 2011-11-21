@@ -20,6 +20,7 @@ import logging
 import time
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Inference.Grammar.LearningAlgorithm import LearningAlgorithm
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -32,50 +33,20 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 
 #+---------------------------------------------- 
 #| Angluin :
-#|    Definition of the Angluin L*A algorithm
+#|    Definition of the Angluin L*A algorithm to infer MEALY automatas
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------- 
-class Angluin(object):
+class Angluin(LearningAlgorithm):
      
     def __init__(self, dictionary, oracle):
+        LearningAlgorithm.__init__(self, dictionary, oracle)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
-        self.dictionary = dictionary
-        self.oracle = oracle
-        self.results = None
     
     def learn(self):
         self.log.info("Learn...")
         entries = self.dictionary.getEntries()        
-        query = MembershipQuery([DictionarySymbol(entries[0]), DictionarySymbol(entries[4]), DictionarySymbol(entries[6])])
+        query = MembershipQuery([DictionarySymbol(entries[0]), DictionarySymbol(entries[1])])
         self.results = self.submitQuery(query)
-        
-        
-    def submitQuery(self, query):
-        self.log.info("Submit the following query : " + str(query))
-        
-        # transform the query into a MMSTD
-        mmstd = query.toMMSTD(self.dictionary)
-        
-        # start the oracle with the MMSTD
-        self.oracle.start(mmstd)
-        
-#        # wait it has finished
-#        while not self.oracle.hasFinish() :
-        time.sleep(10)
-        
-        # stop the oracle and retrieve the query
-        self.oracle.stop()
-        
-        resultQuery = self.oracle.getResults()
-        
-        self.log.info("The following query has been computed : " + str(resultQuery))
-        
-        return resultQuery
-        
-        
-        
-    def getResult(self):
-        return self.results
-        
+     

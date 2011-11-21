@@ -75,10 +75,9 @@ class NormalState(AbstractState):
     def executeAsClient(self, abstractionLayer):
         self.log.info("Execute state " + self.name + " as a client")
         
-        
-        
         # if no transition exists we quit
         if len(self.getTransitions()) == 0 :
+            self.log.warn("The current state has no transitions available.")
             return None
         
         # If there is a "special" transition we execute them
@@ -93,7 +92,7 @@ class NormalState(AbstractState):
         # Wait for a message
         
         tupleReception = abstractionLayer.receiveSymbol()
-        if tupleReception == None :
+        if tupleReception == (None, None) :
             self.log.warn("Warning the abstraction layer returns null")
             return None
         

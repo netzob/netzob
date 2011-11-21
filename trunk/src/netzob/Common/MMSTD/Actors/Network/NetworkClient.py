@@ -72,10 +72,8 @@ class NetworkClient(AbstractActor):
         return True
     
     def close(self):
-        self.log.info("CLosing the network client")
-        if self.socket == None:
-            self.log.info("No need to close the socket since it's not even open")
-            return True
+        self.log.info("Closing the network client")
+        self.stop()
         try :
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
@@ -85,20 +83,23 @@ class NetworkClient(AbstractActor):
         return True
     
     def read(self, timeout):
+        self.log.info("Read from the socket")
         result = bitarray(endian='big')        
         
-#        receivedChars = []
-#        try :
-#            chars = self.socket.recv(4096)
-#        except :
-#            self.log.info("Impossible to read from the network socket")
         chars = []    
         try :
-            ready = select.select([self.socket], [], [], timeout)
-            if ready[0]:
-                chars = self.socket.recv(4096)
+            if timeout > 0 :
+                ready = select.select([self.socket], [], [], timeout)
+                if ready[0]:
+                    chars = self.socket.recv(4096)
+            else :
+                ready = select.select([self.socket], [], [])
+                self.log.info("ready = " + str(ready[0]))
+                if ready[0]:
+                    chars = self.socket.recv(4096)
         except :
             self.log.info("Impossible to read from the network socket")
+            return None
             
             
         self.log.info("Read finished")
@@ -106,20 +107,18 @@ class NetworkClient(AbstractActor):
             return result
         result.fromstring(chars)
         
-#        self.inputMessages.append(receivedData)
-        
         self.log.info("Received : " + str(result))
         return result
         
     def write(self, message):
+        self.log.info("Write down !")  
         self.outputMessages.append(message)
         try :
             self.outputFile.write(message.tostring())
             self.outputFile.flush()
         except :
             self.log.warn("An error occured while trying to write on the communication channel")
-            
-        self.log.info("Write down !")        
+    
         
     def getInputMessages(self):
         return self.inputMessages

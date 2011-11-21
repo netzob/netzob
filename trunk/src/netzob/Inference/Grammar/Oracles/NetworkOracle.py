@@ -17,6 +17,7 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
+import time
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -28,29 +29,40 @@ import logging
 from AbstractOracle import AbstractOracle
 from ....Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from ....Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
+from ....Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+import threading
 
 #+---------------------------------------------- 
 #| NetworkOracle :
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.3
 #+---------------------------------------------- 
-class NetworkOracle(AbstractOracle):
+class NetworkOracle(threading.Thread):
      
     def __init__(self, communicationChannel):
-        AbstractOracle.__init__(self, "Network")
+        threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')       
         self.communicationChannel = communicationChannel
         
-    def start(self, mmstd): 
+    def setMMSTD(self, mmstd):
+        self.mmstd = mmstd
+        
+    def run(self): 
         self.log.info("Start the network oracle based on given MMSTD")
         
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer(self.communicationChannel, mmstd.getDictionary())
+        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getDictionary())
         
         # And we create an MMSTD visitor for this
-        self.oracle = MMSTDVisitor("NetworkOracle", mmstd, True, abstractionLayer) 
-        self.oracle.run()     
+        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, True, abstractionLayer) 
+        self.oracle.start()  
+        
+        while (self.oracle.isAlive()) :
+            time.sleep(0.01)
+            
+        self.log.warn("The network ORACLE has finished")
+        
         
         
     def stop(self):
@@ -62,6 +74,9 @@ class NetworkOracle(AbstractOracle):
         
         
     def getResults(self):
+        symbols = []
         # Retrieve all the IO from the abstraction layer
         abstractionLayer = self.oracle.getAbstractionLayer()        
-        return abstractionLayer.getGeneratedInputAndOutputsSymbols()
+        for io in abstractionLayer.getGeneratedInputAndOutputsSymbols() :
+            symbols.append(DictionarySymbol(io))
+        return symbols

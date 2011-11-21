@@ -21,6 +21,7 @@ import SocketServer
 import threading
 import time
 import uuid
+import select
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -111,16 +112,27 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # And we create an MMSTD visitor for this
         self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer) 
         
+        self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
+        self.subVisitor.start()
+        
         # save it
         self.server.addGeneratedInstance(self.subVisitor)
         
-        self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
-        self.subVisitor.run()
+        while (self.subVisitor.isAlive()) :
+            self.log.warn("==========================================================================================")
+            ready = select.select([self.request], [], [], 1)
+            if ready[0] :
+                self.log.info("THE SOCKET IS READY")
+            else :
+                self.log.info("THE SOCKET IS NOT READY")
+            
+            time.sleep(0.1)
         
-    def finish(self):
-        self.log.info("Closing the NetworkServer since the client is disconnected")
-        SocketServer.BaseRequestHandler.finish(self)
-        self.subVisitor.stop()
+        self.log.warn("End of the execution of the TCP Connection handler")
+#    def finish(self):
+#        self.log.info("Closing the NetworkServer since the client is disconnected")
+#        SocketServer.BaseRequestHandler.finish(self)
+#        self.subVisitor.stop()
         
             
     
@@ -167,8 +179,9 @@ class NetworkServer(AbstractActor):
             self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
             self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
         else :
-            self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
+            self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
+            
             
             
         self.server.setDictionary(dictionary)
