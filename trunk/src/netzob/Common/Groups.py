@@ -102,16 +102,23 @@ class Groups(object):
             aType = "binary"
 
         for group in self.groups :
-            refMinElts = 999999999
-            for message in group.getMessages():
-                tmpTab = message.getStringData().split(delimiter)
-                if len(tmpTab) < refMinElts:
-                    refMinElts = len(tmpTab)
-
             columns = []
-            for i in range(refMinElts):
+            i = -1
+            doBreak = False
+            while True:
+                i += 1
+                maxSize = 0
+                minSize = 999999
+                for message in group.getMessages():
+                    try: # A carambar to the one who finds this awsome code !
+                        maxSize = max(maxSize, len(message.getStringData().split(delimiter)[i]))
+                        minSize = min(minSize, len(message.getStringData().split(delimiter)[i]))
+                    except IndexError:
+                        doBreak = True
+                if doBreak == True:
+                    break
                 columns.append({'name' : "Name",
-                                'regex' : "(.{,})",
+                                'regex' : "(.{"+str(minSize)+","+str(maxSize)+"})",
                                 'selectedType' : aType,
                                 'tabulation' : 0,
                                 'description' : "",
@@ -124,6 +131,8 @@ class Groups(object):
                                 'description' : "",
                                 'color' : ""
                                 })
+            del columns[-1]
+            del columns[-1]
             columns.append({'name' : "Name",
                             'regex' : "(.{,})",
                             'selectedType' : aType,
@@ -132,8 +141,6 @@ class Groups(object):
                             'color' : ""
                             })
             group.setColumns(columns)
-            print refMinElts
-            print len(columns)
             print columns
 
     #+---------------------------------------------- 

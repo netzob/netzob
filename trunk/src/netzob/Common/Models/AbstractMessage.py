@@ -117,6 +117,8 @@ class AbstractMessage():
         m = compiledRegex.match(data)
         if m == None:
             self.log.warning("The regex of the group doesn't match one of its message")
+            self.log.warning("Regex: " + "".join(regex) )
+            self.log.warning("Message: " + data )
             return [ self.getStringData() ]
         res = []
         iCol = 0
