@@ -110,7 +110,7 @@ class Groups(object):
                 maxSize = 0
                 minSize = 999999
                 for message in group.getMessages():
-                    try: # A carambar to the one who finds this awsome code !
+                    try: # A carambar to the one who finds this awsome try/except code !
                         maxSize = max(maxSize, len(message.getStringData().split(delimiter)[i]))
                         minSize = min(minSize, len(message.getStringData().split(delimiter)[i]))
                     except IndexError:
@@ -141,7 +141,6 @@ class Groups(object):
                             'color' : ""
                             })
             group.setColumns(columns)
-            print columns
 
     #+---------------------------------------------- 
     #| slickRegexes:
