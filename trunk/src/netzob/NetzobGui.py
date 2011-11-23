@@ -89,6 +89,9 @@ class NetzobGui():
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
+        
+        window.set_icon_from_file(("%s/logo.png" %
+                                   ResourcesConfiguration.ResourcesConfiguration.getStaticResources()))
         window.connect("delete_event", self.evnmtDelete)
         window.connect("destroy", self.destroy)
         
