@@ -26,6 +26,8 @@ import logging
 #| Local application imports
 #+----------------------------------------------
 from .. import ConfigurationParser
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunicationLayer
 
 #+---------------------------------------------- 
 #| Configuration of the logger
@@ -69,6 +71,26 @@ class MMSTD(object):
     def getDictionary(self):
         return self.dictionary
     
+    #+---------------------------------------------------------------------------+
+    #| getOutputTrace :
+    #|     Returns the generated symbols and the end state if we simulate the given symbols as inputs
+    #| @return the generated traces (a list of symbols) by the MMSTD and the end state
+    #+---------------------------------------------------------------------------+
+    def getOutputTrace(self, state, symbols):
+        communicationLayer = SimpleCommunicationLayer(symbols, [], self.dictionary)        
+        abstractionLayer = AbstractionLayer(communicationLayer, self.dictionary)
+        for i in range(0, len(symbols)) :
+            state = state.executeAsClient(abstractionLayer)
+        outputMessages = abstractionLayer.getOutputMessages()
+        generatedSymbols = []
+        for (sendingTime, strMessage, symbol) in outputMessages :
+            generatedSymbols.append(symbol)
+            
+        return (generatedSymbols, state)
+        
+        
+        
+        
     
     #+---------------------------------------------------------------------------+
     #| getAllStates :

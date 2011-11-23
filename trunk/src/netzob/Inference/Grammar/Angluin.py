@@ -310,8 +310,11 @@ class Angluin(LearningAlgorithm):
                             idTransition = idTransition + 1
                             self.log.info("We create a transition from " + str(state.getName()) + " input : " + str(symbol) + " output : " + str(value) + " outputstate " + str(outputState))
 
-        mmstd = MMSTD(startState, self.dictionary)   
-        self.log.info(mmstd.getDotCode())       
+
+        if startState != None :
+            self.log.info("An infered automata has been computed.")
+            self.inferedAutomata = MMSTD(startState, self.dictionary) 
+            
                 
             
             

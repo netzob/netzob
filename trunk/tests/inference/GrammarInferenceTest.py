@@ -33,17 +33,91 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 from netzob.Inference.Grammar.GrammarInferer import GrammarInferer
+from netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle import WMethodNetworkEquivalenceOracle
 from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
 from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
 from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
+from netzob.Common.MMSTD.States.impl.NormalState import NormalState
+from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Common.MMSTD.MMSTD import MMSTD
 
 class GrammarInferenceTest(unittest.TestCase):
     
     def setUp(self):
         pass
+    
+    def test_WMethod(self):
+        
+        # First we create the server and starts it
+        actorGrammar = "example_learning.xml"
+        actorIP = "localhost"
+        actorPort = random.randint(9000, 9999)
+        actorNetworkProtocol = "TCP"
+        
+        serverName = "Server"
+        
+        
+        # Create a network server
+        grammar_directory = ConfigurationParser().get("automata", "path") 
+        xmlFile = os.path.join(grammar_directory, actorGrammar)
+        tree = ElementTree.ElementTree()
+        tree.parse(xmlFile)
+        # Load the automata based on its XML definition
+        serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())
+        dictionary = serverAutomata.getDictionary()
+            
+        # Create the network layer
+        serverCommunicationChannel = NetworkServer(actorIP, actorNetworkProtocol, actorPort)
+        
+        # Create the abstraction layer for this connection
+        serverAbstractionLayer = AbstractionLayer(serverCommunicationChannel, serverAutomata.getDictionary())
+        
+        # And we create an MMSTD visitor for this
+        server = MMSTDVisitor(serverName, serverAutomata, False, serverAbstractionLayer) 
+        server.run()     
+        
+        logging.info("Starting the server")
+        time.sleep(1)
+        
+        # Lets create a X-METHOD equivalence network oracle
+        oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
+        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, 3)
+        
+        # We create a temporary MMSTD (to simulate the research of a counter-exemple)
+        state1 = NormalState(0, "q1")
+        state2 = NormalState(1, "q2")
+        
+        symbola = DictionarySymbol(dictionary.getEntry(1))
+        symbolb = DictionarySymbol(dictionary.getEntry(2))
+        symbol0 = DictionarySymbol(dictionary.getEntry(3))
+        symbol1 = DictionarySymbol(dictionary.getEntry(4))
+        
+        transition0 = SemiStochasticTransition(0, "transition-0", state1, state2, symbola)
+        transition0.addOutputSymbol(symbol0, 100, 500)
+        state1.registerTransition(transition0)
+        
+        transition1 = SemiStochasticTransition(1, "transition-1", state1, state2, symbolb)
+        transition1.addOutputSymbol(symbol0, 100, 500)
+        state1.registerTransition(transition1)
+        
+        transition2 = SemiStochasticTransition(0, "transition-2", state2, state2, symbola)
+        transition2.addOutputSymbol(symbol1, 100, 500)
+        state2.registerTransition(transition2)
+        
+        transition3 = SemiStochasticTransition(1, "transition-3", state2, state2, symbolb)
+        transition3.addOutputSymbol(symbol1, 100, 500)
+        state2.registerTransition(transition3)
+    
+        mmstd = MMSTD(state1, dictionary)
+        
+        logging.info(mmstd.getDotCode())
+        equivalenceOracle.findCounterExample(mmstd)
+        
+        server.stop()
     
     def test_grammarInference(self):
         
@@ -83,8 +157,8 @@ class GrammarInferenceTest(unittest.TestCase):
         
         # Lets create a simple network oracle
         oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
-        
-        equivalenceOracle = None
+        # Lets create an equivalence oracle
+        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, 3)
         
         inferer = GrammarInferer(dictionary, oracleCommunicationChannel, equivalenceOracle)
         inferer.infer()
