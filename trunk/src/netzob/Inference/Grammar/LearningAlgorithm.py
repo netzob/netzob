@@ -20,6 +20,7 @@ import logging
 import time
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -39,11 +40,11 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 #+---------------------------------------------- 
 class LearningAlgorithm(object):
      
-    def __init__(self, dictionary, oracle):
+    def __init__(self, dictionary, communicationChannel):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
-        self.oracle = oracle
+        self.communicationChannel = communicationChannel
         self.inferedAutomata = None
     
     def learn(self):
@@ -57,24 +58,28 @@ class LearningAlgorithm(object):
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary)
         
+        # create an oracle for this MMSTD
+        oracle = NetworkOracle(self.communicationChannel)
+        
         # start the oracle with the MMSTD
-        self.oracle.setMMSTD(mmstd)
-        self.oracle.start()
+        oracle.setMMSTD(mmstd)
+        oracle.start()
         
 #        # wait it has finished
         self.log.info("Waiting for the oracle to have finish")
-        while self.oracle.isAlive() :
+        while oracle.isAlive() :
             time.sleep(0.01)
         self.log.info("The oracle has finished !")
         
         # stop the oracle and retrieve the query
-        self.oracle.stop()
+        oracle.stop()
+        
 #        exit()
-        resultQuery = MembershipQuery(self.oracle.getResults())
+        resultQuery = oracle.getResults()
         
         self.log.info("The following query has been computed : " + str(resultQuery))
-        
-        return resultQuery
+        # return only the last result
+        return resultQuery[len(resultQuery) - 1]
     
     def getInferedAutomata(self):
         return self.inferedAutomata

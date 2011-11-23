@@ -60,12 +60,21 @@ class NormalState(AbstractState):
     
     #+-----------------------------------------------------------------------+
     #| registerTransition
-    #|     Associate a new transition ot the current state
+    #|     Associate a new transition to the current state
     #| @param transition the transition to associate
     #+-----------------------------------------------------------------------+
     def registerTransition(self, transition):
-        self.transitions.append(transition)
-    
+        if transition.getType() == "SemiStochastic" :
+            inputSymbol = transition.getInputSymbol()
+            found = False
+            for t in self.transitions :
+                if t.getInputSymbol() == inputSymbol :
+                    found = True
+            if not found :
+                self.transitions.append(transition)
+        else :
+            self.transitions.append(transition)
+        
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Execute the state as a client

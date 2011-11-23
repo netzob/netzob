@@ -17,6 +17,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging.config
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -48,8 +49,8 @@ class EmptySymbol(AbstractSymbol):
             self.log.info("The symbols are not equivalents")
             return False
     
-    def getValueToSend(self):
-        return ""
+    def getValueToSend(self, dictionary):
+        return (bitarray(endian='big'), "")
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

@@ -76,17 +76,17 @@ class GrammarInferenceTest(unittest.TestCase):
         server.run()     
         
         logging.info("Starting the server")
-        time.sleep(3)
+        time.sleep(1)
         
         
         
         
         # Lets create a simple network oracle
         oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
-        oracle = NetworkOracle(oracleCommunicationChannel)
+        
         equivalenceOracle = None
         
-        inferer = GrammarInferer(dictionary, oracle, equivalenceOracle)
+        inferer = GrammarInferer(dictionary, oracleCommunicationChannel, equivalenceOracle)
         inferer.infer()
 
         server.stop()

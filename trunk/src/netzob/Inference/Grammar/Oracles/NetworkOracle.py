@@ -44,6 +44,7 @@ class NetworkOracle(threading.Thread):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')       
         self.communicationChannel = communicationChannel
+    
         
     def setMMSTD(self, mmstd):
         self.mmstd = mmstd

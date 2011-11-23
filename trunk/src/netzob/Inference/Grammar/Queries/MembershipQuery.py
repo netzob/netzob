@@ -45,7 +45,19 @@ class MembershipQuery(object):
         self.log = logging.getLogger('netzob.Inference.Grammar.Queries.MembershipQuery.py')
         self.symbols = symbols  
 
+    def addSymbol(self, symbol):
+        self.symbols.append(symbol)
+        
+    def getSymbols(self):
+        return self.symbols
 
+    def getSymbolsWhichAreNotEmpty(self):
+        result = []
+        for s in self.symbols :
+            if s.getType() != "EmptySymbol" :
+                result.append(s)
+        return result
+     
     def toMMSTD(self, dictionary):
         # We create an MMSTD which will submit the following symbols
         
@@ -76,6 +88,37 @@ class MembershipQuery(object):
         mmstd = MMSTD(rootState, dictionary)   
         self.log.info(mmstd.getDotCode()) 
         return mmstd
+   
+   
+    def getMQSuffixedWithMQ(self, mq):
+        result = MembershipQuery([])
+        for s in self.getSymbols() :
+            result.addSymbol(s)
+        
+        for symbol in mq.getSymbols() :
+            result.addSymbol(symbol)
+        return result
+                
+    def __cmp__(self, other):
+        # Do not consider the EmptySymbols when comparing
+        
+        if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())) :
+            
+            for symbol in self.getSymbolsWhichAreNotEmpty() :
+                idself = symbol.getID()
+                found = False
+                for otherSymbol in other.getSymbolsWhichAreNotEmpty() :
+                    if otherSymbol.getID() == idself :
+                        found = True
+                if not found :
+                    return 1
+            return 0
+                
+            
+        elif (len(self.getSymbolsWhichAreNotEmpty()) > len(other.getSymbolsWhichAreNotEmpty())) :
+            return 1
+        else :
+            return -1
         
         
     def __str__(self, *args, **kwargs):

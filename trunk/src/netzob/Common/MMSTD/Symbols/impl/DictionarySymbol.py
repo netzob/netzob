@@ -68,3 +68,9 @@ class DictionarySymbol(AbstractSymbol):
     
     def __str__(self):
         return str(self.entry)
+    
+    def __cmp__(self, other):
+        if self.getID() == other.getID() :
+            return 0
+        else :
+            return 1
