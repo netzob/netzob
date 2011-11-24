@@ -30,6 +30,7 @@ from AbstractEquivalenceOracle import AbstractEquivalenceOracle
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 
 
@@ -63,6 +64,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
     
     def findCounterExample(self, mmstd): 
         self.log.info("Find a counterexample which invalids the given MMSTD")
+        
+        counterExamples = []
+        
         
         inputDictionary = []
         for entry in mmstd.dictionary.getEntries()[:2] :
@@ -133,8 +137,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 
                 i = i + 1
             self.log.info("FOUND : the following distinguish them : " + str(distinguishableZ) + " last which doesn't is " + str(lastIndiguishableZ))        
-    
+            W.append(distinguishableZ)
+        self.log.info("=================================")
         self.log.info("W = " + str(W))
+        self.log.info("=================================")
         
         # Execute STEP 3 : We compute P
         # init P = {E, ...}
@@ -160,28 +166,87 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     openMQ.append(z)
             statesSeen.extend(tmpstatesSeen)
         
-        self.log.info("POSSIBLES : CLOSE : " + str(closeMQ))
-        
         P.extend(closeMQ)    
-        for m in P :
-            self.log.info("=> " + str(m))
         
+        # STEP 4 : We compute Z
+        # it follows the formula Z= W U (X^1.W) U .... U (X^(m-1-n).W) U (W^(m-n).W)
+        self.log.info("Computing Z :")
+        Z = []
+        # First we append W in Z
+        for w in W :
+            Z.append(w)
+        
+        v = self.m - len(states)
+        if v < 0 :
+            v = 0
+        
+        
+        mqInputs = []
+        for input in inputDictionary :
+            mqInputs.append(MembershipQuery([input]))
+        
+        X = dict()
+        X[0] = W
+        
+        for i in range(1, v + 1) :
+            self.log.info("Computing X^" + str(i) + " :")
+            self.log.info("MQ INputs : " + str(len(mqInputs)))
+            self.log.info("W : " + str(len(W)))
+            X[i] = []
+            previousX = X[i - 1]
+            self.log.info(previousX)
+            for x in previousX :
+                X[i].extend(x.multiply(mqInputs))
+            for w in W :
+                Z.extend(X[i])    
             
+        for z in Z :
+            self.log.info("z = " + str(z))
         
         
-        
-        
+        # STEP 5 : We have the list of so desired test cases T = P.Z
+        T = []
+        for p in P :
+            T.extend(p.multiply(Z))
                 
-                    
+        self.log.info("Tests cases are : ")
+        for t in T :
+            self.log.info("=> " + str(t))
             
             
+        testsResults = dict()
+        # We compute the response to the different tests over our learning model and compare them with the real one    
+        for test in T :
+            # Compute our results
+            (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
+            # Compute real results 
+            testedMmstd = test.toMMSTD(mmstd.getDictionary())
+            oracle = NetworkOracle(self.communicationChannel)
+            oracle.setMMSTD(testedMmstd)
+            oracle.start()
+            while oracle.isAlive() :
+                time.sleep(0.01)
+            oracle.stop()
+            resultQuery = oracle.getGeneratedOutputSymbols()
+                
+            mqOur = MembershipQuery(traceTest)
+            mqTheir = MembershipQuery(resultQuery)
             
-            
-            
+            if not mqOur.isStrictlyEqual(mqTheir) :
+                counterExamples.append(test)
+             
+            testsResults[test] = (traceTest, resultQuery)
+        
+        for test in T :            
+            self.log.info("TEST : " + str(test))
+            self.log.info("OUR : " + str(MembershipQuery(testsResults[test][0])))
+            self.log.info("THEIR : " + str(MembershipQuery(testsResults[test][1])))
+        
+        self.log.info("List of counter examples found :")
+        for counter in counterExamples :
+            self.log.info(str(counter))
         
         
         
         
-        
-        
-        return None
+        return counterExamples

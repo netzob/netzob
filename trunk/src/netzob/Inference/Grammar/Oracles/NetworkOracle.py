@@ -73,6 +73,12 @@ class NetworkOracle(threading.Thread):
     def hasFinish(self):
         return not self.oracle.isActive()
         
+    def getGeneratedOutputSymbols(self):
+        symbols = []
+        abstractionLayer = self.oracle.getAbstractionLayer()      
+        for o in abstractionLayer.getGeneratedOutputSymbols() :
+            symbols.append(DictionarySymbol(o))
+        return symbols
         
     def getResults(self):
         symbols = []

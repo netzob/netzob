@@ -89,6 +89,14 @@ class MembershipQuery(object):
         self.log.info(mmstd.getDotCode()) 
         return mmstd
    
+    def multiply(self, mqs):
+        result = []
+        for mq in mqs :
+            result.append(self.getMQSuffixedWithMQ(mq))
+        return result
+        
+        
+        
    
     def getMQSuffixedWithMQ(self, mq):
         result = MembershipQuery([])
@@ -98,6 +106,25 @@ class MembershipQuery(object):
         for symbol in mq.getSymbols() :
             result.addSymbol(symbol)
         return result
+    
+    def isStrictlyEqual(self, other):
+        if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())) :
+            symbols = self.getSymbolsWhichAreNotEmpty()
+            symbols2 = other.getSymbolsWhichAreNotEmpty()
+            
+            nbSymbol = len(symbols)
+            
+            for i in range(0, nbSymbol) :
+                if symbols[i].getID() != symbols2[i].getID() :
+                    return False
+            return True
+        else :
+            return False
+            
+                           
+            
+            
+            
                 
     def __cmp__(self, other):
         # Do not consider the EmptySymbols when comparing

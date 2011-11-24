@@ -51,6 +51,7 @@ class AbstractionLayer():
         self.inputMessages = []
         self.outputMessages = []
         self.manipulatedSymbols = []
+        self.outputSymbols = []
         self.connected = False
         
     def isConnected(self):
@@ -132,6 +133,7 @@ class AbstractionLayer():
             # We store the received messages its time and its abstract representation
             self.inputMessages.append([receptionTime, receivedData, symbol])
             self.manipulatedSymbols.append(symbol)
+            self.outputSymbols.append(symbol)
             return (symbol, receivedData)
         else :
             if len(self.manipulatedSymbols) > 5 :
@@ -204,6 +206,8 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+  
     def getGeneratedInputAndOutputsSymbols(self):
         return self.manipulatedSymbols
+    def getGeneratedOutputSymbols(self):
+        return self.outputSymbols
         
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
