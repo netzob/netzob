@@ -39,6 +39,9 @@ from netzob import NetzobResources
 class ResourcesConfiguration(object):
     
     LOCALFILE = ".netzob"
+    CONFFILE = "global.conf"
+    DELIMITOR_LOCALFILE = "="
+    VAR_WORKSPACE_LOCALFILE = "workspace"
     
     @staticmethod
     #+---------------------------------------------- 
@@ -70,7 +73,7 @@ class ResourcesConfiguration(object):
                 localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
                 # create or update the content
                 localFile = open(localFilePath, 'w')
-                localFile.write("workspace={0}".format(os.path.abspath(userPath)))
+                localFile.write(ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(os.path.abspath(userPath)))
                 localFile.close()
                 return True
         return True
@@ -94,6 +97,7 @@ class ResourcesConfiguration(object):
     
     @staticmethod
     def createWorkspace(path):
+        logging.info("Hosting workspace on " + str(path))
         # we do nothing if a global config file already exists
         if os.path.isfile(os.path.join(path, "global.conf")) :
             return 
@@ -138,13 +142,41 @@ class ResourcesConfiguration(object):
         # the user has specified its home directory so we store it in 
         # a dedicated local file
         localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        workspacePath = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
+        
+        # Workspace not declared
+        if workspacePath == None :
+            return None
+        # is the workspace a directory
+        if not os.path.isdir(workspacePath) :
+            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not valid : its not a directory.")
+            return None
+        # is it readable
+        if not os.access(workspacePath, os.R_OK) :
+            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not readable.")
+            return None
+        # is it writable
+        if not os.access(workspacePath, os.W_OK) :
+            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not writable.")
+            return None
+        
+        return workspacePath
+    
+    @staticmethod
+    def extractWorkspaceDefinitionFromFile(localFilePath):
+        workspacePath = None
         if os.path.isfile(localFilePath) :
             localFile = open(localFilePath, 'r')
-            userDir = localFile.readline().split("=")[1]  # arf... i know ! A chocolate for finding it :)
+            
+            for line in localFile :
+                strippedLine = line.rstrip('\n\r')
+                indexDelimitor = strippedLine.find(ResourcesConfiguration.DELIMITOR_LOCALFILE)
+                if indexDelimitor > 0 and strippedLine[:indexDelimitor] == ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE and len(strippedLine[indexDelimitor + 1:]) > 0 :
+                    workspacePath = strippedLine[indexDelimitor + 1:]
+                    break
             localFile.close()
-            return userDir
-        return None            
-        
+            return workspacePath
+        return workspacePath      
     @staticmethod        
     def getStaticResources():
         return NetzobResources.STATIC_DIR

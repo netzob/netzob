@@ -42,9 +42,6 @@ class LoggingConfiguration(object):
     #| initializeLogging :
     #+---------------------------------------------- 
     def initializeLogging():
-        
-        
-        
         # First we extract the normal logging config file
         loggingFilePath = ConfigurationParser().get("logging", "path")
         if (loggingFilePath != "") :

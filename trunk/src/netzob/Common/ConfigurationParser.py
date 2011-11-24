@@ -42,11 +42,11 @@ class ConfigurationParser(object):
     #| Constructor :
     #+---------------------------------------------- 
     def __init__(self):
-        self.configurationFilePath = os.path.join(ResourcesConfiguration.getWorkspace(), "global.conf")
+        self.configurationFilePath = os.path.join(ResourcesConfiguration.getWorkspace(), ResourcesConfiguration.CONFFILE)
         
         # If the config file exists we parse it
         # if not we create an in-memory default one
-        if self.configurationFilePath == "" or not os.path.isfile(self.configurationFilePath) :
+        if self.configurationFilePath == None or not os.path.isfile(self.configurationFilePath) :
             # create default in memory file
             self.config = ConfigurationParser.createDefault()
             self.config.write(open(self.configurationFilePath, "w"))
