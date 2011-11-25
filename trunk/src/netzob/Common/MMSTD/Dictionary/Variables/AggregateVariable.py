@@ -30,12 +30,6 @@ from .... import ConfigurationParser
 from ..Variable import Variable
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| AggregrateVariable :
 #|     Definition of an aggregation of variables defined in a dictionary
 #| @author     : {gbt,fgy}@amossys.fr

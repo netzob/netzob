@@ -49,7 +49,10 @@ class MembershipQuery(object):
         self.symbols.append(symbol)
         
     def getSymbols(self):
-        return self.symbols
+        if len(self.symbols) <= 1 :
+            return self.symbols
+        else :
+            return self.getSymbolsWhichAreNotEmpty()
 
     def getSymbolsWhichAreNotEmpty(self):
         result = []
@@ -70,7 +73,6 @@ class MembershipQuery(object):
         previousState = initialState
         idState = 2
         for symbol in self.symbols :
-            self.log.info("=>" + str(symbol))
             # we create the current state
             currentState = NormalState(idState, "State " + str(idState))
             # we create a normal transition between it and the previous state
@@ -86,7 +88,6 @@ class MembershipQuery(object):
         currentState.registerTransition(closingTransition)
         
         mmstd = MMSTD(rootState, dictionary)   
-        self.log.info(mmstd.getDotCode()) 
         return mmstd
    
     def multiply(self, mqs):
@@ -96,7 +97,12 @@ class MembershipQuery(object):
         return result
         
         
-        
+    def getNotEmptyPrefixes(self):
+        result = []
+        for i in range(0, len(self.getSymbolsWhichAreNotEmpty())) :
+            result.append(MembershipQuery(self.getSymbolsWhichAreNotEmpty()[:i + 1]))
+        return result    
+            
    
     def getMQSuffixedWithMQ(self, mq):
         result = MembershipQuery([])
@@ -127,21 +133,10 @@ class MembershipQuery(object):
             
                 
     def __cmp__(self, other):
-        # Do not consider the EmptySymbols when comparing
-        
-        if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())) :
-            
-            for symbol in self.getSymbolsWhichAreNotEmpty() :
-                idself = symbol.getID()
-                found = False
-                for otherSymbol in other.getSymbolsWhichAreNotEmpty() :
-                    if otherSymbol.getID() == idself :
-                        found = True
-                if not found :
-                    return 1
+        if other == None :
+            return -1
+        if self.isStrictlyEqual(other) :
             return 0
-                
-            
         elif (len(self.getSymbolsWhichAreNotEmpty()) > len(other.getSymbolsWhichAreNotEmpty())) :
             return 1
         else :
@@ -151,7 +146,7 @@ class MembershipQuery(object):
     def __str__(self, *args, **kwargs):
         
         result = "MQ ("
-        for symbol in self.symbols :
+        for symbol in self.getSymbols() :
             result = result + str(symbol) + ", "
         
         return result + ")"

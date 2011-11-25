@@ -130,7 +130,7 @@ class SemiStochasticTransition(AbstractTransition):
         finish = False
         while (not finish) :
             # Wait for a message
-            self.log.info("Start waiting for something")
+            self.log.debug("Start waiting for something")
             (receivedSymbol, message) = abstractionLayer.receiveSymbol()
             self.log.info("The MASTER received " + str(receivedSymbol))
             if (not (isinstance(receivedSymbol, EmptySymbol))):

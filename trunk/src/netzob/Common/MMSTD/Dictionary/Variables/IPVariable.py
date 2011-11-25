@@ -71,7 +71,7 @@ class IPVariable(Variable):
         
         
     def learn(self, val, indice, isForced, dictionary):
-        self.log.info("Received : " + str(val))
+        self.log.debug("Received : " + str(val))
         
         if self.strVal == None or isForced :
             tmp = val[indice:]
@@ -89,7 +89,7 @@ class IPVariable(Variable):
                 
             if i > 0 :
                 self.strVal = res
-                self.log.info("value = " + str(self.strVal) + ", isForced = " + str(isForced))
+                self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
                 self.binVal = self.ascii2bin(self.strVal)
                 
                 return indice + i

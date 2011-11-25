@@ -65,7 +65,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
     def findCounterExample(self, mmstd): 
         self.log.info("Find a counterexample which invalids the given MMSTD")
         
-        counterExamples = []
         
         
         inputDictionary = []
@@ -233,20 +232,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             mqTheir = MembershipQuery(resultQuery)
             
             if not mqOur.isStrictlyEqual(mqTheir) :
-                counterExamples.append(test)
-             
-            testsResults[test] = (traceTest, resultQuery)
+                self.log.info("TEST : " + str(test))
+                self.log.info("OUR : " + str(mqOur))
+                self.log.info("THEIR : " + str(mqTheir))
+                return test
+            
         
-        for test in T :            
-            self.log.info("TEST : " + str(test))
-            self.log.info("OUR : " + str(MembershipQuery(testsResults[test][0])))
-            self.log.info("THEIR : " + str(MembershipQuery(testsResults[test][1])))
-        
-        self.log.info("List of counter examples found :")
-        for counter in counterExamples :
-            self.log.info(str(counter))
-        
-        
-        
-        
-        return counterExamples
+        return None

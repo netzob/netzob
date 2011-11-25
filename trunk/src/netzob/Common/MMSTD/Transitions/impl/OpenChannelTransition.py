@@ -66,12 +66,12 @@ class OpenChannelTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
          
-        self.log.info("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
+        self.log.debug("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
          
         if abstractionLayer.getCommunicationChannel().isServer() :
             # start a specific listening network thread
             self.activate()
-            self.log.info("We instanciate a new server and close the current MMSTD")     
+            self.log.debug("We instanciate a new server and close the current MMSTD")     
             abstractionLayer.openServer(abstractionLayer.getDictionary(), self.outputState, False)
             self.deactivate()
             return None
@@ -120,7 +120,7 @@ class OpenChannelTransition(AbstractTransition):
             time.sleep(int(self.connectionTime) / 1000)
             abstractionLayer.connect()
             if abstractionLayer.isConnected() :
-                self.log.info("Connected !")
+                self.log.debug("Connected !")
             else :
                 self.log.warn("Error, the connection attempt failed")
             i = i - 1

@@ -119,13 +119,7 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         self.server.addGeneratedInstance(self.subVisitor)
         
         while (self.subVisitor.isAlive()) :
-            self.log.warn("==========================================================================================")
             ready = select.select([self.request], [], [], 1)
-            if ready[0] :
-                self.log.info("THE SOCKET IS READY")
-            else :
-                self.log.info("THE SOCKET IS NOT READY")
-            
             time.sleep(0.1)
         
         self.log.warn("End of the execution of the TCP Connection handler")
@@ -208,7 +202,7 @@ class NetworkServer(AbstractActor):
         return self.server.getGeneratedInstances()
     
     def stop(self):
-        self.log.info("Stopping the thread of the network server")
+        self.log.debug("Stopping the thread of the network server")
         AbstractActor.stop(self)
     
     #+-----------------------------------------------------------------------+

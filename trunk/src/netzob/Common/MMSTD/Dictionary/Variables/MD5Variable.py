@@ -64,7 +64,7 @@ class MD5Variable(Variable):
         (binToHash, strToHash) = var.getValue(negative, dictionary)
         
         toHash = TypeConvertor.bin2ascii(binToHash)
-        self.log.info("Will hash the followings : " + toHash)
+        self.log.debug("Will hash the followings : " + toHash)
         
         md5core = hashlib.md5(self.init)
         md5core.update(toHash)
@@ -72,13 +72,13 @@ class MD5Variable(Variable):
         md5Hex = md5core.digest()
         self.binVal = TypeConvertor.hex2bin(md5Hex)
         self.strVal = TypeConvertor.bin2strhex(self.binVal)
-        self.log.info("Generated MD5 = " + self.strVal)
+        self.log.debug("Generated MD5 = " + self.strVal)
     
     def learn(self, val, indice, isForced, dictionary):
         
         if self.strVal == None or isForced :
             tmp = val[indice:]
-            self.log.info("Taille MD5 " + str(len(tmp)))
+            self.log.debug("Taille MD5 " + str(len(tmp)))
             # MD5 size = 16 bytes = 16*8 = 128
             if (len(tmp) >= 128) :
                 binVal = tmp[0:128]
@@ -87,20 +87,20 @@ class MD5Variable(Variable):
                 (binToHash, strToHash) = var.getValue(False, dictionary)
                 
                 toHash = TypeConvertor.bin2ascii(binToHash)
-                self.log.info("Will hash the followings : " + toHash)
+                self.log.debug("Will hash the followings : " + toHash)
                 
                 md5core = hashlib.md5(self.init)
                 md5core.update(toHash)
                 
                 md5Hex = md5core.digest()
                 
-                self.log.info("We should received an MD5 = " + str(TypeConvertor.hex2bin(md5Hex)))
-                self.log.info("We have received " + str(binVal))
+                self.log.debug("We should received an MD5 = " + str(TypeConvertor.hex2bin(md5Hex)))
+                self.log.debug("We have received " + str(binVal))
                 
                 if (TypeConvertor.hex2bin(md5Hex) == binVal) :
                     self.binVal = TypeConvertor.hex2bin(md5Hex)
                     self.strVal = TypeConvertor.bin2strhex(self.binVal)
-                    self.log.info("Perfect, there are equals we return  " + str(len(binVal)))
+                    self.log.debug("Perfect, there are equals we return  " + str(len(binVal)))
                     return indice + len(binVal)
                 else :
                     return -1
@@ -109,7 +109,7 @@ class MD5Variable(Variable):
                 return -1
             
         
-        self.log.info("value = " + str(self.strVal) + ", isForced = " + str(isForced))
+        self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
         return -1
    
    

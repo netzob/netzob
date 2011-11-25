@@ -29,11 +29,6 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from .... import ConfigurationParser
 from ..AbstractState import AbstractState
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| NormalState :
@@ -82,7 +77,7 @@ class NormalState(AbstractState):
     #| @return the next state after execution of current one
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
-        self.log.info("Execute state " + self.name + " as a client")
+        self.log.debug("Execute state " + self.name + " as a client")
         
         # if no transition exists we quit
         if len(self.getTransitions()) == 0 :
@@ -108,11 +103,11 @@ class NormalState(AbstractState):
         
         (receivedSymbol, message) = tupleReception
         if not receivedSymbol == None :
-            self.log.info("The following symbol has been received : " + str(receivedSymbol))
+            self.log.debug("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one
             for transition in self.getTransitions() :
                 if transition.isValid(receivedSymbol) :
-                    self.log.info("Received data '" + str(message) + "' is valid for transition " + str(transition.getID()))
+                    self.log.debug("Received data '" + str(message) + "' is valid for transition " + str(transition.getID()))
                     newState = transition.executeAsClient(abstractionLayer)
                     self.deactivate()
                     return newState
@@ -128,7 +123,7 @@ class NormalState(AbstractState):
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):
         self.activate()
-        self.log.info("Execute state " + self.name + " as a master")
+        self.log.debug("Execute state " + self.name + " as a master")
         
         # Verify we can do something now
         if (len(self.getTransitions()) == 0) :
@@ -138,7 +133,7 @@ class NormalState(AbstractState):
         # the normal reaction time
         idRandom = random.randint(0, len(self.getTransitions()) - 1)
         pickedTransition = self.getTransitions()[idRandom]
-        self.log.info("Randomly picked the transition " + pickedTransition.getName())
+        self.log.debug("Randomly picked the transition " + pickedTransition.getName())
         
         newState = pickedTransition.executeAsMaster(abstractionLayer)
         self.deactivate()

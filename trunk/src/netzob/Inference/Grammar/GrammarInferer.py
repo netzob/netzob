@@ -17,6 +17,7 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
+import os
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -26,6 +27,8 @@ import logging
 #| Local application imports
 #+----------------------------------------------
 from Angluin import Angluin
+from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 
 #+---------------------------------------------- 
 #| GrammarInferer :
@@ -49,29 +52,36 @@ class GrammarInferer(object):
         # we first initialize the angluin's algo
         learner = Angluin(self.dictionary, self.oracle)
         
+        
+        
         equivalent = False
         
         while not equivalent :
+            self.log.info("=============================================================================")
             self.log.info("Execute one new round of the infering process")
+            self.log.info("=============================================================================")
+            
             
             learner.learn()
-                        
-            hypotheticalAutomaton = learner.getInferedAutomata()
-            self.log.info("An hypothetical automaton has been computed")
+            hypotheticalAutomaton = learner.getInferedAutomata()            
+            self.log.info("An hypothetical automaton has been computed") 
             
             counterExample = self.equivalenceOracle.findCounterExample(hypotheticalAutomaton)
+            
             if counterExample == None :
                 self.log.info("No counter-example were found !")
                 equivalent = True
             else :
                 self.log.info("A counter-example has been found")
-                learner.addCounterExample(counterExample)
+                for s in counterExample.getSymbols() :
+                    self.log.info("symbol : " + str(s) + " => " + str(s.getID()))                
+                learner.addCounterExamples([counterExample])
             
         automaton = learner.getInferedAutomata()    
         
         self.log.info("The infering process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton))
-            
+        return automaton    
             
         
             

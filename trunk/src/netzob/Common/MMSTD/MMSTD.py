@@ -30,12 +30,6 @@ from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunicationLayer
 
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
 #| MMSTD :
 #|    Definition of an "Machine de Mealy Stochastiques
 #|    à Transitions Déterministes"
@@ -43,8 +37,6 @@ from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunic
 #| @version    : 0.3
 #+---------------------------------------------- 
 class MMSTD(object):
-  
-        
     
     #+---------------------------------------------- 
     #| Constructor :

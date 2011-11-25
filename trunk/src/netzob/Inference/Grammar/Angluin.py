@@ -61,6 +61,9 @@ class Angluin(LearningAlgorithm):
         self.log.info("Initialization of the observation table")
         self.suffixes = []
         self.D = []
+        # Create the S and SA
+        self.S = []
+        self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
         for entry in self.dictionary.getEntries()[:2] :
@@ -72,10 +75,11 @@ class Angluin(LearningAlgorithm):
 #            self.suffixes.append(letter)
         
         
-        # Create the S and SA
-        self.S = []
-        self.SA = []
         
+        
+        # Initialize the observation table
+        emptyMQ = MembershipQuery([EmptySymbol()])
+        self.addWordInS(emptyMQ)
     
        
     
@@ -87,12 +91,25 @@ class Angluin(LearningAlgorithm):
         self.log.info("Adding word " + str(words) + " in D")
         self.D.append(words)
         self.observationTable[words] = None
+        # We compute the value of all existing S and SA
+        cel = dict()
+        for wordS in self.S :
+            mq = wordS.getMQSuffixedWithMQ(words)
+            cel[wordS] = self.submitQuery(mq)  
+        for wordSA in self.SA :
+            mq = wordSA.getMQSuffixedWithMQ(words)
+            cel[wordSA] = self.submitQuery(mq)    
+        self.observationTable[words] = cel
         
     def addWordInS(self, word):
         # first we verify the word is not already in S
         if word in self.S :
             self.log.info("The word " + str(word) + " already exists in S")
             return 
+        
+        if word in self.SA :
+            self.log.info("The word " + str(word) + " already exists in SA")
+            self.SA.remove(word)
         
         self.log.info("Adding word " + str(word) + " to S")
         self.S.append(word)
@@ -139,34 +156,35 @@ class Angluin(LearningAlgorithm):
     
     def learn(self):
         self.log.info("Learn...")
-                
-        # Initialize the observation table
-        emptyMQ = MembershipQuery([EmptySymbol()])
-        self.addWordInS(emptyMQ)
         self.displayObservationTable()
-
-#
+        
         while (not self.isClosed() or not self.isConsistent()) :
+            if not self.isClosed():
+                self.log.info("#================================================")
+                self.log.info("The table is not closed")                
+                self.log.info("#================================================")
+                self.closeTable()
+                self.displayObservationTable()
+            else :
+                self.log.info("Table is closed !")
+                
+            if not self.isConsistent():
+                self.log.info("#================================================")
+                self.log.info("The table is not consistent")                
+                self.log.info("#================================================")
+                self.makesTableConsistent()
+                self.displayObservationTable()
+            else :
+                self.log.info("Table is consistent !")
+            
+            
             self.log.info("Another turn")
             self.displayObservationTable()
         
+        self.log.info("Table is closed and consistent")
         # We compute an automata
         self.computeAutomata()
-        
-        self.log.info("We search for a counterexample...")
-        # now we simulate a counter example :
-        
-
-#        conjectureConfirmed = False
-#        while not conjectureConfirmed :
-#            while (not self.isClosed() or not self.isConsistent()) :
-#                if not self.isConsistent() :
-#                    self.add_column()
-#                if not self.isClosed() :
-#                    self.move_row()
-#                    
-#            conjectureConfirmed = self.isEquivalent()
-    
+       
     def add_column(self):
         pass
     def move_row(self):
@@ -175,6 +193,24 @@ class Angluin(LearningAlgorithm):
         return True
      
     def isClosed(self):
+        rowSA = []
+        rowS = []
+        
+        for wordSA in self.SA :
+            rowSA = self.getRowOfObservationTable(wordSA)
+            found = False
+            for wordS in self.S :
+                rowS = self.getRowOfObservationTable(wordS)
+                
+                if self.rowsEquals(rowS, rowSA) :
+                    found = True
+
+            if not found :
+                self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
+                return False
+        return True
+    
+    def closeTable(self):
         rowSA = []
         rowS = []
         
@@ -201,12 +237,77 @@ class Angluin(LearningAlgorithm):
             rowS.append((wordS, self.getRowOfObservationTable(wordS)))
         for (word, row) in rowS :
             for (word2, row2) in rowS :
-                if row != row2 and self.rowsEquals(row, row2) :
+                if word != word2 and self.rowsEquals(row, row2) :
                     equalsRows.append((word, word2))
-        self.log.info("Equals words : ")
-        for (w1, w2) in equalsRows:
-            self.log.info(str(w1) + " == " + str(w2))
-        return len(equalsRows) == 0    
+        
+        self.log.info("Equals Rows in S are from words : ")
+        for (w1, w2) in equalsRows :
+            self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
+        
+            # We verify all the equals rows are still equals one letter more
+            for a in self.initialD :
+                w1a = w1.getMQSuffixedWithMQ(a)
+                w2a = w2.getMQSuffixedWithMQ(a)
+                self.log.info("Searching for word " + str(w1a))
+                self.log.info("Searching for word " + str(w2a))
+                
+                
+                
+                
+                
+                
+                
+                row_w1a = self.getRowOfObservationTable(w1a)
+                row_w2a = self.getRowOfObservationTable(w2a)
+                if not self.rowsEquals(row_w1a, row_w2a):
+                    self.log.info("The table is not consistent because the rows from w1=" + str(w1a) + ";w2=" + str(w2a) + " are NOT equals")
+                    return False 
+        return True    
+    
+    def makesTableConsistent(self):
+        # search for all the rows of S which are equals
+        rowS = []
+        equalsRows = []
+        for wordS in self.S :
+            rowS.append((wordS, self.getRowOfObservationTable(wordS)))
+        for (word, row) in rowS :
+            for (word2, row2) in rowS :
+                if word != word2 and self.rowsEquals(row, row2) :
+                    equalsRows.append((word, word2))
+        
+        self.log.info("Equals Rows in S are from words : ")
+        for (w1, w2) in equalsRows :
+            self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
+        
+            # We verify all the equals rows are still equals one letter more
+            for a in self.initialD :
+                w1a = w1.getMQSuffixedWithMQ(a)
+                w2a = w2.getMQSuffixedWithMQ(a)
+                row_w1a = self.getRowOfObservationTable(w1a)
+                row_w2a = self.getRowOfObservationTable(w2a)
+                if not self.rowsEquals(row_w1a, row_w2a):
+                    # We find the E (col) which makes the unconsistency
+                    e = None
+                    for i in range(0, len(row_w1a)) :
+                        if row_w1a[i] != row_w2a[i] :
+                            e = self.D[i]
+                    self.log.info("E found is " + str(e))       
+                    newCol = a.getMQSuffixedWithMQ(e)
+                    self.log.info("So we add (a.e) to E (=D) a.e=[" + str(newCol) + "]")
+                    self.addWordInD(newCol)
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    self.log.info("The table is not consistent because the rows from w1=" + str(w1a) + ";w2=" + str(w2a) + " are NOT equals")
+                    return False 
+        return True             
+            
+          
+        
             
             
             
@@ -215,10 +316,9 @@ class Angluin(LearningAlgorithm):
         if (len(r1) != len(r2)) :
             return False
         
-        for r in r1 :
-            if not r in r2 :
-                return False
-            
+        for i in range(0, len(r1)) :
+            if r1[i] != r2[i] :
+                return False            
         return True
         
     
@@ -233,7 +333,14 @@ class Angluin(LearningAlgorithm):
     def getRowOfObservationTable(self, rowName):
         cols = []
         for letter in self.D :
-            cols.append(self.observationTable[letter][rowName])
+            val = self.observationTable[letter]
+            mem = None
+            for rN in val.keys() :
+                if rN == rowName :
+                    mem = rN
+                    break
+            if mem != None :
+                cols.append(self.observationTable[letter][mem])     
         return cols
     
     def getUniqueRowsInS(self):
@@ -315,10 +422,19 @@ class Angluin(LearningAlgorithm):
             self.log.info("An infered automata has been computed.")
             self.inferedAutomata = MMSTD(startState, self.dictionary) 
             
+    def addCounterExamples(self, counterExamples):
+        self.log.info("Modify the automata in order to consider the " + str(len(counterExamples)) + " counterexamples")
+        for counterExample in counterExamples :            
+            # we add all the prefix of the counterexample to S
+            prefixes = counterExample.getNotEmptyPrefixes()
+            self.log.info("A number of " + str(len(prefixes)) + " will be added !")
+            for p in prefixes :
+                self.log.info("=> " + str(p))
+            for prefix in prefixes :
+                self.displayObservationTable()
+                self.addWordInS(prefix)
+                self.displayObservationTable()
                 
-            
-            
-        
         
     def appendValuesInRow(self, row):
         result = []

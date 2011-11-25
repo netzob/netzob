@@ -43,18 +43,18 @@ class MMSTDVisitor(threading.Thread):
         self.active = False
     
     def run(self):
-        self.log.info("Starting the MMSTDVisitor")
+        self.log.debug("Starting the MMSTDVisitor")
         self.active = True
         if self.isMaster :
             self.runAsMaster()
         else :
             self.runAsClient()
-        self.log.info("End of execution for the MMSTDVisitor")
+        self.log.debug("End of execution for the MMSTDVisitor")
             
         
    
     def stop(self):
-        self.log.info("Stops the MMSTDVisitor")
+        self.log.debug("Stops the MMSTDVisitor")
         self.abstractionLayer.disconnect()
         self.active = False
         
@@ -62,26 +62,26 @@ class MMSTDVisitor(threading.Thread):
     
     
     def runAsMaster(self):
-        self.log.info("The MMSTD Visitor is running as a master")    
+        self.log.debug("The MMSTD Visitor is running as a master")    
         currentState = self.model.getInitialState()
         while self.active :
             currentState = currentState.executeAsMaster(self.abstractionLayer)
             if currentState == None :
                 self.active = False
-        self.log.info("The MASTER stops !")
+        self.log.debug("The MASTER stops !")
         
         
     def runAsClient(self):
-        self.log.info("The MMSTD Visitor is running as a client")
+        self.log.debug("The MMSTD Visitor is running as a client")
        
         currentState = self.model.getInitialState()
         while self.active :
-            self.log.info("Run as a client the state " + str(currentState.getName()))
+            self.log.debug("Run as a client the state " + str(currentState.getName()))
             currentState = currentState.executeAsClient(self.abstractionLayer)
             if currentState == None :
                 self.log.warn("The execution of the transition didn't provide the next state")
                 self.active = False
-        self.log.info("The CLIENT stops !")
+        self.log.debug("The CLIENT stops !")
         
     def getInputMessages(self):
         return self.abstractionLayer.getInputMessages()

@@ -42,7 +42,7 @@ class VarValue(AbstractValue):
         AbstractValue.__init__(self, "VarValue")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.VarValue.py')
-        self.log.info("VarValue : " + str(variable))
+        self.log.debug("VarValue : " + str(variable))
         self.variable = variable
         self.resetCondition = resetCondition
     
@@ -56,13 +56,13 @@ class VarValue(AbstractValue):
     
     def compare(self, val, indice, negative, dictionary):        
         # first we retrieve the value stored in the variable
-        self.log.info("compare and so retrieve value of " + str(self.variable))
+        self.log.debug("compare and so retrieve value of " + str(self.variable))
         
         (binvalue, strvalue) = self.variable.getValue(negative, dictionary)
         
         if binvalue == None or self.resetCondition == "force":
             # We execute the learning process
-            self.log.info("Variable " + self.variable.getName() + " will be learnt from input. (" + str(indice) + ")")  
+            self.log.debug("Variable " + self.variable.getName() + " will be learnt from input. (" + str(indice) + ")")  
             
             isForced = False
             if self.resetCondition == "force": 
@@ -72,12 +72,12 @@ class VarValue(AbstractValue):
             
             return new_indice
         else :
-            self.log.info("Compare " + val[indice:] + " with " + strvalue + "[" + ''.join(binvalue) + "]")
+            self.log.debug("Compare " + val[indice:] + " with " + strvalue + "[" + ''.join(binvalue) + "]")
             if val[indice:].startswith(''.join(binvalue)) :
-                self.log.info("Compare successful")                
+                self.log.debug("Compare successful")                
                 return indice + len(binvalue)
             else :
-                self.log.info("Compare fail")
+                self.log.debug("Compare fail")
         return -1
     
     def send(self, negative, dictionary):        

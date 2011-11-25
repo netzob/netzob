@@ -55,17 +55,17 @@ class InstanciatedNetworkServer(AbstractActor):
         return False
     
     def close(self):
-        self.log.info("Closing the socket")
+        self.log.debug("Closing the socket")
         if self.socket == None:
-            self.log.info("No need to close the socket since it's not even open")
+            self.log.debug("No need to close the socket since it's not even open")
             return True
-        self.log.info("SHUTDOWN THE SOCKET")
+        self.log.debug("SHUTDOWN THE SOCKET")
         self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
         return True
     
     def read(self, timeout):
-        self.log.info("Reading from the socket some data")
+        self.log.debug("Reading from the socket some data")
         result = bitarray(endian='big')       
         
         
@@ -77,11 +77,11 @@ class InstanciatedNetworkServer(AbstractActor):
                     chars = self.socket.recv(4096)
             else :
                 ready = select.select([self.socket], [], [])
-                self.log.info("ready = " + str(ready[0]))
+                self.log.debug("ready = " + str(ready[0]))
                 if ready[0]:
                     chars = self.socket.recv(4096)
         except :
-            self.log.info("Impossible to read from the network socket")
+            self.log.debug("Impossible to read from the network socket")
             return None
         
         
@@ -92,15 +92,15 @@ class InstanciatedNetworkServer(AbstractActor):
         
 #        self.inputMessages.append(receivedData)
         
-        self.log.info("Received : " + str(result))
+        self.log.debug("Received : " + str(result))
         return result
         
     def write(self, message):
-        self.log.info("Writing to the socket")
+        self.log.debug("Writing to the socket")
         self.outputMessages.append(message)
         self.socket.send(message.tostring())
         
-        self.log.info("Write down !")        
+        self.log.debug("Write down !")        
         
     def getInputMessages(self):
         return self.inputMessages

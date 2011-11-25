@@ -43,10 +43,10 @@ class EmptySymbol(AbstractSymbol):
     def isEquivalent(self, symbol):
         
         if symbol.__class__.__name__ == EmptySymbol.__name__:
-            self.log.info("The symbols are equivalents")
+            self.log.debug("The symbols are equivalents")
             return True
         else :
-            self.log.info("The symbols are not equivalents")
+            self.log.debug("The symbols are not equivalents")
             return False
     
     def getValueToSend(self, dictionary):

@@ -94,7 +94,7 @@ class CloseChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def closeConnection(self, abstractionLayer):
-        self.log.info("CloseChannelTransition executed.")
+        self.log.debug("CloseChannelTransition executed.")
         time.sleep(int(self.disconnectionTime) / 1000)
         abstractionLayer.disconnect()
         time.sleep(int(self.disconnectionTime) / 1000)

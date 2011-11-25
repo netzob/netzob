@@ -48,18 +48,18 @@ class EndValue(AbstractValue):
         return (bitarray(endian='big'), "")
     
     def compare(self, val, indice, negative, dictionary):
-        self.log.info("Endvalue ? indice = " + str(indice))
+        self.log.debug("Endvalue ? indice = " + str(indice))
         if len(val[indice:]) == 0 :
-            self.log.info("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
+            self.log.debug("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
             return indice
         else :
             cr = bitarray('00001010', endian='big')
             
             if val[indice:] == cr :
-                self.log.info("Compare successfull we consider \\n as the end")
+                self.log.debug("Compare successfull we consider \\n as the end")
                 return indice + len(cr)
                 
-            self.log.info("Compare Fail, received '" + str(val[indice:]) + "'")
+            self.log.debug("Compare Fail, received '" + str(val[indice:]) + "'")
             return -1
         
     def restore(self):

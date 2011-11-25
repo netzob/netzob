@@ -85,7 +85,7 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
         self.activate()
-        self.log.info("Execute as a client")
+        self.log.debug("Execute as a client")
         self.deactivate()
         return self.outputState
     
@@ -98,7 +98,7 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):
         self.activate()
-        self.log.info("Execute as a master")
+        self.log.debug("Execute as a master")
         # write a message
         abstractionLayer.writeSymbol(self.outputSymbol)
         

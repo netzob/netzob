@@ -24,12 +24,6 @@ import logging.config
 from ... import ConfigurationParser
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| AbstractState :
 #|     Definition of a state
 #| @author     : {gbt,fgy}@amossys.fr

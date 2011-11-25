@@ -31,12 +31,6 @@ from .... import ConfigurationParser
 from .AbstractValue import AbstractValue
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| Aggregate :
 #|     Definition of an aggregation
 #| @author     : {gbt,fgy}@amossys.fr
@@ -59,8 +53,7 @@ class Aggregate(AbstractValue):
         strResult = []
         for value in self.values :
             (binVal, strVal) = value.send(negative, dictionary)
-            self.log.info("Aggregate : " + str(binVal))
-            self.log.info("Aggregate : " + str(strVal))
+            self.log.debug("Aggregate : " + str(binVal) + " [" + str(strVal) + "]")
             binResult.extend(binVal)
             strResult.append(strVal)
             
@@ -68,18 +61,18 @@ class Aggregate(AbstractValue):
     
     def compare(self, val, indice, negative, dictionary):
         result = indice
-        self.log.info("Will compare with :")        
+        self.log.debug("Will compare with :")        
         for value in self.values :
-            self.log.info(str(value.getType()))
+            self.log.debug(str(value.getType()))
         
         for value in self.values :
-            self.log.info("Indice = " + str(result) + " : " + value.getType())
+            self.log.debug("Indice = " + str(result) + " : " + value.getType())
             result = value.compare(val, result, negative, dictionary)
             if result == -1 or result == None :
-                self.log.info("Compare fail")
+                self.log.debug("Compare fail")
                 return -1
             else :
-                self.log.info("Compare successfull")
+                self.log.debug("Compare successfull")
         
         return result
     

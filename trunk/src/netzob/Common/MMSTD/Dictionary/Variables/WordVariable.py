@@ -71,11 +71,11 @@ class WordVariable(Variable):
         nb_letter = random.randint(0, 10)
         self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
         self.binVal = self.ascii2bin(self.strVal)
-        self.log.info("Generated : " + self.strVal)
-        self.log.info("Generated -bin )= " + str(self.binVal))
+        self.log.debug("Generated : " + self.strVal)
+        self.log.debug("Generated -bin )= " + str(self.binVal))
     
     def learn(self, val, indice, isForced, dictionary):
-        self.log.info("Received : " + str(val))
+        self.log.debug("Received : " + str(val))
         
         if self.binVal == None or isForced :
             tmp = val[indice:]
@@ -97,7 +97,7 @@ class WordVariable(Variable):
 #                
 #                
 #                
-#                self.log.info("value = " + str(self.strVal) + ", isForced = " + str(isForced))
+#                self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
 #                
 #                tmp = ""
 #                for c in self.strVal :

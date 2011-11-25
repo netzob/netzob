@@ -72,18 +72,18 @@ class NetworkClient(AbstractActor):
         return True
     
     def close(self):
-        self.log.info("Closing the network client")
+        self.log.debug("Closing the network client")
         self.stop()
         try :
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
         except :
-            self.log.info("No need to close the socket since it's not even open")
+            self.log.debug("No need to close the socket since it's not even open")
             return True
         return True
     
     def read(self, timeout):
-        self.log.info("Read from the socket")
+        self.log.debug("Read from the socket")
         result = bitarray(endian='big')        
         
         chars = []    
@@ -94,24 +94,24 @@ class NetworkClient(AbstractActor):
                     chars = self.socket.recv(4096)
             else :
                 ready = select.select([self.socket], [], [])
-                self.log.info("ready = " + str(ready[0]))
+                self.log.debug("ready = " + str(ready[0]))
                 if ready[0]:
                     chars = self.socket.recv(4096)
         except :
-            self.log.info("Impossible to read from the network socket")
+            self.log.debug("Impossible to read from the network socket")
             return None
             
             
-        self.log.info("Read finished")
+        self.log.debug("Read finished")
         if (len(chars) == 0) : 
             return result
         result.fromstring(chars)
         
-        self.log.info("Received : " + str(result))
+        self.log.debug("Received : " + str(result))
         return result
         
     def write(self, message):
-        self.log.info("Write down !")  
+        self.log.debug("Write down !")  
         self.outputMessages.append(message)
         try :
             self.outputFile.write(message.tostring())
@@ -128,7 +128,7 @@ class NetworkClient(AbstractActor):
         return []
     
     def stop(self):
-        self.log.info("Stopping the thread of the network client")
+        self.log.debug("Stopping the thread of the network client")
         AbstractActor.stop(self)
     
     #+-----------------------------------------------------------------------+

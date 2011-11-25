@@ -58,50 +58,50 @@ class AbstractionLayer():
         return self.connected    
     
     def openServer(self, dictionary, outputState, isMaster):
-        self.log.info("OpenServer ...")
+        self.log.debug("OpenServer ...")
         self.connected = True
         self.communicationChannel.openServer(dictionary, outputState, isMaster)
         
     def closeServer(self):
-        self.log.info("CLoseServer ...")
+        self.log.debug("CloseServer ...")
         self.connected = False
         self.communicationChannel.close()
     
     def connect(self):
-        self.log.info("Connect ...")
+        self.log.debug("Connect ...")
         if self.connected :
             self.log.warn("Impossible to connect : already connected")
         else :
             # if its a server :
             if self.communicationChannel.isServer() :
-                self.log.info("Opening the server to outside connections")      
+                self.log.debug("Opening the server to outside connections")      
                           
             else :
             # if its a client :
-                self.log.info("Connecting the client...")
+                self.log.debug("Connecting the client...")
                 self.connected = self.communicationChannel.open()
     
     def disconnect(self):
         self.log.warn("Disconnect ...")
         if self.connected :
-            self.log.info("Disconnecting ...")
+            self.log.debug("Disconnecting ...")
             self.connected = not self.communicationChannel.close()
-            self.log.info("Connected = " + str(self.connected))
+            self.log.debug("Connected = " + str(self.connected))
             # if its a server :
             if self.communicationChannel.isServer() :
-                self.log.info("Close the server")  
+                self.log.debug("Close the server")  
                 self.closeServer()
                           
             else :
             # if its a client :
-                self.log.info("Close the client...")
+                self.log.debug("Close the client...")
                 try :
                     self.connected = self.communicationChannel.close()
                 except :
                     self.log.warn("Error while trying to disconnect")
             
         else :
-            self.log.info("Impossible to disconnect : not connected")
+            self.log.debug("Impossible to disconnect : not connected")
             
 
     #+-----------------------------------------------------------------------+
@@ -110,7 +110,7 @@ class AbstractionLayer():
     #| @return a tupple containing the symbol and the associated received message
     #+-----------------------------------------------------------------------+
     def receiveSymbol(self):
-        self.log.info("Waiting for the reception of a message")
+        self.log.debug("Waiting for the reception of a message")
         return self.receiveSymbolWithTimeout(-1)
         
         
@@ -154,7 +154,7 @@ class AbstractionLayer():
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
         self.log.info("Sending message : str = '" + strMessage + "'")
-        self.log.info("Sending message : bin = '" + str(binMessage) + "'")
+        self.log.debug("Sending message : bin = '" + str(binMessage) + "'")
         
         # transform the binMessage to a real binary message
         
@@ -177,12 +177,12 @@ class AbstractionLayer():
         # we search in the dictionary an entry which match the message
         for entry in self.dictionary.getEntries() :            
             if entry.compare(message, 0, False, self.dictionary) != -1:
-                self.log.info("Entry in the dictionary found")
+                self.log.debug("Entry in the dictionary found")
                 return entry
             else :
-                self.log.info("Entry " + str(entry.getID()) + " doesn't match")
+                self.log.debug("Entry " + str(entry.getID()) + " doesn't match")
                 # we first restore possibly learnt value
-                self.log.info("Restore possibly learnt value")
+                self.log.debug("Restore possibly learnt value")
                 entry.restore()
             
         

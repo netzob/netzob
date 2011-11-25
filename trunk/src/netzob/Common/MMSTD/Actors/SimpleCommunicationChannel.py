@@ -26,11 +26,7 @@ from collections import deque
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-#from .... import ConfigurationParser
 from AbstractActor import AbstractActor
-#from ..MMSTDVisitor import MMSTDVisitor
-#from ...Dictionary.AbstractionLayer import AbstractionLayer
-
 
 #+---------------------------------------------------------------------------+
 #| SimpleCommunicationLayer :
@@ -52,28 +48,28 @@ class SimpleCommunicationLayer(AbstractActor):
     
         
     def open(self):
-        self.log.info("We open it !")
+        self.log.debug("We open it !")
         return True
     
     def close(self):
-        self.log.info("We close it !")
+        self.log.debug("We close it !")
         return True
     
     def read(self, timeout):
-        self.log.info("We read it !")
+        self.log.debug("We read it !")
         if (len(self.predefinedInputs) > 0) :
             symbol = self.predefinedInputs.popleft()
-            self.log.info("We simulate the reception of symbol " + str(symbol))
+            self.log.debug("We simulate the reception of symbol " + str(symbol))
             (value, strvalue) = symbol.getValueToSend(self.dictionary)
             self.inputMessages.append(value)
             return value
         else :
-            self.log.info("No more inputs to simulate, nothing was read ")
+            self.log.debug("No more inputs to simulate, nothing was read ")
             return None
        
         
     def write(self, message):
-        self.log.info("Write down !")  
+        self.log.debug("Write down !")  
         self.outputMessages.append(message)
         
         
@@ -85,7 +81,7 @@ class SimpleCommunicationLayer(AbstractActor):
         return []
     
     def stop(self):
-        self.log.info("Stopping the thread of the client")
+        self.log.debug("Stopping the thread of the client")
         AbstractActor.stop(self)
     
    

@@ -24,12 +24,6 @@ import logging.config
 from ... import ConfigurationParser
 
 #+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------------------------------------+
 #| AbstractTransition :
 #|     Definition of a transition
 #| @author     : {gbt,fgy}@amossys.fr

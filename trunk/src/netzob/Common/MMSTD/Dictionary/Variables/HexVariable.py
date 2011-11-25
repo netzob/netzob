@@ -58,40 +58,40 @@ class HexVariable(Variable):
             self.binValue = None
             self.strValue = None
             
-        self.log.info("Bin-value = " + str(self.binValue) + ", str-value = " + str(self.strValue))
+        self.log.debug("Bin-value = " + str(self.binValue) + ", str-value = " + str(self.strValue))
         
     def getValue(self, negative, dictionary):
-        self.log.info("Getvalue of hex")
+        self.log.debug("Getvalue of hex")
         return (self.binValue, self.strValue)
         
     
     def generateValue(self, negative, dictionary) :
-        self.log.info("Generate value of hex")
+        self.log.debug("Generate value of hex")
         if self.min != -1 and self.max != -1 :
             # generate a value in int
             r = random.randint(self.min, self.max)
-            self.log.info("Generating hex of value : " + str(r))
+            self.log.debug("Generating hex of value : " + str(r))
             # encode the value in hex
             v = hex(r)
-            self.log.info("Generating hex of value : " + str(v))
+            self.log.debug("Generating hex of value : " + str(v))
             self.binValue = TypeConvertor.hex2bin(v, 'big')
             self.strValue = str(v)
        
     def learn(self, val, indice, isForced, dictionary):
-        self.log.info("Learn on " + str(indice) + " : " + str(val[indice:]))
+        self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
         if self.binValue != None and not isForced :
-            self.log.info("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
+            self.log.debug("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
             return indice + len(self.binValue)
         
         tmp = val[indice:]
-        self.log.info("Learn hex given its size : " + str(self.size) + " from " + str(tmp)) 
+        self.log.debug("Learn hex given its size : " + str(self.size) + " from " + str(tmp)) 
         if len(tmp) >= self.size :
             
             self.binValue = val[indice:indice + self.size]
             self.strValue = TypeConvertor.bin2hex(self.binValue)
             
-            self.log.info("learning value : " + str(self.binValue))
-            self.log.info("learning value : " + self.strValue)
+            self.log.debug("learning value : " + str(self.binValue))
+            self.log.debug("learning value : " + self.strValue)
             
             return indice + self.size
         else :
