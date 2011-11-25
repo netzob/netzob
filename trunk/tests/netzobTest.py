@@ -63,7 +63,9 @@ def addTestsForMMSTD(suite):
     suite.addTest(ModelTest("test_SimpleDynamic"))
 
 def addTestsForGrammaticalInference(suite):
+    suite.addTest(GrammarInferenceTest("test_WMethod"))
     suite.addTest(GrammarInferenceTest("test_grammarInference"))
+    
     
 if __name__ == "__main__":
     
@@ -94,7 +96,7 @@ if __name__ == "__main__":
     # add the tests dedicated to the inference process
     addTestsForInference(globalTestSuite)
     
-    # add the tests dedicated to the GOT Poisoninget que tu fai
+    # add the tests dedicated to the GOT Poisoning
     # addTestsForGotPoisoning(globalTestSuite)
     
     # addTestsForPrototypesRepositoryTest(globalTestSuite)

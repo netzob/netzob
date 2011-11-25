@@ -117,6 +117,8 @@ class GrammarInferenceTest(unittest.TestCase):
         logging.info(mmstd.getDotCode())
         equivalenceOracle.findCounterExample(mmstd)
         
+        
+        
         server.stop()
     
     def test_grammarInference(self):
@@ -152,16 +154,17 @@ class GrammarInferenceTest(unittest.TestCase):
         logging.info("Starting the server")
         time.sleep(1)
         
-        
-        
-        
         # Lets create a simple network oracle
         oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
         # Lets create an equivalence oracle
-        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, 3)
+        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, 5)
         
         inferer = GrammarInferer(dictionary, oracleCommunicationChannel, equivalenceOracle)
-        inferer.infer()
+        resultedAutomaton = inferer.infer()
+        
+        logging.info(resultedAutomaton.getDotCode())
+        
+        
 
         server.stop()
 
