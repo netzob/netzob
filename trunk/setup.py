@@ -68,7 +68,7 @@ setup(
         "netzob.Inference.Grammar.Oracles",
         "netzob.Inference.Grammar.Queries",
         "netzob.Inference.Vocabulary",
-        "netzob.Inference.vocabulary.TreeViews",
+        "netzob.Inference.Vocabulary.TreeViews",
         "netzob.Simulator"
         ],
     package_dir={"netzob": "src/netzob" },
