@@ -44,10 +44,10 @@ class LoggingConfiguration(object):
         # First we extract the normal logging config file
         loggingFilePath = ConfigurationParser().get("logging", "path")
         if (loggingFilePath != "") :
-            logging.warn("Logging config file : " + loggingFilePath)
+            logging.debug("Logging config file : " + loggingFilePath)
             logging.config.fileConfig(loggingFilePath)
         else :
-            logging.warn("No logging config file found, create a default one.")
+            logging.info("No logging config file found, create a default one.")
             # Make a global logging object.
             logger = logging.getLogger("")
             logger.setLevel(logging.INFO)
