@@ -15,7 +15,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 import os
 
 
@@ -26,13 +26,6 @@ import os
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ...Common import ConfigurationParser
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| ParasiteGenerator :
@@ -48,7 +41,7 @@ class ParasiteGenerator():
         # temporary folder
         self.tmp_folder = tmp_folder
         # fifo file 
-        self.fifoFile=  self.tmp_folder + "/netzob.fifo"
+        self.fifoFile = self.tmp_folder + "/netzob.fifo"
         
         # list of functions to hijacked
         self.hijackedFunctions = []
@@ -192,13 +185,13 @@ static void _saveString(char * param0) {
         tailleParam = tailleParam + 1;
     }
         
-    int fd = _open("'''+self.fifoFile+'''");
+    int fd = _open("''' + self.fifoFile + '''");
      _write(fd, param0 , tailleParam);
     _close(fd);
 }  
 
 static void _saveStringWithSize(char * param0, int size) {
-    int fd = _open("'''+self.fifoFile+'''");
+    int fd = _open("''' + self.fifoFile + '''");
      _write(fd, param0 , size);
     _close(fd);
 }  
@@ -209,7 +202,7 @@ static void _saveStringWithSize(char * param0, int size) {
         coreFunctions = ""
         
         for function in self.hijackedFunctions :
-            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getSource() + "\n"+function.getEndOfFunction()+"\n}\n"
+            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getSource() + "\n" + function.getEndOfFunction() + "\n}\n"
 #            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getEndOfFunction()+"\n}\n"
         return coreFunctions
         

@@ -23,28 +23,21 @@ pygtk.require('2.0')
 import logging
 import os
 import time
-import random
 import threading
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from ptrace.linux_proc import readProcesses, readProcessCmdline
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ..Common import ConfigurationParser
-from ..Common import ExecutionContext
-from GOTPoisoning import PrototypesRepositoryParser
-from GOTPoisoning import ParasiteGenerator
-from GOTPoisoning import InjectorGenerator
-from GOTPoisoning import GOTPoisoner
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.ExecutionContext import ExecutionContext
+from netzob.Import.GOTPoisoning.PrototypesRepositoryParser import PrototypesRepositoryParser
+from netzob.Import.GOTPoisoning.ParasiteGenerator import ParasiteGenerator
+from netzob.Import.GOTPoisoning.InjectorGenerator import InjectorGenerator
+from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 
 #+---------------------------------------------------------------------------+
 #| Api :
@@ -83,11 +76,11 @@ class Api:
         self.packets = []
         
         # First we parse the repository
-        repositoryFile = ConfigurationParser.ConfigurationParser().get("import", "repository_prototypes")
+        repositoryFile = ConfigurationParser().get("import", "repository_prototypes")
         if repositoryFile == "" or not os.path.isfile(repositoryFile) :
             self.log.warn("Unable to find a repository file for API injector.")
         else :
-            self.repositoryOfSharedLib = PrototypesRepositoryParser.PrototypesRepositoryParser.loadFromXML(repositoryFile)
+            self.repositoryOfSharedLib = PrototypesRepositoryParser.loadFromXML(repositoryFile)
         
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -217,7 +210,7 @@ class Api:
         self.processStore.get_model().clear()
         
         # retrieves the list of process
-        self.listOfProcess = ExecutionContext.ExecutionContext.getCurrentProcesses()
+        self.listOfProcess = ExecutionContext.getCurrentProcesses()
         
         # add in the list all the process
         for process in self.listOfProcess :
@@ -321,18 +314,18 @@ class Api:
         tmpFolder = tempfile.mkdtemp()
         self.log.info("Temporary folder : " + tmpFolder)
         
-        parasiteGenerator = ParasiteGenerator.ParasiteGenerator(tmpFolder)
+        parasiteGenerator = ParasiteGenerator(tmpFolder)
         parasiteGenerator.addAnHijackedFunctions(self.selectedFunction)
         
         parasiteGenerator.writeParasiteToFile()
         parasiteGenerator.compileParasite()
         parasiteGenerator.linkParasite()
         
-        injectorGenerator = InjectorGenerator.InjectorGenerator(tmpFolder, parasiteGenerator)
+        injectorGenerator = InjectorGenerator(tmpFolder, parasiteGenerator)
         injectorGenerator.writeInjectorToFile()    
         injectorGenerator.compileInjector()
         
-        poisoner = GOTPoisoner.GOTPoisoner(parasiteGenerator, injectorGenerator) 
+        poisoner = GOTPoisoner(parasiteGenerator, injectorGenerator) 
         poisoner.injectProcess(self.selectedProcess.getPid())
         
         

@@ -25,9 +25,9 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import ConfigurationParser, TypeIdentifier
-from netzob.Common import TraceParser
-from netzob.Modelization import Clusterer
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.TraceParser import TraceParser
+from netzob.Inference.Vocabulary.Clusterer import Clusterer
 
 #+---------------------------------------------- 
 #| Groups :
@@ -52,8 +52,8 @@ class Groups(object):
         del self.groups[:] # Just clean the object without deleting it
 
     def initGroupsWithTraces(self):
-        traceParser = TraceParser.TraceParser(self.netzob)
-        self.setGroups( traceParser.parse() )
+        traceParser = TraceParser(self.netzob)
+        self.setGroups(traceParser.parse())
         for g in self.groups :
             g.buildInitRegex()
 
@@ -68,24 +68,24 @@ class Groups(object):
 
         # We try to clusterize each group
         for group in self.groups :
-            clusterer = Clusterer.Clusterer(self.netzob, [group], explodeGroups=True)
+            clusterer = Clusterer(self.netzob, [group], explodeGroups=True)
             clusterer.mergeGroups()
             tmpGroups.extend(clusterer.getGroups())
                 
         # Now that all the groups are reorganized separately
         # we should consider merging them
         self.log.info("Merging the groups extracted from the different files")
-        clusterer = Clusterer.Clusterer(self.netzob, tmpGroups, explodeGroups=False)
+        clusterer = Clusterer(self.netzob, tmpGroups, explodeGroups=False)
         clusterer.mergeGroups()
         
         # Now we execute the second part of Netzob Magical Algorithms :)
         # clean the single groups
-        if ConfigurationParser.ConfigurationParser().getInt("clustering", "orphan_reduction") == 1 :
+        if ConfigurationParser().getInt("clustering", "orphan_reduction") == 1 :
             self.log.info("Merging the orphan groups") 
             clusterer.mergeOrphanGroups()
 
         self.log.info("Time of parsing : " + str(time.time() - t1))
-        self.setGroups( clusterer.getGroups() )
+        self.setGroups(clusterer.getGroups())
         self.netzob.update()
 
     #+---------------------------------------------- 
@@ -94,7 +94,7 @@ class Groups(object):
     #+----------------------------------------------
     def alignWithDelimiter(self, delimiter):
         # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
         if valID == 0:
             aType = "ascii"
@@ -118,7 +118,7 @@ class Groups(object):
                 if doBreak == True:
                     break
                 columns.append({'name' : "Name",
-                                'regex' : "(.{"+str(minSize)+","+str(maxSize)+"})",
+                                'regex' : "(.{" + str(minSize) + "," + str(maxSize) + "})",
                                 'selectedType' : aType,
                                 'tabulation' : 0,
                                 'description' : "",

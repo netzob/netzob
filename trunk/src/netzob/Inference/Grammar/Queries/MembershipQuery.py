@@ -26,10 +26,10 @@ from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from ....Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
+from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
 from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
 from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
-from ....Common.MMSTD.MMSTD import MMSTD
+from netzob.Common.MMSTD.MMSTD import MMSTD
 
 #+---------------------------------------------- 
 #| MembershipQuery :

@@ -24,13 +24,8 @@ import glib
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import ConfigurationParser
+from netzob.Common.ConfigurationParser import ConfigurationParser
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Message :

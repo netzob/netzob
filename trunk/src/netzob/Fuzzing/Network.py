@@ -22,12 +22,8 @@ pygtk.require('2.0')
 import gobject
 import logging
 import threading
-import os
-import time
-import random
 import nfqueue
 import socket
-from dpkt import ip, tcp, udp
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -36,15 +32,8 @@ from dpkt import ip, tcp, udp
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ..Common import ConfigurationParser
-from TreeViews import TreeGroupGenerator
-from TreeViews import TreeTypeStructureGenerator
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Fuzzing.TreeViews.TreeGroupGenerator import TreeGroupGenerator
+from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+---------------------------------------------------------------------------+ 
 #| Network :
@@ -98,7 +87,7 @@ class Network:
         vb_left_panel.show()
 
         # Initialize the treeview generator for the groups
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
+        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
         vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
@@ -109,7 +98,7 @@ class Network:
         vb_right_panel = gtk.VBox(False, spacing=0)
         vb_right_panel.show()
         # Initialize the treeview for the type structure
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
         self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_field)
         vb_right_panel.add(self.treeTypeStructureGenerator.getScrollLib())
@@ -286,7 +275,7 @@ class Network:
 
 #        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
 #        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
-        gobject.idle_add( button.set_sensitive, True )
+        gobject.idle_add(button.set_sensitive, True)
 
     #+---------------------------------------------- 
     #| Called when we reiceve a corresponding packet to fuzz

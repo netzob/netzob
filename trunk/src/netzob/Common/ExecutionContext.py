@@ -16,20 +16,13 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
 import subprocess
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-import ConfigurationParser
-import Process
+from netzob.Common.Process import Process
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| ExecutionContext :
@@ -54,11 +47,11 @@ class ExecutionContext(object):
         nfields = len(processes[0].split()) - 1
         for row in processes[1:]:
             infos = row.split(None, nfields)
-            if len(infos)>1 :
+            if len(infos) > 1 :
                 user = infos[0]
                 pid = infos[1]
-                cmd = infos[len(infos)-1]
-                process = Process.Process(cmd, pid, user)
+                cmd = infos[len(infos) - 1]
+                process = Process(cmd, pid, user)
                 result.append(process)
             
         return result

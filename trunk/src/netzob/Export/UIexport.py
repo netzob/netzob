@@ -17,9 +17,6 @@
 #| Global Imports
 #+----------------------------------------------
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 import logging
 
@@ -28,15 +25,8 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-import RawExport
-import ScapyExport
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Export.RawExport import RawExport
+from netzob.Export.ScapyExport import ScapyExport
 
 #+---------------------------------------------- 
 #| UIexport :
@@ -88,9 +78,9 @@ class UIexport:
         self.panel.add(notebook)
 
         # Network Capturing Panel
-        self.rawPanel = RawExport.RawExport(self.zob)
+        self.rawPanel = RawExport(self.zob)
         notebook.append_page(self.rawPanel.getPanel(), gtk.Label("Raw Export"))
 
         # IPC Capturing Panel
-        self.scapyPanel = ScapyExport.ScapyExport(self.zob)
+        self.scapyPanel = ScapyExport(self.zob)
         notebook.append_page(self.scapyPanel.getPanel(), gtk.Label("Scapy dissector"))

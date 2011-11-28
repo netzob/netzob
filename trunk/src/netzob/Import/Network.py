@@ -35,9 +35,9 @@ import impacket.ImpactPacket as Packets
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ..Common import ConfigurationParser
-from ..Common.Models import NetworkMessage
-from ..Common.Models.Factories import NetworkMessageFactory
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.Models.NetworkMessage import NetworkMessage
+from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 
 #+---------------------------------------------------------------------------+ 
 #| Network :
@@ -201,7 +201,7 @@ class Network:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -231,7 +231,7 @@ class Network:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
         messages = []
@@ -279,7 +279,7 @@ class Network:
                     
                     if Data != None and len(Data) > 0 :
                         # Compute the messages
-                        message = NetworkMessage.NetworkMessage()
+                        message = NetworkMessage()
                         message.setProtocol(proto)
                         message.setIPSource(IPsrc)
                         message.setIPTarget(IPdst)
@@ -294,7 +294,7 @@ class Network:
         res = []
         res.append("<messages>")
         for message in messages :
-            res.append(NetworkMessageFactory.NetworkMessageFactory.saveInXML(message))
+            res.append(NetworkMessageFactory.saveInXML(message))
         res.append("</messages>")
         
         # Dump into a random XML file
@@ -307,7 +307,7 @@ class Network:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -367,7 +367,7 @@ class Network:
 
                 # Compute the messages
                 if Data != None and len(Data) > 0 :
-                    message = NetworkMessage.NetworkMessage()
+                    message = NetworkMessage()
                     message.setProtocol(proto)
                     message.setIPSource(IPsrc)
                     message.setIPTarget(IPdst)
@@ -382,7 +382,7 @@ class Network:
         res = []
         res.append("<messages>")
         for message in messages :
-            res.append(NetworkMessageFactory.NetworkMessageFactory.saveInXML(message))
+            res.append(NetworkMessageFactory.saveInXML(message))
         res.append("</messages>")
         
         # Dump into a random XML file

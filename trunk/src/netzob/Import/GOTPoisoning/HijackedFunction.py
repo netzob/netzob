@@ -15,23 +15,15 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ...Common import ConfigurationParser
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| HijackedFunction :
@@ -65,7 +57,7 @@ class HijackedFunction():
         i = 0
         params = ""
         for param in self.parameters :
-            params += param[0] + " "+param[1]+"_"
+            params += param[0] + " " + param[1] + "_"
             if i != len(self.parameters) - 1 :
                 params += ", "            
             i = i + 1
@@ -86,7 +78,7 @@ class HijackedFunction():
 #        source += "\tnew_string[2] = 'l';\n"
 #        source += "\tnew_string[3] = 'g';\n"
 #        source += "\tnew_string[4] = 0;\n"
-        source += "\torigfunc("+paramNames+");\n"
+        source += "\torigfunc(" + paramNames + ");\n"
         
         return source
     
@@ -100,10 +92,10 @@ class HijackedFunction():
         params = ""
         i = 0        
         for param in self.parameters :            
-            params = params + param[0]+" "+param[1]
-            if i<len(self.parameters)-1 :
-                params = params+", "
-            i = i+1        
+            params = params + param[0] + " " + param[1]
+            if i < len(self.parameters) - 1 :
+                params = params + ", "
+            i = i + 1        
         prototype = self.returnType + " " + self.name + " (" + params + ")"
         return prototype
     
@@ -116,10 +108,10 @@ class HijackedFunction():
         params = ""
         i = 0        
         for param in self.parameters :            
-            params = params + param[0]+" "+param[1]
-            if i<len(self.parameters)-1 :
-                params = params+", "
-            i = i+1        
+            params = params + param[0] + " " + param[1]
+            if i < len(self.parameters) - 1 :
+                params = params + ", "
+            i = i + 1        
                     
         prototype = self.returnType + " netzobParasite_" + self.name + " (" + params + ")"
         return prototype
@@ -133,7 +125,7 @@ class HijackedFunction():
         params = ""
         i = 0
         for param in self.parameters :
-            params += param[0] + " "+param[1]
+            params += param[0] + " " + param[1]
             if i != len(self.parameters) - 1 :
                 params += ", "            
             i = i + 1

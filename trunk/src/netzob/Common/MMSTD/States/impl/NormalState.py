@@ -16,7 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 import random
 
 #+---------------------------------------------------------------------------+
@@ -27,8 +27,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..AbstractState import AbstractState
+from netzob.Common.MMSTD.States.AbstractState import AbstractState
 
 #+---------------------------------------------------------------------------+
 #| NormalState :

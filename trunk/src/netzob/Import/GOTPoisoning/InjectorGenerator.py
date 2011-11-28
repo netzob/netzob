@@ -15,7 +15,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 import os
 
 
@@ -26,13 +26,6 @@ import os
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ...Common import ConfigurationParser
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| InjectorGenerator :
@@ -52,7 +45,7 @@ class InjectorGenerator():
         
         # configure
         self.libName = "libNetzob.so.1.0"
-        self.libPath = self.tmp_folder+"/"+self.libName
+        self.libPath = self.tmp_folder + "/" + self.libName
         self.shellcode = self.produceShellCode()
     
     
@@ -69,11 +62,11 @@ class InjectorGenerator():
         
         f = os.popen("gcc " + self.tmp_folder + "/netzob_injector.c" + " -o " + self.tmp_folder + "/netzob_injector")
         for i in f.readlines():
-            print "GCC:", i,    
+            print "GCC:", i,
         
-        f = os.popen("chmod +x "+self.tmp_folder+"/netzob_injector")
+        f = os.popen("chmod +x " + self.tmp_folder + "/netzob_injector")
         for i in f.readlines():
-            print "CHMOD:", i,   
+            print "CHMOD:", i,
         
     #+-----------------------------------------------------------------------+
     #| produceShellCode
@@ -478,13 +471,13 @@ int mmap_library(int pid)
  
     /* were going to load our shellcode at base */
     /* first we must backup the original code into saved_text */
-    for (i = 0; i < '''+str(len(self.shellcode))+'''; i += 4)
+    for (i = 0; i < ''' + str(len(self.shellcode)) + '''; i += 4)
         buf[j++] = ptrace(PTRACE_PEEKTEXT, pid, (offset + i));
     p = (unsigned char *)buf;
-    memcpy(saved_text, p, '''+str(len(self.shellcode))+''');
+    memcpy(saved_text, p, ''' + str(len(self.shellcode)) + ''');
  
     printf("Here is the saved code we will be overwriting:\\n");
-    for (j = 0, i = 0; i < '''+str(len(self.shellcode))+'''; i++)
+    for (j = 0, i = 0; i < ''' + str(len(self.shellcode)) + '''; i++)
     {
         if ((j++ % 20) == 0)
             printf("\\n");
@@ -492,16 +485,16 @@ int mmap_library(int pid)
     }
     printf("\\n");
          /* load shellcode into text starting at eip */
-        for (i = 0; i < '''+str(len(self.shellcode))+'''; i += 4)
+        for (i = 0; i < ''' + str(len(self.shellcode)) + '''; i += 4)
                ptrace(PTRACE_POKETEXT, pid, (offset + i), *(long *)(mmap_shellcode + i));
  
     printf("\\nVerifying shellcode was injected properly, does this look ok?\\n");
     j = 0;
-    for (i = 0; i < '''+str(len(self.shellcode))+'''; i += 4)
+    for (i = 0; i < ''' + str(len(self.shellcode)) + '''; i += 4)
         buf[j++] = ptrace(PTRACE_PEEKTEXT, pid, (offset + i));
  
     p = (unsigned char *) buf;
-    for (j = 0, i = 0; i < '''+str(len(self.shellcode))+'''; i++)
+    for (j = 0, i = 0; i < ''' + str(len(self.shellcode)) + '''; i++)
     {
         if ((j++ % 20) == 0)
             printf("\\n");
@@ -522,7 +515,7 @@ int mmap_library(int pid)
     printf("%%eip is now at 0x%x, resetting it to 0x%x\\n", reg.eip, eip);
     printf("inserting original code back\\n");
  
-    for (j = 0, i = 0; i < '''+str(len(self.shellcode))+'''; i += 4)
+    for (j = 0, i = 0; i < ''' + str(len(self.shellcode)) + '''; i += 4)
         buf[j++] = ptrace(PTRACE_POKETEXT, pid, (offset + i), *(long *)(saved_text + i));
  
     /* get base addr of our mmap'd lib */

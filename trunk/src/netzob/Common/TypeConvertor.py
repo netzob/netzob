@@ -16,18 +16,14 @@
 #+---------------------------------------------- 
 #| Global Imports
 #+----------------------------------------------
-import logging
 from bitarray import bitarray
 
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
 
 class TypeConvertor():
-    
-    
     
     #+---------------------------------------------- 
     #| Transform an ascii string to its binary representation
@@ -60,39 +56,6 @@ class TypeConvertor():
     @staticmethod
     def bin2strhex(bin):
         return str(hex(int(bin.to01(), 2)))
-    
-    
-#    #+---------------------------------------------- 
-#    #| Transform an hex to the bits
-#    #| @param the hex to transform
-#    #| @endian the endian selected (little or big) (normal = big)
-#    #| @return 
-#    #+----------------------------------------------
-#    @staticmethod
-#    def hex2bin(hex, endian):
-#        res = ""
-#        if len(hex) % 2 == 0: # Even length
-#            for i in range(0, len(hex), 2):
-#                res = res + chr(int(hex[i: i + 2], 16))
-#        else: # Odd length
-#            for i in range(0, len(hex) - 1, 2):
-#                res = res + chr(int(hex[i: i + 2], 16))
-#            res = res + chr(int(hex[-1], 16))
-#        
-#        result = bitarray(endian='big')
-#        result.fromstring(res)
-#        return result
-##        
-#    @staticmethod
-#    def bin2hex(bin):
-#        return bin.tostring()
-#    
-#    #+---------------------------------------------- 
-#    #| Transform an int to an hex (10 => '0xa')
-#    #+----------------------------------------------
-#    @staticmethod
-#    def int2hex(int):
-#        return hex(int)
     
     @staticmethod
     def int2bin(i, nbbits):

@@ -16,8 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import hashlib
+import logging
 import binascii
 import random
 import string
@@ -30,8 +29,7 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..Variable import Variable
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 
 

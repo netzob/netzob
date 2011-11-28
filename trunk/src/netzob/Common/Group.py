@@ -26,7 +26,9 @@ import glib
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import ConfigurationParser, TypeIdentifier
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.TypeIdentifier import TypeIdentifier
+
 
 #+---------------------------------------------- 
 #| C Imports
@@ -92,7 +94,7 @@ class Group(object):
     def buildInitRegex(self):
         self.log.debug("Build the regex and alignement of the group " + str(self.getID()))
         # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
         if valID == 0:
             aType = "ascii"
@@ -116,7 +118,7 @@ class Group(object):
     def buildRegexAndAlignment(self):
         self.log.debug("Build the regex and alignement of the group " + str(self.getID()))
         # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
         if valID == 0:
             aType = "ascii"
@@ -135,7 +137,7 @@ class Group(object):
             return
 
         # Serialize the messages before sending them to the C library
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         serialMessages = ""
         format = ""
         maxLeftReducedStringData = 0
@@ -152,7 +154,7 @@ class Group(object):
                 maxReducedSize = m.getReducedSize()
 
         # Align sequences in C library
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
         (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
         
@@ -214,7 +216,7 @@ class Group(object):
             regex.append("(.{," + str(nbTiret) + "})")
 
         # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
         if valID == 0:
             aType = "ascii"
@@ -299,7 +301,7 @@ class Group(object):
     #+----------------------------------------------
     def slickRegex(self):
         # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
         if valID == 0:
             aType = "ascii"
@@ -342,7 +344,7 @@ class Group(object):
     def findSizeFields(self, store):
         if len(self.columns) == 0:
             return
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         iCol = 0
         # We cover each field for a potential size field
         for col in self.getColumns():
@@ -444,7 +446,7 @@ class Group(object):
         hbox.add(scroll)
 
         ## Algo : for each column, and then for each cell, try to carve data
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         iCol = 0
         for col in self.getColumns():
             for (carver, regex) in self.carvers.items():
@@ -490,7 +492,7 @@ class Group(object):
     #|  It shows a preview of the carved data
     #+----------------------------------------------
     def dataCarvingResultSelected_cb(self, treeview, treeviewTarget, but):
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
         if(it):
@@ -557,7 +559,7 @@ class Group(object):
         hbox.add(scroll)
 
         ## Algo : for each column, and then for each cell, try to find environmental dependency
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         iCol = 0
         for col in self.getColumns():
             for (carver, regex) in self.carvers.items():
@@ -602,7 +604,7 @@ class Group(object):
     #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
     def envDependenciesResultSelected_cb(self, treeview, treeviewTarget, but):
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
         if(it):
@@ -710,7 +712,7 @@ class Group(object):
     #|  It shows a preview of the finding
     #+----------------------------------------------
     def searchResultSelected_cb(self, treeview, treeviewTarget, data):
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
         if(it):
@@ -759,7 +761,7 @@ class Group(object):
             newRegex = col1['regex'] + col2['regex']
 
         # Use the default protocol type for representation
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         valID = configParser.getInt("clustering", "protocol_type")
         if valID == 0:
             aType = "ascii"
@@ -859,7 +861,7 @@ class Group(object):
     def getPossibleTypesByCol(self, iCol):
         if iCol >= 0 and iCol < len(self.columns) :
             cells = self.getCellsByCol(iCol)
-            typeIdentifier = TypeIdentifier.TypeIdentifier()        
+            typeIdentifier = TypeIdentifier()        
             return typeIdentifier.getTypes(cells)
         else :
             self.log.warning("The possible types for the column " + str(iCol) + " are not defined ! ")
@@ -877,7 +879,7 @@ class Group(object):
         return self.encode(raw, aType)
     
     def encode(self, raw, type):
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         if type == "ascii" :
             return typer.toASCII(raw)
         elif type == "alphanum" :

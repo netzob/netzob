@@ -10,16 +10,8 @@ import os
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ...Common import ConfigurationParser
-from ...Common import Process
-from ...Common import ExecutionContext
-       
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
+from netzob.Common.ExecutionContext import ExecutionContext
+   
 #+---------------------------------------------- 
 #| TreeProcessGenerator :
 #|     update and generates the treestore 
@@ -51,7 +43,7 @@ class TreeProcessesGenerator():
         # str : color foreground
         # str : color background
         self.treestore = gtk.TreeStore(str, str, str, str)
-        self.treeview  = gtk.TreeView(self.treestore)
+        self.treeview = gtk.TreeView(self.treestore)
 
         # messages list
         self.scroll = gtk.ScrolledWindow()
@@ -88,12 +80,12 @@ class TreeProcessesGenerator():
         self.updateProcessesList()
         
         for process in self.processes :
-            iter = self.treestore.append(None, [process.getName(),process.getPid(), '#000000', '#FFFFFF'])
+            iter = self.treestore.append(None, [process.getName(), process.getPid(), '#000000', '#FFFFFF'])
 
 
     def updateProcessesList(self):
         self.log.debug("Updating the list of executing processes.")
-        self.processes = ExecutionContext.ExecutionContext.getCurrentProcesses()
+        self.processes = ExecutionContext.getCurrentProcesses()
         
         
         

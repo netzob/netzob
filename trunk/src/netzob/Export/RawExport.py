@@ -17,9 +17,6 @@
 #| Global Imports
 #+----------------------------------------------
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 import logging
 
@@ -28,14 +25,7 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from TreeViews import TreeGroupGenerator
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Export.TreeViews import TreeGroupGenerator
 
 #+---------------------------------------------- 
 #| RawExport :

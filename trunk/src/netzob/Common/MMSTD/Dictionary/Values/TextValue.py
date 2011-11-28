@@ -16,19 +16,17 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from .AbstractValue import AbstractValue
-from ....TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| TextValue :

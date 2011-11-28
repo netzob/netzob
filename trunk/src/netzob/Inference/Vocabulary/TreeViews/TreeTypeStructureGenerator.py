@@ -17,22 +17,11 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
-import re
-import pango
-import gobject
 import gtk
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ...Common import ConfigurationParser
-from ...Common import TypeIdentifier
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| TreeTypeStructureGenerator :

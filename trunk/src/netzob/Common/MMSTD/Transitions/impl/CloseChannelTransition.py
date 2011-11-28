@@ -17,8 +17,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import random
+import logging
 import time
 
 
@@ -30,9 +29,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..AbstractTransition import AbstractTransition
-from ...Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 
 
 #+---------------------------------------------------------------------------+

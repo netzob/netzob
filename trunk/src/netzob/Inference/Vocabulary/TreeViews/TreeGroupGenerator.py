@@ -22,7 +22,6 @@ import gtk
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ...Common import ConfigurationParser
 
 #+---------------------------------------------- 
 #| TreeGroupGenerator :

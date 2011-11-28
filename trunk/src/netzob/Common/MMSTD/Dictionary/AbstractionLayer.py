@@ -16,8 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import time
+import logging
 import datetime
 
 #+---------------------------------------------------------------------------+
@@ -28,8 +27,7 @@ import datetime
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from ... import ConfigurationParser
-from ..Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 
 
 class TimeoutException(Exception): 

@@ -17,9 +17,6 @@
 #| Global Imports
 #+----------------------------------------------
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 import logging
 
@@ -28,14 +25,8 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from TreeViews import TreeGroupGenerator
+from netzob.Export.TreeViews.TreeGroupGenerator import TreeGroupGenerator
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| ScapyExport :
@@ -87,7 +78,7 @@ class ScapyExport:
         self.box_content.show()
         
         # Create the group selection treeview
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
+        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
         self.box_top.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 

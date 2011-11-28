@@ -18,24 +18,19 @@
 #+----------------------------------------------
 import gobject
 import logging
-import re 
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import Group
-from ..Common import ConfigurationParser, TypeIdentifier
+from netzob.Common.Group import Group
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.TypeIdentifier import TypeIdentifier
 
 #+---------------------------------------------- 
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| Clusterer :
@@ -61,7 +56,7 @@ class Clusterer(object):
             for group in groups :
                 for m in group.getMessages():
                     i += 1
-                    self.groups.append(Group.Group(str(i), [m]))
+                    self.groups.append(Group(str(i), [m]))
             self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
         
     #+---------------------------------------------- 
@@ -75,11 +70,11 @@ class Clusterer(object):
     def retrieveEffectiveMaxIJ(self):
         self.log.debug("Computing the associated matrix")
         # Serialize the groups before feeding the C library
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
         serialGroups = ""
         format = ""
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         for group in self.groups:
             if group.getAlignment() != "": # If we already computed the alignement of the group, then use it
                 format += "1" + "G"
@@ -116,7 +111,7 @@ class Clusterer(object):
     
     def mergeEffectiveGroups(self):
         # retrieves the following parameters from the configuration file
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         nbIteration = configParser.getInt("clustering", "nbIteration")        
         min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
         self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
@@ -245,7 +240,7 @@ class Clusterer(object):
         messages = []
         messages.extend(group1.getMessages())
         messages.extend(group2.getMessages())
-        newGroup = Group.Group(group1.getName() + group2.getName(), messages)
+        newGroup = Group(group1.getName() + group2.getName(), messages)
                     
         # Append th new group to the "groups" structure
         self.groups.append(newGroup)

@@ -16,7 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 import uuid
 import re
 import glib
@@ -24,7 +24,7 @@ import glib
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .. import ConfigurationParser
+
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage :
@@ -117,8 +117,8 @@ class AbstractMessage():
         m = compiledRegex.match(data)
         if m == None:
             self.log.warning("The regex of the group doesn't match one of its message")
-            self.log.warning("Regex: " + "".join(regex) )
-            self.log.warning("Message: " + data )
+            self.log.warning("Regex: " + "".join(regex))
+            self.log.warning("Message: " + data)
             return [ self.getStringData() ]
         res = []
         iCol = 0

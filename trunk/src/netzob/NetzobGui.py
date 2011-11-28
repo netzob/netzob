@@ -36,17 +36,17 @@ sys.path.append('lib/libNeedleman/')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Modelization import UImodelization
-from netzob.Export import UIexport
-from netzob.Import import UIimport
-from netzob.Fuzzing import UIfuzzing
-from netzob.Common import LoggingConfiguration
-from netzob.Simulator import UISimulator
-from netzob.Common import ConfigurationParser
-from netzob.Common import StateParser
-from netzob.Common import Groups
-from netzob.Common import ResourcesConfiguration
-from netzob.Common import SplashScreen
+from netzob.Inference.Vocabulary.UImodelization import UImodelization
+from netzob.Export.UIexport import UIexport
+from netzob.Import.UIimport import UIimport
+from netzob.Fuzzing.UIfuzzing import UIfuzzing
+from netzob.Common.LoggingConfiguration import LoggingConfiguration
+from netzob.Simulator.UISimulator import UISimulator
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.StateParser import StateParser
+from netzob.Common.Groups import Groups
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+
 
 
 #+---------------------------------------------- 
@@ -64,7 +64,7 @@ class NetzobGui():
     def __init__(self):
         
         # First we initialize and verify all the resources
-        if not ResourcesConfiguration.ResourcesConfiguration.initializeResources() :
+        if not ResourcesConfiguration.initializeResources() :
             logging.fatal("Error while configuring the resources of NETZOB")
             sys.exit()
            
@@ -75,7 +75,7 @@ class NetzobGui():
 #        splashScreen.window.destroy() 
         
         # Second we create the logging infrastructure
-        LoggingConfiguration.LoggingConfiguration().initializeLogging()
+        LoggingConfiguration().initializeLogging()
                 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
@@ -84,14 +84,14 @@ class NetzobGui():
         self.tracePath = ""
 
         # Groups of messages are handled with the following object
-        self.groups = Groups.Groups(self)
+        self.groups = Groups(self)
 
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
         
-        window.set_icon_from_file(("%s/logo.png" %
-                                   ResourcesConfiguration.ResourcesConfiguration.getStaticResources()))
+        window.set_icon_from_file(("%s/logo.png" % 
+                                   ResourcesConfiguration.getStaticResources()))
         window.connect("delete_event", self.evnmtDelete)
         window.connect("destroy", self.destroy)
         
@@ -149,11 +149,11 @@ class NetzobGui():
 
         self.pageList = []
         # Adding the different notebook
-        self.Import = UIimport.UIimport(self)
-        self.modelization = UImodelization.UImodelization(self)
-        self.export = UIexport.UIexport(self)
-        self.fuzzing = UIfuzzing.UIfuzzing(self)
-        self.simulator = UISimulator.UISimulator(self)
+        self.Import = UIimport(self)
+        self.modelization = UImodelization(self)
+        self.export = UIexport(self)
+        self.fuzzing = UIfuzzing(self)
+        self.simulator = UISimulator(self)
 
         self.pageList.append(["Import", self.Import])
         self.pageList.append(["Modelization", self.modelization])
@@ -189,7 +189,7 @@ class NetzobGui():
     def updateListOfAvailableTraces(self):
         self.entry.get_model().clear()
         # retrieves the trace directory path
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         if tracesDirectoryPath == "" :
             self.log.warn("No available traces directory was found.")
             return 
@@ -253,7 +253,7 @@ class NetzobGui():
             self.log.info("No trace selected")
             return
 
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         configPath = tracesDirectoryPath + os.sep + target + os.sep + "config.xml"
         
         for page in self.pageList:
@@ -267,7 +267,7 @@ class NetzobGui():
         target = self.entry.get_active_text()
         if target == "" or target == None:
             return
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         self.label_analyse.set_text(target)
         self.tracePath = tracesDirectoryPath + os.sep + target
 
@@ -276,7 +276,7 @@ class NetzobGui():
             filePath = self.tracePath + "/" + file
             if file == "config.xml":
                 self.log.info("A configuration file has been found, so we analyze and load it")
-                stateParser = StateParser.StateParser(self.tracePath + "/config.xml")
+                stateParser = StateParser(self.tracePath + "/config.xml")
                 stateParser.loadConfiguration()
                 self.groups.setGroups(stateParser.getGroups())
         

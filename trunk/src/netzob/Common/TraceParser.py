@@ -28,9 +28,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common import Message
-from netzob.Common import Group
-from netzob.Common import ConfigurationParser
+from netzob.Common.Group import Group
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 
 #+---------------------------------------------- 
@@ -81,7 +79,7 @@ class TraceParser(object):
             # Append retrieved message to the final list
             tmpMessages = self.parseFile(filePath)
             # Save the extracted messages in a dedicated group
-            group = Group.Group(file, tmpMessages)            
+            group = Group(file, tmpMessages)            
             groups.append(group)
         return groups
 

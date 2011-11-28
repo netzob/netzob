@@ -17,7 +17,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
-import pango
 import gobject
 import re
 import pygtk
@@ -33,23 +32,17 @@ import subprocess
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from ..Common.Models import IPCMessage
-from ..Common.Models.Factories import IPCMessageFactory
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.Models.IPCMessage import IPCMessage
+from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
-#| IPC :
+#| IPpc :
 #|     ensures the capture of informations through IPC proxing
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class IPC:
+class Ipc:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace
@@ -309,7 +302,7 @@ class IPC:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -339,7 +332,7 @@ class IPC:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
         
         messages = []
@@ -357,7 +350,7 @@ class IPC:
                     continue
                 
                 #Compute the messages
-                message = IPCMessage.IPCMessage()
+                message = IPCMessage()
                 message.setCategory("none")
                 message.setKey(msg_fd)
                 message.setName("none")
@@ -372,7 +365,7 @@ class IPC:
         res = []
         res.append("<messages>")
         for message in messages :
-            res.append(IPCMessageFactory.IPCMessageFactory.saveInXML(message))
+            res.append(IPCMessageFactory.saveInXML(message))
         res.append("</messages>")
         
         # Dump into a random XML file
@@ -385,7 +378,7 @@ class IPC:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -414,7 +407,7 @@ class IPC:
                     continue
                 
                 #Compute the messages
-                message = IPCMessage.IPCMessage()
+                message = IPCMessage()
                 message.setCategory("none")
                 message.setKey(msg_fd)
                 message.setName("none")
@@ -428,7 +421,7 @@ class IPC:
         res = []
         res.append("<messages>")
         for message in messages :
-            res.append(IPCMessageFactory.IPCMessageFactory.saveInXML(message))
+            res.append(IPCMessageFactory.saveInXML(message))
         res.append("</messages>")
 
         # Dump into a random XML file
@@ -536,7 +529,7 @@ class IPC:
         path = "/proc/" + str(self.pid) + "/fd/" + str(fd)
         if os.path.realpath(path).find("socket:[", 0) != -1:
             return "network"
-        elif os.path.isfile( os.path.realpath(path) ) or os.path.isdir( os.path.realpath(path) ):
+        elif os.path.isfile(os.path.realpath(path)) or os.path.isdir(os.path.realpath(path)):
             return "fs"
         else:
             return "ipc"

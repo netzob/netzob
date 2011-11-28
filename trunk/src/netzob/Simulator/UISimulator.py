@@ -22,7 +22,6 @@ pygtk.require('2.0')
 import logging
 import os
 import threading
-import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -32,19 +31,13 @@ from xml.etree import ElementTree
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from . import XDotWidget
-from ..Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
-from ..Common.MMSTD.Actors.Network import NetworkServer
-from ..Common.MMSTD.Actors.Network import NetworkClient
-from ..Common.MMSTD.Dictionary import AbstractionLayer 
-from ..Common.MMSTD.Actors import MMSTDVisitor 
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
+from netzob.Common.MMSTD.Actors.Network import NetworkServer
+from netzob.Common.MMSTD.Actors.Network import NetworkClient
+from netzob.Common.MMSTD.Dictionary import AbstractionLayer 
+from netzob.Common.MMSTD.Actors import MMSTDVisitor 
+from netzob.Simulator.XDotWidget import XDotWidget
 
 #+---------------------------------------------- 
 #| UISimulator :
@@ -90,7 +83,7 @@ class UISimulator:
         self.finish = False
         
         # Init each field with its saved value if it exist
-        config = ConfigurationParser.ConfigurationParser()
+        config = ConfigurationParser()
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
@@ -368,7 +361,7 @@ class UISimulator:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Panel for the Model
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.xdotWidget = XDotWidget.XDotWidget()        
+        self.xdotWidget = XDotWidget()        
         
         self.xdotWidget.show_all()
         self.xdotWidget.set_size_request(500, 500)        
@@ -413,7 +406,7 @@ class UISimulator:
     #+----------------------------------------------   
     def getAvailableGrammars(self):
         # Scan the directory of grammars and retrieve them
-        grammar_directory = ConfigurationParser.ConfigurationParser().get("automata", "path")  
+        grammar_directory = ConfigurationParser().get("automata", "path")  
         
         if grammar_directory == "" or not os.path.isdir(grammar_directory) :
             self.log.warn("Unable to load the grammar directory")
@@ -495,7 +488,7 @@ class UISimulator:
         self.log.info("Will add an actor named " + actorName + " (" + actorGrammar + ")")
         
         # First we load the xml definition of the automata     
-        grammar_directory = ConfigurationParser.ConfigurationParser().get("automata", "path") 
+        grammar_directory = ConfigurationParser().get("automata", "path") 
         xmlFile = os.path.join(grammar_directory, actorGrammar)
         tree = ElementTree.ElementTree()
         tree.parse(xmlFile)
@@ -527,7 +520,7 @@ class UISimulator:
         self.updateListOfActors()
         
         # we save the form in the configuration considering its a valid one
-        config = ConfigurationParser.ConfigurationParser()
+        config = ConfigurationParser()
         config.set("simulating", "actorName", actorName)
         config.set("simulating", "grammar", actorGrammar)
         config.set("simulating", "typeOfActor", actorGrammarType)

@@ -16,14 +16,13 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..AbstractSymbol import AbstractSymbol
+from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 
 #+---------------------------------------------------------------------------+

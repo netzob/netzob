@@ -20,7 +20,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 import os
-import logging
+
 #+---------------------------------------------- 
 #| Related third party imports
 #+----------------------------------------------
@@ -28,7 +28,8 @@ import logging
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-import ResourcesConfiguration
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+
 #+---------------------------------------------- 
 #| SplashScreen :
 #|    Manage a splashscreen for NETZOB startup
@@ -47,7 +48,7 @@ class SplashScreen(object):
        
         
         # Retrieve static resources
-        staticPath = ResourcesConfiguration.ResourcesConfiguration.getStaticResources()
+        staticPath = ResourcesConfiguration.getStaticResources()
         logoPath = os.path.abspath(os.path.join(staticPath, "logo.png"))
 
 
@@ -65,7 +66,7 @@ class SplashScreen(object):
         
         
         
-        workspace = ResourcesConfiguration.ResourcesConfiguration.getWorkspace()
+        workspace = ResourcesConfiguration.getWorkspace()
         if workspace != None :
             self.lbl = gtk.Label("Current workspace : " + workspace)
         else :

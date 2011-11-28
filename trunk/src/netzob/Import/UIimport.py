@@ -17,7 +17,6 @@
 #| Global Imports
 #+----------------------------------------------
 import gtk
-import gobject
 import pygtk
 pygtk.require('2.0')
 import logging
@@ -25,12 +24,11 @@ import logging
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-import Network
-import Pcap
-import Api
-import Ipc
-import File
+from netzob.Import.Network import Network
+from netzob.Import.Pcap import Pcap
+from netzob.Import.Api import Api
+from netzob.Import.Ipc import Ipc
+from netzob.Import.File import File
 
 #+---------------------------------------------- 
 #| UIcapturing :
@@ -79,23 +77,23 @@ class UIimport:
         self.panel.add(notebook)
 
         # Network Capturing Panel
-        netPanel = Network.Network(self.zob)
+        netPanel = Network(self.zob)
         notebook.append_page(netPanel.getPanel(), gtk.Label("Network Capturing"))
 
         # IPC Capturing Panel
-        ipcPanel = Ipc.IPC(self.zob)
+        ipcPanel = Ipc(self.zob)
         notebook.append_page(ipcPanel.getPanel(), gtk.Label("IPC Capturing"))
 
         # API Panel
-        apiPanel = Api.Api(self.zob)
+        apiPanel = Api(self.zob)
         notebook.append_page(apiPanel.getPanel(), gtk.Label("API capturing"))
 
         # PCAP Panel
-        pcapPanel = Pcap.Pcap(self.zob)
+        pcapPanel = Pcap(self.zob)
         notebook.append_page(pcapPanel.getPanel(), gtk.Label("PCAP import"))
 
         # File Panel
-        filePanel = File.File(self.zob)
+        filePanel = File(self.zob)
         notebook.append_page(filePanel.getPanel(), gtk.Label("File import"))
 
     #+---------------------------------------------- 

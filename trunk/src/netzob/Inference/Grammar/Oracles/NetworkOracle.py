@@ -18,6 +18,7 @@
 #+----------------------------------------------
 import logging
 import time
+import threading
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -26,11 +27,10 @@ import time
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from AbstractOracle import AbstractOracle
-from ....Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
-from ....Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
-from ....Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
-import threading
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+
 
 #+---------------------------------------------- 
 #| NetworkOracle :

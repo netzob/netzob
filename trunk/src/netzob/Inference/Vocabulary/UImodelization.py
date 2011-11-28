@@ -18,8 +18,6 @@
 #+----------------------------------------------
 import gtk
 import pango
-import gobject
-import re
 import pygtk
 pygtk.require('2.0')
 import logging
@@ -32,21 +30,15 @@ import random
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import Group
-from ..Common import Message
-from ..Common import ConfigurationParser
-from SearchView import SearchView
-from ..Common import StateParser
-import Entropy
-from TreeViews import TreeGroupGenerator
-from TreeViews import TreeMessageGenerator
-from TreeViews import TreeTypeStructureGenerator
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common import StateParser
+from netzob.Common.Group import Group
+from netzob.Common.Message import Message
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Inference.Vocabulary.SearchView import SearchView
+from netzob.Inference.Vocabulary.Entropy import Entropy
+from netzob.Inference.Vocabulary.TreeViews.TreeGroupGenerator import TreeGroupGenerator
+from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessageGenerator
+from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+---------------------------------------------- 
 #| UImodelization :
@@ -92,11 +84,11 @@ class UImodelization:
         self.netzob = netzob
         self.selectedGroup = ""
         self.selectedMessage = ""
-        self.treeMessageGenerator = TreeMessageGenerator.TreeMessageGenerator()
+        self.treeMessageGenerator = TreeMessageGenerator()
         self.treeMessageGenerator.initialization()
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
+        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
         
         # Definition of the Sequence Onglet
@@ -105,7 +97,7 @@ class UImodelization:
         self.panel.show()
         self.defer_select = False
 
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         
         #+---------------------------------------------- 
         #| TOP PART OF THE GUI : BUTTONS
@@ -190,7 +182,7 @@ class UImodelization:
         but.set_label("Discover alignment")
         but.connect("clicked", self.startAnalysis_cb)
         but.show()
-        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget entry for chosing the alignment delimiter
         label = gtk.Label("Set the delimiter : ")
@@ -205,7 +197,7 @@ class UImodelization:
         but.set_label("Force alignment")
         but.connect("clicked", self.forceAlignment_cb, entry)
         but.show()
-        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL|gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
         ## Field type inferrence
         frame = gtk.Frame()
@@ -356,7 +348,7 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.netzob.groups.alignWithDelimiter( delimiter.get_text() )
+        self.netzob.groups.alignWithDelimiter(delimiter.get_text())
         self.update()
     
     #+---------------------------------------------- 
@@ -571,7 +563,7 @@ class UImodelization:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -601,7 +593,7 @@ class UImodelization:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, messages, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
         res = "<datas>\n"
@@ -620,7 +612,7 @@ class UImodelization:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, messages, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -1026,7 +1018,7 @@ class UImodelization:
         if (len(newGroupName) > 0) :
             self.log.debug("a new group will be created with the given name : {0}".format(newGroupName))
             
-            newGroup = Group.Group(newGroupName, [])
+            newGroup = Group(newGroupName, [])
             self.netzob.groups.addGroup(newGroup)
             #Update Left and Right
             self.update()
@@ -1188,21 +1180,21 @@ class UImodelization:
     #+----------------------------------------------
     def updateScoreLimit(self, combo):
         val = combo.get_active_text()
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         configParser.set("clustering", "equivalence_threshold", val)
 
     #+---------------------------------------------- 
     #| Called when user wants to slick internally in libNeedleman
     #+----------------------------------------------
     def activeInternalSlickRegexes(self, checkButton):
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         configParser.set("clustering", "do_internal_slick", (0, 1)[checkButton.get_active()])
         
     #+---------------------------------------------- 
     #| Called when user wants to activate orphan reduction
     #+----------------------------------------------
     def activeOrphanReduction(self, checkButton):
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         configParser.set("clustering", "orphan_reduction", (0, 1)[checkButton.get_active()])
 
     #+---------------------------------------------- 
@@ -1210,7 +1202,7 @@ class UImodelization:
     #+----------------------------------------------
     def updateProtocolType(self, combo):
         valID = combo.get_active()
-        configParser = ConfigurationParser.ConfigurationParser()
+        configParser = ConfigurationParser()
         configParser.set("clustering", "protocol_type", valID)
 
         if valID == 0:
@@ -1285,7 +1277,7 @@ class UImodelization:
         if self.treeMessageGenerator.getGroup() == None:
             self.log.info("No group selected")
             return
-        entropy = Entropy.Entropy(self.treeMessageGenerator.getGroup())
+        entropy = Entropy(self.treeMessageGenerator.getGroup())
         entropy.buildDistributionView()
 
     #+---------------------------------------------- 
@@ -1293,7 +1285,7 @@ class UImodelization:
     #+----------------------------------------------
     def findSizeFields(self, button):
         # Create a temporary group for testing size fields
-        group = Group.Group('tmp_group', [])
+        group = Group('tmp_group', [])
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :
@@ -1372,7 +1364,7 @@ class UImodelization:
                 # Build a temporary group
                 group.clear()
                 for message in self.treeMessageGenerator.getGroup().getMessages():
-                    tmp_message = Message.Message()
+                    tmp_message = Message()
                     tmp_message.setData(message.getData())
                     group.addMessage(tmp_message)
                 group.setAlignment(copy.deepcopy(self.treeMessageGenerator.getGroup().getAlignment()))

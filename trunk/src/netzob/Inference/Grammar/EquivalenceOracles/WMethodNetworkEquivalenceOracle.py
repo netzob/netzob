@@ -26,7 +26,7 @@ from collections import deque
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from AbstractEquivalenceOracle import AbstractEquivalenceOracle
+from netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle import AbstractEquivalenceOracle
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol

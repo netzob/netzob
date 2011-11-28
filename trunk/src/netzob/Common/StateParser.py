@@ -22,17 +22,9 @@ from xml.etree import ElementTree
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-import ConfigurationParser
-import Message
-import Group
-from Models.Factories.AbstractMessageFactory import AbstractMessageFactory
-from GroupFactory import GroupFactory
+from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from netzob.Common.GroupFactory import GroupFactory
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| ConfigParser :

@@ -16,10 +16,8 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import binascii
+import logging
 import random
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -29,9 +27,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..Variable import Variable
-from ....TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| HexVariable :
@@ -52,7 +48,8 @@ class HexVariable(Variable):
         self.max = -1   
         self.reset = "normal"    
         if self.value != None :
-            self.binValue = TypeConvertor.hex2bin(self.value, 'big')
+            self.binValue = None 
+            #TypeConvertor.hex2bin(self.value, 'big')
             self.strValue = value
         else :
             self.binValue = None
@@ -74,7 +71,8 @@ class HexVariable(Variable):
             # encode the value in hex
             v = hex(r)
             self.log.debug("Generating hex of value : " + str(v))
-            self.binValue = TypeConvertor.hex2bin(v, 'big')
+            self.binValue = None
+            #TypeConvertor.hex2bin(v, 'big')
             self.strValue = str(v)
        
     def learn(self, val, indice, isForced, dictionary):
@@ -88,7 +86,8 @@ class HexVariable(Variable):
         if len(tmp) >= self.size :
             
             self.binValue = val[indice:indice + self.size]
-            self.strValue = TypeConvertor.bin2hex(self.binValue)
+            self.strValue = "ERROR "
+            #TypeConvertor.bin2hex(self.binValue)
             
             self.log.debug("learning value : " + str(self.binValue))
             self.log.debug("learning value : " + self.strValue)

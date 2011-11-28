@@ -16,25 +16,17 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .. import ConfigurationParser
-from .AbstractMessage import AbstractMessage
-from Factories.NetworkMessageFactory import NetworkMessageFactory
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common.Models.AbstractMessage import AbstractMessage
+from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| NetworkMessage :

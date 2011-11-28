@@ -16,12 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import asyncore
-import threading
-import socket
-import select
-from bitarray import bitarray
+import logging
 from collections import deque
 #+---------------------------------------------------------------------------+
 #| Local application imports

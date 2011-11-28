@@ -16,8 +16,7 @@
 #+---------------------------------------------- 
 #| Standard library imports
 #+----------------------------------------------
-import os.path
-import logging
+import logging.config
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -26,8 +25,8 @@ import logging
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from ConfigurationParser import ConfigurationParser
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.ConfigurationParser import ConfigurationParser
+
 
 #+---------------------------------------------- 
 #| LoggingConfiguration :

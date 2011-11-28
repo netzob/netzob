@@ -16,10 +16,8 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import binascii
+import logging
 import random
-from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -29,9 +27,8 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..Variable import Variable
-from ....TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| IntVariable :

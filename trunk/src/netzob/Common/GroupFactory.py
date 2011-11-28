@@ -16,10 +16,6 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import array
-import binascii
-import logging.config
-import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -29,14 +25,8 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-import ConfigurationParser
-from Group import Group
+from netzob.Common.Group import Group
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| GroupFactory :

@@ -16,9 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import hashlib
-import binascii
+import logging
 import random
 import string
 
@@ -30,9 +28,8 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..Variable import Variable
-from ....TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+

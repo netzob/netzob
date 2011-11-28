@@ -32,9 +32,7 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
-from netzob.Common.MMSTD.Tools.Drawing import MMSTDViewer
 from netzob.Common.MMSTD.Actors.Network import NetworkServer 
 from netzob.Common.MMSTD.Actors.Network import NetworkClient
 from netzob.Common.ConfigurationParser import ConfigurationParser

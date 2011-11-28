@@ -17,27 +17,17 @@
 #| Global Imports
 #+----------------------------------------------
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 pygtk.require('2.0')
 import logging
-import threading
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-import Network
-import Ipc
-import File
+from netzob.Fuzzing.Network import Network
+from netzob.Fuzzing.Ipc import Ipc
+from netzob.Fuzzing.File import File
 
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------- 
 #| UIfuzzing :
@@ -89,13 +79,13 @@ class UIfuzzing:
         self.panel.add(notebook)
 
         # Network Capturing Panel
-        self.netPanel = Network.Network(self.netzob)
+        self.netPanel = Network(self.netzob)
         notebook.append_page(self.netPanel.getPanel(), gtk.Label("Network fuzzing"))
 
         # IPC Capturing Panel
-        self.ipcPanel = Ipc.IPC(self.netzob)
+        self.ipcPanel = Ipc(self.netzob)
         notebook.append_page(self.ipcPanel.getPanel(), gtk.Label("IPC fuzzing"))
 
         # File Panel
-        self.filePanel = File.File(self.netzob)
+        self.filePanel = File(self.netzob)
         notebook.append_page(self.filePanel.getPanel(), gtk.Label("File fuzzing"))

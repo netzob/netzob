@@ -16,19 +16,17 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from .AbstractValue import AbstractValue
+from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
 #+---------------------------------------------------------------------------+
 #| Aggregate :

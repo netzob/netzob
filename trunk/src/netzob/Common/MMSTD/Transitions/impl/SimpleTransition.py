@@ -16,15 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ...Symbols.impl.DictionarySymbol import DictionarySymbol
-from ...Symbols.impl.EmptySymbol import EmptySymbol
-from ..AbstractTransition import AbstractTransition
-from xml.etree import ElementTree
-import logging.config
-import random
-import time
-
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -33,7 +25,7 @@ import time
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
+from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 
 #+---------------------------------------------------------------------------+
 #| SimpleTransition :

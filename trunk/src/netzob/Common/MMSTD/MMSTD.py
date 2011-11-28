@@ -25,7 +25,6 @@ import logging
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from .. import ConfigurationParser
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunicationLayer
 

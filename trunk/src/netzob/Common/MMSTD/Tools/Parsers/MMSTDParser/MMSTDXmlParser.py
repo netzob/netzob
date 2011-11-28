@@ -16,7 +16,6 @@
 #+---------------------------------------------- 
 #| Standard library imports
 #+----------------------------------------------
-import logging
 import os
 
 #+---------------------------------------------- 
@@ -27,20 +26,13 @@ from xml.etree import ElementTree
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from ..... import ConfigurationParser
-from ....States.impl import NormalState
-from ....Symbols.impl import DictionarySymbol
-from ....Transitions.impl import SemiStochasticTransition
-from ....Transitions.impl import OpenChannelTransition
-from ....Transitions.impl import CloseChannelTransition
-from ..DictionaryParser import DictionaryXmlParser
-from .... import MMSTD
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.MMSTD.States.impl import NormalState
+from netzob.Common.MMSTD.Transitions.impl import SemiStochasticTransition
+from netzob.Common.MMSTD.Transitions.impl import OpenChannelTransition
+from netzob.Common.MMSTD.Transitions.impl import CloseChannelTransition
+from netzob.Common.MMSTD.Tools.Parsers.DictionaryParser import DictionaryXmlParser
+from netzob.Common.MMSTD import MMSTD
 
 #+---------------------------------------------- 
 #| MMSTDXmlParser :
@@ -70,7 +62,7 @@ class MMSTDXmlParser(object):
             raise NameError("The MMSTD doesn't have any dictionary declared")
         
         
-        automatonDir = ConfigurationParser.ConfigurationParser().get("automata", "path")
+        automatonDir = ConfigurationParser().get("automata", "path")
         dictionaryFile = os.path.join(automatonDir, rootElement.get("dictionary", "none"))
         # Parsing dictionary file
         dicoTree = ElementTree.ElementTree()

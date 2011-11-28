@@ -22,7 +22,6 @@ import gtk
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ...Common import ConfigurationParser
 
 #+---------------------------------------------- 
 #| TreeGroupGenerator :
@@ -52,7 +51,7 @@ class TreeGroupGenerator():
         # str : color foreground
         # str : color background
         self.treestore = gtk.TreeStore(str, str, str, str, str)
-        self.treeview  = gtk.TreeView(self.treestore)
+        self.treeview = gtk.TreeView(self.treestore)
 
         # messages list
         self.scroll = gtk.ScrolledWindow()
@@ -86,7 +85,7 @@ class TreeGroupGenerator():
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
         for group in self.netzob.groups.getGroups():            
-            iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0} [{1}]".format(group.getName(), str(len(group.getMessages()))),"{0}".format(group.getScore()), '#000000', '#DEEEF0'])
+            iter = self.treestore.append(None, ["{0}".format(group.getID()), "{0} [{1}]".format(group.getName(), str(len(group.getMessages()))), "{0}".format(group.getScore()), '#000000', '#DEEEF0'])
 
     #+---------------------------------------------- 
     #| messageSelected :
@@ -99,21 +98,21 @@ class TreeGroupGenerator():
         self.treestore.clear()
         for group in self.netzob.groups.getGroups():
             tmp_sequences = []
-            if (len(group.getRegex())>0) :
+            if (len(group.getRegex()) > 0) :
                     tmp_sequences.append(group.getRegex())
 
             tmp_sequences.append(self.selectedMessage.getStringData())
             tmp_alignator = NeedlemanWunsch()
 
             tmp_score = group.getScore()
-            if (len(tmp_sequences)>=2) :
+            if (len(tmp_sequences) >= 2) :
                 tmp_regex = tmp_alignator.getRegex(tmp_sequences)
                 tmp_score = tmp_alignator.computeScore(tmp_regex)
             if (tmp_score >= group.getScore()):
                 color = '#66FF00'
             else :
                 color = '#FF0000'
-                iter = self.treestore.append(None, ["{0}".format(group.getID()),"{0}".format(group.getName()),"{0}".format(group.getScore()), '#000000', color])
+                iter = self.treestore.append(None, ["{0}".format(group.getID()), "{0}".format(group.getName()), "{0}".format(group.getScore()), '#000000', color])
     
     #+---------------------------------------------- 
     #| getGroupAtPosition :
@@ -124,7 +123,7 @@ class TreeGroupGenerator():
     #| @return the group if it exists (or None)
     #+---------------------------------------------- 
     def getGroupAtPosition(self, x, y):
-        self.log.debug("Search for the group referenced at position {0};{1}".format(str(x),str(y)))
+        self.log.debug("Search for the group referenced at position {0};{1}".format(str(x), str(y)))
         info = self.treeview.get_path_at_pos(x, y)
         if info is not None :
             path = info[0]

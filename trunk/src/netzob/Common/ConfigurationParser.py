@@ -18,6 +18,7 @@
 #+----------------------------------------------
 import os.path
 import logging
+import ConfigParser
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -26,8 +27,7 @@ import logging
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-import ConfigParser
-from ResourcesConfiguration import ResourcesConfiguration
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 #+---------------------------------------------- 
 #| ConfigurationParser :

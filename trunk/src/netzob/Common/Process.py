@@ -16,21 +16,13 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
 import os
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-import ConfigurationParser
-import SharedLib
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.SharedLib import SharedLib
 #+---------------------------------------------------------------------------+
 #| Process :
 #|     Model object of a simple process definition
@@ -56,23 +48,23 @@ class Process(object):
     def getSharedLibs(self):
         libs = []
         # the command to execute
-        cmd = "cat /proc/"+str(self.pid)+"/maps | grep \"\.so\" | awk -F\" \" {'print $1\";\"$2\";\"$6'}"
+        cmd = "cat /proc/" + str(self.pid) + "/maps | grep \"\.so\" | awk -F\" \" {'print $1\";\"$2\";\"$6'}"
         lines = os.popen(cmd).readlines()
         for line in lines:
             ar = line.split(";")
             mem = ar[0]
             perm = ar[1]
-            path = ar[2][:len(ar[2])-1]
+            path = ar[2][:len(ar[2]) - 1]
             found = False
             for l in libs :
                 if l.getPath() == path :
                     found = True
             if found == False :
-                (libName,libVersion) = SharedLib.SharedLib.findNameAndVersion(path)
+                (libName, libVersion) = SharedLib.findNameAndVersion(path)
                 
                 
                 
-                lib = SharedLib.SharedLib(libName, libVersion, path)
+                lib = SharedLib(libName, libVersion, path)
                 libs.append(lib)
         return libs
         

@@ -16,7 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 import SocketServer
 import threading
 import time
@@ -26,12 +26,11 @@ import select
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..AbstractActor import AbstractActor
-from ..MMSTDVisitor import MMSTDVisitor
-from ...Dictionary.AbstractionLayer import AbstractionLayer
-from ...MMSTD import MMSTD
-from .InstanciatedNetworkServer import InstanciatedNetworkServer
+from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
+from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer import InstanciatedNetworkServer
 
 #+---------------------------------------------------------------------------+
 #| Container 

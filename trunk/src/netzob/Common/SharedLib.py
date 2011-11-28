@@ -16,26 +16,18 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import os
 import string
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-import ConfigurationParser
 from netzob.Import.GOTPoisoning import HijackedFunction
 
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| SharedLib :
@@ -90,20 +82,20 @@ class SharedLib(object):
     @staticmethod
     def findNameAndVersion(path):
         
-        nameWithoutPath = path.split("/")[len(path.split("/"))-1]
+        nameWithoutPath = path.split("/")[len(path.split("/")) - 1]
         
         # Remove the extension
-        if (len(nameWithoutPath) > 3 and nameWithoutPath[len(nameWithoutPath)-3:] == ".so") :
-            nameWithoutPath = nameWithoutPath[:len(nameWithoutPath)-3]
+        if (len(nameWithoutPath) > 3 and nameWithoutPath[len(nameWithoutPath) - 3:] == ".so") :
+            nameWithoutPath = nameWithoutPath[:len(nameWithoutPath) - 3]
         
         libName = nameWithoutPath
         libVersion = "0.0"   
         
         # find version number
         try :
-            if (string.index(nameWithoutPath,"-")>1) :
-                libName =  nameWithoutPath[:nameWithoutPath.index("-")]    
-                libVersion = nameWithoutPath[nameWithoutPath.index("-")+1:]   
+            if (string.index(nameWithoutPath, "-") > 1) :
+                libName = nameWithoutPath[:nameWithoutPath.index("-")]    
+                libVersion = nameWithoutPath[nameWithoutPath.index("-") + 1:]   
         except :
             pass
             

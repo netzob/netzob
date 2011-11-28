@@ -17,29 +17,19 @@
 #| Global Imports
 #+----------------------------------------------
 import gtk
-import pango
-import gobject
-import re
 import pygtk
-import StringIO
 pygtk.require('2.0')
 import logging
 import os
-import time
 import random
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser, TypeIdentifier
-from ..Common.Models import FileMessage
-from ..Common.Models.Factories import FileMessageFactory
-
-#+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
+from netzob.Common.TypeIdentifier import TypeIdentifier
+from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.Models.FileMessage import FileMessage
+from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 
 #+---------------------------------------------- 
 #| FileImport :
@@ -171,7 +161,7 @@ class File:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -201,13 +191,13 @@ class File:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
         res = []
         res.append("<messages>")
         for message in self.messages :
-            res.append(FileMessageFactory.FileMessageFactory.saveInXML(message))
+            res.append(FileMessageFactory.saveInXML(message))
         res.append("</messages>")
         # Dump into a random XML file
         fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
@@ -219,7 +209,7 @@ class File:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, dialog):
-        tracesDirectoryPath = ConfigurationParser.ConfigurationParser().get("traces", "path")
+        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
         for tmpDir in os.listdir(tracesDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -236,7 +226,7 @@ class File:
         res = []
         res.append("<messages>")
         for message in self.messages :
-            res.append(FileMessageFactory.FileMessageFactory.saveInXML(message))
+            res.append(FileMessageFactory.saveInXML(message))
         res.append("</messages>")
         # Dump into a random XML file
         fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
@@ -265,11 +255,11 @@ class File:
             self.size = os.path.getsize(aFile)
             self.creationDate = str(os.path.getctime(aFile))
             self.modificationDate = str(os.path.getmtime(aFile))
-            self.owner= "none"
+            self.owner = "none"
             pktFD = open(aFile, 'r')
             self.content = pktFD.read()
             pktFD.close()
-            typer = TypeIdentifier.TypeIdentifier()
+            typer = TypeIdentifier()
            
             self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), typer.hexdump(self.content), "normalTag")
             
@@ -283,9 +273,9 @@ class File:
         i = 0
         self.lineSeparator = []
         while (i < len(entry_text)) :
-            d = entry_text[i]+entry_text[i+1]
+            d = entry_text[i] + entry_text[i + 1]
             self.lineSeparator.append(int(d, 16))
-            i= i + 2
+            i = i + 2
             
         self.updatePacketList()    
         
@@ -295,28 +285,28 @@ class File:
 
     def updatePacketList(self):
         self.log.info("updating packet list")
-        typer = TypeIdentifier.TypeIdentifier()
+        typer = TypeIdentifier()
         hexValOfContent = ";".join(str(int(i, 16)) for i in typer.ascii2hex(self.content))
         separator = ";".join(str(i) for i in self.lineSeparator)       
         print hexValOfContent
-        ar = hexValOfContent.split(";"+separator+";")
+        ar = hexValOfContent.split(";" + separator + ";")
         # Create a FileMessage for each line
         lineNumber = 1
         self.messages = []        
         ps = []
         i = 0
         for a in ar :
-            if i<len(ar)-1 :
-                ps.append(a+";"+separator)
+            if i < len(ar) - 1 :
+                ps.append(a + ";" + separator)
             else :
                 ps.append(a)
-            i = i +1
+            i = i + 1
                 
         self.lineView.get_model().clear()
             
         for a in ps :
             # Create a message for each
-            message = FileMessage.FileMessage()
+            message = FileMessage()
             message.setLineNumber(lineNumber)
             message.setFilename(self.fileName)
             message.setCreationDate(self.creationDate)
@@ -329,8 +319,8 @@ class File:
             for t in test :
                 h = hex(int(t))[2:]
                 # Add a 0 before an hex value to always have two digit in a hex
-                if len(h)==1 :
-                    h = "0"+h
+                if len(h) == 1 :
+                    h = "0" + h
                 fe.append(h)
                 
             
@@ -339,10 +329,10 @@ class File:
             self.lineView.get_model().append(None, [lineNumber, ";".join(fe)])
             
             self.messages.append(message)
-            lineNumber = lineNumber +1
+            lineNumber = lineNumber + 1
         
         for message in self.messages :
-            print FileMessageFactory.FileMessageFactory.saveInXML(message)
+            print FileMessageFactory.saveInXML(message)
         
         
         

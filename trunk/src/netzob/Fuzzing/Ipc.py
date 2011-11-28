@@ -17,39 +17,23 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
-import pango
-import gobject
-import re
 import pygtk
 pygtk.require('2.0')
 import logging
-import threading
-import os
-import time
-import random
-from ptrace.linux_proc import readProcesses, readProcessCmdline
-import subprocess
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from TreeViews import TreeGroupGenerator
-from TreeViews import TreeTypeStructureGenerator
+from netzob.Fuzzing.TreeViews.TreeGroupGenerator import TreeGroupGenerator
+from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+---------------------------------------------- 
-#| Configuration of the logger
-#+----------------------------------------------
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
-
-#+---------------------------------------------- 
-#| IPC :
+#| Ipc :
 #|     ensures the capture of informations through IPC proxing
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class IPC:
+class Ipc:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace
@@ -94,7 +78,7 @@ class IPC:
 
         # Initialize the treeview generator for the groups
         # Create the treeview
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
+        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
         vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
@@ -106,7 +90,7 @@ class IPC:
         vb_right_panel = gtk.VBox(False, spacing=0)
         vb_right_panel.show()
         # Initialize the treeview for the type structure
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator.TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
         self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_field)
         vb_right_panel.add(self.treeTypeStructureGenerator.getScrollLib())

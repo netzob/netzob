@@ -16,9 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
-import asyncore
-import threading
+import logging
 import socket
 import select
 
@@ -27,10 +25,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..AbstractActor import AbstractActor
-from ..MMSTDVisitor import MMSTDVisitor
-from ...Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 
 
 #+---------------------------------------------------------------------------+

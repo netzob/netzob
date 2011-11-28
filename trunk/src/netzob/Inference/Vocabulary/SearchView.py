@@ -24,8 +24,7 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from ..Common import ConfigurationParser
-from Searcher import Searcher
+from netzob.Inference.Vocabulary.Searcher import Searcher
 
 #+---------------------------------------------- 
 #| SearchView :

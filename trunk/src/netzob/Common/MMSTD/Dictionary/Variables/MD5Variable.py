@@ -16,9 +16,8 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging.config
+import logging
 import hashlib
-import binascii
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -28,15 +27,8 @@ import binascii
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from .... import ConfigurationParser
-from ..Variable import Variable
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.TypeConvertor import TypeConvertor
-
-#+---------------------------------------------------------------------------+
-#| Configuration of the logger
-#+---------------------------------------------------------------------------+
-#loggingFilePath = ConfigurationParser.ConfigurationParser().get("logging", "path")
-#logging.config.fileConfig(loggingFilePath)
 
 #+---------------------------------------------------------------------------+
 #| MD5Variable :
