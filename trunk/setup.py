@@ -64,10 +64,11 @@ setup(
         "netzob.Import.TreeViews",
         "netzob.Inference",
         "netzob.Inference.Grammar",
+        "netzob.Inference.Grammar.EquivalenceOracles",
         "netzob.Inference.Grammar.Oracles",
         "netzob.Inference.Grammar.Queries",
-        "netzob.Modelization",
-        "netzob.Modelization.TreeViews",
+        "netzob.Inference.Vocabulary",
+        "netzob.Inference.vocabulary.TreeViews",
         "netzob.Simulator"
         ],
     package_dir={"netzob": "src/netzob" },
