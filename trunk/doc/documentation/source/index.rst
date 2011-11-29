@@ -35,7 +35,7 @@ The API section has a complete list of all the classes, methods,
 attributes and functions of the :mod:`netzob` module, together with short
 examples for many items.
 
-A day NETZOB will have a proper and efficient documentation. But this day, PYTHON will also have one ! :)
+A day Netzob will have a proper and efficient documentation. But this day, PYTHON will also have one ! :)
 
 Indices and tables
 ==================

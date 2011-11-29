@@ -32,14 +32,14 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 #+---------------------------------------------- 
 #| SplashScreen :
-#|    Manage a splashscreen for NETZOB startup
+#|    Manage a splashscreen for Netzob startup
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
 class SplashScreen(object):
     def __init__(self):        
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title('NETZOB')
+        self.window.set_title('Netzob')
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_decorated(False)
         self.window.set_default_size(268, 501)

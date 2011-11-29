@@ -63,7 +63,7 @@ class ResourcesConfiguration(object):
         
         userPath = ResourcesConfiguration.verifyUserResources()
         if userPath == None :
-            logging.info("The user resources were not found, we ask to the user its NETZOB home directory")
+            logging.info("The user resources were not found, we ask to the user its Netzob home directory")
             userPath = ResourcesConfiguration.askForUserDir()
             if userPath == None :
                 return False

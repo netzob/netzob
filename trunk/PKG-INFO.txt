@@ -1,5 +1,5 @@
 Metadata-Version: 1.0
-Name: NETZOB
+Name: Netzob
 Version: 0.3
 Summary: Framework for the reverse engineering of communication protocols
 Home-page: http://www.netzob.org

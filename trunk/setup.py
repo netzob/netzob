@@ -28,7 +28,7 @@ moduleLibNeedleman = Extension('libNeedleman',
                                sources=['lib/libNeedleman/NeedlemanWunsch.c'])
 
 #+---------------------------------------------------------------------------- 
-#| Definition of NETZOB for setup
+#| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
     name="Netzob",

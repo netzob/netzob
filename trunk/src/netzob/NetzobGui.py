@@ -25,13 +25,11 @@ import sys
 import logging
 from time import sleep
 
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 sys.path.append('lib/')
 sys.path.append('lib/libNeedleman/')
-
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -46,8 +44,6 @@ from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.StateParser import StateParser
 from netzob.Common.Groups import Groups
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-
-
 
 #+---------------------------------------------- 
 #| NetzobGUI :
@@ -65,7 +61,7 @@ class NetzobGui():
         
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources() :
-            logging.fatal("Error while configuring the resources of NETZOB")
+            logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
            
 #        splashScreen = SplashScreen.SplashScreen()
@@ -88,7 +84,7 @@ class NetzobGui():
 
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        window.set_title("NETZOB : NETwork protocol modeliZatiOn By reverse engineering")
+        window.set_title("Netzob : NETwork protocol modeliZatiOn By reverse engineering")
         
         window.set_icon_from_file(("%s/logo.png" % 
                                    ResourcesConfiguration.getStaticResources()))

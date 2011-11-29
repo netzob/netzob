@@ -30,7 +30,7 @@ from netzob.Common.ConfigurationParser import ConfigurationParser
 
 #+---------------------------------------------- 
 #| LoggingConfiguration :
-#|    Configure the logging layer of NETZOB
+#|    Configure the logging layer of Netzob
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
