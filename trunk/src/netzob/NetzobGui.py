@@ -90,12 +90,15 @@ class NetzobGui():
                                    ResourcesConfiguration.getStaticResources()))
         window.connect("delete_event", self.evnmtDelete)
         window.connect("destroy", self.destroy)
+        main_vbox = gtk.VBox(False, spacing=0)
         
+        # Main menu
+        menubar = self.get_main_menu(window)
+        main_vbox.pack_start(menubar, False, True, 0)
         
         ## UI Header definition
-        vbox = gtk.VBox(False, spacing=0)
         toolbar = gtk.HBox(False, spacing=0)
-        vbox.pack_start(toolbar, False, False, 2)
+        main_vbox.pack_start(toolbar, False, False, 2)
 
         label = gtk.Label("Select trace : ")
 #        menu = gtk.Menu()
@@ -141,7 +144,7 @@ class NetzobGui():
         self.notebook = gtk.Notebook()
         self.notebook.set_tab_pos(gtk.POS_TOP)
         self.notebook.connect("switch-page", self.notebookFocus)
-        vbox.pack_start(self.notebook, True, True, 0)
+        main_vbox.pack_start(self.notebook, True, True, 0)
 
         self.pageList = []
         # Adding the different notebook
@@ -171,11 +174,78 @@ class NetzobGui():
         progressBox.show()
         align.show()
         self.progressBar.show()
-        vbox.show()
-        window.add(vbox)
+        main_vbox.show()
+        window.add(main_vbox)
         window.show()
         
-        
+    def get_main_menu(self, window):
+        ui = '''<ui>
+    <menubar name="Menu">
+      <menu action="Workspace">
+        <menuitem action="CreateProject"/>
+        <menuitem action="SelectProject"/>
+        <menuitem action="Options"/>
+        <menuitem action="Exit"/>
+      </menu>
+      <menu action="Project">
+        <menuitem action="ImportTrace"/>
+        <menuitem action="ExportScapy"/>
+        <menuitem action="ExportWireshark"/>
+        <menuitem action="ExportXML"/>
+      </menu>
+      <menu action="Help">
+        <menuitem action="NetzobHelp"/>
+        <menuitem action="About"/>
+      </menu>
+    </menubar>
+    </ui>'''
+        gestionui = gtk.UIManager()
+        grouperacc = gestionui.get_accel_group()
+        window.add_accel_group(grouperacc)
+        groupeactions = gtk.ActionGroup('ExempleUIGestion')
+        groupeactions.add_actions([('Workspace', None, '_Workspace'),
+                                   ('CreateProject', None, '_Create project', None,
+                                    None, self.print_hello),
+                                   ('SelectProject', None, '_Select existing project', None,
+                                    None, self.print_hello),
+                                   ('Options', None, '_Options', None,
+                                    None, self.print_hello),
+                                   ('Exit', gtk.STOCK_QUIT, '_Exit', None,
+                                    'Exit the program', self.destroy)])
+        groupeactions.add_actions([('Project', None, '_Project'),
+                                   ('ImportTrace', None, '_Import trace', None,
+                                    None, self.print_hello),
+                                   ('ExportScapy', None, '_Export as Scapy dissector', None,
+                                    None, self.print_hello),
+                                   ('ExportWireshark', None, '_Export as Wireshark dissector', None,
+                                    None, self.print_hello),
+                                   ('ExportXML', None, '_Export in XML', None,
+                                    None, self.print_hello)])
+        groupeactions.add_actions([('Help', None, '_Help'),
+                                   ('NetzobHelp', None, '_Netzob help', None,
+                                    None, self.print_hello),
+                                   ('About', None, '_About Netzob', None,
+                                    None, self.aboutDialog)])
+        groupeactions.get_action('Exit').set_property('short-label', '_Exit')
+        gestionui.insert_action_group(groupeactions, 0)
+        gestionui.add_ui_from_string(ui)
+
+        menu = gestionui.get_widget('/Menu')
+        return menu
+
+    def print_hello(self):
+        pass
+
+    def aboutDialog(self, widget):
+        about = gtk.AboutDialog()
+        about.set_program_name("Netzob")
+        about.set_version("0.3")
+        about.set_copyright("(c) Georges Bossert & Frédéric Guihéry")
+        about.set_comments("Communication protocol modelization by reverse engineering")
+        about.set_website("http://www.netzob.org")
+        about.set_logo(gtk.gdk.pixbuf_new_from_file("src/netzob/zoby.png")) # TODO: find the good path
+        about.run()
+        about.destroy()
         
     #+------------------------------------------------------------------------ 
     #| updateListOfAvailableTraces :
