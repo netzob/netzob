@@ -30,11 +30,12 @@ import logging
 #+---------------------------------------------------------------------------+
 class AbstractState():
     
-    def __init__(self, id, name):
+    def __init__(self, type, id, name):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.States.AbstractState.py')
         self.id = id
         self.name = name
+        self.type = type
         self.active = False
     
     #+-----------------------------------------------------------------------+
@@ -108,7 +109,9 @@ class AbstractState():
         return self.name
     def isActive(self):
         return self.active
-        
+    def getType(self):
+        return self.type
+    
     def setID(self, id):
         self.id = id
     def setName(self, name):

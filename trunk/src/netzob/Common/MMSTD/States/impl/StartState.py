@@ -38,7 +38,7 @@ from netzob.Common.MMSTD.States.AbstractState import AbstractState
 class StartState(AbstractState):
     
     def __init__(self, id, name):
-        AbstractState.__init__(self, id, name)
+        AbstractState.__init__(self, "StartState", id, name)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.StartState.py')
         self.transitions = []
