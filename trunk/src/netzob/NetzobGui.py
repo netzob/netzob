@@ -25,26 +25,30 @@ import sys
 import logging
 from time import sleep
 
+
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 sys.path.append('lib/')
 sys.path.append('lib/libNeedleman/')
-
+from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
+from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
 from netzob.Export.UIexport import UIexport
 from netzob.Import.UIimport import UIimport
 from netzob.Fuzzing.UIfuzzing import UIfuzzing
+
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
 from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.StateParser import StateParser
 from netzob.Common.Groups import Groups
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-
+from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
 #+---------------------------------------------- 
 #| NetzobGUI :
 #|     Graphical runtime class
@@ -150,12 +154,14 @@ class NetzobGui():
         # Adding the different notebook
         self.Import = UIimport(self)
         self.modelization = UImodelization(self)
+        self.grammarInference = UIGrammarInference(self)
         self.export = UIexport(self)
         self.fuzzing = UIfuzzing(self)
         self.simulator = UISimulator(self)
 
         self.pageList.append(["Import", self.Import])
-        self.pageList.append(["Modelization", self.modelization])
+        self.pageList.append(["Vocabulary inference", self.modelization])
+        self.pageList.append(["Grammar inference", self.grammarInference])
         self.pageList.append(["Fuzzing", self.fuzzing])
         self.pageList.append(["Export", self.export])
         self.pageList.append(["Simulator", self.simulator])
@@ -243,7 +249,8 @@ class NetzobGui():
         about.set_copyright("(c) Georges Bossert & Frédéric Guihéry")
         about.set_comments("Communication protocol modelization by reverse engineering")
         about.set_website("http://www.netzob.org")
-        about.set_logo(gtk.gdk.pixbuf_new_from_file("src/netzob/zoby.png")) # TODO: find the good path
+        logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
+        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath)) # TODO: find the good path
         about.run()
         about.destroy()
         
@@ -362,6 +369,17 @@ class NetzobGui():
     def update(self):
         for page in self.pageList:
             page[1].update()
+            
+    def getDictionary(self):
+        actorGrammar = "example_learning.xml"
+        grammar_directory = ConfigurationParser().get("automata", "path") 
+        xmlFile = os.path.join(grammar_directory, actorGrammar)
+        tree = ElementTree.ElementTree()
+        tree.parse(xmlFile)
+        # Load the automata based on its XML definition
+        serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())
+        return serverAutomata.getDictionary()
+        
 
 #+---------------------------------------------- 
 #| RUNTIME
