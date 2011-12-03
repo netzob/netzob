@@ -302,8 +302,8 @@ class Ipc:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        for tmpDir in os.listdir(tracesDirectoryPath):
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
             entry.append_text(tmpDir)
@@ -332,8 +332,8 @@ class Ipc:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        existingTraceDir = projectsDirectoryPath + "/" + entry.get_active_text()
         
         messages = []
         
@@ -378,8 +378,8 @@ class Ipc:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        for tmpDir in os.listdir(tracesDirectoryPath):
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
             if entry.get_text() == tmpDir:
@@ -389,7 +389,7 @@ class Ipc:
                 return
 
         # Create the dest Dir
-        newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
+        newTraceDir = projectsDirectoryPath + "/" + entry.get_text()
         os.mkdir(newTraceDir)
         # Create the new XML structure        
         messages = []
@@ -429,7 +429,7 @@ class Ipc:
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
-        self.zob.updateListOfAvailableTraces()
+        self.zob.updateListOfAvailableProjects()
 
     #+---------------------------------------------- 
     #| Called when launching sniffing process

@@ -26,7 +26,7 @@ pygtk.require('2.0')
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.ConfigurationParser import ConfigurationParser
-from netzob.Common.TraceParser import TraceParser
+from netzob.Common.ProjectParser import ProjectParser
 from netzob.Inference.Vocabulary.Clusterer import Clusterer
 
 #+---------------------------------------------- 
@@ -52,8 +52,8 @@ class Groups(object):
         del self.groups[:] # Just clean the object without deleting it
 
     def initGroupsWithTraces(self):
-        traceParser = TraceParser(self.netzob)
-        self.setGroups(traceParser.parse())
+        projectParser = ProjectParser(self.netzob)
+        self.setGroups(projectParser.parse())
         for g in self.groups :
             g.buildInitRegex()
 

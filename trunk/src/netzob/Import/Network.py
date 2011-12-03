@@ -201,8 +201,8 @@ class Network:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        for tmpDir in os.listdir(tracesDirectoryPath):
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
             entry.append_text(tmpDir)
@@ -231,8 +231,8 @@ class Network:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        existingTraceDir = tracesDirectoryPath + "/" + entry.get_active_text()
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        existingTraceDir = projectsDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
         messages = []
         
@@ -307,8 +307,8 @@ class Network:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, selection, dialog):
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        for tmpDir in os.listdir(tracesDirectoryPath):
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
             if entry.get_text() == tmpDir:
@@ -318,7 +318,7 @@ class Network:
                 return
 
         # Create the dest Dir
-        newTraceDir = tracesDirectoryPath + "/" + entry.get_text()
+        newTraceDir = projectsDirectoryPath + "/" + entry.get_text()
         os.mkdir(newTraceDir)
         
         # Create the new XML structure
@@ -390,7 +390,7 @@ class Network:
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
-        self.zob.updateListOfAvailableTraces()
+        self.zob.updateListOfAvailableProjects()
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details

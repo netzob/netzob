@@ -4,14 +4,15 @@
 #+---------------------------------------------------------------------------+
 #|         01001110 01100101 01110100 01111010 01101111 01100010             | 
 #+---------------------------------------------------------------------------+
-#| NETwork protocol modeliZatiOn By reverse engineering                      |
+#| Netzob : communication protocol modelization by reverse engineering                     |
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| @license      : GNU GPL v3                                                |
-#| @copyright    : Georges Bossert and Frederic Guihery                      |
-#| @url          : http://code.google.com/p/netzob/                          |
+#| @copyright    : Georges Bossert and Frédéric Guihéry                      |
+#| @url          : http://www.netzob.org                                     |
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| @author       : {gbt,fgy}@amossys.fr                                      |
+#| @contact      : {gbt,fgy}@amossys.fr                                      |
 #| @organization : Amossys, http://www.amossys.fr                            |
+#|                 Supelec, http://www.rennes.supelec.fr/ren/rd/ssir/        |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+ 
@@ -25,14 +26,13 @@ import sys
 import logging
 from time import sleep
 
-
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 sys.path.append('lib/')
 sys.path.append('lib/libNeedleman/')
 from xml.etree import ElementTree
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -49,6 +49,7 @@ from netzob.Common.StateParser import StateParser
 from netzob.Common.Groups import Groups
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
+
 #+---------------------------------------------- 
 #| NetzobGUI :
 #|     Graphical runtime class
@@ -59,7 +60,6 @@ class NetzobGui():
 
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param path: path of the directory containing traces to parse 
     #+----------------------------------------------   
     def __init__(self):
         
@@ -79,9 +79,7 @@ class NetzobGui():
                 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
-        
         self.log.info("Starting netzob")
-        self.tracePath = ""
 
         # Groups of messages are handled with the following object
         self.groups = Groups(self)
@@ -100,49 +98,13 @@ class NetzobGui():
         menubar = self.get_main_menu(window)
         main_vbox.pack_start(menubar, False, True, 0)
         
-        ## UI Header definition
-        toolbar = gtk.HBox(False, spacing=0)
-        main_vbox.pack_start(toolbar, False, False, 2)
-
-        label = gtk.Label("Select trace : ")
-#        menu = gtk.Menu()
-#        gtk.MenuItem("")
-
-        liststore = gtk.ListStore(str, str)
-        self.entry = gtk.ComboBox(liststore)
-        cellText = gtk.CellRendererText()
-        self.entry.pack_start(cellText, True)
-        self.entry.add_attribute(cellText, 'text', 0)
-        cellImage = gtk.CellRendererPixbuf()
-        self.entry.pack_start(cellImage, False)
-        self.entry.add_attribute(cellImage, 'stock_id', 1)
-
-#        self.entry = gtk.combo_box_entry_new_text()
-#        self.entry.set_size_request(200, -1)
-        self.entry.connect("changed", self.traceSelected)
-        self.updateListOfAvailableTraces()       
-      
-        label_text = gtk.Label("     Current trace : ")
-        self.label_analyse = gtk.Label("...")
-
-        button_save = gtk.Button(gtk.STOCK_OK)
-        button_save.set_label("Save trace")
-        button_save.connect("clicked", self.saveTrace)
-
         # Progress Bar handling inside UI Header
-        progressBox = gtk.VBox(False, 0)
-        progressBox.set_border_width(0)
-        align = gtk.Alignment(0.5, 0.5, 0, 0)
-        progressBox.pack_start(align, False, False, 5)
-        self.progressBar = gtk.ProgressBar()
-        align.add(self.progressBar)
-
-        toolbar.pack_start(label, False, False, 5)
-        toolbar.pack_start(self.entry, False, False, 5)
-        toolbar.pack_start(label_text, False, False, 5)
-        toolbar.pack_start(self.label_analyse, False, False, 5)
-        toolbar.pack_start(button_save, False, False, 5)
-        toolbar.pack_start(progressBox, False, False, 5)
+#        progressBox = gtk.VBox(False, 0)
+#        progressBox.set_border_width(0)
+#        align = gtk.Alignment(0.5, 0.5, 0, 0)
+#        progressBox.pack_start(align, False, False, 5)
+#        self.progressBar = gtk.ProgressBar()
+#        align.add(self.progressBar)
 
         # Notebook definition
         self.notebook = gtk.Notebook()
@@ -170,73 +132,81 @@ class NetzobGui():
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
 
         # Show every widgets
-        toolbar.show()
-        self.entry.show()
-        label.show()
-        label_text.show()
-        self.label_analyse.show()
-        button_save.show()
         self.notebook.show()
-        progressBox.show()
-        align.show()
-        self.progressBar.show()
         main_vbox.show()
         window.add(main_vbox)
         window.show()
         
     def get_main_menu(self, window):
-        ui = '''<ui>
-    <menubar name="Menu">
-      <menu action="Workspace">
-        <menuitem action="CreateProject"/>
-        <menuitem action="SelectProject"/>
-        <menuitem action="Options"/>
-        <menuitem action="Exit"/>
+        ui = '''
+<ui>
+  <menubar name="Menu">
+    <menu action="Workspace">
+      <menuitem action="CreateProject"/>
+      <menu action="SelectProject">
       </menu>
-      <menu action="Project">
-        <menuitem action="ImportTrace"/>
+      <menuitem action="ManageProjects"/>
+      <menuitem action="Options"/>
+      <menuitem action="Exit"/>
+    </menu>
+    <menu action="Project">
+      <menuitem action="SaveProject"/>
+      <menuitem action="DeleteProject"/>
+      <menuitem action="ManageTraces"/>
+      <menuitem action="ImportTrace"/>
+      <menu action="ExportProject">
         <menuitem action="ExportScapy"/>
         <menuitem action="ExportWireshark"/>
         <menuitem action="ExportXML"/>
       </menu>
-      <menu action="Help">
-        <menuitem action="NetzobHelp"/>
-        <menuitem action="About"/>
-      </menu>
-    </menubar>
-    </ui>'''
-        gestionui = gtk.UIManager()
-        grouperacc = gestionui.get_accel_group()
-        window.add_accel_group(grouperacc)
-        groupeactions = gtk.ActionGroup('ExempleUIGestion')
-        groupeactions.add_actions([('Workspace', None, '_Workspace'),
-                                   ('CreateProject', None, '_Create project', None,
-                                    None, self.print_hello),
-                                   ('SelectProject', None, '_Select existing project', None,
-                                    None, self.print_hello),
-                                   ('Options', None, '_Options', None,
-                                    None, self.print_hello),
-                                   ('Exit', gtk.STOCK_QUIT, '_Exit', None,
-                                    'Exit the program', self.destroy)])
-        groupeactions.add_actions([('Project', None, '_Project'),
-                                   ('ImportTrace', None, '_Import trace', None,
-                                    None, self.print_hello),
-                                   ('ExportScapy', None, '_Export as Scapy dissector', None,
-                                    None, self.print_hello),
-                                   ('ExportWireshark', None, '_Export as Wireshark dissector', None,
-                                    None, self.print_hello),
-                                   ('ExportXML', None, '_Export in XML', None,
-                                    None, self.print_hello)])
-        groupeactions.add_actions([('Help', None, '_Help'),
-                                   ('NetzobHelp', None, '_Netzob help', None,
-                                    None, self.print_hello),
-                                   ('About', None, '_About Netzob', None,
-                                    None, self.aboutDialog)])
-        groupeactions.get_action('Exit').set_property('short-label', '_Exit')
-        gestionui.insert_action_group(groupeactions, 0)
-        gestionui.add_ui_from_string(ui)
-
-        menu = gestionui.get_widget('/Menu')
+    </menu>
+    <menu action="Help">
+      <menuitem action="NetzobHelp"/>
+      <menuitem action="About"/>
+    </menu>
+  </menubar>
+</ui>
+'''
+        self.uiManager = gtk.UIManager()
+        groupAcc = self.uiManager.get_accel_group()
+        window.add_accel_group(groupAcc)
+        self.uiActionGroup = gtk.ActionGroup('UImanager')
+        self.uiActionGroup.add_actions([('Workspace', None, '_Workspace'),
+                                        ('CreateProject', None, '_Create project', None,
+                                         None, self.print_hello),
+                                        ('SelectProject', None, '_Select existing project'),
+                                        ('ManageProjects', None, '_Manage Projects', None,
+                                         None, self.print_hello),
+                                        ('Options', None, '_Options', None,
+                                         None, self.print_hello),
+                                        ('Exit', gtk.STOCK_QUIT, '_Exit', None,
+                                         'Exit the program', self.destroy)])
+        self.uiActionGroup.add_actions([('Project', None, '_Project'),
+                                        ('SaveProject', None, '_Save project', None,
+                                         None, self.saveProject_cb),
+                                        ('DeleteProject', None, '_Delete project', None,
+                                         None, self.print_hello),
+                                        ('ManageTraces', None, '_Manage traces', None,
+                                         None, self.print_hello),
+                                        ('ImportTrace', None, '_Import trace', None,
+                                         None, self.print_hello),
+                                        ('ExportProject', None, '_Export'),
+                                        ('ExportScapy', None, '_Export as Scapy dissector', None,
+                                         None, self.print_hello),
+                                        ('ExportWireshark', None, '_Export as Wireshark dissector', None,
+                                         None, self.print_hello),
+                                        ('ExportXML', None, '_Export in XML', None,
+                                         None, self.print_hello)])
+        self.uiActionGroup.add_actions([('Help', None, '_Help'),
+                                        ('NetzobHelp', None, '_Netzob help', None,
+                                         None, self.print_hello),
+                                        ('About', None, '_About Netzob', None,
+                                         None, self.aboutDialog)])
+        self.uiActionGroup.get_action('Exit').set_property('short-label', '_Exit')
+        self.uiManager.insert_action_group(self.uiActionGroup, 0)
+        self.uiId = self.uiManager.add_ui_from_string(ui)
+        self.updateListOfAvailableProjects()
+        menu = self.uiManager.get_widget('/Menu')
         return menu
 
     def print_hello(self):
@@ -250,47 +220,49 @@ class NetzobGui():
         about.set_comments("Communication protocol modelization by reverse engineering")
         about.set_website("http://www.netzob.org")
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
-        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath)) # TODO: find the good path
+        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
         about.run()
         about.destroy()
         
     #+------------------------------------------------------------------------ 
-    #| updateListOfAvailableTraces :
-    #| @param entry the GTK entry in which the name of the available traces
+    #| updateListOfAvailableProjects :
+    #| @param entry the GTK entry in which the name of the available projects
     #|              will be added
     #+------------------------------------------------------------------------
-    def updateListOfAvailableTraces(self):
-        self.entry.get_model().clear()
-        # retrieves the trace directory path
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        if tracesDirectoryPath == "" :
-            self.log.warn("No available traces directory was found.")
+    def updateListOfAvailableProjects(self):
+        # retrieves the workspace directory path
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        if projectsDirectoryPath == "" :
+            self.log.warn("No available projects directory found.")
             return 
                
-        # a temporary list in which all the folders will be stored and after sorted
-        temporaryListOfFolders = []
+        # A temporary list in which all the projects will be stored and then sorted
+        tmpListOfProjects = []
          
-        # list all the directories (except .svn)
-        for tmpDir in os.listdir(tracesDirectoryPath):
+        # List all the projects (except .svn)
+        for tmpProject in os.listdir(projectsDirectoryPath):
             stateSaved = False
-            pathOfTrace = tracesDirectoryPath + "/" + tmpDir
-            
-            if os.path.isfile(pathOfTrace) or tmpDir == '.svn':
+            if os.path.isfile(projectsDirectoryPath + os.sep + tmpProject) or tmpProject == '.svn':
                 continue
-            
-            
-            for aFile in os.listdir(pathOfTrace):
+            for aFile in os.listdir(projectsDirectoryPath + os.sep + tmpProject):
                 if aFile == "config.xml":
                     stateSaved = True
                     continue
             if stateSaved == True:
-                temporaryListOfFolders.append([tmpDir, gtk.STOCK_INFO])
+                tmpListOfProjects.append([tmpProject, gtk.STOCK_INFO])
             else:
-                temporaryListOfFolders.append([tmpDir, ''])
+                tmpListOfProjects.append([tmpProject, ''])
         
-        # Sort and add to the entry
-        for folder in sorted(temporaryListOfFolders) :
-            self.entry.get_model().append(folder)
+        # Sort and add to the menu
+        if len(tmpListOfProjects) == 0:
+            self.uiId = self.uiManager.add_ui(self.uiId, "/Menu/Workspace/SelectProject", "EmptyProject", "EmptyProject", gtk.UI_MANAGER_MENUITEM, False)
+            self.uiId = self.uiManager.new_merge_id()
+            self.uiActionGroup.add_actions([('EmptyProject', None, '...', None, None, self.projectSelected_cb)])
+        else:
+            for (project, stock_id) in sorted(tmpListOfProjects) :
+                self.uiManager.add_ui(self.uiId, "/Menu/Workspace/SelectProject", project, project, gtk.UI_MANAGER_MENUITEM, False)
+                self.uiId = self.uiManager.new_merge_id()
+                self.uiActionGroup.add_actions([(project, stock_id, project, None, None, self.projectSelected_cb)])
 
     def startGui(self):
         # UI thread launching
@@ -317,39 +289,38 @@ class NetzobGui():
             if page[0] == nameTab:
                 page[1].update()
                 
-    def saveTrace(self, null):
-        self.log.info("Starting the saving process of all the application")
+    def saveProject_cb(self, null):
+        self.log.info("Starting the saving of the current project : " + str(self.currentProject))
         
-        # retrieve the new trace path
-        target = self.entry.get_active_text()
-        if target == "" or target == "..." or target == None:
-            self.log.info("No trace selected")
+        # Verify that there is a current project
+        if self.currentProject == "" or self.currentProject == "..." or self.currentProject == None:
+            self.log.info("No project selected")
             return
 
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        configPath = tracesDirectoryPath + os.sep + target + os.sep + "config.xml"
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        projectConfigPath = projectsDirectoryPath + os.sep + self.currentProject + os.sep + "config.xml"
         
         for page in self.pageList:
-            page[1].save(configPath)
+            page[1].save(projectConfigPath)
 
     #+---------------------------------------------- 
-    #| Called when user select a new trace for analysis
+    #| Called when user select a new project for analysis
     #+----------------------------------------------
-    def traceSelected(self, null):
-        # retrieve the new trace path
-        target = self.entry.get_active_text()
-        if target == "" or target == None:
+    def projectSelected_cb(self, action):
+        # retrieve the new project path
+        project = action.get_name()
+        if project == "" or project == None:
             return
-        tracesDirectoryPath = ConfigurationParser().get("traces", "path")
-        self.label_analyse.set_text(target)
-        self.tracePath = tracesDirectoryPath + os.sep + target
+        self.currentProject = project
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        projectPath = projectsDirectoryPath + os.sep + project
 
         # If a state saving exists, loads it
-        for file in os.listdir(self.tracePath):
-            filePath = self.tracePath + "/" + file
+        for file in os.listdir(projectPath):
+            filePath = projectPath + os.sep + file
             if file == "config.xml":
                 self.log.info("A configuration file has been found, so we analyze and load it")
-                stateParser = StateParser(self.tracePath + "/config.xml")
+                stateParser = StateParser(projectPath + "/config.xml")
                 stateParser.loadConfiguration()
                 self.groups.setGroups(stateParser.getGroups())
         
@@ -357,8 +328,6 @@ class NetzobGui():
         self.groups.clear()
         for page in self.pageList:
             page[1].clear()
-            #nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
-            #if page[0] == nameTab:
             page[1].new()
             
         self.update()

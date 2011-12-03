@@ -98,7 +98,7 @@ class ConfigurationParser(object):
         logging.info("Create a default configuration file")
         defaultConfig = ConfigParser.RawConfigParser()
         defaultConfig.add_section('clustering')
-        defaultConfig.add_section('traces')
+        defaultConfig.add_section('projects')
         defaultConfig.add_section('automata')
         defaultConfig.add_section('logging')
         defaultConfig.add_section('import')        
@@ -109,11 +109,9 @@ class ConfigurationParser(object):
         defaultConfig.set('clustering', 'do_internal_slick', '0')
         defaultConfig.set('clustering', 'protocol_type', '1')
         
-        #defaultConfig.set('traces', 'path', 'resources/traces')
-        defaultTraceDirectory = os.path.join(ResourcesConfiguration.getWorkspace(), "traces")
-        defaultConfig.set('traces', 'path', defaultTraceDirectory)
+        defaultTraceDirectory = os.path.join(ResourcesConfiguration.getWorkspace(), "projects")
+        defaultConfig.set('projects', 'path', defaultTraceDirectory)
         
-        #defaultConfig.set('automata', 'path', 'resources/automaton')
         defaultAutomatonDirectory = os.path.join(ResourcesConfiguration.getWorkspace(), "automaton")
         defaultConfig.set('automata', 'path', defaultAutomatonDirectory)
         

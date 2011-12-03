@@ -30,37 +30,39 @@ from xml.etree import ElementTree
 #+----------------------------------------------
 from netzob.Common.Group import Group
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from netzob.Common.ConfigurationParser import ConfigurationParser
 
 #+---------------------------------------------- 
-#| TraceParser :
-#|     Parse the content of a trace file and retrieve all the messages
+#| ProjectParser :
+#|     Parse the content of project files and retrieve all the messages
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class TraceParser(object):
+class ProjectParser(object):
     #+---------------------------------------------- 
     #| Constructor :
     #| @param path: path of the file to parse 
     #+----------------------------------------------   
     def __init__(self, netzob):
         self.netzob = netzob
-        self.path = self.netzob.tracePath
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        self.projectPath = projectsDirectoryPath + os.sep + self.netzob.currentProject
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.TraceParser.py')
+        self.log = logging.getLogger('netzob.Modelization.ProjectParser.py')
        
     #+---------------------------------------------- 
     #| Parse :
     #|     @update the groups paramter with the computed groups of messages
     #+----------------------------------------------   
     def parse(self):
-        self.log.info("[INFO] Extract traces from directory {0}".format(self.path))
+        self.log.info("[INFO] Extract project from directory {0}".format(self.projectPath))
         t1 = time.time()
         groups = []
 
         # Retrieves all the files to parse
         files = []
-        for file in os.listdir(self.path):
-            filePath = self.path + "/" + file
+        for file in os.listdir(self.projectPath):
+            filePath = self.projectPath + "/" + file
             if file == '.svn' or file == "config.xml":
                 self.log.warning("[INFO] Do not parse file {0}".format(filePath))
             else :
@@ -68,7 +70,7 @@ class TraceParser(object):
 
         # Parse each file
         for file in files :
-            filePath = self.path + "/" + file
+            filePath = self.projectPath + "/" + file
             
             # TODO: in futur
             # Retrieves the extension of the files in directory
@@ -85,11 +87,11 @@ class TraceParser(object):
 
     #+---------------------------------------------- 
     #| ParseFile :  
-    #|  Parse the content of a trace file and retrieve all the messages
+    #|  Parse the content of a project files and retrieve all the messages
     #|  @return A list of messages
     #+----------------------------------------------   
     def parseFile(self, filePath):
-        self.log.info("Extract traces from file {0}".format(filePath))
+        self.log.info("Extract trace from file {0}".format(filePath))
         messages = []
         tree = ElementTree.ElementTree()
         tree.parse(filePath)

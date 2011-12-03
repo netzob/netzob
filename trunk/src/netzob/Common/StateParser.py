@@ -25,7 +25,6 @@ from xml.etree import ElementTree
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.GroupFactory import GroupFactory
 
-
 #+---------------------------------------------- 
 #| ConfigParser :
 #|     XML parser for saved modelization operations

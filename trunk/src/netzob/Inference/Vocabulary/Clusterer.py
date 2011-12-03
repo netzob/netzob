@@ -253,14 +253,16 @@ class Clusterer(object):
     #| doProgressBarStep :
     #+----------------------------------------------    
     def doProgressBarStep(self, step):
-        new_val = self.netzob.progressBar.get_fraction() + step
-        self.netzob.progressBar.set_fraction(new_val)
+        pass
+#        new_val = self.netzob.progressBar.get_fraction() + step
+#        self.netzob.progressBar.set_fraction(new_val)
 
     #+---------------------------------------------- 
     #| resetProgressBar :
     #+----------------------------------------------
     def resetProgressBar(self):
-        self.netzob.progressBar.set_fraction(0)
+        pass
+#        self.netzob.progressBar.set_fraction(0)
 
     #+---------------------------------------------- 
     #| GETTER/SETTER :
