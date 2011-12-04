@@ -38,8 +38,13 @@ from xml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
-from netzob.Export.UIexport import UIexport
-from netzob.Import.UIimport import UIimport
+from netzob.Export.ScapyExport import ScapyExport
+from netzob.Export.RawExport import RawExport
+from netzob.Import.ApiImport import ApiImport
+from netzob.Import.FileImport import FileImport
+from netzob.Import.IpcImport import IpcImport
+from netzob.Import.NetworkImport import NetworkImport
+from netzob.Import.PcapImport import PcapImport
 from netzob.Fuzzing.UIfuzzing import UIfuzzing
 
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
@@ -114,18 +119,14 @@ class NetzobGui():
 
         self.pageList = []
         # Adding the different notebook
-        self.Import = UIimport(self)
         self.modelization = UImodelization(self)
         self.grammarInference = UIGrammarInference(self)
-        self.export = UIexport(self)
         self.fuzzing = UIfuzzing(self)
         self.simulator = UISimulator(self)
 
-        self.pageList.append(["Import", self.Import])
         self.pageList.append(["Vocabulary inference", self.modelization])
         self.pageList.append(["Grammar inference", self.grammarInference])
         self.pageList.append(["Fuzzing", self.fuzzing])
-        self.pageList.append(["Export", self.export])
         self.pageList.append(["Simulator", self.simulator])
         
         for page in self.pageList:
@@ -151,9 +152,14 @@ class NetzobGui():
     </menu>
     <menu action="Project">
       <menuitem action="SaveProject"/>
-      <menuitem action="DeleteProject"/>
       <menuitem action="ManageTraces"/>
-      <menuitem action="ImportTrace"/>
+      <menu action="Import">
+        <menuitem action="CaptureNetworkTrafic"/>
+        <menuitem action="ImportPcapFile"/>
+        <menuitem action="CaptureIpcFlow"/>
+        <menuitem action="CaptureApiFlow"/>
+        <menuitem action="ImportFile"/>
+      </menu>
       <menu action="ExportProject">
         <menuitem action="ExportScapy"/>
         <menuitem action="ExportWireshark"/>
@@ -172,33 +178,40 @@ class NetzobGui():
         window.add_accel_group(groupAcc)
         self.uiActionGroup = gtk.ActionGroup('UImanager')
         self.uiActionGroup.add_actions([('Workspace', None, '_Workspace'),
-                                        ('CreateProject', None, '_Create project', None,
+                                        ('CreateProject', None, '_Create project (todo)', None,
                                          None, self.print_hello),
                                         ('SelectProject', None, '_Select existing project'),
-                                        ('ManageProjects', None, '_Manage Projects', None,
+                                        ('ManageProjects', None, '_Manage projects (todo)', None,
                                          None, self.print_hello),
-                                        ('Options', None, '_Options', None,
+                                        ('Options', None, '_Options (todo)', None,
                                          None, self.print_hello),
                                         ('Exit', gtk.STOCK_QUIT, '_Exit', None,
                                          'Exit the program', self.destroy)])
         self.uiActionGroup.add_actions([('Project', None, '_Project'),
                                         ('SaveProject', None, '_Save project', None,
                                          None, self.saveProject_cb),
-                                        ('DeleteProject', None, '_Delete project', None,
+                                        ('ManageTraces', None, '_Manage traces (todo)', None,
                                          None, self.print_hello),
-                                        ('ManageTraces', None, '_Manage traces', None,
-                                         None, self.print_hello),
-                                        ('ImportTrace', None, '_Import trace', None,
-                                         None, self.print_hello),
+                                        ('Import', None, '_Import', None),
+                                        ('CaptureNetworkTrafic', None, '_Capture network trafic', None,
+                                         None, self.importNetworkTrafic_cb),
+                                        ('ImportPcapFile', None, '_Import PCAP file', None,
+                                         None, self.importPcapFile_cb),
+                                        ('CaptureIpcFlow', None, '_Capture IPC flow', None,
+                                         None, self.importIpcFlow_cb),
+                                        ('CaptureApiFlow', None, '_Capture API flow', None,
+                                         None, self.importApiFlow_cb),
+                                        ('ImportFile', None, '_Import file', None,
+                                         None, self.importFile_cb),
                                         ('ExportProject', None, '_Export'),
                                         ('ExportScapy', None, '_Export as Scapy dissector', None,
-                                         None, self.print_hello),
+                                         None, self.exportScapyDissector_cb),
                                         ('ExportWireshark', None, '_Export as Wireshark dissector', None,
                                          None, self.print_hello),
                                         ('ExportXML', None, '_Export in XML', None,
-                                         None, self.print_hello)])
+                                         None, self.exportRaw_cb)])
         self.uiActionGroup.add_actions([('Help', None, '_Help'),
-                                        ('NetzobHelp', None, '_Netzob help', None,
+                                        ('NetzobHelp', None, '_Netzob help (todo)', None,
                                          None, self.print_hello),
                                         ('About', None, '_About Netzob', None,
                                          None, self.aboutDialog)])
@@ -331,6 +344,78 @@ class NetzobGui():
             page[1].new()
             
         self.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to export as Scapy dissector
+    #+----------------------------------------------
+    def exportScapyDissector_cb(self, action):
+        scapyPanel = ScapyExport(self)
+        dialog = gtk.Dialog(title="Export project as Scapy dissector", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(scapyPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(800, 700)
+        scapyPanel.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to export as raw XML
+    #+----------------------------------------------
+    def exportRaw_cb(self, action):
+        rawExportPanel = RawExport(self)
+        dialog = gtk.Dialog(title="Export project as raw XML", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(rawExportPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(800, 700)
+        rawExportPanel.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to import network trafic
+    #+----------------------------------------------
+    def importNetworkTrafic_cb(self, action):
+        networkImportPanel = NetworkImport(self)
+        dialog = gtk.Dialog(title="Capture network trafic", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(networkImportPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(900, 700)
+
+    #+---------------------------------------------- 
+    #| Called when user wants to import PCAP file
+    #+----------------------------------------------
+    def importPcapFile_cb(self, action):
+        pcapImportPanel = PcapImport(self)
+        dialog = gtk.Dialog(title="Import PCAP file", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(pcapImportPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(900, 700)
+
+    #+---------------------------------------------- 
+    #| Called when user wants to import IPC flow
+    #+----------------------------------------------
+    def importIpcFlow_cb(self, action):
+        ipcImportPanel = IpcImport(self)
+        dialog = gtk.Dialog(title="Capture IPC flow", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(ipcImportPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(900, 700)
+
+    #+---------------------------------------------- 
+    #| Called when user wants to import API flow
+    #+----------------------------------------------
+    def importApiFlow_cb(self, action):
+        apiImportPanel = ApiImport(self)
+        dialog = gtk.Dialog(title="Capture API flow", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(apiImportPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(900, 700)
+
+    #+---------------------------------------------- 
+    #| Called when user wants to import file
+    #+----------------------------------------------
+    def importFile_cb(self, action):
+        fileImportPanel = FileImport(self)
+        dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
+        dialog.show()
+        dialog.vbox.pack_start(fileImportPanel.getPanel(), True, True, 0)
+        dialog.set_size_request(900, 700)
 
     #+---------------------------------------------- 
     #| Update each panels

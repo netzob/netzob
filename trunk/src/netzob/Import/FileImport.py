@@ -37,7 +37,7 @@ from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class File:
+class FileImport:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace

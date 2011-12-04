@@ -44,7 +44,7 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class Pcap:
+class PcapImport:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace

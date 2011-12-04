@@ -19,13 +19,12 @@
 import gtk
 import pygtk
 import logging
-
 pygtk.require('2.0')
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Export.TreeViews import TreeGroupGenerator
+from netzob.Export.TreeViews.TreeGroupGenerator import TreeGroupGenerator
 
 #+---------------------------------------------- 
 #| RawExport :
@@ -50,63 +49,39 @@ class RawExport:
     def kill(self):
         pass
     
-    def save(self, file):
-        pass
-    
     #+---------------------------------------------- 
     #| Constructor :
     #| @param netzob: the main netzob object
     #+----------------------------------------------   
     def __init__(self, netzob):
         self.netzob = netzob
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Export.UIexport.py')
-        self.log.debug("Starting the Export GUI")
-        
+        self.log = logging.getLogger('netzob.Export.RawExport.py')
         self.selectedGroup = None
         
         # First we create an VPaned which hosts the two main children
-        self.panel = gtk.VPaned()        
+        self.panel = gtk.HBox()        
         self.panel.show()
         
-        # Creation of the two children
-        self.box_top = gtk.HBox(False, spacing=0)
-        self.box_content = gtk.HBox(False, spacing=0)
-        
-        # includes the two children
-        self.panel.add(self.box_top)
-        self.panel.add(self.box_content)
-
-        self.box_top.set_size_request(-1, -1)
-        self.box_content.set_size_request(-1, -1)
-
-        self.box_top.show()
-        self.box_content.show()
-        
-#        # Create the top hbox content
-#        self.topFrame = gtk.Frame()
-#        self.topFrame.show()
-#        self.box_top.add(self.topFrame)
-        
-        # Create the treeview
-        self.treeGroupGenerator = TreeGroupGenerator.TreeGroupGenerator(self.netzob)
+        # Create the group selection treeview
+        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
         self.treeGroupGenerator.initialization()
-        self.box_top.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
+        self.panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
         self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
         
-        # Create the content hbox content
-        self.bottomFrame = gtk.Frame()
-        self.bottomFrame.show()
-        self.box_content.add(self.bottomFrame)
-        
-        # Insert the textarea in a scolledWindow in the content box
+        # Create the hbox content in order to display dissector data
+        bottomFrame = gtk.Frame()
+        bottomFrame.show()
+        bottomFrame.set_size_request(550, -1)
+        self.panel.add(bottomFrame)
         sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.textarea = gtk.TextView()
+        self.textarea.get_buffer().create_tag("normalTag", family="Courier")
         self.textarea.show()
         self.textarea.set_editable(False)
         sw.add(self.textarea)
         sw.show()
-        self.bottomFrame.add(sw)
+        bottomFrame.add(sw)
 
     def groupSelected(self, treeview):
         (model, iter) = treeview.get_selection().get_selected()

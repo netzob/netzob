@@ -45,7 +45,7 @@ from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------------------------------------+
-class Api:
+class ApiImport:
     
     #+-----------------------------------------------------------------------+ 
     #| Called when user select a new trace
@@ -68,7 +68,6 @@ class Api:
     #+-----------------------------------------------------------------------+ 
     def __init__(self, zob):        
         self.zob = zob
-        
         self.listOfProcess = []
         
         # create logger with the given configuration
@@ -81,7 +80,6 @@ class Api:
             self.log.warn("Unable to find a repository file for API injector.")
         else :
             self.repositoryOfSharedLib = PrototypesRepositoryParser.loadFromXML(repositoryFile)
-        
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel

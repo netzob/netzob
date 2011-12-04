@@ -42,7 +42,7 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class Ipc:
+class IpcImport:
     
     #+---------------------------------------------- 
     #| Called when user select a new trace

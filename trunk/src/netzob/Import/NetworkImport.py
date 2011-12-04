@@ -45,7 +45,7 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------------------------------------+
-class Network:
+class NetworkImport:
     
     #+-----------------------------------------------------------------------+
     #| Called when user select a new trace
