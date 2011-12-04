@@ -42,7 +42,6 @@ class AbstractMessage():
         self.group = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-        
     
     #+-----------------------------------------------------------------------+
     #| getFactory

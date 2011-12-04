@@ -228,7 +228,7 @@ class File:
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, dialog):
         projectsDirectoryPath = ConfigurationParser.ConfigurationParser().get("projects", "path")
-        existingTraceDir = projectsDirectoryPath + "/" + entry.get_active_text()
+        existingTraceDir = projectsDirectoryPath + os.sep + entry.get_active_text()
         # Create the new XML structure
         # Create the new XML structure
         res = "<datas>\n"
@@ -237,7 +237,7 @@ class File:
         res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(existingTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingTraceDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()
@@ -257,7 +257,7 @@ class File:
                 return
 
         # Create the dest Dir
-        newTraceDir = projectsDirectoryPath + "/" + entry.get_text()
+        newTraceDir = projectsDirectoryPath + os.sep + entry.get_text()
         os.mkdir( newTraceDir )
         # Create the new XML structure
         res = "<datas>\n"
@@ -266,7 +266,7 @@ class File:
         res += "</data>\n"
         res += "</datas>\n"
         # Dump into a random XML file
-        fd = open(newTraceDir +"/"+ str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(newTraceDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write(res)
         fd.close()
         dialog.destroy()

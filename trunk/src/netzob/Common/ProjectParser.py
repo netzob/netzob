@@ -62,7 +62,7 @@ class ProjectParser(object):
         # Retrieves all the files to parse
         files = []
         for file in os.listdir(self.projectPath):
-            filePath = self.projectPath + "/" + file
+            filePath = self.projectPath + os.sep + file
             if file == '.svn' or file == "config.xml":
                 self.log.warning("[INFO] Do not parse file {0}".format(filePath))
             else :
@@ -70,7 +70,7 @@ class ProjectParser(object):
 
         # Parse each file
         for file in files :
-            filePath = self.projectPath + "/" + file
+            filePath = self.projectPath + os.sep + file
             
             # TODO: in futur
             # Retrieves the extension of the files in directory
@@ -79,9 +79,9 @@ class ProjectParser(object):
 #                self.log.warning("Do not parse file {0} since it's not an xml file (extension {1})".format(filePath, fileExtension))
                
             # Append retrieved message to the final list
-            tmpMessages = self.parseFile(filePath)
+            (messages, properties) = self.parseFile(filePath)
             # Save the extracted messages in a dedicated group
-            group = Group(file, tmpMessages)            
+            group = Group(file, messages, properties)
             groups.append(group)
         return groups
 
@@ -93,13 +93,23 @@ class ProjectParser(object):
     def parseFile(self, filePath):
         self.log.info("Extract trace from file {0}".format(filePath))
         messages = []
+        properties = {}
         tree = ElementTree.ElementTree()
         tree.parse(filePath)
-        xmlMessages = tree.findall("message")
+        
+        # Retrieve each message from the XML
+        xmlMessages = tree.findall("messages/message")
         for xmlMessage in xmlMessages:
             message = AbstractMessageFactory.loadFromXML(xmlMessage)
-            messages.append(message)     
-        
+            messages.append(message)
+
+        # Retrieve each envData properties from the XML
+        xmlEnvDatas = tree.findall("properties/envData")
+        for xmlEnvData in xmlEnvDatas:
+            name = xmlEnvData.get('name', "-1")
+            value = xmlEnvData.get('value', "-1")
+            properties[name] = value.split(";")
+
         self.log.info("Found : {0} messages ".format(len(messages)))
-        return messages
+        return (messages, properties)
         

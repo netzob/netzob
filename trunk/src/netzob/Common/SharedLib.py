@@ -82,7 +82,7 @@ class SharedLib(object):
     @staticmethod
     def findNameAndVersion(path):
         
-        nameWithoutPath = path.split("/")[len(path.split("/")) - 1]
+        nameWithoutPath = path.split(os.sep)[len(path.split(os.sep)) - 1]
         
         # Remove the extension
         if (len(nameWithoutPath) > 3 and nameWithoutPath[len(nameWithoutPath) - 3:] == ".so") :

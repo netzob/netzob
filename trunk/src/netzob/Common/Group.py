@@ -29,7 +29,6 @@ import glib
 from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.TypeIdentifier import TypeIdentifier
 
-
 #+---------------------------------------------- 
 #| C Imports
 #+----------------------------------------------
@@ -57,7 +56,7 @@ class Group(object):
     #| @param name : name of the group
     #| @param messages : list of messages 
     #+----------------------------------------------   
-    def __init__(self, name, messages):
+    def __init__(self, name, messages, properties={}):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Group.py')
         self.id = uuid.uuid4() 
@@ -65,6 +64,7 @@ class Group(object):
         self.messages = messages
         for message in self.messages:
             message.setGroup(self)
+        self.properties = properties
         self.score = 0
         self.alignment = ""
         self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tabulation', 'description', 'color'}
@@ -538,19 +538,20 @@ class Group(object):
         hbox.show()
         # Treeview containing potential data carving results ## ListStore format :
         # int: iCol
-        # str: data type (url, ip, email, etc.)
-        store = gtk.ListStore(int, str)
+        # str: env. dependancy name (ip, os, username, etc.)
+        # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
+        store = gtk.ListStore(int, str, str)
         treeviewRes = gtk.TreeView(store)
         cell = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Column')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Data type found')
+        column = gtk.TreeViewColumn('Env. dependancy')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeviewRes.append_column(column)
-        treeviewRes.set_size_request(200, 300)
+        treeviewRes.set_size_request(250, 300)
         treeviewRes.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -562,13 +563,15 @@ class Group(object):
         typer = TypeIdentifier()
         iCol = 0
         for col in self.getColumns():
-            for (carver, regex) in self.carvers.items():
-                matchElts = 0
-                for cell in self.getCellsByCol(iCol):
-                    for match in regex.finditer(typer.toASCII(cell)):
-                        matchElts += 1
-                if matchElts > 0:
-                    store.append([iCol, carver])
+            for (envName, envValues) in self.properties.items():
+                for envValue in envValues:
+                    if envValue == "":
+                        break
+                    matchElts = 0
+                    for cell in self.getCellsByCol(iCol):
+                        matchElts += typer.toASCII(cell).count(envValue)
+                    if matchElts > 0:
+                        store.append([iCol, envName, envValue])
             iCol += 1
 
         # Preview of matching fields in a treeview ## ListStore format :
@@ -592,12 +595,10 @@ class Group(object):
         but = gtk.Button(label="Apply data type on column")
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, treeview, but)
+        treeviewRes.connect("cursor-changed", self.envDependenciesResultSelected_cb, treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
-        # TODO : use hachoir to retrieve subfiles
-        #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
 
     #+---------------------------------------------- 
     #| envDependenciesResultSelected_cb:
@@ -610,32 +611,24 @@ class Group(object):
         if(it):
             if(model.iter_is_valid(it)):
                 iCol = model.get_value(it, 0)
-                dataType = model.get_value(it, 1)
+                envName = model.get_value(it, 1)
+                envValue = model.get_value(it, 2)
                 treeviewTarget.get_column(0).set_title("Column " + str(iCol))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, iCol, dataType)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, iCol, envName)
                 for cell in self.getCellsByCol(iCol):
                     cell = glib.markup_escape_text(typer.toASCII(cell))
-                    segments = []
-                    for match in self.carvers[dataType].finditer(cell):
-                        if match == None:
-                            treeviewTarget.get_model().append([ cell ])
-                        segments.append((match.start(0), match.end(0)))
-
-                    segments.reverse() # We start from the end to avoid shifting
-                    for (start, end) in segments:
-                        cell = cell[:end] + "</span>" + cell[end:]
-                        cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
+                    pattern = re.compile(envValue, re.IGNORECASE)
+                    cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])
 
     #+---------------------------------------------- 
     #| applyDependency_cb:
     #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
-    def applyDependency_cb(self, button, iCol, dataType):
-        # self.setDescriptionByCol(iCol, dataType)
-        # TODO: handle dependency !
+    def applyDependency_cb(self, button, iCol, envName):
+        self.setDescriptionByCol(iCol, envName)
         pass
 
     #+---------------------------------------------- 
@@ -952,6 +945,8 @@ class Group(object):
         return None
     def getColumns(self):
         return self.columns
+    def getProperties(self):
+        return self.properties
     def getCellsByCol(self, iCol):
         res = []
         for message in self.getMessages():
@@ -990,6 +985,8 @@ class Group(object):
             self.columns[iCol]['name'] = name
     def setColumns(self, columns):
         self.columns = columns
+    def setProperties(self, properties):
+        self.properties = properties
     def setTabulationByCol(self, iCol, n):
         if iCol >= 0 and iCol < len(self.columns) :
             self.columns[iCol]['tabulation'] = int(n)

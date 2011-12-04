@@ -56,7 +56,7 @@ class Clusterer(object):
             for group in groups :
                 for m in group.getMessages():
                     i += 1
-                    self.groups.append(Group(str(i), [m]))
+                    self.groups.append(Group(str(i), [m], group.getProperties()))
             self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
         
     #+---------------------------------------------- 
@@ -240,7 +240,7 @@ class Clusterer(object):
         messages = []
         messages.extend(group1.getMessages())
         messages.extend(group2.getMessages())
-        newGroup = Group(group1.getName() + group2.getName(), messages)
+        newGroup = Group(group1.getName() + group2.getName(), messages, group1.getProperties())
                     
         # Append th new group to the "groups" structure
         self.groups.append(newGroup)

@@ -341,7 +341,7 @@ class NetzobGui():
                 return
 
         # Create the dest Dir
-        newProjectDir = projectsDirectoryPath + "/" + entry.get_text()
+        newProjectDir = projectsDirectoryPath + os.sep + entry.get_text()
         os.mkdir(newProjectDir)
         dialog.destroy()
         self.updateListOfAvailableProjects()

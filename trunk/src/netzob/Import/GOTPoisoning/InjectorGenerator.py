@@ -45,7 +45,7 @@ class InjectorGenerator():
         
         # configure
         self.libName = "libNetzob.so.1.0"
-        self.libPath = self.tmp_folder + "/" + self.libName
+        self.libPath = self.tmp_folder + os.sep + self.libName
         self.shellcode = self.produceShellCode()
     
     

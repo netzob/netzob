@@ -185,7 +185,7 @@ class PcapImport:
     #+----------------------------------------------
     def add_packets_to_existing_project(self, button, entry, selection, dialog):
         projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        existingProjectDir = projectsDirectoryPath + "/" + entry.get_active_text()
+        existingProjectDir = projectsDirectoryPath + os.sep + entry.get_active_text()
         # Create the new XML structure
         messages = []
         
@@ -247,7 +247,7 @@ class PcapImport:
         res.append("</messages>")
         
         # Dump into a random XML file
-        fd = open(existingProjectDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingProjectDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()

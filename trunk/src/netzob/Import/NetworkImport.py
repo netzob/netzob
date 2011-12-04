@@ -38,6 +38,7 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
+from netzob.Import.EnvDependancies import EnvDependancies
 
 #+---------------------------------------------------------------------------+ 
 #| Network :
@@ -65,11 +66,13 @@ class NetworkImport:
     #+-----------------------------------------------------------------------+  
     def __init__(self, zob):        
         self.zob = zob
-        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.Network.py')
         self.packets = []
 
+        # create the environmental dependancy object
+        self.envDeps = EnvDependancies()
+        
         # Network Capturing Panel
         self.panel = gtk.Table(rows=7, columns=4, homogeneous=False)
         self.panel.show()
@@ -217,10 +220,9 @@ class NetworkImport:
     #+----------------------------------------------
     def add_packets_to_existing_project(self, button, entry, selection, dialog):
         projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        existingProjectDir = projectsDirectoryPath + "/" + entry.get_active_text()
+        existingProjectDir = projectsDirectoryPath + os.sep + entry.get_active_text()
         # Create the new XML structure
         messages = []
-        
         
         (model, paths) = selection.get_selected_rows()
         for path in paths:
@@ -242,7 +244,6 @@ class NetworkImport:
                 Dport = None
                 Data = None
                 
-                
                 ethernet = eth_decoder.decode(packetPayload)
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
@@ -254,7 +255,6 @@ class NetworkImport:
                         Sport = udp.get_uh_sport()
                         Dport = udp.get_uh_dport()
                         Data = udp.get_data_as_string()
-
                                 
                     if ip.get_ip_p() == Packets.TCP.protocol :
                         tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
@@ -274,16 +274,20 @@ class NetworkImport:
                         message.setData(Data.encode("hex"))
                         messages.append(message)
         
-        
         # Create the xml content of the file
         res = []
+        res.append("<trace>")
+        res.append("<properties>")
+        res.append( self.envDeps.getXML() )
+        res.append("</properties>")
         res.append("<messages>")
         for message in messages :
             res.append(NetworkMessageFactory.saveInXML(message))
         res.append("</messages>")
+        res.append("</trace>")
         
         # Dump into a random XML file
-        fd = open(existingProjectDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingProjectDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()        
@@ -307,22 +311,15 @@ class NetworkImport:
     #+----------------------------------------------
     def launch_sniff(self, button, dev, filter, count, time):
         button.set_sensitive(False)
+        self.envDeps.retrieveEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
         self.packets = []
         self.treestore.clear()
         self.textview.get_buffer().set_text("")
-#        try: # Just see if scapy is correctly working
-#            scapyy.send(scapyy.UDP(), verbose=False)
-#        except:
-#            self.log.error("Scapy does not have the capability to sniff packets on your system")
-#            self.log.error("If you want capturing capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/bin/python2.6\"")
-#            self.log.error("And if you want filtering capabilities, try the following command : \"sudo setcap cap_net_raw=ep /usr/sbin/tcpdump\"")
-#            return
-
-        aScapyThread = threading.Thread(None, self.sniffingThread, None, (button, dev, filter, count, time), {})
-        aScapyThread.start()
+        aSniffThread = threading.Thread(None, self.sniffingThread, None, (button, dev, filter, count, time), {})
+        aSniffThread.start()
 
     #+---------------------------------------------- 
-    #| Thread for scapy work
+    #| Thread for sniffing work
     #+----------------------------------------------
     def sniffingThread(self, button, devstore, filter, count, time):
         modele = devstore.get_model()
@@ -342,9 +339,7 @@ class NetworkImport:
             button.set_sensitive(True)
             return
         
-        
         sniffer.loop(int(count.get_text()), self.packetHandler)
-
         button.set_sensitive(True)
 
     def packetHandler(self, header, payload):
@@ -353,7 +348,6 @@ class NetworkImport:
         ip_decoder = Decoders.IPDecoder()
         udp_decoder = Decoders.UDPDecoder()
         tcp_decoder = Decoders.TCPDecoder()
-
         
         ethernet = eth_decoder.decode(payload)
         if ethernet.get_ether_type() == Packets.IP.ethertype:
@@ -367,7 +361,6 @@ class NetworkImport:
                 tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])  
                 self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
                 self.packets.append(payload)
-                
                 
     #+---------------------------------------------- 
     #| GETTERS
