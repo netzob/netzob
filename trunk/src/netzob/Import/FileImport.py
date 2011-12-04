@@ -178,12 +178,19 @@ class FileImport:
     def add_packets_to_existing_project(self, button, entry, dialog):
         projectsDirectoryPath = ConfigurationParser().get("projects", "path")
         existingProjectDir = projectsDirectoryPath + os.sep + entry.get_active_text()
-        # Create the new XML structure
+
+        # Create the xml content of the file
         res = []
+        res.append("<trace>")
+        res.append("<properties>")
+        res.append( self.envDeps.getXML() )
+        res.append("</properties>")
         res.append("<messages>")
-        for message in self.messages :
+        for message in messages :
             res.append(FileMessageFactory.saveInXML(message))
         res.append("</messages>")
+        res.append("</trace>")
+
         # Dump into a random XML file
         fd = open(existingProjectDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))

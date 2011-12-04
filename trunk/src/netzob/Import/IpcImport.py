@@ -348,10 +348,16 @@ class IpcImport:
         
         # Create the xml content of the file
         res = []
+        res.append("<trace>")
+        res.append("<properties>")
+        res.append( self.envDeps.getXML() )
+        res.append("</properties>")
         res.append("<messages>")
         for message in messages :
             res.append(IPCMessageFactory.saveInXML(message))
         res.append("</messages>")
+        res.append("</trace>")
+
         
         # Dump into a random XML file
         fd = open(existingProjectDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
