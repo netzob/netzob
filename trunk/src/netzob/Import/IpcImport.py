@@ -44,9 +44,6 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 #+---------------------------------------------- 
 class IpcImport:
     
-    #+---------------------------------------------- 
-    #| Called when user select a new trace
-    #+----------------------------------------------
     def new(self):
         pass
 
@@ -291,12 +288,12 @@ class IpcImport:
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
-        dialog = gtk.Dialog(title="Save selected packet as a new trace", flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Save selected packet as a new project", flags=0, buttons=None)
         dialog.show()
         table = gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
-        # Add to an existing trace
-        label = gtk.Label("Add to an existing trace")
+        # Add to an existing project
+        label = gtk.Label("Add to an existing project")
         label.show()
         entry = gtk.combo_box_entry_new_text()
         entry.show()
@@ -308,32 +305,20 @@ class IpcImport:
                 continue
             entry.append_text(tmpDir)
         but = gtk.Button("Save")
-        but.connect("clicked", self.add_packets_to_existing_trace, entry, treeview.get_selection(), dialog)
+        but.connect("clicked", self.add_packets_to_existing_project, entry, treeview.get_selection(), dialog)
         but.show()
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
-        # Create a new trace
-        label = gtk.Label("Create a new trace")
-        label.show()
-        entry = gtk.Entry()
-        entry.show()
-        but = gtk.Button("Save")
-        but.connect("clicked", self.create_new_trace, entry, treeview.get_selection(), dialog)
-        but.show()
-        table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(but, 2, 3, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
         dialog.action_area.pack_start(table, True, True, 0)
 
     #+---------------------------------------------- 
-    #| Add a selection of packets to an existing trace
+    #| Add a selection of packets to an existing project
     #+----------------------------------------------
-    def add_packets_to_existing_trace(self, button, entry, selection, dialog):
+    def add_packets_to_existing_project(self, button, entry, selection, dialog):
         projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        existingTraceDir = projectsDirectoryPath + "/" + entry.get_active_text()
+        existingProjectDir = projectsDirectoryPath + "/" + entry.get_active_text()
         
         messages = []
         
@@ -369,67 +354,10 @@ class IpcImport:
         res.append("</messages>")
         
         # Dump into a random XML file
-        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingProjectDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()
-
-    #+---------------------------------------------- 
-    #| Creation of a new trace from a selection of packets
-    #+----------------------------------------------
-    def create_new_trace(self, button, entry, selection, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        for tmpDir in os.listdir(projectsDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            if entry.get_text() == tmpDir:
-                dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
-                dialogBis.set_size_request(250, 50)
-                dialogBis.show()
-                return
-
-        # Create the dest Dir
-        newTraceDir = projectsDirectoryPath + "/" + entry.get_text()
-        os.mkdir(newTraceDir)
-        # Create the new XML structure        
-        messages = []
-        
-        (model, paths) = selection.get_selected_rows()
-        for path in paths:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                packetID = model.get_value(iter, 0)
-                msg_fd = model.get_value(iter, 1)
-                msg_direction = model.get_value(iter, 2)
-                msg_timestamp = str(model.get_value(iter, 4))
-                msg_rawPayload = self.packets[packetID]
-                if msg_rawPayload == "":
-                    continue
-                
-                #Compute the messages
-                message = IPCMessage()
-                message.setCategory("none")
-                message.setKey(msg_fd)
-                message.setName("none")
-                message.setType("none")
-                message.setDirection(msg_direction)
-                message.setTimestamp(msg_timestamp)        
-                message.setData(msg_rawPayload.replace("\\x", ""))
-                messages.append(message)
-
-        # Create the xml content of the file
-        res = []
-        res.append("<messages>")
-        for message in messages :
-            res.append(IPCMessageFactory.saveInXML(message))
-        res.append("</messages>")
-
-        # Dump into a random XML file
-        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write("\n".join(res))
-        fd.close()
-        dialog.destroy()
-        self.zob.updateListOfAvailableProjects()
 
     #+---------------------------------------------- 
     #| Called when launching sniffing process

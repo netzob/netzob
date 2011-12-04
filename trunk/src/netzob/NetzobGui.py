@@ -178,8 +178,8 @@ class NetzobGui():
         window.add_accel_group(groupAcc)
         self.uiActionGroup = gtk.ActionGroup('UImanager')
         self.uiActionGroup.add_actions([('Workspace', None, '_Workspace'),
-                                        ('CreateProject', None, '_Create project (todo)', None,
-                                         None, self.print_hello),
+                                        ('CreateProject', None, '_Create project', None,
+                                         None, self.createProject_cb),
                                         ('SelectProject', None, '_Select existing project'),
                                         ('ManageProjects', None, '_Manage projects (todo)', None,
                                          None, self.print_hello),
@@ -239,8 +239,6 @@ class NetzobGui():
         
     #+------------------------------------------------------------------------ 
     #| updateListOfAvailableProjects :
-    #| @param entry the GTK entry in which the name of the available projects
-    #|              will be added
     #+------------------------------------------------------------------------
     def updateListOfAvailableProjects(self):
         # retrieves the workspace directory path
@@ -275,6 +273,9 @@ class NetzobGui():
             for (project, stock_id) in sorted(tmpListOfProjects) :
                 self.uiManager.add_ui(self.uiId, "/Menu/Workspace/SelectProject", project, project, gtk.UI_MANAGER_MENUITEM, False)
                 self.uiId = self.uiManager.new_merge_id()
+                aAction = self.uiActionGroup.get_action(project)
+                if aAction != None:
+                    self.uiActionGroup.remove_action( aAction )
                 self.uiActionGroup.add_actions([(project, stock_id, project, None, None, self.projectSelected_cb)])
 
     def startGui(self):
@@ -301,7 +302,53 @@ class NetzobGui():
         for page in self.pageList:
             if page[0] == nameTab:
                 page[1].update()
-                
+
+    #+---------------------------------------------- 
+    #| Called when user create a new project
+    #+----------------------------------------------
+    def createProject_cb(self, action):
+        dialog = gtk.Dialog(title="Create a new project", flags=0, buttons=None)
+        dialog.show()
+        table = gtk.Table(rows=2, columns=3, homogeneous=False)
+        table.show()
+        label = gtk.Label("New project name")
+        label.show()
+        entry = gtk.Entry()
+        entry.show()
+        but = gtk.Button("Create project")
+        but.connect("clicked", self.createProject_cb_cb, entry, dialog)
+        but.show()
+        table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        dialog.action_area.pack_start(table, True, True, 0)
+
+    #+---------------------------------------------- 
+    #| Creation of a new project from
+    #+----------------------------------------------
+    def createProject_cb_cb(self, button, entry, dialog):
+        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        for tmpDir in os.listdir(projectsDirectoryPath):
+            if tmpDir == '.svn':
+                continue
+            if entry.get_text() == tmpDir:
+                dialogBis = gtk.Dialog(title="Error", flags=0, buttons=None)
+                label = gtk.Label("This project name already exists")
+                label.show()
+                dialogBis.action_area.pack_start(label, True, True, 0)
+                dialogBis.set_size_request(250, 50)
+                dialogBis.show()
+                return
+
+        # Create the dest Dir
+        newProjectDir = projectsDirectoryPath + "/" + entry.get_text()
+        os.mkdir(newProjectDir)
+        dialog.destroy()
+        self.updateListOfAvailableProjects()
+
+    #+---------------------------------------------- 
+    #| Called when user save the current project
+    #+----------------------------------------------                
     def saveProject_cb(self, null):
         self.log.info("Starting the saving of the current project : " + str(self.currentProject))
         

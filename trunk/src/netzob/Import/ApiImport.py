@@ -47,9 +47,6 @@ from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 #+---------------------------------------------------------------------------+
 class ApiImport:
     
-    #+-----------------------------------------------------------------------+ 
-    #| Called when user select a new trace
-    #+-----------------------------------------------------------------------+
     def new(self):
         pass
 

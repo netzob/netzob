@@ -47,9 +47,6 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 #+---------------------------------------------------------------------------+
 class NetworkImport:
     
-    #+-----------------------------------------------------------------------+
-    #| Called when user select a new trace
-    #+-----------------------------------------------------------------------+
     def new(self):
         pass
 
@@ -190,12 +187,12 @@ class NetworkImport:
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
-        dialog = gtk.Dialog(title="Save selected packet as a new trace", flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Save selected packet in a project", flags=0, buttons=None)
         dialog.show()
         table = gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
-        # Add to an existing trace
-        label = gtk.Label("Add to an existing trace")
+        # Add to an existing project
+        label = gtk.Label("Add to an existing project")
         label.show()
         entry = gtk.combo_box_entry_new_text()
         entry.show()
@@ -207,32 +204,20 @@ class NetworkImport:
                 continue
             entry.append_text(tmpDir)
         but = gtk.Button("Save")
-        but.connect("clicked", self.add_packets_to_existing_trace, entry, treeview.get_selection(), dialog)
+        but.connect("clicked", self.add_packets_to_existing_project, entry, treeview.get_selection(), dialog)
         but.show()
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
-        # Create a new trace
-        label = gtk.Label("Create a new trace")
-        label.show()
-        entry = gtk.Entry()
-        entry.show()
-        but = gtk.Button("Save")
-        but.connect("clicked", self.create_new_trace, entry, treeview.get_selection(), dialog)
-        but.show()
-        table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(but, 2, 3, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
         dialog.action_area.pack_start(table, True, True, 0)
 
     #+---------------------------------------------- 
-    #| Add a selection of packets to an existing trace
+    #| Add a selection of packets to an existing project
     #+----------------------------------------------
-    def add_packets_to_existing_trace(self, button, entry, selection, dialog):
+    def add_packets_to_existing_project(self, button, entry, selection, dialog):
         projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        existingTraceDir = projectsDirectoryPath + "/" + entry.get_active_text()
+        existingProjectDir = projectsDirectoryPath + "/" + entry.get_active_text()
         # Create the new XML structure
         messages = []
         
@@ -298,99 +283,10 @@ class NetworkImport:
         res.append("</messages>")
         
         # Dump into a random XML file
-        fd = open(existingTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        fd = open(existingProjectDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
         fd.write("\n".join(res))
         fd.close()
         dialog.destroy()        
-
-    #+---------------------------------------------- 
-    #| Creation of a new trace from a selection of packets
-    #+----------------------------------------------
-    def create_new_trace(self, button, entry, selection, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        for tmpDir in os.listdir(projectsDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            if entry.get_text() == tmpDir:
-                dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
-                dialogBis.set_size_request(250, 50)
-                dialogBis.show()
-                return
-
-        # Create the dest Dir
-        newTraceDir = projectsDirectoryPath + "/" + entry.get_text()
-        os.mkdir(newTraceDir)
-        
-        # Create the new XML structure
-        messages = []
-        
-        
-        (model, paths) = selection.get_selected_rows()
-        for path in paths:
-            iter = model.get_iter(path)
-            if(model.iter_is_valid(iter)):
-                packetID = model.get_value(iter, 0)
-                proto = model.get_value(iter, 1)
-                timestamp = str(model.get_value(iter, 6))
-                packetPayload = self.packets[packetID]
-                
-                eth_decoder = Decoders.EthDecoder()
-                ip_decoder = Decoders.IPDecoder()
-                udp_decoder = Decoders.UDPDecoder()
-                tcp_decoder = Decoders.TCPDecoder()
-        
-                IPsrc = None
-                IPdst = None
-                Sport = None
-                Dport = None
-                Data = None
-                
-                
-                ethernet = eth_decoder.decode(packetPayload)
-                if ethernet.get_ether_type() == Packets.IP.ethertype:
-                    ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
-                    IPsrc = ip.get_ip_src()
-                    IPdst = ip.get_ip_dst()
-                    
-                    if ip.get_ip_p() == Packets.UDP.protocol: 
-                        udp = udp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
-                        Sport = udp.get_uh_sport()
-                        Dport = udp.get_uh_dport()
-                        Data = udp.get_data_as_string()
-
-                                
-                    if ip.get_ip_p() == Packets.TCP.protocol :
-                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
-                        Sport = tcp.get_th_sport()
-                        Dport = tcp.get_th_dport()
-                        Data = tcp.get_data_as_string()
-
-                # Compute the messages
-                if Data != None and len(Data) > 0 :
-                    message = NetworkMessage()
-                    message.setProtocol(proto)
-                    message.setIPSource(IPsrc)
-                    message.setIPTarget(IPdst)
-                    message.setL4SourcePort(Sport)
-                    message.setL4TargetPort(Dport)
-                    message.setTimestamp(timestamp)
-                    message.setData(Data.encode("hex"))
-                    messages.append(message)
-        
-        
-        # Create the xml content of the file
-        res = []
-        res.append("<messages>")
-        for message in messages :
-            res.append(NetworkMessageFactory.saveInXML(message))
-        res.append("</messages>")
-        
-        # Dump into a random XML file
-        fd = open(newTraceDir + "/" + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write("\n".join(res))
-        fd.close()
-        dialog.destroy()
-        self.zob.updateListOfAvailableProjects()
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details
