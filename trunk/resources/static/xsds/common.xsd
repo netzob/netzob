@@ -314,6 +314,13 @@
     		</extension>
     	</complexContent>
     </complexType>
+    
+    <complexType name="RawMessage">
+    	<complexContent>
+    		<extension base="netzob:Message">
+    		</extension>
+    	</complexContent>
+    </complexType>
 
 
     <complexType name="Message" abstract="true">
