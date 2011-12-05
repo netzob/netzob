@@ -94,6 +94,10 @@
     				</restriction>
     			</simpleType>
     		</element>
+    		<element name="environmental_dependencies"
+    			type="netzob:Environmental_dependencies" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
     	</sequence>
     </complexType>
 
@@ -539,5 +543,31 @@
     		</simpleType>
     	</attribute>
     	<attribute name="symbol" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="Environmental_dependencies">
+    	<sequence>
+    		<element name="environmental_dependency"
+    			type="netzob:Environmental_dependency" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Environmental_dependency">
+    	<attribute name="name" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    	<attribute name="type" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
     </complexType>
 </schema>
