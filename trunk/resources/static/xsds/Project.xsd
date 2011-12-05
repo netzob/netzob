@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.netzob.org/project" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:netzob-project="http://www.netzob.org/project" xmlns:Q1="http://www.netzob.org/common">
+
+    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
+    <element name="project" type="Q1:Project"></element>
+</schema>

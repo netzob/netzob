@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.netzob.org/workspace"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:netzob-ws="http://www.netzob.org/workspace" xmlns:Q1="http://www.netzob.org/common">
+
+    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
+    
+    
+
+
+
+
+    <element name="workspace" type="Q1:Workspace"></element>
+</schema>
