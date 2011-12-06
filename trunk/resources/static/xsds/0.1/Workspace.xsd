@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.netzob.org/workspace"
+	elementFormDefault="qualified" 
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:netzob-ws="http://www.netzob.org/workspace" version="0.1">
+	
+	<complexType name="Workspace">
+    	<sequence>
+    		<element name="configuration"
+    			type="netzob-ws:Workspace_configuration" maxOccurs="1" minOccurs="1">
+    		</element>
+    		<element name="projects" type="netzob-ws:Projects"></element>
+    	</sequence>
+    	<attribute name="creation_date" type="dateTime"
+    		use="required">
+    	</attribute>
+    	<attribute name="name" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+	</complexType>
+
+	<complexType name="Projects">
+    	<sequence>
+    		<element name="project" type="netzob-ws:Project_ref" maxOccurs="unbounded"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Project_ref">
+    	<attribute name="path" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    </complexType>
+    
+    <complexType name="Workspace_configuration">
+    	<sequence>
+            <element name="traces" type="string"></element>
+            <element name="logging" type="string" minOccurs="0"></element>
+    		<element name="prototypes" type="string" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+	
+	
+	<element name="workspace" type="netzob-ws:Workspace"></element>
+</schema>

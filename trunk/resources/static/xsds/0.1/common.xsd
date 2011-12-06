@@ -3,8 +3,6 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:netzob="http://www.netzob.org/common">
 
-    
-    <include schemaLocation=""></include>
     <complexType name="Project">
     	<sequence>
     		<element name="configuration"
@@ -23,37 +21,7 @@
     	<attribute name="creation_date" type="dateTime" use="required"></attribute>
     </complexType>
 
-    <complexType name="Workspace">
-    	<sequence>
-    		<element name="configuration"
-    			type="netzob:Workspace_configuration">
-    		</element>
-    		<element name="projects" type="netzob:Projects"></element>
-    	</sequence>
-    	<attribute name="creation_date" type="dateTime"
-    		use="required">
-    	</attribute>
-    	<attribute name="name" type="string" use="required"></attribute>
-    </complexType>
-
-
-    <complexType name="Project_ref">
-    	<attribute name="path" use="required">
-    		<simpleType>
-    			<restriction base="string">
-    				<minLength value="1"></minLength>
-    			</restriction>
-    		</simpleType>
-    	</attribute>
-    </complexType>
     
-    <complexType name="Workspace_configuration">
-    	<sequence>
-            <element name="traces" type="string"></element>
-            <element name="logging" type="string" minOccurs="0"></element>
-    		<element name="prototypes" type="string" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
 
     <complexType name="Project_configuration">
     	<sequence>
@@ -343,12 +311,7 @@
     	<attribute name="timestamp" type="int" use="required"></attribute>
     </complexType>
 
-    <complexType name="Projects">
-    	<sequence>
-    		<element name="project" type="netzob:Project_ref" maxOccurs="unbounded"></element>
-    	</sequence>
-    </complexType>
-
+    
     <complexType name="Fields">
     	<sequence>
     		<element name="field" type="netzob:Field" maxOccurs="unbounded" minOccurs="1"></element>
