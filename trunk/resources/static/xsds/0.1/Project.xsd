@@ -1,6 +1,598 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.netzob.org/project" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:netzob-project="http://www.netzob.org/project" xmlns:Q1="http://www.netzob.org/common">
+<schema targetNamespace="http://www.netzob.org/project"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:netzob-project="http://www.netzob.org/project" xmlns:Q1="http://www.netzob.org/common">
 
-    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
-    <element name="project" type="Q1:Project"></element>
+	<complexType name="Project">
+		<sequence>
+			<element name="configuration"
+				type="netzob-project:Project_configuration" minOccurs="0">
+			</element>
+			<element name="vocabulary" type="netzob-project:Vocabulary"
+				minOccurs="0">
+			</element>
+			<element name="grammar" type="netzob-project:Grammar"
+				minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="creation_date" type="dateTime"
+			use="required">
+		</attribute>
+		<attribute name="path" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+
+
+	<complexType name="Project_configuration">
+		<sequence>
+			<element name="vocabulary_inference"
+				type="netzob-project:Vocabulary_inference_configuration" minOccurs="0"></element>
+			<element name="grammar_inference"
+				type="netzob-project:Grammar_inference_configuration" minOccurs="0"
+				maxOccurs="1"></element>
+			<element name="simulation" type="netzob-project:Simulation_configuration"
+				maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Vocabulary_inference_configuration">
+		<sequence>
+			<element name="equivalence_threshold" minOccurs="0">
+				<simpleType>
+					<restriction base="int">
+						<minInclusive value="0"></minInclusive>
+						<maxInclusive value="100"></maxInclusive>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="orphan_reduction" type="boolean" minOccurs="0">
+			</element>
+			<element name="nb_iteration" minOccurs="0">
+				<simpleType>
+					<restriction base="int">
+						<minExclusive value="0"></minExclusive>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="do_internal_slick" type="boolean" minOccurs="0">
+			</element>
+			<element name="global_display" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="ASCII"></enumeration>
+						<enumeration value="BINARY"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="environmental_dependencies" type="netzob-project:Environmental_dependencies"
+				maxOccurs="1" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Grammar_inference_configuration"></complexType>
+
+	<complexType name="Simulation_configuration">
+		<sequence>
+			<element name="actor" type="netzob-project:Simulated_actor"
+				minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Simulated_actor">
+		<sequence>
+			<element name="type">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="CLIENT"></enumeration>
+						<enumeration value="MASTER"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<choice>
+				<element name="channel" type="netzob-project:NetworkCommunicationChannel"></element>
+			</choice>
+		</sequence>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="CommunicationChannel">
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="Network"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="NetworkCommunicationChannel">
+		<complexContent>
+			<extension base="netzob-project:CommunicationChannel">
+				<sequence>
+					<element name="networkType">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="CLIENT"></enumeration>
+								<enumeration value="SERVER"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="ip" type="string"></element>
+					<element name="protocol">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="TCP"></enumeration>
+								<enumeration value="UDP"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="port">
+						<simpleType>
+							<restriction base="int">
+								<minExclusive value="0"></minExclusive>
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+
+	<complexType name="Vocabulary">
+		<sequence>
+			<element name="symbols" type="netzob-project:Symbols"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Grammar">
+		<sequence>
+			<element name="states" type="netzob-project:States"></element>
+			<element name="transitions" type="netzob-project:Transitions" minOccurs="0"></element>
+		</sequence>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="MMSTD"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="initialState" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="Symbols">
+		<sequence>
+			<element name="symbol" type="netzob-project:Symbol"
+				maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Symbol">
+		<sequence>
+			<element name="messages" type="netzob-project:Messages"
+				minOccurs="0">
+			</element>
+			<element name="fields" type="netzob-project:Fields"
+				maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="alignment" type="string"></attribute>
+		<attribute name="score" type="float"></attribute>
+	</complexType>
+
+	<complexType name="Messages">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="message" type="netzob-project:Message"></element>
+		</choice>
+	</complexType>
+
+
+
+	<complexType name="NetworkMessage">
+		<complexContent>
+			<extension base="netzob-project:Message">
+				<sequence>
+					<element name="ip_source" type="string"></element>
+					<element name="ip_destination" type="string"></element>
+					<element name="protocol">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="TCP"></enumeration>
+								<enumeration value="UDP"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="l4_source_port">
+						<simpleType>
+							<restriction base="int">
+								<minExclusive value="1"></minExclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="l4_destination_port">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="FileMessage">
+		<complexContent>
+			<extension base="netzob-project:Message">
+				<sequence>
+					<element name="lineNumber">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="filename">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="creationDate" type="string" maxOccurs="1"></element>
+					<element name="modificationDate" type="string"></element>
+					<element name="owner" type="string"></element>
+					<element name="size" type="int"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="IPCMessage">
+		<complexContent>
+			<extension base="netzob-project:Message">
+				<sequence>
+					<element name="category" type="string"></element>
+					<element name="key" type="string"></element>
+					<element name="type" type="string"></element>
+					<element name="direction" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="RawMessage">
+		<complexContent>
+			<extension base="netzob-project:Message">
+			</extension>
+		</complexContent>
+	</complexType>
+
+
+	<complexType name="Message" abstract="true">
+		<sequence>
+			<element name="data">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="timestamp" type="int" use="required"></attribute>
+	</complexType>
+
+
+	<complexType name="Fields">
+		<sequence>
+			<element name="field" type="netzob-project:Field" maxOccurs="unbounded"
+				minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Field">
+		<sequence>
+			<element name="regex" type="string"></element>
+			<element name="selectedType" type="string"></element>
+			<element name="description" type="string" minOccurs="0"></element>
+			<element name="color" maxOccurs="1" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="encapsulation_level" use="required">
+			<simpleType>
+				<restriction base="int">
+					<minInclusive value="0"></minInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="number" use="required">
+			<simpleType>
+				<restriction base="int">
+					<minInclusive value="0"></minInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="State" abstract="true">
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="States">
+		<sequence>
+			<element name="state" type="netzob-project:State" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="NormalState">
+		<complexContent>
+			<extension base="netzob-project:State">
+				<sequence>
+
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="Transitions">
+		<sequence>
+			<element name="transition" type="netzob-project:Transition"
+				maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Transition" abstract="true">
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="SemiStochasticTransition">
+		<complexContent>
+			<extension base="netzob-project:Transition">
+				<sequence>
+					<element name="startState">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="endState">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="input" type="netzob-project:Input"></element>
+					<element name="outputs" type="netzob-project:Outputs"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="OpenChannelTransition">
+		<complexContent>
+			<extension base="netzob-project:Transition">
+				<sequence>
+					<element name="startState">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="endState">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="connectionTime">
+						<simpleType>
+							<restriction base="int">
+								<minExclusive value="0"></minExclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="maxNumberOfAttempt">
+						<simpleType>
+							<restriction base="int">
+								<minExclusive value="0"></minExclusive>
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="CloseChannelTransition">
+		<complexContent>
+			<extension base="netzob-project:Transition">
+				<sequence>
+					<element name="startState">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="endState">
+						<simpleType>
+							<restriction base="string">
+								<minLength value="1"></minLength>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="disconnectionTime">
+						<simpleType>
+							<restriction base="int">
+								<minExclusive value="0"></minExclusive>
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="Input">
+		<attribute name="symbol" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="Outputs">
+		<sequence>
+			<element name="output" type="netzob-project:Output"
+				maxOccurs="unbounded" minOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Output">
+		<attribute name="time" use="required">
+			<simpleType>
+				<restriction base="int">
+					<minInclusive value="0"></minInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="probability" use="required">
+			<simpleType>
+				<restriction base="float">
+					<minInclusive value="0"></minInclusive>
+					<maxInclusive value="100"></maxInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="symbol" type="string" use="required"></attribute>
+	</complexType>
+
+	<complexType name="Environmental_dependencies">
+		<sequence>
+			<element name="environmental_dependency" type="netzob-project:Environmental_dependency"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Environmental_dependency">
+		<simpleContent>
+			<extension base="string">
+				<attribute name="name" use="required">
+					<simpleType>
+						<restriction base="string">
+							<minLength value="1"></minLength>
+						</restriction>
+					</simpleType>
+				</attribute>
+				<attribute name="type" use="required">
+					<simpleType>
+						<restriction base="string">
+							<minLength value="1"></minLength>
+						</restriction>
+					</simpleType>
+				</attribute>
+			</extension>
+		</simpleContent>
+	</complexType>
+
+
+
+	<element name="project" type="netzob-project:Project"></element>
 </schema>

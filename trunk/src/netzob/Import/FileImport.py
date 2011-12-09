@@ -18,6 +18,10 @@
 #+----------------------------------------------
 import gtk
 import pygtk
+from netzob.Common.Symbol import Symbol
+import uuid
+from netzob.Common.Field import Field
+import datetime
 pygtk.require('2.0')
 import logging
 import os
@@ -58,13 +62,23 @@ class FileImport:
     def __init__(self, zob):        
         self.zob = zob
         
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Capturing.File.py')
+        self.messages = []
+        
+        self.init()
+        
+        self.dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
+        self.dialog.show()
+        self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
+        self.dialog.set_size_request(900, 700)
+        
+    def init(self):
         # Default line separator is <CR>
         self.lineSeparator = []
         self.fileName = ""
 
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Capturing.File.py')
-        self.messages = []
+        
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
@@ -147,55 +161,39 @@ class FileImport:
     #| Called when user select a list of packet
     #+----------------------------------------------
     def import_file(self, button):
-        dialog = gtk.Dialog(title="Save selected trace in a project", flags=0, buttons=None)
-        dialog.show()
-        table = gtk.Table(rows=2, columns=3, homogeneous=False)
-        table.show()
-        # Add to an existing project
-        label = gtk.Label("Add to an existing project")
-        label.show()
-        entry = gtk.combo_box_entry_new_text()
-        entry.show()
-        entry.set_size_request(300, -1)
-        entry.set_model(gtk.ListStore(str))
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        for tmpDir in os.listdir(projectsDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            entry.append_text(tmpDir)
-        but = gtk.Button("Save")
-        but.connect("clicked", self.add_packets_to_existing_project, entry, dialog)
-        but.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        dialog.action_area.pack_start(table, True, True, 0)
-
+        currentProject = self.zob.getCurrentProject()
+        
+        # We ask the confirmation
+        md = gtk.MessageDialog(None,
+            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(self.messages)) + " selected packets in project " + currentProject.getName() + ".")
+#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        resp = md.run()
+        md.destroy()
+        
+        if resp == gtk.RESPONSE_OK:
+            self.saveMessagesInProject(currentProject, self.messages)
+        self.dialog.destroy()
+        
+        # We update the gui
+        self.zob.update()
+        
+        
+        
     #+---------------------------------------------- 
     #| Add a selection of packets to an existing project
     #+----------------------------------------------
-    def add_packets_to_existing_project(self, button, entry, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        existingProjectDir = projectsDirectoryPath + os.sep + entry.get_active_text()
-
-        # Create the xml content of the file
-        res = []
-        res.append("<trace>")
-        res.append("<properties>")
-        res.append( self.envDeps.getXML() )
-        res.append("</properties>")
-        res.append("<messages>")
+    def saveMessagesInProject(self, project, messages):
+        
+        # We create a symbol dedicated for this
+        symbol = Symbol(uuid.uuid4(), "FILE IMPORT")
         for message in messages :
-            res.append(FileMessageFactory.saveInXML(message))
-        res.append("</messages>")
-        res.append("</trace>")
-
-        # Dump into a random XML file
-        fd = open(existingProjectDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write("\n".join(res))
-        fd.close()
-        dialog.destroy()
+            symbol.addMessage(message)
+        
+        
+        symbol.addField(Field.createDefaultField())
+        project.getVocabulary().addSymbol(symbol)
+        
 
     #+---------------------------------------------- 
     #| Called when user import a file
@@ -213,10 +211,10 @@ class FileImport:
         
         # Reads the file
         if aFile != "" and aFile != None:
-            self.fileName = aFile
+            self.fileName = aFile.strip()
             self.size = os.path.getsize(aFile)
-            self.creationDate = str(os.path.getctime(aFile))
-            self.modificationDate = str(os.path.getmtime(aFile))
+            self.creationDate = datetime.datetime.fromtimestamp(os.path.getctime(aFile))
+            self.modificationDate = datetime.datetime.fromtimestamp(os.path.getmtime(aFile))
             self.owner = "none"
             pktFD = open(aFile, 'r')
             self.content = pktFD.read()
@@ -250,7 +248,7 @@ class FileImport:
         typer = TypeIdentifier()
         hexValOfContent = ";".join(str(int(i, 16)) for i in typer.ascii2hex(self.content))
         separator = ";".join(str(i) for i in self.lineSeparator)       
-        print hexValOfContent
+        
         ar = hexValOfContent.split(";" + separator + ";")
         # Create a FileMessage for each line
         lineNumber = 1
@@ -267,14 +265,6 @@ class FileImport:
         self.lineView.get_model().clear()
             
         for a in ps :
-            # Create a message for each
-            message = FileMessage()
-            message.setLineNumber(lineNumber)
-            message.setFilename(self.fileName)
-            message.setCreationDate(self.creationDate)
-            message.setOwner(self.owner)
-            message.setModificationDate(self.modificationDate)
-            message.setSize(self.size)
             
             test = a.split(";")
             fe = []
@@ -284,17 +274,15 @@ class FileImport:
                 if len(h) == 1 :
                     h = "0" + h
                 fe.append(h)
-                
             
-            message.setData("".join(fe))
+            # Create a message for each
+            message = FileMessage(uuid.uuid4(), 0, "".join(fe), self.fileName, self.creationDate, self.modificationDate, self.owner, self.size, lineNumber)
+            
             
             self.lineView.get_model().append(None, [lineNumber, ";".join(fe)])
             
             self.messages.append(message)
             lineNumber = lineNumber + 1
-        
-        for message in self.messages :
-            print FileMessageFactory.saveInXML(message)
         
         
         

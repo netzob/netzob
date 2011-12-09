@@ -18,9 +18,11 @@
 #+---------------------------------------------------------------------------+
 import logging
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+
 
 #+---------------------------------------------------------------------------+
 #| AbstractTransition :
@@ -134,5 +136,23 @@ class AbstractTransition():
         self.outputState = outputState
     def setInputState(self, inputState):
         self.inputState = inputState
+        
+    @staticmethod
+    def loadFromXML(states, vocabulary, xmlRoot, namespace, version):
+        if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:OpenChannelTransition" :
+            from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
+            return OpenChannelTransition.loadFromXML(states, xmlRoot, namespace, version)
+        elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:CloseChannelTransition" :
+            from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
+            return CloseChannelTransition.loadFromXML(states, xmlRoot, namespace, version)
+        elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:SimpleTransition" :
+            from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
+            return SimpleTransition.loadFromXML(states, xmlRoot, namespace, version)
+        elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:SemiStochasticTransition" :
+            from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+            return SemiStochasticTransition.loadFromXML(states, vocabulary, xmlRoot, namespace, version)
+        else :
+            raise NameError("The parsed xml doesn't represent a valid type message (" + xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") + ").")
+            return None    
     
     

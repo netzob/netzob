@@ -33,10 +33,10 @@ class Entropy(object):
     #+---------------------------------------------- 
     #| Constructor :
     #+----------------------------------------------   
-    def __init__(self, group):
+    def __init__(self, symbol):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.Entropy.py')
-        self.group = group
+        self.symbol = symbol
 
     #+---------------------------------------------- 
     #| buildDistributionView :
@@ -47,9 +47,9 @@ class Entropy(object):
         resY = []
         segments = []
         i = 0
-        for iCol in range(len(self.group.getColumns())):
+        for field in self.symbol.getFields():
             maxCell = -1
-            for cell in self.group.getCellsByCol(iCol):
+            for cell in self.symbol.getMessagesValuesByField(field):
                 for j in range(len(cell) / 2):
                     resX.append(i + j)
                     resY.append(int(cell[j * 2:j * 2 + 2], 16))

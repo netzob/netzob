@@ -57,36 +57,7 @@ class Groups(object):
         for g in self.groups :
             g.buildInitRegex()
 
-    #+---------------------------------------------- 
-    #| alignWithNeedlemanWunsh:
-    #|  Align each messages of each group with the
-    #|  Needleman Wunsh algorithm
-    #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self):
-        tmpGroups = []
-        t1 = time.time()
-
-        # We try to clusterize each group
-        for group in self.groups :
-            clusterer = Clusterer(self.netzob, [group], explodeGroups=True)
-            clusterer.mergeGroups()
-            tmpGroups.extend(clusterer.getGroups())
-                
-        # Now that all the groups are reorganized separately
-        # we should consider merging them
-        self.log.info("Merging the groups extracted from the different files")
-        clusterer = Clusterer(self.netzob, tmpGroups, explodeGroups=False)
-        clusterer.mergeGroups()
-        
-        # Now we execute the second part of Netzob Magical Algorithms :)
-        # clean the single groups
-        if ConfigurationParser().getInt("clustering", "orphan_reduction") == 1 :
-            self.log.info("Merging the orphan groups") 
-            clusterer.mergeOrphanGroups()
-
-        self.log.info("Time of parsing : " + str(time.time() - t1))
-        self.setGroups(clusterer.getGroups())
-        self.netzob.update()
+    
 
     #+---------------------------------------------- 
     #| alignWithDelimiter:
@@ -167,33 +138,6 @@ class Groups(object):
         for group in self.getGroups():
             group.findSizeFields(store)
 
-    #+---------------------------------------------- 
-    #| dataCarvingResults:
-    #|  try to find the data hidden in the messages
-    #+----------------------------------------------    
-    def dataCarvingResults(self):
-        notebook = gtk.Notebook()
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        for group in self.getGroups():
-            scroll = group.dataCarving()
-            if scroll != None:
-                notebook.append_page(scroll, gtk.Label(group.getName()))
-        return notebook
-
-    #+---------------------------------------------- 
-    #| envDependenciesResults:
-    #|  try to find the environmental dependencies
-    #+----------------------------------------------    
-    def envDependenciesResults(self):
-        notebook = gtk.Notebook()
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        for group in self.getGroups():
-            scroll = group.envDependencies()
-            if scroll != None:
-                notebook.append_page(scroll, gtk.Label(group.getName()))
-        return notebook
 
     #+---------------------------------------------- 
     #| search_cb:

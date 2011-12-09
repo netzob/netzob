@@ -20,6 +20,9 @@ import gtk
 import gobject
 import re
 import pygtk
+from netzob.Common.Symbol import Symbol
+import uuid
+from netzob.Common.Field import Field
 pygtk.require('2.0')
 import logging
 import threading
@@ -68,7 +71,18 @@ class IpcImport:
 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.ipc.py')
+        
         self.packets = []
+        self.init()
+        
+        
+        self.dialog = gtk.Dialog(title="Capture IPC flow", flags=0, buttons=None)
+        self.dialog.show()
+        self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
+        self.dialog.set_size_request(900, 700)
+        
+        
+    def init(self):  
         self.pid = None
         self.stracePid = None
         self.aSniffThread = None
@@ -288,38 +302,9 @@ class IpcImport:
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
-        dialog = gtk.Dialog(title="Save selected packet as a new project", flags=0, buttons=None)
-        dialog.show()
-        table = gtk.Table(rows=2, columns=3, homogeneous=False)
-        table.show()
-        # Add to an existing project
-        label = gtk.Label("Add to an existing project")
-        label.show()
-        entry = gtk.combo_box_entry_new_text()
-        entry.show()
-        entry.set_size_request(300, -1)
-        entry.set_model(gtk.ListStore(str))
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        for tmpDir in os.listdir(projectsDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            entry.append_text(tmpDir)
-        but = gtk.Button("Save")
-        but.connect("clicked", self.add_packets_to_existing_project, entry, treeview.get_selection(), dialog)
-        but.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        dialog.action_area.pack_start(table, True, True, 0)
-
-    #+---------------------------------------------- 
-    #| Add a selection of packets to an existing project
-    #+----------------------------------------------
-    def add_packets_to_existing_project(self, button, entry, selection, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        existingProjectDir = projectsDirectoryPath + os.sep + entry.get_active_text()
         
+        currentProject = self.zob.getCurrentProject()
+        selection = treeview.get_selection()
         messages = []
         
         (model, paths) = selection.get_selected_rows()
@@ -335,35 +320,41 @@ class IpcImport:
                     continue
                 
                 #Compute the messages
-                message = IPCMessage()
-                message.setCategory("none")
-                message.setKey(msg_fd)
-                message.setName("none")
-                message.setType("none")
-                message.setDirection(msg_direction)
-                message.setTimestamp(msg_timestamp)        
-                message.setData(msg_rawPayload.replace("\\x", ""))
+                message = IPCMessage(msg_fd, msg_timestamp, msg_rawPayload.replace("\\x", ""), "none", msg_fd, msg_direction)
                 messages.append(message)
         
         
-        # Create the xml content of the file
-        res = []
-        res.append("<trace>")
-        res.append("<properties>")
-        res.append( self.envDeps.getXML() )
-        res.append("</properties>")
-        res.append("<messages>")
-        for message in messages :
-            res.append(IPCMessageFactory.saveInXML(message))
-        res.append("</messages>")
-        res.append("</trace>")
-
+        # We ask the confirmation
+        md = gtk.MessageDialog(None,
+            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(messages)) + " selected packets in project " + currentProject.getName() + ".")
+#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        resp = md.run()
+        md.destroy()
         
-        # Dump into a random XML file
-        fd = open(existingProjectDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write("\n".join(res))
-        fd.close()
-        dialog.destroy()
+        if resp == gtk.RESPONSE_OK:
+            self.saveMessagesInProject(currentProject, messages)
+        self.dialog.destroy()
+        
+        # We update the gui
+        self.zob.update()
+        
+        
+        
+    #+---------------------------------------------- 
+    #| Add a selection of packets to an existing project
+    #+----------------------------------------------
+    def saveMessagesInProject(self, project, messages):
+        
+        # We create a symbol dedicated for this
+        symbol = Symbol(uuid.uuid4(), "IPC IMPORT")
+        for message in messages :
+            symbol.addMessage(message)
+        
+        
+        symbol.addField(Field.createDefaultField())
+        project.getVocabulary().addSymbol(symbol)
+
 
     #+---------------------------------------------- 
     #| Called when launching sniffing process

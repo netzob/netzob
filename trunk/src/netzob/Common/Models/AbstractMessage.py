@@ -20,6 +20,7 @@ import logging
 import uuid
 import re
 import glib
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -34,12 +35,18 @@ import glib
 #+---------------------------------------------------------------------------+
 class AbstractMessage():
     
-    def __init__(self, type):
+    def __init__(self, id, timestamp, data, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
-        self.id = uuid.uuid4() 
+        if id == None :
+            self.id = uuid.uuid4()
+        else :
+            self.id = id 
+            
+        self.timestamp = timestamp
+        self.data = data
         self.type = type
-        self.group = None
+        self.symbol = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
     
@@ -109,8 +116,9 @@ class AbstractMessage():
     #+----------------------------------------------
     def applyRegex(self, styled=False, encoded=False):
         regex = []
-        for col in self.group.getColumns():
-            regex.append(col['regex'])
+        for field in self.symbol.getFields():
+            regex.append(field.getRegex())
+        
         compiledRegex = re.compile("".join(regex))
         data = self.getStringData()
         m = compiledRegex.match(data)
@@ -122,36 +130,36 @@ class AbstractMessage():
         res = []
         iCol = 0
         dynamicCol = 1
-        for col in self.group.getColumns():
-            if col['regex'].find("(") != -1: # Means this column is not static
+        for field in self.symbol.getFields():
+            if field.getRegex().find("(") != -1: # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
-                if self.group.getColorByCol(iCol) == "" or self.group.getColorByCol(iCol) == None:
+                if field.getColor() == "" or field.getColor() == None:
                     color = 'blue'
                 else:
-                    color = self.group.getColorByCol(iCol)
+                    color = field.getColor()
                 if styled:
                     if encoded:
-                        res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(self.group.getRepresentation(data[start:end], iCol)) + '</span>')
+                        res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getSelectedType())) + '</span>')
                     else:
                         res.append('<span foreground="' + color + '" font_family="monospace">' + data[start:end] + '</span>')
                 else:
                     if encoded:
-                        res.append(glib.markup_escape_text(self.group.getRepresentation(data[start:end], iCol)))
+                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getSelectedType())))
                     else:
                         res.append(data[start:end])
                 dynamicCol += 1
             else:
                 if styled:
                     if encoded:
-                        res.append('<span>' + glib.markup_escape_text(self.group.getRepresentation(col['regex'], iCol)) + '</span>')
+                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(field.getRegex(), field.getSelectedType())) + '</span>')
                     else:
-                        res.append('<span>' + col['regex'] + '</span>')
+                        res.append('<span>' + field.getRegex() + '</span>')
                 else:
                     if encoded:
-                        res.append(glib.markup_escape_text(self.group.getRepresentation(col['regex'], iCol)))
+                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(field.getRegex(), field.getSelectedType())))
                     else:
-                        res.append(col['regex'])
+                        res.append(field.getRegex())
             iCol = iCol + 1
         return res
     
@@ -166,12 +174,14 @@ class AbstractMessage():
         return self.type
     def getData(self):
         return self.data.strip()
-    def getGroup(self):
-        return self.group
+    def getSymbol(self):
+        return self.symbol
     def getRightReductionFactor(self):
         return self.rightReductionFactor
     def getLeftReductionFactor(self):
         return self.leftReductionFactor
+    def getTimestamp(self):
+        return self.timestamp
     
     def setID(self, id):
         self.id = id
@@ -179,8 +189,8 @@ class AbstractMessage():
         self.type = type
     def setData(self, data):
         self.data = data
-    def setGroup(self, group):
-        self.group = group
+    def setSymbol(self, symbol):
+        self.symbol = symbol
     def setRightReductionFactor(self, factor):
         self.rightReductionFactor = factor
         self.leftReductionFactor = 0

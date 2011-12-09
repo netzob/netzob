@@ -100,21 +100,24 @@ class CloseChannelTransition(AbstractTransition):
     def getDescription(self):
         return "CloseChannelTransition"
     
-    #+-----------------------------------------------------------------------+
-    #| toXMLString
-    #|     Abstract method to retrieve the XML definition of current transition
-    #| @return String representation of the XML
-    #+-----------------------------------------------------------------------+
-    def toXMLString(self, idStartState):
-        root = ElementTree.Element("transition")
-        root.set("id", int(self.getID()))
-        root.set("name", self.name)
-        root.set("class", "CloseChannelTransition")
-        root.set("idStart", int(idStartState))
-        root.set("idEnd", int(self.outputState.getID()))
-        root.set("disconnectionTime", self.disconnectionTime)                                  
-                 
-        return ElementTree.tostring(root)
+    def getDisconnectionTime(self) :
+        return self.disconnectionTime
+    
+    def save(self, root, namespace):
+        xmlState = ElementTree.SubElement(root, "{" + namespace + "}transition")
+        xmlState.set("id", str(self.getID()))
+        xmlState.set("name", str(self.getName()))
+        xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:CloseChannelTransition")
+        
+        xmlStartState = ElementTree.SubElement(xmlState, "{" + namespace + "}startState")
+        xmlStartState.text = str(self.getInputState().getID())
+        
+        xmlEndState = ElementTree.SubElement(xmlState, "{" + namespace + "}endState")
+        xmlEndState.text = str(self.getOutputState().getID())
+        
+        xmlDisconnectionTime = ElementTree.SubElement(xmlState, "{" + namespace + "}disconnectionTime")
+        xmlDisconnectionTime.text = str(self.getDisconnectionTime())
+        
 
     #+-----------------------------------------------------------------------+
     #| parse
@@ -123,12 +126,13 @@ class CloseChannelTransition(AbstractTransition):
     #| @return the instanciated object declared in the XML
     #+-----------------------------------------------------------------------+
     @staticmethod
-    def parse(xmlTransition, states):
-        idTransition = int(xmlTransition.get("id", "-1"))
-        nameTransition = xmlTransition.get("name", "none")
+    def loadFromXML(states, xmlTransition, namespace, version):
+        
+        idTransition = xmlTransition.get("id")
+        nameTransition = xmlTransition.get("name")
             
-        idStartTransition = int(xmlTransition.get("idStart", "-1"))
-        idEndTransition = int(xmlTransition.get("idEnd", "-1"))
+        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text
+        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text
         
         inputStateTransition = None
         outputStateTransition = None
@@ -138,7 +142,7 @@ class CloseChannelTransition(AbstractTransition):
             if state.getID() == idEndTransition :
                 outputStateTransition = state
         
-        disconnectionTime = int(xmlTransition.get("disconnectionTime", "0"))
+        disconnectionTime = int(xmlTransition.find("{" + namespace + "}disconnectionTime").text)
 
         transition = CloseChannelTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, disconnectionTime)
         inputStateTransition.registerTransition(transition)

@@ -29,6 +29,7 @@ import shutil
 #| Local application imports
 #+----------------------------------------------
 from netzob import NetzobResources
+from netzob.Common.Workspace import Workspace
 
 #+---------------------------------------------- 
 #| ResourcesConfiguration :
@@ -99,31 +100,11 @@ class ResourcesConfiguration(object):
     def createWorkspace(path):
         logging.info("Hosting workspace on " + str(path))
         # we do nothing if a global config file already exists
-        if os.path.isfile(os.path.join(path, "global.conf")) :
+        if os.path.isfile(os.path.join(path, Workspace.CONFIGURATION_FILENAME)) :
             return 
         else :
-            # we create a "traces" directory if it doesn't yet exist
-            tracesPath = os.path.join(path, "traces")
-            if not os.path.isdir(tracesPath) :
-                os.mkdir(tracesPath)
-            
-            # we create a "automaton" directory if it doesn't yet exist
-            automatonPath = os.path.join(path, "automaton")
-            if not os.path.isdir(automatonPath) :
-                os.mkdir(automatonPath)
-                
-            # we create the "prototypes" directory if it doesn't yet exist
-            prototypesPath = os.path.join(path, "prototypes")
-            if not os.path.isdir(prototypesPath) :
-                os.mkdir(prototypesPath)
-                # we upload in it the default repository file
-                staticRepositoryPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "repository.xml.default")
-                shutil.copy(staticRepositoryPath, os.path.join(prototypesPath, "repository.xml"))
-                
-            
-            
-        
-    
+            workspace = Workspace.createWorkspace("New Workspace", path)
+            return workspace
       
     @staticmethod
     def verifyStaticResources():
@@ -181,7 +162,7 @@ class ResourcesConfiguration(object):
     def getStaticResources():
         return NetzobResources.STATIC_DIR
     @staticmethod        
-    def getWorkspace():
+    def getWorkspaceFile():
         if NetzobResources.WORKSPACE_DIR == None :
             return ResourcesConfiguration.verifyUserResources()
         else :

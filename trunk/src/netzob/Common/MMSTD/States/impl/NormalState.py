@@ -138,19 +138,20 @@ class NormalState(AbstractState):
         self.deactivate()
         return newState
     
-    #+-----------------------------------------------------------------------+
-    #| toXMLString
-    #|     Return the xml definition of a normal state
-    #| @return the XML definition of the state
-    #+-----------------------------------------------------------------------+
-    def toXMLString(self):
-        root = ElementTree.Element("state")
-        root.set("id", int(self.id))
-        root.set("name", self.name)
-        root.set("class", "NormalState")
-        return ElementTree.tostring(root)
+    def save(self, root, namespace):
+        xmlState = ElementTree.SubElement(root, "{" + namespace + "}state")
+        xmlState.set("id", str(self.getID()))
+        xmlState.set("name", str(self.getName()))
+        xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NormalState")
+        
     
-    
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        idState = xmlRoot.get("id")
+        nameState = xmlRoot.get("name")
+        
+        state = NormalState(idState, nameState)
+        return state
     
     
     #+-----------------------------------------------------------------------+

@@ -28,6 +28,7 @@
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
+from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 
 
 #+---------------------------------------------------------------------------+
@@ -40,17 +41,18 @@ class AbstractMessageFactory():
     
     @staticmethod
     #+-----------------------------------------------------------------------+
-    #| saveInXML
+    #| save
     #|     Generate an XML representation of a message
-    #| @return a string which include the xml definition of the msg
     #+-----------------------------------------------------------------------+
-    def saveInXML(message):
+    def save(message, root, namespace):
         if message.getType() == "File" :
-            return FileMessageFactory.saveInXML(message)
+            return FileMessageFactory.save(message, root, namespace)
         elif message.getType() == "Network" :
-            return NetworkMessageFactory.saveInXML(message)
+            return NetworkMessageFactory.save(message, root, namespace)
         elif message.getType() == "IPC" :
-            return IPCMessageFactory.saveInXML(message)
+            return IPCMessageFactory.save(message, root, namespace)
+        elif message.getType() == "RAW" :
+            return RawMessageFactory.save(message, root, namespace)
         else :
             raise NameError('''There is no factory which would support 
             the generation of an xml representation of the message : ''' + str(message))
@@ -62,23 +64,24 @@ class AbstractMessageFactory():
     #|     Function which parses an XML and extract from it
     #[     the definition of a file message
     #| @param rootElement: XML root of the file message 
-    #| @return an instance of a FipSource (default 0.0.0.0)ileMessage
+    #| @return an instance of a message
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement):        
-        # First we verify rootElement is a message
-        if rootElement.tag != "message" :
-            raise NameError("The parsed xml doesn't represent a message.")
+    def loadFromXML(rootElement, namespace, version):        
+        
+        
         # Computes which type is it
-        if rootElement.get("type", "abstract") == "abstract" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract" :
             raise NameError("The parsed xml doesn't represent a valid type message.")
         
-        if rootElement.get("type", "abstract") == "file" :
-            return FileMessageFactory.loadFromXML(rootElement)
-        if rootElement.get("type", "abstract") == "network" :
-            return NetworkMessageFactory.loadFromXML(rootElement)
-        if rootElement.get("type", "abstract") == "IPC" :
-            return IPCMessageFactory.loadFromXML(rootElement)
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:FileMessage" :
+            return FileMessageFactory.loadFromXML(rootElement, namespace, version)
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:NetworkMessage" :
+            return NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:IPCMessage" :
+            return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RawMessage" :
+            return RawMessageFactory.loadFromXML(rootElement, namespace, version)
         else :
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None

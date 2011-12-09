@@ -16,7 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-
+import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -34,11 +34,16 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 #| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class IPCMessage(AbstractMessage):
-    def __init__(self):
-        AbstractMessage.__init__(self, "IPC")
+    def __init__(self, id, timestamp, data, category, key, direction):
+        AbstractMessage.__init__(self, id, timestamp, data, "IPC")
+        
+        self.category = category
+        self.key = key
+        self.direction = direction
+        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.IPCMessage.py')
-    
+        
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
@@ -70,15 +75,11 @@ class IPCMessage(AbstractMessage):
         return self.category
     def getKey(self):
         return self.key
-    def getName(self):
-        return self.name
     def getType(self):
         return self.type
     def getDirection(self):
         return self.direction
-    def getTimestamp(self):
-        return self.timestamp
-       
+
     #+---------------------------------------------- 
     #| SETTERS : 
     #+----------------------------------------------
@@ -86,12 +87,9 @@ class IPCMessage(AbstractMessage):
         self.category = category
     def setKey(self, key):
         self.key = key
-    def setName(self, name):
-        self.name = name
     def setType(self, type):
         self.type = type
     def setDirection(self, direction):
         self.direction = direction
-    def setTimestamp(self, timestamp):
-        self.timestamp = timestamp
+
 

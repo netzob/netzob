@@ -42,7 +42,7 @@ class ConfigurationParser(object):
     #| Constructor :
     #+---------------------------------------------- 
     def __init__(self):
-        self.configurationFilePath = os.path.join(ResourcesConfiguration.getWorkspace(), ResourcesConfiguration.CONFFILE)
+        self.configurationFilePath = os.path.join(ResourcesConfiguration.getWorkspaceFile(), ResourcesConfiguration.CONFFILE)
         
         # If the config file exists we parse it
         # if not we create an in-memory default one
@@ -109,10 +109,10 @@ class ConfigurationParser(object):
         defaultConfig.set('clustering', 'do_internal_slick', '0')
         defaultConfig.set('clustering', 'protocol_type', '1')
         
-        defaultTraceDirectory = os.path.join(ResourcesConfiguration.getWorkspace(), "projects")
+        defaultTraceDirectory = os.path.join(ResourcesConfiguration.getWorkspaceFile(), "projects")
         defaultConfig.set('projects', 'path', defaultTraceDirectory)
         
-        defaultAutomatonDirectory = os.path.join(ResourcesConfiguration.getWorkspace(), "automaton")
+        defaultAutomatonDirectory = os.path.join(ResourcesConfiguration.getWorkspaceFile(), "automaton")
         defaultConfig.set('automata', 'path', defaultAutomatonDirectory)
         
         defaultConfig.set('logging', 'path', '')

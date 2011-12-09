@@ -37,10 +37,10 @@ class SearchView(object):
     #+---------------------------------------------- 
     #| Constructor :
     #+----------------------------------------------   
-    def __init__(self, messages):
+    def __init__(self, project):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.SearchView.py')
-        self.messages = messages
+        self.project = project
     
     def getPanel(self):
         # Create the main panel
@@ -91,7 +91,7 @@ class SearchView(object):
     def search(self, pattern, typeOfPattern):
         
         # Initialize the searcher
-        searcher = Searcher(self.messages)
+        searcher = Searcher(self.project.getVocabulary().getAllMessages())
         
         searchResults = []
         if typeOfPattern == "IP" :

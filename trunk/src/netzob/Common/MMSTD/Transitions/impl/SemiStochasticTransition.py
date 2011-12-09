@@ -158,34 +158,31 @@ class SemiStochasticTransition(AbstractTransition):
          
         return "(" + str(inputSymbolId) + ";{" + ",".join(desc) + "})"
     
-    #+-----------------------------------------------------------------------+
-    #| toXMLString
-    #|     Abstract method to retrieve the XML definition of current transition
-    #| @return String representation of the XML
-    #+-----------------------------------------------------------------------+
-    def toXMLString(self, idStartState):
-        root = ElementTree.Element("transition")
-        root.set("id", int(self.getID()))
-        root.set("name", self.name)
-        root.set("class", "SemiStochasticTransition")
-        root.set("idStart", int(idStartState))
-        root.set("idEnd", int(self.outputState.getID()))
-                         
-        # input symbol
-        input = ElementTree.SubElement(root, "input")
-        input.set("class", "DictionnarySymbol")
-        input.text = str(self.inputSymbol.getID())
+    
+    
+    def save(self, root, namespace):
+        xmlTransition = ElementTree.SubElement(root, "{" + namespace + "}transition")
+        xmlTransition.set("id", str(self.getID()))
+        xmlTransition.set("name", str(self.getName()))
+        xmlTransition.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:SemiStochasticTransition")
         
-        # output symbols
+        xmlStartState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}startState")
+        xmlStartState.text = str(self.getInputState().getID())
+        
+        xmlEndState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}endState")
+        xmlEndState.text = str(self.getOutputState().getID())
+        
+        xmlInput = ElementTree.SubElement(xmlTransition, "{" + namespace + "}input")
+        xmlInput.set("symbol", self.getInputSymbol().getID())
+        
+        xmlOutputs = ElementTree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols :
             [symbol, proba, time] = arSymbol
-            output = ElementTree.SubElement(root, "output")
-            output.set("class", "DictionnarySymbol")
-            output.set("probability", str(proba))
-            output.set("time", str(time))
-            output.text = str(symbol.getID())
-                 
-        return ElementTree.tostring(root)
+            xmlOutput = ElementTree.SubElement(xmlOutputs, "{" + namespace + "}output")
+            xmlOutput.set("time", str(time))
+            xmlOutput.set("probability", str(proba))
+            xmlOutput.set("symbol", str(symbol.getID())) 
+        
     
     #+-----------------------------------------------------------------------+
     #| parse
@@ -195,19 +192,13 @@ class SemiStochasticTransition(AbstractTransition):
     #| @return the instanciated object declared in the XML
     #+-----------------------------------------------------------------------+
     @staticmethod
-    def parse(xmlTransition, dictionary, states):
-        idTransition = int(xmlTransition.get("id", "-1"))
-        nameTransition = xmlTransition.get("name", "none")
+    def loadFromXML(states, vocabulary, xmlTransition, namespace, version):
+        idTransition = xmlTransition.get("id")
+        nameTransition = xmlTransition.get("name")
             
-        idStartTransition = int(xmlTransition.get("idStart", "-1"))
-        idEndTransition = int(xmlTransition.get("idEnd", "-1"))
-                    
-        xmlInput = xmlTransition.find("input")
-        inputClass = xmlInput.get("class", "none")
-        inputId = int(xmlInput.text)
-        inputSymbol = DictionarySymbol(dictionary.getEntry(inputId)) 
-            
-        # searches for the output and input state
+        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text
+        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text
+        
         inputStateTransition = None
         outputStateTransition = None
         for state in states :
@@ -215,16 +206,32 @@ class SemiStochasticTransition(AbstractTransition):
                 inputStateTransition = state
             if state.getID() == idEndTransition :
                 outputStateTransition = state
+                    
+        xmlInput = xmlTransition.find("{" + namespace + "}input")
+        inputSymbolID = xmlInput.get("symbol")
+        # We retrieve the symbol associated with it
+        inputSymbol = vocabulary.getSymbol(inputSymbolID)
+        
+        if inputSymbol == None :
+            logging.warn("The vocabulary doesn't reference a symbol which ID is " + inputSymbolID)
+            return None
+            
+        
             
         transition = SemiStochasticTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, inputSymbol)
             
-        xmlOutputs = xmlTransition.findall("output")
+        xmlOutputs = xmlTransition.findall("{" + namespace + "}outputs/{" + namespace + "}output")
         for xmlOutput in xmlOutputs :
-            outputClass = xmlOutput.get("class", "none")
-            outputId = int(xmlOutput.text)
-            outputTime = int(xmlOutput.get("time", "0"))
-            outputProbability = float(xmlOutput.get("probability", "0"))
-            outputSymbol = DictionarySymbol(dictionary.getEntry(outputId))
+            outputSymbolId = xmlOutput.get("symbol")
+            outputTime = int(xmlOutput.get("time"))
+            outputProbability = float(xmlOutput.get("probability"))
+            
+            outputSymbol = vocabulary.getSymbol(outputSymbolId)
+        
+            if outputSymbol == None :
+                logging.warn("The vocabulary doesn't reference a symbol which ID is " + outputSymbolId)
+                return None
+            
             transition.addOutputSymbol(outputSymbol, outputProbability, outputTime)
                 
         inputStateTransition.registerTransition(transition)

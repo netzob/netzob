@@ -16,67 +16,46 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import os
+from xml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.SharedLib import SharedLib
+
 #+---------------------------------------------------------------------------+
-#| Process :
-#|     Model object of a simple process definition
+#| EnvironmentalDependency :
+#|     Class definition of an environmental dependency
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------------------------------------+
-class Process(object):
+class EnvironmentalDependency(object):
+    
     #+-----------------------------------------------------------------------+
     #| Constructor
-    #| @param name : name of the process
-    #|        pid : pid of the process
-    #|        user : the owner of the process
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, pid, user):
+    def __init__(self, name, type, value):
         self.name = name
-        self.pid = int(pid)
-        self.user = user        
+        self.type = type
+        self.value = value
         
-    #+-----------------------------------------------------------------------+
-    #| getSharedLibs
-    #| @return a list of shared libraries linked with current process    
-    #+-----------------------------------------------------------------------+
-    def getSharedLibs(self):
-        libs = []
-        # the command to execute
-        cmd = "cat /proc/" + str(self.pid) + "/maps | grep \"\.so\" | awk -F\" \" {'print $1\";\"$2\";\"$6'}"
-        lines = os.popen(cmd).readlines()
-        for line in lines:
-            ar = line.split(";")
-            mem = ar[0]
-            perm = ar[1]
-            path = ar[2][:len(ar[2]) - 1]
-            found = False
-            for l in libs :
-                if l.getPath() == path :
-                    found = True
-            if found == False :
-                (libName, libVersion) = SharedLib.findNameAndVersion(path)
-                
-                
-                
-                lib = SharedLib(libName, libVersion, path)
-                libs.append(lib)
-        return libs
-        
-        
-    def setPid(self, pid):
-        self.pid = int(pid)
-    def setName(self, name):
-        self.name = name
-    def setUser(self, user):
-        self.user = user
-    def getPid(self):
-        return self.pid;
+    
+    def save(self, root, namespace):
+        environmental_dependency = ElementTree.SubElement(root, "{" + namespace + "}environmental_dependency")
+        environmental_dependency.set("name", str(self.name))
+        environmental_dependency.set("type", str(self.type))
+        environmental_dependency.text = str(self.value)
+    
+   
     def getName(self):
         return self.name
-    def getUser(self):
-        return self.user
+    def getType(self):
+        return self.type
+    def getValue(self):
+        return self.value
+    
+    def setName(self, name):
+        self.name = name
+    def setType(self, type):
+        self.type = type
+    def setValue(self, value):
+        self.value = value

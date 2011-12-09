@@ -17,6 +17,7 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging.config
+import os
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -25,7 +26,7 @@ import logging.config
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-from netzob.Common.ConfigurationParser import ConfigurationParser
+
 
 
 #+---------------------------------------------- 
@@ -40,10 +41,10 @@ class LoggingConfiguration(object):
     #+---------------------------------------------- 
     #| initializeLogging :
     #+---------------------------------------------- 
-    def initializeLogging():
+    def initializeLogging(workspace):
         # First we extract the normal logging config file
-        loggingFilePath = ConfigurationParser().get("logging", "path")
-        if (loggingFilePath != "") :
+        loggingFilePath = workspace.getPathOfLogging()
+        if (loggingFilePath != "" and os.path.isfile(loggingFilePath)) :
             logging.debug("Logging config file : " + loggingFilePath)
             logging.config.fileConfig(loggingFilePath)
         else :

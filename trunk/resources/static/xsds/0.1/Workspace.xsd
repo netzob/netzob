@@ -25,7 +25,7 @@
 
 	<complexType name="Projects">
     	<sequence>
-    		<element name="project" type="netzob-ws:Project_ref" maxOccurs="unbounded"></element>
+    		<element name="project" type="netzob-ws:Project_ref" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
 

@@ -30,6 +30,10 @@ from netzob.Common.TypeIdentifier import TypeIdentifier
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
+from netzob.Common.Symbol import Symbol
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.TypeConvertor import TypeConvertor
+import uuid
 
 
 #+---------------------------------------------- 
@@ -40,23 +44,27 @@ import libNeedleman
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self, netzob, groups, explodeGroups=False):
-        self.netzob = netzob
-        self.groups = []
+    def __init__(self, configuration, symbols, explodeSymbols=False):
+        self.configuration = configuration
+        
+        self.symbols = []
+        
         # Create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.Clusterer.py')
 
-        if explodeGroups == False:
-            self.groups = groups
-            self.log.debug("A number of {0} already aligned groups will be clustered.".format(str(len(groups))))
+        if explodeSymbols == False:
+            self.symbols = symbols
+            self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
         else:
             # Create a group for each message
-            self.groups = []
+            self.symbols = []
             i = 0
-            for group in groups :
-                for m in group.getMessages():
+            for symbol in symbols :
+                for m in symbol.getMessages():
                     i += 1
-                    self.groups.append(Group(str(i), [m], group.getProperties()))
+                    tmpSymbol = Symbol(str(i), "tmpSymbol")
+                    tmpSymbol.addMessage(m)
+                    self.symbols.append(tmpSymbol)
             self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
         
     #+---------------------------------------------- 
@@ -70,37 +78,41 @@ class Clusterer(object):
     def retrieveEffectiveMaxIJ(self):
         self.log.debug("Computing the associated matrix")
         # Serialize the groups before feeding the C library
-        configParser = ConfigurationParser()
-        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
-        serialGroups = ""
+        if self.configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
+            doInternalSlick = 1
+        else :
+            doInternalSlick = 0   
+        serialSymbols = ""
         format = ""
-        typer = TypeIdentifier()
-        for group in self.groups:
-            if group.getAlignment() != "": # If we already computed the alignement of the group, then use it
+
+        for symbol in self.symbols:
+            if symbol.getAlignment() != "": # If we already computed the alignement of the group, then use it
                 format += "1" + "G"
                 messageTmp = ""
                 alignmentTmp = ""
-                for i in range(0, len(group.getAlignment()), 2):
-                    if group.getAlignment()[i:i + 2] == "--":
+                for i in range(0, len(symbol.getAlignment()), 2):
+                    if symbol.getAlignment()[i:i + 2] == "--":
                         messageTmp += "\xff"
                         alignmentTmp += "\x01"
                     else:
-                        messageTmp += typer.toBinary(group.getAlignment()[i:i + 2])
+                        messageTmp += TypeConvertor.netzobRawToBinary(symbol.getAlignment()[i:i + 2])
                         alignmentTmp += "\x00"
-                format += str(len(group.getAlignment()) / 2) + "M"
-                serialGroups += messageTmp
-                serialGroups += alignmentTmp
+                format += str(len(symbol.getAlignment()) / 2) + "M"
+                serialSymbols += messageTmp
+                serialSymbols += alignmentTmp
             else:
-                format += str(len(group.getMessages())) + "G"
-                for m in group.getMessages():
+                format += str(len(symbol.getMessages())) + "G"
+                for m in symbol.getMessages():
                     format += str(len(m.getReducedStringData()) / 2) + "M"
-                    serialGroups += typer.toBinary(m.getReducedStringData()) # The message
+                    serialSymbols += TypeConvertor.netzobRawToBinary(m.getReducedStringData()) # The message
 #                    print m.getReducedStringData()
-                    serialGroups += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]) # The alignement == "\x00" * len(the message), the first time
+                    serialSymbols += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]) # The alignement == "\x00" * len(the message), the first time
 #                    print "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ).encode("hex")
 
         # Execute the Clustering part in C :) (thx fgy)
-        (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(self.groups), format, serialGroups)
+        
+        
+        (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(self.symbols), format, serialSymbols)
         return (i_max, j_max, maxScore)
     
     def retrieveMaxIJ(self):
@@ -111,10 +123,9 @@ class Clusterer(object):
     
     def mergeEffectiveGroups(self):
         # retrieves the following parameters from the configuration file
-        configParser = ConfigurationParser()
-        nbIteration = configParser.getInt("clustering", "nbIteration")        
-        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
-        self.log.debug("Re-Organize the groups (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
+        nbIteration = self.configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)      
+        min_equivalence = self.configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(nbIteration, min_equivalence))
 
         gobject.idle_add(self.resetProgressBar)
         progressionStep = 1.0 / nbIteration
@@ -152,9 +163,9 @@ class Clusterer(object):
 
         # Compute the regex/alignment of each group
         gobject.idle_add(self.resetProgressBar)
-        progressionStep = 1.0 / len(self.groups)
-        for g in self.groups :
-            g.buildRegexAndAlignment()
+        progressionStep = 1.0 / len(self.symbols)
+        for g in self.symbols :
+            g.buildRegexAndAlignment(self.configuration)
             gobject.idle_add(self.doProgressBarStep, progressionStep)
         gobject.idle_add(self.resetProgressBar)
     
@@ -175,25 +186,25 @@ class Clusterer(object):
             
             # First we retrieve the current orphans
             orphans = []
-            tmp_groups = []
+            tmp_symbols = []
             # extract orphans
-            for group in self.groups :
-                if len(group.getMessages()) == 1 :
-                    orphans.append(group)
+            for symbol in self.symbols :
+                if len(symbol.getMessages()) == 1 :
+                    orphans.append(symbol)
             # create a tmp groups array where groups will be added once computed    
-            for group in self.groups :
-                if len(group.getMessages()) > 1 :
-                    tmp_groups.append(group)
+            for symbol in self.symbols :
+                if len(symbol.getMessages()) > 1 :
+                    tmp_symbols.append(symbol)
             
             if len(orphans) <= 1 :
                 self.log.info("Number of orphan groups : {0}. The orphan merging op. is finished !".format(len(orphans)))
                 break;
 
-            self.groups = orphans            
+            self.symbols = orphans            
             if currentReductionIsLeft :
                 leftReductionFactor = leftReductionFactor + increment
                 # Reduce the size of the messages by 50% from the left
-                for orphan in self.groups:
+                for orphan in self.symbols:
                     orphan.getMessages()[0].setLeftReductionFactor(leftReductionFactor)
 
                 self.log.warning("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
@@ -203,7 +214,7 @@ class Clusterer(object):
             if not currentReductionIsLeft :
                 rightReductionFactor = rightReductionFactor + increment
                 # Reduce the size of the messages from the right
-                for orphan in self.groups:
+                for orphan in self.symbols:
                     orphan.getMessages()[0].setRightReductionFactor(rightReductionFactor)
 
                 self.log.warning("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
@@ -211,14 +222,14 @@ class Clusterer(object):
                 currentReductionIsLeft = True
             
         
-            for orphan in self.groups :
-                tmp_groups.append(orphan)
-            self.groups = tmp_groups 
+            for orphan in self.symbols :
+                tmp_symbols.append(orphan)
+            self.symbols = tmp_symbols 
 
         # Compute the regex/alignment of each group
         gobject.idle_add(self.resetProgressBar)
-        progressionStep = 1.0 / len(self.groups)
-        for g in self.groups :
+        progressionStep = 1.0 / len(self.symbols)
+        for g in self.symbols :
             g.buildRegexAndAlignment()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
         gobject.idle_add(self.resetProgressBar)
@@ -230,20 +241,23 @@ class Clusterer(object):
     def mergeEffectiveRowCol(self, i_maximum, j_maximum):
         # Extract groups i and j
         if i_maximum > j_maximum:
-            group1 = self.groups.pop(i_maximum)
-            group2 = self.groups.pop(j_maximum)
+            symbol1 = self.symbols.pop(i_maximum)
+            symbol2 = self.symbols.pop(j_maximum)
         else:
-            group2 = self.groups.pop(j_maximum)
-            group1 = self.groups.pop(i_maximum)
+            symbol1 = self.symbols.pop(j_maximum)
+            symbol2 = self.symbols.pop(i_maximum)
 
         # Merge the groups i and j
         messages = []
-        messages.extend(group1.getMessages())
-        messages.extend(group2.getMessages())
-        newGroup = Group(group1.getName() + group2.getName(), messages, group1.getProperties())
+        messages.extend(symbol1.getMessages())
+        messages.extend(symbol2.getMessages())
+        
+        newSymbol = Symbol(uuid.uuid4(), symbol1.getName() + symbol2.getName())
+        for message in messages :
+            newSymbol.addMessage(message)
                     
         # Append th new group to the "groups" structure
-        self.groups.append(newGroup)
+        self.symbols.append(newSymbol)
     
     def mergeRowCol(self, i_maximum, j_maximum):
         self.mergeEffectiveRowCol(i_maximum, j_maximum)
@@ -267,8 +281,8 @@ class Clusterer(object):
     #+---------------------------------------------- 
     #| GETTER/SETTER :
     #+----------------------------------------------
-    def getGroups(self):
-        return self.groups
+    def getSymbols(self):
+        return self.symbols
 
 """        
 #+---------------------------------------------- 

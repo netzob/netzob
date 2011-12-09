@@ -84,8 +84,20 @@ class TreeGroupGenerator():
     def default(self):
         self.log.debug("Updating the treestore of the group in default mode")        
         self.treestore.clear()
-        for group in self.netzob.groups.getGroups():            
-            iter = self.treestore.append(None, ["{0}".format(group.getID()), "{0} [{1}]".format(group.getName(), str(len(group.getMessages()))), "{0}".format(group.getScore()), '#000000', '#DEEEF0'])
+        
+        # We retrieve the current project
+        project = self.netzob.getCurrentProject()
+        
+        if project != None :
+            # We retrieve the vocabulary of the project
+            vocabulary = project.getVocabulary()
+            
+            # We retrieve the symbols declared in (symbol = group)
+            symbols = vocabulary.getSymbols()
+            
+            for symbol in symbols :
+                iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0']) 
+                
 
     #+---------------------------------------------- 
     #| messageSelected :
@@ -122,19 +134,23 @@ class TreeGroupGenerator():
     #| @param y the position in Y
     #| @return the group if it exists (or None)
     #+---------------------------------------------- 
-    def getGroupAtPosition(self, x, y):
-        self.log.debug("Search for the group referenced at position {0};{1}".format(str(x), str(y)))
+    def getSymbolAtPosition(self, x, y):
+        self.log.debug("Search for the symbol referenced at position {0};{1}".format(str(x), str(y)))
+        
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        
+        
         info = self.treeview.get_path_at_pos(x, y)
         if info is not None :
             path = info[0]
             iter = self.treeview.get_model().get_iter(path)
-            idGroup = str(self.treeview.get_model().get_value(iter, 0))
-            if idGroup is not None :
-                self.log.debug("An entry with the ID {0} has been found.".format(idGroup))                
-                for group in self.netzob.groups.getGroups():
-                    if (str(group.getID()) == idGroup) :
-                        self.log.debug("The requested group with ID {0} has been found".format(group.getID()))
-                        return group
+            idSymbol = str(self.treeview.get_model().get_value(iter, 0))
+            if idSymbol is not None :
+                self.log.debug("An entry with the ID {0} has been found.".format(idSymbol))     
+                for symbol in vocabulary.getSymbols():
+                    if (str(symbol.getID()) == idSymbol) :
+                        self.log.debug("The requested symbol with ID {0} has been found".format(symbol.getID()))
+                        return symbol
         return None
 
     #+---------------------------------------------- 

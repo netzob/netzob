@@ -24,7 +24,8 @@ import os
 import threading
 import sys
 import logging
-from time import sleep
+from netzob.Common.Project import Project
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -54,6 +55,7 @@ from netzob.Common.StateParser import StateParser
 from netzob.Common.Groups import Groups
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
+from netzob.Common.Workspace import Workspace
 
 #+---------------------------------------------- 
 #| NetzobGUI :
@@ -72,15 +74,19 @@ class NetzobGui():
         if not ResourcesConfiguration.initializeResources() :
             logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
-           
+        
 #        splashScreen = SplashScreen.SplashScreen()
 #        while gtk.events_pending():
 #            gtk.main_iteration()
 #        sleep(3) 
 #        splashScreen.window.destroy() 
         
+        # loading the workspace
+        self.currentWorkspace = Workspace.loadWorkspace(ResourcesConfiguration.getWorkspaceFile())
+        self.currentProject = None
+        
         # Second we create the logging infrastructure
-        LoggingConfiguration().initializeLogging()
+        LoggingConfiguration().initializeLogging(self.currentWorkspace)
                 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
@@ -138,41 +144,46 @@ class NetzobGui():
         window.add(main_vbox)
         window.show()
         
+    def getCurrentProject(self):
+        return self.currentProject
+    def getCurrentWorkspace(self):
+        return self.currentWorkspace
+        
     def get_main_menu(self, window):
         ui = '''
-<ui>
-  <menubar name="Menu">
-    <menu action="Workspace">
-      <menuitem action="CreateProject"/>
-      <menu action="SelectProject">
-      </menu>
-      <menuitem action="ManageProjects"/>
-      <menuitem action="Options"/>
-      <menuitem action="Exit"/>
-    </menu>
-    <menu action="Project">
-      <menuitem action="SaveProject"/>
-      <menuitem action="ManageTraces"/>
-      <menu action="Import">
-        <menuitem action="CaptureNetworkTrafic"/>
-        <menuitem action="ImportPcapFile"/>
-        <menuitem action="CaptureIpcFlow"/>
-        <menuitem action="CaptureApiFlow"/>
-        <menuitem action="ImportFile"/>
-      </menu>
-      <menu action="ExportProject">
-        <menuitem action="ExportScapy"/>
-        <menuitem action="ExportWireshark"/>
-        <menuitem action="ExportXML"/>
-      </menu>
-    </menu>
-    <menu action="Help">
-      <menuitem action="NetzobHelp"/>
-      <menuitem action="About"/>
-    </menu>
-  </menubar>
-</ui>
-'''
+        <ui>
+          <menubar name="Menu">
+            <menu action="Workspace">
+              <menuitem action="CreateProject"/>
+              <menu action="SelectProject">
+              </menu>
+              <menuitem action="ManageProjects"/>
+              <menuitem action="Options"/>
+              <menuitem action="Exit"/>
+            </menu>
+            <menu action="Project">
+              <menuitem action="SaveProject"/>
+              <menuitem action="ManageTraces"/>
+              <menu action="Import">
+                <menuitem action="CaptureNetworkTrafic"/>
+                <menuitem action="ImportPcapFile"/>
+                <menuitem action="CaptureIpcFlow"/>
+                <menuitem action="CaptureApiFlow"/>
+                <menuitem action="ImportFile"/>
+              </menu>
+              <menu action="ExportProject">
+                <menuitem action="ExportScapy"/>
+                <menuitem action="ExportWireshark"/>
+                <menuitem action="ExportXML"/>
+              </menu>
+            </menu>
+            <menu action="Help">
+              <menuitem action="NetzobHelp"/>
+              <menuitem action="About"/>
+            </menu>
+          </menubar>
+        </ui>
+        '''
         self.uiManager = gtk.UIManager()
         groupAcc = self.uiManager.get_accel_group()
         window.add_accel_group(groupAcc)
@@ -241,42 +252,26 @@ class NetzobGui():
     #| updateListOfAvailableProjects :
     #+------------------------------------------------------------------------
     def updateListOfAvailableProjects(self):
-        # retrieves the workspace directory path
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        if projectsDirectoryPath == "" :
-            self.log.warn("No available projects directory found.")
-            return 
-               
-        # A temporary list in which all the projects will be stored and then sorted
-        tmpListOfProjects = []
-         
-        # List all the projects (except .svn)
-        for tmpProject in os.listdir(projectsDirectoryPath):
-            stateSaved = False
-            if os.path.isfile(projectsDirectoryPath + os.sep + tmpProject) or tmpProject == '.svn':
-                continue
-            for aFile in os.listdir(projectsDirectoryPath + os.sep + tmpProject):
-                if aFile == "config.xml":
-                    stateSaved = True
-                    continue
-            if stateSaved == True:
-                tmpListOfProjects.append([tmpProject, gtk.STOCK_INFO])
-            else:
-                tmpListOfProjects.append([tmpProject, ''])
+        # retrieves all the project references in current workspace
+        projects = self.getCurrentWorkspace().getProjects()
         
         # Sort and add to the menu
-        if len(tmpListOfProjects) == 0:
+        if len(projects) == 0:
             self.uiId = self.uiManager.add_ui(self.uiId, "/Menu/Workspace/SelectProject", "EmptyProject", "EmptyProject", gtk.UI_MANAGER_MENUITEM, False)
             self.uiId = self.uiManager.new_merge_id()
             self.uiActionGroup.add_actions([('EmptyProject', None, '...', None, None, self.projectSelected_cb)])
         else:
-            for (project, stock_id) in sorted(tmpListOfProjects) :
-                self.uiManager.add_ui(self.uiId, "/Menu/Workspace/SelectProject", project, project, gtk.UI_MANAGER_MENUITEM, False)
+            for (project) in sorted(projects) :
+                self.uiManager.add_ui(self.uiId, "/Menu/Workspace/SelectProject", project.getName(), project.getName(), gtk.UI_MANAGER_MENUITEM, False)
                 self.uiId = self.uiManager.new_merge_id()
-                aAction = self.uiActionGroup.get_action(project)
+                
+                # If an action for the current project entry exist with delete it
+                aAction = self.uiActionGroup.get_action(project.getName())
                 if aAction != None:
-                    self.uiActionGroup.remove_action( aAction )
-                self.uiActionGroup.add_actions([(project, stock_id, project, None, None, self.projectSelected_cb)])
+                    self.uiActionGroup.remove_action(aAction)
+                    
+                # Specify an action for current project through the callback (project is the use data)   
+                self.uiActionGroup.add_actions([(project.getName(), "", project.getName(), None, None, self.projectSelected_cb)], project)
 
     def startGui(self):
         # UI thread launching
@@ -322,28 +317,33 @@ class NetzobGui():
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         dialog.action_area.pack_start(table, True, True, 0)
+        
 
     #+---------------------------------------------- 
     #| Creation of a new project from
     #+----------------------------------------------
     def createProject_cb_cb(self, button, entry, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        for tmpDir in os.listdir(projectsDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            if entry.get_text() == tmpDir:
-                dialogBis = gtk.Dialog(title="Error", flags=0, buttons=None)
-                label = gtk.Label("This project name already exists")
-                label.show()
-                dialogBis.action_area.pack_start(label, True, True, 0)
-                dialogBis.set_size_request(250, 50)
-                dialogBis.show()
-                return
-
-        # Create the dest Dir
-        newProjectDir = projectsDirectoryPath + os.sep + entry.get_text()
-        os.mkdir(newProjectDir)
-        dialog.destroy()
+        
+        projectName = entry.get_text()
+        
+        # We verify the project name doesn't already exist
+        found = False
+        for project in  self.getCurrentWorkspace().getProjects() :
+            if project.getName() == projectName :
+                found = True
+        if found :
+            dialogBis = gtk.Dialog(title="Error", flags=0, buttons=None)
+            label = gtk.Label("This project name already exists")
+            label.show()
+            dialogBis.action_area.pack_start(label, True, True, 0)
+            dialogBis.set_size_request(250, 50)
+            dialogBis.show()
+            
+            return
+        
+        # Creation of the project
+        project = Project.createProject(self.getCurrentWorkspace(), projectName)
+        
         self.updateListOfAvailableProjects()
 
     #+---------------------------------------------- 
@@ -353,41 +353,29 @@ class NetzobGui():
         self.log.info("Starting the saving of the current project : " + str(self.currentProject))
         
         # Verify that there is a current project
-        if self.currentProject == "" or self.currentProject == "..." or self.currentProject == None:
+        if self.getCurrentProject() == None:
             self.log.info("No project selected")
             return
-
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        projectConfigPath = projectsDirectoryPath + os.sep + self.currentProject + os.sep + "config.xml"
         
-        for page in self.pageList:
-            page[1].save(projectConfigPath)
+        self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
+#
+#        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+#        projectConfigPath = projectsDirectoryPath + os.sep + self.currentProject + os.sep + "config.xml"
+#        
+#        for page in self.pageList:
+#            page[1].save(projectConfigPath)
 
     #+---------------------------------------------- 
     #| Called when user select a new project for analysis
     #+----------------------------------------------
-    def projectSelected_cb(self, action):
-        # retrieve the new project path
-        project = action.get_name()
-        if project == "" or project == None:
-            return
+    def projectSelected_cb(self, action, project):
+        self.log.debug("The current project is : " + project.getName())
         self.currentProject = project
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
-        projectPath = projectsDirectoryPath + os.sep + project
-
-        # If a state saving exists, loads it
-        for file in os.listdir(projectPath):
-            filePath = projectPath + os.sep + file
-            if file == "config.xml":
-                self.log.info("A configuration file has been found, so we analyze and load it")
-                stateParser = StateParser(projectPath + "/config.xml")
-                stateParser.loadConfiguration()
-                self.groups.setGroups(stateParser.getGroups())
         
-        # clear past analysis and initialize the each notebook
-        self.groups.clear()
+        # We update all the pages of the gui
         for page in self.pageList:
             page[1].clear()
+            page[1].update()
             page[1].new()
             
         self.update()
@@ -419,30 +407,20 @@ class NetzobGui():
     #+----------------------------------------------
     def importNetworkTrafic_cb(self, action):
         networkImportPanel = NetworkImport(self)
-        dialog = gtk.Dialog(title="Capture network trafic", flags=0, buttons=None)
-        dialog.show()
-        dialog.vbox.pack_start(networkImportPanel.getPanel(), True, True, 0)
-        dialog.set_size_request(900, 700)
+        
 
     #+---------------------------------------------- 
     #| Called when user wants to import PCAP file
     #+----------------------------------------------
     def importPcapFile_cb(self, action):
         pcapImportPanel = PcapImport(self)
-        dialog = gtk.Dialog(title="Import PCAP file", flags=0, buttons=None)
-        dialog.show()
-        dialog.vbox.pack_start(pcapImportPanel.getPanel(), True, True, 0)
-        dialog.set_size_request(900, 700)
-
+        
     #+---------------------------------------------- 
     #| Called when user wants to import IPC flow
     #+----------------------------------------------
     def importIpcFlow_cb(self, action):
         ipcImportPanel = IpcImport(self)
-        dialog = gtk.Dialog(title="Capture IPC flow", flags=0, buttons=None)
-        dialog.show()
-        dialog.vbox.pack_start(ipcImportPanel.getPanel(), True, True, 0)
-        dialog.set_size_request(900, 700)
+        
 
     #+---------------------------------------------- 
     #| Called when user wants to import API flow
@@ -459,10 +437,7 @@ class NetzobGui():
     #+----------------------------------------------
     def importFile_cb(self, action):
         fileImportPanel = FileImport(self)
-        dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
-        dialog.show()
-        dialog.vbox.pack_start(fileImportPanel.getPanel(), True, True, 0)
-        dialog.set_size_request(900, 700)
+        
 
     #+---------------------------------------------- 
     #| Update each panels

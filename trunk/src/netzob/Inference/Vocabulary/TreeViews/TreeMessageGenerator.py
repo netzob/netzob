@@ -20,6 +20,7 @@ import logging
 import pango
 import gobject
 import gtk
+from netzob.Common.Field import Field
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -41,7 +42,7 @@ class TreeMessageGenerator():
     #| @param vbox : where the treeview will be hold
     #+---------------------------------------------- 
     def __init__(self):
-        self.group = None
+        self.symbol = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.TreeStores.TreeMessageGenerator.py')
    
@@ -76,7 +77,7 @@ class TreeMessageGenerator():
     #|         Clear the class
     #+---------------------------------------------- 
     def clear(self):
-        self.group = None
+        self.symbol = None
         self.treestore.clear()
         
     #+---------------------------------------------- 
@@ -91,19 +92,19 @@ class TreeMessageGenerator():
     #| default :
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
-    def default(self, group):
-        self.group = group
-        self.log.debug("Updating the treestore of the messages in default mode with the messages from the group " + self.group.getName())
+    def default(self, symbol):
+        self.symbol = symbol
+        self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
         self.treestore.clear()
-
+        
         # Verifies we have everything needed for the creation of the treeview
-        if (self.group == None or len(self.group.getMessages()) < 1) or len(self.group.getColumns()) == 0 :
-            self.error()
+        if (self.symbol == None or len(self.symbol.getMessages()) < 1) or len(self.symbol.getFields()) == 0 :
+            self.log.warn("Error while trying to update the list of messages")
             return
 
-        # Create a TreeStore with N cols, with N := len(self.group.getColumns())
+        # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for i in range(len(self.group.getColumns())):
+        for i in range(len(self.symbol.getFields())):
             treeStoreTypes.append(str)
         self.treestore = gtk.TreeStore(*treeStoreTypes)
 
@@ -113,8 +114,8 @@ class TreeMessageGenerator():
         name_line.append("#ababab")
         name_line.append(pango.WEIGHT_BOLD)
         name_line.append(True)
-        for col in self.group.getColumns():
-            name_line.append(col['name'])
+        for field in self.symbol.getFields():
+            name_line.append(field.getName())
         self.treestore.append(None, name_line)
 
         # Build the regex row
@@ -123,11 +124,13 @@ class TreeMessageGenerator():
         regex_row.append("#c8c8c8")
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
-        for iCol in range(len(self.group.getColumns())):
-            if self.group.isRegexStatic(self.group.getRegexByCol(iCol)):
-                regex_row.append(self.group.getRepresentation(self.group.getRegexByCol(iCol), iCol))
-            else:
-                regex_row.append(self.group.getRegexByCol(iCol))
+        
+        for field in self.symbol.getFields():         
+            if field.isRegexStatic() :
+                regex_row.append(field.getEncodedVersionOfTheRegex())
+            else :
+                regex_row.append(field.getRegex())
+                
         self.treestore.append(None, regex_row)
 
         # Build the types row
@@ -136,12 +139,12 @@ class TreeMessageGenerator():
         types_line.append("#DEDEDE")
         types_line.append(pango.WEIGHT_BOLD)
         types_line.append(True)        
-        for iCol in range(len(self.getGroup().getColumns())):
-            types_line.append(self.getGroup().getStyledPossibleTypesByCol(iCol))
+        for field in self.symbol.getFields():
+            types_line.append(self.getSymbol().getStyledPossibleTypesForAField(field))
         self.treestore.append(None, types_line)
         
         # Build the next rows from messages after applying the regex
-        for message in self.group.getMessages():
+        for message in self.symbol.getMessages():
             # for each message we create a line and computes its cols
             line = []
             line.append(message.getID())
@@ -155,25 +158,24 @@ class TreeMessageGenerator():
         for col in self.treeview.get_columns() :
             self.treeview.remove_column(col)
             
-        for iCol in range(4, 4 + len(self.group.getColumns())) :
+        for iField in range(4, 4 + len(self.symbol.getFields())) :
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property('background-set' , True)
-            textCellRenderer.connect('edited', self.column_renaming_cb, iCol - 4)
+            textCellRenderer.connect('edited', self.column_renaming_cb, iField - 4)
             # Column Messages
-            lvcolumn = gtk.TreeViewColumn('Col' + str(iCol - 4))
+            lvcolumn = gtk.TreeViewColumn('Col' + str(iField - 4))
             lvcolumn.pack_start(textCellRenderer, True)
-            lvcolumn.set_attributes(textCellRenderer, markup=iCol, background=1, weight=2, editable=3)
+            lvcolumn.set_attributes(textCellRenderer, markup=iField, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)
         self.treeview.set_model(self.treestore)
 
     def column_renaming_cb(self, cell, path_string, new_text, iCol):
-        print "2"
         self.treestore[path_string][iCol + 4] = new_text
-        self.group.setColumnNameByCol(iCol, new_text)
+        self.symbol.setColumnNameByCol(iCol, new_text)
 
     def updateDefault(self):
-        self.default(self.group)
+        self.default(self.symbol)
     
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -184,5 +186,5 @@ class TreeMessageGenerator():
     def getScrollLib(self):
         return self.scroll
 
-    def getGroup(self):
-        return self.group
+    def getSymbol(self):
+        return self.symbol

@@ -24,18 +24,23 @@ import uuid
 from xml.etree import ElementTree
 from netzob.Common.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| NetworkMessageFactory :
-#|     Factory dedicated to the manipulation of network messages
+#| RawMessageFactory :
+#|     Factory dedicated to the manipulation of raw messages
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
+#| XML Definition :
+#| <message type="RAW" id="" timestamp="">
+#|     <data></data>
+#| </message>
 #+---------------------------------------------------------------------------+
-class NetworkMessageFactory():
+class RawMessageFactory():
     
     @staticmethod
     #+-----------------------------------------------------------------------+
@@ -46,41 +51,25 @@ class NetworkMessageFactory():
         root = ElementTree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NetworkMessage")
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:RawMessage")
         # data
-        subData = ElementTree.SubElement(root, "{" + namespace + "}data")
+        subData = ElementTree.SubElement(root, "data")
         subData.text = str(message.getData())
-        # ipSource
-        subIpSource = ElementTree.SubElement(root, "{" + namespace + "}ip_source")
-        subIpSource.text = message.getIPSource()
-        # ipTarget
-        subIpTarget = ElementTree.SubElement(root, "{" + namespace + "}ip_destination")
-        subIpTarget.text = message.getIPDestination()
-        # protocol
-        subProtocol = ElementTree.SubElement(root, "{" + namespace + "}protocol")
-        subProtocol.text = message.getProtocol()
-        # l4 source port
-        subL4SourcePort = ElementTree.SubElement(root, "{" + namespace + "}l4_source_port")
-        subL4SourcePort.text = str(message.getL4SourcePort())
-        # l4 target port
-        subL4TargetPort = ElementTree.SubElement(root, "{" + namespace + "}l4_destination_port")
-        subL4TargetPort.text = str(message.getL4DestinationPort())
-        return ElementTree.tostring(root)
+        
     
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML :
     #|     Function which parses an XML and extract from it
-    #[     the definition of a network message
-    #| @param rootElement: XML root of the network message 
-    #| @return an instance of a NetworkMessage
+    #[     the definition of a RAW message
+    #| @param rootElement: XML root of the RAW message 
+    #| @return an instance of a n IPC Message
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):        
-        
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:NetworkMessage" :
-            raise NameError("The parsed xml doesn't represent a Network message.")
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:RawMessage" :
+            raise NameError("The parsed xml doesn't represent an IPC message.")
         
         # Verifies the data field
         if rootElement.find("{" + namespace + "}data") == None or len(rootElement.find("{" + namespace + "}data").text) == 0:
@@ -94,28 +83,10 @@ class NetworkMessageFactory():
         
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))
+      
+        from netzob.Common.Models.RawMessage import RawMessage
+        result = RawMessage(msg_id, msg_timestamp, msg_data)
         
-        # Retrieves the ip source
-        msg_ipSource = rootElement.find("{" + namespace + "}ip_source").text
-            
-        # Retrieves the ip target
-        msg_ipDestination = rootElement.find("{" + namespace + "}ip_destination").text
         
-        # Retrieves the protocol
-        msg_protocol = rootElement.find("{" + namespace + "}protocol").text
-            
-        # Retrieves the l4 source port
-        msg_l4SourcePort = rootElement.find("{" + namespace + "}l4_source_port").text
-            
-        # Retrieves the l4 target port (default 0)
-        msg_l4TargetPort = rootElement.find("{" + namespace + "}l4_destination_port").text
-        
-        # TODO : verify this ! Circular imports in python !      
-        # WARNING : verify this ! Circular imports in python !  
-        from netzob.Common.Models.NetworkMessage import NetworkMessage
-        
-        result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort)
-
         return result
-    
-    
+   

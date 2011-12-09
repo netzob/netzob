@@ -16,7 +16,7 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -48,36 +48,30 @@ class IPCMessageFactory():
     
     @staticmethod
     #+-----------------------------------------------------------------------+
-    #| saveInXML
+    #| save
     #|     Generate the XML representation of an IPC message
-    #| @return a string which include the xml definition of the msg
     #+-----------------------------------------------------------------------+    
-    def saveInXML(message):
-        root = ElementTree.Element("message")
-        root.set("type", "IPC")
+    def save(message, xmlMessages, namespace):
+        root = ElementTree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
+        root.set("timestamp", str(message.getTimestamp()))
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:IPCMessage")
+        # data
+        subData = ElementTree.SubElement(root, "{" + namespace + "}data")
+        subData.text = str(message.getData())
         # category
-        subCategory = ElementTree.SubElement(root, "category")
+        subCategory = ElementTree.SubElement(root, "{" + namespace + "}category")
         subCategory.text = str(message.getCategory())
         # key
-        subKey = ElementTree.SubElement(root, "key")
+        subKey = ElementTree.SubElement(root, "{" + namespace + "}key")
         subKey.text = str(message.getKey())
-        # name
-        subName = ElementTree.SubElement(root, "name")
-        subName.text = message.getName()
         # type
-        subType = ElementTree.SubElement(root, "type")
-        subType.text = message.getType()
+        subType = ElementTree.SubElement(root, "{" + namespace + "}type")
+        subType.text = str(message.getType())
         # direction
-        subDirection = ElementTree.SubElement(root, "direction")
-        subDirection.text = message.getDirection()
-        # timestamp
-        subTimestamp = ElementTree.SubElement(root, "timestamp")
-        subTimestamp.text = str(message.getTimestamp())
-        # data
-        subData = ElementTree.SubElement(root, "data")
-        subData.text = str(message.getData())
-        return ElementTree.tostring(root)
+        subDirection = ElementTree.SubElement(root, "{" + namespace + "}direction")
+        subDirection.text = str(message.getDirection())
+        
     
     @staticmethod
     #+---------------------------------------------------------------------------+
@@ -88,77 +82,43 @@ class IPCMessageFactory():
     #| @return an instance of a n IPC Message
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement):        
-        # First we verify rootElement is a message
-        if rootElement.tag != "message" :
-            raise NameError("The parsed xml doesn't represent a message.")
+    def loadFromXML(rootElement, namespace, version):        
         # Then we verify its an IPC Message
-        if rootElement.get("type", "abstract") != "IPC" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:IPCMessage" :
             raise NameError("The parsed xml doesn't represent an IPC message.")
+        
         # Verifies the data field
-        if rootElement.find("data") == None or len(rootElement.find("data").text) == 0:
+        if rootElement.find("{" + namespace + "}data") == None or len(rootElement.find("{" + namespace + "}data").text) == 0:
             raise NameError("The parsed message has no data specified")
         
         # Parse the data field and transform it into a byte array
-        msg_data = bytearray(rootElement.find("data").text)
+        msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
         
-        # Retrieve the id (default = -1)
-        msg_id = rootElement.get('id', "-1")
+        # Retrieve the id
+        msg_id = rootElement.get("id")
         
-        if msg_id == "-1" :
-            msg_id = str(uuid.uuid4()) 
+        # Retrieve the timestamp
+        msg_timestamp = int(rootElement.get("timestamp"))
         
-        # Retrieves the category (default none)
-        if rootElement.find("category") != None :
-            msg_category = rootElement.find("category").text
-        else :
-            msg_category = "none"
+        # Retrieves the category
+        msg_category = rootElement.find("{" + namespace + "}category").text
+       
+        # Retrieves the key
+        msg_key = rootElement.find("{" + namespace + "}key").text
+        
+        # Retrieves the type
+        msg_type = rootElement.find("{" + namespace + "}type").text
             
-        # Retrieves the key (default none)
-        if rootElement.find("key") != None :
-            msg_key = rootElement.find("key").text
-        else :
-            msg_key = "none"
-            
-        # Retrieves the name (default none)
-        if rootElement.find("name") != None :
-            msg_name = rootElement.find("name").text
-        else :
-            msg_name = "none"
+        # Retrieves the direction
+        msg_direction = rootElement.find("{" + namespace + "}direction").text
         
-        # Retrieves the type (default none)
-        if rootElement.find("type") != None :
-            msg_type = rootElement.find("type").text
-        else :
-            msg_type = "none"
-            
-        # Retrieves the direction (default none)
-        if rootElement.find("direction") != None :
-            msg_direction = rootElement.find("direction").text
-        else :
-            msg_direction = "none"
         
-        # Retrieves the timestamp (default -1)
-        if rootElement.find("timestamp") != None :
-            msg_timestamp = int(rootElement.find("timestamp").text)
-        else :
-            msg_timestamp = -1
-              
         
         # TODO : verify this ! Circular imports in python !      
         # WARNING : verify this ! Circular imports in python !  
-        from .. import IPCMessage
+        from netzob.Common.Models.IPCMessage import IPCMessage
         
-        result = IPCMessage.IPCMessage()
-        result.setID(msg_id)
-        result.setData(msg_data)
-        result.setCategory(msg_category)
-        result.setKey(msg_key)
-        result.setName(msg_name)
-        result.setType(msg_type)
-        result.setDirection(msg_direction)
-        result.setTimestamp(msg_timestamp)
-        
+        result = IPCMessage(msg_id, msg_timestamp, msg_data, msg_category, msg_key, msg_direction)
         
         return result
     

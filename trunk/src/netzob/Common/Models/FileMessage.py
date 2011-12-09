@@ -36,8 +36,15 @@ from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 #| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class FileMessage(AbstractMessage):
-    def __init__(self):
-        AbstractMessage.__init__(self, "File")
+    def __init__(self, id, timestamp, data, filename, creationDate, modificationDate, owner, size, lineNumber):
+        AbstractMessage.__init__(self, id, timestamp, data, "File")
+        self.filename = filename
+        self.creationDate = creationDate
+        self.modificationDate = modificationDate
+        self.owner = owner
+        self.size = size
+        self.lineNumber = lineNumber
+        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.FileMessage.py')
     
@@ -63,7 +70,7 @@ class FileMessage(AbstractMessage):
         properties.append(['Modification Date', self.getModificationDate()])
         properties.append(['Owner', self.getOwner()])
         properties.append(['Size', self.getSize()])
-        properties.append(['Line number', self.getDirection()])        
+        properties.append(['Line number', self.getLineNumber()])        
         properties.append(['Data', self.getStringData()])
         
         return properties 

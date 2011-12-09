@@ -130,37 +130,41 @@ class OpenChannelTransition(AbstractTransition):
     
     def getDescription(self):
         return "OpenChannelTransition"
+    def getConnectionTime(self):
+        return self.connectionTime
+    def getMaxNumberOfAttempt(self):
+        return self.maxNumberOfAttempt
     
-    #+-----------------------------------------------------------------------+
-    #| toXMLString
-    #|     Abstract method to retrieve the XML definition of current transition
-    #| @return String representation of the XML
-    #+-----------------------------------------------------------------------+
-    def toXMLString(self, idStartState):
-        root = ElementTree.Element("transition")
-        root.set("id", int(self.getID()))
-        root.set("name", self.name)
-        root.set("class", "OpenChannelTransition")
-        root.set("idStart", int(idStartState))
-        root.set("idEnd", int(self.outputState.getID()))
-        root.set("connectionTime", self.connectionTime)
-        root.set("maxNumberOfAttempt", self.maxNumberOfAttempt)                                  
-                 
-        return ElementTree.tostring(root)
+    def save(self, root, namespace):
+        xmlTransition = ElementTree.SubElement(root, "{" + namespace + "}transition")
+        xmlTransition.set("id", str(self.getID()))
+        xmlTransition.set("name", str(self.getName()))
+        xmlTransition.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:OpenChannelTransition")
+        
+        xmlStartState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}startState")
+        xmlStartState.text = str(self.getInputState().getID())
+        
+        xmlEndState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}endState")
+        xmlEndState.text = str(self.getOutputState().getID())
+        
+        xmlConnectionTime = ElementTree.SubElement(xmlTransition, "{" + namespace + "}connectionTime")
+        xmlConnectionTime.text = str(self.getConnectionTime())
+        
+        xmlMaxNumberOfAttempt = ElementTree.SubElement(xmlTransition, "{" + namespace + "}maxNumberOfAttempt")
+        xmlMaxNumberOfAttempt.text = str(self.getMaxNumberOfAttempt())
 
     #+-----------------------------------------------------------------------+
-    #| parse
+    #| loadFromXML
     #|     Extract from an XML declaration the definition of the transition
-    #| @param states the states already parsed while analyzing the MMSTD
     #| @return the instanciated object declared in the XML
     #+-----------------------------------------------------------------------+
     @staticmethod
-    def parse(xmlTransition, states):
-        idTransition = int(xmlTransition.get("id", "-1"))
-        nameTransition = xmlTransition.get("name", "none")
+    def loadFromXML(states, xmlTransition, namespace, version):
+        idTransition = xmlTransition.get("id")
+        nameTransition = xmlTransition.get("name")
             
-        idStartTransition = int(xmlTransition.get("idStart", "-1"))
-        idEndTransition = int(xmlTransition.get("idEnd", "-1"))
+        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text
+        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text
         
         inputStateTransition = None
         outputStateTransition = None
@@ -170,12 +174,9 @@ class OpenChannelTransition(AbstractTransition):
             if state.getID() == idEndTransition :
                 outputStateTransition = state
         
-        connectionTime = int(xmlTransition.get("connectionTime", "0"))
-        maxNumberOfAttempt = int(xmlTransition.get("maxNumberOfAttempt", "1"))
-        
-        
-        
-
+        connectionTime = int(xmlTransition.find("{" + namespace + "}connectionTime").text)
+        maxNumberOfAttempt = int(xmlTransition.find("{" + namespace + "}maxNumberOfAttempt").text)
+       
         transition = OpenChannelTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, connectionTime, maxNumberOfAttempt)
         inputStateTransition.registerTransition(transition)
         return transition

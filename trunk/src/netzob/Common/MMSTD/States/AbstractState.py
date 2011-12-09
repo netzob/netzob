@@ -18,6 +18,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -37,6 +38,10 @@ class AbstractState():
         self.name = name
         self.type = type
         self.active = False
+        
+        
+    
+        
     
     #+-----------------------------------------------------------------------+
     #| getTransitions
@@ -79,13 +84,13 @@ class AbstractState():
         raise NotImplementedError("The state class doesn't support 'executeAsMaster'.")
     
     #+-----------------------------------------------------------------------+
-    #| toXMLString
+    #| save
     #|     Abstract method to retrieve the XML definition of current state
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def toXMLString(self):
-        self.log.error("The state class doesn't support 'toXMLString'.")
-        raise NotImplementedError("The state class doesn't support 'toXMLString'.")
+    def save(self, root, namespace):
+        self.log.error("The state class doesn't support 'save'.")
+        raise NotImplementedError("The state class doesn't support 'save'.")
     
     #+-----------------------------------------------------------------------+
     #| active
@@ -118,3 +123,11 @@ class AbstractState():
         self.name = name
     
     
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:NormalState" :
+            from netzob.Common.MMSTD.States.impl.NormalState import NormalState
+            return NormalState.loadFromXML(xmlRoot, namespace, version)
+        else :
+            raise NameError("The parsed xml doesn't represent a valid type message.")
+            return None    
