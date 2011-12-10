@@ -60,14 +60,14 @@ class TreeGroupGenerator():
         self.scroll.set_size_request(200, 300)
         self.scroll.add(self.treeview)        
 
-        lvcolumn = gtk.TreeViewColumn('Groups')
-        lvcolumn.set_sort_column_id(1)
+        self.lvcolumn = gtk.TreeViewColumn('Groups')
+        self.lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
-        lvcolumn.pack_start(cell, True)
+        self.lvcolumn.pack_start(cell, True)
         cell.set_property('background-set' , True)
         cell.set_property('foreground-set' , True)            
-        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
-        self.treeview.append_column(lvcolumn)
+        self.lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
+        self.treeview.append_column(self.lvcolumn)
         self.treeview.show()
 
     #+---------------------------------------------- 
@@ -91,6 +91,9 @@ class TreeGroupGenerator():
         if project != None :
             # We retrieve the vocabulary of the project
             vocabulary = project.getVocabulary()
+            
+            # Include the name of the project
+            self.lvcolumn.set_title(project.getName())
             
             # We retrieve the symbols declared in (symbol = group)
             symbols = vocabulary.getSymbols()
