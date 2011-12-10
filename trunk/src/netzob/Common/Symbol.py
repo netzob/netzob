@@ -77,7 +77,6 @@ class Symbol(object):
             return
         
         # If more messages, we align them
-        
         # Serialize the messages before sending them to the C library
         
         serialMessages = ""
@@ -95,14 +94,13 @@ class Symbol(object):
             if m.getReducedSize() > maxReducedSize :
                 maxReducedSize = m.getReducedSize()
 
-        
         if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK) :
             doInternalSlick = 1
         else :
             doInternalSlick = 0
             
         # Align sequences in C library
-        logging.debug("Alignemnt with : ")
+        logging.debug("Alignment with : ")
         logging.debug("internal slick = " + str(doInternalSlick))
         logging.debug("len messages : " + str(len(self.getMessages())))
         logging.debug("format = " + format)
@@ -168,6 +166,7 @@ class Symbol(object):
         for regexElt in regex:
             field = Field("Field " + str(iField), 0, iField, regexElt, display)
             self.addField(field)
+            iField = iField + 1
         
     #+---------------------------------------------- 
     #| Regex handling
