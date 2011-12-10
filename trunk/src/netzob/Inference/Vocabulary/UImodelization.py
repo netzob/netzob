@@ -66,7 +66,7 @@ class UImodelization:
         self.updateTreeStoreTypeStructure()
 
     def clear(self):
-        pass
+        self.selectedSymbol = None
 
     def kill(self):
         pass
@@ -443,6 +443,7 @@ class UImodelization:
                 iField += 1
                 
             selectedField = None
+            print "iField = " + str(iField)
             for field in self.treeMessageGenerator.getSymbol().getFields() :
                 if field.getNumber() == iField :
                     selectedField = field
@@ -1194,16 +1195,17 @@ class UImodelization:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):     
-        if (self.selectedSymbol != None) :
-            # If we found it we can update the content of the treestore        
-            if self.selectedSymbol != None :
-                self.treeMessageGenerator.default(self.selectedSymbol)
-                # enable dragging message out of current group
-                self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-                self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
-            # Else, quite weird so throw a warning
-            else :
-                self.log.warning("Impossible to update the treestore message since we cannot find the selected symbol ")
+        # If we found it we can update the content of the treestore        
+        if self.selectedSymbol != None :
+            self.treeMessageGenerator.default(self.selectedSymbol)
+            # enable dragging message out of current group
+            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
+        # Else, quite weird so throw a warning
+        else :
+            self.treeMessageGenerator.default(None)
+            
+            
 
     #+---------------------------------------------- 
     #| Update the content of the tree store for type structure

@@ -93,6 +93,11 @@ class TreeMessageGenerator():
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
     def default(self, symbol):
+        
+        if symbol == None :
+            self.treestore.clear()
+            return
+        
         self.symbol = symbol
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
         self.treestore.clear()

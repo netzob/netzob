@@ -81,6 +81,8 @@
 					<restriction base="string">
 						<enumeration value="ASCII"></enumeration>
 						<enumeration value="BINARY"></enumeration>
+						<enumeration value="ascii"></enumeration>
+						<enumeration value="binary"></enumeration>
 					</restriction>
 				</simpleType>
 			</element>

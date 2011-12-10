@@ -56,6 +56,17 @@ class RawExport:
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.Export.RawExport.py')
+        
+        self.init()
+        
+        self.dialog = gtk.Dialog(title="Export project as raw XML", flags=0, buttons=None)
+        self.dialog.show()
+        self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
+        self.dialog.set_size_request(800, 700)
+        self.update()
+        
+    def init (self):
+        
         self.selectedGroup = None
         
         # First we create an VPaned which hosts the two main children

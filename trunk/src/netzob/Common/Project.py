@@ -36,6 +36,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.TypeConvertor import TypeConvertor
+import types
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 
@@ -121,7 +122,11 @@ class Project(object):
         root = ElementTree.Element("{" + PROJECT_NAMESPACE + "}project")
         root.set("id", str(self.getID()))
         root.set("path", str(self.getPath()))
-        root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()[0]))
+        # Warning, changed because of project = Project.createProject(self.netzob.getCurrentWorkspace(), projectName)
+        if isinstance(self.getCreationDate(), types.TupleType) :
+            root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()[0]))
+        else :
+            root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
         root.set("name", str(self.getName()))
         # Save the configuration in it
         self.getConfiguration().save(root, PROJECT_NAMESPACE)
