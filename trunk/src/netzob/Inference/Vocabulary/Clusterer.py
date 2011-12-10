@@ -62,7 +62,7 @@ class Clusterer(object):
             for symbol in symbols :
                 for m in symbol.getMessages():
                     i += 1
-                    tmpSymbol = Symbol(str(i), "tmpSymbol")
+                    tmpSymbol = Symbol(str(i), "Symbol")
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
             self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
@@ -252,7 +252,7 @@ class Clusterer(object):
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
         
-        newSymbol = Symbol(uuid.uuid4(), symbol1.getName() + symbol2.getName())
+        newSymbol = Symbol(uuid.uuid4(), "Symbol")
         for message in messages :
             newSymbol.addMessage(message)
                     
