@@ -19,6 +19,7 @@ import logging.config
 import gobject
 
 sys.path.insert(0, 'src/')
+sys.path.append('lib/libNeedleman/')
 
 import netzob.NetzobGui as NetzobGui
 

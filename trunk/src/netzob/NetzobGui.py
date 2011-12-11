@@ -24,20 +24,13 @@ import os
 import threading
 import sys
 import logging
-from netzob.Common.Project import Project
-from netzob.Common.Menu import Menu
-
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-sys.path.append('lib/')
-sys.path.append('lib/libNeedleman/')
 from xml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Project import Project
+from netzob.Common.Menu import Menu
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
 from netzob.Export.ScapyExport import ScapyExport
