@@ -20,6 +20,9 @@
 import unittest
 import sys
 import logging
+import os
+from workspace.WorkspaceTest import WorkspaceTest
+from netzob.Common.Workspace import Workspace
 
 sys.path.append('lib/libNeedleman/')
 sys.path.append('src')
@@ -66,6 +69,9 @@ def addTestsForGrammaticalInference(suite):
     suite.addTest(GrammarInferenceTest("test_WMethod"))
     suite.addTest(GrammarInferenceTest("test_grammarInference"))
     
+def addTestsForWorkspace(suite):
+    suite.addTest(WorkspaceTest("test_workspaceParsing"))    
+
     
 if __name__ == "__main__":
     
@@ -82,27 +88,36 @@ if __name__ == "__main__":
     # Configure the environment of execution
     NetzobResources.STATIC_DIR = "resources/static"
     NetzobResources.WORKSPACE_DIR = "resources/workspace"
+#    NetzobResources.WORKSPACE_DIR = 
     
+    currentWorkspace = Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)
+    if currentWorkspace == None :
+        logging.error("Impossible to load the workspace") 
+        exit()
     
     # Second we create the logging infrastructure
-    LoggingConfiguration().initializeLogging()
+    LoggingConfiguration().initializeLogging(currentWorkspace)
     
     # Creates the main test suite
     globalTestSuite = unittest.TestSuite()
-    
-    # add the tests dedicated to the models
-    addTestsForModels(globalTestSuite)
+#    
+#    # add the tests dedicated to the models
+#    addTestsForModels(globalTestSuite)    
 
-    # add the tests dedicated to the inference process
-    addTestsForInference(globalTestSuite)
-    
-    # add the tests dedicated to the GOT Poisoning
-    # addTestsForGotPoisoning(globalTestSuite)
-    
-    # addTestsForPrototypesRepositoryTest(globalTestSuite)
-    addTestsForMMSTD(globalTestSuite)
-    
-    addTestsForGrammaticalInference(globalTestSuite)
+    # add the tests dedicated to the workspace config
+    addTestsForWorkspace(globalTestSuite)
+#
+#    # add the tests dedicated to the inference process
+#    addTestsForInference(globalTestSuite)
+#    
+#    # add the tests dedicated to the GOT Poisoning
+#    # addTestsForGotPoisoning(globalTestSuite)
+#    
+#    # addTestsForPrototypesRepositoryTest(globalTestSuite)
+#    addTestsForMMSTD(globalTestSuite)
+#    
+#    # add the test dedicated to the inference of the grammar
+#    addTestsForGrammaticalInference(globalTestSuite)
     
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()
