@@ -25,8 +25,6 @@ from xml.etree import ElementTree
 from lxml import etree
 
 
-
-
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
@@ -47,7 +45,7 @@ def loadProject_0_1(projectFile):
     tree.parse(projectFile)
     
     xmlProject = tree.getroot()
-    ElementTree.register_namespace('netzob', PROJECT_NAMESPACE)
+    etree.register_namespace('netzob', PROJECT_NAMESPACE)
     
     projectID = xmlProject.get('id')
     projectName = xmlProject.get('name', 'none')
@@ -118,7 +116,7 @@ class Project(object):
             os.mkdir(projectPath)
         
         # Dump the file
-        ElementTree.register_namespace('netzob', PROJECT_NAMESPACE)
+        etree.register_namespace('netzob', PROJECT_NAMESPACE)
         root = ElementTree.Element("{" + PROJECT_NAMESPACE + "}project")
         root.set("id", str(self.getID()))
         root.set("path", str(self.getPath()))

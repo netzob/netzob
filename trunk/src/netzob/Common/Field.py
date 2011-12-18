@@ -35,14 +35,14 @@ class Field(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, encapsulation_level, number, regex, selected_type):
+    def __init__(self, name, encapsulation_level, index, regex, selected_type, description="", color="black"):
         self.name = name
         self.encapsulation_level = encapsulation_level
+        self.index = index
         self.regex = regex
-        self.number = number
         self.selected_type = selected_type
-        self.description = ""
-        self.color = "Black"
+        self.description = description
+        self.color = color
     
     def getEncodedVersionOfTheRegex(self):
         return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)  
@@ -72,8 +72,8 @@ class Field(object):
         return self.description
     def getColor(self):
         return self.color
-    def getNumber(self):
-        return self.number
+    def getIndex(self):
+        return self.index
     
     def setName(self, name):
         self.name = name
@@ -87,15 +87,15 @@ class Field(object):
         self.description = description
     def setColor(self, color):
         self.color = color
-    def setNumber(self, number):
-        self.number = number
+    def setIndex(self, index):
+        self.index = index
     
     
     def save(self, root, namespace):
         xmlField = ElementTree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
         xmlField.set("encapsulation_level", str(self.getEncapsulationLevel()))
-        xmlField.set("number", str(self.getNumber()))
+        xmlField.set("index", str(self.getIndex()))
         
         xmlFieldRegex = ElementTree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
@@ -118,12 +118,12 @@ class Field(object):
         if version == "0.1" :
             field_name = xmlRoot.get("name")
             field_encapsulation_level = int(xmlRoot.get("encapsulation_level"))
-            field_number = int(xmlRoot.get("number"))
+            field_index = int(xmlRoot.get("index"))
             
             field_regex = xmlRoot.find("{" + namespace + "}regex").text
             field_selectedType = xmlRoot.find("{" + namespace + "}selectedType").text
             
-            field = Field(field_name, field_encapsulation_level, field_number, field_regex, field_selectedType)
+            field = Field(field_name, field_encapsulation_level, field_index, field_regex, field_selectedType)
             
             if xmlRoot.find("{" + namespace + "}description") != None :
                 field_description = xmlRoot.find("{" + namespace + "}description").text

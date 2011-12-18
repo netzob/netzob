@@ -167,7 +167,7 @@ class Symbol(object):
             field = Field("Field " + str(iField), 0, iField, regexElt, display)
             self.addField(field)
             iField = iField + 1
-        
+
     #+---------------------------------------------- 
     #| Regex handling
     #+----------------------------------------------
@@ -206,6 +206,14 @@ class Symbol(object):
                 return message
             
         return None
+
+    #+---------------------------------------------- 
+    #| getFieldByIndex:
+    #|  Return the field with specified index
+    #+----------------------------------------------
+    def getFieldByIndex(self, index):
+        return self.fields[index]
+
     #+---------------------------------------------- 
     #| getMessagesValuesByField:
     #|  Return all the messages parts which are in 
@@ -220,10 +228,10 @@ class Symbol(object):
         res = []
         for message in self.getMessages():
             messageTable = message.applyRegex()
-            if len(messageTable) <= field.getNumber() :
+            if len(messageTable) <= field.getIndex() :
                 res.append("")
             else :
-                messageElt = messageTable[field.getNumber()]
+                messageElt = messageTable[field.getIndex()]
                 res.append(messageElt)
         return res
     
@@ -235,9 +243,9 @@ class Symbol(object):
         field1 = None
         field2 = None
         for field in self.fields :
-            if field.getNumber() == iField :
+            if field.getIndex() == iField :
                 field1 = field
-            elif field.getNumber() == iField + 1 :
+            elif field.getIndex() == iField + 1 :
                 field2 = field
         # Build the merged regex
         newRegex = ""
@@ -261,18 +269,18 @@ class Symbol(object):
         # Default representation is BINARY
         new_name = field1.getName() + "+" + field2.getName()
         # Creation of the new Field
-        newField = Field(new_name, 0, field1.getNumber(), newRegex, "binary")
+        newField = Field(new_name, 0, field1.getIndex(), newRegex, "binary")
         
         self.fields.remove(field1)
         self.fields.remove(field2)
         
-        # Update the number of the fields placed after it
+        # Update the index of the fields placed after it
         for field in self.fields :
-            if field.getNumber() > newField.getNumber() :
-                field.setNumber(field.getNumber() - 1)
+            if field.getIndex() > newField.getIndex() :
+                field.setIndex(field.getIndex() - 1)
         self.fields.append(newField)
-        # sort fields by their number
-        self.fields = sorted(self.fields, key=attrgetter('number'), reverse=False)
+        # sort fields by their index
+        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
 
     
     #+---------------------------------------------- 
@@ -283,7 +291,6 @@ class Symbol(object):
     def splitField(self, field, split_position):
         if not (split_position > 0):
             return False
-        
         
         # Find the static/dynamic cols
         cells = self.getMessagesValuesByField(field)
@@ -322,11 +329,11 @@ class Symbol(object):
         new_encapsulationLevel = field.getEncapsulationLevel()
         
         # We Build the two new fields
-        field1 = Field("(1/2)" + field.getName(), new_encapsulationLevel, field.getNumber(), regex1, new_type)
+        field1 = Field("(1/2)" + field.getName(), new_encapsulationLevel, field.getIndex(), regex1, new_type)
         field1.setColor(field.getColor())
         if field.getDescription() != None and len(field.getDescription()) > 0 :
             field1.setDescription("(1/2) " + field.getDescription())
-        field2 = Field("(2/2) " + field.getName(), new_encapsulationLevel, field.getNumber() + 1, regex2, new_type)
+        field2 = Field("(2/2) " + field.getName(), new_encapsulationLevel, field.getIndex() + 1, regex2, new_type)
         field2.setColor(field.getColor())
         if field.getDescription() != None and len(field.getDescription()) > 0 :
             field2.setDescription("(2/2) " + field.getDescription())
@@ -334,15 +341,15 @@ class Symbol(object):
         # Remove the truncated one
         self.fields.remove(field)
         
-        # modify number to adapt 
+        # modify index to adapt 
         for field in self.getFields() :
-            if field.getNumber() > field1.getNumber() :
-                field.setNumber(field.getNumber() + 1)
+            if field.getIndex() > field1.getIndex() :
+                field.setIndex(field.getIndex() + 1)
         
         self.fields.append(field1)
         self.fields.append(field2)
-        # sort fields by their number
-        self.fields = sorted(self.fields, key=attrgetter('number'), reverse=False)
+        # sort fields by their index
+        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
         
         return True
     
@@ -387,7 +394,7 @@ class Symbol(object):
         hbox = gtk.HPaned()
         hbox.show()
         # Treeview containing potential data carving results ## ListStore format :
-        # int: iCol
+        # int: iField
         # str: data type (url, ip, email, etc.)
         store = gtk.ListStore(int, str)
         treeviewRes = gtk.TreeView(store)
@@ -457,6 +464,86 @@ class Symbol(object):
         #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
 
     #+---------------------------------------------- 
+    #| findSizeFields:
+    #|  try to find the size fields of each regex
+    #+----------------------------------------------    
+    def findSizeFields(self, store):
+        if len(self.fields) == 1:
+            return
+        iField = 0
+        # We cover each field for a potential size field
+        for field in self.getFields():
+            if field.isRegexStatic(): # Means the element is static, and we exclude it for performance issue
+                iField += 1
+                continue
+            cellsSize = self.getMessagesValuesByField(field)
+            j = 0
+            # We cover each field and aggregate them for a potential payload
+            while j < len(self.getFields()):
+                # Initialize the aggregate of messages from fieldJ to fieldK
+                aggregateCellsData = []
+                for l in range(len(cellsSize)):
+                    aggregateCellsData.append("")
+
+                # Fill the aggregate of messages and try to compare its length with the current expected length
+                k = j
+                while k < len(self.getFields()):
+                    if k != j:
+                        for l in range(len(cellsSize)):
+                            aggregateCellsData[l] += self.getMessagesValuesByField( self.getFieldByIndex(k) )[l]
+
+                    # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
+                    if self.getFieldByIndex(j).isRegexStatic():
+                        lenJ = len( self.getFieldByIndex(j).getRegex() )
+                        stop = 0
+                    else:
+                        lenJ = 2
+                        stop = 0
+                    for m in range(lenJ, stop, -2):
+                        for n in [4, 0, 1]: # loop over different possible encoding of size field
+                            res = True
+                            for l in range(len(cellsSize)):
+                                if self.getFieldByIndex(j).isRegexStatic():
+                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[l]
+                                else:
+                                    targetData = self.getMessagesValuesByField( self.getFieldByIndex(k) )[l] + aggregateCellsData[l]
+
+                                # Handle big and little endian for size field of 1, 2 and 4 octets length
+                                rawMsgSize = TypeConvertor.netzobRawToBinary(cellsSize[l][:n * 2])
+                                if len(rawMsgSize) == 1:
+                                    expectedSizeType = "B"
+                                elif len(rawMsgSize) == 2:
+                                    expectedSizeType = "H"
+                                elif len(rawMsgSize) == 4:
+                                    expectedSizeType = "I"
+                                else: # Do not consider size field with len > 4
+                                    res = False
+                                    break
+                                (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
+                                (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
+                                if (expectedSizeLE != len(targetData) / 2) and (expectedSizeBE != len(targetData) / 2):
+                                    res = False
+                                    break
+                            if res:
+                                if self.getFieldByIndex(j).isRegexStatic(): # Means the regex j element is static and a sub-part is concerned
+                                    store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
+                                    self.log.info("In group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
+                                else:
+                                    store.append([self.id, iField, n * 2, j, -1, k, -1, "Group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
+                                    self.log.info("In group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
+                                break
+                    k += 1
+                j += 1
+            iField += 1
+
+    #+---------------------------------------------- 
+    #| applyDataType_cb:
+    #|  Called when user wants to apply a data type to a field
+    #+----------------------------------------------
+    def applyDataType_cb(self, button, iField, dataType):
+        self.getFieldById(iField).setDescriptionByCol(dataType)
+
+    #+---------------------------------------------- 
     #| dataCarvingResultSelected_cb:
     #|  Callback when clicking on a data carving result.
     #|  It shows a preview of the carved data
@@ -469,7 +556,7 @@ class Symbol(object):
             if(model.iter_is_valid(it)):
                 field = model.get_value(it, 0)
                 dataType = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + field.getNumber())
+                treeviewTarget.get_column(0).set_title("Field " + field.getIndex())
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, field, dataType)
@@ -501,7 +588,7 @@ class Symbol(object):
         hbox = gtk.HPaned()
         hbox.show()
         # Treeview containing potential data carving results ## ListStore format :
-        # int: iCol
+        # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
         # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
         store = gtk.ListStore(int, str, str)
@@ -573,7 +660,7 @@ class Symbol(object):
             if(model.iter_is_valid(it)):
                 field = model.get_value(it, 0)
                 env = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + field.getNumber())
+                treeviewTarget.get_column(0).set_title("Field " + field.getIndex())
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, env)
@@ -587,8 +674,8 @@ class Symbol(object):
     #| applyDependency_cb:
     #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
-    def applyDependency_cb(self, button, iCol, envName):
-        self.setDescriptionByCol(iCol, envName)
+    def applyDependency_cb(self, button, iField, envName):
+        self.getFieldById(iField).setDescriptionByCol(envName)
         pass
     
     #+---------------------------------------------- 
@@ -612,8 +699,9 @@ class Symbol(object):
         return self.name
     
     def getFields(self):
-        self.fields = sorted(self.fields, key=attrgetter('number'), reverse=False)
+        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
         return self.fields
+
     def setFields(self, fields):
         self.fields = fields
         
@@ -623,9 +711,6 @@ class Symbol(object):
                 return
         message.setSymbol(self)
         self.messages.append(message)
-        
-    
-        
         
     def addField(self, field):
         self.fields.append(field)

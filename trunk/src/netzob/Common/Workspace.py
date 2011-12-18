@@ -20,19 +20,15 @@ import logging
 import os
 import datetime
 import re
-
-
-from lxml import etree
-
 from xml.etree import ElementTree
-
-from netzob.Common.TypeConvertor import TypeConvertor
+from lxml import etree
 import shutil
 
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.TypeConvertor import TypeConvertor
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 
@@ -133,7 +129,7 @@ class Workspace(object):
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
         
         # Dump the file
-        ElementTree.register_namespace('netzob', WORKSPACE_NAMESPACE)
+        etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
         
         root = ElementTree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
         print TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate())

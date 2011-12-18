@@ -123,7 +123,7 @@ class UImodelization:
         label = gtk.Label("Similarity threshold:")
         label.show()
         combo = gtk.combo_box_entry_new_text()
-        combo.set_size_request(60, -1)
+#        combo.set_size_request(60, -1)
         combo.set_model(gtk.ListStore(str))
         combo.connect("changed", self.updateScoreLimit)
         possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
@@ -228,7 +228,7 @@ class UImodelization:
         label = gtk.Label("Protocol type : ")
         label.show()
         combo = gtk.combo_box_entry_new_text()
-        combo.set_size_request(300, -1)
+#        combo.set_size_request(300, -1)
         combo.set_model(gtk.ListStore(str))
         combo.append_text("Text based (HTTP, FTP)")
         combo.append_text("Fixed fields binary based (IP, TCP)")
@@ -290,7 +290,7 @@ class UImodelization:
         bottomPanel.show()
         self.panel.pack_start(bottomPanel, True, True, 0)
         leftPanel = gtk.VBox(False, spacing=0)
-        leftPanel.set_size_request(-1, -1)
+#        leftPanel.set_size_request(-1, -1)
         leftPanel.show()
         bottomPanel.add(leftPanel)
         # Initialize the treeview generator for the groups
@@ -355,7 +355,8 @@ class UImodelization:
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        self.netzob.groups.alignWithDelimiter(delimiter.get_text())
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(), delimiter.get_text())
         self.update()
     
     #+---------------------------------------------- 
@@ -445,7 +446,7 @@ class UImodelization:
             selectedField = None
             print "iField = " + str(iField)
             for field in self.treeMessageGenerator.getSymbol().getFields() :
-                if field.getNumber() == iField :
+                if field.getIndex() == iField :
                     selectedField = field
             if selectedField == None :
                 self.log.warn("Impossible to retrieve the clicked field !")
@@ -467,13 +468,13 @@ class UImodelization:
 
             # Add entries to concatenate column
             concatMenu = gtk.Menu()
-            if selectedField.getNumber() > 0 :
+            if selectedField.getIndex() > 0 :
                 item = gtk.MenuItem("with precedent field")
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
                 concatMenu.append(item)
                 
-            if selectedField.getNumber() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
+            if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
                 item = gtk.MenuItem("with next field")
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
@@ -529,7 +530,7 @@ class UImodelization:
             
             selectedField = None
             for field in self.treeMessageGenerator.getSymbol().getFields() :
-                if field.getNumber() == iField :
+                if field.getIndex() == iField :
                     selectedField = field
             if selectedField == None :
                 self.log.warn("Impossible to retrieve the clicked field !")
@@ -594,7 +595,7 @@ class UImodelization:
                 
                 selectedField = None
                 for field in self.treeMessageGenerator.getSymbol().getFields() :
-                    if field.getNumber() == iField :
+                    if field.getIndex() == iField :
                         selectedField = field
                 if selectedField == None :
                     self.log.warn("Impossible to retrieve the clicked field !")
@@ -719,7 +720,7 @@ class UImodelization:
         cell.set_sensitive(True)
         cell.set_property('editable', True)
         
-        column = gtk.TreeViewColumn("Column " + str(field.getNumber()))
+        column = gtk.TreeViewColumn("Column " + str(field.getIndex()))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)        
         
@@ -835,20 +836,20 @@ class UImodelization:
     #|   Callback to concatenate two columns
     #+----------------------------------------------
     def rightClickToConcatColumns(self, event, field, strOtherCol):
-        self.log.debug("Concatenate the column " + str(field.getNumber()) + " with the " + str(strOtherCol) + " column")
+        self.log.debug("Concatenate the column " + str(field.getIndex()) + " with the " + str(strOtherCol) + " column")
 
-        if field.getNumber() == 0 and strOtherCol == "left":
+        if field.getIndex() == 0 and strOtherCol == "left":
             self.log.debug("Can't concatenate the first column with its left column")
             return
 
-        if field.getNumber() + 1 == len(self.selectedSymbol.getFields()) and strOtherCol == "right":
+        if field.getIndex() + 1 == len(self.selectedSymbol.getFields()) and strOtherCol == "right":
             self.log.debug("Can't concatenate the last column with its right column")
             return
 
         if strOtherCol == "left":
-            self.selectedSymbol.concatFields(field.getNumber() - 1)
+            self.selectedSymbol.concatFields(field.getIndex() - 1)
         else:
-            self.selectedSymbol.concatFields(field.getNumber())
+            self.selectedSymbol.concatFields(field.getIndex())
         self.treeMessageGenerator.updateDefault()
         self.update()
 
@@ -857,7 +858,7 @@ class UImodelization:
     #|   Callback to split a column
     #+----------------------------------------------
     def rightClickToSplitColumn(self, event, field):
-        dialog = gtk.Dialog(title="Split column " + str(field.getNumber()), flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Split column " + str(field.getIndex()), flags=0, buttons=None)
         textview = gtk.TextView()
         textview.set_editable(False)
         textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
@@ -960,7 +961,7 @@ class UImodelization:
                 
         selectedField = None
         for field in self.treeMessageGenerator.getSymbol().getFields() :
-            if field.getNumber() == iField :
+            if field.getIndex() == iField :
                 selectedField = field
         
         if selectedField == None :

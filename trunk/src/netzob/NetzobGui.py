@@ -19,6 +19,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
+import pygtk
+pygtk.require('2.0')
 import gobject
 import os
 import threading
@@ -85,6 +87,7 @@ class NetzobGui():
 
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        window.set_default_size(800, 600)
         window.set_title("Netzob : NETwork protocol modeliZatiOn By reverse engineering")
         
         window.set_icon_from_file(("%s/logo.png" % 

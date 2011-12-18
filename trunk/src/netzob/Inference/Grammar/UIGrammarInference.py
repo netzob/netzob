@@ -196,12 +196,12 @@ class UIGrammarInference:
         # ----------------------------------------
         self.rightPanel = gtk.HPaned()
         self.rightPanel.show()
-        self.panel.pack_start(self.rightPanel, False, False, 0)
+        self.panel.pack_start(self.rightPanel, True, True, 0)
         
         
         self.xdotWidget = XDotWidget()
         self.xdotWidget.show_all()
-        self.xdotWidget.set_size_request(500, -1)  
+#        self.xdotWidget.set_size_request(500, -1)  
         
         self.rightPanel.add(self.xdotWidget)
           

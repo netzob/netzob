@@ -57,62 +57,6 @@ class Groups(object):
         for g in self.groups :
             g.buildInitRegex()
 
-    
-
-    #+---------------------------------------------- 
-    #| alignWithDelimiter:
-    #|  Align each messages of each group with a specific delimiter
-    #+----------------------------------------------
-    def alignWithDelimiter(self, delimiter):
-        # Use the default protocol type for representation
-        configParser = ConfigurationParser()
-        valID = configParser.getInt("clustering", "protocol_type")
-        if valID == 0:
-            aType = "ascii"
-        else:
-            aType = "binary"
-
-        for group in self.groups :
-            columns = []
-            i = -1
-            doBreak = False
-            while True:
-                i += 1
-                maxSize = 0
-                minSize = 999999
-                for message in group.getMessages():
-                    try: # A carambar to the one who finds this awsome try/except code !
-                        maxSize = max(maxSize, len(message.getStringData().split(delimiter)[i]))
-                        minSize = min(minSize, len(message.getStringData().split(delimiter)[i]))
-                    except IndexError:
-                        doBreak = True
-                if doBreak == True:
-                    break
-                columns.append({'name' : "Name",
-                                'regex' : "(.{" + str(minSize) + "," + str(maxSize) + "})",
-                                'selectedType' : aType,
-                                'tabulation' : 0,
-                                'description' : "",
-                                'color' : ""
-                                })
-                columns.append({'name' : "Sep",
-                                'regex' : delimiter,
-                                'selectedType' : aType,
-                                'tabulation' : 0,
-                                'description' : "",
-                                'color' : ""
-                                })
-            del columns[-1]
-            del columns[-1]
-            columns.append({'name' : "Name",
-                            'regex' : "(.{,})",
-                            'selectedType' : aType,
-                            'tabulation' : 0,
-                            'description' : "",
-                            'color' : ""
-                            })
-            group.setColumns(columns)
-
     #+---------------------------------------------- 
     #| slickRegexes:
     #|  try to make smooth the regexes, by deleting tiny static
@@ -129,15 +73,6 @@ class Groups(object):
     #+----------------------------------------------
     def mergeCommonRegexes(self, button, ui):
         self.log.info("Merging not implemented yet")
-
-    #+---------------------------------------------- 
-    #| findSizeField:
-    #|  try to find the size field of each regex
-    #+----------------------------------------------    
-    def findSizeFields(self, store):
-        for group in self.getGroups():
-            group.findSizeFields(store)
-
 
     #+---------------------------------------------- 
     #| search_cb:

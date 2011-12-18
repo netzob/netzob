@@ -107,11 +107,11 @@ class TreeTypeStructureGenerator():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
                 tab += " "
-            messageElt = splittedMessage[field.getNumber()]
+            messageElt = splittedMessage[field.getIndex()]
             if not field.isRegexStatic():
-                self.treestore.append(None, [field.getNumber(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
+                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
             else:
-                self.treestore.append(None, [field.getNumber(), tab + field.getName() + ":", messageElt, field.getDescription()])
+                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
 
     #+---------------------------------------------- 
     #| GETTERS : 

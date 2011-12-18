@@ -21,15 +21,21 @@ import unittest
 import sys
 import logging
 import os
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+sys.path.append('lib/libNeedleman/')
+sys.path.append('src')
+
 from workspace.WorkspaceTest import WorkspaceTest
 from netzob.Common.Workspace import Workspace
 
-sys.path.append('lib/libNeedleman/')
-sys.path.append('src')
 
 from models.NetworkMessageTest import NetworkMessageTest
 from models.FileMessageTest import FileMessageTest
 from inference.SequencingTest import SequencingTest
+from inference.SymbolTest import SymbolTest
 from inference.GrammarInferenceTest import GrammarInferenceTest
   
 from importing.ParasiteGeneratorTest import ParasiteGeneratorTest
@@ -44,10 +50,6 @@ from netzob import NetzobResources
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
-
 def addTestsForModels(suite):    
     suite.addTest(NetworkMessageTest('test_loadFromXml'))
     suite.addTest(NetworkMessageTest('test_saveInXML'))
@@ -55,7 +57,8 @@ def addTestsForModels(suite):
 
 def addTestsForInference(suite):    
     suite.addTest(SequencingTest('test_alignment'))
-    
+    suite.addTest(SymbolTest('test_findSizeField'))
+   
 def addTestsForGotPoisoning(suite):    
     suite.addTest(ParasiteGeneratorTest('test_sourceCodeGenerator'))
     
@@ -108,7 +111,7 @@ if __name__ == "__main__":
     addTestsForWorkspace(globalTestSuite)
 #
 #    # add the tests dedicated to the inference process
-#    addTestsForInference(globalTestSuite)
+    addTestsForInference(globalTestSuite)
 #    
 #    # add the tests dedicated to the GOT Poisoning
 #    # addTestsForGotPoisoning(globalTestSuite)
