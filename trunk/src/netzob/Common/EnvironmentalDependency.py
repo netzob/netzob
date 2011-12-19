@@ -16,7 +16,8 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -40,7 +41,7 @@ class EnvironmentalDependency(object):
         
     
     def save(self, root, namespace):
-        environmental_dependency = ElementTree.SubElement(root, "{" + namespace + "}environmental_dependency")
+        environmental_dependency = etree.SubElement(root, "{" + namespace + "}environmental_dependency")
         environmental_dependency.set("name", str(self.name))
         environmental_dependency.set("type", str(self.type))
         environmental_dependency.text = str(self.value)

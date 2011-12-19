@@ -24,12 +24,13 @@ import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
+from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
@@ -104,18 +105,18 @@ class CloseChannelTransition(AbstractTransition):
         return self.disconnectionTime
     
     def save(self, root, namespace):
-        xmlState = ElementTree.SubElement(root, "{" + namespace + "}transition")
+        xmlState = etree.SubElement(root, "{" + namespace + "}transition")
         xmlState.set("id", str(self.getID()))
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:CloseChannelTransition")
         
-        xmlStartState = ElementTree.SubElement(xmlState, "{" + namespace + "}startState")
+        xmlStartState = etree.SubElement(xmlState, "{" + namespace + "}startState")
         xmlStartState.text = str(self.getInputState().getID())
         
-        xmlEndState = ElementTree.SubElement(xmlState, "{" + namespace + "}endState")
+        xmlEndState = etree.SubElement(xmlState, "{" + namespace + "}endState")
         xmlEndState.text = str(self.getOutputState().getID())
         
-        xmlDisconnectionTime = ElementTree.SubElement(xmlState, "{" + namespace + "}disconnectionTime")
+        xmlDisconnectionTime = etree.SubElement(xmlState, "{" + namespace + "}disconnectionTime")
         xmlDisconnectionTime.text = str(self.getDisconnectionTime())
         
 

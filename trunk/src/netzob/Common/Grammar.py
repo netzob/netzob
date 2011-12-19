@@ -18,7 +18,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -68,14 +68,14 @@ class Grammar(object):
         return self.transitions
             
     def save(self, root, namespace):
-        xmlGrammar = ElementTree.SubElement(root, "{" + namespace + "}grammar")
+        xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")
         xmlGrammar.set("type", str(self.getType()))
         xmlGrammar.set("initialState", str(self.getInitialState().getID()))
-        xmlStates = ElementTree.SubElement(xmlGrammar, "{" + namespace + "}states")
+        xmlStates = etree.SubElement(xmlGrammar, "{" + namespace + "}states")
         for state in self.getStates():
             state.save(xmlStates, namespace)
         
-        xmlTransitions = ElementTree.SubElement(xmlGrammar, "{" + namespace + "}transitions")
+        xmlTransitions = etree.SubElement(xmlGrammar, "{" + namespace + "}transitions")
         for transition in self.getTransitions():
             transition.save(xmlTransitions, namespace)
         

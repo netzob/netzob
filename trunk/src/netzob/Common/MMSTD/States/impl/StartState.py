@@ -22,12 +22,13 @@ import random
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
-
+from lxml.etree import ElementTree
+from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.States.AbstractState import AbstractState
+
 
 #+---------------------------------------------------------------------------+
 #| StartState :
@@ -123,7 +124,7 @@ class StartState(AbstractState):
     
     
     def save(self, root, namespace):
-        xmlState = ElementTree.SubElement(root, "{" + namespace + "}state")
+        xmlState = etree.SubElement(root, "{" + namespace + "}state")
         xmlState.set("id", str(self.getID()))
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:StartState")

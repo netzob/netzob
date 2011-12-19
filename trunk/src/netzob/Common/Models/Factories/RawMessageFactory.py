@@ -16,13 +16,13 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
 from netzob.Common.TypeConvertor import TypeConvertor
+from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
@@ -48,12 +48,12 @@ class RawMessageFactory():
     #|     Generate the XML representation of a Network message
     #+-----------------------------------------------------------------------+    
     def save(message, xmlMessages, namespace):
-        root = ElementTree.SubElement(xmlMessages, "{" + namespace + "}message")
+        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
         root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:RawMessage")
         # data
-        subData = ElementTree.SubElement(root, "data")
+        subData = etree.SubElement(root, "data")
         subData.text = str(message.getData())
         
     

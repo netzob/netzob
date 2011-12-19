@@ -20,12 +20,13 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common import SharedLib
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| PrototypesRepositoryParser :
@@ -49,7 +50,7 @@ class PrototypesRepositoryParser():
     def loadFromXML(file):
         libs = []        
         # first we parse the file to retrieve its root element
-        rootElement = ElementTree.parse(file).getroot()
+        rootElement = etree.parse(file).getroot()
         # we found all the declared libs
         for xmlLib in rootElement.findall("lib"):
             lib = SharedLib.SharedLib.loadFromXML(xmlLib)

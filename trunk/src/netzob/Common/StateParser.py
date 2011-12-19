@@ -17,7 +17,7 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -86,7 +86,7 @@ class StateParser(object):
         messages = []
         
         # Parse the config file associated
-        configTree = ElementTree.ElementTree()
+        configTree = ElementTree()
         configTree.parse(self.configFile)  
         # Retrieves the root of the config file
         rootConfigTree = configTree.getroot()

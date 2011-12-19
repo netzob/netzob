@@ -20,12 +20,13 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Group import Group
+from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
@@ -63,7 +64,7 @@ class GroupFactory():
     #| @return a string which include the xml definition of the group
     #+-----------------------------------------------------------------------+    
     def saveInXML(group):
-        root = ElementTree.Element("group")
+        root = etree.Element("group")
         # ID
         root.set("id", str(group.getID()))
         # Name
@@ -74,33 +75,33 @@ class GroupFactory():
         root.set("score", str(group.getScore()))
         
         # Messages
-        messagesXML = ElementTree.SubElement(root, "messages")
+        messagesXML = etree.SubElement(root, "messages")
         for message in group.getMessages() :
-            messageXML = ElementTree.SubElement(messagesXML, "message")
+            messageXML = etree.SubElement(messagesXML, "message")
             messageXML.set("id", str(message.getID()))
         
         # Columns
-        columnsXML = ElementTree.SubElement(root, "columns")
+        columnsXML = etree.SubElement(root, "columns")
         for column in group.getColumns() :
-            columnXML = ElementTree.SubElement(columnsXML, "column")
+            columnXML = etree.SubElement(columnsXML, "column")
             columnXML.set("name", column['name'])
             
-            regexXML = ElementTree.SubElement(columnXML, "regex")
+            regexXML = etree.SubElement(columnXML, "regex")
             regexXML.text = column['regex'].strip()
             
-            selectedTypeXML = ElementTree.SubElement(columnXML, "selectedType")
+            selectedTypeXML = etree.SubElement(columnXML, "selectedType")
             selectedTypeXML.text = column['selectedType']
             
-            tabulationXML = ElementTree.SubElement(columnXML, "tabulation")
+            tabulationXML = etree.SubElement(columnXML, "tabulation")
             tabulationXML.text = column['tabulation']
             
-            descriptionXML = ElementTree.SubElement(columnXML, "description")
+            descriptionXML = etree.SubElement(columnXML, "description")
             descriptionXML.text = column['description']
             
-            colorXML = ElementTree.SubElement(columnXML, "color")
+            colorXML = etree.SubElement(columnXML, "color")
             colorXML.text = column['color']
             
-        return ElementTree.tostring(root)
+        return etree.tostring(root)
     
     @staticmethod
     #+---------------------------------------------------------------------------+

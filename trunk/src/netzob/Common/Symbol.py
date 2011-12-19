@@ -23,7 +23,7 @@ import gtk
 from operator import attrgetter
 import re
 import glib
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -38,6 +38,7 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Symbol :
@@ -490,11 +491,11 @@ class Symbol(object):
                 while k < len(self.getFields()):
                     if k != j:
                         for l in range(len(cellsSize)):
-                            aggregateCellsData[l] += self.getMessagesValuesByField( self.getFieldByIndex(k) )[l]
+                            aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
                     if self.getFieldByIndex(j).isRegexStatic():
-                        lenJ = len( self.getFieldByIndex(j).getRegex() )
+                        lenJ = len(self.getFieldByIndex(j).getRegex())
                         stop = 0
                     else:
                         lenJ = 2
@@ -506,7 +507,7 @@ class Symbol(object):
                                 if self.getFieldByIndex(j).isRegexStatic():
                                     targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[l]
                                 else:
-                                    targetData = self.getMessagesValuesByField( self.getFieldByIndex(k) )[l] + aggregateCellsData[l]
+                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(k))[l] + aggregateCellsData[l]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
                                 rawMsgSize = TypeConvertor.netzobRawToBinary(cellsSize[l][:n * 2])
@@ -725,18 +726,18 @@ class Symbol(object):
         
     
     def save(self, root, namespace):
-        xmlSymbol = ElementTree.SubElement(root, "{" + namespace + "}symbol")
+        xmlSymbol = etree.SubElement(root, "{" + namespace + "}symbol")
         xmlSymbol.set("alignment", str(self.getAlignment()))
         xmlSymbol.set("id", str(self.getID()))
         xmlSymbol.set("name", str(self.getName()))
         xmlSymbol.set("score", str(self.getScore()))
         
         # Save the messages
-        xmlMessages = ElementTree.SubElement(xmlSymbol, "{" + namespace + "}messages")
+        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace + "}messages")
         for message in self.messages :
             AbstractMessageFactory.save(message, xmlMessages, namespace)
         # Save the fields
-        xmlFields = ElementTree.SubElement(xmlSymbol, "{" + namespace + "}fields")
+        xmlFields = etree.SubElement(xmlSymbol, "{" + namespace + "}fields")
         for field in self.getFields() :
             field.save(xmlFields, namespace)
         

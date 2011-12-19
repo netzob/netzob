@@ -18,7 +18,8 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import re
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -92,21 +93,21 @@ class Field(object):
     
     
     def save(self, root, namespace):
-        xmlField = ElementTree.SubElement(root, "{" + namespace + "}field")
+        xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
         xmlField.set("encapsulation_level", str(self.getEncapsulationLevel()))
         xmlField.set("index", str(self.getIndex()))
         
-        xmlFieldRegex = ElementTree.SubElement(xmlField, "{" + namespace + "}regex")
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
         
-        xmlFieldRegex = ElementTree.SubElement(xmlField, "{" + namespace + "}selectedType")
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
         xmlFieldRegex.text = str(self.getSelectedType())
         
-        xmlFieldRegex = ElementTree.SubElement(xmlField, "{" + namespace + "}description")
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}description")
         xmlFieldRegex.text = str(self.getDescription())
         
-        xmlFieldRegex = ElementTree.SubElement(xmlField, "{" + namespace + "}color")
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}color")
         xmlFieldRegex.text = str(self.getColor())
     
     @staticmethod

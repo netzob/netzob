@@ -24,7 +24,7 @@ import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -32,6 +32,7 @@ from xml.etree import ElementTree
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
@@ -161,24 +162,24 @@ class SemiStochasticTransition(AbstractTransition):
     
     
     def save(self, root, namespace):
-        xmlTransition = ElementTree.SubElement(root, "{" + namespace + "}transition")
+        xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")
         xmlTransition.set("id", str(self.getID()))
         xmlTransition.set("name", str(self.getName()))
         xmlTransition.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:SemiStochasticTransition")
         
-        xmlStartState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}startState")
+        xmlStartState = etree.SubElement(xmlTransition, "{" + namespace + "}startState")
         xmlStartState.text = str(self.getInputState().getID())
         
-        xmlEndState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}endState")
+        xmlEndState = etree.SubElement(xmlTransition, "{" + namespace + "}endState")
         xmlEndState.text = str(self.getOutputState().getID())
         
-        xmlInput = ElementTree.SubElement(xmlTransition, "{" + namespace + "}input")
+        xmlInput = etree.SubElement(xmlTransition, "{" + namespace + "}input")
         xmlInput.set("symbol", self.getInputSymbol().getID())
         
-        xmlOutputs = ElementTree.SubElement(xmlTransition, "{" + namespace + "}outputs")
+        xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols :
             [symbol, proba, time] = arSymbol
-            xmlOutput = ElementTree.SubElement(xmlOutputs, "{" + namespace + "}output")
+            xmlOutput = etree.SubElement(xmlOutputs, "{" + namespace + "}output")
             xmlOutput.set("time", str(time))
             xmlOutput.set("probability", str(proba))
             xmlOutput.set("symbol", str(symbol.getID())) 

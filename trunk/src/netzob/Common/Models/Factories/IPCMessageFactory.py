@@ -21,7 +21,8 @@
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -52,24 +53,24 @@ class IPCMessageFactory():
     #|     Generate the XML representation of an IPC message
     #+-----------------------------------------------------------------------+    
     def save(message, xmlMessages, namespace):
-        root = ElementTree.SubElement(xmlMessages, "{" + namespace + "}message")
+        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
         root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:IPCMessage")
         # data
-        subData = ElementTree.SubElement(root, "{" + namespace + "}data")
+        subData = etree.SubElement(root, "{" + namespace + "}data")
         subData.text = str(message.getData())
         # category
-        subCategory = ElementTree.SubElement(root, "{" + namespace + "}category")
+        subCategory = etree.SubElement(root, "{" + namespace + "}category")
         subCategory.text = str(message.getCategory())
         # key
-        subKey = ElementTree.SubElement(root, "{" + namespace + "}key")
+        subKey = etree.SubElement(root, "{" + namespace + "}key")
         subKey.text = str(message.getKey())
         # type
-        subType = ElementTree.SubElement(root, "{" + namespace + "}type")
+        subType = etree.SubElement(root, "{" + namespace + "}type")
         subType.text = str(message.getType())
         # direction
-        subDirection = ElementTree.SubElement(root, "{" + namespace + "}direction")
+        subDirection = etree.SubElement(root, "{" + namespace + "}direction")
         subDirection.text = str(message.getDirection())
         
     

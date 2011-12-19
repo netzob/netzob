@@ -16,14 +16,14 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import re
-import datetime
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 from netzob.Common.TypeConvertor import TypeConvertor
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -57,31 +57,31 @@ class FileMessageFactory():
     #| @return a string which include the xml definition of the file msg
     #+-----------------------------------------------------------------------+    
     def save(message, xmlMessages, namespace):
-        root = ElementTree.SubElement(xmlMessages, "{" + namespace + "}message")
+        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
         root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:FileMessage")
         # data
-        subData = ElementTree.SubElement(root, "{" + namespace + "}data")
+        subData = etree.SubElement(root, "{" + namespace + "}data")
         subData.text = str(message.getData())
         # line number
-        subLineNumber = ElementTree.SubElement(root, "{" + namespace + "}lineNumber")
+        subLineNumber = etree.SubElement(root, "{" + namespace + "}lineNumber")
         subLineNumber.text = str(message.getLineNumber())
         # filename
-        subFilename = ElementTree.SubElement(root, "{" + namespace + "}filename")
+        subFilename = etree.SubElement(root, "{" + namespace + "}filename")
         subFilename.text = str(message.getFilename())
         # creationDate
-        subCreationDate = ElementTree.SubElement(root, "{" + namespace + "}creationDate")
+        subCreationDate = etree.SubElement(root, "{" + namespace + "}creationDate")
         subCreationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getCreationDate())
         # creationDate
-        subModificationDate = ElementTree.SubElement(root, "{" + namespace + "}modificationDate")
+        subModificationDate = etree.SubElement(root, "{" + namespace + "}modificationDate")
         subModificationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getModificationDate())
         
         # owner
-        subOwner = ElementTree.SubElement(root, "{" + namespace + "}owner")
+        subOwner = etree.SubElement(root, "{" + namespace + "}owner")
         subOwner.text = message.getOwner()
         # size
-        subSize = ElementTree.SubElement(root, "{" + namespace + "}size")
+        subSize = etree.SubElement(root, "{" + namespace + "}size")
         subSize.text = str(message.getSize())
         
         

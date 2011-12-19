@@ -26,7 +26,7 @@ import os
 import threading
 import sys
 import logging
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -209,7 +209,7 @@ class NetzobGui():
         actorGrammar = "example_learning.xml"
         grammar_directory = ConfigurationParser().get("automata", "path") 
         xmlFile = os.path.join(grammar_directory, actorGrammar)
-        tree = ElementTree.ElementTree()
+        tree = ElementTree()
         tree.parse(xmlFile)
         # Load the automata based on its XML definition
         serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())

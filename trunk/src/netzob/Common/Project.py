@@ -21,7 +21,7 @@ import os
 import datetime
 import re
 import uuid
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 from lxml import etree
 import types
 
@@ -40,12 +40,17 @@ PROJECT_NAMESPACE = "http://www.netzob.org/project"
 
 def loadProject_0_1(projectFile):  
     # Parse the XML Document as 0.1 version
-    tree = ElementTree.ElementTree()
+    tree = ElementTree()
     
     tree.parse(projectFile)
     
     xmlProject = tree.getroot()
-    etree.register_namespace('netzob', PROJECT_NAMESPACE)
+    # Register the namespace (2 way depending of the version)
+   
+    try :
+        etree.register_namespace('netzob', PROJECT_NAMESPACE)
+    except AttributeError :
+        etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
     
     projectID = xmlProject.get('id')
     projectName = xmlProject.get('name', 'none')
@@ -103,9 +108,15 @@ class Project(object):
     
     
     def generateXMLConfigFile(self):
+        
+        # Register the namespace (2 way depending of the version)
+        try :
+            etree.register_namespace('netzob', PROJECT_NAMESPACE)
+        except AttributeError :
+            etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
+        
         # Dump the file
-        ElementTree.register_namespace('netzob', PROJECT_NAMESPACE)
-        root = ElementTree.Element("{" + PROJECT_NAMESPACE + "}project")
+        root = etree.Element("{" + PROJECT_NAMESPACE + "}project")
         root.set("id", str(self.getID()))
         root.set("path", str(self.getPath()))
         # Warning, changed because of project = Project.createProject(self.netzob.getCurrentWorkspace(), projectName)
@@ -136,7 +147,7 @@ class Project(object):
             os.mkdir(projectPath)
         # We generate the XML Config file
         root = self.generateXMLConfigFile()
-        tree = ElementTree.ElementTree(root)
+        tree = ElementTree(root)
         tree.write(projectFile)
 
     

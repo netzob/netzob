@@ -23,7 +23,7 @@ import os
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -94,7 +94,7 @@ class ProjectParser(object):
         self.log.info("Extract trace from file {0}".format(filePath))
         messages = []
         properties = {}
-        tree = ElementTree.ElementTree()
+        tree = ElementTree()
         tree.parse(filePath)
         
         # Retrieve each message from the XML

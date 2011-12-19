@@ -20,7 +20,7 @@ import logging
 import os
 import datetime
 import re
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 from lxml import etree
 import shutil
 
@@ -37,7 +37,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     
     
     # Parse the XML Document as 0.1 version
-    tree = ElementTree.ElementTree()
+    tree = ElementTree()
     
     tree.parse(workspaceFile)
     xmlWorkspace = tree.getroot()
@@ -151,32 +151,35 @@ class Workspace(object):
         
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
         
+        # Register the namespace (2 way depending of the version)
+        try :
+            etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
+        except AttributeError :
+            etree._namespace_map[WORKSPACE_NAMESPACE] = 'netzob'
+            
         # Dump the file
-        etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
-        
-        root = ElementTree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
-        print TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate())
+        root = etree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
         root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
         root.set("name", str(self.getName()))
         
-        xmlWorkspaceConfig = ElementTree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}configuration")
+        xmlWorkspaceConfig = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}configuration")
         
-        xmlTraces = ElementTree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}traces")
+        xmlTraces = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}traces")
         xmlTraces.text = str(self.getPathOfTraces())
         
-        xmlLogging = ElementTree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}logging")
+        xmlLogging = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}logging")
         xmlLogging.text = str(self.getPathOfLogging())
         
-        xmlPrototypes = ElementTree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}prototypes")
+        xmlPrototypes = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}prototypes")
         xmlPrototypes.text = str(self.getPathOfPrototypes())
         
-        xmlWorkspaceProjects = ElementTree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")        
+        xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")        
         for projectPath in self.getProjectsPath():
-            xmlProject = ElementTree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
+            xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
             xmlProject.set("path", projectPath)
         
         
-        tree = ElementTree.ElementTree(root)
+        tree = ElementTree(root)
         tree.write(workspaceFile)
     
     

@@ -21,7 +21,7 @@ import os
 #+---------------------------------------------- 
 #| Related third party imports
 #+----------------------------------------------
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------- 
 #| Local application imports
@@ -65,7 +65,7 @@ class MMSTDXmlParser(object):
         automatonDir = ConfigurationParser().get("automata", "path")
         dictionaryFile = os.path.join(automatonDir, rootElement.get("dictionary", "none"))
         # Parsing dictionary file
-        dicoTree = ElementTree.ElementTree()
+        dicoTree = ElementTree()
         dicoTree.parse(dictionaryFile)           
         dictionary = DictionaryXmlParser.DictionaryXmlParser.loadFromXML(dicoTree.getroot(), dictionaryFile)
         

@@ -24,12 +24,13 @@ import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
+from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
@@ -136,21 +137,21 @@ class OpenChannelTransition(AbstractTransition):
         return self.maxNumberOfAttempt
     
     def save(self, root, namespace):
-        xmlTransition = ElementTree.SubElement(root, "{" + namespace + "}transition")
+        xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")
         xmlTransition.set("id", str(self.getID()))
         xmlTransition.set("name", str(self.getName()))
         xmlTransition.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:OpenChannelTransition")
         
-        xmlStartState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}startState")
+        xmlStartState = etree.SubElement(xmlTransition, "{" + namespace + "}startState")
         xmlStartState.text = str(self.getInputState().getID())
         
-        xmlEndState = ElementTree.SubElement(xmlTransition, "{" + namespace + "}endState")
+        xmlEndState = etree.SubElement(xmlTransition, "{" + namespace + "}endState")
         xmlEndState.text = str(self.getOutputState().getID())
         
-        xmlConnectionTime = ElementTree.SubElement(xmlTransition, "{" + namespace + "}connectionTime")
+        xmlConnectionTime = etree.SubElement(xmlTransition, "{" + namespace + "}connectionTime")
         xmlConnectionTime.text = str(self.getConnectionTime())
         
-        xmlMaxNumberOfAttempt = ElementTree.SubElement(xmlTransition, "{" + namespace + "}maxNumberOfAttempt")
+        xmlMaxNumberOfAttempt = etree.SubElement(xmlTransition, "{" + namespace + "}maxNumberOfAttempt")
         xmlMaxNumberOfAttempt.text = str(self.getMaxNumberOfAttempt())
 
     #+-----------------------------------------------------------------------+

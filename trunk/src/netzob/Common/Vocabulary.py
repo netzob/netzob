@@ -18,16 +18,18 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from xml.etree import ElementTree
+import time
+from lxml.etree import ElementTree
+
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Symbol import Symbol
-import time
 from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Vocabulary :
@@ -163,8 +165,8 @@ class Vocabulary(object):
                 symbol.addField(field)
         
     def save(self, root, namespace):
-        xmlVocabulary = ElementTree.SubElement(root, "{" + namespace + "}vocabulary")
-        xmlSymbols = ElementTree.SubElement(xmlVocabulary, "{" + namespace + "}symbols")
+        xmlVocabulary = etree.SubElement(root, "{" + namespace + "}vocabulary")
+        xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace + "}symbols")
         for symbol in self.symbols :
             symbol.save(xmlSymbols, namespace)
     

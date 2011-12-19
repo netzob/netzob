@@ -16,13 +16,14 @@
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from xml.etree import ElementTree
+from lxml.etree import ElementTree
 from netzob.Common.TypeConvertor import TypeConvertor
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,29 +44,29 @@ class NetworkMessageFactory():
     #|     Generate the XML representation of a Network message
     #+-----------------------------------------------------------------------+    
     def save(message, xmlMessages, namespace):
-        root = ElementTree.SubElement(xmlMessages, "{" + namespace + "}message")
+        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
         root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NetworkMessage")
         # data
-        subData = ElementTree.SubElement(root, "{" + namespace + "}data")
+        subData = etree.SubElement(root, "{" + namespace + "}data")
         subData.text = str(message.getData())
         # ipSource
-        subIpSource = ElementTree.SubElement(root, "{" + namespace + "}ip_source")
+        subIpSource = etree.SubElement(root, "{" + namespace + "}ip_source")
         subIpSource.text = message.getIPSource()
         # ipTarget
-        subIpTarget = ElementTree.SubElement(root, "{" + namespace + "}ip_destination")
+        subIpTarget = etree.SubElement(root, "{" + namespace + "}ip_destination")
         subIpTarget.text = message.getIPDestination()
         # protocol
-        subProtocol = ElementTree.SubElement(root, "{" + namespace + "}protocol")
+        subProtocol = etree.SubElement(root, "{" + namespace + "}protocol")
         subProtocol.text = message.getProtocol()
         # l4 source port
-        subL4SourcePort = ElementTree.SubElement(root, "{" + namespace + "}l4_source_port")
+        subL4SourcePort = etree.SubElement(root, "{" + namespace + "}l4_source_port")
         subL4SourcePort.text = str(message.getL4SourcePort())
         # l4 target port
-        subL4TargetPort = ElementTree.SubElement(root, "{" + namespace + "}l4_destination_port")
+        subL4TargetPort = etree.SubElement(root, "{" + namespace + "}l4_destination_port")
         subL4TargetPort.text = str(message.getL4DestinationPort())
-        return ElementTree.tostring(root)
+        return etree.tostring(root)
     
     @staticmethod
     #+---------------------------------------------------------------------------+
