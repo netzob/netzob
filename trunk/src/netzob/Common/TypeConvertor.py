@@ -92,17 +92,17 @@ class TypeConvertor():
     @staticmethod
     def encodeNetzobRawToGivenType(raw, type):
         if type.lower() == "ascii" :
-            return TypeConvertor.netzobRawtoASCII(raw)
+            return TypeConvertor.netzobRawToASCII(raw)
         elif type.lower() == "alphanum" :
-            return TypeConvertor.netzobRawtoAlphanum(raw)
+            return TypeConvertor.netzobRawToAlphanum(raw)
         elif type.lower() == "num" :
-            return TypeConvertor.netzobRawtoNum(raw)
+            return TypeConvertor.netzobRawToNum(raw)
         elif type.lower() == "alpha" :
-            return TypeConvertor.netzobRawtoAlpha(raw)
+            return TypeConvertor.netzobRawToAlpha(raw)
         elif type.lower() == "base64dec" :
-            return TypeConvertor.netzobRawtoBase64Decoded(raw)
+            return TypeConvertor.netzobRawToBase64Decoded(raw)
         elif type.lower() == "base64enc" :
-            return TypeConvertor.netzobRawtoBase64Encoded(raw)
+            return TypeConvertor.netzobRawToBase64Encoded(raw)
         else :
             return raw
     
@@ -149,7 +149,7 @@ class TypeConvertor():
     #+---------------------------------------------- 
     #| Return the string parameter in ASCII
     #+----------------------------------------------
-    def netzobRawtoASCII(raw):
+    def netzobRawToASCII(raw):
         if len(raw) % 2 != 0:
 #            self.log.error("Hex string len not even !")
             return raw
