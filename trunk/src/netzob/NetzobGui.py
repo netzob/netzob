@@ -174,7 +174,7 @@ class NetzobGui():
         
         # Before exiting, we compute if its necessary to save
         # it means we simulate a save and compare the XML with the current one
-        if self.getCurrentProject() != None and self.getCurrentProject().hasPendingModifications() :
+        if self.getCurrentProject() != None and self.getCurrentProject().hasPendingModifications(self.getCurrentWorkspace()) :
             self.offerToSaveCurrentProject()
         
         

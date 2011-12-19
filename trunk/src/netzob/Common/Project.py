@@ -151,9 +151,22 @@ class Project(object):
         tree.write(projectFile)
 
     
-    def hasPendingModifications(self):
+    def hasPendingModifications(self, workspace):
         result = True
         
+        # TODO : Some errors may occur here...
+        try :
+            tree = ElementTree(self.generateXMLConfigFile())
+            currentXml = etree.tostring(tree)
+            
+            tree.parse(os.path.join(os.path.join(os.path.join(workspace.getPath(), "projects"), self.getPath()), Project.CONFIGURATION_FILENAME))
+            xmlProject = tree.getroot()
+            oldXml = etree.tostring(xmlProject)
+            
+            if currentXml == oldXml :
+                result = False
+        except :
+            pass
         
         
         return result
