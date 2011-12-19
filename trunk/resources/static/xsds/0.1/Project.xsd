@@ -372,7 +372,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="number" use="required">
+		<attribute name="index" use="required">
 			<simpleType>
 				<restriction base="int">
 					<minInclusive value="0"></minInclusive>
