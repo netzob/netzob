@@ -245,7 +245,7 @@ class NetworkImport:
                         tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
                         Sport = tcp.get_th_sport()
                         Dport = tcp.get_th_dport()
-                        Data = ip.get_data_as_string()
+                        Data = tcp.get_data_as_string()
                 
                 # Compute the messages
                 message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)
