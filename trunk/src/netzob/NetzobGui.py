@@ -73,7 +73,7 @@ class NetzobGui():
 
         # loading the workspace
         self.currentWorkspace = Workspace.loadWorkspace(ResourcesConfiguration.getWorkspaceFile())
-        self.currentProject = None
+        self.currentProject = self.currentWorkspace.getLastProject()
         
         # Second we create the logging infrastructure
         LoggingConfiguration().initializeLogging(self.currentWorkspace)
@@ -153,12 +153,15 @@ class NetzobGui():
     def getCurrentWorkspace(self):
         return self.currentWorkspace
         
-
-
-    
+    def offerToSaveCurrentProject(self):
+        questionMsg = "Do you want to save the current project (" + self.getCurrentProject().getName() + ")"
+        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == gtk.RESPONSE_YES:
+            logging.info("Saving the current project")
+            self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
         
-
-
     def startGui(self):
         # UI thread launching
         self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
@@ -168,6 +171,13 @@ class NetzobGui():
         return False
 
     def destroy(self, widget, data=None):
+        
+        # Before exiting, we compute if its necessary to save
+        # it means we simulate a save and compare the XML with the current one
+        if self.getCurrentProject() != None and self.getCurrentProject().hasPendingModifications() :
+            self.offerToSaveCurrentProject()
+        
+        
         for page in self.pageList:
             page[1].kill()
         gtk.main_quit()

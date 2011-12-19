@@ -56,15 +56,25 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text) > 0:
         pathOfPrototypes = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text
     
+    lastProject = None
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None :
+        xmlProjects = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects")
+        if xmlProjects.get("last", "none") != "none" :
+            lastProject = xmlProjects.get("last", "none") 
+        
+    
     # Instantiation of the workspace
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
+    
     
     # Load the projects
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None :
         for xmlProject in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}projects/{" + WORKSPACE_NAMESPACE + "}project") :
             project_path = xmlProject.get("path")
             workspace.referenceProject(project_path)
-    
+            if project_path == lastProject and lastProject != None:
+                workspace.referenceLastProject(lastProject)
+            
     return workspace    
     
 
@@ -91,7 +101,7 @@ class Workspace(object):
     #| Constructor
     #| @param path : path of the workspace
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes):
+    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None):
         self.name = name
         self.path = path
         self.creationDate = creationDate
@@ -99,6 +109,8 @@ class Workspace(object):
         self.pathOfTraces = pathOfTraces
         self.pathOfLogging = pathOfLogging
         self.pathOfPrototypes = pathOfPrototypes
+        self.lastProjectPath = lastProjectPath
+        
         
     def getProjects(self):
         projects = []
@@ -110,7 +122,18 @@ class Workspace(object):
                 
         return projects
            
+    
+    def getLastProject(self):
+        if self.lastProjectPath == None :
+            return None
         
+        from netzob.Common.Project import Project
+        project = Project.loadProject(self, self.lastProjectPath)
+        return project
+    
+    def referenceLastProject(self, lastProject):
+        self.lastProjectPath = lastProject
+    
     #+-----------------------------------------------------------------------+
     #| referenceProject :
     #|     reference a project in the workspace

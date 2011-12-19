@@ -23,7 +23,7 @@ import re
 import uuid
 from xml.etree import ElementTree
 from lxml import etree
-
+import types
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -34,7 +34,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.TypeConvertor import TypeConvertor
-import types
+
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 
@@ -101,22 +101,10 @@ class Project(object):
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
         
     
-        
-       
-    def saveConfigFile(self, workspace):
-        
-        projectPath = os.path.join(os.path.join(workspace.getPath(), "projects"), self.getPath())
-        projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
-        
-        logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
-        
-        # First we verify and create if necessary the directory of the project
-        if not os.path.exists(projectPath) :
-            logging.info("Creation of the directory " + projectPath)
-            os.mkdir(projectPath)
-        
+    
+    def generateXMLConfigFile(self):
         # Dump the file
-        etree.register_namespace('netzob', PROJECT_NAMESPACE)
+        ElementTree.register_namespace('netzob', PROJECT_NAMESPACE)
         root = ElementTree.Element("{" + PROJECT_NAMESPACE + "}project")
         root.set("id", str(self.getID()))
         root.set("path", str(self.getPath()))
@@ -133,11 +121,31 @@ class Project(object):
         # Save the grammar in it
         if self.getGrammar() != None :
             self.getGrammar().save(root, PROJECT_NAMESPACE)
+        return root
+       
+    def saveConfigFile(self, workspace):     
+           
+        projectPath = os.path.join(os.path.join(workspace.getPath(), "projects"), self.getPath())
+        projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
         
+        logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
+        
+        # First we verify and create if necessary the directory of the project
+        if not os.path.exists(projectPath) :
+            logging.info("Creation of the directory " + projectPath)
+            os.mkdir(projectPath)
+        # We generate the XML Config file
+        root = self.generateXMLConfigFile()
         tree = ElementTree.ElementTree(root)
         tree.write(projectFile)
 
-       
+    
+    def hasPendingModifications(self):
+        result = True
+        
+        
+        
+        return result
        
         
     @staticmethod
