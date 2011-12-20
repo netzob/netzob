@@ -155,6 +155,7 @@ class Menu(object):
             self.manageTraces.set_sensitive(False)
             self.importRootMenu.set_sensitive(False)
             self.exportRootMenu.set_sensitive(False)
+            self.helpContent.set_sensitive(False)
         else :
             # Activate everything
             self.saveProject.set_sensitive(True)
