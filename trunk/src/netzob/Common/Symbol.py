@@ -215,7 +215,7 @@ class Symbol(object):
     #+----------------------------------------------
     def getMessageByID(self, messageID):
         for message in self.messages :
-            if message.getID() == messageID :
+            if str(message.getID()) == str(messageID) :
                 return message
             
         return None
