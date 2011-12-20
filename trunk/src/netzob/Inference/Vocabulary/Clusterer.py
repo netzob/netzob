@@ -70,14 +70,12 @@ class Clusterer(object):
         else:
             # Create a group for each message
             self.symbols = []
-            i = 0
             for symbol in symbols :
                 for m in symbol.getMessages():
-                    i += 1
-                    tmpSymbol = Symbol(str(i), "Symbol")
+                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol")
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
-            self.log.debug("A number of {0} messages will be clustered.".format(str(i)))
+            self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
         
     #+---------------------------------------------- 
     #| retrieveMaxIJ :
@@ -264,7 +262,7 @@ class Clusterer(object):
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
         
-        newSymbol = Symbol(uuid.uuid4(), "Symbol")
+        newSymbol = Symbol(str(uuid.uuid4()), "Symbol")
         for message in messages :
             newSymbol.addMessage(message)
                     
