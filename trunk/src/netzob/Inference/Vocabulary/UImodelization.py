@@ -387,7 +387,6 @@ class UImodelization:
             self.log.warn("The current project doesn't have any referenced vocabulary")
             return
         
-        clickedSymbol = None
         
         x = int(event.x)
         y = int(event.y)
@@ -395,7 +394,9 @@ class UImodelization:
         
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
             self.selectedSymbol = clickedSymbol
-            self.update()
+            self.updateTreeStoreMessage()
+            self.treeTypeStructureGenerator.clear()
+            self.updateTreeStoreTypeStructure()
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_groups(event, clickedSymbol)
 
@@ -1211,9 +1212,9 @@ class UImodelization:
         # If we found it we can update the content of the treestore        
         if self.selectedSymbol != None :
             self.treeMessageGenerator.default(self.selectedSymbol)
-            # enable dragging message out of current group
-            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
+#            # enable dragging message out of current group
+#            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+#            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         # Else, quite weird so throw a warning
         else :
             self.treeMessageGenerator.default(None)
