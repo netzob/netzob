@@ -219,7 +219,10 @@ class UIGrammarInference:
         
         self.rightPanel.add(self.xdotWidget)
           
-          
+    #+-----------------------------------------------------------------------+
+    #| createTransition :
+    #|     Display the GUI for the creation of a transition and create it
+    #+-----------------------------------------------------------------------+
     def createTransition(self, widget):
         self.log.debug("Opening the dialog for the creation of a new transition")
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
@@ -266,7 +269,7 @@ class UIGrammarInference:
         transitionStartStateCombo.pack_start(transitionStartStateCell, True)
         transitionStartStateCombo.add_attribute(transitionStartStateCell, 'text', 0)
         
-        for state in self.states :
+        for state in self.getGrammar().getStates() :
             transitionStartStateCombo.get_model().append([state.getName(), str(state.getID())])
         transitionStartStateCombo.show()
         mainTable.attach(transitionStartStateLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -280,7 +283,7 @@ class UIGrammarInference:
         transitionStopStateCombo.pack_start(transitionStopStateComboCell, True)
         transitionStopStateCombo.add_attribute(transitionStopStateComboCell, 'text', 0)
         
-        for state in self.states :
+        for state in self.getGrammar().getStates() :
             transitionStopStateCombo.get_model().append([state.getName(), str(state.getID())])
         transitionStopStateCombo.show()
         mainTable.attach(transitionStopStateLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -300,7 +303,7 @@ class UIGrammarInference:
         idStopState = transitionStopStateCombo.get_model()[transitionStopStateCombo.get_active()][1]
         startState = None
         stopState = None
-        for state in self.states :
+        for state in self.getGrammar().getStates() :
             if str(state.getID()) == idStartState :
                 startState = state
             if str(state.getID()) == idStopState :
@@ -323,7 +326,7 @@ class UIGrammarInference:
         
         
         if createdTransition != None :
-            self.transitions.append(createdTransition)
+            self.getGrammar().addTransition(createdTransition)
             self.updateListTransitions()
             self.updateXDot()
             
