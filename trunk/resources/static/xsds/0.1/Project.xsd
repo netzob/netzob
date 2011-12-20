@@ -341,7 +341,7 @@
 	<complexType name="Fields">
 		<sequence>
 			<element name="field" type="netzob-project:Field" maxOccurs="unbounded"
-				minOccurs="1"></element>
+				minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
