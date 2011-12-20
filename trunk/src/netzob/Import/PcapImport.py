@@ -33,6 +33,7 @@ import pygtk
 import uuid
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
+import errno
 pygtk.require('2.0')
 import logging
 import os
@@ -288,13 +289,40 @@ class PcapImport:
     #| Called when launching sniffing process
     #+----------------------------------------------
     def launch_sniff(self, button, aFilter, label_file):
-        button.set_sensitive(False)
-        self.packets = []
-        self.treestore.clear()
         self.textview.get_buffer().set_text("")
         
         # retrieve the choosen pcap file
         pcapFile = label_file.get_text()
+        
+        # Before reading it we verify we have the necessary rights to open it
+        # and to read it. If not we display an error message
+        try:
+            fp = open(pcapFile)
+            fp.close()
+        except IOError as e:
+            errorMessage = "Error while trying to open the file " + pcapFile + "."
+            if e.errno == errno.EACCES:
+                errorMessage = "Error while trying to open the file " + pcapFile + ", more permissions are required for reading it."
+            
+            logging.warn(errorMessage)
+            md = gtk.MessageDialog(None,
+                gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR,
+                gtk.BUTTONS_CLOSE, errorMessage)
+            md.run()
+            md.destroy()
+            
+            return
+            
+            
+            raise
+       
+        
+        
+        button.set_sensitive(False)
+        self.packets = []
+        self.treestore.clear()
+        
+        
         # read it with pcapy
         reader = pcapy.open_offline(pcapFile)
         
