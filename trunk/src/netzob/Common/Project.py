@@ -114,7 +114,7 @@ class Project(object):
         self.creationDate = creationDate
         self.path = path
         self.vocabulary = Vocabulary()
-        self.grammar = None
+        self.grammar = Grammar("MMSTD")
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
         
     

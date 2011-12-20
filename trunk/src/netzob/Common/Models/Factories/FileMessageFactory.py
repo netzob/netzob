@@ -140,7 +140,7 @@ class FileMessageFactory():
         if rootElement.find("{" + namespace + "}modificationDate").text != None :
             msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
         else :
-            msg_modificationDate = None
+            msg_modificationDate = msg_creationDate
         
         # Retrieves the owner
         msg_owner = rootElement.find("{" + namespace + "}owner").text

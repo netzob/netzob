@@ -32,7 +32,7 @@
 import logging
 import time
 from lxml.etree import ElementTree
-
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -41,7 +41,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
-from lxml import etree
+
 
 #+---------------------------------------------------------------------------+
 #| Vocabulary :

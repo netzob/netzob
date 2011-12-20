@@ -84,7 +84,10 @@ class UIGrammarInference:
         self.log = logging.getLogger('netzob.Inference.Grammar.UIGrammarInference.py')
         self.netzob = netzob
         
-        self.grammar = None
+        if netzob.getCurrentProject() != None :
+            self.grammar = netzob.getCurrentProject().getGrammar()
+        
+        self.grammar = None 
         self.states = []
         self.initialState = None
         self.transitions = []
@@ -101,14 +104,7 @@ class UIGrammarInference:
         self.mainPanel.show()
         
         # First we add a table
-        leftFormTable = gtk.Table(rows=8, columns=2, homogeneous=False)
-        # Name of the grammar
-        grammarNameLabel = gtk.Label("Grammar's name : ")
-        grammarNameLabel.show()
-        self.grammarNameEntry = gtk.Entry()
-        self.grammarNameEntry.show()
-        leftFormTable.attach(grammarNameLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        leftFormTable.attach(self.grammarNameEntry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable = gtk.Table(rows=7, columns=2, homogeneous=False)
         # Type of the model
         modelLabel = gtk.Label("Type of model : ")
         modelLabel.show()
@@ -118,21 +114,21 @@ class UIGrammarInference:
         for i in range(len(possible_choices)):
             self.grammarModelCombo.append_text(str(possible_choices[i]))
         self.grammarModelCombo.show()
-        leftFormTable.attach(modelLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        leftFormTable.attach(self.grammarModelCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(modelLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.grammarModelCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # We add the button for the automatic inference process
         self.grammarAutomaticInferenceButton = gtk.Button("Open wizard for automatic inference")
 #        self.grammarAutomaticInferenceButton.connect("clicked", None)
         self.grammarAutomaticInferenceButton.show()
         self.grammarAutomaticInferenceButton.set_sensitive(False)
-        leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # CREATE A STATE
         self.createStateButton = gtk.Button("Create a state")
         self.createStateButton.show()
         self.createStateButton.connect("clicked", self.createState)
-        leftFormTable.attach(self.createStateButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.createStateButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # The list of current states
         scroll_listStates = gtk.ScrolledWindow()
@@ -156,13 +152,13 @@ class UIGrammarInference:
         scroll_listStates.add(treeview_listStates)
         scroll_listStates.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_listStates.show()
-        leftFormTable.attach(scroll_listStates, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(scroll_listStates, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # CREATE A TRANSITION
         self.createTransitionButton = gtk.Button("Create a transition")
         self.createTransitionButton.show()
         self.createTransitionButton.connect("clicked", self.createTransition)
-        leftFormTable.attach(self.createTransitionButton, 0, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.createTransitionButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # The list of current transitions
         scroll_listTransitions = gtk.ScrolledWindow()
@@ -196,7 +192,7 @@ class UIGrammarInference:
         scroll_listTransitions.add(treeview_listTransitions)
         scroll_listTransitions.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_listTransitions.show()
-        leftFormTable.attach(scroll_listTransitions, 0, 2, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(scroll_listTransitions, 0, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         leftFormTable.show()
         self.mainPanel.pack_start(leftFormTable, False, False, 0)

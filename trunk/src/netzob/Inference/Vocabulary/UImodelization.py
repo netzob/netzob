@@ -1133,6 +1133,7 @@ class UImodelization:
     #|   is dropped out current group to the selected group 
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
+        self.log.info("DROPPING !!")
         ids = selection.data
         for msg_id in ids.split(";") :
             
@@ -1184,11 +1185,13 @@ class UImodelization:
     #|   is dragged out current group 
     #+----------------------------------------------
     def drag_fromDND(self, treeview, contexte, selection, info, dateur):   
+        self.log.info("DRAGGING !!")
         ids = []             
         treeview.get_selection().selected_foreach(self.foreach_drag_fromDND, ids)
         selection.set(selection.target, 8, ";".join(ids))
     
     def foreach_drag_fromDND(self, model, path, iter, ids):
+        self.log.info("4EACH DRAGGING !!")
         texte = str(model.get_value(iter, 0))
         ids.append(texte)
         return
