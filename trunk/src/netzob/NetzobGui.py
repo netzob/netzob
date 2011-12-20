@@ -99,7 +99,7 @@ class NetzobGui():
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_default_size(800, 600)
-        window.set_title("Netzob : NETwork protocol modeliZatiOn By reverse engineering")
+        window.set_title("Netzob : Inferring communication protocols")
         
         window.set_icon_from_file(("%s/logo.png" % 
                                    ResourcesConfiguration.getStaticResources()))
