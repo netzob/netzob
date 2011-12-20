@@ -50,12 +50,13 @@ class Grammar(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, type):
+    def __init__(self, type, initialState):
         self.type = type
         self.states = []
         self.transitions = []
         self.states = []
-        self.initialState = None
+        self.initialState = initialState
+        self.states.append(initialState)
         
         
     def setInitialState(self, state):

@@ -63,7 +63,7 @@ class UIGrammarInference:
         pass
 
     def update(self):
-        pass
+        self.updateInterface()
     
     def clear(self):
         pass
@@ -128,6 +128,7 @@ class UIGrammarInference:
         self.createStateButton = gtk.Button("Create a state")
         self.createStateButton.show()
         self.createStateButton.connect("clicked", self.createState)
+        self.createStateButton.set_sensitive(False)
         leftFormTable.attach(self.createStateButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # The list of current states
@@ -158,6 +159,7 @@ class UIGrammarInference:
         self.createTransitionButton = gtk.Button("Create a transition")
         self.createTransitionButton.show()
         self.createTransitionButton.connect("clicked", self.createTransition)
+        self.createTransitionButton.set_sensitive(False)
         leftFormTable.attach(self.createTransitionButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # The list of current transitions
@@ -643,4 +645,11 @@ class UIGrammarInference:
             self.grammar = MMSTD(self.initialState, self.netzob.getDictionary())
             self.xdotWidget.set_dotcode(self.grammar.getDotCode())
             
+    def updateInterface(self):
+        if self.netzob.getCurrentProject() == None :
+            self.createStateButton.set_sensitive(False)
+            self.createTransitionButton.set_sensitive(False)
         
+        else :
+            self.createStateButton.set_sensitive(True)
+            self.createTransitionButton.set_sensitive(True)
