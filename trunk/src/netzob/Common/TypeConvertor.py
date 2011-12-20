@@ -122,6 +122,9 @@ class TypeConvertor():
     @staticmethod
     def pythonDatetime2XSDDatetime(date):
         # XSD Format : [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]
+        if not isinstance(date, datetime.datetime) and isinstance(date[0], datetime.datetime):
+            date = date[0]
+            
         return str(date.isoformat('T'))[:19]
         
         
