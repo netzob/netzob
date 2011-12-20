@@ -125,30 +125,5 @@ class MMSTD(object):
                             toAnalyze.append(outputState)
                     states.append(currentState)      
         return states
-    #+---------------------------------------------------------------------------+
-    #| getDotCode :
-    #|     Generates the dot code representing the automata
-    #| @return a string containing the dot code of the automata
-    #+---------------------------------------------------------------------------+
-    def getDotCode(self):        
-        dotCode = "digraph G {\n"        
-        # first we include all the states declared in the automata
-        states = self.getAllStates()        
-        for state in states :
-            if state.isActive() :
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"  
-            else :
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"  
-            
-                      
-            
-        for inputState in states :
-            for transition in inputState.getTransitions() :
-                outputState = transition.getOutputState()                
-                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
-        
-        dotCode = dotCode + "}"      
-
-          
-        return dotCode
+    
     

@@ -80,6 +80,32 @@ class Grammar(object):
         return self.states
     def getTransitions(self):
         return self.transitions
+    
+    #+---------------------------------------------------------------------------+
+    #| getDotCode :
+    #|     Generates the dot code representing the automata
+    #| @return a string containing the dot code of the automata
+    #+---------------------------------------------------------------------------+
+    def getDotCode(self):        
+        dotCode = "digraph G {\n"        
+        # first we include all the states declared in the automata
+        states = self.getStates()        
+        for state in states :
+            if state.isActive() :
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"  
+            else :
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"  
+           
+        for inputState in states :
+            for transition in inputState.getTransitions() :
+                outputState = transition.getOutputState()                
+                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
+        
+        dotCode = dotCode + "}"      
+        return dotCode
+    
+    
+    
             
     def save(self, root, namespace):
         xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")
@@ -100,7 +126,7 @@ class Grammar(object):
         if version == "0.1" :
             grammarType = xmlRoot.get("type")
             initialStateID = xmlRoot.get("initialState")
-            grammar = Grammar(grammarType)
+            
             states = []
             transitions = []
             if grammarType == "MMSTD" :
@@ -117,11 +143,20 @@ class Grammar(object):
                         transition = AbstractTransition.loadFromXML(states, vocabulary, xmlTransition, namespace, version)
                         if transition != None :
                             transitions.append(transition)
-            
+                
+                # First we retrieve the initial state to create the grammar
+                initialState = None
                 for state in states :
                     if state.getID() == initialStateID :
-                        grammar.setInitialState(state)
+                        initialState = state
                     
+                if initialState == None :
+                    logging.warn("Impossible to retrieve the initial state of the saved grammar")
+                    return None
+                # Creation of the grammar
+                grammar = Grammar(grammarType, initialState)
+                # Register all the states
+                for state in states :
                     grammar.addState(state)
                     
                 for transition in transitions :

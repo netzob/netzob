@@ -47,6 +47,7 @@ from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChann
 from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
+from netzob.Common.Grammar import Grammar
 
 #+---------------------------------------------------------------------------+
 #| UIGrammarInference :
@@ -64,6 +65,9 @@ class UIGrammarInference:
 
     def update(self):
         self.updateInterface()
+        self.updateListStates()
+        self.updateListTransitions()
+        self.updateXDot()
     
     def clear(self):
         pass
@@ -565,7 +569,10 @@ class UIGrammarInference:
         
         
 
-
+    #+-----------------------------------------------------------------------+
+    #| createState :
+    #|     Display the GUI for the creation of the state and create it
+    #+-----------------------------------------------------------------------+
     def createState(self, widget):
         self.log.debug("Opening the dialog for the creation of a new state")
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
@@ -592,8 +599,9 @@ class UIGrammarInference:
         isItInitialStateLabel = gtk.Label("Is it the initial state : ")
         isItInitialStateLabel.show()
         isItInitialStateButton = gtk.CheckButton("")
-        if self.initialState == None:
+        if self.getGrammar() == None:
             isItInitialStateButton.set_active(True)
+            isItInitialStateButton.set_sensitive(False)
         else:
             isItInitialStateButton.set_active(False)
         isItInitialStateButton.show()
@@ -612,10 +620,15 @@ class UIGrammarInference:
                 # Create of the new state
                 self.log.info("Create a state " + stateName + " (" + stateID + ")")
                 state = NormalState(stateID, stateName)
-                self.states.append(state)        
                 
-                if isItInitialStateButton.get_active() :
-                    self.initialState = state
+                if self.getGrammar() == None :
+                    grammar = Grammar("MMSTD", state)
+                    self.netzob.getCurrentProject().setGrammar(grammar)
+                else :
+                    if isItInitialStateButton.get_active() :
+                        self.getGrammar().setInitialState(state)
+                    
+                self.getGrammar().addState(state)
             
             dialog.destroy()
             
@@ -628,28 +641,39 @@ class UIGrammarInference:
         
     def updateListStates(self):
         self.treestore_listStates.clear()
-        for state in self.states :
+        if self.getGrammar() == None :
+            return
+        for state in self.getGrammar().getStates() :
             self.treestore_listStates.append(None, [str(state.getID()), state.getName(), state.getType()])
             
     def updateListTransitions(self):
         self.treestore_listTransitions.clear()
-        for transition in self.transitions :   
+        if self.getGrammar() == None :
+            return
+        for transition in self.getGrammar().getTransitions() :   
             startState = transition.getInputState().getName()
             endState = transition.getOutputState().getName()
             self.treestore_listTransitions.append(None, [str(transition.getID()), transition.getName(), startState, endState, transition.getType()])
         
         
     def updateXDot(self):
-        if self.initialState != None :
-            # Build the current grammar 
-            self.grammar = MMSTD(self.initialState, self.netzob.getDictionary())
-            self.xdotWidget.set_dotcode(self.grammar.getDotCode())
+        # We retrieve the xdot from the grammar (if it exists)
+        if self.getGrammar() == None :
+            return
+        self.xdotWidget.set_dotcode(self.getGrammar().getDotCode())
             
     def updateInterface(self):
         if self.netzob.getCurrentProject() == None :
             self.createStateButton.set_sensitive(False)
-            self.createTransitionButton.set_sensitive(False)
-        
+            self.createTransitionButton.set_sensitive(False)        
         else :
             self.createStateButton.set_sensitive(True)
             self.createTransitionButton.set_sensitive(True)
+        
+    
+        
+    def getGrammar(self):
+        if self.netzob.getCurrentProject() == None :
+            return None 
+        else :
+            return self.netzob.getCurrentProject().getGrammar()
