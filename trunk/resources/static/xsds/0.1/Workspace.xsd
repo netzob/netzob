@@ -24,12 +24,15 @@
 	</complexType>
 
 	<complexType name="Projects">
-    	<sequence>
-    		<element name="project" type="netzob-ws:Project_ref" maxOccurs="unbounded" minOccurs="0"></element>
-    	</sequence>
-    </complexType>
+		<sequence>
+			<element name="project" type="netzob-ws:Project_ref"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="last" type="string"></attribute>
+	</complexType>
 
-    <complexType name="Project_ref">
+	<complexType name="Project_ref">
     	<attribute name="path" use="required">
     		<simpleType>
     			<restriction base="string">
