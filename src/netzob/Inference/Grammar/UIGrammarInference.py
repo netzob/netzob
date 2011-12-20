@@ -390,10 +390,12 @@ class UIGrammarInference:
         startState.registerTransition(transition)
         dialog.destroy()
         return transition
+    
+    
+    
+    
     def createSemiStochasticTransition(self, transitionID, transitionName, startState, stopState):
-        
-        entries = self.netzob.getDictionary().getEntries()
-        
+        symbols = self.getVocabulary().getSymbols()
         
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
         dialog.set_markup('Definition of a SemiStochastic Transition')
@@ -413,8 +415,8 @@ class UIGrammarInference:
         inputSymbolCombo.pack_start(inputSymbolComboCell, True)
         inputSymbolCombo.add_attribute(inputSymbolComboCell, 'text', 0)
         
-        for dicoEntry in entries :
-            inputSymbolCombo.get_model().append([dicoEntry.getName(), str(dicoEntry.getID())])
+        for symbol in symbols :
+            inputSymbolCombo.get_model().append([symbol.getName(), str(symbol.getID())])
         inputSymbolCombo.show()
         
         mainTable.attach(inputSymbolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -434,8 +436,8 @@ class UIGrammarInference:
         outputSymbolCombo.pack_start(outputSymbolComboCell, True)
         outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 0)
         
-        for dicoEntry in entries :
-            outputSymbolCombo.get_model().append([dicoEntry.getName(), str(dicoEntry.getID())])
+        for symbol in symbols :
+            outputSymbolCombo.get_model().append([symbol.getName(), str(symbol.getID())])
         outputSymbolCombo.show()
         
         mainTable.attach(outputSymbolLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -464,7 +466,7 @@ class UIGrammarInference:
         outputSymbolsTreeStore = gtk.TreeStore(str, str, str, str) # id, name, time, proba
         
         addOutputSymbolButton = gtk.Button("Add")
-        addOutputSymbolButton.connect("clicked", self.addSymbolToTheList, entries, outputSymbolsTreeStore, outputSymbolCombo, outputTimeEntry, outputProbabilityEntry)
+        addOutputSymbolButton.connect("clicked", self.addSymbolToTheList, symbols, outputSymbolsTreeStore, outputSymbolCombo, outputTimeEntry, outputProbabilityEntry)
         addOutputSymbolButton.show()
         addOutputSymbolButton.set_sensitive(True)
         
@@ -512,9 +514,9 @@ class UIGrammarInference:
         # retrieve the input symbols
         inputEntryID = inputSymbolCombo.get_model()[inputSymbolCombo.get_active()][1]
         inputEntry = None
-        for entry in entries :
-            if str(entry.getID()) == inputEntryID :
-                inputEntry = entry
+        for symbol in symbols :
+            if str(symbol.getID()) == inputEntryID :
+                inputEntry = symbol
         
         if inputEntry == None :
             self.log.warn("Impossible to retrieve the selected input dictionary entry")
@@ -531,9 +533,9 @@ class UIGrammarInference:
             outputSymbolProba = outputData[3]
             
             outputEntry = None
-            for entry in entries :
-                if str(entry.getID()) == outputSymbolID :
-                    outputEntry = entry
+            for symbol in symbols :
+                if str(symbol.getID()) == outputSymbolID :
+                    outputEntry = symbol
                     
             if outputEntry == None :
                 self.log.warn("Impossible to retrieve the selected output dictionary entry")
@@ -680,3 +682,9 @@ class UIGrammarInference:
             return None 
         else :
             return self.netzob.getCurrentProject().getGrammar()
+        
+    def getVocabulary(self):
+        if self.netzob.getCurrentProject() == None :
+            return None 
+        else :
+            return self.netzob.getCurrentProject().getVocabulary()
