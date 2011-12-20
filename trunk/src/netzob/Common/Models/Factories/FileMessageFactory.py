@@ -36,6 +36,7 @@
 from lxml.etree import ElementTree
 from netzob.Common.TypeConvertor import TypeConvertor
 from lxml import etree
+import datetime
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -136,7 +137,10 @@ class FileMessageFactory():
         msg_creationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}creationDate").text)
             
         # Retrieves the modification date
-        msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
+        if rootElement.find("{" + namespace + "}modificationDate").text != None :
+            msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
+        else :
+            msg_modificationDate = None
         
         # Retrieves the owner
         msg_owner = rootElement.find("{" + namespace + "}owner").text
