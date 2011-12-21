@@ -167,6 +167,16 @@ class TypeConvertor():
             return None, None
     
     @staticmethod
+    def ASCIIToNetzobRaw(ascii):
+        raw = []
+        for c in ascii :
+            strhexc = str(hex(ord(c)))[2:]
+            if len(strhexc) < 2 :
+                strhexc = "0" + strhexc
+            raw.append(strhexc)
+        return ''.join(raw)
+    
+    @staticmethod
     #+---------------------------------------------- 
     #| Return the string parameter in ASCII
     #+----------------------------------------------
