@@ -39,6 +39,10 @@ import base64
 #+----------------------------------------------
 
 class TypeConvertor():
+
+
+
+
     
     #+---------------------------------------------- 
     #| Transform an ascii string to its binary representation

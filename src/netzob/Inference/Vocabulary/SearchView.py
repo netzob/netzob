@@ -46,6 +46,13 @@ from netzob.Inference.Vocabulary.Searcher import Searcher
 #+---------------------------------------------- 
 class SearchView(object):
     
+    TYPE_IP = "IP"
+    TYPE_ANY = "Any"
+    TYPE_BINARY = "Binary"
+    TYPE_OCTAL = "Octal"
+    TYPE_HEXADECIMAL = "Hexadecimal"
+    TYPE_ASCII = "Ascii"
+    
     #+---------------------------------------------- 
     #| Constructor :
     #+----------------------------------------------   
@@ -69,11 +76,12 @@ class SearchView(object):
         self.typeCombo.show()
         self.typeStore = gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
-        self.typeCombo.get_model().append(["Binary"])
-        self.typeCombo.get_model().append(["Octal"])
-        self.typeCombo.get_model().append(["Hexadecimal"])
-        self.typeCombo.get_model().append(["ASCII"])
-        self.typeCombo.get_model().append(["IP"])
+        self.typeCombo.get_model().append([SearchView.TYPE_ANY])
+        self.typeCombo.get_model().append([SearchView.TYPE_BINARY])
+        self.typeCombo.get_model().append([SearchView.TYPE_OCTAL])
+        self.typeCombo.get_model().append([SearchView.TYPE_HEXADECIMAL])
+        self.typeCombo.get_model().append([SearchView.TYPE_IP])
+        self.typeCombo.get_model().append([SearchView.TYPE_ASCII])
         
         # Search button        
         searchButton = gtk.Button("Search")
@@ -106,18 +114,17 @@ class SearchView(object):
         searcher = Searcher(self.project.getVocabulary().getAllMessages())
         
         searchResults = []
-        if typeOfPattern == "IP" :
-            searchResults = searcher.searchIP(pattern)
-        elif typeOfPattern == "Binary":
-            searchResults = searcher.searchBinary(pattern)
-        elif typeOfPattern == "Octal":
-            searchResults = searcher.searchOctal(pattern)
-        elif typeOfPattern == "Hexadecimal":
-            searchResults = searcher.searchHexadecimal(pattern)
-        elif typeOfPattern == "ASCII":
-            searchResults = searcher.searchASCII(pattern)
-        else :
-            self.log.warn("The provided type of the searched pattern is not yet supported")
+        
+        if typeOfPattern == SearchView.TYPE_IP or typeOfPattern == SearchView.TYPE_ANY :
+            searchResults.extend(searcher.searchIP(pattern))
+        if typeOfPattern == SearchView.TYPE_BINARY or typeOfPattern == SearchView.TYPE_ANY :
+            searchResults.extend(searcher.searchBinary(pattern))
+        if typeOfPattern == SearchView.TYPE_OCTAL or typeOfPattern == SearchView.TYPE_ANY :
+            searchResults.extend(searcher.searchOctal(pattern))
+        if typeOfPattern == SearchView.TYPE_HEXADECIMAL or typeOfPattern == SearchView.TYPE_ANY :
+            searchResults.extend(searcher.searchHexadecimal(pattern))
+        if typeOfPattern == SearchView.TYPE_ASCII or typeOfPattern == SearchView.TYPE_ANY :
+            searchResults.extend(searcher.searchASCII(pattern))
         
         self.log.debug("A number of " + str(len(searchResults)) + " results were found")
         
