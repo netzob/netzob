@@ -29,6 +29,8 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
+from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Inference.Vocabulary.SearchResult import SearchResult
 
 
 #+---------------------------------------------- 
@@ -53,45 +55,88 @@ class Searcher(object):
         self.log = logging.getLogger('netzob.Modelization.Searcher.py')
         self.messages = messages
     
+    
     #+---------------------------------------------- 
-    #| searchBinary :
-    #|   search for a value provided in Binary
+    #| getSearchedDataForBinary :
+    #|   Generates data which can represent the specified Binary
     #| @param value the value to search for
     #+---------------------------------------------- 
-    def searchBinary(self, value):
+    def getSearchedDataForBinary(self, value):
+        return []
+    
+    
+    #+---------------------------------------------- 
+    #| getSearchedDataForOctal :
+    #|   Generates data which can represent the specified Octal
+    #| @param value the value to search for
+    #+---------------------------------------------- 
+    def getSearchedDataForOctal(self, value):
+        return []
+    
+    
+    #+---------------------------------------------- 
+    #| getSearchedDataForHexadecimal :
+    #|   Generates data which can represent the specified Hexa
+    #| @param value the value to search for
+    #+---------------------------------------------- 
+    def getSearchedDataForHexadecimal(self, value):
         return []
     
     #+---------------------------------------------- 
-    #| searchOctal :
-    #|   search for a value provided in octal
+    #| getSearchedDataForASCII :
+    #|   Generates data which can represent the specified ASCII
     #| @param value the value to search for
     #+---------------------------------------------- 
-    def searchOctal(self, value):
-        return []
+    def getSearchedDataForASCII(self, value):
+        data = TypeConvertor.ASCIIToNetzobRaw(value)
+        return [data]
     
     #+---------------------------------------------- 
-    #| searchHexadecimal :
-    #|   search for a value provided in hex
+    #| getSearchedDataForIP :
+    #|   Generates data which can represent the specified IP
     #| @param value the value to search for
     #+---------------------------------------------- 
-    def searchHexadecimal(self, value):
-        return []
-    
-    #+---------------------------------------------- 
-    #| searchASCII :
-    #|   search for a value provided in ASCII
-    #| @param value the value to search for
-    #+---------------------------------------------- 
-    def searchASCII(self, value):
-        return []
-    
-    #+---------------------------------------------- 
-    #| searchIP :
-    #|   search for a value provided in IP
-    #| @param value the value to search for
-    #+---------------------------------------------- 
-    def searchIP(self, value):
+    def getSearchedDataForIP(self, value):
         return []
         
+    
+    #+---------------------------------------------- 
+    #| search :
+    #|   Search a set of specified data in the messages
+    #| @param datas set of data to search for
+    #+----------------------------------------------
+    def search(self, datas):
+        results = []
+        for data in datas :
+            for message in self.messages :
+                results.extend(self.extendedSearch(data, message))
+        return results
+    
+    #+---------------------------------------------- 
+    #| extendedSearch :
+    #|   Search for a data in a specified message
+    #+----------------------------------------------
+    def extendedSearch(self, data, message):
+        results = []
+        results.extend(self.naturalSearch(data, message))
+        return results
 
-
+    def naturalSearch(self, data, message):
+        results = []
+        
+        print "Search " + data
+        print "in " + message.getStringData()
+        
+        # Search naturally all the possible places of data in message
+        indice = 0
+        while indice + len(data) <= len(message.getStringData()) :
+            self.log.info("indice = " + str(indice))
+            self.log.info(message.getStringData()[indice:len(data) + indice] + "== " + data)
+            if message.getStringData()[indice:len(data) + indice] == data :
+                # We have a match
+                searchResult = SearchResult()
+                searchResult.addSegment(indice, len(data))
+                results.append(searchResult)
+            indice = indice + 1
+        
+        return results

@@ -113,20 +113,30 @@ class SearchView(object):
         # Initialize the searcher
         searcher = Searcher(self.project.getVocabulary().getAllMessages())
         
-        searchResults = []
-        
+        # First we generate the different researched data
+        searchedData = []
         if typeOfPattern == SearchView.TYPE_IP or typeOfPattern == SearchView.TYPE_ANY :
-            searchResults.extend(searcher.searchIP(pattern))
+            searchedData.extend(searcher.getSearchedDataForIP(pattern))
         if typeOfPattern == SearchView.TYPE_BINARY or typeOfPattern == SearchView.TYPE_ANY :
-            searchResults.extend(searcher.searchBinary(pattern))
+            searchedData.extend(searcher.getSearchedDataForBinary(pattern))
         if typeOfPattern == SearchView.TYPE_OCTAL or typeOfPattern == SearchView.TYPE_ANY :
-            searchResults.extend(searcher.searchOctal(pattern))
+            searchedData.extend(searcher.getSearchedDataForOctal(pattern))
         if typeOfPattern == SearchView.TYPE_HEXADECIMAL or typeOfPattern == SearchView.TYPE_ANY :
-            searchResults.extend(searcher.searchHexadecimal(pattern))
+            searchedData.extend(searcher.getSearchedDataForHexadecimal(pattern))
         if typeOfPattern == SearchView.TYPE_ASCII or typeOfPattern == SearchView.TYPE_ANY :
-            searchResults.extend(searcher.searchASCII(pattern))
+            searchedData.extend(searcher.getSearchedDataForASCII(pattern))
         
-        self.log.debug("A number of " + str(len(searchResults)) + " results were found")
+        if len(searchedData) == 0 :
+            self.log.warn("No data to search after were computed.")
+            return
+        
+        self.log.debug("The following data will be searched for :")
+        for data in searchedData :
+            self.log.info(" - " + str(data))
+        
+        # Then we search them in the list of messages included in the vocabulary
+        searchResults = searcher.search(searchedData)
+        self.log.info("A number of " + str(len(searchResults)) + " results found !")
         
         self.updateView(searchResults)
         
@@ -145,9 +155,9 @@ class SearchView(object):
         
         
         for result in results :
-            it = treestore.append(None, [result.getGroup().getName()])
+            it = treestore.append(None, [result.getSymbol()])
             it2 = treestore.append(it, [result.getMessage().getID()])
-            treestore.append(it2, [result.getStringResult()])
+            treestore.append(it2, [str(result.getSegments())])
  
 #        it = treestore.append(None, ["Groupe REQUEST"])
 #        it2 = treestore.append(it, ["Message 1"])
