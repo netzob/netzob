@@ -550,10 +550,6 @@ class UIGrammarInference:
         startState.registerTransition(transition)
         dialog.destroy()
         return transition
-        
-
-
-
 
     def addSymbolToTheList(self, widget, entries, outputSymbolsTreeStore, outputSymbolCombo, outputTimeEntry, outputProbabilityEntry):
         entryID = outputSymbolCombo.get_model()[outputSymbolCombo.get_active()][1]
@@ -568,10 +564,6 @@ class UIGrammarInference:
             return
         
         outputSymbolsTreeStore.append(None, [selectedEntry.getID(), selectedEntry.getName(), entryTime, entryProba])
-        
-        
-        
-        
         
 
     #+-----------------------------------------------------------------------+
@@ -642,7 +634,6 @@ class UIGrammarInference:
             
             # update the xdot
             self.updateXDot()
-            
         
     def updateListStates(self):
         self.treestore_listStates.clear()
@@ -650,6 +641,7 @@ class UIGrammarInference:
             return
         for state in self.getGrammar().getStates() :
             self.treestore_listStates.append(None, [str(state.getID()), state.getName(), state.getType()])
+            
             
     def updateListTransitions(self):
         self.treestore_listTransitions.clear()

@@ -162,14 +162,14 @@ class SemiStochasticTransition(AbstractTransition):
      
     
     def getDescription(self):
-        inputSymbolId = self.getInputSymbol().getID()
+        inputSymbolName = self.getInputSymbol().getName()
         
         desc = []
         for outSymbolDesc in self.getOutputSymbols() :
-            desc.append("(" + str(outSymbolDesc[0].getID()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
+            desc.append("(" + str(outSymbolDesc[0].getName()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
         
          
-        return "(" + str(inputSymbolId) + ";{" + ",".join(desc) + "})"
+        return "(" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
     
     
     
