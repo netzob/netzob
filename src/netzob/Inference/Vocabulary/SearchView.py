@@ -155,7 +155,11 @@ class SearchView(object):
         
         
         for result in results :
-            it = treestore.append(None, [result.getSymbol()])
+            
+            # retrieve the symbol associated with the message
+            symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
+            
+            it = treestore.append(None, [symbol.getName()])
             it2 = treestore.append(it, [result.getMessage().getID()])
             treestore.append(it2, [str(result.getSegments())])
  

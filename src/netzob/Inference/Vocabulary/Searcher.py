@@ -134,7 +134,7 @@ class Searcher(object):
             self.log.info(message.getStringData()[indice:len(data) + indice] + "== " + data)
             if message.getStringData()[indice:len(data) + indice] == data :
                 # We have a match
-                searchResult = SearchResult()
+                searchResult = SearchResult(message)
                 searchResult.addSegment(indice, len(data))
                 results.append(searchResult)
             indice = indice + 1

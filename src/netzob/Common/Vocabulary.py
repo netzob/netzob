@@ -65,6 +65,14 @@ class Vocabulary(object):
             for msg in symbol.getMessages() :
                 messages.append(msg)
         return messages
+
+    def getSymbolWhichContainsMessage(self, message):
+        for symbol in self.symbols :
+            for msg in symbol.getMessages() :
+                if msg.getID() == message.getID() :
+                    return symbol
+        return None
+
     
     def getSymbols(self):
         return self.symbols    
