@@ -31,6 +31,7 @@
 import logging
 from netzob.Common.TypeConvertor import TypeConvertor
 from netzob.Inference.Vocabulary.SearchResult import SearchResult
+from netzob.Inference.Vocabulary.SearchTask import SearchTask
 
 
 #+---------------------------------------------- 
@@ -48,12 +49,12 @@ class Searcher(object):
     
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param messages the list of messages it will search in
+    #| @param project : the project where the search will be executed
     #+----------------------------------------------   
-    def __init__(self, messages):
+    def __init__(self, project):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.Searcher.py')
-        self.messages = messages
+        self.log = logging.getLogger('netzob.Inference.Vocabulary.Searcher.py')
+        self.project = project
     
     
     #+---------------------------------------------- 
@@ -89,7 +90,10 @@ class Searcher(object):
     #+---------------------------------------------- 
     def getSearchedDataForASCII(self, value):
         data = TypeConvertor.ASCIIToNetzobRaw(value)
-        return [data]
+        # Creation of a SearchTask 
+        task = SearchTask(value, "ASCII")
+        task.registerVariation(data, "Ascii representation of the value")
+        return [task]
     
     #+---------------------------------------------- 
     #| getSearchedDataForIP :
@@ -103,14 +107,17 @@ class Searcher(object):
     #+---------------------------------------------- 
     #| search :
     #|   Search a set of specified data in the messages
-    #| @param datas set of data to search for
+    #| @param tasks the set of "search" task
     #+----------------------------------------------
-    def search(self, datas):
+    def search(self, tasks):
         results = []
-        for data in datas :
-            for message in self.messages :
-                results.extend(self.extendedSearch(data, message))
-        return results
+        for task in tasks :
+            for symbols in self.project.getVocabulary().getSymbols() :
+                for message in symbols.getMessages() :
+                    for variation in task.getVariations() :
+                        task.registerResults(self.extendedSearch(variation, message))
+                    
+        return tasks
     
     #+---------------------------------------------- 
     #| extendedSearch :
@@ -120,6 +127,7 @@ class Searcher(object):
         results = []
         results.extend(self.naturalSearch(data, message))
         return results
+
 
     def naturalSearch(self, data, message):
         results = []

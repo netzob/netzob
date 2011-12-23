@@ -54,8 +54,17 @@ class SearchTask(object):
         self.data = data
         self.type = type
         self.searchedDatas = dict()
+        self.results = []
+    
+    def registerResults(self, r):
+        self.results.extend(r)
+        
+    def getResults(self):
+        return self.results
     
     def registerVariation(self, data, description):
         self.searchedDatas[data] = description
 
-        
+    def getVariations(self):
+        return self.searchedDatas.keys()
+    

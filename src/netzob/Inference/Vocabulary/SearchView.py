@@ -111,7 +111,7 @@ class SearchView(object):
     def search(self, pattern, typeOfPattern):
         
         # Initialize the searcher
-        searcher = Searcher(self.project.getVocabulary().getAllMessages())
+        searcher = Searcher(self.project)
         
         # First we generate the different researched data
         searchedData = []
@@ -140,10 +140,9 @@ class SearchView(object):
         
         self.updateView(searchResults)
         
-    def updateView(self, results):
+    def updateView(self, tasks):
         
         self.tree = gtk.TreeView()
-        
         colResult = gtk.TreeViewColumn()
         colResult.set_title("Search results")
  
@@ -154,14 +153,14 @@ class SearchView(object):
         treestore = gtk.TreeStore(str)
         
         
-        for result in results :
-            
-            # retrieve the symbol associated with the message
-            symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
-            
-            it = treestore.append(None, [symbol.getName()])
-            it2 = treestore.append(it, [result.getMessage().getID()])
-            treestore.append(it2, [str(result.getSegments())])
+        for task in tasks :
+            for result in task.getResults() :
+                # retrieve the symbol associated with the message
+                symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
+                
+                it = treestore.append(None, [symbol.getName()])
+                it2 = treestore.append(it, [result.getMessage().getID()])
+                treestore.append(it2, [str(result.getSegments())])
  
 #        it = treestore.append(None, ["Groupe REQUEST"])
 #        it2 = treestore.append(it, ["Message 1"])
