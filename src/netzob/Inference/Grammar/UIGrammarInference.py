@@ -734,9 +734,23 @@ class UIGrammarInference:
     def responseToDialog(self, entry, dialog, response):
         dialog.response(response)
       
-        
+    #+---------------------------------------------- 
+    #| displayPopupToRemoveState :
+    #|   Display a popup to remove a state
+    #+----------------------------------------------    
     def displayPopupToRemoveState(self, event, state):
-        pass
+        
+        questionMsg = "Click yes to confirm the removal of the state {0}. All its associated transitions will also be deleted.".format(state.getName())
+        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == gtk.RESPONSE_YES:
+            self.getGrammar().removeState(state)
+            self.update()
+        else :
+            self.log.debug("The user didn't confirm the deletion of the state " + state.getName())                
+            
+        
     
     def getGrammar(self):
         if self.netzob.getCurrentProject() == None :
