@@ -68,6 +68,21 @@ class Grammar(object):
         else :
             logging.warn("The state cannot be added one more time in the grammar.")
             
+    def removeState(self, state):
+        # First we remove the transitions
+        transitionsToRemove = []
+        for transition in self.transitions :
+            if transition.getOutputState().getID() == state.getID() :
+                transitionsToRemove.append(transition)
+        for transition in state.getTransitions() :
+            transitionsToRemove.append(transition)
+            
+            
+        for transition in transitionsToRemove :
+            self.transitions.remove(transition)
+        
+        self.states.remove(state)
+            
     def addTransition(self, transition):
         if not transition in self.transitions :
             self.transitions.append(transition)
