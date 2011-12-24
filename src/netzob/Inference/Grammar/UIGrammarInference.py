@@ -699,8 +699,42 @@ class UIGrammarInference:
             menu.append(item)
         menu.popup(None, None, None, event.button, event.time)    
     
+    #+---------------------------------------------- 
+    #| displayPopupToEditState :
+    #|   Display a popup for the edition of a state
+    #+----------------------------------------------
     def displayPopupToEditState(self, event, state):
-        pass
+        dialog = gtk.MessageDialog(
+        None,
+        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+        gtk.MESSAGE_QUESTION,
+        gtk.BUTTONS_OK,
+        None)
+        dialog.set_markup("Enter the name of the state")
+        #create the text input field
+        entry = gtk.Entry()
+        entry.set_text(state.getName())
+        #allow the user to press enter to do ok
+        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        #create a horizontal box to pack the entry and a label
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label("Name : "), False, 5, 5)
+        hbox.pack_end(entry)
+        dialog.vbox.pack_end(hbox, True, True, 0)
+        dialog.show_all()
+        #go go go
+        dialog.run()
+        text = entry.get_text()
+        if (len(text) > 0) :
+            state.setName(text)
+        dialog.destroy()
+        
+        self.update()
+        
+    def responseToDialog(self, entry, dialog, response):
+        dialog.response(response)
+      
+        
     def displayPopupToRemoveState(self, event, state):
         pass
     
