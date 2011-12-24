@@ -108,32 +108,22 @@ class UIGrammarInference:
         self.mainPanel.show()
         
         # First we add a table
-        leftFormTable = gtk.Table(rows=7, columns=2, homogeneous=False)
-        # Type of the model
-        modelLabel = gtk.Label("Type of model : ")
-        modelLabel.show()
-        self.grammarModelCombo = gtk.combo_box_entry_new_text()
-        self.grammarModelCombo.set_model(gtk.ListStore(str))
-        possible_choices = ["MMSTD"]
-        for i in range(len(possible_choices)):
-            self.grammarModelCombo.append_text(str(possible_choices[i]))
-        self.grammarModelCombo.show()
-        leftFormTable.attach(modelLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        leftFormTable.attach(self.grammarModelCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable = gtk.Table(rows=6, columns=2, homogeneous=False)
+        
         
         # We add the button for the automatic inference process
         self.grammarAutomaticInferenceButton = gtk.Button("Open wizard for automatic inference")
 #        self.grammarAutomaticInferenceButton.connect("clicked", None)
         self.grammarAutomaticInferenceButton.show()
         self.grammarAutomaticInferenceButton.set_sensitive(False)
-        leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # CREATE A STATE
         self.createStateButton = gtk.Button("Create a state")
         self.createStateButton.show()
         self.createStateButton.connect("clicked", self.createState)
         self.createStateButton.set_sensitive(False)
-        leftFormTable.attach(self.createStateButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.createStateButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # The list of current states
         scroll_listStates = gtk.ScrolledWindow()
@@ -141,6 +131,7 @@ class UIGrammarInference:
         treeview_listStates = gtk.TreeView(self.treestore_listStates)
         treeview_listStates.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview_listStates.set_size_request(-1, 250)
+        treeview_listStates.connect('button-press-event', self.button_press_on_states)
 #        treeview_listStates.connect("cursor-changed", self.actorDetails)
         cell = gtk.CellRendererText()
         # main col
@@ -157,14 +148,14 @@ class UIGrammarInference:
         scroll_listStates.add(treeview_listStates)
         scroll_listStates.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_listStates.show()
-        leftFormTable.attach(scroll_listStates, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(scroll_listStates, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # CREATE A TRANSITION
         self.createTransitionButton = gtk.Button("Create a transition")
         self.createTransitionButton.show()
         self.createTransitionButton.connect("clicked", self.createTransition)
         self.createTransitionButton.set_sensitive(False)
-        leftFormTable.attach(self.createTransitionButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.createTransitionButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # The list of current transitions
         scroll_listTransitions = gtk.ScrolledWindow()
@@ -198,7 +189,7 @@ class UIGrammarInference:
         scroll_listTransitions.add(treeview_listTransitions)
         scroll_listTransitions.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_listTransitions.show()
-        leftFormTable.attach(scroll_listTransitions, 0, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(scroll_listTransitions, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         leftFormTable.show()
         self.mainPanel.pack_start(leftFormTable, False, False, 0)
@@ -667,8 +658,52 @@ class UIGrammarInference:
             self.createStateButton.set_sensitive(True)
             self.createTransitionButton.set_sensitive(True)
         
-    
         
+    def button_press_on_states(self, treeview, event):
+        self.log.warn("User requested a contextual menu (treeview group)")
+        x = int(event.x)
+        y = int(event.y)
+        info = treeview.get_path_at_pos(x, y)
+        clickedState = None
+        if info is not None :
+            path = info[0]
+            iter = treeview.get_model().get_iter(path)
+            idState = str(treeview.get_model().get_value(iter, 0))
+            for state in self.getGrammar().getStates() :
+                if state.getID() == idState :
+                    clickedState = state
+            
+            
+        if clickedState != None and event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+            self.build_context_menu_for_states(event, clickedState)
+        
+    #+---------------------------------------------- 
+    #| build_context_menu_for_states :
+    #|   Create a menu to display available operations
+    #|   on the treeview states
+    #+----------------------------------------------
+    def build_context_menu_for_states(self, event, state):
+        # Retrieves the group on which the user has clicked on
+        
+        entries = [        
+                  (gtk.STOCK_EDIT, self.displayPopupToEditState, (state != None)),
+                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveState, (state != None))
+        ]
+
+        menu = gtk.Menu()
+        for stock_id, callback, sensitive in entries:
+            item = gtk.ImageMenuItem(stock_id)
+            item.connect("activate", callback, state)  
+            item.set_sensitive(sensitive)
+            item.show()
+            menu.append(item)
+        menu.popup(None, None, None, event.button, event.time)    
+    
+    def displayPopupToEditState(self, event, state):
+        pass
+    def displayPopupToRemoveState(self, event, state):
+        pass
+    
     def getGrammar(self):
         if self.netzob.getCurrentProject() == None :
             return None 
