@@ -442,11 +442,11 @@ class Symbol(object):
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
-                for cell in self.getMessagesValuesByField(field) :
+                for cell in self.getMessagesValuesByField( field ) :
                     for match in regex.finditer(TypeConvertor.netzobRawToASCII(cell)):
                         matchElts += 1
                 if matchElts > 0:
-                    store.append([field, carver])
+                    store.append( [field.getIndex(), carver] )
 
         # Preview of matching fields in a treeview ## ListStore format :
         # str: data
@@ -554,7 +554,7 @@ class Symbol(object):
     #|  Called when user wants to apply a data type to a field
     #+----------------------------------------------
     def applyDataType_cb(self, button, iField, dataType):
-        self.getFieldById(iField).setDescriptionByCol(dataType)
+        self.getFieldByIndex(iField).setDescription(dataType)
 
     #+---------------------------------------------- 
     #| dataCarvingResultSelected_cb:
@@ -567,14 +567,14 @@ class Symbol(object):
         (model, it) = treeview.get_selection().get_selected()
         if(it):
             if(model.iter_is_valid(it)):
-                field = model.get_value(it, 0)
+                fieldIndex = model.get_value(it, 0)
                 dataType = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + field.getIndex())
+                treeviewTarget.get_column(0).set_title("Field " + str(fieldIndex))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, field, dataType)
-                for cell in self.getMessagesValuesByField(field) :
-                    cell = glib.markup_escape_text(typer.toASCII(cell))
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
+                for cell in self.getMessagesValuesByField( self.getFieldByIndex(fieldIndex) ) :
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
                         if match == None:
@@ -624,9 +624,7 @@ class Symbol(object):
         hbox.add(scroll)
 
         ## Algo : for each column, and then for each cell, try to find environmental dependency
-        
         for field in self.getFields():
-            
             for envDependency in project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES) :
                 if envDependency.getValue() == "":
                     break
@@ -688,7 +686,7 @@ class Symbol(object):
     #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
     def applyDependency_cb(self, button, iField, envName):
-        self.getFieldById(iField).setDescriptionByCol(envName)
+        self.getFieldByIndex(iField).setDescription(envName)
         pass
     
     #+---------------------------------------------- 
