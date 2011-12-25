@@ -443,7 +443,7 @@ class Symbol(object):
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
                 for cell in self.getMessagesValuesByField(field) :
-                    for match in regex.finditer(TypeConvertor.netzobRawtoASCII(cell)):
+                    for match in regex.finditer(TypeConvertor.netzobRawToASCII(cell)):
                         matchElts += 1
                 if matchElts > 0:
                     store.append([field, carver])
@@ -632,7 +632,7 @@ class Symbol(object):
                     break
                 matchElts = 0
                 for cell in self.getMessagesValuesByField(field):
-                    matchElts += TypeConvertor.netzobRawtoASCII(cell).count(envDependency.getValue())
+                    matchElts += TypeConvertor.netzobRawToASCII(cell).count(envDependency.getValue())
                 if matchElts > 0:
                     store.append([field, envDependency])
 
@@ -678,7 +678,7 @@ class Symbol(object):
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, env)
                 for cell in self.getMessagesValuesByField(field):
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawtoASCII(cell))
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
                     pattern = re.compile(env.getValue(), re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + env.getValue() + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])
