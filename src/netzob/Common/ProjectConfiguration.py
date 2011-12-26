@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -30,16 +31,12 @@
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
 
-
-
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.TypeConvertor import TypeConvertor
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from lxml import etree
- 
-
 
 #+---------------------------------------------------------------------------+
 #| ProjectConfiguration :
@@ -89,7 +86,6 @@ class ProjectConfiguration(object):
     def getGrammarInferenceParameter(self, name):
         return self.grammarInference[name]
     
-    
     def save(self, root, namespace):
         xmlConfiguration = etree.SubElement(root, "{" + namespace + "}configuration")
         xmlVocabularyInference = etree.SubElement(xmlConfiguration, "{" + namespace + "}vocabulary_inference")
@@ -114,14 +110,10 @@ class ProjectConfiguration(object):
         if envDependencies != None :
             for envDependency in envDependencies :
                 envDependency.save(xmlVocabularyInferenceEnvDependencies, namespace)
-                
-                
-        
-        
-        
-        
-        
-        
+
+    #+-----------------------------------------------------------------------+
+    #| Static methods
+    #+-----------------------------------------------------------------------+                
     @staticmethod
     def loadDefaultProjectConfiguration():
         projectConfiguration = ProjectConfiguration()
@@ -180,6 +172,3 @@ class ProjectConfiguration(object):
             # Load the configuration of the simulation
         
         return projectConfiguration
-        
-        
-    

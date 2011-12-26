@@ -42,8 +42,6 @@ from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransitio
 #+---------------------------------------------------------------------------+
 #| Grammar :
 #|     Class definition of a grammar
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Grammar(object):
     
@@ -58,7 +56,6 @@ class Grammar(object):
         self.initialState = initialState
         self.states.append(initialState)
         
-        
     def setInitialState(self, state):
         self.initialState = state    
     
@@ -71,15 +68,6 @@ class Grammar(object):
     def addTransition(self, transition):
         if not transition in self.transitions :
             self.transitions.append(transition)
-            
-    def getType(self):
-        return self.type
-    def getInitialState(self):
-        return self.initialState
-    def getStates(self):
-        return self.states
-    def getTransitions(self):
-        return self.transitions
     
     #+---------------------------------------------------------------------------+
     #| getDotCode :
@@ -103,9 +91,6 @@ class Grammar(object):
         
         dotCode = dotCode + "}"      
         return dotCode
-    
-    
-    
             
     def save(self, root, namespace):
         xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")
@@ -119,14 +104,14 @@ class Grammar(object):
         for transition in self.getTransitions():
             transition.save(xmlTransitions, namespace)
         
-        
-    
+    #+---------------------------------------------- 
+    #| Static methods
+    #+----------------------------------------------    
     @staticmethod
     def loadGrammar(xmlRoot, vocabulary, namespace, version):
         if version == "0.1" :
             grammarType = xmlRoot.get("type")
             initialStateID = xmlRoot.get("initialState")
-            
             states = []
             transitions = []
             if grammarType == "MMSTD" :
@@ -163,10 +148,20 @@ class Grammar(object):
                     grammar.addTransition(transition)
                 
                 return grammar
-            
             else :
                 logging.warn("Impossible to parse the grammar since its type (" + grammarType + ") is not supported.")
-               
+
+    #+---------------------------------------------- 
+    #| GETTERS
+    #+----------------------------------------------                    
+    def getType(self):
+        return self.type
+    def getInitialState(self):
+        return self.initialState
+    def getStates(self):
+        return self.states
+    def getTransitions(self):
+        return self.transitions
         
         
         

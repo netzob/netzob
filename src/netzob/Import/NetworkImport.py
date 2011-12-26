@@ -53,7 +53,8 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
-from netzob.Import.EnvDependancies import EnvDependancies
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
 #+---------------------------------------------------------------------------+ 
 #| Network :
@@ -93,10 +94,9 @@ class NetworkImport:
         self.dialog.set_size_request(900, 700)
         
     def init(self):
-        
 
         # create the environmental dependancy object
-        self.envDeps = EnvDependancies()
+        self.envDeps = EnvironmentalDependencies()
         
         # Network Capturing Panel
         self.panel = gtk.Table(rows=7, columns=4, homogeneous=False)
@@ -215,7 +215,6 @@ class NetworkImport:
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
-        
         currentProject = self.zob.getCurrentProject()
         # We compute the selected messages
         # Create the new XML structure
@@ -279,21 +278,22 @@ class NetworkImport:
         # We update the gui
         self.zob.update()
         
-        
-        
     #+---------------------------------------------- 
     #| Add a selection of packets to an existing project
     #+----------------------------------------------
     def saveMessagesInProject(self, project, messages):
-        
         # We create a symbol dedicated for this
         symbol = Symbol(uuid.uuid4(), "NETWORK IMPORT")
         for message in messages :
             symbol.addMessage(message)
-        
-        
+
+        # Add the symbol to the project
         symbol.addField(Field.createDefaultField())
         project.getVocabulary().addSymbol(symbol)
+
+        # Add the environmental dependencies to the project
+        project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
+                                                                   self.envDeps.getEnvData())
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details
@@ -314,7 +314,7 @@ class NetworkImport:
     #+----------------------------------------------
     def launch_sniff(self, button, dev, filter, count, time):
         button.set_sensitive(False)
-        self.envDeps.retrieveEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
+        self.envDeps.captureEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
         self.packets = []
         self.treestore.clear()
         self.textview.get_buffer().set_text("")

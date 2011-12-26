@@ -46,6 +46,8 @@ from netzob.Common.TypeIdentifier import TypeIdentifier
 from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.FileMessage import FileMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
 #+---------------------------------------------- 
 #| FileImport :
@@ -73,6 +75,9 @@ class FileImport:
     #+----------------------------------------------   
     def __init__(self, zob):        
         self.zob = zob
+
+        # create the environmental dependancy object
+        self.envDeps = EnvironmentalDependencies()
         
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.File.py')
@@ -205,7 +210,10 @@ class FileImport:
         
         symbol.addField(Field.createDefaultField())
         project.getVocabulary().addSymbol(symbol)
-        
+
+        # Add the environmental dependencies to the project
+        project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
+                                                                   self.envDeps.getEnvData())        
 
     #+---------------------------------------------- 
     #| Called when user import a file
@@ -235,10 +243,9 @@ class FileImport:
            
             self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), typer.hexdump(self.content), "normalTag")
             
-            # Fullfill the packets list
+            # Fill the packets list
             self.updatePacketList()
             
-            # 
     def entry_separator_callback(self, widget, entry):
         entry_text = widget.get_text()
         # transforms ; 2043 in [0x20; 0x43]
@@ -256,6 +263,7 @@ class FileImport:
         
 
     def updatePacketList(self):
+        self.envDeps.captureEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
         self.log.info("updating packet list")
         typer = TypeIdentifier()
         hexValOfContent = ";".join(str(int(i, 16)) for i in typer.ascii2hex(self.content))

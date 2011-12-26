@@ -116,8 +116,6 @@ class Project(object):
         self.vocabulary = Vocabulary()
         self.grammar = None
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
-        
-    
     
     def generateXMLConfigFile(self):
         

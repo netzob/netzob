@@ -48,11 +48,9 @@ import libNeedleman
 
 #+---------------------------------------------- 
 #| Group :
-#|     definition of a group of messages
-#| all the messages in the same group must be 
-#| considered as equivalent
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
+#|   Definition of a group of messages.
+#|   All the messages in the same group must be 
+#|   considered as equivalent.
 #+---------------------------------------------- 
 class Group(object):
     
@@ -81,8 +79,6 @@ class Group(object):
         self.alignment = ""
         self.columns = [] # each column element contains a dict : {'name', 'regex', 'selectedType', 'tabulation', 'description', 'color'}
 
-        
-
     def __repr__(self, *args, **kwargs):
         return self.name + "(" + str(round(self.score, 2)) + ")"
 
@@ -93,12 +89,6 @@ class Group(object):
         self.columns = []
         self.alignment = ""
         del self.messages[:]
-
-    
-
-    
-   
-    
         
     #+---------------------------------------------- 
     #| addMessage : add a message in the list
@@ -293,10 +283,6 @@ class Group(object):
                         styledCell = cell
                     treeviewTarget.get_model().append([ styledCell ])
 
-    
-
-    
-
     #+---------------------------------------------- 
     #| Type handling
     #+----------------------------------------------
@@ -326,12 +312,6 @@ class Group(object):
             self.log.warning("The possible types for the column " + str(iCol) + " are not defined ! ")
             return ["binary"]
 
-    
-
-    
-
-    
-
     #+---------------------------------------------- 
     #| GETTERS : 
     #+----------------------------------------------
@@ -353,8 +333,7 @@ class Group(object):
     def getColumns(self):
         return self.columns
     def getProperties(self):
-        return self.properties
-    
+        return self.properties    
     def getTabulationByCol(self, iCol):
         if iCol >= 0 and iCol < len(self.columns) :
             return self.columns[iCol]['tabulation']

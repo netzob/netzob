@@ -32,40 +32,38 @@ from lxml.etree import ElementTree
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 #| EnvironmentalDependency :
 #|     Class definition of an environmental dependency
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class EnvironmentalDependency(object):
     
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, type, value):
+    def __init__(self, name, aType, value):
         self.name = name
-        self.type = type
+        self.type = aType
         self.value = value
-        
     
     def save(self, root, namespace):
         environmental_dependency = etree.SubElement(root, "{" + namespace + "}environmental_dependency")
         environmental_dependency.set("name", str(self.name))
         environmental_dependency.set("type", str(self.type))
         environmental_dependency.text = str(self.value)
-    
-   
+
+    #+-----------------------------------------------------------------------+
+    #| GETTERS
+    #+-----------------------------------------------------------------------+   
     def getName(self):
         return self.name
     def getType(self):
         return self.type
     def getValue(self):
         return self.value
-    
+
+    #+-----------------------------------------------------------------------+
+    #| SETTERS
+    #+-----------------------------------------------------------------------+       
     def setName(self, name):
         self.name = name
     def setType(self, type):

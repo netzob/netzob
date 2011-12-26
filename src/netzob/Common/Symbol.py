@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -55,8 +54,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Symbol :
 #|     Class definition of a symbol
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Symbol(object):
     
@@ -70,7 +67,6 @@ class Symbol(object):
         self.score = 0.0
         self.messages = []
         self.fields = []
-        
     
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
@@ -294,7 +290,6 @@ class Symbol(object):
         self.fields.append(newField)
         # sort fields by their index
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-
     
     #+---------------------------------------------- 
     #| splitField:
@@ -392,7 +387,6 @@ class Symbol(object):
             if tmpTypes[i] == field.getSelectedType():
                 tmpTypes[i] = "<span foreground=\"red\">" + field.getSelectedType() + "</span>"
         return ", ".join(tmpTypes)
-    
     
     #+---------------------------------------------- 
     #| dataCarving:
@@ -603,8 +597,9 @@ class Symbol(object):
         # Treeview containing potential data carving results ## ListStore format :
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
+        # str: type
         # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
-        store = gtk.ListStore(int, str, str)
+        store = gtk.ListStore(int, str, str, str)
         treeviewRes = gtk.TreeView(store)
         cell = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Column')
@@ -632,7 +627,7 @@ class Symbol(object):
                 for cell in self.getMessagesValuesByField(field):
                     matchElts += TypeConvertor.netzobRawToASCII(cell).count(envDependency.getValue())
                 if matchElts > 0:
-                    store.append([field, envDependency])
+                    store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
         # Preview of matching fields in a treeview ## ListStore format :
         # str: data
@@ -669,53 +664,36 @@ class Symbol(object):
         (model, it) = treeview.get_selection().get_selected()
         if(it):
             if(model.iter_is_valid(it)):
-                field = model.get_value(it, 0)
-                env = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + field.getIndex())
+                fieldIndex = model.get_value(it, 0)
+                field = self.getFieldByIndex( fieldIndex )
+                envName = model.get_value(it, 1)
+                envType = model.get_value(it, 2)
+                envValue = model.get_value(it, 3)
+                treeviewTarget.get_column(0).set_title("Field " + str(field.getIndex()))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, env)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getMessagesValuesByField(field):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
-                    pattern = re.compile(env.getValue(), re.IGNORECASE)
-                    cell = pattern.sub('<span foreground="red" font_family="monospace">' + env.getValue() + "</span>", cell)
+                    pattern = re.compile(envValue, re.IGNORECASE)
+                    cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])
 
     #+---------------------------------------------- 
     #| applyDependency_cb:
     #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
-    def applyDependency_cb(self, button, iField, envName):
-        self.getFieldByIndex(iField).setDescription(envName)
+    def applyDependency_cb(self, button, field, envName):
+        field.setDescription( envName )
         pass
-    
+
     #+---------------------------------------------- 
     #| removeMessage : remove any ref to the given
     #| message and recompute regex and score
     #+----------------------------------------------
     def removeMessage(self, message):
         self.messages.remove(message)
-    
-    def getID(self):
-        return self.id
-    
-    def getMessages(self):
-        return self.messages
-    
-    
-    def getScore(self):
-        return self.score
-    
-    def getName(self):
-        return self.name
-    
-    def getFields(self):
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-        return self.fields
 
-    def setFields(self, fields):
-        self.fields = fields
-        
     def addMessage(self, message):
         for msg in self.messages :
             if msg.getID() == message.getID() :
@@ -724,16 +702,7 @@ class Symbol(object):
         self.messages.append(message)
         
     def addField(self, field):
-        self.fields.append(field)
-    def getAlignment(self):
-        return self.alignment.strip()
-    def setAlignment(self, alignment):
-        self.alignment = alignment
-    def setScore(self, score):
-        self.score = score
-    def setName(self, name):
-        self.name = name
-        
+        self.fields.append(field)        
     
     def save(self, root, namespace):
         xmlSymbol = etree.SubElement(root, "{" + namespace + "}symbol")
@@ -750,7 +719,39 @@ class Symbol(object):
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace + "}fields")
         for field in self.getFields() :
             field.save(xmlFields, namespace)
-        
+    
+    #+---------------------------------------------- 
+    #| GETTERS
+    #+----------------------------------------------    
+    def getID(self):
+        return self.id
+    def getMessages(self):
+        return self.messages
+    def getScore(self):
+        return self.score
+    def getName(self):
+        return self.name
+    def getFields(self):
+        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
+        return self.fields
+    def getAlignment(self):
+        return self.alignment.strip()
+
+    #+---------------------------------------------- 
+    #| SETTERS
+    #+----------------------------------------------
+    def setFields(self, fields):
+        self.fields = fields
+    def setAlignment(self, alignment):
+        self.alignment = alignment
+    def setScore(self, score):
+        self.score = score
+    def setName(self, name):
+        self.name = name
+
+    #+---------------------------------------------- 
+    #| Static methods
+    #+----------------------------------------------       
     @staticmethod
     def loadSymbol(xmlRoot, namespace, version):
         
