@@ -47,7 +47,6 @@ from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.TypeConvertor import TypeConvertor
 
-
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 
 def loadProject_0_1(projectFile):  

@@ -44,8 +44,8 @@ A field has four attributes~:
 Field's content can be~:
 
 * static ;
-* dependant of another field (or a set of fields) of the same message (intra-message dependancy) ;
-* dependant of a field (or a set of fields) of a previous message in the grammar (inter-message dependancy) ;
+* dependant of another field (or a set of fields) of the same message (intra-message dependency) ;
+* dependant of a field (or a set of fields) of a previous message in the grammar (inter-message dependency) ;
 * dependant of the environment ;
 * dependant of the application behaviour (which could depend on the user behaviour) ;
 * random (the initial value of the TCP sequence number for example).

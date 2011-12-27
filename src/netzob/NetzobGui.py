@@ -105,7 +105,6 @@ class NetzobGui():
         main_vbox = gtk.VBox(False, spacing=0)
         
         # Main menu
-#        menubar = self.get_main_menu(window)
         self.menu = Menu(self)
         menubar = self.menu.getMenuBar()
         main_vbox.pack_start(menubar, False, True, 0)

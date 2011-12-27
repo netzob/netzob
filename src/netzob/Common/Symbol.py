@@ -35,6 +35,7 @@ from operator import attrgetter
 import re
 import glib
 from lxml.etree import ElementTree
+import struct
 
 #+---------------------------------------------------------------------------+
 #| Local Imports

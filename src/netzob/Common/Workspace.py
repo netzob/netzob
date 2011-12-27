@@ -73,7 +73,6 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
         xmlProjects = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects")
         if xmlProjects.get("last", "none") != "none" :
             lastProject = xmlProjects.get("last", "none") 
-        
     
     # Instantiation of the workspace
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
@@ -131,9 +130,7 @@ class Workspace(object):
             project = Project.loadProject(self, project_path)
             if project != None :
                 projects.append(project)
-                
         return projects
-           
     
     def getLastProject(self):
         if self.lastProjectPath == None :
