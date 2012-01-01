@@ -123,21 +123,7 @@ class UISimulator:
         self.tableFormNewActor.attach(label_actorName, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.entry_actorName, 1, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-        # Available grammars
-        label_grammar = gtk.Label("Grammar : ")
-        label_grammar.show()
-        self.combo_grammar = gtk.combo_box_entry_new_text()
-        self.combo_grammar.set_model(gtk.ListStore(str))
-        possible_grammars = self.getAvailableGrammars()
-        for i in range(len(possible_grammars)):
-            self.combo_grammar.append_text(possible_grammars[i])
-            
-            if config.get("simulating", "grammar") != None and  config.get("simulating", "grammar") == possible_grammars[i] :
-                self.combo_grammar.set_active(i)
-            
-        self.combo_grammar.show()
-        self.tableFormNewActor.attach(label_grammar, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.tableFormNewActor.attach(self.combo_grammar, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
         
         # Type of actor
         label_typeOfActor = gtk.Label("Type of actor : ")
@@ -153,8 +139,8 @@ class UISimulator:
             self.combo_typeOfActor.set_active(1)
         
         self.combo_typeOfActor.show()
-        self.tableFormNewActor.attach(label_typeOfActor, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.tableFormNewActor.attach(self.combo_typeOfActor, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(label_typeOfActor, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.combo_typeOfActor, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Network layer actor
         label_typeOfNetworkActor = gtk.Label("Network layer : ")
@@ -170,8 +156,8 @@ class UISimulator:
             self.combo_typeOfNetworkActor.set_active(1)
         
         self.combo_typeOfNetworkActor.show()
-        self.tableFormNewActor.attach(label_typeOfNetworkActor, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.tableFormNewActor.attach(self.combo_typeOfNetworkActor, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(label_typeOfNetworkActor, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.combo_typeOfNetworkActor, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Network protocol
         label_protocolOfNetworkActor = gtk.Label("Network Protocol : ")
@@ -410,32 +396,7 @@ class UISimulator:
         # Update the GUI
         self.refreshGUI(1)
         
-    #+---------------------------------------------- 
-    #| getAvailableGrammars :
-    #| Retrieves the available grammars represented by
-    #| a dedicated xml file in the ressources directory
-    #| @return a list of xml files
-    #+----------------------------------------------   
-    def getAvailableGrammars(self):
-        # Scan the directory of grammars and retrieve them
-        grammar_directory = ConfigurationParser().get("automata", "path")  
-        
-        if grammar_directory == "" or not os.path.isdir(grammar_directory) :
-            self.log.warn("Unable to load the grammar directory")
-            return []
-        
-        # a temporary list in which all the files
-        temporaryListOfFiles = []
-         
-        # list all the files (except .svn)
-        for file in os.listdir(grammar_directory):
-            pathOfAutomata = os.path.join(grammar_directory, file)
-            
-            if os.path.isfile(pathOfAutomata) :
-                temporaryListOfFiles.append(file)
-            
-        # Sort and add to the entry
-        return sorted(temporaryListOfFiles)
+    
     
     #+---------------------------------------------- 
     #| startSelectedActor :
@@ -484,7 +445,6 @@ class UISimulator:
     def addActor(self, widget):
         # Retrieves the value of the form to create the actor
         actorName = self.entry_actorName.get_text()
-        actorGrammar = self.combo_grammar.get_active_text()
         actorGrammarType = self.combo_typeOfActor.get_active_text()
         actorNetworkProtocol = self.combo_protocolOfNetworkActor.get_active_text()
         actorNetworkType = self.combo_typeOfNetworkActor.get_active_text()
@@ -497,16 +457,9 @@ class UISimulator:
                 self.log.warn("Impossible to create the requested actor since another one has the same name")
                 return
         
-        self.log.info("Will add an actor named " + actorName + " (" + actorGrammar + ")")
+        self.log.info("Will add an actor named " + actorName)
         
-        # First we load the xml definition of the automata     
-        grammar_directory = ConfigurationParser().get("automata", "path") 
-        xmlFile = os.path.join(grammar_directory, actorGrammar)
-        tree = ElementTree()
-        tree.parse(xmlFile)
-        # Load the automata based on its XML definition
-        automata = MMSTDXmlParser.MMSTDXmlParser.loadFromXML(tree.getroot())
-        
+        grammar = self.netzob.getCurrentProject().getGrammar()
         # We create an actor based on given informations
         if actorGrammarType == "MASTER" :
             isMaster = True
@@ -520,10 +473,10 @@ class UISimulator:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
         
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, automata.getDictionary())
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary())
         
         # And we create an MMSTD visitor for this
-        visitor = MMSTDVisitor.MMSTDVisitor(actorName, automata, isMaster, abstractionLayer) 
+        visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar, isMaster, abstractionLayer) 
             
         # add the actor to the list
         self.actors.append(visitor)
@@ -531,15 +484,14 @@ class UISimulator:
         # update the list of actors
         self.updateListOfActors()
         
-        # we save the form in the configuration considering its a valid one
-        config = ConfigurationParser()
-        config.set("simulating", "actorName", actorName)
-        config.set("simulating", "grammar", actorGrammar)
-        config.set("simulating", "typeOfActor", actorGrammarType)
-        config.set("simulating", "networkLayer", actorNetworkType)
-        config.set("simulating", "networkProtocol", actorNetworkProtocol)
-        config.set("simulating", "ip", actorIP)
-        config.set("simulating", "port", int(actorPort))
+#        # we save the form in the configuration considering its a valid one
+#        config = ConfigurationParser()
+#        config.set("simulating", "actorName", actorName)
+#        config.set("simulating", "typeOfActor", actorGrammarType)
+#        config.set("simulating", "networkLayer", actorNetworkType)
+#        config.set("simulating", "networkProtocol", actorNetworkProtocol)
+#        config.set("simulating", "ip", actorIP)
+#        config.set("simulating", "port", int(actorPort))
         
     def updateListOfActors(self):        
 #        self.treestore_listActiveActors.clear()
