@@ -34,14 +34,8 @@ from lxml.etree import ElementTree
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 #| Field :
 #|     Class definition of a field
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Field(object):
     
@@ -65,45 +59,13 @@ class Field(object):
             return True
         else:
             return False
+
     def isRegexOnlyDynamic(self):
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
             return True
         else:
             return False    
-        
-    
-    
-    def getName(self):
-        return self.name
-    def getEncapsulationLevel(self):
-        return self.encapsulation_level
-    def getRegex(self):
-        return self.regex
-    def getSelectedType(self):
-        return self.selected_type
-    def getDescription(self):
-        return self.description
-    def getColor(self):
-        return self.color
-    def getIndex(self):
-        return self.index
-    
-    def setName(self, name):
-        self.name = name
-    def setEncapsulationLevel(self, level):
-        self.encapsulation_level = level
-    def setRegex(self, regex):
-        self.regex = regex
-    def setSelectedType(self, type):
-        self.selected_type = type
-    def setDescription(self, description):
-        self.description = description
-    def setColor(self, color):
-        self.color = color
-    def setIndex(self, index):
-        self.index = index
-    
-    
+
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
@@ -122,6 +84,45 @@ class Field(object):
         xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}color")
         xmlFieldRegex.text = str(self.getColor())
     
+    #+---------------------------------------------- 
+    #| GETTERS
+    #+----------------------------------------------         
+    def getName(self):
+        return self.name
+    def getEncapsulationLevel(self):
+        return self.encapsulation_level
+    def getRegex(self):
+        return self.regex
+    def getSelectedType(self):
+        return self.selected_type
+    def getDescription(self):
+        return self.description
+    def getColor(self):
+        return self.color
+    def getIndex(self):
+        return self.index
+
+    #+---------------------------------------------- 
+    #| SETTERS
+    #+----------------------------------------------         
+    def setName(self, name):
+        self.name = name
+    def setEncapsulationLevel(self, level):
+        self.encapsulation_level = level
+    def setRegex(self, regex):
+        self.regex = regex
+    def setSelectedType(self, type):
+        self.selected_type = type
+    def setDescription(self, description):
+        self.description = description
+    def setColor(self, color):
+        self.color = color
+    def setIndex(self, index):
+        self.index = index
+
+    #+---------------------------------------------- 
+    #| Static methods
+    #+----------------------------------------------             
     @staticmethod
     def createDefaultField():
         return Field("Default", 0, 0, "(.{,})", "binary")

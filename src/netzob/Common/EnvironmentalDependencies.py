@@ -34,13 +34,16 @@ import socket
 from uuid import getnode as get_mac_address
 import time
 
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
+
 #+---------------------------------------------- 
 #| EnvDependancies :
 #|     Handle environmental dependancies
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
-class EnvDependancies(object):
+class EnvironmentalDependencies(object):
     
     #+---------------------------------------------- 
     #| Constructor :
@@ -48,46 +51,46 @@ class EnvDependancies(object):
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.EnvDependancies.py')
-        self.envData = {} # Dict containing environment data
+        self.envData = [] # List containing environmental data
 
     #+---------------------------------------------- 
-    #| retrieveEnvData: 
-    #|   Retrieve environmental data,
+    #| captureEnvData: 
+    #|   Capture environmental data,
     #|   like local IP address, Ethernet address, etc.
     #+----------------------------------------------
-    def retrieveEnvData(self):
+    def captureEnvData(self):
         # OS specific
-        self.envData['os_name'] = [ os.uname()[0] ] # for example 'Linux'
-        self.envData['os_family'] = [ os.name ] # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
-        self.envData['os_version'] = [ os.uname()[2] ] # result of 'uname -r' under linux
-        self.envData['os_arch'] = [ os.uname()[4] ] # result of 'uname -m' under linux
+        self.envData.append( EnvironmentalDependency("os_name", "ascii", os.uname()[0]) ) # for example 'Linux'
+        self.envData.append( EnvironmentalDependency("os_family", "ascii", os.name) ) # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
+        self.envData.append( EnvironmentalDependency("os_version", "ascii", os.uname()[2]) ) # result of 'uname -r' under linux
+        self.envData.append( EnvironmentalDependency("os_arch", "ascii", os.uname()[4]) ) # result of 'uname -m' under linux
 
         # User specific
-        self.envData['user_home_dir'] = [ os.environ['HOME'] ]
-        self.envData['user_name'] = [ os.environ['USERNAME'] ]
-        self.envData['user_lang'] = [ os.environ['LANG'] ]
+        self.envData.append( EnvironmentalDependency("user_home_dir", "ascii", os.environ['HOME']) )
+        self.envData.append( EnvironmentalDependency("user_name", "ascii", os.environ['USERNAME']) )
+        self.envData.append( EnvironmentalDependency("user_lang", "ascii", os.environ['LANG']) )
 
         # System specific
-        self.envData['hostname'] = [ socket.gethostname() ]
-        self.envData['domainname'] = [ "".join( socket.getfqdn().split(".", 1)[1:] ) ]
+        self.envData.append( EnvironmentalDependency("hostname", "ascii", socket.gethostname()) )
+        self.envData.append( EnvironmentalDependency("domainname", "ascii", "".join( socket.getfqdn().split(".", 1)[1:] )) )
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("gmail.com",80))
-        ip_address = s.getsockname()[0]
-        s.close()
+        # Trick to retrieve the usual IP address
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("gmail.com",80))
+            ip_address = s.getsockname()[0]
+            s.close()
+        except:
+            ip_address = "127.0.0.1"
 
-        self.envData['ip_addresses'] = [ "127.0.0.1", ip_address ]
-        self.envData['mac_addresses'] = [ hex(int(get_mac_address()))[2:-1] ]
+        self.envData.append( EnvironmentalDependency("ip_address", "ascii", ip_address) )
+        self.envData.append( EnvironmentalDependency("mac_address", "ascii", hex(int(get_mac_address()))[2:-1]) )
 
         # Misc        
-        self.envData['date'] = [ str(time.time()) ] # elapsed second since epoch in UTC
+        self.envData.append( EnvironmentalDependency("date", "ascii", str(time.time())) ) # elapsed second since epoch in UTC
 
     #+---------------------------------------------- 
-    #| getXML: 
-    #|   Retrieve the XML format of the self.envData dict
+    #| GETTERS
     #+----------------------------------------------
-    def getXML(self):
-        res = []
-        for (name,value) in self.envData.items():
-            res.append( "<envData name=\"" + name + "\" value=\"" + ";".join(value) + "\" />" )
-        return "\n".join(res)
+    def getEnvData(self):
+        return self.envData

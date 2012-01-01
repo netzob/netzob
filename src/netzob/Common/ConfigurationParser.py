@@ -33,10 +33,6 @@ import logging
 import ConfigParser
 
 #+---------------------------------------------- 
-#| Related third party imports
-#+----------------------------------------------
-
-#+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
@@ -45,8 +41,6 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 #| ConfigurationParser :
 #|     extracts from the configuration file the 
 #|     requested value
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class ConfigurationParser(object):
     
@@ -87,7 +81,6 @@ class ConfigurationParser(object):
             return self.config.getint(section, name)
         else :
             return None
-        
     
     def getFloat(self, section, name):
         return self.config.getfloat(section, name)
@@ -103,7 +96,6 @@ class ConfigurationParser(object):
         self.config.set(section, name, value)
         if self.configurationFilePath != "" and os.path.isfile(self.configurationFilePath) :
             self.config.write(open(self.configurationFilePath, "w"))
-    
     
     @staticmethod
     def createDefault():

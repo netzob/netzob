@@ -54,7 +54,6 @@ from netzob.Import.IpcImport import IpcImport
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
 from netzob.Fuzzing.UIfuzzing import UIfuzzing
-
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
 from netzob.Common.ConfigurationParser import ConfigurationParser
@@ -67,8 +66,6 @@ from netzob.Common.Workspace import Workspace
 #+---------------------------------------------- 
 #| NetzobGUI :
 #|     Graphical runtime class
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class NetzobGui():
 
@@ -108,7 +105,6 @@ class NetzobGui():
         main_vbox = gtk.VBox(False, spacing=0)
         
         # Main menu
-#        menubar = self.get_main_menu(window)
         self.menu = Menu(self)
         menubar = self.menu.getMenuBar()
         main_vbox.pack_start(menubar, False, True, 0)
@@ -149,6 +145,14 @@ class NetzobGui():
         main_vbox.show()
         window.add(main_vbox)
         window.show()
+
+    #+---------------------------------------------- 
+    #| Update each panels
+    #+----------------------------------------------
+    def update(self):
+        for page in self.pageList:
+            page[1].clear()
+            page[1].update()
         
     def switchCurrentProject(self, project):        
         self.log.debug("The current project is : " + project.getName())
@@ -159,11 +163,6 @@ class NetzobGui():
             page[1].new()            
         self.update()
 
-    def getCurrentProject(self):
-        return self.currentProject
-    def getCurrentWorkspace(self):
-        return self.currentWorkspace
-        
     def offerToSaveCurrentProject(self):
         questionMsg = "Do you want to save the current project (" + self.getCurrentProject().getName() + ")"
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
@@ -182,7 +181,6 @@ class NetzobGui():
         return False
 
     def destroy(self, widget, data=None):
-        
         # Before exiting, we compute if its necessary to save
         # it means we simulate a save and compare the XML with the current one
         if self.getCurrentProject() != None and self.getCurrentProject().hasPendingModifications(self.getCurrentWorkspace()) :
@@ -208,18 +206,13 @@ class NetzobGui():
         for page in self.pageList:
             if page[0] == nameTab:
                 page[1].update()
-
-    
-
    
-    #+---------------------------------------------- 
-    #| Update each panels
-    #+----------------------------------------------
-    def update(self):
-        for page in self.pageList:
-            page[1].clear()
-            page[1].update()
-            
+    def getCurrentProject(self):
+        return self.currentProject
+
+    def getCurrentWorkspace(self):
+        return self.currentWorkspace
+
     def getDictionary(self):
         actorGrammar = "example_learning.xml"
         grammar_directory = ConfigurationParser().get("automata", "path") 
@@ -235,10 +228,6 @@ class NetzobGui():
 #| RUNTIME
 #+----------------------------------------------
 if __name__ == "__main__":
-    # for handling GUI access from threads
-    gobject.threads_init()
-        
+    gobject.threads_init() # for handling GUI access from threads
     netZobGUI = NetzobGui()
     netZobGUI.startGui()
-        
-        

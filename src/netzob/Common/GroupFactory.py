@@ -25,10 +25,6 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
-#| Standard library imports
-#+---------------------------------------------------------------------------+
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -40,12 +36,9 @@ from lxml.etree import ElementTree
 from netzob.Common.Group import Group
 from lxml import etree
 
-
 #+---------------------------------------------------------------------------+
 #| GroupFactory :
 #|     Factory dedicated to the manipulation of a group
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| XML Definition :
 #| <group id="" name="" score="" alignment="">

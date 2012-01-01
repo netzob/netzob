@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -36,6 +35,7 @@ from operator import attrgetter
 import re
 import glib
 from lxml.etree import ElementTree
+import struct
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -55,8 +55,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Symbol :
 #|     Class definition of a symbol
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Symbol(object):
     
@@ -70,7 +68,6 @@ class Symbol(object):
         self.score = 0.0
         self.messages = []
         self.fields = []
-        
     
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
@@ -294,7 +291,6 @@ class Symbol(object):
         self.fields.append(newField)
         # sort fields by their index
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-
     
     #+---------------------------------------------- 
     #| splitField:
@@ -393,7 +389,6 @@ class Symbol(object):
                 tmpTypes[i] = "<span foreground=\"red\">" + field.getSelectedType() + "</span>"
         return ", ".join(tmpTypes)
     
-    
     #+---------------------------------------------- 
     #| dataCarving:
     #|  try to find semantic elements in each field
@@ -442,11 +437,11 @@ class Symbol(object):
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
-                for cell in self.getMessagesValuesByField(field) :
-                    for match in regex.finditer(TypeConvertor.netzobRawtoASCII(cell)):
+                for cell in self.getMessagesValuesByField( field ) :
+                    for match in regex.finditer(TypeConvertor.netzobRawToASCII(cell)):
                         matchElts += 1
                 if matchElts > 0:
-                    store.append([field, carver])
+                    store.append( [field.getIndex(), carver] )
 
         # Preview of matching fields in a treeview ## ListStore format :
         # str: data
@@ -554,7 +549,7 @@ class Symbol(object):
     #|  Called when user wants to apply a data type to a field
     #+----------------------------------------------
     def applyDataType_cb(self, button, iField, dataType):
-        self.getFieldById(iField).setDescriptionByCol(dataType)
+        self.getFieldByIndex(iField).setDescription(dataType)
 
     #+---------------------------------------------- 
     #| dataCarvingResultSelected_cb:
@@ -567,14 +562,14 @@ class Symbol(object):
         (model, it) = treeview.get_selection().get_selected()
         if(it):
             if(model.iter_is_valid(it)):
-                field = model.get_value(it, 0)
+                fieldIndex = model.get_value(it, 0)
                 dataType = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + field.getIndex())
+                treeviewTarget.get_column(0).set_title("Field " + str(fieldIndex))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, field, dataType)
-                for cell in self.getMessagesValuesByField(field) :
-                    cell = glib.markup_escape_text(typer.toASCII(cell))
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
+                for cell in self.getMessagesValuesByField( self.getFieldByIndex(fieldIndex) ) :
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
                         if match == None:
@@ -603,8 +598,9 @@ class Symbol(object):
         # Treeview containing potential data carving results ## ListStore format :
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
+        # str: type
         # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
-        store = gtk.ListStore(int, str, str)
+        store = gtk.ListStore(int, str, str, str)
         treeviewRes = gtk.TreeView(store)
         cell = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Column')
@@ -624,17 +620,15 @@ class Symbol(object):
         hbox.add(scroll)
 
         ## Algo : for each column, and then for each cell, try to find environmental dependency
-        
         for field in self.getFields():
-            
             for envDependency in project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES) :
                 if envDependency.getValue() == "":
                     break
                 matchElts = 0
                 for cell in self.getMessagesValuesByField(field):
-                    matchElts += TypeConvertor.netzobRawtoASCII(cell).count(envDependency.getValue())
+                    matchElts += TypeConvertor.netzobRawToASCII(cell).count(envDependency.getValue())
                 if matchElts > 0:
-                    store.append([field, envDependency])
+                    store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
         # Preview of matching fields in a treeview ## ListStore format :
         # str: data
@@ -671,53 +665,36 @@ class Symbol(object):
         (model, it) = treeview.get_selection().get_selected()
         if(it):
             if(model.iter_is_valid(it)):
-                field = model.get_value(it, 0)
-                env = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + field.getIndex())
+                fieldIndex = model.get_value(it, 0)
+                field = self.getFieldByIndex( fieldIndex )
+                envName = model.get_value(it, 1)
+                envType = model.get_value(it, 2)
+                envValue = model.get_value(it, 3)
+                treeviewTarget.get_column(0).set_title("Field " + str(field.getIndex()))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, env)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getMessagesValuesByField(field):
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawtoASCII(cell))
-                    pattern = re.compile(env.getValue(), re.IGNORECASE)
-                    cell = pattern.sub('<span foreground="red" font_family="monospace">' + env.getValue() + "</span>", cell)
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
+                    pattern = re.compile(envValue, re.IGNORECASE)
+                    cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])
 
     #+---------------------------------------------- 
     #| applyDependency_cb:
     #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
-    def applyDependency_cb(self, button, iField, envName):
-        self.getFieldById(iField).setDescriptionByCol(envName)
+    def applyDependency_cb(self, button, field, envName):
+        field.setDescription( envName )
         pass
-    
+
     #+---------------------------------------------- 
     #| removeMessage : remove any ref to the given
     #| message and recompute regex and score
     #+----------------------------------------------
     def removeMessage(self, message):
         self.messages.remove(message)
-    
-    def getID(self):
-        return self.id
-    
-    def getMessages(self):
-        return self.messages
-    
-    
-    def getScore(self):
-        return self.score
-    
-    def getName(self):
-        return self.name
-    
-    def getFields(self):
-        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-        return self.fields
 
-    def setFields(self, fields):
-        self.fields = fields
-        
     def addMessage(self, message):
         for msg in self.messages :
             if msg.getID() == message.getID() :
@@ -726,16 +703,7 @@ class Symbol(object):
         self.messages.append(message)
         
     def addField(self, field):
-        self.fields.append(field)
-    def getAlignment(self):
-        return self.alignment.strip()
-    def setAlignment(self, alignment):
-        self.alignment = alignment
-    def setScore(self, score):
-        self.score = score
-    def setName(self, name):
-        self.name = name
-        
+        self.fields.append(field)        
     
     def save(self, root, namespace):
         xmlSymbol = etree.SubElement(root, "{" + namespace + "}symbol")
@@ -752,7 +720,39 @@ class Symbol(object):
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace + "}fields")
         for field in self.getFields() :
             field.save(xmlFields, namespace)
-        
+    
+    #+---------------------------------------------- 
+    #| GETTERS
+    #+----------------------------------------------    
+    def getID(self):
+        return self.id
+    def getMessages(self):
+        return self.messages
+    def getScore(self):
+        return self.score
+    def getName(self):
+        return self.name
+    def getFields(self):
+        self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
+        return self.fields
+    def getAlignment(self):
+        return self.alignment.strip()
+
+    #+---------------------------------------------- 
+    #| SETTERS
+    #+----------------------------------------------
+    def setFields(self, fields):
+        self.fields = fields
+    def setAlignment(self, alignment):
+        self.alignment = alignment
+    def setScore(self, score):
+        self.score = score
+    def setName(self, name):
+        self.name = name
+
+    #+---------------------------------------------- 
+    #| Static methods
+    #+----------------------------------------------       
     @staticmethod
     def loadSymbol(xmlRoot, namespace, version):
         

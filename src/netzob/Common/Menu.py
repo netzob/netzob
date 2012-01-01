@@ -42,16 +42,8 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 import os
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
-#+---------------------------------------------------------------------------+
-
-
-
-#+---------------------------------------------------------------------------+
 #| Menu :
 #|     Class definition of the menu
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Menu(object):
     
@@ -65,7 +57,6 @@ class Menu(object):
         # creation of the menu entries
         self.menuBar = gtk.MenuBar()
         
-        
         # Creation of the Workspace menu
         self.createWorkspaceMenu()
         
@@ -76,7 +67,6 @@ class Menu(object):
         self.createHelpMenu()
         
         self.menuBar.show_all()
-        
         
     def createHelpMenu(self):
         self.menuHelp = gtk.Menu()
