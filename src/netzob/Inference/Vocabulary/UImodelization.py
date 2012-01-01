@@ -1318,8 +1318,8 @@ class UImodelization:
         ## TODO: put this at the end of the alignement process
         if self.netzob.getCurrentProject() != None :
         
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                self.treeMessageGenerator.default(symbol)
+#            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+#                self.treeMessageGenerator.default(symbol)
         
             searchPanel = SearchView(self.netzob.getCurrentProject())
             dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
