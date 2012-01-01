@@ -357,14 +357,16 @@ class NetworkImport:
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
             if ip.get_ip_p() == Packets.UDP.protocol: 
                 udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
-                self.packets.append(payload)
-                        
+                if len(udp.get_data_as_string()) > 0 :
+                    self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
+                    self.packets.append(payload)
+                            
             if ip.get_ip_p() == Packets.TCP.protocol :
                 tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])  
-                self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
-                self.packets.append(payload)
-                
+                if len(tcp.get_data_as_string()) > 0 :
+                    self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
+                    self.packets.append(payload)
+                    
     #+---------------------------------------------- 
     #| GETTERS
     #+----------------------------------------------
