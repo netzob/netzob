@@ -160,10 +160,10 @@ class AbstractMessage():
             if field.getRegex().find("(") != -1: # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
-                if field.getColor() == "" or field.getColor() == None:
-                    color = 'blue'
-                else:
+                if field.getColor() != "" and field.getColor() != None and field.getColor() != "black":
                     color = field.getColor()
+                else:
+                    color = 'blue'
                 if styled:
                     if encoded:
                         res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getSelectedType())) + '</span>')

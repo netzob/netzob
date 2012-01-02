@@ -161,9 +161,9 @@ class UImodelization:
 #        but.set_sensitive(False)
 #        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        ## Message format inferrence
+        ## Message format inference
         frame = gtk.Frame()
-        frame.set_label("2 - Message format inferrence")
+        frame.set_label("2 - Message format inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
@@ -201,9 +201,9 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
-        ## Field type inferrence
+        ## Field type inference
         frame = gtk.Frame()
-        frame.set_label("3 - Field type inferrence")
+        frame.set_label("3 - Field type inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=2, homogeneous=False)
@@ -238,9 +238,9 @@ class UImodelization:
         table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         table.attach(combo, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        ## Dependencies inferrence
+        ## Dependencies inference
         frame = gtk.Frame()
-        frame.set_label("4 - Dependencies inferrence")
+        frame.set_label("4 - Dependencies inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -260,9 +260,9 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        ## Semantic inferrence
+        ## Semantic inference
         frame = gtk.Frame()
-        frame.set_label("5 - Semantic inferrence")
+        frame.set_label("5 - Semantic inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -1252,7 +1252,6 @@ class UImodelization:
 #            # enable dragging message out of current symbol
 #            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
-        # Else, quite weird so throw a warning
         else :
             self.treeMessageGenerator.default(None)
             

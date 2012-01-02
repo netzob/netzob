@@ -81,13 +81,13 @@ class Symbol(object):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         # Use the default protocol type for representation
-        display = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        encodingType = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
         
         self.fields = []
         
         # If only one message (easy)
         if len(self.getMessages()) == 1 :
-            field = Field("Field 0", 0, 0, self.getMessages()[0].getStringData(), display)
+            field = Field("Field 0", 0, 0, self.getMessages()[0].getStringData(), encodingType)
             self.addField(field)
             return
         
@@ -175,11 +175,11 @@ class Symbol(object):
             regex.append("(.{," + str(nbTiret) + "})")
 
         # Use the default protocol type for representation
-        display = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        encodingType = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
 
         iField = 0
         for regexElt in regex:
-            field = Field("Field " + str(iField), 0, iField, regexElt, display)
+            field = Field("Field " + str(iField), 0, iField, regexElt, encodingType)
             self.addField(field)
             iField = iField + 1
 
@@ -193,7 +193,7 @@ class Symbol(object):
         self.setFields([])
 
         # Use the default protocol type for representation
-        display = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        encodingType = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
 
         minNbSplit = 999999
         maxNbSplit = -1
@@ -214,10 +214,10 @@ class Symbol(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field("Name", 0, iField, "", display, "", "blue")
+            field = Field("Name", 0, iField, "", encodingType, "", "blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", 0, iField, "", display, "", "black")
+            field = Field("__sep__", 0, iField, "", encodingType, "", "black")
             self.addField(field)
         self.popField()
 

@@ -56,7 +56,12 @@ class Field(object):
         self.color = color
     
     def getEncodedVersionOfTheRegex(self):
-        return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)  
+        if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files store None as a string...
+            return ""
+        elif self.regex.find("{") != -1: # This is a real regex
+            return self.regex
+        else: # This is a simple value
+            return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)
     
     def isRegexStatic(self):
         if self.regex.find("{") == -1:
