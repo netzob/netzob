@@ -94,7 +94,7 @@ class Vocabulary(object):
         
     #+---------------------------------------------- 
     #| alignWithNeedlemanWunsh:
-    #|  Align each messages of each group with the
+    #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
     def alignWithNeedlemanWunsh(self, configuration, callback):
@@ -104,21 +104,21 @@ class Vocabulary(object):
         # We try to clusterize each symbol
         for symbol in self.symbols :
             clusterer = Clusterer(configuration, [symbol], explodeSymbols=True)
-            clusterer.mergeGroups()
+            clusterer.mergeSymbols()
             tmpSymbols.extend(clusterer.getSymbols())
                 
-        # Now that all the groups are reorganized separately
+        # Now that all the symbols are reorganized separately
         # we should consider merging them
         logging.info("Merging the symbols extracted from the different files")
         clusterer = Clusterer(configuration, tmpSymbols, explodeSymbols=False)
-        clusterer.mergeGroups()
+        clusterer.mergeSymbols()
         
         # Now we execute the second part of NETZOB Magical Algorithms :)
-        # clean the single groups  
+        # clean the single symbols  
         mergeOrphanReduction = configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)          
         if mergeOrphanReduction :
-            logging.info("Merging the orphan groups") 
-            clusterer.mergeOrphanGroups()
+            logging.info("Merging the orphan symbols") 
+            clusterer.mergeOrphanSymbols()
 
         logging.info("Time of parsing : " + str(time.time() - t1))
         

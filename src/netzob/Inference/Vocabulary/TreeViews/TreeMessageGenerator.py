@@ -32,13 +32,11 @@ import logging
 import pango
 import gobject
 import gtk
-from netzob.Common.Field import Field
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-
-
+from netzob.Common.Field import Field
 
 #+---------------------------------------------- 
 #| TreeMessageGenerator :
@@ -142,11 +140,7 @@ class TreeMessageGenerator():
         regex_row.append(True)
         
         for field in self.symbol.getFields():         
-            if field.isRegexStatic() :
-                regex_row.append(field.getEncodedVersionOfTheRegex())
-            else :
-                regex_row.append(field.getRegex())
-                
+            regex_row.append(field.getEncodedVersionOfTheRegex())
         self.treestore.append(None, regex_row)
 
         # Build the types row

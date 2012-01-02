@@ -38,13 +38,9 @@ import nfqueue
 import socket
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Fuzzing.TreeViews.TreeGroupGenerator import TreeGroupGenerator
+from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+---------------------------------------------------------------------------+ 
@@ -58,7 +54,7 @@ class Network:
         pass
 
     def update(self):
-        self.treeGroupGenerator.update()
+        self.treeSymbolGenerator.update()
         self.treeTypeStructureGenerator.update()
 
     def clear(self):
@@ -81,7 +77,7 @@ class Network:
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.Network.py')
         self.netzob = netzob
-        self.selectedGroup = None
+        self.selectedSymbol = None
         self.aFuzzThread = None
         self.packets = [] 
         self.panel = gtk.VPaned()
@@ -98,11 +94,11 @@ class Network:
         vb_left_panel.set_size_request(-1, -1)
         vb_left_panel.show()
 
-        # Initialize the treeview generator for the groups
-        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
-        self.treeGroupGenerator.initialization()
-        vb_left_panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
-        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
+        # Initialize the treeview generator for the symbols
+        self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
+        self.treeSymbolGenerator.initialization()
+        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
+        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected) 
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
@@ -191,32 +187,33 @@ class Network:
     #| update:
     #|   Update the Treestore
     #+---------------------------------------------- 
-    def groupSelected(self, treeview):
+    def symbolSelected(self, treeview):
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
-                # Retrieve the selected group
-                idGroup = model.get_value(iter, 0)
-                self.selectedGroup = idGroup
-                group = None
-                for tmp_group in self.netzob.groups.getGroups() :
-                    if str(tmp_group.getID()) == idGroup :
-                        group = tmp_group
+                # Retrieve the selected symbol
+                idSymbol = model.get_value(iter, 0)
+                self.selectedSymbol = idSymbol
+                symbol = None
+
+                for tmp_symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+                    if str(tmp_symbol.getID()) == idSymbol :
+                        symbol = tmp_symbol
 
                 # Retrieve a random message in order to show a type structure
-                message = group.getMessages()[-1]
-                self.treeTypeStructureGenerator.setGroup(group)
+                message = symbol.getMessages()[-1]
+                self.treeTypeStructureGenerator.setSymbol(symbol)
                 self.treeTypeStructureGenerator.setMessage(message)
                 self.treeTypeStructureGenerator.update()
 
     #+---------------------------------------------- 
     #| button_press_on_field :
     #|   Create a menu to display available operations
-    #|   on the treeview groups
+    #|   on the treeview symbols
     #+----------------------------------------------
     def button_press_on_field(self, button, event):
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:        
-            # Retrieves the group on which the user has clicked on
+            # Retrieves the symbol on which the user has clicked on
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = self.treeTypeStructureGenerator.getTreeview().get_path_at_pos(x, y)

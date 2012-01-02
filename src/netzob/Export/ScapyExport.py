@@ -36,7 +36,7 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Export.TreeViews.TreeGroupGenerator import TreeGroupGenerator
+from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 
 #+---------------------------------------------- 
 #| ScapyExport :
@@ -53,7 +53,7 @@ class ScapyExport:
         pass
 
     def update(self):
-        self.treeGroupGenerator.update()
+        self.treesymbolGenerator.update()
     
     def clear(self):
         pass
@@ -80,17 +80,17 @@ class ScapyExport:
     
     def init(self):
         
-        self.selectedGroup = None
+        self.selectedSymbol = None
         
         # First we create an VPaned which hosts the two main children
         self.panel = gtk.HBox()        
         self.panel.show()
         
-        # Create the group selection treeview
-        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
-        self.treeGroupGenerator.initialization()
-        self.panel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
-        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupSelected) 
+        # Create the symbol selection treeview
+        self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
+        self.treeSymbolGenerator.initialization()
+        self.panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
+        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected) 
         
         # Create the hbox content in order to display dissector data
         bottomFrame = gtk.Frame()
@@ -107,26 +107,26 @@ class ScapyExport:
         sw.show()
         bottomFrame.add(sw)
 
-    def groupSelected(self, treeview):
+    def symbolSelected(self, treeview):
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
-                idGroup = model.get_value(iter, 0)
-                self.selectedGroup = idGroup
+                idSymbol = model.get_value(iter, 0)
+                self.selectedSymbol = idSymbol
                 self.updateTextareaWithDissector()
 
     def updateTextareaWithDissector(self):
-        if self.selectedGroup == None :
-            self.textarea.get_buffer().set_text("Select a group to see its Scapy dissector")
+        if self.selectedSymbol == None :
+            self.textarea.get_buffer().set_text("Select a symbol to see its Scapy dissector")
         else :
             found = False
-            for group in self.netzob.groups.getGroups() :
-                if str(group.getID()) == self.selectedGroup :
+            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+                if str(symbol.getID()) == self.selectedSymbol:
                     self.textarea.get_buffer().set_text("")
-                    self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), group.getScapyDissector(), "normalTag")
+                    self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getScapyDissector(), "normalTag")
                     found = True
             if found == False :
-                self.log.warning("Impossible to retrieve the group having the id {0}".format(str(self.selectedGroup)))
+                self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))
 
     #+---------------------------------------------- 
     #| GETTERS

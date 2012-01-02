@@ -49,7 +49,7 @@ class TreeTypeStructureGenerator():
     #| @param vbox : where the treeview will be hold
     #+---------------------------------------------- 
     def __init__(self):
-        self.group = None
+        self.symbol = None
         self.message = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator.py')
@@ -84,7 +84,7 @@ class TreeTypeStructureGenerator():
     #|         Clear the class
     #+---------------------------------------------- 
     def clear(self):
-        self.group = None
+        self.symbol = None
         self.message = None
         self.treestore.clear()
         
@@ -101,7 +101,7 @@ class TreeTypeStructureGenerator():
     #|   Update the treestore
     #+---------------------------------------------- 
     def update(self):
-        if self.getGroup() == None or self.getMessage() == None:
+        if self.getSymbol() == None or self.getMessage() == None:
             self.clear()
             return
 
@@ -132,8 +132,8 @@ class TreeTypeStructureGenerator():
         return self.treeview
     def getScrollLib(self):
         return self.scroll
-    def getGroup(self):
-        return self.group
+    def getSymbol(self):
+        return self.symbol
     def getMessage(self):
         return self.message
 
@@ -144,10 +144,10 @@ class TreeTypeStructureGenerator():
         self.treeview = treeview
     def setScrollLib(self, scroll):
         self.scroll = scroll
-    def setGroup(self, group):
-        self.group = group
+    def setSymbol(self, symbol):
+        self.symbol = symbol
     def setMessage(self, message):
         self.message = message
     def setMessageByID(self, message_id):
-        self.message = self.group.getMessageByID(message_id)
+        self.message = self.symbol.getMessageByID(message_id)
 

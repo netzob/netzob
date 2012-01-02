@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -32,6 +31,11 @@ from netzob.Common.TypeConvertor import TypeConvertor
 import re
 from lxml.etree import ElementTree
 from lxml import etree
+
+#+---------------------------------------------------------------------------+ 
+#| Local imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -150,7 +154,3 @@ class Field(object):
             return field
             
         return None
-        
-        
-        
-        
