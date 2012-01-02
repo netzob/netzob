@@ -95,7 +95,9 @@ class Vocabulary(object):
     def getVariables(self):
         variables = []
         for symbol in self.symbols :
-            variables.extend(symbol.getVariables())
+            for variable in symbol.getVariables() :
+                if not variable in variables :
+                    variables.append(variable)
         return variables
         
     #+---------------------------------------------- 

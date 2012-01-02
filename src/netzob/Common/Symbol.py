@@ -36,7 +36,7 @@ import re
 import glib
 from lxml.etree import ElementTree
 import struct
-
+from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
@@ -50,7 +50,7 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
-from lxml import etree
+
 
 #+---------------------------------------------------------------------------+
 #| Symbol :
@@ -696,8 +696,8 @@ class Symbol(object):
     def getVariables(self):
         result = []
         for field in self.getFields():
-            if field.isRegexOnlyDynamic() :
-                result.append(field.getAssociatedVariable())
+            if field.getVariable() != None :
+                result.append(field.getVariable())
         return result
     
     #+---------------------------------------------- 
