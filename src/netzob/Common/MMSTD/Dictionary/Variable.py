@@ -48,12 +48,13 @@ import logging
 #+---------------------------------------------------------------------------+
 class Variable():
     
-    def __init__(self, id, name, type):
+    def __init__(self, type, id, name, domain):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
         self.id = id
         self.name = name
         self.type = type
+        self.domain = domain
  
  
     def getValue(self, negative, dictionary):
@@ -69,6 +70,8 @@ class Variable():
         return self.name
     def getType(self):
         return self.type    
+    def getDomain(self):
+        return self.domain
         
     def setID(self, id):
         self.id = id
@@ -76,5 +79,13 @@ class Variable():
         self.name = name
     def setType(self, type):
         self.type = type
-    
-    
+    def setDomain(self, domain):
+        self.domain = domain
+        
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        if version == "0.1" :            
+            # Word Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable" :
+                from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+                return WordVariable.loadFromXML(xmlRoot, namespace, version)

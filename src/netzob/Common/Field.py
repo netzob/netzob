@@ -35,6 +35,7 @@ from lxml import etree
 import uuid
 
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -53,6 +54,7 @@ class Field(object):
         self.selected_type = selected_type
         self.description = description
         self.color = color
+        self.variable = None
     
     def getEncodedVersionOfTheRegex(self):
         return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)  
@@ -69,9 +71,11 @@ class Field(object):
         else:
             return False  
         
-    def getAssociatedVariable(self):
-        return WordVariable(uuid.uuid4(), self.getName(), "defaultVar")
-
+    def getVariable(self):
+        return self.variable
+    def setVariable(self, variable):
+        self.variable = variable
+        
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
@@ -81,14 +85,18 @@ class Field(object):
         xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
         
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
-        xmlFieldRegex.text = str(self.getSelectedType())
+        xmlFieldType = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
+        xmlFieldType.text = str(self.getSelectedType())
         
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}description")
-        xmlFieldRegex.text = str(self.getDescription())
+        xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
+        xmlFieldDescription.text = str(self.getDescription())
         
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}color")
-        xmlFieldRegex.text = str(self.getColor())
+        xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
+        xmlFieldColor.text = str(self.getColor())
+        
+        if self.getVariable() != None :
+            self.getVariable().save(xmlField, namespace)
+        
     
     #+---------------------------------------------- 
     #| GETTERS
@@ -153,6 +161,9 @@ class Field(object):
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
             
+            if xmlRoot.find("{" + namespace + "}variable") != None :
+                field.setVariable(Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version))
+                
             return field
             
         return None
