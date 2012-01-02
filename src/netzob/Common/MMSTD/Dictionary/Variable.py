@@ -48,13 +48,17 @@ import logging
 #+---------------------------------------------------------------------------+
 class Variable():
     
-    def __init__(self, type, id, name, domain):
+    def __init__(self, type, id, name, domain, default):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
         self.id = id
         self.name = name
         self.type = type
         self.domain = domain
+        self.default = default
+        
+    def hasDefault(self):
+        return self.default != None
  
  
     def getValue(self, negative, dictionary):
@@ -82,6 +86,7 @@ class Variable():
     def setDomain(self, domain):
         self.domain = domain
         
+    
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1" :            

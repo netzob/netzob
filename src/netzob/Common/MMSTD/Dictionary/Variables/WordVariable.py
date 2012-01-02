@@ -32,6 +32,8 @@ import logging
 import binascii
 import random
 import string
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -110,7 +112,18 @@ class WordVariable(Variable):
         
                 
         return -1
-   
+    
+    def save(self, root, namespace):
+        xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlWordVariable.set("id", str(self.getID()))
+        xmlWordVariable.set("name", str(self.getName()))
+        xmlWordVariable.set("domain", str(self.getDomain()))
+        if self.hasDefault() :
+            xmlWordVariable.set("default", str(self.getDefault()))
+            
+        xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:WordVariable")
+        return xmlWordVariable
+        
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         result = None
