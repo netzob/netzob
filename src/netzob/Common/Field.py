@@ -32,6 +32,9 @@ from netzob.Common.TypeConvertor import TypeConvertor
 import re
 from lxml.etree import ElementTree
 from lxml import etree
+import uuid
+
+from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -64,7 +67,10 @@ class Field(object):
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
             return True
         else:
-            return False    
+            return False  
+        
+    def getAssociatedVariable(self):
+        return WordVariable(uuid.uuid4(), self.getName(), "defaultVar")
 
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
