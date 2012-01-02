@@ -1,4 +1,24 @@
-### Dependencies ###
+Netzob : inferring communication protocols
+
+### Presentation ###
+
+Netzob simplifies the work for security auditors by providing a
+complete framework for the reverse engineering of communication
+protocols.
+
+It handles different types of protocols : text protocols (like HTTP
+and IRC), fixed fields protocols (like IP and TCP) and variable fields
+protocols (like ASN.1 based formats).  Netzob is therefore suitable
+for reversing network protocols, structured files and system and
+process flows (IPC and communication with drivers). Netzob is provided
+with modules dedicated to capture data in multiple contexts (network,
+file, process and kernel data acquisition).
+
+### Installation ###
+
+Netzob currently supports Linux platforms.
+
+Dependencies :
 
 * tcpdump
 * python
@@ -12,17 +32,26 @@
 * lsof
 * iptables
 * python-bitarray
+
 or, on Debian-like operating systems :
 
 $ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables python-pcapy python-bitarray
 
-and for documentation purposes :
+And then, 
+
+$ python setup.py build
+
+### Usage ###
+
+Just run the following command to launch the graphical interface
+
+$ ./netzob
+
+### Documentation ###
+
+Dependency for documentation building :
+
 * python-sphinx
-
-### Installation ###
-
-$ cd lib/libNeedleman/
-$ gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
 
 ## Requirements for Network and PCAP input ##
 
@@ -35,10 +64,6 @@ $ sudo setcap cap_net_raw=ep /usr/sbin/tcpdump
 ## Requirements for IPC input on Ubuntu ##
 
 sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
-
-### Running Netzob ###
-
-$ ./run_netzob
 
 ### Generates documentation ###
 

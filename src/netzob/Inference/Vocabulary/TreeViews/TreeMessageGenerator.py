@@ -121,7 +121,7 @@ class TreeMessageGenerator():
 
         # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for i in range(len(self.symbol.getFields())):
+        for field in self.symbol.getFields():
             treeStoreTypes.append(str)
         self.treestore = gtk.TreeStore(*treeStoreTypes)
 
@@ -168,7 +168,7 @@ class TreeMessageGenerator():
             line.append("#ffffff")
             line.append(pango.WEIGHT_NORMAL)
             line.append(False)
-            line.extend(message.applyRegex(styled=True, encoded=True))
+            line.extend(message.applyAlignment(styled=True, encoded=True))
             self.treestore.append(None, line)
 
         # Remove all the columns of the current treeview

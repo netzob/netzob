@@ -127,63 +127,12 @@ class Vocabulary(object):
 
     #+---------------------------------------------- 
     #| alignWithDelimiter:
-    #|  Align each messages of each group with a specific delimiter
+    #|  Align each message of each symbol with a specific delimiter
     #+----------------------------------------------
     def alignWithDelimiter(self, configuration, delimiter):
-        # Use the default protocol type for representation
-        display = configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
-        if display == 0:
-            aType = "ascii"
-        else:
-            aType = "binary"
-
         for symbol in self.symbols :
-            columns = []
-            iField = -1
-            doBreak = False
-            while True:
-                iField += 1
-                maxSize = 0
-                minSize = 999999
-                for message in symbol.getMessages():
-                    try: # A carambar to the one who finds this awsome try/except code !
-                        maxSize = max(maxSize, len(message.getStringData().split(delimiter)[iField]))
-                        minSize = min(minSize, len(message.getStringData().split(delimiter)[iField]))
-                    except IndexError:
-                        doBreak = True
-                if doBreak == True:
-                    break
-                columns.append({'name' : "Name",
-                                'encapsulation_level' : 0,
-                                'iField' : iField,
-                                'regex' : "(.{" + str(minSize) + "," + str(maxSize) + "})",
-                                'selectedType' : aType,
-                                'description' : "",
-                                'color' : ""
-                                })
-                columns.append({'name' : "Sep",
-                                'encapsulation_level' : 0,
-                                'iField' : iField,
-                                'regex' : delimiter,
-                                'selectedType' : aType,
-                                'description' : "",
-                                'color' : ""
-                                })
-            del columns[-1]
-            del columns[-1]
-            columns.append({'name' : "Name",
-                            'encapsulation_level' : 0,
-                            'iField' : len(columns),
-                            'regex' : "(.{,})",
-                            'selectedType' : aType,
-                            'description' : "",
-                            'color' : ""
-                            })
-            symbol.setFields([])
-            for col in columns:
-                field = Field(col['name'], col['encapsulation_level'], col['iField'], col['regex'], col['selectedType'], col['description'], col['color'])
-                symbol.addField(field)
-        
+            symbol.alignWithDelimiter(configuration, delimiter)
+       
     def save(self, root, namespace):
         xmlVocabulary = etree.SubElement(root, "{" + namespace + "}vocabulary")
         xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace + "}symbols")
