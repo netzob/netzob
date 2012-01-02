@@ -45,6 +45,7 @@ from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.TypeIdentifier import TypeIdentifier
 from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.NetzobException import NetzobException
 
 #+---------------------------------------------- 
 #| C Imports
@@ -135,11 +136,11 @@ class Symbol(object):
             i += 1
         
         if maxLeftReducedStringData > 0 :
-            self.log.warning("add on the left part adding a bit of --")
+            logging.warning("add on the left part adding a bit of --")
             for i in range(0, maxReducedSize):
                 align = "--" + align
         if maxRightReducedStringData > 0 :
-            self.log.warning("add on the right part adding a bit of --")
+            logging.warning("add on the right part adding a bit of --")
             for i in range(0, maxReducedSize):
                 align = align + "--"            
 
@@ -274,15 +275,15 @@ class Symbol(object):
     #|  the specified field
     #+----------------------------------------------
     def getMessagesValuesByField(self, field):
-        # first we verify the field exists in the symbol
+        # First we verify the field exists in the symbol
         if not field in self.fields :
             logging.warn("The computing field is not part of the current symbol")
             return []
         
         res = []
         for message in self.getMessages():
-            messageTable = message.applyRegex()
-            if len(messageTable) <= field.getIndex() :
+            messageTable = message.applyAlignment()
+            if len(messageTable) < 1 :
                 res.append("")
             else :
                 messageElt = messageTable[field.getIndex()]
@@ -579,10 +580,10 @@ class Symbol(object):
                             if res:
                                 if self.getFieldByIndex(j).isRegexStatic(): # Means the regex j element is static and a sub-part is concerned
                                     store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
-                                    self.log.info("In group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
+                                    logging.info("In group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:
                                     store.append([self.id, iField, n * 2, j, -1, k, -1, "Group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
-                                    self.log.info("In group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
+                                    logging.info("In group " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
                                 break
                     k += 1
                 j += 1
@@ -663,13 +664,19 @@ class Symbol(object):
         scroll.add(treeviewRes)
         hbox.add(scroll)
 
-        ## Algo : for each column, and then for each cell, try to find environmental dependency
+        ## Algo : for each field, and then for each value, try to find environmental dependency
         for field in self.getFields():
+            cells = []
+            try:
+                cells = self.getMessagesValuesByField(field)
+            except NetzobException as e:
+                logging.warning("ERROR: " + str(e.value))
+                break
             for envDependency in project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES) :
                 if envDependency.getValue() == "":
                     break
                 matchElts = 0
-                for cell in self.getMessagesValuesByField(field):
+                for cell in cells:
                     matchElts += TypeConvertor.netzobRawToASCII(cell).count(envDependency.getValue())
                 if matchElts > 0:
                     store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])

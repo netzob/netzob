@@ -105,7 +105,6 @@ class TreeMessageGenerator():
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
     def default(self, symbol):
-        
         if symbol == None :
             self.treestore.clear()
             return

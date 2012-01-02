@@ -31,10 +31,6 @@
 import gtk
 import pango
 import pygtk
-from netzob.Common.TypeConvertor import TypeConvertor
-from netzob.Common.Symbol import Symbol
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Models.RawMessage import RawMessage
 pygtk.require('2.0')
 import logging
 import threading
@@ -43,12 +39,16 @@ import os
 import time
 import random
 import uuid
+
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common import StateParser
-
 from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Symbol import Symbol
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Inference.Vocabulary.SearchView import SearchView
 from netzob.Inference.Vocabulary.Entropy import Entropy
 from netzob.Inference.Vocabulary.TreeViews.TreeGroupGenerator import TreeGroupGenerator
@@ -739,7 +739,6 @@ class UImodelization:
         
         treeview.append_column(column)
 
-        # Just to force the calculation of each group with its associated messages
         currentProject = self.netzob.getCurrentProject()
         if currentProject == None :
             self.log.warn("No current project found")
@@ -748,10 +747,6 @@ class UImodelization:
             self.log.warn("The project has no vocbaulary to work with.")
             return
         
-        for symbol in currentProject.getVocabulary().getSymbols():
-            self.selectedSymbol = symbol
-            self.treeMessageGenerator.default(symbol)
-
         for elt in domain:
             treeview.get_model().append([elt])
 
@@ -1290,11 +1285,6 @@ class UImodelization:
         
         if self.netzob.getCurrentProject() == None :
             return  
-
-        # Just to force the calculation of the splitted messages by regex
-        ## TODO: put this at the end of the alignement process
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            self.treeMessageGenerator.default(symbol)
         
         notebook = gtk.Notebook()
         notebook.show()
@@ -1314,16 +1304,12 @@ class UImodelization:
     def search_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        # Just to force the calculation of the splitted messages by regex 
-        ## TODO: put this at the end of the alignement process
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() == None :
+            return
         
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                self.treeMessageGenerator.default(symbol)
-        
-            searchPanel = SearchView(self.netzob.getCurrentProject())
-            dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
-            dialog.show()
+        searchPanel = SearchView(self.netzob.getCurrentProject())
+        dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
+        dialog.show()
 
     #+---------------------------------------------- 
     #| Called when user wants to identifies environment dependencies
@@ -1331,23 +1317,19 @@ class UImodelization:
     def env_dependencies_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        # Just to force the calculation of the splitted messages by regex 
-        ## TODO: put this at the end of the alignement process
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        notebook = gtk.Notebook()
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_TOP)
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            scroll = symbol.envDependencies(self.netzob.getCurrentProject())
+            if scroll != None:
+                notebook.append_page(scroll, gtk.Label(symbol.getName())) 
             
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                self.treeMessageGenerator.default(symbol)
-                
-            notebook = gtk.Notebook()
-            notebook.show()
-            notebook.set_tab_pos(gtk.POS_TOP)
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                scroll = symbol.envDependencies(self.netzob.getCurrentProject())
-                if scroll != None:
-                    notebook.append_page(scroll, gtk.Label(symbol.getName())) 
-            
-            dialog.vbox.pack_start(notebook, True, True, 0)
-            dialog.show()
+        dialog.vbox.pack_start(notebook, True, True, 0)
+        dialog.show()
 
     #+---------------------------------------------- 
     #| Called when user wants to see the distribution of a group of messages
@@ -1368,12 +1350,6 @@ class UImodelization:
         
         if self.netzob.getCurrentProject() == None :
             return  
-
-        # Just to force the calculation of the splitted messages by regex
-        ## TODO: put this at the end of the alignement process
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            self.treeMessageGenerator.default(symbol)
-        
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :
