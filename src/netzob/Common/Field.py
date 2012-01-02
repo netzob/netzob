@@ -120,11 +120,9 @@ class Field(object):
         return self.index
     
     def getBackgroundColor(self):
-        if self.getVariable() == None :
-            return "white"
-        else :
+        if self.getVariable() != None :
             return "yellow"
-
+        return None
     #+---------------------------------------------- 
     #| SETTERS
     #+----------------------------------------------         

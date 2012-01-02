@@ -156,15 +156,23 @@ class AbstractMessage():
             if field.getRegex().find("(") != -1: # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
+                # Define the color
                 if field.getColor() == "" or field.getColor() == None:
                     color = 'blue'
                 else:
                     color = field.getColor()
+                    
+                # Define the background color
+                if field.getBackgroundColor() != None :
+                    backgroundColor = 'background="' + field.getBackgroundColor() + '"'
+                else :
+                    backgroundColor = ""
+                    
                 if styled:
                     if encoded:
-                        res.append('<span foreground="' + color + '" background="' + field.getBackgroundColor() + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getSelectedType())) + '</span>')
+                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getSelectedType())) + '</span>')
                     else:
-                        res.append('<span foreground="' + color + '" background="' + field.getBackgroundColor() + '" font_family="monospace">' + data[start:end] + '</span>')
+                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + data[start:end] + '</span>')
                 else:
                     if encoded:
                         res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getSelectedType())))
