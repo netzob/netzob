@@ -457,7 +457,6 @@ class UImodelization:
                 iField += 1
                 
             selectedField = None
-            print "iField = " + str(iField)
             for field in self.treeMessageGenerator.getSymbol().getFields() :
                 if field.getIndex() == iField :
                     selectedField = field
@@ -470,11 +469,11 @@ class UImodelization:
             typesList = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
             typeMenu = gtk.Menu()
             for aType in typesList:
-                item = gtk.MenuItem("Render in : " + str(aType))
+                item = gtk.MenuItem(str(aType))
                 item.show()
                 item.connect("activate", self.rightClickToChangeType, selectedField, aType)   
                 typeMenu.append(item)
-            item = gtk.MenuItem("Change Type")
+            item = gtk.MenuItem("Render in ...")
             item.set_submenu(typeMenu)
             item.show()
             menu.append(item)
@@ -507,6 +506,40 @@ class UImodelization:
             item = gtk.MenuItem("Domain of definition")
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
+            menu.append(item)
+            
+            
+            # Add sub-entries to change the variable of a specific column
+            typeMenuVariable = gtk.Menu()
+            itemVariable = gtk.MenuItem("Create a variable")
+            itemVariable.show()
+            itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)   
+            typeMenuVariable.append(itemVariable)
+            
+            existingVariables = self.netzob.getCurrentProject().getVocabulary().getVariables()
+            
+            if len(existingVariables) > 0 :
+                listMenuVariable = gtk.Menu()
+                for variable in existingVariables :
+                    itemVariableToAttach = gtk.MenuItem(variable.getName())
+                    itemVariableToAttach.show()
+                    itemVariableToAttach.connect("activate", self.rightClickCreateVariable, selectedField)   
+                    listMenuVariable.append(itemVariableToAttach)
+                
+                itemVariable2 = gtk.MenuItem("Attach to an existing variable")
+                itemVariable2.show()
+                itemVariable2.set_submenu(listMenuVariable)
+                itemVariable2.connect("activate", self.rightClickAttachVariable, selectedField)   
+                typeMenuVariable.append(itemVariable2)
+            
+            itemVariable3 = gtk.MenuItem("Remove variable")
+            itemVariable3.show()
+            itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)   
+            typeMenuVariable.append(itemVariable3)
+            
+            item = gtk.MenuItem("Configure variation ...")
+            item.set_submenu(typeMenuVariable)
+            item.show()
             menu.append(item)
             
             # Add entry to show properties of the message
@@ -927,6 +960,14 @@ class UImodelization:
         frame.add(scroll)
         dialog.vbox.pack_start(frame, True, True, 0)
         dialog.show()
+    
+    def rightClickCreateVariable(self, widget, field):
+        pass
+    def rightClickRemoveVariable(self, widget, field):
+        pass
+    def rightClickAttachVariable(self, widget, field):
+        pass
+
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 2:
@@ -1133,7 +1174,6 @@ class UImodelization:
     #|   is dropped out current group to the selected group 
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
-        self.log.info("DROPPING !!")
         ids = selection.data
         for msg_id in ids.split(";") :
             
@@ -1185,13 +1225,11 @@ class UImodelization:
     #|   is dragged out current group 
     #+----------------------------------------------
     def drag_fromDND(self, treeview, contexte, selection, info, dateur):   
-        self.log.info("DRAGGING !!")
         ids = []             
         treeview.get_selection().selected_foreach(self.foreach_drag_fromDND, ids)
         selection.set(selection.target, 8, ";".join(ids))
     
     def foreach_drag_fromDND(self, model, path, iter, ids):
-        self.log.info("4EACH DRAGGING !!")
         texte = str(model.get_value(iter, 0))
         ids.append(texte)
         return
