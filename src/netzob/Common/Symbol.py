@@ -68,6 +68,8 @@ class Symbol(object):
         self.score = 0.0
         self.messages = []
         self.fields = []
+        self.alignmentType = "regex"
+        self.delimiter = ""
     
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
@@ -75,6 +77,8 @@ class Symbol(object):
     #| in the C Needleman library
     #+----------------------------------------------
     def buildRegexAndAlignment(self, projectConfiguration):
+        self.alignmentType = "regex"
+        self.delimiter = ""
         # Use the default protocol type for representation
         display = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
         
@@ -177,6 +181,46 @@ class Symbol(object):
             field = Field("Field " + str(iField), 0, iField, regexElt, display)
             self.addField(field)
             iField = iField + 1
+
+    #+---------------------------------------------- 
+    #| alignWithDelimiter:
+    #|  Align each messages with a specific delimiter
+    #+----------------------------------------------
+    def alignWithDelimiter(self, configuration, delimiter):
+        self.alignmentType = "delimiter"
+        self.delimiter = delimiter
+
+        # Use the default protocol type for representation
+        display = configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        if display == 0:
+            aType = "ascii"
+        else:
+            aType = "binary"
+
+        self.setFields([])
+
+        minNbSplit = 999999
+        maxNbSplit = -1
+        for message in self.getMessages():
+            minNbSplit = min(minNbSplit, len(message.getStringData().split(delimiter)))
+            maxNbSplit = max(maxNbSplit, len(message.getStringData().split(delimiter)))
+        if minNbSplit <= 1: # If the delimiter does not create splitted fields
+            field = Field("Name", 0, 0,
+                          "(.{,})",
+                          aType, "", "blue")
+            self.addField(field)
+            return
+        
+        # Else, we add (maxNbSplit + maxNbSplit - 1) fields
+        iField = -1
+        for i in range(maxNbSplit):
+            iField += 1
+            field = Field("Name", 0, iField, "", aType, "", "blue")
+            self.addField(field)
+            iField += 1
+            field = Field("__sep__", 0, iField, delimiter, aType, "", "black")
+            self.addField(field)
+        self.popField()
 
     #+---------------------------------------------- 
     #| Regex handling
@@ -715,7 +759,10 @@ class Symbol(object):
         self.messages.append(message)
         
     def addField(self, field):
-        self.fields.append(field)        
+        self.fields.append(field)
+
+    def popField(self):
+        self.fields.pop()
     
     def save(self, root, namespace):
         xmlSymbol = etree.SubElement(root, "{" + namespace + "}symbol")
@@ -749,6 +796,10 @@ class Symbol(object):
         return self.fields
     def getAlignment(self):
         return self.alignment.strip()
+    def getAlignmentType(self):
+        return self.alignmentType
+    def getDelimiter(self):
+        return self.delimiter
 
     #+---------------------------------------------- 
     #| SETTERS
@@ -761,6 +812,10 @@ class Symbol(object):
         self.score = score
     def setName(self, name):
         self.name = name
+    def setAlignmentType(self, aType):
+        self.alignmentType = aType
+    def setDelimiter(self, delimiter):
+        self.delimiter = delimiter
 
     #+---------------------------------------------- 
     #| Static methods

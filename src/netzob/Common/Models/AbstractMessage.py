@@ -121,7 +121,17 @@ class AbstractMessage():
                 
                   
         return "".join(self.getStringData()[start:end]) 
-    
+
+    #+---------------------------------------------- 
+    #| applyRegex: apply the current regex on the message
+    #|  and return a table
+    #+----------------------------------------------
+    def applyAlignment(self, styled=False, encoded=False):
+        if self.getSymbol().getAlignmentType() == "regex":
+            return self.applyRegex(styled, encoded)
+        else:
+            return self.applyDelimiter(styled, encoded)
+
     #+---------------------------------------------- 
     #| applyRegex: apply the current regex on the message
     #|  and return a table
@@ -137,7 +147,7 @@ class AbstractMessage():
         if m == None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
-            self.log.warning("Message: " + data)
+            self.log.warning("Message: " + data[:255] + "...")
             return [ self.getStringData() ]
         res = []
         iCol = 0
@@ -174,8 +184,41 @@ class AbstractMessage():
                         res.append(field.getRegex())
             iCol = iCol + 1
         return res
-    
-    
+
+    #+---------------------------------------------- 
+    #| applyDelimiter: apply the current delimiter on the message
+    #|  and return a table
+    #+----------------------------------------------
+    def applyDelimiter(self, styled=False, encoded=False):
+        delimiter = self.getSymbol().getDelimiter()
+        res = []
+        iField = -1
+        for field in self.symbol.getFields():
+            if field.getRegex() == delimiter:
+                tmp = delimiter
+            else:
+                iField += 1
+                try:
+                    tmp = self.getStringData().split(delimiter)[ iField ]
+                except IndexError:
+                    tmp = ""
+
+            if field.getColor() == "" or field.getColor() == None:
+                color = 'blue'
+            else:
+                color = field.getColor()
+
+            if styled:
+                if encoded:
+                    res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(tmp, field.getSelectedType())) + '</span>')
+                else:
+                    res.append('<span foreground="' + color + '" font_family="monospace">' + tmp + '</span>')
+            else:
+                if encoded:
+                    res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(tmp, field.getSelectedType())))
+                else:
+                    res.append(tmp)
+        return res
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

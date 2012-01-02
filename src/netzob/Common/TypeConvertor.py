@@ -40,10 +40,6 @@ import base64
 
 class TypeConvertor():
 
-
-
-
-    
     #+---------------------------------------------- 
     #| Transform an ascii string to its binary representation
     #| @param the ascii string to transform
@@ -70,8 +66,6 @@ class TypeConvertor():
             return "True"
         else :
             return "False"
-
-
     
     #+---------------------------------------------- 
     #| Transform an hex to the bits : \xc9\xa1\x8d => bitarray

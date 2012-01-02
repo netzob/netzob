@@ -94,11 +94,11 @@ setup(
         ],
     scripts=["netzob"],
     version="0.3.0",
-    description="Network protocol modelization by reverse engineering",
+    description="Inferring communication protocols",
     author="Georges Bossert, Frederic Guihery",
-    author_email="{gbt,fgy}@amossys.fr",
-    url="http://code.google.com/p/netzob/",
-    download_url="https://netzob.googlecode.com/svn/trunk/",
+    author_email="contact@netzob.org",
+    url="http://www.netzob.org",
+    download_url="https://dev.netzob.org",
     keywords=["Protocol", "Inference", "Networking", "Reverse Engineering", "Driver", "Security"],
     classifiers=[
         "Programming Language :: Python",
@@ -115,7 +115,7 @@ setup(
         "Topic :: System :: Networking",
         ],
     long_description="""\
-NETwork protocol modeliZatiOn By reverse engineering
+Inferring communication protocols
 -------------------------------------
 
 Netzob simplifies the work for security auditors by providing a complete framework 

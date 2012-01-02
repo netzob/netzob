@@ -107,7 +107,7 @@ class TreeTypeStructureGenerator():
             self.clear()
             return
 
-        splittedMessage = self.getMessage().applyRegex(styled=True, encoded=True)
+        splittedMessage = self.getMessage().applyAlignment(styled=True, encoded=True)
 
         if str(self.message.getID).find("HEADER") != -1:
             self.clear()
@@ -120,6 +120,8 @@ class TreeTypeStructureGenerator():
             for k in range(field.getEncapsulationLevel()):
                 tab += " "
             messageElt = splittedMessage[field.getIndex()]
+            if field.getName() == "__sep__":
+                continue
             if not field.isRegexStatic():
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
             else:
