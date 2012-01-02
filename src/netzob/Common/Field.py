@@ -112,9 +112,18 @@ class Field(object):
     def getDescription(self):
         return self.description
     def getColor(self):
+        if not self.isRegexStatic() :
+            return "red"
+        
         return self.color
     def getIndex(self):
         return self.index
+    
+    def getBackgroundColor(self):
+        if self.getVariable() == None :
+            return "white"
+        else :
+            return "yellow"
 
     #+---------------------------------------------- 
     #| SETTERS
