@@ -200,20 +200,12 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
-        # Widget entry for chosing the alignment delimiter
-        label = gtk.Label("Set the delimiter : ")
-        label.show()
-        entry = gtk.Entry(4)
-        entry.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Force alignment")
-        but.connect("clicked", self.forceAlignment_cb, entry)
+        but.connect("clicked", self.forceAlignment_cb)
         but.show()
-        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
         ## Field type inferrence
         frame = gtk.Frame()
@@ -355,21 +347,74 @@ class UImodelization:
         self.alignThread.start()
         
     #+---------------------------------------------- 
-    #| forceAlignment :
+    #| forceAlignment_cb :
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
-    def forceAlignment_cb(self, widget, delimiter):
+    def forceAlignment_cb(self, widget):
         if self.netzob.getCurrentProject() == None:
-            self.log.info("A project must be loaded to start an analysis")
+            logging.info("A project must be loaded to start an analysis")
             return
+
         self.selectedGroup = ""
         self.treeMessageGenerator.clear()
         self.treeGroupGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
+        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
+        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        panel.show()
+
+        # Label
+        label = gtk.Label("Delimiter: ")
+        label.show()
+        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Entry for delimiter
+        entry = gtk.Entry(4)
+        entry.show()
+        panel.attach(entry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Label
+        label = gtk.Label("Encoding type: ")
+        label.show()
+        panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Delimiter type
+        typeCombo = gtk.combo_box_entry_new_text()
+        typeCombo.show()
+        typeStore = gtk.ListStore(str)
+        typeCombo.set_model(typeStore)
+        typeCombo.get_model().append(["ascii"])
+        typeCombo.get_model().append(["binary"])
+        typeCombo.set_active(0)
+        panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Button
+        searchButton = gtk.Button("Force alignment")
+        searchButton.show()
+        searchButton.connect("clicked", self.forceAlignment_cb_cb, dialog, typeCombo, entry)
+        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
+    #| forceAlignment_cb_cb :
+    #|   Force the delimiter for sequence alignment
+    #+----------------------------------------------
+    def forceAlignment_cb_cb(self, widget, dialog, encodingType, delimiter):
+        encodingType = encodingType.get_active_text()
+        delimiter = delimiter.get_text()
+
+        if encodingType == "ascii":
+            delimiter = TypeConvertor.ASCIIToNetzobRaw(delimiter)            
+
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(), delimiter.get_text())
+        vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(),
+                                      encodingType,
+                                      delimiter)
         self.update()
+        dialog.destroy()
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_groups :

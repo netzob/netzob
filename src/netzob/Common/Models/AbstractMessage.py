@@ -194,11 +194,11 @@ class AbstractMessage():
     #|  and return a table
     #+----------------------------------------------
     def applyDelimiter(self, styled=False, encoded=False):
-        delimiter = self.getSymbol().getDelimiter()
+        delimiter = self.getSymbol().getRawDelimiter()
         res = []
         iField = -1
         for field in self.symbol.getFields():
-            if field.getRegex() == delimiter:
+            if field.getName() == "__sep__":
                 tmp = delimiter
             else:
                 iField += 1

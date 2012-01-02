@@ -70,7 +70,7 @@ class Symbol(object):
         self.messages = []
         self.fields = []
         self.alignmentType = "regex"
-        self.delimiter = ""
+        self.rawDelimiter = ""
     
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
@@ -79,7 +79,7 @@ class Symbol(object):
     #+----------------------------------------------
     def buildRegexAndAlignment(self, projectConfiguration):
         self.alignmentType = "regex"
-        self.delimiter = ""
+        self.rawDelimiter = ""
         # Use the default protocol type for representation
         display = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
         
@@ -187,28 +187,26 @@ class Symbol(object):
     #| alignWithDelimiter:
     #|  Align each messages with a specific delimiter
     #+----------------------------------------------
-    def alignWithDelimiter(self, configuration, delimiter):
+    def alignWithDelimiter(self, projectConfiguration, encodingType, rawDelimiter):
         self.alignmentType = "delimiter"
-        self.delimiter = delimiter
+        self.rawDelimiter = rawDelimiter
+        self.setFields([])
 
         # Use the default protocol type for representation
-        display = configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
-        if display == 0:
-            aType = "ascii"
-        else:
-            aType = "binary"
-
-        self.setFields([])
+        display = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
 
         minNbSplit = 999999
         maxNbSplit = -1
         for message in self.getMessages():
-            minNbSplit = min(minNbSplit, len(message.getStringData().split(delimiter)))
-            maxNbSplit = max(maxNbSplit, len(message.getStringData().split(delimiter)))
+            tmpStr = message.getStringData().split(rawDelimiter)
+            minNbSplit = min(minNbSplit,
+                             len(tmpStr))
+            maxNbSplit = max(maxNbSplit,
+                             len(tmpStr))
         if minNbSplit <= 1: # If the delimiter does not create splitted fields
             field = Field("Name", 0, 0,
                           "(.{,})",
-                          aType, "", "blue")
+                          encodingType, "", "blue")
             self.addField(field)
             return
         
@@ -216,10 +214,10 @@ class Symbol(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field("Name", 0, iField, "", aType, "", "blue")
+            field = Field("Name", 0, iField, "", display, "", "blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", 0, iField, delimiter, aType, "", "black")
+            field = Field("__sep__", 0, iField, "", display, "", "black")
             self.addField(field)
         self.popField()
 
@@ -793,8 +791,8 @@ class Symbol(object):
         return self.alignment.strip()
     def getAlignmentType(self):
         return self.alignmentType
-    def getDelimiter(self):
-        return self.delimiter
+    def getRawDelimiter(self):
+        return self.rawDelimiter
 
     #+---------------------------------------------- 
     #| SETTERS
@@ -809,8 +807,8 @@ class Symbol(object):
         self.name = name
     def setAlignmentType(self, aType):
         self.alignmentType = aType
-    def setDelimiter(self, delimiter):
-        self.delimiter = delimiter
+    def setRawDelimiter(self, rawDelimiter):
+        self.rawDelimiter = rawDelimiter
 
     #+---------------------------------------------- 
     #| Static methods
