@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -32,10 +31,11 @@ from netzob.Common.TypeConvertor import TypeConvertor
 import re
 from lxml.etree import ElementTree
 from lxml import etree
-import uuid
 
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
+#+---------------------------------------------------------------------------+ 
+#| Local imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -54,10 +54,14 @@ class Field(object):
         self.selected_type = selected_type
         self.description = description
         self.color = color
-        self.variable = None
     
     def getEncodedVersionOfTheRegex(self):
-        return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)  
+        if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files store None as a string...
+            return ""
+        elif self.regex.find("{") != -1: # This is a real regex
+            return self.regex
+        else: # This is a simple value
+            return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)
     
     def isRegexStatic(self):
         if self.regex.find("{") == -1:
@@ -69,13 +73,8 @@ class Field(object):
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
             return True
         else:
-            return False  
-        
-    def getVariable(self):
-        return self.variable
-    def setVariable(self, variable):
-        self.variable = variable
-        
+            return False    
+
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
@@ -85,18 +84,14 @@ class Field(object):
         xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
         
-        xmlFieldType = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
-        xmlFieldType.text = str(self.getSelectedType())
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
+        xmlFieldRegex.text = str(self.getSelectedType())
         
-        xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
-        xmlFieldDescription.text = str(self.getDescription())
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}description")
+        xmlFieldRegex.text = str(self.getDescription())
         
-        xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
-        xmlFieldColor.text = str(self.getColor())
-        
-        if self.getVariable() != None :
-            self.getVariable().save(xmlField, namespace)
-        
+        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}color")
+        xmlFieldRegex.text = str(self.getColor())
     
     #+---------------------------------------------- 
     #| GETTERS
@@ -112,17 +107,10 @@ class Field(object):
     def getDescription(self):
         return self.description
     def getColor(self):
-        if not self.isRegexStatic() :
-            return "red"
-        
         return self.color
     def getIndex(self):
         return self.index
-    
-    def getBackgroundColor(self):
-        if self.getVariable() != None :
-            return "yellow"
-        return None
+
     #+---------------------------------------------- 
     #| SETTERS
     #+----------------------------------------------         
@@ -168,13 +156,6 @@ class Field(object):
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
             
-            if xmlRoot.find("{" + namespace + "}variable") != None :
-                field.setVariable(Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version))
-                
             return field
             
         return None
-        
-        
-        
-        

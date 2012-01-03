@@ -32,13 +32,11 @@ import logging
 import pango
 import gobject
 import gtk
-from netzob.Common.Field import Field
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-
-
+from netzob.Common.Field import Field
 
 #+---------------------------------------------- 
 #| TreeMessageGenerator :
@@ -105,14 +103,12 @@ class TreeMessageGenerator():
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
     def default(self, symbol):
-        
+        self.treestore.clear()
         if symbol == None :
-            self.treestore.clear()
             return
         
         self.symbol = symbol
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
-        self.treestore.clear()
         
         # Verifies we have everything needed for the creation of the treeview
         if (self.symbol == None or len(self.symbol.getMessages()) < 1) or len(self.symbol.getFields()) == 0 :
@@ -142,12 +138,11 @@ class TreeMessageGenerator():
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
         
-        for field in self.symbol.getFields():         
-            if field.isRegexStatic() :
-                regex_row.append(field.getEncodedVersionOfTheRegex())
-            else :
+        for field in self.symbol.getFields():
+            if field.getRegex().find("{") != -1: # This is a real regex
                 regex_row.append(field.getRegex())
-                
+            else: # This is a simple value
+                regex_row.append(field.getEncodedVersionOfTheRegex())
         self.treestore.append(None, regex_row)
 
         # Build the types row

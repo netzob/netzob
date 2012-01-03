@@ -52,8 +52,6 @@ from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 #+---------------------------------------------- 
 #| FileImport :
 #|     GUI for capturing messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class FileImport:
     
@@ -71,7 +69,6 @@ class FileImport:
 
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param groups: list of all groups 
     #+----------------------------------------------   
     def __init__(self, zob):        
         self.zob = zob

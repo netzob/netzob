@@ -660,7 +660,7 @@ class UIGrammarInference:
         
         
     def button_press_on_states(self, treeview, event):
-        self.log.warn("User requested a contextual menu (treeview group)")
+        self.log.warn("User requested a contextual menu (treeview symbol)")
         x = int(event.x)
         y = int(event.y)
         info = treeview.get_path_at_pos(x, y)
@@ -683,7 +683,7 @@ class UIGrammarInference:
     #|   on the treeview states
     #+----------------------------------------------
     def build_context_menu_for_states(self, event, state):
-        # Retrieves the group on which the user has clicked on
+        # Retrieves the symbol on which the user has clicked on
         
         entries = [        
                   (gtk.STOCK_EDIT, self.displayPopupToEditState, (state != None)),
@@ -723,11 +723,10 @@ class UIGrammarInference:
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
         #go go go
-        result = dialog.run()
-        if result == gtk.RESPONSE_APPLY :
-            text = entry.get_text()
-            if (len(text) > 0) :
-                state.setName(text)
+        dialog.run()
+        text = entry.get_text()
+        if (len(text) > 0) :
+            state.setName(text)
         dialog.destroy()
         
         self.update()

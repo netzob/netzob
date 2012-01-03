@@ -36,94 +36,69 @@ import gtk
 #+----------------------------------------------
 
 #+---------------------------------------------- 
-#| TreeTypeStructureGenerator :
-#|     update and generates the treeview and its 
-#|     treestore dedicated to the type structure
+#| TreeSymbolGenerator :
 #| @author     : {gbt,fgy}@amossys.fr
 #| @version    : 0.2
 #+---------------------------------------------- 
-class TreeTypeStructureGenerator():
+class TreeSymbolGenerator():
     
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param vbox : where the treeview will be hold
     #+---------------------------------------------- 
-    def __init__(self):
-        self.symbol = None
-        self.message = None
+    def __init__(self, netzob):
+        self.netzob = netzob
+        self.treestore = None
+        self.treeview = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator.py')
-   
+        self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeSymbolGenerator.py')
+    
     #+---------------------------------------------- 
     #| initialization :
     #| builds and configures the treeview
-    #+----------------------------------------------     
+    #+---------------------------------------------- 
     def initialization(self):
-        # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Data, Description
-        # creation of the treeview   
+        # Tree store contains :
+        # str : text ( symbol Name )
+        # str : text ( score )
+        # str : color foreground
+        # str : color background
+        self.treestore = gtk.TreeStore(str, str, str, str, str)
         self.treeview = gtk.TreeView(self.treestore)
-        self.treeview.set_reorderable(True)
-        # Creation of a cell rendered and of a column
-        cell = gtk.CellRendererText()
-        columns = ["iCol", "Name", "Value", "Description"]
-        for i in range(1, len(columns)):
-            column = gtk.TreeViewColumn(columns[i])
-            column.pack_start(cell, True)
-            column.set_attributes(cell, markup=i)
-            self.treeview.append_column(column)
-        self.treeview.show()
-        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+
+        # messages list
         self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
-        self.scroll.add(self.treeview)
+        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll.show()
+        self.scroll.set_size_request(200, 200)
+        self.scroll.add(self.treeview)        
+
+        lvcolumn = gtk.TreeViewColumn('Symbols')
+        lvcolumn.set_sort_column_id(1)
+        cell = gtk.CellRendererText()
+        lvcolumn.pack_start(cell, True)
+        cell.set_property('background-set' , True)
+        cell.set_property('foreground-set' , True)            
+        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
+        self.treeview.append_column(lvcolumn)
+        self.treeview.show()
 
     #+---------------------------------------------- 
     #| clear :
     #|         Clear the class
     #+---------------------------------------------- 
     def clear(self):
-        self.symbol = None
-        self.message = None
-        self.treestore.clear()
-        
-    #+---------------------------------------------- 
-    #| error :
-    #|         Update the treestore in error mode
-    #+---------------------------------------------- 
-    def error(self):
-        self.log.warning("The treeview for the messages is in error mode")      
         pass
-    
+
     #+---------------------------------------------- 
     #| update :
-    #|   Update the treestore
+    #|         Update the treestore in normal mode
     #+---------------------------------------------- 
     def update(self):
-        if self.getSymbol() == None or self.getMessage() == None:
-            self.clear()
-            return
-
-        splittedMessage = self.getMessage().applyAlignment(styled=True, encoded=True)
-
-        if str(self.message.getID).find("HEADER") != -1:
-            self.clear()
-            return
-
+        self.log.debug("Updating the treestore of the symbol in default mode")        
         self.treestore.clear()
 
-        for field in self.getSymbol().getFields():
-            tab = ""
-            for k in range(field.getEncapsulationLevel()):
-                tab += " "
-            messageElt = splittedMessage[field.getIndex()]
-            if field.getName() == "__sep__":
-                continue
-            if not field.isRegexStatic():
-                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
-            else:
-                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -132,22 +107,3 @@ class TreeTypeStructureGenerator():
         return self.treeview
     def getScrollLib(self):
         return self.scroll
-    def getSymbol(self):
-        return self.symbol
-    def getMessage(self):
-        return self.message
-
-    #+---------------------------------------------- 
-    #| SETTERS : 
-    #+----------------------------------------------
-    def setTreeview(self, treeview):
-        self.treeview = treeview
-    def setScrollLib(self, scroll):
-        self.scroll = scroll
-    def setSymbol(self, symbol):
-        self.symbol = symbol
-    def setMessage(self, message):
-        self.message = message
-    def setMessageByID(self, message_id):
-        self.message = self.symbol.getMessageByID(message_id)
-
