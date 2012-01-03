@@ -359,7 +359,7 @@
 					</restriction>
 				</simpleType>
 			</element>
-			<element name="variable" type="netzob-project:Variable" minOccurs="0"></element>
+			<element name="variable" type="netzob-project:Variable" minOccurs="1"></element>
 		</sequence>
 		<attribute name="name" use="required">
 			<simpleType>
@@ -620,7 +620,8 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="default" type="string"></attribute>
+        <attribute name="mutable" type="boolean" default="False"></attribute>
+        <attribute name="default" type="string"></attribute>
 	</complexType>
 
 	<complexType name="WordVariable">

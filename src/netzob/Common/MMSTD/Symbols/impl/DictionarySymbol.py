@@ -70,6 +70,8 @@ class DictionarySymbol(AbstractSymbol):
         return self.entry.getID()
     def getEntry(self):
         return self.entry
+    def getName(self):
+        return self.entry.getName()
   
         
     def setID(self, id):

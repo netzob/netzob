@@ -44,6 +44,7 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.TypeConvertor import TypeConvertor
 
 
 
@@ -55,8 +56,8 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
     
-    def __init__(self, id, name, domain, defaultVar):
-        Variable.__init__(self, "Word", id, name, domain)
+    def __init__(self, id, name, domain, mutable, defaultVar):
+        Variable.__init__(self, "Word", id, name, domain, mutable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
         if defaultVar == "" or defaultVar == None :
             self.binVal = None
@@ -118,6 +119,7 @@ class WordVariable(Variable):
         xmlWordVariable.set("id", str(self.getID()))
         xmlWordVariable.set("name", str(self.getName()))
         xmlWordVariable.set("domain", str(self.getDomain()))
+        xmlWordVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         if self.hasDefault() :
             xmlWordVariable.set("default", str(self.getDefault()))
             
@@ -131,9 +133,10 @@ class WordVariable(Variable):
             field_id = xmlRoot.get("id")
             field_name = xmlRoot.get("name")
             field_domain = xmlRoot.get("domain")
+            field_mutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
             field_default = xmlRoot.get("default", "abstract")
             if field_default == "abstract" :
                 field_default = None            
-            result = WordVariable(field_id, field_name, field_domain, field_default)
+            result = WordVariable(field_id, field_name, field_domain, field_mutable, field_default)
             
         return result

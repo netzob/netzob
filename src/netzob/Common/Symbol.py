@@ -1142,7 +1142,7 @@ class Symbol(object):
             idSymbol = xmlRoot.get("id")
             alignmentSymbol = xmlRoot.get("alignment", None)
             scoreSymbol = float(xmlRoot.get("score", "0"))
-            alignmentType = xmlRoot.get("alignmenType")
+            alignmentType = xmlRoot.get("alignmentType")
             rawDelimiter = xmlRoot.get("rawDelimiter")
             
             symbol = Symbol(idSymbol, nameSymbol)
