@@ -209,8 +209,8 @@ class SemiStochasticTransition(AbstractTransition):
         idTransition = xmlTransition.get("id")
         nameTransition = xmlTransition.get("name")
             
-        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text
-        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text
+        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text.strip()
+        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text.strip()
         
         inputStateTransition = None
         outputStateTransition = None
