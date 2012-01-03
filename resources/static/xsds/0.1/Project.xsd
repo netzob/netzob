@@ -226,6 +226,8 @@
 		</attribute>
 		<attribute name="alignment" type="string"></attribute>
 		<attribute name="score" type="float"></attribute>
+		<attribute name="alignmentType" type="string"></attribute>
+		<attribute name="rawDelimiter" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Messages">

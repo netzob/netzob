@@ -31,10 +31,6 @@
 import gtk
 import pango
 import pygtk
-from netzob.Common.TypeConvertor import TypeConvertor
-from netzob.Common.Symbol import Symbol
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Models.RawMessage import RawMessage
 pygtk.require('2.0')
 import logging
 import threading
@@ -43,15 +39,18 @@ import os
 import time
 import random
 import uuid
+
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common import StateParser
-
 from netzob.Common.ConfigurationParser import ConfigurationParser
+from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Symbol import Symbol
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Inference.Vocabulary.SearchView import SearchView
 from netzob.Inference.Vocabulary.Entropy import Entropy
-from netzob.Inference.Vocabulary.TreeViews.TreeGroupGenerator import TreeGroupGenerator
+from netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessageGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
@@ -69,11 +68,10 @@ class UImodelization:
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
-#        self.netzob.groups.initGroupsWithTraces()
         pass
 
     def update(self):
-        self.updateTreeStoreGroup()
+        self.updateTreeStoreSymbol()
         self.updateTreeStoreMessage()
         self.updateTreeStoreTypeStructure()
 
@@ -83,12 +81,8 @@ class UImodelization:
     def kill(self):
         pass
     
-    def save(self, file):
-        self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
-        self.log.info("Saving the modelization")
-        
-        stateParser = StateParser.StateParser(file)
-        stateParser.saveInConfiguration(self.netzob.groups.getGroups())
+    def save(self, aFile):
+        self.log.info("Saving the vocabulary infered")
     
     #+---------------------------------------------- 
     #| Constructor :
@@ -99,13 +93,13 @@ class UImodelization:
         self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
         self.netzob = netzob
         self.selectedSymbol = None
-        self.selectedMessage = ""
+        self.selectedMessage = None
         self.treeMessageGenerator = TreeMessageGenerator()
         self.treeMessageGenerator.initialization()
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
-        self.treeGroupGenerator = TreeGroupGenerator(self.netzob)
-        self.treeGroupGenerator.initialization()
+        self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
+        self.treeSymbolGenerator.initialization()
         
         # Definition of the Sequence Onglet
         # First we create an VBox which hosts the two main children
@@ -160,27 +154,27 @@ class UImodelization:
         table.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button merge common regexes
-        but = gtk.Button("Merge common regexes")
-        but.connect("clicked", self.netzob.groups.mergeCommonRegexes, self)
+#        but = gtk.Button("Merge common regexes")
+#        but.connect("clicked", self.netzob.symbols.mergeCommonRegexes, self)
         ## TODO: merge common regexes (if it is really usefull)
-        but.show()
-        but.set_sensitive(False)
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+#        but.show()
+#        but.set_sensitive(False)
+#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        ## Message format inferrence
+        ## Message format inference
         frame = gtk.Frame()
-        frame.set_label("2 - Message format inferrence")
+        frame.set_label("2 - Message format inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
-        # Widget button slick regexes
-        but = gtk.Button("Slick regexes")
-        but.connect("clicked", self.netzob.groups.slickRegexes, self)
-        but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        # Widget button slick regexes # TODO
+#        but = gtk.Button("Slick regexes")
+#        but.connect("clicked", self.netzob.symbols.slickRegexes, self)
+#        but.show()
+#        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Slick regexes")
@@ -200,24 +194,16 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
-        # Widget entry for chosing the alignment delimiter
-        label = gtk.Label("Set the delimiter : ")
-        label.show()
-        entry = gtk.Entry(4)
-        entry.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(entry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Force alignment")
-        but.connect("clicked", self.forceAlignment_cb, entry)
+        but.connect("clicked", self.forceAlignment_cb)
         but.show()
-        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
-        ## Field type inferrence
+        ## Field type inference
         frame = gtk.Frame()
-        frame.set_label("3 - Field type inferrence")
+        frame.set_label("3 - Field type inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=2, homogeneous=False)
@@ -252,9 +238,9 @@ class UImodelization:
         table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         table.attach(combo, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        ## Dependencies inferrence
+        ## Dependencies inference
         frame = gtk.Frame()
-        frame.set_label("4 - Dependencies inferrence")
+        frame.set_label("4 - Dependencies inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -274,9 +260,9 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        ## Semantic inferrence
+        ## Semantic inference
         frame = gtk.Frame()
-        frame.set_label("5 - Semantic inferrence")
+        frame.set_label("5 - Semantic inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -296,7 +282,7 @@ class UImodelization:
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #+---------------------------------------------- 
-        #| LEFT PART OF THE GUI : GROUP TREEVIEW
+        #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
         #+----------------------------------------------           
         bottomPanel = gtk.HPaned()
         bottomPanel.show()
@@ -305,13 +291,13 @@ class UImodelization:
 #        leftPanel.set_size_request(-1, -1)
         leftPanel.show()
         bottomPanel.add(leftPanel)
-        # Initialize the treeview generator for the groups
-        leftPanel.pack_start(self.treeGroupGenerator.getScrollLib(), True, True, 0)
+        # Initialize the treeview generator for the symbols
+        leftPanel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeGroupGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-        self.treeGroupGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
-#        self.treeGroupGenerator.getTreeview().connect("cursor-changed", self.groupChanged)
-        self.treeGroupGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_groups)
+        self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+        self.treeSymbolGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
+#        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolChanged)
+        self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
@@ -345,7 +331,7 @@ class UImodelization:
             return
         self.selectedSymbol = None
         self.treeMessageGenerator.clear()
-        self.treeGroupGenerator.clear()
+        self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
         
@@ -355,29 +341,82 @@ class UImodelization:
         self.alignThread.start()
         
     #+---------------------------------------------- 
-    #| forceAlignment :
+    #| forceAlignment_cb :
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
-    def forceAlignment_cb(self, widget, delimiter):
+    def forceAlignment_cb(self, widget):
         if self.netzob.getCurrentProject() == None:
-            self.log.info("A project must be loaded to start an analysis")
+            logging.info("A project must be loaded to start an analysis")
             return
-        self.selectedGroup = ""
+
+        self.selectedSymbol = None
         self.treeMessageGenerator.clear()
-        self.treeGroupGenerator.clear()
+        self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
+        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
+        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        panel.show()
+
+        # Label
+        label = gtk.Label("Delimiter: ")
+        label.show()
+        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Entry for delimiter
+        entry = gtk.Entry(4)
+        entry.show()
+        panel.attach(entry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Label
+        label = gtk.Label("Encoding type: ")
+        label.show()
+        panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Delimiter type
+        typeCombo = gtk.combo_box_entry_new_text()
+        typeCombo.show()
+        typeStore = gtk.ListStore(str)
+        typeCombo.set_model(typeStore)
+        typeCombo.get_model().append(["ascii"])
+        typeCombo.get_model().append(["binary"])
+        typeCombo.set_active(0)
+        panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Button
+        searchButton = gtk.Button("Force alignment")
+        searchButton.show()
+        searchButton.connect("clicked", self.forceAlignment_cb_cb, dialog, typeCombo, entry)
+        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
+    #| forceAlignment_cb_cb :
+    #|   Force the delimiter for sequence alignment
+    #+----------------------------------------------
+    def forceAlignment_cb_cb(self, widget, dialog, encodingType, delimiter):
+        encodingType = encodingType.get_active_text()
+        delimiter = delimiter.get_text()
+
+        if encodingType == "ascii":
+            delimiter = TypeConvertor.ASCIIToNetzobRaw(delimiter)            
+
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(), delimiter.get_text())
+        vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(),
+                                      encodingType,
+                                      delimiter)
         self.update()
+        dialog.destroy()
     
     #+---------------------------------------------- 
-    #| button_press_on_treeview_groups :
+    #| button_press_on_treeview_symbols :
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
-    def button_press_on_treeview_groups(self, treeview, event):
-        self.log.debug("User requested a contextual menu (treeview group)")
+    def button_press_on_treeview_symbols(self, treeview, event):
+        self.log.debug("User requested a contextual menu (treeview symbol)")
         
         project = self.netzob.getCurrentProject()
         if project == None :
@@ -390,7 +429,7 @@ class UImodelization:
         
         x = int(event.x)
         y = int(event.y)
-        clickedSymbol = self.treeGroupGenerator.getSymbolAtPosition(x, y)
+        clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
         
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
             self.selectedSymbol = clickedSymbol
@@ -398,7 +437,7 @@ class UImodelization:
             self.treeTypeStructureGenerator.clear()
             self.updateTreeStoreTypeStructure()
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
-            self.build_context_menu_for_groups(event, clickedSymbol)
+            self.build_context_menu_for_symbols(event, clickedSymbol)
 
     def button_release_on_treeview_messages(self, treeview, event):
         # re-enable selection
@@ -457,6 +496,7 @@ class UImodelization:
                 iField += 1
                 
             selectedField = None
+            print "iField = " + str(iField)
             for field in self.treeMessageGenerator.getSymbol().getFields() :
                 if field.getIndex() == iField :
                     selectedField = field
@@ -469,11 +509,11 @@ class UImodelization:
             typesList = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
             typeMenu = gtk.Menu()
             for aType in typesList:
-                item = gtk.MenuItem(str(aType))
+                item = gtk.MenuItem("Render in : " + str(aType))
                 item.show()
                 item.connect("activate", self.rightClickToChangeType, selectedField, aType)   
                 typeMenu.append(item)
-            item = gtk.MenuItem("Render in ...")
+            item = gtk.MenuItem("Change Type")
             item.set_submenu(typeMenu)
             item.show()
             menu.append(item)
@@ -506,40 +546,6 @@ class UImodelization:
             item = gtk.MenuItem("Domain of definition")
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
-            menu.append(item)
-            
-            
-            # Add sub-entries to change the variable of a specific column
-            typeMenuVariable = gtk.Menu()
-            itemVariable = gtk.MenuItem("Create a variable")
-            itemVariable.show()
-            itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)   
-            typeMenuVariable.append(itemVariable)
-            
-            existingVariables = self.netzob.getCurrentProject().getVocabulary().getVariables()
-            
-            if len(existingVariables) > 0 :
-                listMenuVariable = gtk.Menu()
-                for variable in existingVariables :
-                    itemVariableToAttach = gtk.MenuItem(variable.getName())
-                    itemVariableToAttach.show()
-                    itemVariableToAttach.connect("activate", self.rightClickCreateVariable, selectedField)   
-                    listMenuVariable.append(itemVariableToAttach)
-                
-                itemVariable2 = gtk.MenuItem("Attach to an existing variable")
-                itemVariable2.show()
-                itemVariable2.set_submenu(listMenuVariable)
-                itemVariable2.connect("activate", self.rightClickAttachVariable, selectedField)   
-                typeMenuVariable.append(itemVariable2)
-            
-            itemVariable3 = gtk.MenuItem("Remove variable")
-            itemVariable3.show()
-            itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)   
-            typeMenuVariable.append(itemVariable3)
-            
-            item = gtk.MenuItem("Configure variation ...")
-            item.set_submenu(typeMenuVariable)
-            item.show()
             menu.append(item)
             
             # Add entry to show properties of the message
@@ -772,7 +778,6 @@ class UImodelization:
         
         treeview.append_column(column)
 
-        # Just to force the calculation of each group with its associated messages
         currentProject = self.netzob.getCurrentProject()
         if currentProject == None :
             self.log.warn("No current project found")
@@ -781,10 +786,6 @@ class UImodelization:
             self.log.warn("The project has no vocbaulary to work with.")
             return
         
-        for symbol in currentProject.getVocabulary().getSymbols():
-            self.selectedSymbol = symbol
-            self.treeMessageGenerator.default(symbol)
-
         for elt in domain:
             treeview.get_model().append([elt])
 
@@ -947,7 +948,7 @@ class UImodelization:
         frame.set_label("Content of the column to split")
         frame.show()
         textview.set_size_request(400, 300)
-#        cells = self.treeMessageGenerator.getGroup().getCellsByCol(iCol)
+#        cells = self.treeMessageGenerator.getSymbol().getCellsByCol(iCol)
 
         for m in cells:
             textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getSelectedType()) + "  ", "redTag")
@@ -960,14 +961,6 @@ class UImodelization:
         frame.add(scroll)
         dialog.vbox.pack_start(frame, True, True, 0)
         dialog.show()
-    
-    def rightClickCreateVariable(self, widget, field):
-        pass
-    def rightClickRemoveVariable(self, widget, field):
-        pass
-    def rightClickAttachVariable(self, widget, field):
-        pass
-
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 2:
@@ -1037,17 +1030,17 @@ class UImodelization:
         self.treeMessageGenerator.updateDefault()
         
     #+---------------------------------------------- 
-    #| build_context_menu_for_groups :
+    #| build_context_menu_for_symbols :
     #|   Create a menu to display available operations
-    #|   on the treeview groups
+    #|   on the treeview symbols
     #+----------------------------------------------
-    def build_context_menu_for_groups(self, event, symbol):
-        # Retrieves the group on which the user has clicked on
+    def build_context_menu_for_symbols(self, event, symbol):
+        # Retrieves the symbol on which the user has clicked on
         
         entries = [        
-                  (gtk.STOCK_EDIT, self.displayPopupToEditGroup, (symbol != None)),
-                  (gtk.STOCK_ADD, self.displayPopupToCreateGroup, (symbol == None)),
-                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveGroup, (symbol != None))
+                  (gtk.STOCK_EDIT, self.displayPopupToEditSymbol, (symbol != None)),
+                  (gtk.STOCK_ADD, self.displayPopupToCreateSymbol, (symbol == None)),
+                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveSymbol, (symbol != None))
         ]
 
         menu = gtk.Menu()
@@ -1061,13 +1054,13 @@ class UImodelization:
 
 
     #+---------------------------------------------- 
-    #| displayPopupToCreateGroup_ResponseToDialog :
+    #| displayPopupToCreateSymbol_ResponseToDialog :
     #|   pygtk is so good ! arf :( <-- clap clap :D
     #+----------------------------------------------
-    def displayPopupToCreateGroup_ResponseToDialog(self, entry, dialog, response):
+    def displayPopupToCreateSymbol_ResponseToDialog(self, entry, dialog, response):
         dialog.response(response)
 
-    def displayPopupToEditGroup(self, event, group):
+    def displayPopupToEditSymbol(self, event, symbol):
         dialog = gtk.MessageDialog(
         None,
         gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -1077,7 +1070,7 @@ class UImodelization:
         dialog.set_markup("<b>Please enter the name of the symbol :</b>")
         #create the text input field
         entry = gtk.Entry()
-        entry.set_text(group.getName())
+        entry.set_text(symbol.getName())
         #allow the user to press enter to do ok
         entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
@@ -1100,11 +1093,11 @@ class UImodelization:
     
     
     #+---------------------------------------------- 
-    #| displayPopupToCreateGroup :
-    #|   Display a form to create a new group.
+    #| displayPopupToCreateSymbol :
+    #|   Display a form to create a new symbol.
     #|   Based on the famous dialogs
     #+----------------------------------------------
-    def displayPopupToCreateGroup(self, event, group):
+    def displayPopupToCreateSymbol(self, event, symbol):
         
         #base this on a message dialog
         dialog = gtk.MessageDialog(
@@ -1117,7 +1110,7 @@ class UImodelization:
         #create the text input field
         entry = gtk.Entry()
         #allow the user to press enter to do ok
-        entry.connect("activate", self.displayPopupToCreateGroup_ResponseToDialog, dialog, gtk.RESPONSE_OK)
+        entry.connect("activate", self.displayPopupToCreateSymbol_ResponseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("Name :"), False, 5, 5)
@@ -1141,15 +1134,15 @@ class UImodelization:
             self.update()
         
     #+---------------------------------------------- 
-    #| displayPopupToRemoveGroup :
-    #|   Display a popup to remove a group
-    #|   the removal of a group can only occurs
-    #|   if its an empty group
+    #| displayPopupToRemoveSymbol :
+    #|   Display a popup to remove a symbol
+    #|   the removal of a symbol can only occurs
+    #|   if its an empty symbol
     #+----------------------------------------------    
-    def displayPopupToRemoveGroup(self, event, symbol):
+    def displayPopupToRemoveSymbol(self, event, symbol):
         
         if (len(symbol.getMessages()) == 0) :
-            self.log.debug("Can remove the group {0} since it's an empty one.".format(symbol.getName()))
+            self.log.debug("Can remove the symbol {0} since it's an empty one.".format(symbol.getName()))
             questionMsg = "Click yes to confirm the removal of the symbol {0}".format(symbol.getName())
             md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
             result = md.run()
@@ -1159,7 +1152,7 @@ class UImodelization:
                 #Update Left and Right
                 self.update()
             else :
-                self.log.debug("The user didn't confirm the deletion of the group " + symbol.getName())                
+                self.log.debug("The user didn't confirm the deletion of the symbol " + symbol.getName())                
             
         else :
             self.log.debug("Can't remove the symbol {0} since its not an empty one.".format(symbol.getName()))
@@ -1171,9 +1164,10 @@ class UImodelization:
     #+---------------------------------------------- 
     #| drop_fromDND :
     #|   defines the operation executed when a message is
-    #|   is dropped out current group to the selected group 
+    #|   is dropped out current symbol to the selected symbol 
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
+        self.log.info("DROPPING !!")
         ids = selection.data
         for msg_id in ids.split(";") :
             
@@ -1194,7 +1188,7 @@ class UImodelization:
             
             self.log.debug("The message having the ID [{0}] has been found !".format(msg_id))
             
-            # Now we search for the new group of the message
+            # Now we search for the new symbol of the message
             if info_depot :
                 chemin, position = info_depot
                 iter = modele.get_iter(chemin)
@@ -1207,10 +1201,10 @@ class UImodelization:
                 return
             
             self.log.debug("The new symbol of the message is {0}".format(str(new_message_symbol.getID())))
-            #Removing from its old group
+            #Removing from its old symbol
             message_symbol.removeMessage(message)
             
-            #Adding to its new group
+            #Adding to its new symbol
             new_message_symbol.addMessage(message)            
         
         message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
@@ -1222,29 +1216,31 @@ class UImodelization:
     #+---------------------------------------------- 
     #| drag_fromDND :
     #|   defines the operation executed when a message is
-    #|   is dragged out current group 
+    #|   is dragged out current symbol 
     #+----------------------------------------------
     def drag_fromDND(self, treeview, contexte, selection, info, dateur):   
+        self.log.info("DRAGGING !!")
         ids = []             
         treeview.get_selection().selected_foreach(self.foreach_drag_fromDND, ids)
         selection.set(selection.target, 8, ";".join(ids))
     
     def foreach_drag_fromDND(self, model, path, iter, ids):
+        self.log.info("4EACH DRAGGING !!")
         texte = str(model.get_value(iter, 0))
         ids.append(texte)
         return
     
     #+---------------------------------------------- 
-    #| Update the content of the tree store for groups
+    #| Update the content of the tree store for symbols
     #+----------------------------------------------
-    def updateTreeStoreGroup(self):        
+    def updateTreeStoreSymbol(self):        
         # Updates the treestore with a selected message
-        if (self.selectedMessage != "") :
-            self.treeGroupGenerator.messageSelected(self.selectedMessage)
-            self.selectedMessage = ""
+        if (self.selectedMessage != None) :
+            self.treeSymbolGenerator.messageSelected(self.selectedMessage)
+            self.selectedMessage = None
         else :
-            # Default display of the groups
-            self.treeGroupGenerator.default()
+            # Default display of the symbols
+            self.treeSymbolGenerator.default()
  
     #+---------------------------------------------- 
     #| Update the content of the tree store for messages
@@ -1253,10 +1249,9 @@ class UImodelization:
         # If we found it we can update the content of the treestore        
         if self.selectedSymbol != None :
             self.treeMessageGenerator.default(self.selectedSymbol)
-#            # enable dragging message out of current group
+#            # enable dragging message out of current symbol
 #            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
-        # Else, quite weird so throw a warning
         else :
             self.treeMessageGenerator.default(None)
             
@@ -1328,11 +1323,6 @@ class UImodelization:
         
         if self.netzob.getCurrentProject() == None :
             return  
-
-        # Just to force the calculation of the splitted messages by regex
-        ## TODO: put this at the end of the alignement process
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            self.treeMessageGenerator.default(symbol)
         
         notebook = gtk.Notebook()
         notebook.show()
@@ -1352,16 +1342,12 @@ class UImodelization:
     def search_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        # Just to force the calculation of the splitted messages by regex 
-        ## TODO: put this at the end of the alignement process
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() == None :
+            return
         
-#            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-#                self.treeMessageGenerator.default(symbol)
-        
-            searchPanel = SearchView(self.netzob.getCurrentProject())
-            dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
-            dialog.show()
+        searchPanel = SearchView(self.netzob.getCurrentProject())
+        dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
+        dialog.show()
 
     #+---------------------------------------------- 
     #| Called when user wants to identifies environment dependencies
@@ -1369,30 +1355,26 @@ class UImodelization:
     def env_dependencies_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        # Just to force the calculation of the splitted messages by regex 
-        ## TODO: put this at the end of the alignement process
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        notebook = gtk.Notebook()
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_TOP)
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            scroll = symbol.envDependencies(self.netzob.getCurrentProject())
+            if scroll != None:
+                notebook.append_page(scroll, gtk.Label(symbol.getName())) 
             
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                self.treeMessageGenerator.default(symbol)
-                
-            notebook = gtk.Notebook()
-            notebook.show()
-            notebook.set_tab_pos(gtk.POS_TOP)
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                scroll = symbol.envDependencies(self.netzob.getCurrentProject())
-                if scroll != None:
-                    notebook.append_page(scroll, gtk.Label(symbol.getName())) 
-            
-            dialog.vbox.pack_start(notebook, True, True, 0)
-            dialog.show()
+        dialog.vbox.pack_start(notebook, True, True, 0)
+        dialog.show()
 
     #+---------------------------------------------- 
-    #| Called when user wants to see the distribution of a group of messages
+    #| Called when user wants to see the distribution of a symbol of messages
     #+----------------------------------------------
     def messagesDistribution_cb(self, but):
         if self.selectedSymbol == None:
-            self.log.info("No group selected")
+            self.log.info("No symbol selected")
             return
         entropy = Entropy(self.selectedSymbol)
         entropy.buildDistributionView()
@@ -1402,20 +1384,14 @@ class UImodelization:
     #+----------------------------------------------
     def findSizeFields(self, button):
         # Create a temporary symbol for testing size fields
-        tmp_symbol = Symbol("tmp_symbol", "tmp_group")
+        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol")
         
         if self.netzob.getCurrentProject() == None :
             return  
 
-        # Just to force the calculation of the splitted messages by regex
-        ## TODO: put this at the end of the alignement process
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            self.treeMessageGenerator.default(symbol)
-        
-
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :
-        # str: group.id
+        # str: symbol.id
         # int: size field column
         # int: size field size
         # int: start column
@@ -1451,13 +1427,13 @@ class UImodelization:
         dialog.show()
 
     #+---------------------------------------------- 
-    #| Called when user wants to try to apply a size field on a group
+    #| Called when user wants to try to apply a size field on a symbol
     #+----------------------------------------------
     def sizeField_selected(self, treeview, symbol):
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
-                group_id = model.get_value(iter, 0)
+                symbol_id = model.get_value(iter, 0)
                 size_field = model.get_value(iter, 1)
                 size_field_len = model.get_value(iter, 2)
                 start_field = model.get_value(iter, 3)
@@ -1465,7 +1441,7 @@ class UImodelization:
                 end_field = model.get_value(iter, 5)
                 end_field_len = model.get_value(iter, 6)
                 
-                ## Select the related group
+                ## Select the related symbol
                 self.selectedSymbol = symbol
                 self.update()
 
@@ -1483,7 +1459,7 @@ class UImodelization:
                 if it == None:
                     return
 
-                # Build a temporary group
+                # Build a temporary symbol
                 symbol.clear()
                 for message in self.treeMessageGenerator.getSymbol().getMessages():
                     tmp_message = RawMessage("tmp", 329832, message.getData())
@@ -1501,27 +1477,27 @@ class UImodelization:
 #                    if end_field != -1:
 #                        end_field += 1
 #                symbol.setDescriptionByCol(size_field, "Size field")
-#                group.setColorByCol(size_field, "red")
-#                if group.splitColumn(start_field, start_field_len) == True:
+#                symbol.setColorByCol(size_field, "red")
+#                if symbol.splitColumn(start_field, start_field_len) == True:
 #                    start_field += 1
 #                    if end_field != -1:
 #                        end_field += 1
-#                group.setDescriptionByCol(start_field, "Start of payload")
-#                group.splitColumn(end_field, end_field_len)
+#                symbol.setDescriptionByCol(start_field, "Start of payload")
+#                symbol.splitColumn(end_field, end_field_len)
 #
 #                # Adapt tabulation for encapsulated payloads
 #                if end_field != -1:
 #                    for iCol in range(start_field, end_field + 1):
-#                        group.setTabulationByCol(iCol, group.getTabulationByCol(iCol) + 10)
+#                        symbol.setTabulationByCol(iCol, symbol.getTabulationByCol(iCol) + 10)
 #                else:
-#                    group.setTabulationByCol(start_field, group.getTabulationByCol(start_field) + 10)
+#                    symbol.setTabulationByCol(start_field, symbol.getTabulationByCol(start_field) + 10)
 
                 # View the proposed protocol structuration
                 self.update()
 
     #+---------------------------------------------- 
-    #| Called when user wants to apply a size field on a group
+    #| Called when user wants to apply a size field on a symbol
     #+----------------------------------------------
-    def applySizeField(self, button, dialog, group):
-#        self.treeMessageGenerator.getGroup().setColumns(copy.deepcopy(list(group.getColumns())))
+    def applySizeField(self, button, dialog, symbol):
+#        self.treeMessageGenerator.getSymbol().setColumns(copy.deepcopy(list(symbol.getColumns())))
         dialog.destroy()
