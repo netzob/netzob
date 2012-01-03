@@ -294,7 +294,7 @@ class UImodelization:
         combo.connect("changed", self.updateScoreLimit)
         possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
 
-        min_equivalence = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        min_equivalence = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         for i in range(len(possible_choices)):
             combo.append_text(str(possible_choices[i]))
             if str(possible_choices[i]) == str(int(min_equivalence)):
@@ -305,7 +305,7 @@ class UImodelization:
 
         # Widget button activate orphan reduction
         butOrphanReduction = gtk.CheckButton("Orphan reduction")
-        doOrphanReduction = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
+        doOrphanReduction = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
         if doOrphanReduction:
             butOrphanReduction.set_active(True)
         else:
@@ -316,7 +316,7 @@ class UImodelization:
 
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Slick regexes")
-        doInternalSlick = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        doInternalSlick = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         if doInternalSlick:
             but.set_active(True)
         else:
