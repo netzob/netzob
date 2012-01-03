@@ -177,7 +177,8 @@ class Field(object):
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
             
-            field.setVariable(Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version))
+            if xmlRoot.find("{" + namespace + "}variable") != None :
+                field.setVariable(Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version))
                 
             return field
             
