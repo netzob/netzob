@@ -359,7 +359,7 @@
 					</restriction>
 				</simpleType>
 			</element>
-			<element name="variable" type="netzob-project:Variable" minOccurs="0"></element>
+			<element name="variable" type="netzob-project:Variable" minOccurs="1"></element>
 		</sequence>
 		<attribute name="name" use="required">
 			<simpleType>
