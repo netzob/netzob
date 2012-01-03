@@ -40,6 +40,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #| Local imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -81,7 +82,12 @@ class Field(object):
             return False  
         
     def getVariable(self):
+        if self.isRegexStatic() :
+            variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
+            return variable
+            
         return self.variable
+    
     def setVariable(self, variable):
         self.variable = variable
         

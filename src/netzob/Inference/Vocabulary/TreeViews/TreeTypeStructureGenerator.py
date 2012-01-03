@@ -129,11 +129,12 @@ class TreeTypeStructureGenerator():
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
                 
         # Configure the display of the symbol description
-        symbol = self.getSymbol()
         for field in self.getSymbol().getFields() :
-            self.treestore.append(None, [field.getIndex(), "==> ", "element" + field.getVariable().getType(), "description"])
-                
-                
+            if field.getVariable() != None :
+                self.treestore.append(None, [field.getIndex(), str(field.getIndex()) + "]", field.getVariable().getType(), "description"])
+            else :
+                self.treestore.append(None, [field.getIndex(), "-", "-", "-"])
+               
 
     #+---------------------------------------------- 
     #| GETTERS : 
