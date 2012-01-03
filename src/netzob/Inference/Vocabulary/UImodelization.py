@@ -206,7 +206,7 @@ class UImodelization:
         frame.set_label("3 - Field type inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=4, columns=2, homogeneous=False)
+        table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -216,11 +216,17 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
-        # Widget button to show fields entropy
+        # Widget button to show message distribution
         but = gtk.Button("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button to analyze for ASN.1 presence
+        but = gtk.Button("Find ASN.1 fields")
+        but.connect("clicked", self.findASN1Fields_cb)
+        but.show()
+        table.attach(but, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for choosing the analysed protocole type
         label = gtk.Label("Protocol type : ")
@@ -235,8 +241,8 @@ class UImodelization:
         protocol_type_ID = configParser.getInt("clustering", "protocol_type")
         combo.set_active(protocol_type_ID)
         combo.show()
-        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         ## Dependencies inference
         frame = gtk.Frame()
@@ -1418,14 +1424,33 @@ class UImodelization:
         entropy.buildDistributionView()
 
     #+---------------------------------------------- 
+    #| Called when user wants to find ASN.1 fields
+    #+----------------------------------------------
+    def findASN1Fields_cb(self, button):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        dialog = gtk.Dialog(title="Find ASN.1 fields", flags=0, buttons=None)
+        notebook = gtk.Notebook()
+        notebook.show()
+        notebook.set_tab_pos(gtk.POS_TOP)
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            scroll = symbol.findASN1Fields(self.netzob.getCurrentProject())
+            if scroll != None:
+                notebook.append_page(scroll, gtk.Label(symbol.getName())) 
+            
+        dialog.vbox.pack_start(notebook, True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
-        # Create a temporary symbol for testing size fields
-        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol")
-        
         if self.netzob.getCurrentProject() == None :
             return  
+
+        # Create a temporary symbol for testing size fields
+        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol")
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :

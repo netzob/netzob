@@ -37,6 +37,9 @@ import glib
 from lxml.etree import ElementTree
 import struct
 from lxml import etree
+import pyasn1.codec.ber as ber
+from pyasn1.error import SubstrateUnderrunError
+
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
@@ -625,7 +628,116 @@ class Symbol(object):
                         cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
                     treeviewTarget.get_model().append([ cell ])
     
-    
+    #+---------------------------------------------- 
+    #| findASN1Fields:
+    #|  try to find ASN.1 fields
+    #+----------------------------------------------    
+    def findASN1Fields(self, project):
+        if len(self.fields) == 0:
+            return None
+
+        vbox = gtk.VBox(False, spacing=5)
+        vbox.show()
+        hbox = gtk.HPaned()
+        hbox.show()
+        # Treeview containing ASN.1 results ## ListStore format :
+        # int: iField
+        # str: env. dependancy name (ip, os, username, etc.)
+        # str: type
+        # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
+        store = gtk.ListStore(int, str, str, str)
+        treeviewRes = gtk.TreeView(store)
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Column')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=0)
+        treeviewRes.append_column(column)
+        column = gtk.TreeViewColumn('Results')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        treeviewRes.append_column(column)
+        treeviewRes.set_size_request(250, 300)
+        treeviewRes.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeviewRes)
+        hbox.add(scroll)
+
+        ## Algo : for each field, and then for each value, try to find environmental dependency
+
+        for message in self.getMessages():
+            tmpStr = message.getStringData()
+
+            for end in range(len(tmpStr)):
+                for start in range(len(tmpStr[:end] - 1)):
+                    print repr(tmpStr)
+                    try:
+                        ber.decoder.decode( tmpStr[start:end] )
+                    except pyasn1.error.SubstrateUnderrunError:
+                        pass
+                    else:
+                        print "PAN: " + repr(tmpStr)
+#                        store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
+
+        # Preview of matching fields in a treeview ## ListStore format :
+        # str: data
+        treeview = gtk.TreeView(gtk.ListStore(str))
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn('Data')
+        column.pack_start(cell, True)
+        column.set_attributes(cell, markup=0)
+        treeview.append_column(column)
+        treeview.set_size_request(700, 300)
+        treeview.show()
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        hbox.add(scroll)
+        vbox.pack_start(hbox, True, True, 0)
+
+        # Apply button
+        but = gtk.Button(label="Apply data type on column")
+        but.show()
+        self.butDataCarvingHandle = None
+        treeviewRes.connect("cursor-changed", self.envDependenciesResultSelected_cb, treeview, but)
+        vbox.pack_start(but, False, False, 0)
+
+        return vbox
+
+    #+---------------------------------------------- 
+    #| envDependenciesResultSelected_cb:
+    #|  Callback when clicking on a environmental dependency result.
+    #+----------------------------------------------
+    def envDependenciesResultSelected_cb(self, treeview, treeviewTarget, but):
+        treeviewTarget.get_model().clear()
+        (model, it) = treeview.get_selection().get_selected()
+        if(it):
+            if(model.iter_is_valid(it)):
+                fieldIndex = model.get_value(it, 0)
+                field = self.getFieldByIndex(fieldIndex)
+                envName = model.get_value(it, 1)
+                envType = model.get_value(it, 2)
+                envValue = model.get_value(it, 3)
+                treeviewTarget.get_column(0).set_title("Field " + str(field.getIndex()))
+                if self.butDataCarvingHandle != None:
+                    but.disconnect(self.butDataCarvingHandle)
+                self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
+                for cell in self.getMessagesValuesByField(field):
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
+                    pattern = re.compile(envValue, re.IGNORECASE)
+                    cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
+                    treeviewTarget.get_model().append([ cell ])
+
+    #+---------------------------------------------- 
+    #| applyDependency_cb:
+    #|  Called when user wants to apply a dependency to a field
+    #+----------------------------------------------
+    def applyDependency_cb(self, button, field, envName):
+        field.setDescription(envName)
+        pass
+
     #+---------------------------------------------- 
     #| envDependencies:
     #|  try to find environmental dependencies
@@ -736,8 +848,7 @@ class Symbol(object):
     def applyDependency_cb(self, button, field, envName):
         field.setDescription(envName)
         pass
-    
-    
+   
     #+---------------------------------------------- 
     #| getVariables:
     #|  Extract from the fields definitions the included variables
