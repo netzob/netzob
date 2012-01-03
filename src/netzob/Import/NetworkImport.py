@@ -31,8 +31,6 @@
 import gtk
 import pygtk
 import uuid
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Field import Field
 pygtk.require('2.0')
 import logging
 import threading
@@ -55,12 +53,13 @@ from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
+from netzob.Common.Symbol import Symbol
+from netzob.Common.Field import Field
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+ 
 #| Network :
 #|     This class offers the capability to capture traffic from live network 
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class NetworkImport:
     
@@ -240,7 +239,6 @@ class NetworkImport:
                 Dport = None
                 Data = None
                 
-                
                 ethernet = eth_decoder.decode(packetPayload)
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
@@ -259,7 +257,7 @@ class NetworkImport:
                         Data = tcp.get_data_as_string()
                 
                 # Compute the messages
-                message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)
+                message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)    
                 messages.append(message)
                 
         
