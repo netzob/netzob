@@ -140,6 +140,12 @@ class UImodelization:
         but.connect("clicked", self.forceAlignment_cb)
         but.show()
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+
+        # Widget button slick regex
+        but = gtk.Button("Slick regexes")
+        but.connect("clicked", self.slickRegex_cb)
+        but.show()
+        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
         ## Field type inference
         frame = gtk.Frame()
@@ -331,12 +337,6 @@ class UImodelization:
 #        but.show()
 #        but.set_sensitive(False)
 #        panel.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button slick regexes # TODO
-#        but = gtk.Button("Slick regexes")
-#        but.connect("clicked", self.netzob.symbols.slickRegexes, self)
-#        but.show()
-#        panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = gtk.Button("Discover alignment")
@@ -1488,6 +1488,16 @@ class UImodelization:
             return
         entropy = Entropy(self.selectedSymbol)
         entropy.buildDistributionView()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to slick the current regexes
+    #+----------------------------------------------
+    def slickRegex_cb(self, but):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.slickRegex(self.netzob.getCurrentProject())
 
     #+---------------------------------------------- 
     #| Called when user wants to find ASN.1 fields

@@ -259,7 +259,6 @@ class NetworkImport:
                 # Compute the messages
                 message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)    
                 messages.append(message)
-                
         
         # We ask the confirmation
         md = gtk.MessageDialog(None,

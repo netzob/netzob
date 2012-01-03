@@ -34,8 +34,8 @@ import gtk
 from operator import attrgetter
 import re
 import glib
-from lxml.etree import ElementTree
 import struct
+from lxml.etree import ElementTree
 from lxml import etree
 import pyasn1.codec.der.decoder
 from pyasn1.error import PyAsn1Error
@@ -55,7 +55,6 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
-
 
 #+---------------------------------------------------------------------------+
 #| Symbol :
@@ -942,6 +941,56 @@ class Symbol(object):
         # bind_layers( TCP, HTTP, dport=80 )
         return s
 
+    #+---------------------------------------------- 
+    #| slickRegex:
+    #|  try to make smooth the regex, by deleting tiny static
+    #|  sequences that are between big dynamic sequences
+    #+----------------------------------------------
+    def slickRegex(self, project):
+        if self.getAlignmentType() != "regex":
+            logging.warn("SlickRegex(): only applicable to a symbol with dynamic alignment")
+            return
+
+        # Use the default protocol type for representation
+        encodingType = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+
+        res = False
+        i = 1
+        nbFields = len(self.getFields())
+        while i < nbFields - 2:
+            aField = self.getFieldByIndex(i)
+            if aField.isRegexStatic():
+                if len(aField.getRegex()) == 2: # Means a potential negligeable element that can be merged with its neighbours
+                    precField = self.getFieldByIndex(i - 1)
+                    if precField.isRegexOnlyDynamic():
+                        nextField = self.getFieldByIndex(i + 1)
+                        if nextField.isRegexOnlyDynamic():
+                            res = True
+                            
+                            # Build the new field
+                            lenColResult = int(precField.getRegex()[4:-2]) + 2 + int(nextField.getRegex()[4:-2]) # We compute the len of the aggregated regex
+                            lenColResult = str(lenColResult)
+                            aField.setIndex( precField.getIndex() )
+                            aField.setRegex( "(.{," + lenColResult + "})" )
+                            aField.setSelectedType( encodingType )
+
+                            # Delete the old ones
+                            self.fields.remove(nextField)
+                            self.fields.remove(precField)
+        
+                            # Update the index of the fields placed after the new one
+                            for field in self.fields :
+                                if field.getIndex() > aField.getIndex() :
+                                    field.setIndex(field.getIndex() - 2)
+                            # Sort fields by their index
+                            self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
+                            break # Just do it one time to avoid conflicts in self.fields structure
+            i += 1
+
+        if res:
+            self.slickRegex(project) # Try to loop until no more merges are done
+            logging.debug("The regex has been slicked")
+
     """ TODO
     #+---------------------------------------------- 
     #| search_cb:
@@ -960,50 +1009,6 @@ class Symbol(object):
             vbox = group.search(entry.get_text())
             if vbox != None:
                 notebook.append_page(vbox, gtk.Label(group.getName()))
-
-
-    #+---------------------------------------------- 
-    #| slickRegex:
-    #|  try to make smooth the regex, by deleting tiny static
-    #|  sequences that are between big dynamic sequences
-    #+----------------------------------------------
-    def slickRegex(self):
-        # Use the default protocol type for representation
-        configParser = ConfigurationParser()
-        valID = configParser.getInt("clustering", "protocol_type")
-        if valID == 0:
-            aType = "ascii"
-        else:
-            aType = "binary"
-
-        res = False
-        i = 1
-        while i < len(self.columns) - 1:
-            if self.isRegexStatic(self.columns[i]['regex']):
-                if len(self.columns[i]['regex']) == 2: # Means a potential negligeable element that can be merged with its neighbours
-                    if self.isRegexOnlyDynamic(self.columns[i - 1]['regex']):
-                        if self.isRegexOnlyDynamic(self.columns[i + 1]['regex']):
-                            res = True
-                            col1 = self.columns.pop(i - 1) # we retrieve the precedent regex
-                            col2 = self.columns.pop(i - 1) # we retrieve the current regex
-                            col3 = self.columns.pop(i - 1) # we retrieve the next regex
-                            lenColResult = int(col1['regex'][4:-2]) + 2 + int(col3['regex'][4:-2]) # We compute the len of the aggregated regex
-                            self.columns.insert(i - 1, {'name' : "Name",
-                                                        'regex' : "(.{," + str(lenColResult) + "})",
-                                                        'selectedType' : aType,
-                                                        'tabulation' : 0,
-                                                        'description' : "",
-                                                        'color' : ""
-                                                        })
-            i += 1
-
-        if res:
-            self.slickRegex() # Try to loop until no more merges are done
-            self.log.debug("The regex has been slicked")
-
-        # TODO: relaunch the matrix step of getting the maxIJ to merge column/row
-        # TODO: memorize old regex/align
-        # TODO: adapt align
 
     #+---------------------------------------------- 
     #| search:
