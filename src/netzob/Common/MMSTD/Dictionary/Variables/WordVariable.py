@@ -64,7 +64,9 @@ class WordVariable(Variable):
             
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
-        
+    
+    def getDescription(self):
+        return self.getType() + ", value = " + self.strVal
     
    
     def generateValue(self, negative, dictionary):

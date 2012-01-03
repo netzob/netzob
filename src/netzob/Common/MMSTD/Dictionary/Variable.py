@@ -65,6 +65,11 @@ class Variable():
         self.log.error("Error, the current value (declared as " + self.type + ") do not support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")
     
+    def getDescription(self):
+        self.log.error("Error, the current value (declared as " + self.type + ") do not support function getDescription")
+        raise NotImplementedError("The current variable doesn't support 'getDescription'.")
+    
+    
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -74,8 +79,6 @@ class Variable():
         return self.name
     def getType(self):
         return self.type    
-    def getDomain(self):
-        return self.domain
     def isMutable(self):
         return self.mutable
         

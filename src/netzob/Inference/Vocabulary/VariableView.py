@@ -185,10 +185,11 @@ class VariableView(object):
         
         # Creation of the word
         wordVariable = WordVariable(id, varValue, varValue)
+        rootVariable.addChild(wordVariable)
         
-        self.treestore.append(rootEntry, [str(wordVariable.getID()), "Word"])
-            
+        self.datas[str(wordVariable.getID())] = wordVariable
         
+        self.treestore.append(rootEntry, [str(wordVariable.getID()), wordVariable.getDescription()])
         
         # We close the current dialog
         dialog.destroy()

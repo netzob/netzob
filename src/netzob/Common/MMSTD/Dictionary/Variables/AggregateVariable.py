@@ -50,8 +50,12 @@ class AggregateVariable(Variable):
     def __init__(self, id, name, vars):
         Variable.__init__(self, "Aggregate", id, name, True, None)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
-        self.vars = vars
+        self.vars = []
+        if vars != None :
+            self.vars.extend(vars)
     
+    def addChild(self, variable):
+        self.vars.append(variable)
     
     def getValue(self, negative, dictionary):
         binResult = []
