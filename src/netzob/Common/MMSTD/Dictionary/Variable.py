@@ -48,7 +48,7 @@ import logging
 #+---------------------------------------------------------------------------+
 class Variable():
     
-    def __init__(self, type, id, name, domain, default, mutable):
+    def __init__(self, type, id, name, domain, mutable, default):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
         self.id = id

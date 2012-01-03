@@ -31,6 +31,7 @@
 import gtk
 import pango
 import pygtk
+from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 pygtk.require('2.0')
 import logging
 import threading
@@ -1002,7 +1003,97 @@ class UImodelization:
         dialog.show()
     
     def rightClickCreateVariable(self, widget, field):
-        pass
+        self.log.debug("Opening the dialog for the creation of a variable")
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the new variable')
+        
+        # Create the ID of the new variable
+        variableID = str(uuid.uuid4())
+        
+        mainTable = gtk.Table(rows=6, columns=2, homogeneous=False)
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        # name of the variable
+        variableNameLabel = gtk.Label("Name : ")
+        variableNameLabel.show()
+        variableNameEntry = gtk.Entry()
+        variableNameEntry.show()
+        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        # type of the variable
+        variableTypeLabel = gtk.Label("Type : ")
+        variableTypeLabel.show()
+        variableTypeCombo = gtk.ComboBox()
+        variableTypeCombo.set_model(gtk.ListStore(str))
+        variableTypeComboCell = gtk.CellRendererText()
+        variableTypeCombo.pack_start(variableTypeComboCell, True)
+        variableTypeCombo.add_attribute(variableTypeComboCell, 'text', 0)
+        possible_choices = ["Word"]
+        for i in range(len(possible_choices)):
+            variableTypeCombo.append_text(str(possible_choices[i]))
+        variableTypeCombo.show()
+        mainTable.attach(variableTypeLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableTypeCombo, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # is a mutable variable
+        isMutableVariableLabel = gtk.Label("Mutable : ")
+        isMutableVariableLabel.show()
+        isMutableVariableButton = gtk.CheckButton("")
+        isMutableVariableButton.show()
+        
+        mainTable.attach(isMutableVariableLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(isMutableVariableButton, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # domain of the variable
+        variableDomainLabel = gtk.Label("Domain : ")
+        variableDomainLabel.show()
+        variableDomainEntry = gtk.Entry()
+        variableDomainEntry.show()
+        mainTable.attach(variableDomainLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableDomainEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Default value of the variable
+        variableDefaultLabel = gtk.Label("Default : ")
+        variableDefaultLabel.show()
+        variableDefaultEntry = gtk.Entry()
+        variableDefaultEntry.show()
+        mainTable.attach(variableDefaultLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableDefaultEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        
+        if result != gtk.RESPONSE_OK :
+            dialog.destroy()
+            return 
+        
+        # Creation of the variable
+        varName = variableNameEntry.get_text()
+        varType = variableTypeCombo.get_model()[variableTypeCombo.get_active()][0]
+        varMutable = isMutableVariableButton.get_active()
+        varDomain = variableDomainEntry.get_text()
+        varDefault = variableDefaultEntry.get_text()
+        if len(varDefault) == 0 :
+            varDefault = None
+        
+        if varType == "Word" :
+            self.log.debug("Creation of a word variable")
+            variable = WordVariable(variableID, varName, varDomain, varMutable, varDefault)
+            
+            # now we assign this variable to the field
+            field.setVariable(variable)
+            
+        dialog.destroy()
+        
+        
     def rightClickRemoveVariable(self, widget, field):
         pass
     def rightClickAttachVariable(self, widget, field):
