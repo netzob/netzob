@@ -36,7 +36,7 @@ import re
 import glib
 from lxml.etree import ElementTree
 import struct
-
+from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
@@ -51,7 +51,7 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
-from lxml import etree
+
 
 #+---------------------------------------------------------------------------+
 #| Symbol :
@@ -480,11 +480,11 @@ class Symbol(object):
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
-                for cell in self.getMessagesValuesByField( field ) :
+                for cell in self.getMessagesValuesByField(field) :
                     for match in regex.finditer(TypeConvertor.netzobRawToASCII(cell)):
                         matchElts += 1
                 if matchElts > 0:
-                    store.append( [field.getIndex(), carver] )
+                    store.append([field.getIndex(), carver])
 
         # Preview of matching fields in a treeview ## ListStore format :
         # str: data
@@ -611,7 +611,7 @@ class Symbol(object):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
-                for cell in self.getMessagesValuesByField( self.getFieldByIndex(fieldIndex) ) :
+                for cell in self.getMessagesValuesByField(self.getFieldByIndex(fieldIndex)) :
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
@@ -715,7 +715,7 @@ class Symbol(object):
         if(it):
             if(model.iter_is_valid(it)):
                 fieldIndex = model.get_value(it, 0)
-                field = self.getFieldByIndex( fieldIndex )
+                field = self.getFieldByIndex(fieldIndex)
                 envName = model.get_value(it, 1)
                 envType = model.get_value(it, 2)
                 envValue = model.get_value(it, 3)
@@ -734,9 +734,21 @@ class Symbol(object):
     #|  Called when user wants to apply a dependency to a field
     #+----------------------------------------------
     def applyDependency_cb(self, button, field, envName):
-        field.setDescription( envName )
+        field.setDescription(envName)
         pass
-
+    
+    
+    #+---------------------------------------------- 
+    #| getVariables:
+    #|  Extract from the fields definitions the included variables
+    #+----------------------------------------------
+    def getVariables(self):
+        result = []
+        for field in self.getFields():
+            if field.getVariable() != None :
+                result.append(field.getVariable())
+        return result
+    
     #+---------------------------------------------- 
     #| removeMessage : remove any ref to the given
     #| message and recompute regex and score

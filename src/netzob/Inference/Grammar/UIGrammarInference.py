@@ -723,10 +723,11 @@ class UIGrammarInference:
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
         #go go go
-        dialog.run()
-        text = entry.get_text()
-        if (len(text) > 0) :
-            state.setName(text)
+        result = dialog.run()
+        if result == gtk.RESPONSE_APPLY :
+            text = entry.get_text()
+            if (len(text) > 0) :
+                state.setName(text)
         dialog.destroy()
         
         self.update()

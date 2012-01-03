@@ -31,6 +31,10 @@
 import re
 from lxml.etree import ElementTree
 from lxml import etree
+import uuid
+
+from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 #+---------------------------------------------------------------------------+ 
 #| Local imports
@@ -54,6 +58,7 @@ class Field(object):
         self.selected_type = selected_type
         self.description = description
         self.color = color
+        self.variable = None
     
     def getEncodedVersionOfTheRegex(self):
         if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files store None as a string...
@@ -73,8 +78,13 @@ class Field(object):
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
             return True
         else:
-            return False    
-
+            return False  
+        
+    def getVariable(self):
+        return self.variable
+    def setVariable(self, variable):
+        self.variable = variable
+        
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
@@ -84,14 +94,18 @@ class Field(object):
         xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
         
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
-        xmlFieldRegex.text = str(self.getSelectedType())
+        xmlFieldType = etree.SubElement(xmlField, "{" + namespace + "}selectedType")
+        xmlFieldType.text = str(self.getSelectedType())
         
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}description")
-        xmlFieldRegex.text = str(self.getDescription())
+        xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
+        xmlFieldDescription.text = str(self.getDescription())
         
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}color")
-        xmlFieldRegex.text = str(self.getColor())
+        xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
+        xmlFieldColor.text = str(self.getColor())
+        
+        if self.getVariable() != None :
+            self.getVariable().save(xmlField, namespace)
+        
     
     #+---------------------------------------------- 
     #| GETTERS
@@ -107,10 +121,17 @@ class Field(object):
     def getDescription(self):
         return self.description
     def getColor(self):
+        if not self.isRegexStatic() :
+            return "red"
+        
         return self.color
     def getIndex(self):
         return self.index
-
+    
+    def getBackgroundColor(self):
+        if self.getVariable() != None :
+            return "yellow"
+        return None
     #+---------------------------------------------- 
     #| SETTERS
     #+----------------------------------------------         
@@ -156,6 +177,9 @@ class Field(object):
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
             
+            if xmlRoot.find("{" + namespace + "}variable") != None :
+                field.setVariable(Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version))
+                
             return field
             
         return None

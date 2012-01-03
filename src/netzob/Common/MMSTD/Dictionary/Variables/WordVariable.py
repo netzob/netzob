@@ -32,6 +32,8 @@ import logging
 import binascii
 import random
 import string
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -53,8 +55,8 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
     
-    def __init__(self, id, name, defaultVar):
-        Variable.__init__(self, id, name, "WORD")
+    def __init__(self, id, name, domain, defaultVar):
+        Variable.__init__(self, "Word", id, name, domain)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
         if defaultVar == "" or defaultVar == None :
             self.binVal = None
@@ -104,24 +106,34 @@ class WordVariable(Variable):
             if i > 0 :
                 self.strVal = res
                 self.binVal = binascii.unhexlify(self.strVal)
-#                
-#                
-#                
-#                self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
-#                
-#                tmp = ""
-#                for c in self.strVal :
-#                    h = str(hex(ord(c))).replace("0x", "")
-#                    if len(h) != 2 :
-#                        h = "0" + h
-#                    tmp = tmp + h
-#                
-#                self.binVal = binascii.unhexlify(tmp)
-#                
+
                 return indice + i
             
         
                 
         return -1
-   
-   
+    
+    def save(self, root, namespace):
+        xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlWordVariable.set("id", str(self.getID()))
+        xmlWordVariable.set("name", str(self.getName()))
+        xmlWordVariable.set("domain", str(self.getDomain()))
+        if self.hasDefault() :
+            xmlWordVariable.set("default", str(self.getDefault()))
+            
+        xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:WordVariable")
+        return xmlWordVariable
+        
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        result = None
+        if version == "0.1" :
+            field_id = xmlRoot.get("id")
+            field_name = xmlRoot.get("name")
+            field_domain = xmlRoot.get("domain")
+            field_default = xmlRoot.get("default", "abstract")
+            if field_default == "abstract" :
+                field_default = None            
+            result = WordVariable(field_id, field_name, field_domain, field_default)
+            
+        return result

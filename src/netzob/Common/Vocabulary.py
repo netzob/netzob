@@ -92,6 +92,14 @@ class Vocabulary(object):
     def removeSymbol(self, symbol):
         self.symbols.remove(symbol)
         
+    def getVariables(self):
+        variables = []
+        for symbol in self.symbols :
+            for variable in symbol.getVariables() :
+                if not variable in variables :
+                    variables.append(variable)
+        return variables
+        
     #+---------------------------------------------- 
     #| alignWithNeedlemanWunsh:
     #|  Align each messages of each symbol with the

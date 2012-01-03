@@ -359,6 +359,7 @@
 					</restriction>
 				</simpleType>
 			</element>
+			<element name="variable" type="netzob-project:Variable" minOccurs="0"></element>
 		</sequence>
 		<attribute name="name" use="required">
 			<simpleType>
@@ -597,6 +598,43 @@
 	</complexType>
 
 
+	<complexType name="Variable" abstract="true">
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="domain" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="default" type="string"></attribute>
+	</complexType>
+
+	<complexType name="WordVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				
+			</extension>
+		</complexContent>
+	</complexType>
+	
+
+
 
 	<element name="project" type="netzob-project:Project"></element>
+
+    
 </schema>
