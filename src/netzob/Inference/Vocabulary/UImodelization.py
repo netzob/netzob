@@ -43,7 +43,6 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
@@ -109,8 +108,6 @@ class UImodelization:
         self.panel.show()
         self.defer_select = False
 
-        configParser = ConfigurationParser()
-        
         #+---------------------------------------------- 
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
@@ -182,10 +179,8 @@ class UImodelization:
         combo.set_model(gtk.ListStore(str))
         combo.append_text("Text based (HTTP, FTP)")
         combo.append_text("Fixed fields binary based (IP, TCP)")
-        combo.append_text("Variable fields binary based (ASN.1)")
+#        combo.append_text("Variable fields binary based (ASN.1)")
         combo.connect("changed", self.updateProtocolType)
-        protocol_type_ID = configParser.getInt("clustering", "protocol_type")
-        combo.set_active(protocol_type_ID)
         combo.show()
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         table.attach(combo, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -290,7 +285,6 @@ class UImodelization:
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
         panel = gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
-        configParser = ConfigurationParser()
 
         ## Similarity threshold
         label = gtk.Label("Similarity threshold:")
@@ -299,7 +293,8 @@ class UImodelization:
         combo.set_model(gtk.ListStore(str))
         combo.connect("changed", self.updateScoreLimit)
         possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
-        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
+
+        min_equivalence = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         for i in range(len(possible_choices)):
             combo.append_text(str(possible_choices[i]))
             if str(possible_choices[i]) == str(int(min_equivalence)):
@@ -310,8 +305,8 @@ class UImodelization:
 
         # Widget button activate orphan reduction
         butOrphanReduction = gtk.CheckButton("Orphan reduction")
-        doOrphanReduction = configParser.getInt("clustering", "orphan_reduction")
-        if doOrphanReduction == 1:
+        doOrphanReduction = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
+        if doOrphanReduction:
             butOrphanReduction.set_active(True)
         else:
             butOrphanReduction.set_active(False)
@@ -321,8 +316,8 @@ class UImodelization:
 
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Slick regexes")
-        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
-        if doInternalSlick == 1:
+        doInternalSlick = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        if doInternalSlick:
             but.set_active(True)
         else:
             but.set_active(False)
@@ -722,7 +717,7 @@ class UImodelization:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -752,7 +747,11 @@ class UImodelization:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, messages, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        logging.warn("Not yet implemented")
+        return
+
+    """
+        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         existingTraceDir = projectsDirectoryPath + os.sep + entry.get_active_text()
         # Create the new XML structure
         res = "<datas>\n"
@@ -766,12 +765,17 @@ class UImodelization:
         fd.write(res)
         fd.close()
         dialog.destroy()
+    """
 
     #+---------------------------------------------- 
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, messages, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        logging.warn("Not yet implemented")
+        return
+
+    """
+        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -797,6 +801,7 @@ class UImodelization:
         fd.close()
         dialog.destroy()
         self.netzob.updateListOfAvailableProjects()
+    """
 
     #+---------------------------------------------- 
     #| rightClickDomainOfDefinition :

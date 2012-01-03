@@ -43,7 +43,6 @@ import random
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.TypeIdentifier import TypeIdentifier
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.FileMessage import FileMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration

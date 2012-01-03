@@ -47,7 +47,6 @@ import subprocess
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 

@@ -35,7 +35,6 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.TypeIdentifier import TypeIdentifier
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration

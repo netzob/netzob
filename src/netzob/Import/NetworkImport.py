@@ -48,7 +48,6 @@ import impacket.ImpactPacket as Packets
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
