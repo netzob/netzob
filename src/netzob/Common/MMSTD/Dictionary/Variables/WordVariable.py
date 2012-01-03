@@ -56,28 +56,16 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
     
-    def __init__(self, id, name, domain, mutable, defaultVar):
-        Variable.__init__(self, "Word", id, name, domain, mutable, defaultVar)
+    def __init__(self, id, name, value):
+        Variable.__init__(self, "Word", id, name, True, None)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
-        if defaultVar == "" or defaultVar == None :
-            self.binVal = None
-            self.strVal = None
-        else :
-            self.strVal = defaultVar
-            self.binVal = self.ascii2bin(self.strVal)
+        self.strVal = value
+        self.binVal = TypeConvertor.ASCIIToNetzobRaw(self.strVal)
             
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
         
     
-    def ascii2bin(self, ascii):
-        chars = []
-        for c in ascii :
-            v = str(hex(ord(c))).replace("0x", "")
-            if len(str(v)) != 2 : 
-                v = "0" + str(v)
-            chars.append(v)
-        return ''.join(chars)
    
     def generateValue(self, negative, dictionary):
         # Generate a WORD value 

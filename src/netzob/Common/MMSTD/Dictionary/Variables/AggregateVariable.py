@@ -48,7 +48,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 class AggregateVariable(Variable):
     
     def __init__(self, id, name, vars):
-        Variable.__init__(self, id, name, "AGGREGATE")
+        Variable.__init__(self, "Aggregate", id, name, True, None)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
         self.vars = vars
     

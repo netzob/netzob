@@ -57,7 +57,7 @@ from netzob.Common.TypeConvertor import TypeConvertor
 class BinaryVariable(Variable):
     
     def __init__(self, id, name, mutable, defaultVar):
-        Variable.__init__(self, "Binary", id, name, "", mutable, defaultVar)
+        Variable.__init__(self, "Binary", id, name, mutable, defaultVar)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
         if defaultVar == "" or defaultVar == None :
             self.binVal = None
