@@ -45,19 +45,10 @@ from netzob.Common.Project import Project
 from netzob.Common.Menu import Menu
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
-from netzob.Export.ScapyExport import ScapyExport
-from netzob.Export.RawExport import RawExport
-from netzob.Import.ApiImport import ApiImport
-from netzob.Import.FileImport import FileImport
-from netzob.Import.IpcImport import IpcImport
-from netzob.Import.NetworkImport import NetworkImport
-from netzob.Import.PcapImport import PcapImport
 from netzob.Fuzzing.UIfuzzing import UIfuzzing
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
 from netzob.Common.ConfigurationParser import ConfigurationParser
-from netzob.Common.StateParser import StateParser
-from netzob.Common.Groups import Groups
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
 from netzob.Common.Workspace import Workspace
@@ -88,9 +79,6 @@ class NetzobGui():
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
         self.log.info("Starting netzob")
-
-        # Groups of messages are handled with the following object
-        self.groups = Groups(self)
 
         # Main window definition
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)

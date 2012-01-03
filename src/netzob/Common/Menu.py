@@ -30,8 +30,13 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
-from netzob.Common.Project import Project
 import logging
+import os
+
+#+---------------------------------------------------------------------------+ 
+#| Local imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.Project import Project
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
 from netzob.Import.IpcImport import IpcImport
@@ -39,7 +44,6 @@ from netzob.Import.FileImport import FileImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-import os
 
 #+---------------------------------------------------------------------------+
 #| Menu :
@@ -133,6 +137,7 @@ class Menu(object):
         
         exportXMLEntry = gtk.MenuItem("XML")
         exportXMLEntry.connect("activate", self.exportXMLAction)
+        self.menuExport.append(exportXMLEntry)
           
         self.menuProject.append(self.exportRootMenu)
         

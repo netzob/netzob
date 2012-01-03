@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -37,6 +36,11 @@ import uuid
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
+#+---------------------------------------------------------------------------+ 
+#| Local imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.TypeConvertor import TypeConvertor
+
 #+---------------------------------------------------------------------------+
 #| Field :
 #|     Class definition of a field
@@ -57,7 +61,12 @@ class Field(object):
         self.variable = None
     
     def getEncodedVersionOfTheRegex(self):
-        return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)  
+        if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files store None as a string...
+            return ""
+        elif self.regex.find("{") != -1: # This is a real regex
+            return self.regex
+        else: # This is a simple value
+            return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.selected_type)
     
     def isRegexStatic(self):
         if self.regex.find("{") == -1:
@@ -174,7 +183,3 @@ class Field(object):
             return field
             
         return None
-        
-        
-        
-        

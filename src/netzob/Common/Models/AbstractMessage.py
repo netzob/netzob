@@ -32,18 +32,16 @@ import logging
 import uuid
 import re
 import glib
-from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
+from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.NetzobException import NetzobException
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage :
 #|     Definition of a message
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class AbstractMessage():
     
@@ -137,25 +135,32 @@ class AbstractMessage():
     #|  and return a table
     #+----------------------------------------------
     def applyRegex(self, styled=False, encoded=False):
+        res = []
         regex = []
+        m = None
+        data = ""
         for field in self.symbol.getFields():
             regex.append(field.getRegex())
-        
-        compiledRegex = re.compile("".join(regex))
-        data = self.getStringData()
-        m = compiledRegex.match(data)
+
+        try:
+            compiledRegex = re.compile("".join(regex))
+            data = self.getStringData()
+            m = compiledRegex.match(data)
+        except AssertionError:
+            raise NetzobException("This Python version only supports 100 named groups in regex")
+#            return res
         if m == None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
             return [ self.getStringData() ]
-        res = []
         iCol = 0
         dynamicCol = 1
         for field in self.symbol.getFields():
             if field.getRegex().find("(") != -1: # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
+
                 # Define the color
                 if field.getColor() == "" or field.getColor() == None:
                     color = 'blue'
@@ -198,11 +203,11 @@ class AbstractMessage():
     #|  and return a table
     #+----------------------------------------------
     def applyDelimiter(self, styled=False, encoded=False):
-        delimiter = self.getSymbol().getDelimiter()
+        delimiter = self.getSymbol().getRawDelimiter()
         res = []
         iField = -1
         for field in self.symbol.getFields():
-            if field.getRegex() == delimiter:
+            if field.getName() == "__sep__":
                 tmp = delimiter
             else:
                 iField += 1

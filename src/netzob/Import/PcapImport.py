@@ -76,7 +76,6 @@ class PcapImport:
     
     #+---------------------------------------------- 
     #| Constructor :
-    #| @param groups: list of all groups 
     #+----------------------------------------------   
     def __init__(self, zob):        
         self.zob = zob
