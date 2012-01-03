@@ -106,7 +106,8 @@ class TreeTypeStructureGenerator():
         if self.getSymbol() == None or self.getMessage() == None:
             self.clear()
             return
-
+        
+        # Configure the field alignment
         splittedMessage = self.getMessage().applyAlignment(styled=True, encoded=True)
 
         if str(self.message.getID).find("HEADER") != -1:
@@ -126,6 +127,13 @@ class TreeTypeStructureGenerator():
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
             else:
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
+                
+        # Configure the display of the symbol description
+        symbol = self.getSymbol()
+        for field in self.getSymbol().getFields() :
+            self.treestore.append(None, [field.getIndex(), "==> ", "element" + field.getVariable().getType(), "description"])
+                
+                
 
     #+---------------------------------------------- 
     #| GETTERS : 

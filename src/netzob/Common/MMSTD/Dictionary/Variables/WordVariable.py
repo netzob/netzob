@@ -57,7 +57,7 @@ from netzob.Common.TypeConvertor import TypeConvertor
 class WordVariable(Variable):
     
     def __init__(self, id, name, domain, mutable, defaultVar):
-        Variable.__init__(self, "Word", id, name, domain, mutable)
+        Variable.__init__(self, "Word", id, name, domain, mutable, defaultVar)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
         if defaultVar == "" or defaultVar == None :
             self.binVal = None

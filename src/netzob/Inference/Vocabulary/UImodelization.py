@@ -31,6 +31,7 @@
 import gtk
 import pango
 import pygtk
+from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 pygtk.require('2.0')
 import logging
 import threading
@@ -1008,6 +1009,7 @@ class UImodelization:
         variableIDLabel = gtk.Label("ID :")
         variableIDLabel.show()
         variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
         mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -1067,9 +1069,23 @@ class UImodelization:
             dialog.destroy()
             return 
         
+        # Creation of the variable
+        varName = variableNameEntry.get_text()
+        varType = variableTypeCombo.get_model()[variableTypeCombo.get_active()][0]
+        varMutable = isMutableVariableButton.get_active()
+        varDomain = variableDomainEntry.get_text()
+        varDefault = variableDefaultEntry.get_text()
+        if len(varDefault) == 0 :
+            varDefault = None
         
-        
-        
+        if varType == "Word" :
+            self.log.debug("Creation of a word variable")
+            variable = WordVariable(variableID, varName, varDomain, varMutable, varDefault)
+            
+            # now we assign this variable to the field
+            field.setVariable(variable)
+            
+        dialog.destroy()
         
         
     def rightClickRemoveVariable(self, widget, field):
