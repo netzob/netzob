@@ -37,7 +37,8 @@ import glib
 from lxml.etree import ElementTree
 import struct
 from lxml import etree
-import pyasn1.codec.ber as ber
+import pyasn1.codec.der.decoder
+from pyasn1.error import PyAsn1Error
 from pyasn1.error import SubstrateUnderrunError
 
 #+---------------------------------------------------------------------------+
@@ -664,20 +665,27 @@ class Symbol(object):
         scroll.add(treeviewRes)
         hbox.add(scroll)
 
-        ## Algo : for each field, and then for each value, try to find environmental dependency
+        ## Algo : for each message, try to decode ASN.1 data
 
         for message in self.getMessages():
+#            tmpStr = TypeConvertor.netzobRawToBinary( message.getStringData() )
             tmpStr = message.getStringData()
 
-            for end in range(len(tmpStr)):
-                for start in range(len(tmpStr[:end] - 1)):
-                    print repr(tmpStr)
+            for end in range(1, len(tmpStr)):
+                for start in range(0, end):
                     try:
-                        ber.decoder.decode( tmpStr[start:end] )
-                    except pyasn1.error.SubstrateUnderrunError:
-                        pass
-                    else:
-                        print "PAN: " + repr(tmpStr)
+                        res = pyasn1.codec.der.decoder.decode( tmpStr[start:end] )
+                    except SubstrateUnderrunError:
+                        continue
+                    except PyAsn1Error:
+                        continue
+                    except IndexError:
+                        print "IndexError: " + repr( tmpStr[start:end] )
+                        continue
+                    except:
+                        print "NOK"
+                        continue
+#                    print "PAN: " + repr(res)
 #                        store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
         # Preview of matching fields in a treeview ## ListStore format :
