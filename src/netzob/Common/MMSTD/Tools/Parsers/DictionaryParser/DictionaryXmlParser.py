@@ -60,8 +60,6 @@ from netzob.Common.MMSTD.Dictionary.Variables.DynLenStringVariable import DynLen
 #+---------------------------------------------- 
 #| DictionaryXmlParser :
 #|    Parser for an XML Dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class DictionaryXmlParser(object):
     

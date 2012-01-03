@@ -44,8 +44,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| RawMessageFactory :
 #|     Factory dedicated to the manipulation of raw messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| XML Definition :
 #| <message type="RAW" id="" timestamp="">

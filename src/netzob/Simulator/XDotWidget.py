@@ -50,8 +50,6 @@ from netzob.ExternalLibs.xdot import DotWidget
 #+---------------------------------------------- 
 #| XDotWidget :
 #|    Integrates an XDot graph in a PyGtk window
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class XDotWidget(DotWidget):
     

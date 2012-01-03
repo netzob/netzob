@@ -38,8 +38,6 @@ from pylab import figure, show
 #+---------------------------------------------- 
 #| Entropy :
 #|     Class for calculating and viewing entropy information
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class Entropy(object):
     #+---------------------------------------------- 

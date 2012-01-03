@@ -47,8 +47,6 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| DynLenStringVariable :
 #|     Definition of a dynamic sized string variable defined in a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class DynLenStringVariable(Variable):
     

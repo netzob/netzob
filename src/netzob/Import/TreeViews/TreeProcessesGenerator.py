@@ -16,8 +16,6 @@ from netzob.Common.ExecutionContext import ExecutionContext
 #| TreeProcessGenerator :
 #|     update and generates the treestore 
 #|     dedicated to the processes
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class TreeProcessesGenerator():
     

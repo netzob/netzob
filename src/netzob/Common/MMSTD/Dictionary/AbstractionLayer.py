@@ -48,8 +48,6 @@ class TimeoutException(Exception):
 #+---------------------------------------------------------------------------+
 #| AbstractionLayer :
 #|     Definition of an abstractionLayer
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AbstractionLayer():
     

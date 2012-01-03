@@ -54,8 +54,6 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+---------------------------------------------- 
 #| Angluin :
 #|    Definition of the Angluin L*A algorithm to infer MEALY automatas
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class Angluin(LearningAlgorithm):
      

@@ -40,8 +40,6 @@ from netzob.Common.Process import Process
 #|    A set of methods to extract the current
 #|    context of the execution (processes,
 #|    env vars, ...)
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class ExecutionContext(object):
   

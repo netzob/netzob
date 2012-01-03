@@ -47,8 +47,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| OpenChannelTransition :
 #|    Special transition in charge of opening the transition
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class OpenChannelTransition(AbstractTransition):
     

@@ -46,8 +46,6 @@ import datetime
 #+---------------------------------------------------------------------------+
 #| FileMessageFactory :
 #|     Factory dedicated to the manipulation of file messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| XML Definition
 #| <message type="file" id="" timestamp="">

@@ -39,8 +39,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| AbstractTransition :
 #|     Definition of a transition
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AbstractTransition():
     

@@ -46,8 +46,6 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 
 #+---------------------------------------------- 
 #| NetworkOracle :
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class NetworkOracle(threading.Thread):
      

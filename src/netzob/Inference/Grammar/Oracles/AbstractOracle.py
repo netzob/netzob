@@ -41,8 +41,6 @@ import logging
 
 #+---------------------------------------------- 
 #| AbstractOracle :
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class AbstractOracle(object):
      

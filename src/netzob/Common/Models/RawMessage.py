@@ -42,8 +42,6 @@ from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 #+---------------------------------------------------------------------------+
 #| RawMessage :
 #|     Definition of a raw message
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class RawMessage(AbstractMessage):
     def __init__(self, id, timestamp, data):

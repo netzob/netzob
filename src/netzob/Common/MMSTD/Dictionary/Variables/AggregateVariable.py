@@ -42,8 +42,6 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable :
 #|     Definition of an aggregation of variables defined in a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
     

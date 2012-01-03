@@ -45,8 +45,6 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 #+---------------------------------------------- 
 #| SplashScreen :
 #|    Manage a splashscreen for Netzob startup
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class SplashScreen(object):
     def __init__(self):        

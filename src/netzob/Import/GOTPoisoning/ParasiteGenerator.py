@@ -42,8 +42,6 @@ import os
 #+---------------------------------------------------------------------------+
 #| ParasiteGenerator :
 #|     Describes and generates a GOT parasite
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class ParasiteGenerator():
     
@@ -239,7 +237,6 @@ static void _saveStringWithSize(char * param0, int size) {
 //| @copyright    : Georges Bossert and Frederic Guihery                      |
 //| @url          : http://code.google.com/p/netzob/                          |
 //| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-//| @author       : {gbt,fgy}@amossys.fr                                      |
 //| @organization : Amossys, http://www.amossys.fr                            |
 //+---------------------------------------------------------------------------+
 #include <sys/syscall.h>

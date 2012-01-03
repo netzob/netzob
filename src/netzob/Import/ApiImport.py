@@ -54,8 +54,6 @@ from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 #+---------------------------------------------------------------------------+
 #| Api :
 #|     GUI for capturing messages from api hooking
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class ApiImport:
     

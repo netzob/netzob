@@ -44,8 +44,6 @@ from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunic
 #| MMSTD :
 #|    Definition of an "Machine de Mealy Stochastiques
 #|    à Transitions Déterministes"
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class MMSTD(object):
     

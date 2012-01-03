@@ -51,8 +51,6 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| BinaryVarible :
 #|     Definition of a binary variable
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
     

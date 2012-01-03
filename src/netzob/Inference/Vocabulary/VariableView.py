@@ -41,8 +41,6 @@ pygtk.require('2.0')
 #+---------------------------------------------- 
 #| VariableView :
 #|     Class dedicated to host the creation of a variable
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class VariableView(object):
     

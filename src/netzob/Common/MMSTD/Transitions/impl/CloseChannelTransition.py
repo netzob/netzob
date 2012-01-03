@@ -47,8 +47,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| CloseChannelTransition :
 #|    Special transition in charge of closing the transition
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class CloseChannelTransition(AbstractTransition):
     

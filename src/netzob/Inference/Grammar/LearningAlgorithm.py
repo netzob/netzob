@@ -47,8 +47,6 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 #| LearningAlgorithm :
 #|    Abstract class which provides to his children 
 #| the necessary functions to learn 
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class LearningAlgorithm(object):
      

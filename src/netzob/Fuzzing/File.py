@@ -42,8 +42,6 @@ from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructur
 #+---------------------------------------------- 
 #| FileImport :
 #|     GUI for capturing messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class File:
 

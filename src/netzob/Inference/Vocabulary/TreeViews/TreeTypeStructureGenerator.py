@@ -40,8 +40,6 @@ from netzob.Common.Field import Field
 #| TreeTypeStructureGenerator :
 #|     update and generates the treeview and its 
 #|     treestore dedicated to the type structure
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class TreeTypeStructureGenerator():
     

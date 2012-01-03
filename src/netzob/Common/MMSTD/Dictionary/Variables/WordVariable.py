@@ -51,8 +51,6 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| WordVariable :
 #|     Definition of a word variable defined in a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
     

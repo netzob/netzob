@@ -38,8 +38,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| AbstractState :
 #|     Definition of a state
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AbstractState():
     

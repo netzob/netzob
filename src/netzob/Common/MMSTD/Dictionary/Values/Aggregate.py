@@ -43,8 +43,6 @@ from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 #+---------------------------------------------------------------------------+
 #| Aggregate :
 #|     Definition of an aggregation
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class Aggregate(AbstractValue):
     

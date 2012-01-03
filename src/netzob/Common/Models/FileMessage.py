@@ -44,8 +44,6 @@ from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 #+---------------------------------------------------------------------------+
 #| FileMessage :
 #|     Definition of a file message
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class FileMessage(AbstractMessage):
     def __init__(self, id, timestamp, data, filename, creationDate, modificationDate, owner, size, lineNumber):

@@ -42,8 +42,6 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 #+---------------------------------------------------------------------------+
 #| NetworkClient :
 #|     Definition of a network client
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class NetworkClient(AbstractActor):
     

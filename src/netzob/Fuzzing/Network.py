@@ -46,8 +46,6 @@ from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructur
 #+---------------------------------------------------------------------------+ 
 #| Network :
 #|     This class offers the capability to fuzz network flows in live 
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Network:
     def new(self):

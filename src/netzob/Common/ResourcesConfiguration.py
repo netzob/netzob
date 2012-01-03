@@ -46,8 +46,6 @@ from netzob.Common.Workspace import Workspace
 #+---------------------------------------------- 
 #| ResourcesConfiguration :
 #|    Configure and verify all the resources
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class ResourcesConfiguration(object):
     

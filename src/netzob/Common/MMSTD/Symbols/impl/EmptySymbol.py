@@ -40,8 +40,6 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 #+---------------------------------------------------------------------------+
 #| EmptySymbol :
 #|     Definition of an empty symbol
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class EmptySymbol(AbstractSymbol):
     

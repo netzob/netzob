@@ -43,8 +43,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| IPCMessageFactory :
 #|     Factory dedicated to the manipulation of IPC messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| XML Definition :
 #| <message type="IPC" id="">

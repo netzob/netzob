@@ -37,8 +37,6 @@ from netzob.Common.SharedLib import SharedLib
 #+---------------------------------------------------------------------------+
 #| Process :
 #|     Model object of a simple process definition
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Process(object):
     #+-----------------------------------------------------------------------+

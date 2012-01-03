@@ -58,8 +58,6 @@ from netzob.Inference.Vocabulary.VariableView import VariableView
 #+---------------------------------------------- 
 #| UImodelization :
 #|     GUI for message modelization
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class UImodelization:
     TARGET_TYPE_TEXT = 80

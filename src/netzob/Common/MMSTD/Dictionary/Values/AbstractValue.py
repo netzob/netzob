@@ -42,8 +42,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| AbstractValue :
 #|     Abstraction of a value
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AbstractValue():
     

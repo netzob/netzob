@@ -54,8 +54,6 @@ from netzob.Simulator.XDotWidget import XDotWidget
 #+---------------------------------------------- 
 #| UISimulator :
 #|     GUI for the simulation of actors
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class UISimulator:
     

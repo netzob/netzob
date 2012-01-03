@@ -46,8 +46,6 @@ from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 #+---------------------------------------------------------------------------+
 #| AbstractMessageFactory :
 #|     Factory dedicated to the manipulation of file messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class AbstractMessageFactory():
     

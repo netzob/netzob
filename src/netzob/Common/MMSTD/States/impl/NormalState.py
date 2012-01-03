@@ -45,8 +45,6 @@ from netzob.Common.MMSTD.States.AbstractState import AbstractState
 #+---------------------------------------------------------------------------+
 #| NormalState :
 #|     Definition of a normal state
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class NormalState(AbstractState):
     

@@ -38,8 +38,6 @@ from AbstractActor import AbstractActor
 #+---------------------------------------------------------------------------+
 #| SimpleCommunicationLayer :
 #|     Definition of a simple communicationLayer
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class SimpleCommunicationLayer(AbstractActor):
     

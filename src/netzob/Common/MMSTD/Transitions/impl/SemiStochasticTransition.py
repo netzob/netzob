@@ -50,8 +50,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| SemiStochasticTransition :
 #|     Definition of a semi stochastic transition
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class SemiStochasticTransition(AbstractTransition):
     

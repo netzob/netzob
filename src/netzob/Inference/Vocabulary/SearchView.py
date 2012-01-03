@@ -41,8 +41,6 @@ from netzob.Inference.Vocabulary.Searcher import Searcher
 #+---------------------------------------------- 
 #| SearchView :
 #|     Class dedicated to host the search view
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class SearchView(object):
     

@@ -163,8 +163,6 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 #| NetworkServer :
 #|     Definition of a server which follows the definition of the provided 
 #|     automata.
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class NetworkServer(AbstractActor):
     

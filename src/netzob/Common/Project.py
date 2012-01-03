@@ -90,8 +90,6 @@ def loadProject_0_1(projectFile):
 #+---------------------------------------------------------------------------+
 #| Project :
 #|     Class definition of a Project
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Project(object):
     

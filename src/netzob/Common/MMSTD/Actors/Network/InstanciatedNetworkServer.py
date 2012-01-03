@@ -43,8 +43,6 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 #+---------------------------------------------------------------------------+
 #| InstanciatedNetworkServer :
 #|     Definition of an instanciated network server
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class InstanciatedNetworkServer(AbstractActor):
     

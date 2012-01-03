@@ -42,8 +42,6 @@ from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructur
 #+---------------------------------------------- 
 #| Ipc :
 #|     ensures the capture of informations through IPC proxing
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class Ipc:
     

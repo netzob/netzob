@@ -56,8 +56,6 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 #+---------------------------------------------- 
 #| Pcap :
 #|     GUI for capturing messages imported through a provided PCAP
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class PcapImport:
     
