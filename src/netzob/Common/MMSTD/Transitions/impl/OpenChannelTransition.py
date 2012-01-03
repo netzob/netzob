@@ -175,12 +175,13 @@ class OpenChannelTransition(AbstractTransition):
         idTransition = xmlTransition.get("id")
         nameTransition = xmlTransition.get("name")
             
-        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text
-        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text
+        idStartTransition = xmlTransition.find("{" + namespace + "}startState").text.strip()
+        idEndTransition = xmlTransition.find("{" + namespace + "}endState").text.strip()
         
         inputStateTransition = None
         outputStateTransition = None
         for state in states :
+        
             if state.getID() == idStartTransition :
                 inputStateTransition = state
             if state.getID() == idEndTransition :
