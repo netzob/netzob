@@ -101,7 +101,7 @@ class VariableView(object):
 
         self.panel.attach(createButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
-        self.treestore.append(None, [str(self.rootVariable.getID()), "Aggregate"])
+        self.treestore.append(None, [str(self.rootVariable.getID()), "Root"])
         
         
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
@@ -141,10 +141,29 @@ class VariableView(object):
         
         subElementMenu = gtk.Menu()
         
+        # Word Variable
         itemWord = gtk.MenuItem("Word")
         itemWord.show()
         itemWord.connect("activate", self.addWord, rootVariable, aIter)
         subElementMenu.append(itemWord)
+        
+        # Binary Variable
+        itemBinary = gtk.MenuItem("Binary")
+        itemBinary.show()
+        itemBinary.connect("activate", self.addBinary, rootVariable, aIter)
+        subElementMenu.append(itemBinary)
+        
+        # Aggregate Variable
+        itemAggregate = gtk.MenuItem("Aggregate")
+        itemAggregate.show()
+        itemAggregate.connect("activate", self.addAggregate, rootVariable, aIter)
+        subElementMenu.append(itemAggregate)
+        
+        # Alternate Variable
+        itemAlternate = gtk.MenuItem("Alternative")
+        itemAlternate.show()
+        itemAlternate.connect("activate", self.addAlternate, rootVariable, aIter)
+        subElementMenu.append(itemAlternate)
         
         item = gtk.MenuItem("Add a sub-element")
         item.set_submenu(subElementMenu)
@@ -152,6 +171,13 @@ class VariableView(object):
         
         menu.append(item)
         menu.popup(None, None, None, event.button, event.time)
+    
+    def addBinary(self, event, rootVariable, rootEntry):
+        pass
+    def addAlternate(self, event, rootVariable, rootEntry):
+        pass
+    def addAggregate(self, event, rootVariable, rootEntry):
+        pass
     
     def addWord(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable

@@ -628,6 +628,19 @@
 			</extension>
 		</complexContent>
 	</complexType>
+	
+	<complexType name="AlternateVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="variable"
+						type="netzob-project:Variable" minOccurs="0"
+						maxOccurs="unbounded">
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 
 	<complexType name="BinaryVariable">
 		<complexContent>
