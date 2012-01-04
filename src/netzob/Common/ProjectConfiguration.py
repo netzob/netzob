@@ -34,7 +34,7 @@ from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from lxml import etree
 

@@ -35,10 +35,10 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.TypeIdentifier import TypeIdentifier
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 
 #+---------------------------------------------- 
 #| C Imports
@@ -100,7 +100,7 @@ class Clusterer(object):
                         messageTmp += "\xff"
                         alignmentTmp += "\x01"
                     else:
-                        messageTmp += TypeConvertor.netzobRawToBinary(symbol.getAlignment()[i:i + 2])
+                        messageTmp += TypeConvertor.netzobRawToPythonRaw(symbol.getAlignment()[i:i + 2])
                         alignmentTmp += "\x00"
                 format += str(len(symbol.getAlignment()) / 2) + "M"
                 serialSymbols += messageTmp
@@ -109,7 +109,7 @@ class Clusterer(object):
                 format += str(len(symbol.getMessages())) + "G"
                 for m in symbol.getMessages():
                     format += str(len(m.getReducedStringData()) / 2) + "M"
-                    serialSymbols += TypeConvertor.netzobRawToBinary(m.getReducedStringData()) # The message
+                    serialSymbols += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData()) # The message
 #                    print m.getReducedStringData()
                     serialSymbols += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]) # The alignement == "\x00" * len(the message), the first time
 #                    print "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ).encode("hex")

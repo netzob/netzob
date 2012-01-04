@@ -34,7 +34,7 @@
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from lxml import etree
 import datetime
 

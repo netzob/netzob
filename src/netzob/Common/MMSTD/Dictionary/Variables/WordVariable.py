@@ -44,7 +44,7 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| WordVariable :
@@ -57,7 +57,7 @@ class WordVariable(Variable):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
         
         self.strVal = value
-        self.binVal = TypeConvertor.netzobRawToBinary(TypeConvertor.ASCIIToNetzobRaw(self.strVal))
+        self.binVal = TypeConvertor.netzobRawToBinary(TypeConvertor.stringToNetzobRaw(self.strVal))
             
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
@@ -74,7 +74,7 @@ class WordVariable(Variable):
 #        # Generate a WORD value 
 #        nb_letter = random.randint(0, 10)
 #        self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
-#        self.binVal = self.ascii2bin(self.strVal)
+#        self.binVal = self.string2bin(self.strVal)
 #        self.log.debug("Generated : " + self.strVal)
 #        self.log.debug("Generated -bin )= " + str(self.binVal))
 #    

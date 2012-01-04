@@ -40,7 +40,7 @@ import hashlib
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| MD5Variable :
@@ -65,7 +65,7 @@ class MD5Variable(Variable):
         var = dictionary.getVariableByID(self.id_var)
         (binToHash, strToHash) = var.getValue(negative, dictionary)
         
-        toHash = TypeConvertor.bin2ascii(binToHash)
+        toHash = TypeConvertor.bin2string(binToHash)
         self.log.debug("Will hash the followings : " + toHash)
         
         md5core = hashlib.md5(self.init)
@@ -88,7 +88,7 @@ class MD5Variable(Variable):
                 var = dictionary.getVariableByID(self.id_var)
                 (binToHash, strToHash) = var.getValue(False, dictionary)
                 
-                toHash = TypeConvertor.bin2ascii(binToHash)
+                toHash = TypeConvertor.bin2string(binToHash)
                 self.log.debug("Will hash the followings : " + toHash)
                 
                 md5core = hashlib.md5(self.init)

@@ -29,7 +29,8 @@
 #| Global Imports
 #+----------------------------------------------
 import logging
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.Format import Format
 from netzob.Inference.Vocabulary.SearchResult import SearchResult
 from netzob.Inference.Vocabulary.SearchTask import SearchTask
 
@@ -70,6 +71,15 @@ class Searcher(object):
     #+---------------------------------------------- 
     def getSearchedDataForOctal(self, value):
         return []
+
+
+    #+---------------------------------------------- 
+    #| getSearchedDataForDecimal :
+    #|   Generates data which can represent the specified Decimal
+    #| @param value the value to search for
+    #+---------------------------------------------- 
+    def getSearchedDataForDecimal(self, value):
+        return []
     
     
     #+---------------------------------------------- 
@@ -81,15 +91,15 @@ class Searcher(object):
         return []
     
     #+---------------------------------------------- 
-    #| getSearchedDataForASCII :
-    #|   Generates data which can represent the specified ASCII
+    #| getSearchedDataForString :
+    #|   Generates data which can represent the specified string
     #| @param value the value to search for
     #+---------------------------------------------- 
-    def getSearchedDataForASCII(self, value):
-        data = TypeConvertor.ASCIIToNetzobRaw(value)
+    def getSearchedDataForString(self, value):
+        data = TypeConvertor.stringToNetzobRaw(value)
         # Creation of a SearchTask 
-        task = SearchTask(value, "ASCII")
-        task.registerVariation(data, "Ascii representation of the value")
+        task = SearchTask(value, Format.STRING)
+        task.registerVariation(data, "String representation of the value")
         return [task]
     
     #+---------------------------------------------- 
