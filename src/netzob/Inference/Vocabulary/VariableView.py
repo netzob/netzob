@@ -51,20 +51,24 @@ class VariableView(object):
     #+---------------------------------------------- 
     #| Constructor :
     #+----------------------------------------------   
-    def __init__(self, project, variableId, variableName, variableIsMutable):
+    def __init__(self, project, field, variableId, variableName, variableIsMutable):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.VariableView.py')
         self.project = project
         self.varId = variableId
         self.varName = variableName
         self.varIsMutable = variableIsMutable
+        self.field = field
     
         # Add the initial Aggregate
         self.rootVariable = AggregateVariable(self.varId, self.varName, None)
         self.datas = dict()
         self.datas[str(self.rootVariable.getID())] = self.rootVariable
     
-    def getPanel(self):
+    def display(self):
+        # We display the dedicated dialog for the creation of a variable
+        self.dialog = gtk.Dialog(title="Creation of a variable", flags=0, buttons=None)
+        
         # Create the main panel
         self.panel = gtk.Table(rows=2, columns=3, homogeneous=False)
         
@@ -90,10 +94,24 @@ class VariableView(object):
         self.panel.attach(self.scroll, 0, 2, 0, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.show()
         
+        # Create button
+        createButton = gtk.Button("Create")
+        createButton.show()
+        createButton.connect("clicked", self.createVariable)
+
+        self.panel.attach(createButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         self.treestore.append(None, [str(self.rootVariable.getID()), "Aggregate"])
         
-        return self.panel
+        
+        self.dialog.vbox.pack_start(self.panel, True, True, 0)
+        self.dialog.show()
+    
+    def createVariable(self, button):
+        
+        # We register the root variable as the variable of specified field
+        self.field.setVariable(self.rootVariable)
+        self.dialog.destroy()
     
     def showMenu(self, treeview, event):
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
@@ -182,7 +200,7 @@ class VariableView(object):
         varValue = variableValueEntry.get_text()
         
         # Creation of the word id, name, mutable, value):
-        wordVariable = WordVariable(id, varValue, False, varValue)
+        wordVariable = WordVariable(variableID, varValue, False, varValue)
         rootVariable.addChild(wordVariable)
         
         self.datas[str(wordVariable.getID())] = wordVariable

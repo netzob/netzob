@@ -100,3 +100,8 @@ class Variable():
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable" :
                 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
                 return BinaryVariable.loadFromXML(xmlRoot, namespace, version)
+            
+            # Aggregate Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable" :
+                from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
+                return AggregateVariable.loadFromXML(xmlRoot, namespace, version)

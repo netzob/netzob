@@ -109,7 +109,6 @@ class WordVariable(Variable):
         xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlWordVariable.set("id", str(self.getID()))
         xmlWordVariable.set("name", str(self.getName()))
-        xmlWordVariable.set("domain", str(self.getDomain()))
         xmlWordVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         
         xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:WordVariable")

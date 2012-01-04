@@ -616,6 +616,19 @@
         <attribute name="mutable" type="boolean" default="false"></attribute>
 	</complexType>
 
+	<complexType name="AggregateVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="variable"
+						type="netzob-project:Variable" minOccurs="0"
+						maxOccurs="unbounded">
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
 	<complexType name="BinaryVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">

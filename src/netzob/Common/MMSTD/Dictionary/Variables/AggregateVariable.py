@@ -29,7 +29,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-
+from lxml.etree import ElementTree
+from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -38,6 +39,7 @@ import logging
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable :
@@ -47,37 +49,79 @@ class AggregateVariable(Variable):
     
     def __init__(self, id, name, vars):
         Variable.__init__(self, "Aggregate", id, name, True)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
         if vars != None :
             self.vars.extend(vars)
-    
+            
     def addChild(self, variable):
         self.vars.append(variable)
     
-    def getValue(self, negative, dictionary):
-        binResult = []
-        strResult = []        
-        for idVar in self.vars :
-            var = dictionary.getVariableByID(int(idVar))
-            (binVal, strVal) = var.getValue(negative, dictionary)
-            if binVal == None :
-                return (None, None)
-            else :
-                binResult.append(binVal)
-                strResult.append(strVal)
-        return ("".join(binResult), "".join(strResult))       
-    
-    def generateValue(self, negative, dictionary):
-        for idVar in self.vars :
-            var = dictionary.getVariableByID(int(idVar))
-            var.generateValue(negative, dictionary)
+    def getDescription(self):
+        if self.isMutable() :
+            mut = "[M]"
+        else :
+            mut = "[!M]"
+        values = []
+        for var in self.vars :
+            values.append(var.getDescription())
             
-    def learn(self, val, indice, isForced, dictionary):
-        new_indice = indice
-        for idVar in self.vars :
-            var = dictionary.getVariableByID(int(idVar))
-            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
-            if tmp_indice != -1 :
-                new_indice = tmp_indice
-        return new_indice
+        return "AggregateVariable " + mut + " [" + " AND ".join(values) + "]"
+    
+    def save(self, root, namespace):
+        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        # Header specific to the definition of a variable
+        xmlVariable.set("id", str(self.getID()))
+        xmlVariable.set("name", str(self.getName()))
+        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
+        
+        # Definition of the variables
+        for var in self.vars :
+            var.save(xmlVariable, namespace)
+        
+        
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        if version == "0.1" :
+            varId = xmlRoot.get("id")
+            varName = xmlRoot.get("name")
+            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
+            
+            children = []
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :
+                child = Variable.loadFromXML(xmlChildren, namespace, version)
+                children.append(child)
+            
+            return AggregateVariable(varId, varName, children)
+            
+        return None
+    
+    
+    
+#    def getValue(self, negative, dictionary):
+#        binResult = []
+#        strResult = []        
+#        for idVar in self.vars :
+#            var = dictionary.getVariableByID(int(idVar))
+#            (binVal, strVal) = var.getValue(negative, dictionary)
+#            if binVal == None :
+#                return (None, None)
+#            else :
+#                binResult.append(binVal)
+#                strResult.append(strVal)
+#        return ("".join(binResult), "".join(strResult))       
+#    
+#    def generateValue(self, negative, dictionary):
+#        for idVar in self.vars :
+#            var = dictionary.getVariableByID(int(idVar))
+#            var.generateValue(negative, dictionary)
+#            
+#    def learn(self, val, indice, isForced, dictionary):
+#        new_indice = indice
+#        for idVar in self.vars :
+#            var = dictionary.getVariableByID(int(idVar))
+#            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
+#            if tmp_indice != -1 :
+#                new_indice = tmp_indice
+#        return new_indice
