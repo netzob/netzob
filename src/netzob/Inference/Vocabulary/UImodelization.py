@@ -559,33 +559,25 @@ class UImodelization:
             
             
             # Add sub-entries to change the variable of a specific column
-            typeMenuVariable = gtk.Menu()
-            itemVariable = gtk.MenuItem("Create a variable")
-            itemVariable.show()
-            itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)   
-            typeMenuVariable.append(itemVariable)
+            if selectedField.getVariable() == None :
+                typeMenuVariable = gtk.Menu()
+                itemVariable = gtk.MenuItem("Create a variable")
+                itemVariable.show()
+                itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)   
+                typeMenuVariable.append(itemVariable)
+            else :
+                typeMenuVariable = gtk.Menu()
+                itemVariable = gtk.MenuItem("Edit variable")
+                itemVariable.show()
+                itemVariable.connect("activate", self.rightClickEditVariable, selectedField)   
+                typeMenuVariable.append(itemVariable)
             
-            existingVariables = self.netzob.getCurrentProject().getVocabulary().getVariables()
-            
-            if len(existingVariables) > 0 :
-                listMenuVariable = gtk.Menu()
-                for variable in existingVariables :
-                    itemVariableToAttach = gtk.MenuItem(variable.getName())
-                    itemVariableToAttach.show()
-                    itemVariableToAttach.connect("activate", self.rightClickCreateVariable, selectedField)   
-                    listMenuVariable.append(itemVariableToAttach)
+            if selectedField.getVariable() != None :
+                itemVariable3 = gtk.MenuItem("Remove variable")
+                itemVariable3.show()
+                itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)   
+                typeMenuVariable.append(itemVariable3)
                 
-                itemVariable2 = gtk.MenuItem("Attach to an existing variable")
-                itemVariable2.show()
-                itemVariable2.set_submenu(listMenuVariable)
-                itemVariable2.connect("activate", self.rightClickAttachVariable, selectedField)   
-                typeMenuVariable.append(itemVariable2)
-            
-            itemVariable3 = gtk.MenuItem("Remove variable")
-            itemVariable3.show()
-            itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)   
-            typeMenuVariable.append(itemVariable3)
-            
             item = gtk.MenuItem("Configure variation ...")
             item.set_submenu(typeMenuVariable)
             item.show()
@@ -1070,8 +1062,18 @@ class UImodelization:
         
         
     def rightClickRemoveVariable(self, widget, field):
-        pass
-    def rightClickAttachVariable(self, widget, field):
+        questionMsg = "Click yes to confirm the removal of the variable {0}".format(field.getVariable().getDescription())
+        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == gtk.RESPONSE_YES:
+            field.setVariable(None)
+            self.update()
+        else :
+            self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getDescription())                
+            
+        
+    def rightClickEditVariable(self, widget, field):
         pass
 
 
