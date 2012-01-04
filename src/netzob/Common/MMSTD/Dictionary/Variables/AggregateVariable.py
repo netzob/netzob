@@ -39,8 +39,10 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.TypeConvertor import TypeConvertor
+
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from bitarray import bitarray
+
 
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable :

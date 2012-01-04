@@ -41,8 +41,7 @@ import string
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.TypeConvertor import TypeConvertor
-
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| DynLenStringVariable :
@@ -69,7 +68,7 @@ class DynLenStringVariable(Variable):
         self.log.debug("GENERATE VALUE of size : " + str(binValue))
         nb_letter = TypeConvertor.bin2int(binValue)
         self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
-        self.binVal = TypeConvertor.ascii2bin(self.strVal, 'big')
+        self.binVal = TypeConvertor.string2bin(self.strVal, 'big')
         self.log.debug("Generated value = " + self.strVal)
         self.log.debug("Generated value = " + str(self.binVal))
         
@@ -86,7 +85,7 @@ class DynLenStringVariable(Variable):
         self.log.debug("tmp size : " + str(len(tmp)))
         if (len(tmp) >= nb_letter) :
             self.binVal = tmp[:nb_letter]
-            self.strVal = TypeConvertor.bin2ascii(self.binVal)
+            self.strVal = TypeConvertor.bin2string(self.binVal)
             self.log.debug("Value learnt : " + self.strVal)
             return indice + nb_letter
         

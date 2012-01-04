@@ -42,7 +42,7 @@ import random
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.TypeIdentifier import TypeIdentifier
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.FileMessage import FileMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
@@ -235,9 +235,8 @@ class FileImport:
             pktFD = open(aFile, 'r')
             self.content = pktFD.read()
             pktFD.close()
-            typer = TypeIdentifier()
            
-            self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), typer.hexdump(self.content), "normalTag")
+            self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), TypeConvertor.hexdump(self.content), "normalTag")
             
             # Fill the packets list
             self.updatePacketList()
@@ -261,8 +260,7 @@ class FileImport:
     def updatePacketList(self):
         self.envDeps.captureEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
         self.log.info("updating packet list")
-        typer = TypeIdentifier()
-        hexValOfContent = ";".join(str(int(i, 16)) for i in typer.ascii2hex(self.content))
+        hexValOfContent = ";".join(str(int(i, 16)) for i in TypeConvertor.string2hex(self.content))
         separator = ";".join(str(i) for i in self.lineSeparator)       
         
         ar = hexValOfContent.split(";" + separator + ";")

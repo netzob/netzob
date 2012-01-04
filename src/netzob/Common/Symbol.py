@@ -37,9 +37,9 @@ import glib
 import struct
 from lxml.etree import ElementTree
 from lxml import etree
-import pyasn1.codec.der.decoder
-from pyasn1.error import PyAsn1Error
-from pyasn1.error import SubstrateUnderrunError
+#import pyasn1.codec.der.decoder
+#from pyasn1.error import PyAsn1Error
+#from pyasn1.error import SubstrateUnderrunError
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -47,8 +47,8 @@ from pyasn1.error import SubstrateUnderrunError
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.TypeIdentifier import TypeIdentifier
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 
 #+---------------------------------------------- 
@@ -85,13 +85,14 @@ class Symbol(object):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         # Use the default protocol type for representation
-        encodingType = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
         
         self.fields = []
         
         # If only one message (easy)
         if len(self.getMessages()) == 1 :
-            field = Field("Field 0", 0, 0, self.getMessages()[0].getStringData(), encodingType)
+            field = Field("Field 0", 0, self.getMessages()[0].getStringData())
+            field.setFormat(aFormat)
             self.addField(field)
             return
         
@@ -105,7 +106,7 @@ class Symbol(object):
         maxReducedSize = 0
         for m in self.getMessages():
             format += str(len(m.getReducedStringData()) / 2) + "M"
-            serialMessages += TypeConvertor.netzobRawToBinary(m.getReducedStringData())
+            serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
             if m.getLeftReductionFactor() > maxLeftReducedStringData :
                 maxLeftReducedStringData = m.getLeftReductionFactor()
             if m.getRightReductionFactor() > maxRightReducedStringData :
@@ -179,11 +180,12 @@ class Symbol(object):
             regex.append("(.{," + str(nbTiret) + "})")
 
         # Use the default protocol type for representation
-        encodingType = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
 
         iField = 0
         for regexElt in regex:
-            field = Field("Field " + str(iField), 0, iField, regexElt, encodingType)
+            field = Field("Field " + str(iField), iField, regexElt)
+            field.setFormat(aFormat)
             self.addField(field)
             iField = iField + 1
 
@@ -191,13 +193,10 @@ class Symbol(object):
     #| alignWithDelimiter:
     #|  Align each messages with a specific delimiter
     #+----------------------------------------------
-    def alignWithDelimiter(self, projectConfiguration, encodingType, rawDelimiter):
+    def alignWithDelimiter(self, projectConfiguration, aFormat, rawDelimiter):
         self.alignmentType = "delimiter"
         self.rawDelimiter = rawDelimiter
         self.setFields([])
-
-        # Use the default protocol type for representation
-        encodingType = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
 
         minNbSplit = 999999
         maxNbSplit = -1
@@ -208,9 +207,9 @@ class Symbol(object):
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
         if minNbSplit <= 1: # If the delimiter does not create splitted fields
-            field = Field("Name", 0, 0,
-                          "(.{,})",
-                          encodingType, "", "blue")
+            field = Field("Name", 0, "(.{,})")
+            field.setFormat(aFormat)
+            field.setColor("blue")
             self.addField(field)
             return
         
@@ -218,10 +217,14 @@ class Symbol(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field("Name", 0, iField, "", encodingType, "", "blue")
+            field = Field("Name", iField, "")
+            field.setFormat(aFormat)
+            field.setColor("blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", 0, iField, "", encodingType, "", "black")
+            field = Field("__sep__", iField, "")
+            field.setFormat(aFormat)
+            field.setColor("black")
             self.addField(field)
         self.popField()
 
@@ -326,7 +329,7 @@ class Symbol(object):
         # Default representation is BINARY
         new_name = field1.getName() + "+" + field2.getName()
         # Creation of the new Field
-        newField = Field(new_name, 0, field1.getIndex(), newRegex, "binary")
+        newField = Field(new_name, field1.getIndex(), newRegex)
         
         self.fields.remove(field1)
         self.fields.remove(field2)
@@ -381,15 +384,19 @@ class Symbol(object):
         if regex2 == "":
             return False
 
-        new_type = field.getSelectedType()
+        new_format = field.getFormat()
         new_encapsulationLevel = field.getEncapsulationLevel()
         
         # We Build the two new fields
-        field1 = Field("(1/2)" + field.getName(), new_encapsulationLevel, field.getIndex(), regex1, new_type)
+        field1 = Field("(1/2)" + field.getName(), field.getIndex(), regex1)
+        field1.setEncapsulationLevel(new_encapsulationLevel)
+        field1.setFormat(new_format)
         field1.setColor(field.getColor())
         if field.getDescription() != None and len(field.getDescription()) > 0 :
             field1.setDescription("(1/2) " + field.getDescription())
-        field2 = Field("(2/2) " + field.getName(), new_encapsulationLevel, field.getIndex() + 1, regex2, new_type)
+        field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2)
+        field2.setEncapsulationLevel(new_encapsulationLevel)
+        field2.setFormat(new_format)
         field2.setColor(field.getColor())
         if field.getDescription() != None and len(field.getDescription()) > 0 :
             field2.setDescription("(2/2) " + field.getDescription())
@@ -432,8 +439,8 @@ class Symbol(object):
     def getStyledPossibleTypesForAField(self, field):
         tmpTypes = self.getPossibleTypesForAField(field)
         for i in range(len(tmpTypes)):
-            if tmpTypes[i] == field.getSelectedType():
-                tmpTypes[i] = "<span foreground=\"red\">" + field.getSelectedType() + "</span>"
+            if tmpTypes[i] == field.getFormat():
+                tmpTypes[i] = "<span foreground=\"red\">" + field.getFormat() + "</span>"
         return ", ".join(tmpTypes)
     
     #+---------------------------------------------- 
@@ -485,7 +492,7 @@ class Symbol(object):
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
                 for cell in self.getMessagesValuesByField(field) :
-                    for match in regex.finditer(TypeConvertor.netzobRawToASCII(cell)):
+                    for match in regex.finditer(TypeConvertor.netzobRawToString(cell)):
                         matchElts += 1
                 if matchElts > 0:
                     store.append([field.getIndex(), carver])
@@ -564,7 +571,7 @@ class Symbol(object):
                                     targetData = self.getMessagesValuesByField(self.getFieldByIndex(k))[l] + aggregateCellsData[l]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
-                                rawMsgSize = TypeConvertor.netzobRawToBinary(cellsSize[l][:n * 2])
+                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[l][:n * 2])
                                 if len(rawMsgSize) == 1:
                                     expectedSizeType = "B"
                                 elif len(rawMsgSize) == 2:
@@ -616,7 +623,7 @@ class Symbol(object):
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
                 for cell in self.getMessagesValuesByField(self.getFieldByIndex(fieldIndex)) :
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
                         if match == None:
@@ -733,7 +740,7 @@ class Symbol(object):
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getMessagesValuesByField(field):
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])
@@ -795,7 +802,7 @@ class Symbol(object):
                     break
                 matchElts = 0
                 for cell in cells:
-                    matchElts += TypeConvertor.netzobRawToASCII(cell).count(envDependency.getValue())
+                    matchElts += TypeConvertor.netzobRawToString(cell).count(envDependency.getValue())
                 if matchElts > 0:
                     store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
@@ -844,7 +851,7 @@ class Symbol(object):
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getMessagesValuesByField(field):
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToASCII(cell))
+                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])
@@ -953,7 +960,7 @@ class Symbol(object):
             return
 
         # Use the default protocol type for representation
-        encodingType = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
 
         res = False
         i = 1
@@ -971,9 +978,10 @@ class Symbol(object):
                             # Build the new field
                             lenColResult = int(precField.getRegex()[4:-2]) + 2 + int(nextField.getRegex()[4:-2]) # We compute the len of the aggregated regex
                             lenColResult = str(lenColResult)
+                            
                             aField.setIndex(precField.getIndex())
                             aField.setRegex("(.{," + lenColResult + "})")
-                            aField.setSelectedType(encodingType)
+                            aField.setFormat(aFormat)
 
                             # Delete the old ones
                             self.fields.remove(nextField)

@@ -45,7 +45,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 

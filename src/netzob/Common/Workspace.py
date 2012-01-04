@@ -40,7 +40,7 @@ import shutil
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 

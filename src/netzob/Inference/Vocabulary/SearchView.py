@@ -37,19 +37,13 @@ pygtk.require('2.0')
 #| Local Imports
 #+----------------------------------------------
 from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------- 
 #| SearchView :
 #|     Class dedicated to host the search view
 #+---------------------------------------------- 
 class SearchView(object):
-    
-    TYPE_IP = "IP"
-    TYPE_ANY = "Any"
-    TYPE_BINARY = "Binary"
-    TYPE_OCTAL = "Octal"
-    TYPE_HEXADECIMAL = "Hexadecimal"
-    TYPE_ASCII = "Ascii"
     
     #+---------------------------------------------- 
     #| Constructor :
@@ -74,12 +68,11 @@ class SearchView(object):
         self.typeCombo.show()
         self.typeStore = gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
-        self.typeCombo.get_model().append([SearchView.TYPE_ANY])
-        self.typeCombo.get_model().append([SearchView.TYPE_BINARY])
-        self.typeCombo.get_model().append([SearchView.TYPE_OCTAL])
-        self.typeCombo.get_model().append([SearchView.TYPE_HEXADECIMAL])
-        self.typeCombo.get_model().append([SearchView.TYPE_IP])
-        self.typeCombo.get_model().append([SearchView.TYPE_ASCII])
+        self.typeCombo.get_model().append([Format.STRING])
+        self.typeCombo.get_model().append([Format.HEX])
+        self.typeCombo.get_model().append([Format.BINARY])
+        self.typeCombo.get_model().append([Format.OCTAL])
+        self.typeCombo.get_model().append([Format.DECIMAL])
         
         # Search button        
         searchButton = gtk.Button("Search")
@@ -113,16 +106,18 @@ class SearchView(object):
         
         # First we generate the different researched data
         searchedData = []
-        if typeOfPattern == SearchView.TYPE_IP or typeOfPattern == SearchView.TYPE_ANY :
+        if typeOfPattern == Format.IP :
             searchedData.extend(searcher.getSearchedDataForIP(pattern))
-        if typeOfPattern == SearchView.TYPE_BINARY or typeOfPattern == SearchView.TYPE_ANY :
+        if typeOfPattern == Format.BINARY :
             searchedData.extend(searcher.getSearchedDataForBinary(pattern))
-        if typeOfPattern == SearchView.TYPE_OCTAL or typeOfPattern == SearchView.TYPE_ANY :
+        if typeOfPattern == Format.OCTAL :
             searchedData.extend(searcher.getSearchedDataForOctal(pattern))
-        if typeOfPattern == SearchView.TYPE_HEXADECIMAL or typeOfPattern == SearchView.TYPE_ANY :
+        if typeOfPattern == Format.DECIMAL :
+            searchedData.extend(searcher.getSearchedDataForDecimal(pattern))
+        if typeOfPattern == Format.HEX :
             searchedData.extend(searcher.getSearchedDataForHexadecimal(pattern))
-        if typeOfPattern == SearchView.TYPE_ASCII or typeOfPattern == SearchView.TYPE_ANY :
-            searchedData.extend(searcher.getSearchedDataForASCII(pattern))
+        if typeOfPattern == Format.STRING :
+            searchedData.extend(searcher.getSearchedDataForString(pattern))
         
         if len(searchedData) == 0 :
             self.log.warn("No data to search after were computed.")

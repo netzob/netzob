@@ -55,14 +55,14 @@ class IPVariable(Variable):
             self.strVal = None
         else :
             self.strVal = defaultVar
-            self.binVal = self.ascii2bin(self.strVal)
+            self.binVal = self.string2bin(self.strVal)
             
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
     
-    def ascii2bin(self, ascii):
+    def string2bin(self, aStr):
         chars = []
-        for c in ascii :
+        for c in aStr :
             v = str(hex(ord(c))).replace("0x", "")
             if len(str(v)) != 2 : 
                 v = "0" + str(v)
@@ -71,7 +71,7 @@ class IPVariable(Variable):
     def generateValue(self, negative, dictionary):
         # NOT YET GENERATED
         self.strVal = "192.168.0.10"
-        self.binVal = self.ascii2bin(self.strVal)
+        self.binVal = self.string2bin(self.strVal)
         
         
     def learn(self, val, indice, isForced, dictionary):
@@ -94,7 +94,7 @@ class IPVariable(Variable):
             if i > 0 :
                 self.strVal = res
                 self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
-                self.binVal = self.ascii2bin(self.strVal)
+                self.binVal = self.string2bin(self.strVal)
                 
                 return indice + i
             

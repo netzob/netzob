@@ -38,7 +38,7 @@ import logging
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| TextValue :
@@ -52,7 +52,7 @@ class TextValue(AbstractValue):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.TextValue.py')
         
         self.strtext = text
-        self.bintext = TypeConvertor.ascii2bin(self.strtext, 'big')
+        self.bintext = TypeConvertor.string2bin(self.strtext, 'big')
         
     def send(self, negative, dictionary):
         return (self.bintext, self.strtext)

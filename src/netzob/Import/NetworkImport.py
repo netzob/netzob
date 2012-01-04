@@ -54,7 +54,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+ 
 #| Network :

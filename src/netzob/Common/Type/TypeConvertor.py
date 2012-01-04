@@ -37,23 +37,24 @@ import base64
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
+from netzob.Common.Type.Format import Format
 
 class TypeConvertor():
 
     #+---------------------------------------------- 
-    #| Transform an ascii string to its binary representation
-    #| @param the ascii string to transform
+    #| Transform a string to its binary representation
+    #| @param the string to transform
     #| @endian the endian selected (little or big) (normal = big)
     #| @return 
     #+----------------------------------------------
     @staticmethod
-    def ascii2bin(ascii, endian):
+    def string2bin(aStr, endian):
         result = bitarray(endian=endian)
-        result.fromstring(ascii)
+        result.fromstring(aStr)
         return result
     
     @staticmethod
-    def bin2ascii(bin):
+    def bin2string(bin):
         return bin.tostring()
     
     @staticmethod
@@ -93,29 +94,45 @@ class TypeConvertor():
     def bin2int(bin):
         return int(bin.to01(), 2)
     @staticmethod   
-    def ascii2int(ascii):
-        return int(ascii)
+    def string2int(aStr):
+        return int(aStr)
     @staticmethod
-    def int2ascii(int):
+    def int2string(int):
         return str(int)
     
     @staticmethod
-    def encodeNetzobRawToGivenType(raw, type):
-        if type.lower() == "ascii" :
-            return TypeConvertor.netzobRawToASCII(raw)
-        elif type.lower() == "alphanum" :
-            return TypeConvertor.netzobRawToAlphanum(raw)
-        elif type.lower() == "num" :
-            return TypeConvertor.netzobRawToNum(raw)
-        elif type.lower() == "alpha" :
-            return TypeConvertor.netzobRawToAlpha(raw)
-        elif type.lower() == "base64dec" :
-            return TypeConvertor.netzobRawToBase64Decoded(raw)
-        elif type.lower() == "base64enc" :
-            return TypeConvertor.netzobRawToBase64Encoded(raw)
+    def encodeNetzobRawToGivenType(raw, aType):
+        if aType == Format.STRING :
+            return TypeConvertor.netzobRawToString(raw)
+        elif aType == Format.HEX :
+            return raw
+        elif aType == Format.OCTAL :
+            return TypeConvertor.netzobRawToOctal(raw)
+        elif aType == Format.BINARY :
+            return TypeConvertor.netzobRawToBinary(raw)
+        elif aType == Format.DECIMAL :
+            return TypeConvertor.netzobRawToDecimal(raw)
         else :
             return raw
-    
+
+    @staticmethod
+    def string2hex(msg):
+        return [hex(ord(x)) for x in msg]
+
+    @staticmethod
+    def encodeGivenTypeToNetzobRaw(raw, aType):
+        if aType == Format.STRING :
+            return TypeConvertor.stringToNetzobRaw(raw)
+        elif aType == Format.HEX :
+            return raw
+        elif aType == Format.OCTAL :
+            return TypeConvertor.octalToNetzobRaw(raw)
+        elif aType == Format.BINARY :
+            return TypeConvertor.binaryToNetzobRaw(raw)
+        elif aType == Format.DECIMAL :
+            return TypeConvertor.decimalToNetzobRaw(raw)
+        else :
+            return raw
     
     @staticmethod
     def pythonDatetime2XSDDatetime(date):
@@ -124,10 +141,7 @@ class TypeConvertor():
 #            return ""
         if not isinstance(date, datetime.datetime) and isinstance(date[0], datetime.datetime):
             date = date[0]
-            
         return str(date.isoformat('T'))[:19]
-        
-        
     
     @staticmethod
     # Warning str must contain an XSD Datetime typed data
@@ -161,9 +175,9 @@ class TypeConvertor():
             return None, None
     
     @staticmethod
-    def ASCIIToNetzobRaw(ascii):
+    def stringToNetzobRaw(aStr):
         raw = []
-        for c in ascii :
+        for c in aStr :
             strhexc = str(hex(ord(c)))[2:]
             if len(strhexc) < 2 :
                 strhexc = "0" + strhexc
@@ -172,9 +186,9 @@ class TypeConvertor():
     
     @staticmethod
     #+---------------------------------------------- 
-    #| Return the string parameter in ASCII
+    #| Return the string parameter in string
     #+----------------------------------------------
-    def netzobRawToASCII(raw):
+    def netzobRawToString(raw):
         if len(raw) % 2 != 0:
 #            self.log.error("Hex string len not even !")
             return raw
@@ -190,112 +204,79 @@ class TypeConvertor():
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Return the string parameter in numerical value
+    #| Return the string parameter in octal
     #+----------------------------------------------
-    def netzobRawToNum(raw):
+    def netzobRawToOctal(raw):
         if len(raw) % 2 != 0:
-            logging.error("(toNum) Hex string len not even : " + raw)
+            logging.error("(toOctal) Hex string len not even : " + raw)
             return raw
 
-        s = ""
-        for i in range(0, len(raw), 2):
-            s += chr(int(raw[i:i + 2], 16))
-
-        if not s.isdigit():
-            logging.error("Not a digit")
-            return raw
-
-        return s
+        # TODO
+        return raw
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Return the string parameter in alpha
+    #| Return the octal parameter in string
     #+----------------------------------------------
-    def netzobRawToAlpha(raw):
+    def octalToNetzobRaw(raw):
         if len(raw) % 2 != 0:
-            logging.error("(toAlpha) Hex string len not even : " + raw)
+            logging.error("(toOctal) Hex string len not even : " + raw)
             return raw
 
-        s = ""
-        for i in range(0, len(raw), 2):
-            s += chr(int(raw[i:i + 2], 16))
-
-        if not s.isalpha():
-            logging.error("Not an alpha string")
-            return raw
-
-        return s
+        # TODO
+        return raw
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Return the string parameter in alphanum
+    #| Return the string parameter in decimal
     #+----------------------------------------------
-    def netzobRawToAlphanum(raw):
+    def netzobRawToDecimal(raw):
         if len(raw) % 2 != 0:
-            logging.error("(toAlphanum) Hex string len not even : " + raw)
+            logging.error("(toOctal) Hex string len not even : " + raw)
             return raw
 
-        s = ""
-        for i in range(0, len(raw), 2):
-            s += chr(int(raw[i:i + 2], 16))
-
-        if not s.isalnum():
-            logging.error("Not an alphanumerical string")
-            return raw
-
-        return s
+        # TODO
+        return raw
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Return the string parameter base64 encoded
+    #| Return the decimal parameter in string
     #+----------------------------------------------
-    def netzobRawToBase64Encoded(raw):
+    def decimalToNetzobRaw(raw):
         if len(raw) % 2 != 0:
-            logging.error("(toBase64Encoded) Hex string len not even : " + raw)
+            logging.error("(toOctal) Hex string len not even : " + raw)
             return raw
 
-        s = ""
-        for i in range(0, len(raw), 2):
-            s += chr(int(raw[i:i + 2], 16))
-
-        res = ""
-        try:
-            res = base64.b64decode(s)
-            if res == "":
-                res = raw
-        except TypeError:
-            res = raw
-
-        return s
+        # TODO
+        return raw
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Return the string parameter base64 decoded
+    #| Return the string parameter in bit
     #+----------------------------------------------
-    def netzobRawToBase64Decoded(raw):
+    def netzobRawToBinary(raw):
         if len(raw) % 2 != 0:
-            logging.error("(toBase64Decoded) Hex string len not even : " + raw)
+            logging.error("(toBit) Hex string len not even : " + raw)
             return raw
-
-        s = ""
-        for i in range(0, len(raw), 2):
-            s += chr(int(raw[i:i + 2], 16))
-
-        res = ""
-        try:
-            res = base64.b64decode(s)
-            if res == "":
-                res = raw
-        except TypeError:
-            res = raw
-
-        return res
+        binary = TypeConvertor.netzobRawToPythonRaw(raw)
+        return TypeConvertor.hex2bin(binary).to01()
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Transform the current hex message ( '1fdf' ) in binary ( '\x1f\xdf' )
+    #| Return the bits parameter in raw
+    #+----------------------------------------------
+    def binaryToNetzobRaw(raw):
+        if len(raw) % 2 != 0:
+            logging.error("(toBit) Hex string len not even : " + raw)
+            return raw
+        # TODO
+        return raw
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Transform the current hex message ( '1fdf' ) in binary python raw ( '\x1f\xdf' )
     #+----------------------------------------------          
-    def netzobRawToBinary(msg):
+    def netzobRawToPythonRaw(msg):
         res = ""
         msg = msg.strip()
         
@@ -311,10 +292,44 @@ class TypeConvertor():
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Transform the current binary message ( '\x1f\xdf' ) in hex ( '1fdf' )
+    #| Transform the current binary python raw message ( '\x1f\xdf' ) in hex ( '1fdf' )
     #+----------------------------------------------          
-    def binaryToNetzobRaw(msg):
+    def pythonRawToNetzobRaw(msg):
         res = ""
         for i in range(0, len(msg), 1):
             res = res + msg[i:i + 1].encode("hex")
         return res
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Return a hexdump of a hex message
+    #+----------------------------------------------          
+    def hexdump(self, buf, start=0):
+        length = len(buf)
+        res = StringIO.StringIO()
+        def GetPrintableChar(str):
+            if str.isalnum():
+                return str
+            elif str == '\n' :
+                return "<CR>"
+            else:
+                return '.'
+
+        i = 0
+        while i < length:
+            if length - i > 16:
+                l = 16
+            else:
+                l = length - i
+            
+            res.write('0x%08x  ' % (i + start))
+            s = ' '.join(["%02x" % ord(c) for c in buf[i:i + l]])
+            res.write(s)
+            sp = 49 - len(s)
+            res.write(' ' * sp)
+            s = ''.join(["%s" % GetPrintableChar(c) for c in buf[i:i + l]])
+            res.write(s)
+            res.write('\n')
+            i = i + 16
+
+        return res.getvalue()

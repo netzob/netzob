@@ -40,7 +40,7 @@ import random
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| IntVariable :
@@ -61,7 +61,7 @@ class IntVariable(Variable):
         self.reset = "normal"    
         if self.value != None :
             self.binValue = TypeConvertor.int2bin(self.value, self.size)
-            self.strValue = TypeConvertor.int2ascii(self.value)
+            self.strValue = TypeConvertor.int2string(self.value)
         else :
             self.binValue = None
             self.strValue = None
@@ -89,7 +89,7 @@ class IntVariable(Variable):
             r = random.randint(self.min, self.max)
             self.log.debug("Generating hex of value : " + str(r))
             self.binValue = TypeConvertor.int2bin(r, self.size)
-            self.strValue = TypeConvertor.int2ascii(r)
+            self.strValue = TypeConvertor.int2string(r)
        
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))

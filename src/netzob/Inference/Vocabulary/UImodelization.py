@@ -43,11 +43,15 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 from netzob.Inference.Vocabulary.SearchView import SearchView
 from netzob.Inference.Vocabulary.Entropy import Entropy
 from netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
@@ -81,8 +85,8 @@ class UImodelization:
         pass
     
     def save(self, aFile):
-        self.log.info("Saving the vocabulary infered")
-    
+        pass
+
     #+---------------------------------------------- 
     #| Constructor :
     #| @param netzob: the netzob main class
@@ -144,7 +148,7 @@ class UImodelization:
        
         ## Field type inference
         frame = gtk.Frame()
-        frame.set_label("3 - Field type inference")
+        frame.set_label("2 - Field type inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
@@ -155,37 +159,23 @@ class UImodelization:
         but = gtk.Button("Refine regexes")
         but.connect("clicked", self.refineRegexes_cb)
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button to show message distribution
         but = gtk.Button("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button to analyze for ASN.1 presence
         but = gtk.Button("Find ASN.1 fields")
         but.connect("clicked", self.findASN1Fields_cb)
         but.show()
-        table.attach(but, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget for choosing the analysed protocole type
-        label = gtk.Label("Protocol type : ")
-        label.show()
-        combo = gtk.combo_box_entry_new_text()
-#        combo.set_size_request(300, -1)
-        combo.set_model(gtk.ListStore(str))
-        combo.append_text("Text based (HTTP, FTP)")
-        combo.append_text("Fixed fields binary based (IP, TCP)")
-#        combo.append_text("Variable fields binary based (ASN.1)")
-        combo.connect("changed", self.updateProtocolType)
-        combo.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         ## Dependencies inference
         frame = gtk.Frame()
-        frame.set_label("4 - Dependencies inference")
+        frame.set_label("3 - Dependencies inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -197,17 +187,17 @@ class UImodelization:
         # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
         but.connect("clicked", self.findSizeFields)
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button for environment dependencies
         but = gtk.Button("Environment dependencies")
         but.connect("clicked", self.env_dependencies_cb)
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         ## Semantic inference
         frame = gtk.Frame()
-        frame.set_label("5 - Semantic inference")
+        frame.set_label("4 - Semantic inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -218,13 +208,78 @@ class UImodelization:
         but = gtk.Button("Data carving")
         but.connect("clicked", self.dataCarving_cb)
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button for search
         but = gtk.Button("Search")
         but.connect("clicked", self.search_cb)
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+
+        ## Visualization
+        frame = gtk.Frame()
+        frame.set_label("5 - Visualization")
+        frame.show()
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget for choosing the format
+        label = gtk.Label("Format : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_model(gtk.ListStore(str))
+        combo.append_text(Format.BINARY)
+        combo.append_text(Format.OCTAL)
+        combo.append_text(Format.DECIMAL)
+        combo.append_text(Format.HEX)
+        combo.append_text(Format.STRING)
+        combo.connect("changed", self.updateDisplayFormat)
+        combo.show()
+        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget for choosing the unit size
+        label = gtk.Label("Unit size : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_model(gtk.ListStore(str))
+        combo.append_text(UnitSize.BIT)
+        combo.append_text(UnitSize.HALFBYTE)
+        combo.append_text(UnitSize.BYTE)
+        combo.append_text(UnitSize.HALFWORD)
+        combo.append_text(UnitSize.WORD)
+        combo.append_text(UnitSize.DOUBLEWORD)
+        combo.append_text(UnitSize.QUADWORD)
+        combo.connect("changed", self.updateDisplayUnitSize)
+        combo.show()
+        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget for choosing the displayed sign
+        label = gtk.Label("Sign : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_model(gtk.ListStore(str))
+        combo.append_text(Sign.SIGNED)
+        combo.append_text(Sign.UNSIGNED)
+        combo.connect("changed", self.updateDisplaySign)
+        combo.show()
+        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget for choosing the displayed endianess
+        label = gtk.Label("Endianess : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_model(gtk.ListStore(str))
+        combo.append_text(Endianess.BIG)
+        combo.append_text(Endianess.LITTLE)
+        combo.connect("changed", self.updateDisplayEndianess)
+        combo.show()
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -379,7 +434,7 @@ class UImodelization:
         panel.attach(entry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Label
-        label = gtk.Label("Encoding type: ")
+        label = gtk.Label("Format type: ")
         label.show()
         panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -388,8 +443,8 @@ class UImodelization:
         typeCombo.show()
         typeStore = gtk.ListStore(str)
         typeCombo.set_model(typeStore)
-        typeCombo.get_model().append(["ascii"])
-        typeCombo.get_model().append(["binary"])
+        typeCombo.get_model().append([ Format.STRING ])
+        typeCombo.get_model().append([ Format.HEX ])
         typeCombo.set_active(0)
         panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -406,16 +461,14 @@ class UImodelization:
     #| forceAlignment_cb_cb :
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
-    def forceAlignment_cb_cb(self, widget, dialog, encodingType, delimiter):
-        encodingType = encodingType.get_active_text()
+    def forceAlignment_cb_cb(self, widget, dialog, aFormat, delimiter):
+        aFormat = aFormat.get_active_text()
         delimiter = delimiter.get_text()
-
-        if encodingType == "ascii":
-            delimiter = TypeConvertor.ASCIIToNetzobRaw(delimiter)            
+        delimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, aFormat)            
 
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
         vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(),
-                                      encodingType,
+                                      aFormat,
                                       delimiter)
         self.update()
         dialog.destroy()
@@ -801,7 +854,7 @@ class UImodelization:
         cells = self.treeMessageGenerator.getSymbol().getMessagesValuesByField(field)
         tmpDomain = set()
         for cell in cells:
-            tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, field.getSelectedType()))
+            tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, field.getFormat()))
         domain = sorted(tmpDomain)
 
         dialog = gtk.Dialog(title="Domain of definition for the column " + field.getName(), flags=0, buttons=None)
@@ -920,7 +973,7 @@ class UImodelization:
     #|   by doing a right click
     #+----------------------------------------------
     def rightClickToChangeType(self, event, field, aType):
-        field.setSelectedType(aType)
+        field.setFormat(aType)
         self.update()
 
     #+---------------------------------------------- 
@@ -996,8 +1049,8 @@ class UImodelization:
 #        cells = self.treeMessageGenerator.getSymbol().getCellsByCol(iCol)
 
         for m in cells:
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getSelectedType()) + "  ", "redTag")
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getSelectedType()) + "\n", "greenTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getFormat()) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
         textview.show()
         scroll = gtk.ScrolledWindow()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -1105,8 +1158,8 @@ class UImodelization:
         # Colorize text according to position
         textview.get_buffer().set_text("")
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getSelectedType()) + "  ", "redTag")
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getSelectedType()) + "\n", "greenTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getFormat()) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
 
     #+---------------------------------------------- 
     #| dbClickToChangeType :
@@ -1133,7 +1186,7 @@ class UImodelization:
         # Find the next possible type for this column
         possibleTypes = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
         i = 0
-        chosedType = selectedField.getSelectedType()
+        chosedType = selectedField.getFormat()
         for aType in possibleTypes:
             if aType == chosedType:
                 chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
@@ -1141,7 +1194,7 @@ class UImodelization:
             i += 1
 
         # Apply the new choosen type for this column
-        selectedField.setSelectedType(chosedType)
+        selectedField.setFormat(chosedType)
         self.treeMessageGenerator.updateDefault()
         
     #+---------------------------------------------- 
@@ -1399,22 +1452,56 @@ class UImodelization:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, checkButton.get_active())
 
     #+---------------------------------------------- 
-    #| Called when user wants to modify the expected protocol type
+    #| Called when user wants to modify the format displayed
     #+----------------------------------------------
-    def updateProtocolType(self, combo):
-        valID = combo.get_active()
-        if valID == 0:
-            display = "ascii"
-        else:
-            display = "binary"
-        
-        if self.netzob.getCurrentProject() != None :
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY, display)
-        
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                for field in symbol.getFields() :
-                    field.setSelectedType(display)
-            self.update()
+    def updateDisplayFormat(self, combo):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        aFormat = combo.get_active_text()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for field in symbol.getFields():
+                field.setFormat( aFormat )
+        self.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to modify the unit size displayed
+    #+----------------------------------------------
+    def updateDisplayUnitSize(self, combo):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        unitSize = combo.get_active_text()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for field in symbol.getFields():
+                field.setUnitSize( unitSize )
+        self.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to modify the sign displayed
+    #+----------------------------------------------
+    def updateDisplaySign(self, combo):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        sign = combo.get_active_text()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for field in symbol.getFields():
+                field.setSign( sign )
+        self.update()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to modify the endianess displayed
+    #+----------------------------------------------
+    def updateDisplayEndianess(self, combo):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        endianess = combo.get_active_text()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for field in symbol.getFields():
+                field.setEndianess( endianess )
+        self.update()
 
     #+---------------------------------------------- 
     #| Called when user wants to refine regexes
