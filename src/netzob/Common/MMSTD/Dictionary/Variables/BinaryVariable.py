@@ -62,6 +62,13 @@ class BinaryVariable(Variable):
         else :
             self.strVal = str(value)
             self.binVal = value
+            
+    def getDescription(self):
+        if self.isMutable() :
+            mut = "[M]"
+        else :
+            mut = "[!M]"
+        return "BinaryVariable " + mut + " (" + self.strVal + ")"
       
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
