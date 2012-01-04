@@ -51,11 +51,12 @@ class TimeoutException(Exception):
 #+---------------------------------------------------------------------------+
 class AbstractionLayer():
     
-    def __init__(self, communicationChannel, dictionary):
+    def __init__(self, communicationChannel, vocabulary, memory):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.AbstractionLayer.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.vocabulary.AbstractionLayer.py')
         self.communicationChannel = communicationChannel
-        self.dictionary = dictionary
+        self.vocabulary = vocabulary
+        self.memory = memory
         self.inputMessages = []
         self.outputMessages = []
         self.manipulatedSymbols = []
@@ -65,10 +66,10 @@ class AbstractionLayer():
     def isConnected(self):
         return self.connected    
     
-    def openServer(self, dictionary, outputState, isMaster):
+    def openServer(self, vocabulary, outputState, isMaster):
         self.log.debug("OpenServer ...")
         self.connected = True
-        self.communicationChannel.openServer(dictionary, outputState, isMaster)
+        self.communicationChannel.openServer(vocabulary, outputState, isMaster)
         
     def closeServer(self):
         self.log.debug("CloseServer ...")
@@ -159,14 +160,11 @@ class AbstractionLayer():
         
     
     def writeSymbol(self, symbol):
+        self.log.info("Sending symbol '" + symbol.getName() + "' over the communication channel")
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
-        self.log.info("Sending message : str = '" + strMessage + "'")
-        self.log.debug("Sending message : bin = '" + str(binMessage) + "'")
-        
-        # transform the binMessage to a real binary message
-        
-        
+        self.log.info("- str = '" + strMessage + "'")
+        self.log.info("- bin = '" + str(binMessage) + "'")
         
         # now we send it
         now = datetime.datetime.now()
@@ -175,17 +173,17 @@ class AbstractionLayer():
         
         self.outputMessages.append([sendingTime, strMessage, symbol])
         self.manipulatedSymbols.append(symbol)
-    
+        
     #+-----------------------------------------------------------------------+
     #| abstract
-    #|     Searches in the dictionary the symbol which abstract the received message
-    #| @return a possible symbol or None if none exist in the dictionary
+    #|     Searches in the vocabulary the symbol which abstract the received message
+    #| @return a possible symbol or None if none exist in the vocabulary
     #+-----------------------------------------------------------------------+    
     def abstract(self, message):        
-        # we search in the dictionary an entry which match the message
-        for entry in self.dictionary.getEntries() :            
-            if entry.compare(message, 0, False, self.dictionary) != -1:
-                self.log.debug("Entry in the dictionary found")
+        # we search in the vocabulary an entry which match the message
+        for entry in self.vocabulary.getEntries() :            
+            if entry.compare(message, 0, False, self.vocabulary) != -1:
+                self.log.debug("Entry in the vocabulary found")
                 return entry
             else :
                 self.log.debug("Entry " + str(entry.getID()) + " doesn't match")
@@ -197,15 +195,10 @@ class AbstractionLayer():
         return EmptySymbol()
         
     def specialize(self, symbol):
-        (value, strvalue) = symbol.getValueToSend(self.dictionary)
-        return (value, strvalue)     
+        return symbol.getValueToSend(self.vocabulary)  # (bin, str)
         
     def getMemory(self):
-        memory = []
-        for variable in self.dictionary.getVariables() :
-            (binVal, strVal) = variable.getValue(False, self.dictionary)
-            memory.append([variable.getName(), variable.getType(), strVal])
-        return memory
+        return self.memory
     
     #+-----------------------------------------------------------------------+
     #| getGeneratedInputAndOutputsSymbols
@@ -224,8 +217,8 @@ class AbstractionLayer():
         return self.inputMessages
     def getOutputMessages(self):
         return self.outputMessages
-    def getDictionary(self):
-        return self.dictionary
+    def getVocabulary(self):
+        return self.vocabulary
     def getCommunicationChannel(self):
         return self.communicationChannel
     

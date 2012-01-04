@@ -30,6 +30,7 @@
 #+----------------------------------------------
 import gtk
 import pygtk
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 pygtk.require('2.0')
 import logging
 import os
@@ -471,7 +472,7 @@ class UISimulator:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
         
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary())
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory())
         
         # And we create an MMSTD visitor for this
         visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar, isMaster, abstractionLayer) 
@@ -568,8 +569,8 @@ class UISimulator:
             
         # Now we update its memory
         self.treestore_memory.clear()
-        for memory in self.selectedActor.getMemory() :
-            self.treestore_memory.append(None, memory)
+        for memory_id in self.selectedActor.getMemory().recallAll().keys() :
+            self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallAll()[memory_id]])
     
     def refreshGUI(self, tempo=0.5):
         if not self.finish :

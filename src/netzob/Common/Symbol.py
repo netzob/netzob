@@ -55,6 +55,7 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 
 #+---------------------------------------------------------------------------+
 #| Symbol :
@@ -673,13 +674,13 @@ class Symbol(object):
             for end in range(1, len(tmpStr)):
                 for start in range(0, end):
                     try:
-                        res = pyasn1.codec.der.decoder.decode( tmpStr[start:end] )
+                        res = pyasn1.codec.der.decoder.decode(tmpStr[start:end])
                     except SubstrateUnderrunError:
                         continue
                     except PyAsn1Error:
                         continue
                     except IndexError:
-                        print "IndexError: " + repr( tmpStr[start:end] )
+                        print "IndexError: " + repr(tmpStr[start:end])
                         continue
                     except:
                         print "NOK"
@@ -970,9 +971,9 @@ class Symbol(object):
                             # Build the new field
                             lenColResult = int(precField.getRegex()[4:-2]) + 2 + int(nextField.getRegex()[4:-2]) # We compute the len of the aggregated regex
                             lenColResult = str(lenColResult)
-                            aField.setIndex( precField.getIndex() )
-                            aField.setRegex( "(.{," + lenColResult + "})" )
-                            aField.setSelectedType( encodingType )
+                            aField.setIndex(precField.getIndex())
+                            aField.setRegex("(.{," + lenColResult + "})")
+                            aField.setSelectedType(encodingType)
 
                             # Delete the old ones
                             self.fields.remove(nextField)
@@ -1106,6 +1107,18 @@ class Symbol(object):
                     treeviewTarget.get_model().append([ styledCell ])
 
     """
+    
+    
+    def getValueToSend(self, memory):
+        # We create an aggregate of all the fields
+        rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
+        for field in self.getFields() :
+            rootSymbol.addChild(field.getVariable())
+        
+        result = rootSymbol.send(False, memory)
+        return result
+    
+    
     
     #+---------------------------------------------- 
     #| GETTERS

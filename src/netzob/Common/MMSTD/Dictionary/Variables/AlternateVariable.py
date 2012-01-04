@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+import random
 from lxml.etree import ElementTree
 from lxml import etree
 #+---------------------------------------------------------------------------+
@@ -40,6 +41,8 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.TypeConvertor import TypeConvertor
+from bitarray import bitarray
+
 
 #+---------------------------------------------------------------------------+
 #| AlternateVariable :
@@ -65,9 +68,16 @@ class AlternateVariable(Variable):
             if result != -1 and result != None :
                 self.log.debug("Compare successfull")
                 return result
-
         return -1
     
+    def send(self, negative, memory):
+        self.log.info("send")
+        # Randomly pick
+        idRandom = random.randint(0, len(self.vars) - 1)
+        picked = self.vars[idRandom]
+        
+        return picked.send(negative, memory)
+        
     def getDescription(self):
         values = []
         for var in self.vars :

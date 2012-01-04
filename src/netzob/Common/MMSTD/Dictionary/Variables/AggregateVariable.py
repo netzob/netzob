@@ -40,6 +40,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.TypeConvertor import TypeConvertor
+from bitarray import bitarray
 
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable :
@@ -69,14 +70,21 @@ class AggregateVariable(Variable):
                 self.log.debug("Compare successfull")
         return result
         
-        
-        
+    def send(self, negative, memory):
+        binResult = bitarray()
+        strResult = ""
+        for var in self.vars :
+            (b, s) = var.send(negative, memory)
+            print "==>" + str(b)
+            binResult += b
+            strResult = strResult + s
+        return (binResult, strResult)
+
     
     def getDescription(self):
         values = []
         for var in self.vars :
-            values.append(var.getDescription())
-            
+            values.append(var.getDescription())            
         return "AggregateVariable [" + " AND ".join(values) + "]"
     
     def save(self, root, namespace):

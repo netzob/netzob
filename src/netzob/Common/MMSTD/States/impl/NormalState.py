@@ -143,7 +143,7 @@ class NormalState(AbstractState):
         # the normal reaction time
         idRandom = random.randint(0, len(self.getTransitions()) - 1)
         pickedTransition = self.getTransitions()[idRandom]
-        self.log.debug("Randomly picked the transition " + pickedTransition.getName())
+        self.log.info("Randomly picked the transition " + pickedTransition.getName())
         
         newState = pickedTransition.executeAsMaster(abstractionLayer)
         self.deactivate()

@@ -54,9 +54,14 @@ class Variable():
         self.type = type
         self.mutable = mutable
  
-    def getValue(self, negative, dictionary):
+    def getValue(self, negative, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")
+    
+    def send(self, negative, memory):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function send")
+        raise NotImplementedError("The current variable doesn't support 'send'.")
+    
     
     def getDescription(self):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")

@@ -61,7 +61,6 @@ class WordVariable(Variable):
     
     def compare(self, value, indice, negative, memory):
         self.log.debug("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
-        
         tmp = value[indice:]
         if len(tmp) >= len(self.binVal) :
             if tmp[:len(self.binVal)] == self.binVal :
@@ -70,6 +69,9 @@ class WordVariable(Variable):
         else :
             self.log.debug("Compare fail")
             return -1
+    
+    def send(self, negative, memory):
+        return (self.binVal, self.strVal)
             
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)

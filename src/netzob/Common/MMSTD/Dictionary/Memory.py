@@ -29,74 +29,33 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from lxml.etree import ElementTree
-from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.TypeConvertor import TypeConvertor
-
-
 
 #+---------------------------------------------------------------------------+
-#| BinaryVarible :
-#|     Definition of a binary variable
+#| Memory :
+#|     Definition of an memory
 #+---------------------------------------------------------------------------+
-class BinaryVariable(Variable):
+class Memory():
     
-    def __init__(self, id, name, mutable, value):
-        Variable.__init__(self, "Binary", id, name, mutable)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
-        
-        
-        if value == "" or value == None :
-            self.binVal = None
-            self.strVal = None
-        else :
-            self.strVal = str(value)
-            self.binVal = value
-            
-    def send(self, negative, memory):
-        return (self.binVal, self.strVal)
+    def __init__(self):
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
+        self.memory = dict()
     
-    def getValue(self):
-        return (self.binVal, self.strVal)
+    def memorize(self, variable, binValue):
+        self.memory[variable.getID()] = binValue
+        
+    def recall(self, variable):
+        return self.memory[variable.getID()]
     
-    def getDescription(self):
-        if self.isMutable() :
-            mut = "[M]"
-        else :
-            mut = "[!M]"
-        return "BinaryVariable " + mut + " (" + self.strVal + ")"
-      
-    def save(self, root, namespace):
-        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
-        # Header specific to the definition of a variable
-        xmlVariable.set("id", str(self.getID()))
-        xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
-        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:BinaryVariable")
+    def recallAll(self):
+        return self.memory
         
-        # Definition of a binary variable
-        xmlWordVariableValue = etree.SubElement(xmlVariable, "{" + namespace + "}value")
-        xmlWordVariableValue.text = str(TypeConvertor.binaryToNetzobRaw(self.binVal))
-        
-    @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
-            varId = xmlRoot.get("id")
-            varName = xmlRoot.get("name")
-            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-            
-            varValue = TypeConvertor.netzobRawToBinary(xmlRoot.find("{" + namespace + "}value").text)
-            return BinaryVariable(varId, varName, varIsMutable, varValue)
-            
-        return None
     
