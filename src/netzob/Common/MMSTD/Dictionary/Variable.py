@@ -46,27 +46,25 @@ import logging
 #+---------------------------------------------------------------------------+
 class Variable():
     
-    def __init__(self, type, id, name, mutable, default):
+    def __init__(self, type, id, name, mutable):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
         self.id = id
         self.name = name
         self.type = type
-        self.default = default
         self.mutable = mutable
-        
-    def hasDefault(self):
-        return self.default != None
- 
  
     def getValue(self, negative, dictionary):
-        self.log.error("Error, the current value (declared as " + self.type + ") do not support function getValue")
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")
     
     def getDescription(self):
-        self.log.error("Error, the current value (declared as " + self.type + ") do not support function getDescription")
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
     
+    def save(self, root, namespace):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
+        raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
     
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
@@ -86,8 +84,6 @@ class Variable():
         self.name = name
     def setType(self, type):
         self.type = type
-    def setDomain(self, domain):
-        self.domain = domain
     def setMutable(self, mutable):
         self.mutable = mutable
         

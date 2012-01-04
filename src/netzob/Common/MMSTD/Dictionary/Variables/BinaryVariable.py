@@ -29,9 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import binascii
-import random
-import string
 from lxml.etree import ElementTree
 from lxml import etree
 
@@ -54,15 +51,28 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
     
-    def __init__(self, id, name, mutable, defaultVar):
-        Variable.__init__(self, "Binary", id, name, mutable, defaultVar)
+    def __init__(self, id, name, mutable, value):
+        Variable.__init__(self, "Binary", id, name, mutable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
-        if defaultVar == "" or defaultVar == None :
+        
+        
+        if value == "" or value == None :
             self.binVal = None
             self.strVal = None
         else :
-            self.strVal = str(defaultVar)
-            self.binVal = defaultVar
+            self.strVal = str(value)
+            self.binVal = value
       
-      
+    def save(self, root, namespace):
+        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        # Header specific to the definition of a variable
+        xmlVariable.set("id", str(self.getID()))
+        xmlVariable.set("name", str(self.getName()))
+        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:BinaryVariable")
+        
+        # Definition of a word variable
+        xmlWordVariableValue = etree.SubElement(xmlVariable, "{" + namespace + "}value")
+        xmlWordVariableValue.text = str(TypeConvertor.binaryToNetzobRaw(self.binVal))
+        
     
