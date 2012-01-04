@@ -56,17 +56,28 @@ class AggregateVariable(Variable):
             
     def addChild(self, variable):
         self.vars.append(variable)
+        
+    def compare(self, value, indice, negative, memory):
+        result = indice
+        for var in self.vars :
+            self.log.debug("Indice = " + str(result) + " : " + var.getDescription())
+            result = var.compare(value, result, negative, memory)
+            if result == -1 or result == None :
+                self.log.debug("Compare fail")
+                return result
+            else :
+                self.log.debug("Compare successfull")
+        return result
+        
+        
+        
     
     def getDescription(self):
-        if self.isMutable() :
-            mut = "[M]"
-        else :
-            mut = "[!M]"
         values = []
         for var in self.vars :
             values.append(var.getDescription())
             
-        return "AggregateVariable " + mut + " [" + " AND ".join(values) + "]"
+        return "AggregateVariable [" + " AND ".join(values) + "]"
     
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
@@ -86,7 +97,6 @@ class AggregateVariable(Variable):
         if version == "0.1" :
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
             
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :

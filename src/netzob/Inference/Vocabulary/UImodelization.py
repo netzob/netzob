@@ -1062,7 +1062,7 @@ class UImodelization:
         
         
     def rightClickRemoveVariable(self, widget, field):
-        questionMsg = "Click yes to confirm the removal of the variable {0}".format(field.getVariable().getDescription())
+        questionMsg = "Click yes to confirm the removal of the variable {0}".format(field.getVariable().getID())
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
@@ -1070,7 +1070,7 @@ class UImodelization:
             field.setVariable(None)
             self.update()
         else :
-            self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getDescription())                
+            self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getID())                
             
         
     def rightClickEditVariable(self, widget, field):

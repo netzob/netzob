@@ -57,7 +57,19 @@ class WordVariable(Variable):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
         
         self.strVal = value
-        self.binVal = TypeConvertor.netzobRawToBinary(TypeConvertor.ASCIIToNetzobRaw(self.strVal))
+        self.binVal = TypeConvertor.ascii2bin(self.strVal, "big")
+    
+    def compare(self, value, indice, negative, memory):
+        self.log.debug("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
+        
+        tmp = value[indice:]
+        if len(tmp) >= len(self.binVal) :
+            if tmp[:len(self.binVal)] == self.binVal :
+                self.log.debug("Compare successful")
+                return indice + len(self.binVal)                                
+        else :
+            self.log.debug("Compare fail")
+            return -1
             
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
