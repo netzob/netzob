@@ -43,6 +43,7 @@ from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.MMSTD.MMSTD import MMSTD
 from netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer import InstanciatedNetworkServer
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 #+---------------------------------------------------------------------------+
 #| Container 
@@ -54,15 +55,15 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         self.instances = []
         
     
-    def getDictionary(self):
-        return self.dictionary
+    def getVocabulary(self):
+        return self.vocabulary
     def getInitialState(self):
         return self.initialState
     def isMaster(self):
         return self.master
     
-    def setDictionary(self, dictionary):
-        self.dictionary = dictionary
+    def setVocabulary(self, vocabulary):
+        self.vocabulary = vocabulary
     def setInitialState(self, initialState):
         self.initialState = initialState
     def setMaster(self, master):
@@ -82,15 +83,15 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
     
-    def getDictionary(self):
-        return self.dictionary
+    def getVocabulary(self):
+        return self.vocabulary
     def getInitialState(self):
         return self.initialState
     def isMaster(self):
         return self.master
     
-    def setDictionary(self, dictionary):
-        self.dictionary = dictionary
+    def setVocabulary(self, vocabulary):
+        self.vocabulary = vocabulary
     def setInitialState(self, initialState):
         self.initialState = initialState
     def setMaster(self, master):
@@ -108,17 +109,17 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         self.log.info("A client has just initiated a connection on the server.")
         
         initialState = self.server.getInitialState()
-        dictionary = self.server.getDictionary()
+        vocabulary = self.server.getVocabulary()
         isMaster = self.server.isMaster()
         
         # we create a sub automata
-        automata = MMSTD(initialState, dictionary)
+        automata = MMSTD(initialState, vocabulary)
 
         # We create an instanciated network server
         instanciatedNetworkServer = InstanciatedNetworkServer(self.request)        
         
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, dictionary)        
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory())        
         
         # And we create an MMSTD visitor for this
         self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer) 
@@ -151,7 +152,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         self.log.info("A client has just initiated a connection on the server.")
         
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getDictionary())
+        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory())
         
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
@@ -176,7 +177,7 @@ class NetworkServer(AbstractActor):
         self.server = None
         self.instantiatedServers = []
         
-    def openServer(self, dictionary, initialState, master):
+    def openServer(self, vocabulary, initialState, master):
         # Instantiates the server
         if self.protocol == "UDP" :
             self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
@@ -187,7 +188,7 @@ class NetworkServer(AbstractActor):
             
             
             
-        self.server.setDictionary(dictionary)
+        self.server.setVocabulary(vocabulary)
         self.server.setInitialState(initialState)
         self.server.setMaster(master)
         

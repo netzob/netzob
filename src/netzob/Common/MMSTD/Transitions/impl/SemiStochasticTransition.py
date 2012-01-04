@@ -95,7 +95,7 @@ class SemiStochasticTransition(AbstractTransition):
     #| @return a boolean which indicates if received symbol is equivalent
     #+-----------------------------------------------------------------------+
     def isValid(self, receivedSymbol):
-        return self.inputSymbol.isEquivalent(receivedSymbol)
+        return self.inputSymbol.getID() == receivedSymbol.getID()
     
     #+-----------------------------------------------------------------------+
     #| pickOutputSymbol
