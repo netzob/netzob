@@ -143,7 +143,7 @@ class Field(object):
         return self.description
     def getColor(self):
         if not self.isRegexStatic() :
-            return "red"
+            return "blue"
         return self.color
     def getIndex(self):
         return self.index

@@ -38,6 +38,7 @@ import glib
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage :
@@ -172,6 +173,14 @@ class AbstractMessage():
                     backgroundColor = 'background="' + field.getBackgroundColor() + '"'
                 else :
                     backgroundColor = ""
+                    
+                # Overwrite the background color (red if the variable doesn't match the data)
+                if field.getVariable() != None :
+
+                    if field.getVariable().compare(TypeConvertor.hex2bin(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, None) == -1 :
+                        backgroundColor = 'background="red"'
+                    else :
+                        backgroundColor = 'background="green"'
                     
                 if styled:
                     if encoded:

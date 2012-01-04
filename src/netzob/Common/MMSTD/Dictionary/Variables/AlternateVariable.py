@@ -57,16 +57,23 @@ class AlternateVariable(Variable):
     def addChild(self, variable):
         self.vars.append(variable)
     
+    def compare(self, value, indice, negative, memory):
+        saved = indice
+        for var in self.vars :
+            self.log.debug("Indice = " + str(saved) + " : " + var.getDescription())
+            result = var.compare(value, saved, negative, memory)
+            if result != -1 and result != None :
+                self.log.debug("Compare successfull")
+                return result
+
+        return -1
+    
     def getDescription(self):
-        if self.isMutable() :
-            mut = "[M]"
-        else :
-            mut = "[!M]"
         values = []
         for var in self.vars :
             values.append(var.getDescription())
             
-        return "AlternateVariable " + mut + " [" + " OR ".join(values) + "]"
+        return "AlternateVariable [" + " OR ".join(values) + "]"
     
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
