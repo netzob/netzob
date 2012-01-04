@@ -38,6 +38,7 @@ import base64
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
 
 class TypeConvertor():
 
@@ -116,6 +117,16 @@ class TypeConvertor():
             return raw
 
     @staticmethod
+    def encodeNetzobRawToGivenField(raw, field):
+        res = TypeConvertor.applyUnitSize(raw, field.getUnitSize())
+        print res
+        return
+        res = TypeConvertor.applyEndianess(res, field.getEndianess())
+        res = TypeConvertor.applySign(res, field.getSign())
+        res = TypeConvertor.encodeNetzobRawToGivenType(res, field.getFormat())
+        return res
+
+    @staticmethod
     def string2hex(msg):
         return [hex(ord(x)) for x in msg]
 
@@ -190,7 +201,6 @@ class TypeConvertor():
     #+----------------------------------------------
     def netzobRawToString(raw):
         if len(raw) % 2 != 0:
-#            self.log.error("Hex string len not even !")
             return raw
 
         res = ""
@@ -304,7 +314,7 @@ class TypeConvertor():
     #+---------------------------------------------- 
     #| Return a hexdump of a hex message
     #+----------------------------------------------          
-    def hexdump(self, buf, start=0):
+    def hexdump(buf, start=0):
         length = len(buf)
         res = StringIO.StringIO()
         def GetPrintableChar(str):
@@ -333,3 +343,32 @@ class TypeConvertor():
             i = i + 16
 
         return res.getvalue()
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Split a raw message by chunk of specific size
+    #+----------------------------------------------          
+    def applyUnitSize(raw, unitSize):
+        size = None
+        # TODO: handle BIT level
+#        if unitSize == UnitSize.BIT:
+#            size = 1
+#        elif unitSize == UnitSize.HALFBYTE:
+        if unitSize == UnitSize.HALFBYTE:
+            size = 4
+        elif unitSize == UnitSize.BYTE:
+            size = 8
+        elif unitSize == UnitSize.HALFWORD:
+            size = 16
+        elif unitSize == UnitSize.WORD:
+            size = 32
+        elif unitSize == UnitSize.DOUBLEWORD:
+            size = 64
+        elif unitSize == UnitSize.QUADWORD:
+            size = 128
+
+        size = size / 4
+        res = ""
+        for i in range(len(raw)):
+            res += raw[i:i+size] + " "
+        return res[:-1] # We delete the last space character
