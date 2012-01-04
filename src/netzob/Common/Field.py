@@ -33,14 +33,13 @@ from lxml.etree import ElementTree
 from lxml import etree
 import uuid
 
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
-
 #+---------------------------------------------------------------------------+ 
 #| Local imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
+from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -85,7 +84,6 @@ class Field(object):
         if self.isRegexStatic() :
             variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
-            
         return self.variable
     
     def setVariable(self, variable):
@@ -111,7 +109,6 @@ class Field(object):
         
         if self.getVariable() != None :
             self.getVariable().save(xmlField, namespace)
-        
     
     #+---------------------------------------------- 
     #| GETTERS
@@ -138,6 +135,7 @@ class Field(object):
         if self.getVariable() != None :
             return "yellow"
         return None
+
     #+---------------------------------------------- 
     #| SETTERS
     #+----------------------------------------------         
@@ -147,8 +145,8 @@ class Field(object):
         self.encapsulation_level = level
     def setRegex(self, regex):
         self.regex = regex
-    def setSelectedType(self, type):
-        self.selected_type = type
+    def setSelectedType(self, aType):
+        self.selected_type = aType
     def setDescription(self, description):
         self.description = description
     def setColor(self, color):

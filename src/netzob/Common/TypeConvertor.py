@@ -103,6 +103,12 @@ class TypeConvertor():
     def encodeNetzobRawToGivenType(raw, type):
         if type.lower() == "ascii" :
             return TypeConvertor.netzobRawToASCII(raw)
+        elif type.lower() == "hex" :
+            return raw
+        elif type.lower() == "octal" :
+            return TypeConvertor.netzobRawToOctal(raw)
+        elif type.lower() == "bit" :
+            return TypeConvertor.netzobRawToBit(raw)
         elif type.lower() == "alphanum" :
             return TypeConvertor.netzobRawToAlphanum(raw)
         elif type.lower() == "num" :
@@ -116,7 +122,6 @@ class TypeConvertor():
         else :
             return raw
     
-    
     @staticmethod
     def pythonDatetime2XSDDatetime(date):
         # XSD Format : [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]
@@ -124,10 +129,7 @@ class TypeConvertor():
 #            return ""
         if not isinstance(date, datetime.datetime) and isinstance(date[0], datetime.datetime):
             date = date[0]
-            
         return str(date.isoformat('T'))[:19]
-        
-        
     
     @staticmethod
     # Warning str must contain an XSD Datetime typed data
@@ -200,12 +202,33 @@ class TypeConvertor():
         s = ""
         for i in range(0, len(raw), 2):
             s += chr(int(raw[i:i + 2], 16))
-
         if not s.isdigit():
             logging.error("Not a digit")
             return raw
-
         return s
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Return the string parameter in octal
+    #+----------------------------------------------
+    def netzobRawToOctal(raw):
+        if len(raw) % 2 != 0:
+            logging.error("(toOctal) Hex string len not even : " + raw)
+            return raw
+
+        # TODO
+        return raw
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Return the string parameter in bit
+    #+----------------------------------------------
+    def netzobRawToBit(raw):
+        if len(raw) % 2 != 0:
+            logging.error("(toBit) Hex string len not even : " + raw)
+            return raw
+
+        return str(TypeConvertor.hex2bin(raw))
 
     @staticmethod
     #+---------------------------------------------- 
@@ -219,11 +242,9 @@ class TypeConvertor():
         s = ""
         for i in range(0, len(raw), 2):
             s += chr(int(raw[i:i + 2], 16))
-
         if not s.isalpha():
             logging.error("Not an alpha string")
             return raw
-
         return s
 
     @staticmethod
@@ -238,11 +259,9 @@ class TypeConvertor():
         s = ""
         for i in range(0, len(raw), 2):
             s += chr(int(raw[i:i + 2], 16))
-
         if not s.isalnum():
             logging.error("Not an alphanumerical string")
             return raw
-
         return s
 
     @staticmethod
@@ -257,7 +276,6 @@ class TypeConvertor():
         s = ""
         for i in range(0, len(raw), 2):
             s += chr(int(raw[i:i + 2], 16))
-
         res = ""
         try:
             res = base64.b64decode(s)
@@ -265,7 +283,6 @@ class TypeConvertor():
                 res = raw
         except TypeError:
             res = raw
-
         return s
 
     @staticmethod
@@ -280,7 +297,6 @@ class TypeConvertor():
         s = ""
         for i in range(0, len(raw), 2):
             s += chr(int(raw[i:i + 2], 16))
-
         res = ""
         try:
             res = base64.b64decode(s)
@@ -288,7 +304,6 @@ class TypeConvertor():
                 res = raw
         except TypeError:
             res = raw
-
         return res
 
     @staticmethod

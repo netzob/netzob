@@ -144,7 +144,7 @@ class UImodelization:
        
         ## Field type inference
         frame = gtk.Frame()
-        frame.set_label("3 - Field type inference")
+        frame.set_label("2 - Field type inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
@@ -169,23 +169,9 @@ class UImodelization:
         but.show()
         table.attach(but, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
-        # Widget for choosing the analysed protocole type
-        label = gtk.Label("Protocol type : ")
-        label.show()
-        combo = gtk.combo_box_entry_new_text()
-#        combo.set_size_request(300, -1)
-        combo.set_model(gtk.ListStore(str))
-        combo.append_text("Text based (HTTP, FTP)")
-        combo.append_text("Fixed fields binary based (IP, TCP)")
-#        combo.append_text("Variable fields binary based (ASN.1)")
-        combo.connect("changed", self.updateProtocolType)
-        combo.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
         ## Dependencies inference
         frame = gtk.Frame()
-        frame.set_label("4 - Dependencies inference")
+        frame.set_label("3 - Dependencies inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -207,7 +193,7 @@ class UImodelization:
 
         ## Semantic inference
         frame = gtk.Frame()
-        frame.set_label("5 - Semantic inference")
+        frame.set_label("4 - Semantic inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
@@ -225,6 +211,31 @@ class UImodelization:
         but.connect("clicked", self.search_cb)
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        ## Visualization
+        frame = gtk.Frame()
+        frame.set_label("5 - Visualization")
+        frame.show()
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget for choosing the analysed protocole type
+        label = gtk.Label("Encoding : ")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+#        combo.set_size_request(300, -1)
+        combo.set_model(gtk.ListStore(str))
+        combo.append_text("ascii")
+        combo.append_text("hex")
+        combo.append_text("octal")
+        combo.append_text("bit")
+        combo.connect("changed", self.updateProtocolType)
+        combo.show()
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(combo, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -1403,19 +1414,14 @@ class UImodelization:
     #| Called when user wants to modify the expected protocol type
     #+----------------------------------------------
     def updateProtocolType(self, combo):
-        valID = combo.get_active()
-        if valID == 0:
-            display = "ascii"
-        else:
-            display = "binary"
-        
-        if self.netzob.getCurrentProject() != None :
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY, display)
-        
-            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                for field in symbol.getFields() :
-                    field.setSelectedType(display)
-            self.update()
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        encoding = combo.get_active_text()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for field in symbol.getFields():
+                field.setSelectedType( encoding )
+        self.update()
 
     #+---------------------------------------------- 
     #| Called when user wants to refine regexes
