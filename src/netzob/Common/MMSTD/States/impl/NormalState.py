@@ -73,7 +73,7 @@ class NormalState(AbstractState):
             inputSymbol = transition.getInputSymbol()
             found = False
             for t in self.transitions :
-                if t.getInputSymbol() == inputSymbol :
+                if t.getType() == "SemiStochastic" and t.getInputSymbol() == inputSymbol :
                     found = True
             if not found :
                 self.transitions.append(transition)
