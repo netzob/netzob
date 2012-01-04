@@ -46,8 +46,6 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 #| GrammarInferer :
 #|    Given Angluin's L*a algorithm, it learns
 #|    the grammar of a protocol
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class GrammarInferer(object):
      

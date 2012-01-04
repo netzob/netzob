@@ -33,7 +33,6 @@ from netzob.Common.TypeConvertor import TypeConvertor
 from netzob.Inference.Vocabulary.SearchResult import SearchResult
 from netzob.Inference.Vocabulary.SearchTask import SearchTask
 
-
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
@@ -42,8 +41,6 @@ from netzob.Inference.Vocabulary.SearchTask import SearchTask
 #| Searcher :
 #|     Provides multiple algorithms for a searching after a pattern in a 
 #|     set of computed messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class Searcher(object):
     

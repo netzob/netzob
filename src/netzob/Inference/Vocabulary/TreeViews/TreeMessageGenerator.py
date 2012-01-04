@@ -42,8 +42,6 @@ from netzob.Common.Field import Field
 #| TreeMessageGenerator :
 #|     update and generates the treeview and its 
 #|     treestore dedicated to the messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class TreeMessageGenerator():
     

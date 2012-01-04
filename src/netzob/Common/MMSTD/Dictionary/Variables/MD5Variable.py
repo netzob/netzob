@@ -45,8 +45,6 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| MD5Variable :
 #|     Definition of an md5 variable defined in a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class MD5Variable(Variable):
     

@@ -47,15 +47,12 @@ import subprocess
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 
 #+---------------------------------------------- 
 #| IPpc :
 #|     ensures the capture of informations through IPC proxing
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class IpcImport:
     

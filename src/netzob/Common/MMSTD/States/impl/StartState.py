@@ -45,8 +45,6 @@ from netzob.Common.MMSTD.States.AbstractState import AbstractState
 #+---------------------------------------------------------------------------+
 #| StartState :
 #|     Definition of a starting state (open the communication layer)
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class StartState(AbstractState):
     

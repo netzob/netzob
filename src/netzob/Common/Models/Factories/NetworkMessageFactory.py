@@ -44,8 +44,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| NetworkMessageFactory :
 #|     Factory dedicated to the manipulation of network messages
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #+---------------------------------------------------------------------------+
 class NetworkMessageFactory():

@@ -39,8 +39,6 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 #+---------------------------------------------------------------------------+
 #| DictionarySymbol :
 #|     Definition of a symbol based on a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class DictionarySymbol(AbstractSymbol):
     

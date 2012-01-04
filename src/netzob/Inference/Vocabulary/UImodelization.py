@@ -31,8 +31,6 @@
 import gtk
 import pango
 import pygtk
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Inference.Vocabulary.VariableView import VariableView
 pygtk.require('2.0')
 import logging
 import threading
@@ -45,22 +43,21 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 from netzob.Inference.Vocabulary.SearchView import SearchView
 from netzob.Inference.Vocabulary.Entropy import Entropy
 from netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessageGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
+from netzob.Inference.Vocabulary.VariableView import VariableView
 
 #+---------------------------------------------- 
 #| UImodelization :
 #|     GUI for message modelization
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class UImodelization:
     TARGET_TYPE_TEXT = 80
@@ -109,8 +106,6 @@ class UImodelization:
         self.panel.show()
         self.defer_select = False
 
-        configParser = ConfigurationParser()
-        
         #+---------------------------------------------- 
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
@@ -118,90 +113,34 @@ class UImodelization:
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
 
-        ## Classification by similarity
+        ## Message format inference
         frame = gtk.Frame()
-        frame.set_label("1 - Classification by similarity")
+        frame.set_label("1 - Message format inference")
         frame.show()
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=3, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
-        # Widget entry for chosing the alignment score sub-limit
-        label = gtk.Label("Similarity threshold:")
-        label.show()
-        combo = gtk.combo_box_entry_new_text()
-#        combo.set_size_request(60, -1)
-        combo.set_model(gtk.ListStore(str))
-        combo.connect("changed", self.updateScoreLimit)
-        possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
-        min_equivalence = configParser.getFloat("clustering", "equivalence_threshold")
-        for i in range(len(possible_choices)):
-            combo.append_text(str(possible_choices[i]))
-            if str(possible_choices[i]) == str(int(min_equivalence)):
-                combo.set_active(i)
-        combo.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button activate orphan reduction
-        butOrphanReduction = gtk.CheckButton("Orphan reduction")
-        doOrphanReduction = configParser.getInt("clustering", "orphan_reduction")
-        if doOrphanReduction == 1:
-            butOrphanReduction.set_active(True)
-        else:
-            butOrphanReduction.set_active(False)
-        butOrphanReduction.connect("toggled", self.activeOrphanReduction)
-        butOrphanReduction.show()
-        table.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget button merge common regexes
-#        but = gtk.Button("Merge common regexes")
-#        but.connect("clicked", self.netzob.symbols.mergeCommonRegexes, self)
-        ## TODO: merge common regexes (if it is really usefull)
-#        but.show()
-#        but.set_sensitive(False)
-#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        ## Message format inference
-        frame = gtk.Frame()
-        frame.set_label("2 - Message format inference")
-        frame.show()
-        topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=5, columns=2, homogeneous=False)
-        table.show()
-        frame.add(table)
-
-        # Widget button slick regexes # TODO
-#        but = gtk.Button("Slick regexes")
-#        but.connect("clicked", self.netzob.symbols.slickRegexes, self)
-#        but.show()
-#        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget checkbox for selecting the slickery during alignement process
-        but = gtk.CheckButton("Slick regexes")
-        doInternalSlick = configParser.getInt("clustering", "do_internal_slick")
-        if doInternalSlick == 1:
-            but.set_active(True)
-        else:
-            but.set_active(False)
-        but.connect("toggled", self.activeInternalSlickRegexes)
-        but.show()
-        table.attach(but, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Widget for launching the analysis
+        # Widget for discovering the alignment
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Discover alignment")
-        but.connect("clicked", self.startAnalysis_cb)
+        but.connect("clicked", self.discoverAlignment_cb)
         but.show()
-        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Force alignment")
         but.connect("clicked", self.forceAlignment_cb)
         but.show()
-        table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+
+        # Widget button slick regex
+        but = gtk.Button("Slick regexes")
+        but.connect("clicked", self.slickRegex_cb)
+        but.show()
+        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
         ## Field type inference
         frame = gtk.Frame()
@@ -238,10 +177,8 @@ class UImodelization:
         combo.set_model(gtk.ListStore(str))
         combo.append_text("Text based (HTTP, FTP)")
         combo.append_text("Fixed fields binary based (IP, TCP)")
-        combo.append_text("Variable fields binary based (ASN.1)")
+#        combo.append_text("Variable fields binary based (ASN.1)")
         combo.connect("changed", self.updateProtocolType)
-        protocol_type_ID = configParser.getInt("clustering", "protocol_type")
-        combo.set_active(protocol_type_ID)
         combo.show()
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         table.attach(combo, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -330,10 +267,10 @@ class UImodelization:
         self.log.debug("GUI for sequential part is created")
 
     #+---------------------------------------------- 
-    #| startAnalysis :
+    #| discoverAlignment :
     #|   Parse the traces and store the results
     #+----------------------------------------------
-    def startAnalysis_cb(self, widget):
+    def discoverAlignment_cb(self, widget):
         if self.netzob.getCurrentProject() == None:
             self.log.info("A project must be loaded to start an analysis")
             return
@@ -342,10 +279,75 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        
+
+        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
+        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        panel.show()
+
+        ## Similarity threshold
+        label = gtk.Label("Similarity threshold:")
+        label.show()
+        combo = gtk.combo_box_entry_new_text()
+        combo.set_model(gtk.ListStore(str))
+        combo.connect("changed", self.updateScoreLimit)
+        possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
+
+        min_equivalence = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        for i in range(len(possible_choices)):
+            combo.append_text(str(possible_choices[i]))
+            if str(possible_choices[i]) == str(int(min_equivalence)):
+                combo.set_active(i)
+        combo.show()
+        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button activate orphan reduction
+        butOrphanReduction = gtk.CheckButton("Orphan reduction")
+        doOrphanReduction = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
+        if doOrphanReduction:
+            butOrphanReduction.set_active(True)
+        else:
+            butOrphanReduction.set_active(False)
+        butOrphanReduction.connect("toggled", self.activeOrphanReduction)
+        butOrphanReduction.show()
+        panel.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget checkbox for selecting the slickery during alignement process
+        but = gtk.CheckButton("Slick regexes")
+        doInternalSlick = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        if doInternalSlick:
+            but.set_active(True)
+        else:
+            but.set_active(False)
+        but.connect("toggled", self.activeInternalSlickRegexes)
+        but.show()
+        panel.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Widget button merge common regexes
+#        but = gtk.Button("Merge common regexes")
+#        but.connect("clicked", self.netzob.symbols.mergeCommonRegexes, self)
+        ## TODO: merge common regexes (if it is really usefull)
+#        but.show()
+#        but.set_sensitive(False)
+#        panel.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Button
+        searchButton = gtk.Button("Discover alignment")
+        searchButton.show()
+        searchButton.connect("clicked", self.discoverAlignment_cb_cb, dialog)
+        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
+    #| discoverAlignment_cb_cb :
+    #|   Force the delimiter for sequence alignment
+    #+----------------------------------------------
+    def discoverAlignment_cb_cb(self, widget, dialog):
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        
         self.alignThread = threading.Thread(None, vocabulary.alignWithNeedlemanWunsh, None, ([self.netzob.getCurrentProject().getConfiguration(), self.update]), {})
+        dialog.destroy()
         self.alignThread.start()
         
     #+---------------------------------------------- 
@@ -713,7 +715,7 @@ class UImodelization:
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(gtk.ListStore(str))
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -743,7 +745,11 @@ class UImodelization:
     #| Add a selection of packets to an existing trace
     #+----------------------------------------------
     def add_packets_to_existing_trace(self, button, entry, messages, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        logging.warn("Not yet implemented")
+        return
+
+    """
+        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         existingTraceDir = projectsDirectoryPath + os.sep + entry.get_active_text()
         # Create the new XML structure
         res = "<datas>\n"
@@ -757,12 +763,17 @@ class UImodelization:
         fd.write(res)
         fd.close()
         dialog.destroy()
+    """
 
     #+---------------------------------------------- 
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, messages, dialog):
-        projectsDirectoryPath = ConfigurationParser().get("projects", "path")
+        logging.warn("Not yet implemented")
+        return
+
+    """
+        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
                 continue
@@ -788,6 +799,7 @@ class UImodelization:
         fd.close()
         dialog.destroy()
         self.netzob.updateListOfAvailableProjects()
+    """
 
     #+---------------------------------------------- 
     #| rightClickDomainOfDefinition :
@@ -1479,6 +1491,16 @@ class UImodelization:
             return
         entropy = Entropy(self.selectedSymbol)
         entropy.buildDistributionView()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to slick the current regexes
+    #+----------------------------------------------
+    def slickRegex_cb(self, but):
+        if self.netzob.getCurrentProject() == None :
+            return
+
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.slickRegex(self.netzob.getCurrentProject())
 
     #+---------------------------------------------- 
     #| Called when user wants to find ASN.1 fields

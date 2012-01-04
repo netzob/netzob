@@ -49,8 +49,6 @@ from netzob.Common.MMSTD import MMSTD
 #+---------------------------------------------- 
 #| MMSTDXmlParser :
 #|    Parser for an MMSTD
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class MMSTDXmlParser(object):
     

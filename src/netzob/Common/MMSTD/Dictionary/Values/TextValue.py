@@ -43,8 +43,6 @@ from netzob.Common.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| TextValue :
 #|     Represents a text value
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class TextValue(AbstractValue):
     

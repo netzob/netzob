@@ -43,8 +43,6 @@ from netzob.Fuzzing.File import File
 #+---------------------------------------------- 
 #| UIfuzzing :
 #|     GUI for fuzzing applications
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class UIfuzzing:
     def new(self):

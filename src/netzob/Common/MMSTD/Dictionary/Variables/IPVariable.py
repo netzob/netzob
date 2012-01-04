@@ -44,8 +44,6 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 #| IPVariable :
 #|     Definition of a n IP variable defined in a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class IPVariable(Variable):
     

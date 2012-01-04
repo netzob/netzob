@@ -42,8 +42,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| MMSTDDictionary :
 #|     Definition of a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class MMSTDDictionary():
     

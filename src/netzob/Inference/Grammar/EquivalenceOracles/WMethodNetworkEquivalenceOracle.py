@@ -48,8 +48,6 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 #+---------------------------------------------- 
 #| WMethodNetworkEquivalenceOracle :
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
      

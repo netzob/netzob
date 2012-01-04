@@ -37,8 +37,6 @@ import gtk
 
 #+---------------------------------------------- 
 #| TreeSymbolGenerator :
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class TreeSymbolGenerator():
     

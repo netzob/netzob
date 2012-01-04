@@ -42,8 +42,6 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 #+---------------------------------------------------------------------------+
 #| IPCMessage :
 #|     Definition of an IPC message
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class IPCMessage(AbstractMessage):
     def __init__(self, id, timestamp, data, category, key, direction):

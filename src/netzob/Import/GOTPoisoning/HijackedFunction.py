@@ -40,8 +40,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| HijackedFunction :
 #|     Definition of a function to hijack
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| A function to hijack has the following members :
 #|     - a name

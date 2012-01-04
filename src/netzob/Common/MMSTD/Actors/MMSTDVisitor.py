@@ -39,8 +39,6 @@ import threading
 #+---------------------------------------------------------------------------+
 #| MMSTDVisitor :
 #|     Definition of a visitor of an MMSTD automata
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class MMSTDVisitor(threading.Thread):
     

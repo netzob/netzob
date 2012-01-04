@@ -308,5 +308,13 @@ class TypeConvertor():
                 res = res + chr(int(msg[i: i + 2], 16))
             res = res + chr(int(msg[-1], 16))
         return res    
-        
-    
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Transform the current binary message ( '\x1f\xdf' ) in hex ( '1fdf' )
+    #+----------------------------------------------          
+    def binaryToNetzobRaw(msg):
+        res = ""
+        for i in range(0, len(msg), 1):
+            res = res + msg[i:i+1].encode("hex")
+        return res

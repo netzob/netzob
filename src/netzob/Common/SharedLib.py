@@ -44,8 +44,6 @@ from netzob.Import.GOTPoisoning import HijackedFunction
 #+---------------------------------------------------------------------------+
 #| SharedLib :
 #|     Model object of a shared lib
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class SharedLib(object):
     #+-----------------------------------------------------------------------+

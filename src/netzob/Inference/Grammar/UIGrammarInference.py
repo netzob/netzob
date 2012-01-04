@@ -52,8 +52,6 @@ from netzob.Common.Grammar import Grammar
 #+---------------------------------------------------------------------------+
 #| UIGrammarInference :
 #|    Graphical display of the inferring process of a grammar
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class UIGrammarInference:
     

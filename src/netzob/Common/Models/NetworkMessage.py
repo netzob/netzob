@@ -43,8 +43,6 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 #+---------------------------------------------------------------------------+
 #| NetworkMessage :
 #|     Definition of a network message
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class NetworkMessage(AbstractMessage):
     def __init__(self, id, timestamp, data, ip_source, ip_destination, protocol, l4_source_port, l4_destination_port):

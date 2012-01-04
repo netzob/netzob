@@ -43,8 +43,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Variable :
 #|     Definition of a variable defined in a dictionary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class Variable():
     

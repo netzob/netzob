@@ -46,8 +46,6 @@ from netzob.Common.Field import Field
 #+---------------------------------------------------------------------------+
 #| Vocabulary :
 #|     Class definition of the vocabulary
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Vocabulary(object):
     

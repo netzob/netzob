@@ -41,8 +41,6 @@ import logging
 
 #+---------------------------------------------- 
 #| AbstractEquivalenceOracle :
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class AbstractEquivalenceOracle(object):
      

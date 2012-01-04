@@ -47,8 +47,6 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #| MembershipQuery :
 #| Represents a set of query which will be submited to 
 #| an oracle
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------- 
 class MembershipQuery(object):
      

@@ -42,8 +42,6 @@ import os
 #+---------------------------------------------------------------------------+
 #| InjectorGenerator :
 #|     Describes and generates a GOT Injector
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class InjectorGenerator():
     
@@ -110,7 +108,6 @@ class InjectorGenerator():
 //| @copyright    : Georges Bossert and Frederic Guihery                      |
 //| @url          : http://code.google.com/p/netzob/                          |
 //| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-//| @author       : {gbt,fgy}@amossys.fr                                      |
 //| @organization : Amossys, http://www.amossys.fr                            |
 //+---------------------------------------------------------------------------+
 #include <stdio.h>

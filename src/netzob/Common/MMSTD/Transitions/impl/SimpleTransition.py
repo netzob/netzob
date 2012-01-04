@@ -42,8 +42,6 @@ from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransitio
 #+---------------------------------------------------------------------------+
 #| SimpleTransition :
 #|     Definition of a simple transition (only sends something after X ms)
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class SimpleTransition(AbstractTransition):
     

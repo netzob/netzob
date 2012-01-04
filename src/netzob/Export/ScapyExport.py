@@ -41,8 +41,6 @@ from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 #+---------------------------------------------- 
 #| ScapyExport :
 #|     Class for building a scapy dissector
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class ScapyExport:
 

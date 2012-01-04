@@ -96,8 +96,6 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
 #+---------------------------------------------------------------------------+
 #| Workspace :
 #|     Class definition of a Workspace
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------------------------------------+
 class Workspace(object):
     

@@ -43,8 +43,6 @@ from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 #+---------------------------------------------------------------------------+
 #| VarValue :
 #|     Represents a var value
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class VarValue(AbstractValue):
     

@@ -44,8 +44,6 @@ import os
 #+---------------------------------------------- 
 #| LoggingConfiguration :
 #|    Configure the logging layer of Netzob
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.2
 #+---------------------------------------------- 
 class LoggingConfiguration(object):
     

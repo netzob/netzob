@@ -37,8 +37,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| AbstractSymbol :
 #|     Definition of a symbol
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class AbstractSymbol():
     

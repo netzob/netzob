@@ -43,8 +43,6 @@ from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 #+---------------------------------------------------------------------------+
 #| EndValue :
 #|     Represents the end of a symbol
-#| @author     : {gbt,fgy}@amossys.fr
-#| @version    : 0.3
 #+---------------------------------------------------------------------------+
 class EndValue(AbstractValue):
     
