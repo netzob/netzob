@@ -78,8 +78,19 @@ class BinaryVariable(Variable):
         xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:BinaryVariable")
         
-        # Definition of a word variable
+        # Definition of a binary variable
         xmlWordVariableValue = etree.SubElement(xmlVariable, "{" + namespace + "}value")
         xmlWordVariableValue.text = str(TypeConvertor.binaryToNetzobRaw(self.binVal))
         
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        if version == "0.1" :
+            varId = xmlRoot.get("id")
+            varName = xmlRoot.get("name")
+            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
+            
+            varValue = TypeConvertor.netzobRawToBinary(xmlRoot.find("{" + namespace + "}value").text)
+            return BinaryVariable(varId, varName, varIsMutable, varValue)
+            
+        return None
     

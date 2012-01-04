@@ -619,7 +619,16 @@
 	<complexType name="BinaryVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">
-
+				<sequence>
+					<element name="value" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="WordVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
 				<sequence>
 					<element name="value" type="string"></element>
 				</sequence>

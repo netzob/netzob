@@ -181,8 +181,8 @@ class VariableView(object):
         # We retrieve the value of the variable
         varValue = variableValueEntry.get_text()
         
-        # Creation of the word
-        wordVariable = WordVariable(id, varValue, varValue)
+        # Creation of the word id, name, mutable, value):
+        wordVariable = WordVariable(id, varValue, False, varValue)
         rootVariable.addChild(wordVariable)
         
         self.datas[str(wordVariable.getID())] = wordVariable

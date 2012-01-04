@@ -95,3 +95,8 @@ class Variable():
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable" :
                 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
                 return WordVariable.loadFromXML(xmlRoot, namespace, version)
+            
+            # Binary Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable" :
+                from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
+                return BinaryVariable.loadFromXML(xmlRoot, namespace, version)
