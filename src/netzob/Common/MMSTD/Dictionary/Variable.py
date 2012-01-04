@@ -66,6 +66,11 @@ class Variable():
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
     
+    def compare(self, value, indice, negative, memory):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
+        raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
+    
+    
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -105,3 +110,8 @@ class Variable():
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable" :
                 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
                 return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
+            
+            # Alternate Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable" :
+                from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
+                return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
