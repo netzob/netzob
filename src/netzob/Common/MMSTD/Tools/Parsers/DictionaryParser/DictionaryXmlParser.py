@@ -41,17 +41,17 @@ import logging
 from netzob.Common.MMSTD.Dictionary import DictionaryEntry
 from netzob.Common.MMSTD.Dictionary import MMSTDDictionary
 
-from netzob.Common.MMSTD.Dictionary.Values import Aggregate
-from netzob.Common.MMSTD.Dictionary.Values import TextValue
-from netzob.Common.MMSTD.Dictionary.Values import EndValue
-from netzob.Common.MMSTD.Dictionary.Values import VarValue
-from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
-from netzob.Common.MMSTD.Dictionary.Variables.IntVariable import IntVariable
-from netzob.Common.MMSTD.Dictionary.Variables.MD5Variable import MD5Variable
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Common.MMSTD.Dictionary.Variables.IPVariable import IPVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.MMSTD.Dictionary.Variables.DynLenStringVariable import DynLenStringVariable
+#from netzob.Common.MMSTD.Dictionary.Values import Aggregate
+#from netzob.Common.MMSTD.Dictionary.Values import TextValue
+#from netzob.Common.MMSTD.Dictionary.Values import EndValue
+#from netzob.Common.MMSTD.Dictionary.Values import VarValue
+#from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
+#from netzob.Common.MMSTD.Dictionary.Variables.IntVariable import IntVariable
+#from netzob.Common.MMSTD.Dictionary.Variables.MD5Variable import MD5Variable
+#from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+#from netzob.Common.MMSTD.Dictionary.Variables.IPVariable import IPVariable
+#from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
+#from netzob.Common.MMSTD.Dictionary.Variables.DynLenStringVariable import DynLenStringVariable
 
 
 
