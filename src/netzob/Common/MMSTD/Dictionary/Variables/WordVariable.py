@@ -65,7 +65,10 @@ class WordVariable(Variable):
         if len(tmp) >= len(self.binVal) :
             if tmp[:len(self.binVal)] == self.binVal :
                 self.log.debug("Compare successful")
-                return indice + len(self.binVal)                                
+                return indice + len(self.binVal)              
+            else :
+                self.log.info("error in the comparison")
+                return -1                  
         else :
             self.log.debug("Compare fail")
             return -1

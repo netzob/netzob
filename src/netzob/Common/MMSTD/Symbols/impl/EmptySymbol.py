@@ -68,7 +68,8 @@ class EmptySymbol(AbstractSymbol):
         return 0
     def getEntry(self):
         return None
-  
+    def getName(self):
+        return "EmptySymbol"
   
     def __str__(self):
         return "EmptySymbol"

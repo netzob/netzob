@@ -63,6 +63,20 @@ class BinaryVariable(Variable):
             self.strVal = str(value)
             self.binVal = value
             
+    def compare(self, value, indice, negative, memory):
+        self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
+        tmp = value[indice:]
+        if len(tmp) >= len(self.binVal) :
+            if tmp[:len(self.binVal)] == self.binVal :
+                self.log.info("Compare successful")
+                return indice + len(self.binVal)      
+            else :
+                self.log.info("error in the comparison")
+                return -1
+        else :
+            self.log.info("Compare fail")
+            return -1
+            
     def send(self, negative, memory):
         return (self.binVal, self.strVal)
     

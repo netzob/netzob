@@ -1110,13 +1110,15 @@ class Symbol(object):
     
     
     def getValueToSend(self, memory):
+        result = self.getRoot().send(False, memory)
+        return result
+    
+    def getRoot(self):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
         for field in self.getFields() :
             rootSymbol.addChild(field.getVariable())
-        
-        result = rootSymbol.send(False, memory)
-        return result
+        return rootSymbol
     
     
     

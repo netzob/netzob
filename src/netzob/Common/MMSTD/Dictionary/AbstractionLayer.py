@@ -181,21 +181,22 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+    
     def abstract(self, message):        
         # we search in the vocabulary an entry which match the message
-        for entry in self.vocabulary.getEntries() :            
-            if entry.compare(message, 0, False, self.vocabulary) != -1:
+        for symbol in self.vocabulary.getSymbols() :            
+            if symbol.getRoot().compare(message, 0, False, self.memory) != -1:
                 self.log.debug("Entry in the vocabulary found")
-                return entry
+                self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
+                return symbol
             else :
-                self.log.debug("Entry " + str(entry.getID()) + " doesn't match")
+                self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
                 # we first restore possibly learnt value
                 self.log.debug("Restore possibly learnt value")
-                entry.restore()
+#                entry.restore()
             
         
         return EmptySymbol()
         
     def specialize(self, symbol):
-        return symbol.getValueToSend(self.vocabulary)  # (bin, str)
+        return symbol.getValueToSend(self.memory)  # (bin, str)
         
     def getMemory(self):
         return self.memory
