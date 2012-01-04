@@ -613,25 +613,55 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="domain" use="required">
-			<simpleType>
-				<restriction base="string">
-					<minLength value="1"></minLength>
-				</restriction>
-			</simpleType>
-		</attribute>
         <attribute name="mutable" type="boolean" default="false"></attribute>
-        <attribute name="default" type="string"></attribute>
 	</complexType>
 
-	<complexType name="WordVariable">
+	<complexType name="AggregateVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">
-				
+				<sequence>
+					<element name="variable"
+						type="netzob-project:Variable" minOccurs="0"
+						maxOccurs="unbounded">
+					</element>
+				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
 	
+	<complexType name="AlternateVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="variable"
+						type="netzob-project:Variable" minOccurs="0"
+						maxOccurs="unbounded">
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="BinaryVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="value" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="WordVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="value" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
 
 
 

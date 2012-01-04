@@ -1075,12 +1075,9 @@ class UImodelization:
         # We close the current dialog
         dialog.destroy()
         
-        # We display the dedicated dialog for the creation of a variable
-        dialog = gtk.Dialog(title="Creation of a variable", flags=0, buttons=None)
-        
-        creationPanel = VariableView(self.netzob.getCurrentProject(), variableID, varName, varMutable)
-        dialog.vbox.pack_start(creationPanel.getPanel(), True, True, 0)
-        dialog.show()
+        # Dedicated view for the creation of a variable
+        creationPanel = VariableView(self.netzob.getCurrentProject(), field, variableID, varName, varMutable)
+        creationPanel.display()
         
         
     def rightClickRemoveVariable(self, widget, field):

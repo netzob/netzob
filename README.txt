@@ -32,10 +32,11 @@ Dependencies :
 * lsof
 * iptables
 * python-bitarray
+* python-pyasn1
 
 or, on Debian-like operating systems :
 
-$ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables python-pcapy python-bitarray
+$ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables python-pcapy python-bitarray python-pyasn1
 
 And then, 
 

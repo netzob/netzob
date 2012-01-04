@@ -42,14 +42,14 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| AggregrateVariable :
-#|     Definition of an aggregation of variables defined in a dictionary
+#| AlternateVariable :
+#|     Definition of an alternative of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
-class AggregateVariable(Variable):
+class AlternateVariable(Variable):
     
     def __init__(self, id, name, vars):
-        Variable.__init__(self, "Aggregate", id, name, True)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
+        Variable.__init__(self, "Alternate", id, name, True)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.vars = []
         if vars != None :
             self.vars.extend(vars)
@@ -66,7 +66,7 @@ class AggregateVariable(Variable):
         for var in self.vars :
             values.append(var.getDescription())
             
-        return "AggregateVariable " + mut + " [" + " AND ".join(values) + "]"
+        return "AlternateVariable " + mut + " [" + " OR ".join(values) + "]"
     
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
@@ -74,7 +74,7 @@ class AggregateVariable(Variable):
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
-        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
         
         # Definition of the variables
         for var in self.vars :
@@ -93,7 +93,7 @@ class AggregateVariable(Variable):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
             
-            return AggregateVariable(varId, varName, children)
+            return AlternateVariable(varId, varName, children)
             
         return None
     

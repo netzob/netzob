@@ -63,9 +63,9 @@ class TypeConvertor():
     @staticmethod
     def bool2str(b):
         if b :
-            return "True"
+            return "true"
         else :
-            return "False"
+            return "false"
     
     #+---------------------------------------------- 
     #| Transform an hex to the bits : \xc9\xa1\x8d => bitarray
@@ -331,5 +331,5 @@ class TypeConvertor():
     def binaryToNetzobRaw(msg):
         res = ""
         for i in range(0, len(msg), 1):
-            res = res + msg[i:i+1].encode("hex")
+            res = res + msg[i:i + 1].encode("hex")
         return res

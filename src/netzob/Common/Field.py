@@ -132,7 +132,7 @@ class Field(object):
         return self.index
     
     def getBackgroundColor(self):
-        if self.getVariable() != None :
+        if self.getVariable() == None :
             return "yellow"
         return None
 
@@ -182,7 +182,8 @@ class Field(object):
                 field.setColor(field_color)
             
             if xmlRoot.find("{" + namespace + "}variable") != None :
-                field.setVariable(Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version))
+                var = Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
+                field.setVariable(var)
                 
             return field
             
