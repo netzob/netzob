@@ -34,6 +34,7 @@ import pygtk
 import uuid
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 pygtk.require('2.0')
 
 #+---------------------------------------------- 
@@ -175,9 +176,117 @@ class VariableView(object):
     def addBinary(self, event, rootVariable, rootEntry):
         pass
     def addAlternate(self, event, rootVariable, rootEntry):
-        pass
+        # Display the form for the creation of a word variable
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the Alternative')
+        
+        # Create the ID of the new variable
+        variableID = str(uuid.uuid4())
+        
+        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        # parent id of the variable
+        variablePIDLabel = gtk.Label("Parent ID :")
+        variablePIDLabel.show()
+        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel.set_sensitive(False)
+        variablePIDValueLabel.show()
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # name of the variable
+        variableValueLabel = gtk.Label("Name : ")
+        variableValueLabel.show()
+        variableValueEntry = gtk.Entry()
+        variableValueEntry.show()
+        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        
+        if result != gtk.RESPONSE_OK :
+            dialog.destroy()
+            return 
+        
+        # We retrieve the name of the variable
+        varName = variableValueEntry.get_text()
+        
+        # Creation of the aggregate id, name, mutable, value):
+        alternateVariable = AlternateVariable(variableID, varName, None)
+        rootVariable.addChild(alternateVariable)
+        
+        self.datas[str(alternateVariable.getID())] = alternateVariable
+        
+        self.treestore.append(rootEntry, [str(alternateVariable.getID()), "Alternate"])
+        
+        # We close the current dialog
+        dialog.destroy()
     def addAggregate(self, event, rootVariable, rootEntry):
-        pass
+        # Display the form for the creation of a word variable
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the Aggregate')
+        
+        # Create the ID of the new variable
+        variableID = str(uuid.uuid4())
+        
+        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        # parent id of the variable
+        variablePIDLabel = gtk.Label("Parent ID :")
+        variablePIDLabel.show()
+        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel.set_sensitive(False)
+        variablePIDValueLabel.show()
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # name of the variable
+        variableValueLabel = gtk.Label("Name : ")
+        variableValueLabel.show()
+        variableValueEntry = gtk.Entry()
+        variableValueEntry.show()
+        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        
+        if result != gtk.RESPONSE_OK :
+            dialog.destroy()
+            return 
+        
+        # We retrieve the name of the variable
+        varName = variableValueEntry.get_text()
+        
+        # Creation of the aggregate id, name, mutable, value):
+        aggregateVariable = AggregateVariable(variableID, varName, None)
+        rootVariable.addChild(aggregateVariable)
+        
+        self.datas[str(aggregateVariable.getID())] = aggregateVariable
+        
+        self.treestore.append(rootEntry, [str(aggregateVariable.getID()), "Aggregate"])
+        
+        # We close the current dialog
+        dialog.destroy()
     
     def addWord(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
