@@ -85,7 +85,7 @@ class Symbol(object):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         # Use the default protocol type for representation
-        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         
         self.fields = []
         
@@ -180,7 +180,7 @@ class Symbol(object):
             regex.append("(.{," + str(nbTiret) + "})")
 
         # Use the default protocol type for representation
-        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
 
         iField = 0
         for regexElt in regex:
@@ -960,7 +960,7 @@ class Symbol(object):
             return
 
         # Use the default protocol type for representation
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
+        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
 
         res = False
         i = 1

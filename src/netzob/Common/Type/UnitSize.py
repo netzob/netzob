@@ -29,6 +29,7 @@
 #| Class for representation potential unit size for data representation
 #+----------------------------------------------
 class UnitSize():
+    NONE="none"
     BIT="bit"
     HALFBYTE="half-byte"
     BYTE="byte"

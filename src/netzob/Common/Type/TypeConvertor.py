@@ -33,12 +33,15 @@ import re
 import datetime
 import logging
 import base64
+import struct
 
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 
 class TypeConvertor():
 
@@ -118,13 +121,10 @@ class TypeConvertor():
 
     @staticmethod
     def encodeNetzobRawToGivenField(raw, field):
-        res = TypeConvertor.applyUnitSize(raw, field.getUnitSize())
-        print res
-        return
-        res = TypeConvertor.applyEndianess(res, field.getEndianess())
-        res = TypeConvertor.applySign(res, field.getSign())
-        res = TypeConvertor.encodeNetzobRawToGivenType(res, field.getFormat())
+        res = TypeConvertor.applyFieldEncoding(raw, field)
         return res
+#        res = TypeConvertor.encodeNetzobRawToGivenType(res, field.getFormat())
+#        return res
 
     @staticmethod
     def string2hex(msg):
@@ -295,7 +295,6 @@ class TypeConvertor():
                 res = res + chr(int(msg[i: i + 2], 16))
         else: # Odd length
             for i in range(0, len(msg) - 1, 2):
-                print msg[i: i + 2]
                 res = res + chr(int(msg[i: i + 2], 16))
             res = res + chr(int(msg[-1], 16))
         return res    
@@ -346,29 +345,59 @@ class TypeConvertor():
 
     @staticmethod
     #+---------------------------------------------- 
-    #| Split a raw message by chunk of specific size
+    #| Transform each chunk according to the endianess
     #+----------------------------------------------          
-    def applyUnitSize(raw, unitSize):
-        size = None
-        # TODO: handle BIT level
-#        if unitSize == UnitSize.BIT:
-#            size = 1
-#        elif unitSize == UnitSize.HALFBYTE:
-        if unitSize == UnitSize.HALFBYTE:
-            size = 4
+    def applyFieldEncoding(raw, field):
+        unitSize = field.getUnitSize()
+        endianess = field.getEndianess()
+        sign = field.getSign()
+
+        # Handle unitSize
+        # TODO: handle BIT, HALFBYTE and QUADWORD
+        if unitSize == UnitSize.NONE:
+            return raw
+        elif unitSize == UnitSize.BIT:
+            return " ".join( TypeConvertor.netzobRawToBinary(raw) )
         elif unitSize == UnitSize.BYTE:
-            size = 8
+            size = 8 # In bits
         elif unitSize == UnitSize.HALFWORD:
             size = 16
         elif unitSize == UnitSize.WORD:
             size = 32
         elif unitSize == UnitSize.DOUBLEWORD:
             size = 64
-        elif unitSize == UnitSize.QUADWORD:
-            size = 128
 
-        size = size / 4
+        # Handle endianess
+        if endianess == Endianess.BIG:
+            transform = ">"
+        else:
+            transform = "<"
+
         res = ""
-        for i in range(len(raw)):
-            res += raw[i:i+size] + " "
+        for i in range(0, len(raw), size/4):
+            tmp = raw[i:i+(size/4)]
+
+            if len(tmp) == 2: # In half-bytes
+                sizeStr = "B"
+            elif len(tmp) == 4:
+                sizeStr = "H"
+            elif len(tmp) == 8:
+                sizeStr = "I"
+            elif len(tmp) == 16:
+                sizeStr = "Q"
+            else:
+                sizeStr = "Q"
+                if endianess == Endianess.BIG:
+                    tmp = (16 - len(tmp)) * "0" + tmp # Put padding on the left
+                else:
+                    tmp = tmp + (16 - len(tmp)) * "0" # Put padding on the right
+
+            tmp = TypeConvertor.netzobRawToPythonRaw(tmp)
+
+            # Handle sign
+            if sign == Sign.SIGNED:
+                sizeStr = sizeStr.lower()
+
+            (tmp,) = struct.unpack(transform + sizeStr, tmp)
+            res += str(tmp) + " "
         return res[:-1] # We delete the last space character
