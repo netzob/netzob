@@ -202,17 +202,6 @@ class TypeConvertor():
             return None, None
 
     @staticmethod
-    #+---------------------------------------------- 
-    #| Return the int data in netzob raw format
-    #+----------------------------------------------
-    def intToNetzobRaw(raw):
-        try:
-            int(raw)
-        except: # Not an integer
-            return raw
-        return hex(raw)[2:]
-    
-    @staticmethod
     def stringToNetzobRaw(aStr):
         raw = []
         for c in aStr :
@@ -378,11 +367,13 @@ class TypeConvertor():
         unitSize = field.getUnitSize()
         endianess = field.getEndianess()
         sign = field.getSign()
+        aFormat = field.getFormat()
 
         # Handle unitSize
         # TODO: handle, HALFBYTE and QUADWORD
         if unitSize == UnitSize.NONE:
-            return raw
+            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
+            return tmp
         elif unitSize == UnitSize.BIT:
             return " ".join(TypeConvertor.netzobRawToBinary(raw))
         elif unitSize == UnitSize.BYTE:
@@ -403,6 +394,7 @@ class TypeConvertor():
         res = ""
         for i in range(0, len(raw), size / 4):
             tmp = raw[i:i + (size / 4)]
+            initTmp = tmp
 
             if len(tmp) == 2: # In half-bytes
                 sizeStr = "B"
@@ -428,8 +420,18 @@ class TypeConvertor():
             (tmp,) = struct.unpack(transform + sizeStr, tmp)
 
             # Handle format
-            tmp = TypeConvertor.intToNetzobRaw(tmp)
-            tmp = TypeConvertor.netzobRawToGivenType(tmp, field.getFormat())
+            if aFormat == Format.BINARY:
+                tmp = TypeConvertor.netzobRawToBinary(initTmp)
+            elif aFormat == Format.OCTAL:
+                tmp = "%o" % tmp
+            elif aFormat == Format.DECIMAL:
+                tmp = "%d" % tmp
+            elif aFormat == Format.HEX:
+                tmp = "%x" % tmp
+            elif aFormat == Format.STRING:
+                tmp = TypeConvertor.netzobRawToString(initTmp)
+            elif aFormat == Format.FLOAT:
+                tmp = "%f" % tmp
 
             res += str(tmp) + " "
 
