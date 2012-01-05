@@ -30,13 +30,17 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
-from lxml import etree
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 
 #+---------------------------------------------------------------------------+
 #| ProjectConfiguration :
@@ -48,7 +52,10 @@ class ProjectConfiguration(object):
     VOCABULARY_ORPHAN_REDUCTION = "orphan_reduction"
     VOCABULARY_NB_ITERATION = "nb_iteration"
     VOCABULARY_DO_INTERNAL_SLICK = "do_internal_slick"
-    VOCABULARY_GLOBAL_DISPLAY = "global_display"
+    VOCABULARY_GLOBAL_FORMAT = "global_format"
+    VOCABULARY_GLOBAL_UNITSIZE = "global_unitsize"
+    VOCABULARY_GLOBAL_SIGN = "global_sign"
+    VOCABULARY_GLOBAL_ENDIANESS = "global_endianess"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCIES = "environmental_dependencies"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCY = "environmental_dependency"
     
@@ -67,7 +74,10 @@ class ProjectConfiguration(object):
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, False)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION, 100)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, False)
-        self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY, "BINARY")
+        self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, Format.HEX)
+        self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, UnitSize.NONE)
+        self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, Sign.UNSIGNED)
+        self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, Endianess.BIG)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES, [])
         
         # Grammar
@@ -100,8 +110,17 @@ class ProjectConfiguration(object):
         xmlVocabularyInferenceDoInternalSlick = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         xmlVocabularyInferenceDoInternalSlick.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)).lower()
         
-        xmlVocabularyInferenceGlobalDisplay = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
-        xmlVocabularyInferenceGlobalDisplay.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY))
+        xmlVocabularyInferenceGlobalFormat = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        xmlVocabularyInferenceGlobalFormat.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT))
+
+        xmlVocabularyInferenceGlobalUnitSize = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        xmlVocabularyInferenceGlobalUnitSize.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE))
+
+        xmlVocabularyInferenceGlobalSign = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+        xmlVocabularyInferenceGlobalSign.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN))
+
+        xmlVocabularyInferenceGlobalEndianess = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+        xmlVocabularyInferenceGlobalEndianess.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS))
         
         xmlVocabularyInferenceEnvDependencies = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
         envDependencies = self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
@@ -130,28 +149,43 @@ class ProjectConfiguration(object):
                             
                 # Equivalence threshold
                 xmlEquivalence = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
-                if xmlEquivalence != None and xmlEquivalence != None and len(xmlEquivalence) > 0:
+                if xmlEquivalence != None and xmlEquivalence.text != None and len(xmlEquivalence.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD, int(xmlEquivalence.text))
                 
                 # Orphan reduction
                 xmlOrphanReduction = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-                if xmlOrphanReduction != None and xmlOrphanReduction != None and len(xmlOrphanReduction) > 0:
+                if xmlOrphanReduction != None and xmlOrphanReduction.text != None and len(xmlOrphanReduction.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, TypeConvertor.str2bool(xmlOrphanReduction.text))
                     
                 # Nb iteration
                 xmlNbIteration = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_NB_ITERATION)
-                if xmlNbIteration != None and xmlNbIteration != None and len(xmlNbIteration) > 0:
+                if xmlNbIteration != None and xmlNbIteration.text != None and len(xmlNbIteration.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION, int(xmlNbIteration.text))
                     
                 # Do Internal Slick
                 xmlDoInternalSlick = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
-                if xmlDoInternalSlick != None and xmlDoInternalSlick != None and len(xmlDoInternalSlick) > 0:
+                if xmlDoInternalSlick != None and xmlDoInternalSlick.text != None and len(xmlDoInternalSlick.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, TypeConvertor.str2bool(xmlDoInternalSlick.text))
                     
-                # Global display
-                xmlGlobalDisplay = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY)
-                if xmlGlobalDisplay != None and xmlGlobalDisplay != None and len(xmlGlobalDisplay) > 0:
-                    projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_DISPLAY, xmlGlobalDisplay.text)
+                # Global format
+                xmlGlobalFormat = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+                if xmlGlobalFormat != None and xmlGlobalFormat.text != None and len(xmlGlobalFormat.text) > 0:
+                    projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, xmlGlobalFormat.text)
+
+                # Global unitsize
+                xmlGlobalUnitSize = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+                if xmlGlobalUnitSize != None and xmlGlobalUnitSize.text != None and len(xmlGlobalUnitSize.text) > 0:
+                    projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, xmlGlobalUnitSize.text)
+
+                # Global sign
+                xmlGlobalSign = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+                if xmlGlobalSign != None and xmlGlobalSign.text != None and len(xmlGlobalSign.text) > 0:
+                    projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, xmlGlobalSign.text)
+
+                # Global endianess
+                xmlGlobalEndianess = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+                if xmlGlobalEndianess != None and xmlGlobalEndianess.text != None and len(xmlGlobalEndianess.text) > 0:
+                    projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, xmlGlobalEndianess.text)
                     
                 # Environmental dependencies
                 xmlEnvDependencies = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)

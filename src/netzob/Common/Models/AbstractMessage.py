@@ -184,24 +184,24 @@ class AbstractMessage():
                     
                 if styled:
                     if encoded:
-                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getFormat())) + '</span>')
+                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)) + '</span>')
                     else:
                         res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + data[start:end] + '</span>')
                 else:
                     if encoded:
-                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(data[start:end], field.getFormat())))
+                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
                     else:
                         res.append(data[start:end])
                 dynamicCol += 1
             else:
                 if styled:
                     if encoded:
-                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(field.getRegex(), field.getFormat())) + '</span>')
+                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)) + '</span>')
                     else:
                         res.append('<span>' + field.getRegex() + '</span>')
                 else:
                     if encoded:
-                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(field.getRegex(), field.getFormat())))
+                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
                     else:
                         res.append(field.getRegex())
             iCol = iCol + 1
@@ -232,12 +232,12 @@ class AbstractMessage():
 
             if styled:
                 if encoded:
-                    res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(tmp, field.getFormat())) + '</span>')
+                    res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
                 else:
                     res.append('<span foreground="' + color + '" font_family="monospace">' + tmp + '</span>')
             else:
                 if encoded:
-                    res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(tmp, field.getFormat())))
+                    res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))
                 else:
                     res.append(tmp)
         return res

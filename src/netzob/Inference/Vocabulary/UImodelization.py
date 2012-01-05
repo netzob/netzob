@@ -71,7 +71,37 @@ class UImodelization:
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
-        pass
+        # Update the combo for choosing the format
+        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+        global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        for i in range(len(possible_choices)):
+            self.comboDisplayFormat.append_text(possible_choices[i])
+            if possible_choices[i] == global_format:
+                self.comboDisplayFormat.set_active(i)
+
+        # Update the combo for choosing the unit size
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.HALFBYTE, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD, UnitSize.QUADWORD]
+        global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        for i in range(len(possible_choices)):
+            self.comboDisplayUnitSize.append_text(possible_choices[i])
+            if possible_choices[i] == global_unitsize:
+                self.comboDisplayUnitSize.set_active(i)
+
+        # Update the combo for choosing the displayed sign
+        possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
+        global_sign = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+        for i in range(len(possible_choices)):
+            self.comboDisplaySign.append_text(possible_choices[i])
+            if possible_choices[i] == global_sign:
+                self.comboDisplaySign.set_active(i)
+
+        # Update the combo for choosing the displayed endianess
+        possible_choices = [Endianess.BIG, Endianess.LITTLE]
+        global_endianess = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+        for i in range(len(possible_choices)):
+            self.comboDisplayEndianess.append_text(possible_choices[i])
+            if possible_choices[i] == global_endianess:
+                self.comboDisplayEndianess.set_active(i)
 
     def update(self):
         self.updateTreeStoreSymbol()
@@ -228,58 +258,42 @@ class UImodelization:
         # Widget for choosing the format
         label = gtk.Label("Format : ")
         label.show()
-        combo = gtk.combo_box_entry_new_text()
-        combo.set_model(gtk.ListStore(str))
-        combo.append_text(Format.BINARY)
-        combo.append_text(Format.OCTAL)
-        combo.append_text(Format.DECIMAL)
-        combo.append_text(Format.HEX)
-        combo.append_text(Format.STRING)
-        combo.connect("changed", self.updateDisplayFormat)
-        combo.show()
+        self.comboDisplayFormat = gtk.combo_box_entry_new_text()
+        self.comboDisplayFormat.set_model(gtk.ListStore(str))
+        self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
+        self.comboDisplayFormat.show()
         table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for choosing the unit size
         label = gtk.Label("Unit size : ")
         label.show()
-        combo = gtk.combo_box_entry_new_text()
-        combo.set_model(gtk.ListStore(str))
-        combo.append_text(UnitSize.BIT)
-        combo.append_text(UnitSize.HALFBYTE)
-        combo.append_text(UnitSize.BYTE)
-        combo.append_text(UnitSize.HALFWORD)
-        combo.append_text(UnitSize.WORD)
-        combo.append_text(UnitSize.DOUBLEWORD)
-        combo.append_text(UnitSize.QUADWORD)
-        combo.connect("changed", self.updateDisplayUnitSize)
-        combo.show()
+        self.comboDisplayUnitSize = gtk.combo_box_entry_new_text()
+        self.comboDisplayUnitSize.set_model(gtk.ListStore(str))
+        self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
+        self.comboDisplayUnitSize.show()
         table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for choosing the displayed sign
         label = gtk.Label("Sign : ")
         label.show()
-        combo = gtk.combo_box_entry_new_text()
-        combo.set_model(gtk.ListStore(str))
-        combo.append_text(Sign.SIGNED)
-        combo.append_text(Sign.UNSIGNED)
-        combo.connect("changed", self.updateDisplaySign)
-        combo.show()
+        self.comboDisplaySign = gtk.combo_box_entry_new_text()
+        self.comboDisplaySign.set_model(gtk.ListStore(str))
+        self.comboDisplaySign.connect("changed", self.updateDisplaySign)
+        self.comboDisplaySign.show()
         table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget for choosing the displayed endianess
         label = gtk.Label("Endianess : ")
         label.show()
-        combo = gtk.combo_box_entry_new_text()
-        combo.set_model(gtk.ListStore(str))
-        combo.append_text(Endianess.BIG)
-        combo.append_text(Endianess.LITTLE)
-        combo.connect("changed", self.updateDisplayEndianess)
-        combo.show()
+        self.comboDisplayEndianess = gtk.combo_box_entry_new_text()
+        self.comboDisplayEndianess.set_model(gtk.ListStore(str))
+        self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
+        self.comboDisplayEndianess.show()
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(combo, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -1457,8 +1471,8 @@ class UImodelization:
     def updateDisplayFormat(self, combo):
         if self.netzob.getCurrentProject() == None :
             return
-
         aFormat = combo.get_active_text()
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, aFormat)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
                 field.setFormat( aFormat )
@@ -1470,8 +1484,8 @@ class UImodelization:
     def updateDisplayUnitSize(self, combo):
         if self.netzob.getCurrentProject() == None :
             return
-
         unitSize = combo.get_active_text()
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
                 field.setUnitSize( unitSize )
@@ -1483,8 +1497,8 @@ class UImodelization:
     def updateDisplaySign(self, combo):
         if self.netzob.getCurrentProject() == None :
             return
-
         sign = combo.get_active_text()
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
                 field.setSign( sign )
@@ -1496,8 +1510,8 @@ class UImodelization:
     def updateDisplayEndianess(self, combo):
         if self.netzob.getCurrentProject() == None :
             return
-
         endianess = combo.get_active_text()
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
                 field.setEndianess( endianess )

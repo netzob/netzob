@@ -65,7 +65,7 @@ class Field(object):
         self.color = "black"
         self.variable = None
         self.format = Format.HEX
-        self.unitSize = UnitSize.BYTE
+        self.unitSize = UnitSize.NONE
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
     

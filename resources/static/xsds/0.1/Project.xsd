@@ -76,13 +76,45 @@
 			</element>
 			<element name="do_internal_slick" type="boolean" minOccurs="0">
 			</element>
-			<element name="global_display" minOccurs="0">
+			<element name="global_format" minOccurs="0">
 				<simpleType>
 					<restriction base="string">
-						<enumeration value="ASCII"></enumeration>
-						<enumeration value="BINARY"></enumeration>
-						<enumeration value="ascii"></enumeration>
 						<enumeration value="binary"></enumeration>
+						<enumeration value="octal"></enumeration>
+						<enumeration value="decimal"></enumeration>
+						<enumeration value="hex"></enumeration>
+						<enumeration value="string"></enumeration>
+						<enumeration value="float"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="global_unitsize" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="none"></enumeration>
+						<enumeration value="bit"></enumeration>
+						<enumeration value="half-byte"></enumeration>
+						<enumeration value="byte"></enumeration>
+						<enumeration value="half-word"></enumeration>
+						<enumeration value="word"></enumeration>
+						<enumeration value="double-word"></enumeration>
+						<enumeration value="quad-word"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="global_sign" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="signed"></enumeration>
+						<enumeration value="unsigned"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="global_endianess" minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="big-endian"></enumeration>
+						<enumeration value="little-endian"></enumeration>
 					</restriction>
 				</simpleType>
 			</element>
