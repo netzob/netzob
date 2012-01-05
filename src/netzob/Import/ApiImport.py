@@ -44,7 +44,6 @@ import threading
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.ExecutionContext import ExecutionContext
 from netzob.Import.GOTPoisoning.PrototypesRepositoryParser import PrototypesRepositoryParser
 from netzob.Import.GOTPoisoning.ParasiteGenerator import ParasiteGenerator
@@ -72,16 +71,16 @@ class ApiImport:
     #+-----------------------------------------------------------------------+
     #| Constructor :
     #+-----------------------------------------------------------------------+ 
-    def __init__(self, zob):        
-        self.zob = zob
+    def __init__(self, netzob):        
+        self.netzob = netzob
         self.listOfProcess = []
         
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Capturing.api.py')
+        self.log = logging.getLogger('netzob.Import.ApiImport.py')
         self.packets = []
         
         # First we parse the repository
-        repositoryFile = ConfigurationParser().get("import", "repository_prototypes")
+        repositoryFile = self.netzob.getCurrentWorkspace().getPathOfPrototypes() + os.sep + "repository.xml"
         if repositoryFile == "" or not os.path.isfile(repositoryFile) :
             self.log.warn("Unable to find a repository file for API injector.")
         else :

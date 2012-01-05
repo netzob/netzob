@@ -46,7 +46,7 @@
     	<sequence>
             <element name="traces" type="string"></element>
             <element name="logging" type="string" minOccurs="0"></element>
-    		<element name="prototypes" type="string" minOccurs="0"></element>
+	    <element name="prototypes" type="string" minOccurs="0"></element>
     	</sequence>
     </complexType>
 	
