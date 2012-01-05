@@ -49,10 +49,10 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 #+---------------------------------------------- 
 class GrammarInferer(object):
      
-    def __init__(self, dictionary, oracle, equivalenceOracle):
+    def __init__(self, vocabulary, oracle, equivalenceOracle):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.GrammarInferer.py')
-        self.dictionary = dictionary
+        self.vocabulary = vocabulary
         self.oracle = oracle
         self.equivalenceOracle = equivalenceOracle
         
@@ -60,9 +60,7 @@ class GrammarInferer(object):
     def infer(self):
         
         # we first initialize the angluin's algo
-        learner = Angluin(self.dictionary, self.oracle)
-        
-        
+        learner = Angluin(self.vocabulary, self.oracle)
         
         equivalent = False
         
@@ -70,7 +68,6 @@ class GrammarInferer(object):
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the infering process")
             self.log.info("=============================================================================")
-            
             
             learner.learn()
             hypotheticalAutomaton = learner.getInferedAutomata()            
