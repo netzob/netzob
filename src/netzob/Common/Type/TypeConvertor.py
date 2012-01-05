@@ -390,10 +390,6 @@ class TypeConvertor():
             transform = "<"
 
         res = ""
-<<<<<<< HEAD
-        for i in range(len(raw)):
-            res += raw[i:i + size] + " "
-== == == = 
         for i in range(0, len(raw), size / 4):
             tmp = raw[i:i + (size / 4)]
 
@@ -420,5 +416,5 @@ class TypeConvertor():
 
             (tmp,) = struct.unpack(transform + sizeStr, tmp)
             res += str(tmp) + " "
->>>>>>> refs / remotes / origin / master
+
         return res[:-1] # We delete the last space character
