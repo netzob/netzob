@@ -46,8 +46,6 @@ WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 
 def loadWorkspace_0_1(workspacePath, workspaceFile):  
     
-    
-    
     # Parse the XML Document as 0.1 version
     tree = ElementTree()
     

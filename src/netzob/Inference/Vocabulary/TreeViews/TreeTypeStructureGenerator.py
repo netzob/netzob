@@ -59,13 +59,13 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------     
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Data, Description
+        self.treestore = gtk.TreeStore(int, str, str, str, str) # iCol, Name, Data, Variable, Description
         # creation of the treeview   
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
-        columns = ["iCol", "Name", "Value", "Description"]
+        columns = ["iCol", "Name", "Value", "Variable", "Description"]
         for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
             column.pack_start(cell, True)
@@ -121,18 +121,23 @@ class TreeTypeStructureGenerator():
             messageElt = splittedMessage[field.getIndex()]
             if field.getName() == "__sep__":
                 continue
-            if not field.isRegexStatic():
-                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
-            else:
-                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
-                
-        # Configure the display of the symbol description
-        for field in self.getSymbol().getFields() :
+            
+            variableDescription = "-"
             if field.getVariable() != None :
-                self.treestore.append(None, [field.getIndex(), str(field.getIndex()) + "]", field.getVariable().getType(), field.getVariable().getDescription()])
-            else :
-                self.treestore.append(None, [field.getIndex(), "-", "-", "-"])
-               
+                variableDescription = field.getVariable().getDescription()
+#            
+#            if not field.isRegexStatic():
+#                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, variableDescription, field.getDescription()])
+#            else:
+                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, variableDescription, field.getDescription()])
+                
+#        # Configure the display of the symbol description
+#        for field in self.getSymbol().getFields() :
+#            if field.getVariable() != None :
+#                self.treestore.append(None, [field.getIndex(), str(field.getIndex()) + "]", field.getVariable().getType(), field.getVariable().getDescription()])
+#            else :
+#                self.treestore.append(None, [field.getIndex(), "-", "-", "-"])
+#               
 
     #+---------------------------------------------- 
     #| GETTERS : 
