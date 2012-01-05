@@ -76,7 +76,7 @@ class Angluin(LearningAlgorithm):
         self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
-        for entry in self.dictionary.getEntries()[:2] :
+        for entry in self.dictionary.getSymbols()[:2] :
             letter = DictionarySymbol(entry)
             mq = MembershipQuery([letter])
             self.addWordInD(mq)

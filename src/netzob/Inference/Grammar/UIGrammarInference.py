@@ -48,6 +48,7 @@ from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseCha
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
 from netzob.Common.Grammar import Grammar
+from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
 
 #+---------------------------------------------------------------------------+
 #| UIGrammarInference :
@@ -111,9 +112,9 @@ class UIGrammarInference:
         
         # We add the button for the automatic inference process
         self.grammarAutomaticInferenceButton = gtk.Button("Open wizard for automatic inference")
-#        self.grammarAutomaticInferenceButton.connect("clicked", None)
+        self.grammarAutomaticInferenceButton.connect("clicked", self.showAutomaticInferencePanel)
         self.grammarAutomaticInferenceButton.show()
-        self.grammarAutomaticInferenceButton.set_sensitive(False)
+        self.grammarAutomaticInferenceButton.set_sensitive(True)
         leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # CREATE A STATE
@@ -656,6 +657,10 @@ class UIGrammarInference:
             self.createStateButton.set_sensitive(True)
             self.createTransitionButton.set_sensitive(True)
         
+    def showAutomaticInferencePanel(self, button):
+        # Dedicated view for the inference process
+        inferencePanel = AutomaticGrammarInferenceView(self.netzob.getCurrentProject())
+        inferencePanel.display()
         
     def button_press_on_states(self, treeview, event):
         self.log.warn("User requested a contextual menu (treeview symbol)")
