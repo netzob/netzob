@@ -204,7 +204,7 @@ class Field(object):
 
             if xmlRoot.find("{" + namespace + "}encapsulation_level") != None :
                 field_encapsulation_level = xmlRoot.find("{" + namespace + "}encapsulation_level").text
-                field.setEncapsulationLevel(field_encapsulation_level)
+                field.setEncapsulationLevel(int(field_encapsulation_level))
 
             if xmlRoot.find("{" + namespace + "}format") != None :
                 field_format = xmlRoot.find("{" + namespace + "}format").text
