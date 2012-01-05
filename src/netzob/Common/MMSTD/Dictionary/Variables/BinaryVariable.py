@@ -61,7 +61,7 @@ class BinaryVariable(Variable):
             self.strVal = None
         else :
             self.strVal = str(value)
-            self.binVal = value
+            self.binVal = TypeConvertor.strBitarray2Bitarray(value)
             
     def compare(self, value, indice, negative, memory):
         self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
@@ -100,7 +100,8 @@ class BinaryVariable(Variable):
         
         # Definition of a binary variable
         xmlWordVariableValue = etree.SubElement(xmlVariable, "{" + namespace + "}value")
-        xmlWordVariableValue.text = str(TypeConvertor.binaryToNetzobRaw(self.binVal))
+        xmlWordVariableValue.text = TypeConvertor.bitarray2StrBitarray(self.binVal)
+
         
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
@@ -108,8 +109,7 @@ class BinaryVariable(Variable):
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-            
-            varValue = TypeConvertor.netzobRawToBinary(xmlRoot.find("{" + namespace + "}value").text)
+            varValue = TypeConvertor.strBitarray2Bitarray(xmlRoot.find("{" + namespace + "}value").text)
             return BinaryVariable(varId, varName, varIsMutable, varValue)
             
         return None

@@ -39,6 +39,7 @@ import base64
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
+import StringIO
 
 class TypeConvertor():
 
@@ -68,6 +69,21 @@ class TypeConvertor():
             return "true"
         else :
             return "false"
+    
+    #+---------------------------------------------- 
+    #| Transforms : bitarray('011101010') -> 011101010
+    #+----------------------------------------------
+    @staticmethod   
+    def bitarray2StrBitarray(bin):
+        return str(bin)[10:len(str(bin)) - 2]
+    
+    #+---------------------------------------------- 
+    #| Transforms : 011101010 -> bitarray('011101010')
+    #+----------------------------------------------
+    @staticmethod
+    def strBitarray2Bitarray(strBin):
+        result = bitarray(strBin)
+        return result
     
     #+---------------------------------------------- 
     #| Transform an hex to the bits : \xc9\xa1\x8d => bitarray
@@ -370,5 +386,5 @@ class TypeConvertor():
         size = size / 4
         res = ""
         for i in range(len(raw)):
-            res += raw[i:i+size] + " "
+            res += raw[i:i + size] + " "
         return res[:-1] # We delete the last space character

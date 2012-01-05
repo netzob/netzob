@@ -57,8 +57,8 @@ class DictionarySymbol(AbstractSymbol):
             self.log.debug("The symbols are not equivalents")
             return False
     
-    def getValueToSend(self, memory):
-        result = self.entry.getValueToSend(False, memory)
+    def getValueToSend(self, inverse, memory):
+        result = self.entry.getValueToSend(inverse, memory)
         return result
     
     #+-----------------------------------------------------------------------+

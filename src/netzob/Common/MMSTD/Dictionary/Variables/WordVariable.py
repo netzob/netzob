@@ -67,7 +67,7 @@ class WordVariable(Variable):
                 self.log.debug("Compare successful")
                 return indice + len(self.binVal)              
             else :
-                self.log.info("error in the comparison")
+                self.log.info("error in the comparison : " + str(tmp[:len(self.binVal)]) + " != " + str(self.binVal))
                 return -1                  
         else :
             self.log.debug("Compare fail")
@@ -85,6 +85,8 @@ class WordVariable(Variable):
         else :
             mut = "[!M]"
         return "WordVariable " + mut + " (" + self.strVal + ")"
+
+
 #    
 #   
 #    def generateValue(self, negative, dictionary):

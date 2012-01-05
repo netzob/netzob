@@ -91,7 +91,7 @@ class Field(object):
         
     def getVariable(self):
         if self.isRegexStatic() :
-            variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.hex2bin(TypeConvertor.netzobRawToBinary(self.getRegex())))
+            variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
         return self.variable
     
