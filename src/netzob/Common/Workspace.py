@@ -85,12 +85,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
                 workspace.referenceLastProject(lastProject)
             
     return workspace    
-    
-
-
-
-
-
+ 
 #+---------------------------------------------------------------------------+
 #| Workspace :
 #|     Class definition of a Workspace
