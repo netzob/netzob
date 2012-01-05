@@ -40,6 +40,7 @@ import datetime
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class TimeoutException(Exception): 
@@ -182,7 +183,9 @@ class AbstractionLayer():
     def abstract(self, message):        
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols() :            
-            if symbol.getRoot().compare(message, 0, False, self.memory) != -1:
+            print message
+            print TypeConvertor.strBitarray2Bitarray(message)
+            if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.memory) != -1:
                 self.log.debug("Entry in the vocabulary found")
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
                 return symbol
@@ -196,7 +199,7 @@ class AbstractionLayer():
         return EmptySymbol()
         
     def specialize(self, symbol):
-        return symbol.getValueToSend(self.memory)  # (bin, str)
+        return symbol.getValueToSend(False, self.memory)  # (bin, str)
         
     def getMemory(self):
         return self.memory

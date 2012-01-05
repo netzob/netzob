@@ -91,7 +91,7 @@ class Field(object):
         
     def getVariable(self):
         if self.isRegexStatic() :
-            variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.hex2bin(TypeConvertor.netzobRawToBinary(self.getRegex())))
+            variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
         return self.variable
     
@@ -204,7 +204,7 @@ class Field(object):
 
             if xmlRoot.find("{" + namespace + "}encapsulation_level") != None :
                 field_encapsulation_level = xmlRoot.find("{" + namespace + "}encapsulation_level").text
-                field.setEncapsulationLevel(field_encapsulation_level)
+                field.setEncapsulationLevel(int(field_encapsulation_level))
 
             if xmlRoot.find("{" + namespace + "}format") != None :
                 field_format = xmlRoot.find("{" + namespace + "}format").text

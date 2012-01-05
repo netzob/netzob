@@ -1117,8 +1117,8 @@ class Symbol(object):
     """
     
     
-    def getValueToSend(self, memory):
-        result = self.getRoot().send(False, memory)
+    def getValueToSend(self, inverse, memory):
+        result = self.getRoot().send(inverse, memory)
         return result
     
     def getRoot(self):

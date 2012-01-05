@@ -40,6 +40,7 @@ import struct
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
+import StringIO
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 
@@ -71,6 +72,21 @@ class TypeConvertor():
             return "true"
         else :
             return "false"
+    
+    #+---------------------------------------------- 
+    #| Transforms : bitarray('011101010') -> 011101010
+    #+----------------------------------------------
+    @staticmethod   
+    def bitarray2StrBitarray(bin):
+        return str(bin)[10:len(str(bin)) - 2]
+    
+    #+---------------------------------------------- 
+    #| Transforms : 011101010 -> bitarray('011101010')
+    #+----------------------------------------------
+    @staticmethod
+    def strBitarray2Bitarray(strBin):
+        result = bitarray(strBin)
+        return result
     
     #+---------------------------------------------- 
     #| Transform an hex to the bits : \xc9\xa1\x8d => bitarray
@@ -368,7 +384,7 @@ class TypeConvertor():
         if unitSize == UnitSize.NONE:
             return raw
         elif unitSize == UnitSize.BIT:
-            return " ".join( TypeConvertor.netzobRawToBinary(raw) )
+            return " ".join(TypeConvertor.netzobRawToBinary(raw))
         elif unitSize == UnitSize.BYTE:
             size = 8 # In bits
         elif unitSize == UnitSize.HALFWORD:
@@ -385,8 +401,8 @@ class TypeConvertor():
             transform = "<"
 
         res = ""
-        for i in range(0, len(raw), size/4):
-            tmp = raw[i:i+(size/4)]
+        for i in range(0, len(raw), size / 4):
+            tmp = raw[i:i + (size / 4)]
 
             if len(tmp) == 2: # In half-bytes
                 sizeStr = "B"
@@ -416,4 +432,5 @@ class TypeConvertor():
             tmp = TypeConvertor.netzobRawToGivenType(tmp, field.getFormat())
 
             res += str(tmp) + " "
+
         return res[:-1] # We delete the last space character

@@ -177,7 +177,7 @@ class AbstractMessage():
                 # Overwrite the background color (red if the variable doesn't match the data)
                 if field.getVariable() != None :
 
-                    if field.getVariable().compare(TypeConvertor.hex2bin(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, None) == -1 :
+                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, None) == -1 :
                         backgroundColor = 'background="red"'
                     else :
                         backgroundColor = 'background="green"'
