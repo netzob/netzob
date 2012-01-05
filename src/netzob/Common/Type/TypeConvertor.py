@@ -184,6 +184,17 @@ class TypeConvertor():
             except ValueError:
                 pass
             return None, None
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Return the int data in netzob raw format
+    #+----------------------------------------------
+    def intToNetzobRaw(raw):
+        try:
+            int(raw)
+        except: # Not an integer
+            return raw
+        return hex(raw)[2:]
     
     @staticmethod
     def stringToNetzobRaw(aStr):
@@ -353,7 +364,7 @@ class TypeConvertor():
         sign = field.getSign()
 
         # Handle unitSize
-        # TODO: handle BIT, HALFBYTE and QUADWORD
+        # TODO: handle, HALFBYTE and QUADWORD
         if unitSize == UnitSize.NONE:
             return raw
         elif unitSize == UnitSize.BIT:
@@ -399,5 +410,10 @@ class TypeConvertor():
                 sizeStr = sizeStr.lower()
 
             (tmp,) = struct.unpack(transform + sizeStr, tmp)
+
+            # Handle format
+            tmp = TypeConvertor.intToNetzobRaw(tmp)
+            tmp = TypeConvertor.netzobRawToGivenType(tmp, field.getFormat())
+
             res += str(tmp) + " "
         return res[:-1] # We delete the last space character

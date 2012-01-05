@@ -95,6 +95,9 @@ class TreeSymbolGenerator():
         self.log.debug("Updating the treestore of the symbol in default mode")        
         self.treestore.clear()
 
+        if self.netzob.getCurrentProject() == None:
+            return
+
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 

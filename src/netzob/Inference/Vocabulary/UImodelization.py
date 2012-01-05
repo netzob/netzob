@@ -80,7 +80,9 @@ class UImodelization:
                 self.comboDisplayFormat.set_active(i)
 
         # Update the combo for choosing the unit size
-        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.HALFBYTE, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD, UnitSize.QUADWORD]
+        # TODO: support of HALFBYTE and QUADWORD
+#        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.HALFBYTE, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD, UnitSize.QUADWORD]
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         for i in range(len(possible_choices)):
             self.comboDisplayUnitSize.append_text(possible_choices[i])

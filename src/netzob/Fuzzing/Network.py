@@ -104,7 +104,7 @@ class Network:
         vb_right_panel = gtk.VBox(False, spacing=0)
         vb_right_panel.show()
         # Initialize the treeview for the type structure
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator(self.netzob)
         self.treeTypeStructureGenerator.initialization()
         self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_field)
         vb_right_panel.add(self.treeTypeStructureGenerator.getScrollLib())

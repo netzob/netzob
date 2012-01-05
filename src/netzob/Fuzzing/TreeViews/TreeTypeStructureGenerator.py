@@ -46,7 +46,8 @@ class TreeTypeStructureGenerator():
     #| Constructor :
     #| @param vbox : where the treeview will be hold
     #+---------------------------------------------- 
-    def __init__(self):
+    def __init__(self, netzob):
+        self.netzob = netzob
         self.symbol = None
         self.message = None
         # create logger with the given configuration
@@ -99,6 +100,8 @@ class TreeTypeStructureGenerator():
     #|   Update the treestore
     #+---------------------------------------------- 
     def update(self):
+        if self.netzob.getCurrentProject() == None:
+            return
         if self.getSymbol() == None or self.getMessage() == None:
             self.clear()
             return
