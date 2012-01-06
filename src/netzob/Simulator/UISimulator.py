@@ -472,7 +472,7 @@ class UISimulator:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
         
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory())
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))
         
         # And we create an MMSTD visitor for this
         visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar, isMaster, abstractionLayer) 

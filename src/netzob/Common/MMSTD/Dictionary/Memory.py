@@ -50,6 +50,9 @@ class Memory():
         self.memory = dict()
         self.variables = variables
     
+    def hasMemorized(self, variable):
+        return variable.getID() in self.memory.keys()
+    
     def memorize(self, variable, binValue):
         self.memory[variable.getID()] = binValue
         

@@ -43,14 +43,17 @@ import logging
 #+---------------------------------------------------------------------------+
 class AbstractActor():
     
-    def __init__(self, isServer):
+    def __init__(self, isServer, instanciated):
 #        Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.AbstractActor.py')
         self.Terminated = False
         self.is_server = isServer
         self.active = False
-        
+        self.instanciated = instanciated
+    
+    def isAnInstanciated(self):
+        return self.instanciated
         
     def stop(self):
         self.Terminated = True

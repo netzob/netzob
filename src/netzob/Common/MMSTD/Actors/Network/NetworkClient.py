@@ -46,7 +46,7 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 class NetworkClient(AbstractActor):
     
     def __init__(self, host, protocol, port):
-        AbstractActor.__init__(self, False)
+        AbstractActor.__init__(self, False, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
         self.port = port

@@ -115,7 +115,7 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
-        # We create an instanciated network server
+        # We create an instantiated network server
         instanciatedNetworkServer = InstanciatedNetworkServer(self.request)        
         
         # Create the input and output abstraction layer
@@ -168,7 +168,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 class NetworkServer(AbstractActor):
     
     def __init__(self, host, protocol, port):
-        AbstractActor.__init__(self, True)
+        AbstractActor.__init__(self, True, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer.py')
         self.port = port

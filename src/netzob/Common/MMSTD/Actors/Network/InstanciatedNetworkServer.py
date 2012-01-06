@@ -40,6 +40,7 @@ from bitarray import bitarray
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 
 
+
 #+---------------------------------------------------------------------------+
 #| InstanciatedNetworkServer :
 #|     Definition of an instanciated network server
@@ -47,14 +48,21 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 class InstanciatedNetworkServer(AbstractActor):
     
     def __init__(self, socket):
-        AbstractActor.__init__(self, False)
+        AbstractActor.__init__(self, True, True)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer.py')
         self.socket = socket
         self.inputMessages = []
         self.outputMessages = []        
     
-        
+   
+    def createNewServer(self):
+        host = "localhost"
+        protocol = "TCP"
+        port = 6666
+        from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
+        return NetworkServer(host, protocol, port)
+    
     def open(self):
         self.log.warn("Impossible to open an InstanciatedNetworkServer")
         return False

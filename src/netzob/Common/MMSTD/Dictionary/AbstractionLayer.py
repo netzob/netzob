@@ -68,9 +68,16 @@ class AbstractionLayer():
         return self.connected    
     
     def openServer(self, vocabulary, outputState, isMaster):
-        self.log.debug("OpenServer ...")
+        self.log.info("OpenServer " + str(self.communicationChannel))
         self.connected = True
-        self.communicationChannel.openServer(vocabulary, outputState, isMaster)
+        
+        # if it's an instanciated network server we kill it
+        # and create a new one !
+        if self.communicationChannel.isAnInstanciated() :
+#            self.communicationChannel = self.communicationChannel.createNewServer()
+            pass
+        else :
+            self.communicationChannel.openServer(vocabulary, outputState, isMaster)
         
     def closeServer(self):
         self.log.debug("CloseServer ...")
@@ -84,11 +91,11 @@ class AbstractionLayer():
         else :
             # if its a server :
             if self.communicationChannel.isServer() :
-                self.log.debug("Opening the server to outside connections")      
+                self.log.info("Opening the server to outside connections")      
                           
             else :
             # if its a client :
-                self.log.debug("Connecting the client...")
+                self.log.info("Connecting the client...")
                 self.connected = self.communicationChannel.open()
     
     def disconnect(self):
@@ -130,6 +137,7 @@ class AbstractionLayer():
         
         if receivedData == None :
             self.log.warn("The communication channel seems to be closed !")
+#            return (EmptySymbol(), None)
             return (None, None)
         
         if len(receivedData) > 0 :        

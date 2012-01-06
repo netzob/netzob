@@ -72,8 +72,21 @@ class AlternateVariable(Variable):
     
     def send(self, negative, memory):
         self.log.info("send")
-        # Randomly pick
+        
         idRandom = random.randint(0, len(self.vars) - 1)
+        
+        if self.isMutable() :
+            # try to load the old choice
+            # if it exists we use it,
+            # if not we take a choice and we save it
+            if memory.hasMemorized(self) :
+                self.log.info("We remember an old choice !")
+                idRandom = memory.recall(self)
+            else :
+                self.log.info("We'll remember this choice")
+                memory.memorize(self, idRandom)
+        
+        
         picked = self.vars[idRandom]
         
         return picked.send(negative, memory)

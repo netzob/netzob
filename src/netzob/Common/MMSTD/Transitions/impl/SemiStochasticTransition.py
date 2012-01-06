@@ -142,6 +142,10 @@ class SemiStochasticTransition(AbstractTransition):
             # Wait for a message
             self.log.debug("Start waiting for something")
             (receivedSymbol, message) = abstractionLayer.receiveSymbol()
+            
+            if receivedSymbol == None :
+                finish = True
+            
             self.log.info("The MASTER received " + str(receivedSymbol.getName()))
             if (not (isinstance(receivedSymbol, EmptySymbol))):
                 self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
