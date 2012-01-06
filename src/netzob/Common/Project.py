@@ -76,7 +76,7 @@ def loadProject_0_1(projectFile):
     
     # Parse the vocabulary
     if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") != None :
-        projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, "0.1")
+        projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, "0.1", project)
         project.setVocabulary(projectVocabulary)
         
     # Parse the grammar

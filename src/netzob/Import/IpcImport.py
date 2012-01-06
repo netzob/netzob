@@ -355,7 +355,7 @@ class IpcImport:
     def saveMessagesInProject(self, project, messages):
         
         # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), "IPC IMPORT")
+        symbol = Symbol(uuid.uuid4(), "IPC IMPORT", project)
         for message in messages :
             symbol.addMessage(message)
         

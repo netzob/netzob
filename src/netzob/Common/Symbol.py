@@ -66,7 +66,7 @@ class Symbol(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name):
+    def __init__(self, id, name, project):
         self.id = id
         self.name = name
         self.alignment = ""
@@ -75,6 +75,7 @@ class Symbol(object):
         self.fields = []
         self.alignmentType = "regex"
         self.rawDelimiter = ""
+        self.project = project
     
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
@@ -1155,6 +1156,8 @@ class Symbol(object):
         return self.alignmentType
     def getRawDelimiter(self):
         return self.rawDelimiter
+    def getProject(self):
+        return self.project
 
     #+---------------------------------------------- 
     #| SETTERS
@@ -1176,7 +1179,7 @@ class Symbol(object):
     #| Static methods
     #+----------------------------------------------       
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, version):
+    def loadSymbol(xmlRoot, namespace, version, project):
         
         if version == "0.1" :
             nameSymbol = xmlRoot.get("name")
@@ -1186,7 +1189,7 @@ class Symbol(object):
             alignmentType = xmlRoot.get("alignmentType")
             rawDelimiter = xmlRoot.get("rawDelimiter")
             
-            symbol = Symbol(idSymbol, nameSymbol)
+            symbol = Symbol(idSymbol, nameSymbol, project)
             symbol.setAlignment(alignmentSymbol)
             symbol.setScore(scoreSymbol)
             symbol.setAlignmentType(alignmentType)

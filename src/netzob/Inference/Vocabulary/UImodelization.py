@@ -417,7 +417,7 @@ class UImodelization:
     #+----------------------------------------------
     def discoverAlignment_cb_cb(self, widget, dialog):
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        self.alignThread = threading.Thread(None, vocabulary.alignWithNeedlemanWunsh, None, ([self.netzob.getCurrentProject().getConfiguration(), self.update]), {})
+        self.alignThread = threading.Thread(None, vocabulary.alignWithNeedlemanWunsh, None, ([self.netzob.getCurrentProject(), self.update]), {})
         dialog.destroy()
         self.alignThread.start()
         
@@ -1314,7 +1314,7 @@ class UImodelization:
         if (len(newSymbolName) > 0) :
             newSymbolId = str(uuid.uuid4())
             self.log.debug("a new symbol will be created with the given name : {0}".format(newSymbolName))
-            newSymbol = Symbol(newSymbolId, newSymbolName)
+            newSymbol = Symbol(newSymbolId, newSymbolName, self.netzob.getCurrentProject())
             
             self.netzob.getCurrentProject().getVocabulary().addSymbol(newSymbol)
             
@@ -1635,7 +1635,7 @@ class UImodelization:
             return  
 
         # Create a temporary symbol for testing size fields
-        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol")
+        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol", self.netzob.getCurrentProject())
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :

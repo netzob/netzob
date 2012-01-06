@@ -51,8 +51,8 @@ import libNeedleman
 #+---------------------------------------------- 
 class Clusterer(object):
  
-    def __init__(self, configuration, symbols, explodeSymbols=False):
-        self.configuration = configuration
+    def __init__(self, project, symbols, explodeSymbols=False):
+        self.configuration = project.getConfiguration()
         
         self.symbols = []
         
@@ -67,7 +67,7 @@ class Clusterer(object):
             self.symbols = []
             for symbol in symbols :
                 for m in symbol.getMessages():
-                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol")
+                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol", self.getProject())
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
             self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
@@ -257,7 +257,7 @@ class Clusterer(object):
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
         
-        newSymbol = Symbol(str(uuid.uuid4()), "Symbol")
+        newSymbol = Symbol(str(uuid.uuid4()), "Symbol", self.project)
         for message in messages :
             newSymbol.addMessage(message)
                     

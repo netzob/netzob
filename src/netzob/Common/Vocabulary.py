@@ -103,20 +103,20 @@ class Vocabulary(object):
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self, configuration, callback):
+    def alignWithNeedlemanWunsh(self, project, callback):
         tmpSymbols = []
         t1 = time.time()
 
         # We try to clusterize each symbol
         for symbol in self.symbols :
-            clusterer = Clusterer(configuration, [symbol], explodeSymbols=True)
+            clusterer = Clusterer(project, [symbol], explodeSymbols=True)
             clusterer.mergeSymbols()
             tmpSymbols.extend(clusterer.getSymbols())
                 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
         logging.info("Merging the symbols extracted from the different files")
-        clusterer = Clusterer(configuration, tmpSymbols, explodeSymbols=False)
+        clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
         clusterer.mergeSymbols()
         
         # Now we execute the second part of NETZOB Magical Algorithms :)
@@ -146,13 +146,13 @@ class Vocabulary(object):
             symbol.save(xmlSymbols, namespace)
     
     @staticmethod
-    def loadVocabulary(xmlRoot, namespace, version):
+    def loadVocabulary(xmlRoot, namespace, version, project):
         vocabulary = Vocabulary()
         
         if version == "0.1" :
             # parse all the symbols which are declared in the vocabulary
             for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol") :
-                symbol = Symbol.loadSymbol(xmlSymbol, namespace, version)
+                symbol = Symbol.loadSymbol(xmlSymbol, namespace, version, project)
                 if symbol != None :
                     vocabulary.addSymbol(symbol)
         
