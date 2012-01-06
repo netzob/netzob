@@ -44,10 +44,11 @@ import logging
 #+---------------------------------------------------------------------------+
 class Memory():
     
-    def __init__(self):
+    def __init__(self, variables):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
         self.memory = dict()
+        self.variables = variables
     
     def memorize(self, variable, binValue):
         self.memory[variable.getID()] = binValue
@@ -58,4 +59,8 @@ class Memory():
     def recallAll(self):
         return self.memory
         
-    
+    def getVariableByID(self, id):
+        for var in self.variables :
+            if str(var.getID()) == id :
+                return var
+        return None 
