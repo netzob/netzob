@@ -54,8 +54,6 @@ class BinaryVariable(Variable):
     def __init__(self, id, name, mutable, value):
         Variable.__init__(self, "Binary", id, name, mutable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
-        
-        
         if value == "" or value == None :
             self.binVal = None
             self.strVal = None
