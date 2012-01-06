@@ -76,9 +76,16 @@ class Grammar(object):
             
             
         for transition in transitionsToRemove :
-            self.transitions.remove(transition)
+            self.removeTransition(transition)
         
         self.states.remove(state)
+        
+    def removeTransition(self, transition):
+        if transition in self.transitions :
+            for state in self.states :
+                state.unregisterTransition(transition)
+            
+            self.transitions.remove(transition)
             
     def addTransition(self, transition):
         if not transition in self.transitions :

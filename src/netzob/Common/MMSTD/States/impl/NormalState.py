@@ -64,6 +64,15 @@ class NormalState(AbstractState):
         return self.transitions
     
     #+-----------------------------------------------------------------------+
+    #| unregisterTransition
+    #|     Remove from the associate transitions the specified one
+    #| @param transition the transition to unregister
+    #+-----------------------------------------------------------------------+
+    def unregisterTransition(self, transition):
+        if transition in self.transitions :
+            self.transitions.remove(transition)
+            
+    #+-----------------------------------------------------------------------+
     #| registerTransition
     #|     Associate a new transition to the current state
     #| @param transition the transition to associate

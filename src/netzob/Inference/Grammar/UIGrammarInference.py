@@ -162,6 +162,7 @@ class UIGrammarInference:
         treeview_listTransitions = gtk.TreeView(self.treestore_listTransitions)
         treeview_listTransitions.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview_listTransitions.set_size_request(-1, 250)
+        treeview_listTransitions.connect('button-press-event', self.button_press_on_transitions)
 #        treeview_listStates.connect("cursor-changed", self.actorDetails)
         cell = gtk.CellRendererText()
         # col : name of the transition
@@ -662,8 +663,11 @@ class UIGrammarInference:
         inferencePanel = AutomaticGrammarInferenceView(self.netzob.getCurrentProject())
         inferencePanel.display()
         
+    #+---------------------------------------------- 
+    #| button_press_on_states :
+    #|   Contextual menu when clicking on a state
+    #+----------------------------------------------
     def button_press_on_states(self, treeview, event):
-        self.log.warn("User requested a contextual menu (treeview symbol)")
         x = int(event.x)
         y = int(event.y)
         info = treeview.get_path_at_pos(x, y)
@@ -679,15 +683,52 @@ class UIGrammarInference:
             
         if clickedState != None and event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_states(event, clickedState)
+    #+---------------------------------------------- 
+    #| button_press_on_transitions :
+    #|   Contextual menu when clicking on a transition
+    #+----------------------------------------------
+    def button_press_on_transitions(self, treeview, event):
+        x = int(event.x)
+        y = int(event.y)
+        info = treeview.get_path_at_pos(x, y)
+        clickedTransition = None
+        if info is not None :
+            path = info[0]
+            iter = treeview.get_model().get_iter(path)
+            idTransition = str(treeview.get_model().get_value(iter, 0))
+            for transition in self.getGrammar().getTransitions() :
+                if transition.getID() == idTransition :
+                    clickedTransition = transition
+            
+            
+        if clickedTransition != None and event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+            self.build_context_menu_for_transitions(event, clickedTransition)
         
+    #+---------------------------------------------- 
+    #| build_context_menu_for_transitions :
+    #|   Create a menu to display available operations
+    #|   on the treeview transition
+    #+----------------------------------------------
+    def build_context_menu_for_transitions(self, event, transition):
+        entries = [        
+                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveTransition, (transition != None))
+        ]
+
+        menu = gtk.Menu()
+        for stock_id, callback, sensitive in entries:
+            item = gtk.ImageMenuItem(stock_id)
+            item.connect("activate", callback, transition)  
+            item.set_sensitive(sensitive)
+            item.show()
+            menu.append(item)
+        menu.popup(None, None, None, event.button, event.time)        
+    
     #+---------------------------------------------- 
     #| build_context_menu_for_states :
     #|   Create a menu to display available operations
     #|   on the treeview states
     #+----------------------------------------------
     def build_context_menu_for_states(self, event, state):
-        # Retrieves the symbol on which the user has clicked on
-        
         entries = [        
                   (gtk.STOCK_EDIT, self.displayPopupToEditState, (state != None)),
                   (gtk.STOCK_REMOVE, self.displayPopupToRemoveState, (state != None))
@@ -701,6 +742,18 @@ class UIGrammarInference:
             item.show()
             menu.append(item)
         menu.popup(None, None, None, event.button, event.time)    
+    
+    
+    def displayPopupToRemoveTransition(self, event, transition):
+        questionMsg = "Click yes to confirm the removal of the transition {0}. ".format(transition.getName())
+        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == gtk.RESPONSE_YES:
+            self.getGrammar().removeTransition(transition)
+            self.update()
+        else :
+            self.log.debug("The user didn't confirm the deletion of the transition " + transition.getName())
     
     #+---------------------------------------------- 
     #| displayPopupToEditState :
