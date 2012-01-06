@@ -696,6 +696,16 @@
 			</extension>
 		</complexContent>
 	</complexType>
+	
+	<complexType name="ReferencedVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="ref" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 
 
 

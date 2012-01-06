@@ -54,14 +54,13 @@ class Variable():
         self.type = type
         self.mutable = mutable
  
-    def getValue(self, negative, memory):
+    def getValue(self, negative, vocabulary):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")
     
     def send(self, negative, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function send")
         raise NotImplementedError("The current variable doesn't support 'send'.")
-    
     
     def getDescription(self):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
@@ -120,3 +119,8 @@ class Variable():
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable" :
                 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
                 return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
+            
+            # Referenced Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable" :
+                from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
+                return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)
