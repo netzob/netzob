@@ -199,6 +199,8 @@ class AbstractionLayer():
         return EmptySymbol()
         
     def specialize(self, symbol):
+        self.log.info("Specializing the symbol " + symbol.getName())
+        print symbol
         return symbol.getValueToSend(False, self.memory)  # (bin, str)
         
     def getMemory(self):

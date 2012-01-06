@@ -122,22 +122,14 @@ class TreeTypeStructureGenerator():
             if field.getName() == "__sep__":
                 continue
             
+            # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
             if field.getVariable() != None :
                 variableDescription = field.getVariable().getDescription()
-#            
-#            if not field.isRegexStatic():
-#                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, variableDescription, field.getDescription()])
-#            else:
-                self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, variableDescription, field.getDescription()])
-                
-#        # Configure the display of the symbol description
-#        for field in self.getSymbol().getFields() :
-#            if field.getVariable() != None :
-#                self.treestore.append(None, [field.getIndex(), str(field.getIndex()) + "]", field.getVariable().getType(), field.getVariable().getDescription()])
-#            else :
-#                self.treestore.append(None, [field.getIndex(), "-", "-", "-"])
-#               
+            elif field.getDefaultVariable(self.getSymbol()) != None :
+                variableDescription = field.getDefaultVariable(self.getSymbol()).getDescription()
+
+            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, variableDescription, field.getDescription()])
 
     #+---------------------------------------------- 
     #| GETTERS : 

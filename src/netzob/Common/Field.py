@@ -44,6 +44,8 @@ from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 
 #+---------------------------------------------------------------------------+
 #| Field :
@@ -94,6 +96,23 @@ class Field(object):
             variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
         return self.variable
+    
+    def getDefaultVariable(self, symbol):
+        # The default variable its an Alternative of all the possibilities (in binary type)
+        cells = symbol.getMessagesValuesByField(self)
+        tmpDomain = set()
+        for cell in cells:
+            tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))
+        domain = sorted(tmpDomain)
+        
+        variable = AggregateVariable(uuid.uuid4(), "Aggregate", None)
+        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", None)
+        for d in domain :
+            binaryVariable = BinaryVariable(uuid.uuid4(), "Val", False, d)
+            alternateVar.addChild(binaryVariable)
+        variable.addChild(alternateVar)
+        
+        return variable
     
     def setVariable(self, variable):
         self.variable = variable

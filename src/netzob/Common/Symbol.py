@@ -1125,7 +1125,12 @@ class Symbol(object):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
         for field in self.getFields() :
-            rootSymbol.addChild(field.getVariable())
+            if field.getVariable() == None :
+                variable = field.getDefaultVariable(self)
+            else :
+                variable = field.getVariable()
+            
+            rootSymbol.addChild(variable)
         return rootSymbol
     
     

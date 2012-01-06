@@ -1129,6 +1129,9 @@ class UImodelization:
         creationPanel = VariableView(self.netzob.getCurrentProject(), field, variableID, varName, varMutable)
         creationPanel.display()
         
+        self.updateTreeStoreMessage()
+        self.updateTreeStoreTypeStructure()
+        
         
     def rightClickRemoveVariable(self, widget, field):
         questionMsg = "Click yes to confirm the removal of the variable {0}".format(field.getVariable().getID())
@@ -1477,7 +1480,7 @@ class UImodelization:
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, aFormat)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
-                field.setFormat( aFormat )
+                field.setFormat(aFormat)
         self.update()
 
     #+---------------------------------------------- 
@@ -1490,7 +1493,7 @@ class UImodelization:
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
-                field.setUnitSize( unitSize )
+                field.setUnitSize(unitSize)
         self.update()
 
     #+---------------------------------------------- 
@@ -1503,7 +1506,7 @@ class UImodelization:
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
-                field.setSign( sign )
+                field.setSign(sign)
         self.update()
 
     #+---------------------------------------------- 
@@ -1516,7 +1519,7 @@ class UImodelization:
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             for field in symbol.getFields():
-                field.setEndianess( endianess )
+                field.setEndianess(endianess)
         self.update()
 
     #+---------------------------------------------- 
