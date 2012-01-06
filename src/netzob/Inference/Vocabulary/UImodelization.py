@@ -1146,6 +1146,7 @@ class UImodelization:
             
         
     def rightClickEditVariable(self, widget, field):
+        # todo
         pass
 
 
