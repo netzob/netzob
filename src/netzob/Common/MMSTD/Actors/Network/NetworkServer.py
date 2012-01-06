@@ -119,7 +119,7 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         instanciatedNetworkServer = InstanciatedNetworkServer(self.request)        
         
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory())        
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()))        
         
         # And we create an MMSTD visitor for this
         self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer) 
@@ -152,7 +152,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         self.log.info("A client has just initiated a connection on the server.")
         
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory())
+        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(self.server.getModel().getVocabulary().getVariables()))
         
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
@@ -180,8 +180,8 @@ class NetworkServer(AbstractActor):
     def openServer(self, vocabulary, initialState, master):
         # Instantiates the server
         if self.protocol == "UDP" :
-            self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
             self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
+            self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
         else :
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
