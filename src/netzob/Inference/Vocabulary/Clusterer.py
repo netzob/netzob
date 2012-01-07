@@ -55,6 +55,7 @@ class Clusterer(object):
         self.configuration = project.getConfiguration()
         
         self.symbols = []
+        self.project = project
         
         # Create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.Clusterer.py')
@@ -70,7 +71,7 @@ class Clusterer(object):
                     tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol", self.getProject())
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
-            self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
+                    self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
         
     #+---------------------------------------------- 
     #| retrieveMaxIJ :
@@ -168,7 +169,10 @@ class Clusterer(object):
 
         # Compute the regex/alignment of each symbol
         gobject.idle_add(self.resetProgressBar)
-        progressionStep = 1.0 / len(self.symbols)
+        if len(self.symbols) == 0 :
+            progressionStep = 1.0 
+        else :
+            progressionStep = 1.0 / len(self.symbols)
         for g in self.symbols :
             g.buildRegexAndAlignment(self.configuration)
             gobject.idle_add(self.doProgressBarStep, progressionStep)
@@ -288,3 +292,6 @@ class Clusterer(object):
     #+----------------------------------------------
     def getSymbols(self):
         return self.symbols
+    
+    def getProject(self):
+        return self.project
