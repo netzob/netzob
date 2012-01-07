@@ -37,7 +37,7 @@ import select
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
-#+---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+    
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer

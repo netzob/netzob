@@ -121,7 +121,7 @@ class Vocabulary(object):
         
         # Now we execute the second part of NETZOB Magical Algorithms :)
         # clean the single symbols  
-        mergeOrphanReduction = configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)          
+        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)          
         if mergeOrphanReduction :
             logging.info("Merging the orphan symbols") 
             clusterer.mergeOrphanSymbols()

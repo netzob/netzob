@@ -394,7 +394,6 @@ class UISimulator:
         
         # Update the GUI
         self.refreshGUI(1)
-        
     
     
     #+---------------------------------------------- 
