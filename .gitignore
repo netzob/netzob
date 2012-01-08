@@ -1,4 +1,7 @@
 *~
+*.pyc
+*.so
+*.[ao]
 /MANIFEST
 /dist/*
 /.settings/*
