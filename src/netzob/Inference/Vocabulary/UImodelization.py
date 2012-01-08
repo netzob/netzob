@@ -76,35 +76,47 @@ class UImodelization:
 #        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
         possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
+        self.comboDisplayFormat.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayFormat.append_text(possible_choices[i])
             if possible_choices[i] == global_format:
                 self.comboDisplayFormat.set_active(i)
+        self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
 
         # Update the combo for choosing the unit size
         # TODO: support of 4BITS
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        self.comboDisplayUnitSize.disconnect(self.comboDisplayUnitSize_handler)
+        self.comboDisplayUnitSize.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayUnitSize.append_text(possible_choices[i])
             if possible_choices[i] == global_unitsize:
                 self.comboDisplayUnitSize.set_active(i)
+        self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
 
         # Update the combo for choosing the displayed sign
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
         global_sign = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+        self.comboDisplaySign.disconnect(self.comboDisplaySign_handler)
+        self.comboDisplaySign.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplaySign.append_text(possible_choices[i])
             if possible_choices[i] == global_sign:
                 self.comboDisplaySign.set_active(i)
+        self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
 
         # Update the combo for choosing the displayed endianess
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
         global_endianess = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+        self.comboDisplayEndianess.disconnect(self.comboDisplayEndianess_handler)
+        self.comboDisplayEndianess.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayEndianess.append_text(possible_choices[i])
             if possible_choices[i] == global_endianess:
                 self.comboDisplayEndianess.set_active(i)
+        self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
         self.updateTreeStoreSymbol()
@@ -262,7 +274,7 @@ class UImodelization:
         label.show()
         self.comboDisplayFormat = gtk.combo_box_entry_new_text()
         self.comboDisplayFormat.set_model(gtk.ListStore(str))
-        self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
+        self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
         self.comboDisplayFormat.show()
         table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
         table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
@@ -272,7 +284,7 @@ class UImodelization:
         label.show()
         self.comboDisplayUnitSize = gtk.combo_box_entry_new_text()
         self.comboDisplayUnitSize.set_model(gtk.ListStore(str))
-        self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
+        self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
         self.comboDisplayUnitSize.show()
         table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
         table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
@@ -282,7 +294,7 @@ class UImodelization:
         label.show()
         self.comboDisplaySign = gtk.combo_box_entry_new_text()
         self.comboDisplaySign.set_model(gtk.ListStore(str))
-        self.comboDisplaySign.connect("changed", self.updateDisplaySign)
+        self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
         self.comboDisplaySign.show()
         table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
         table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
@@ -292,7 +304,7 @@ class UImodelization:
         label.show()
         self.comboDisplayEndianess = gtk.combo_box_entry_new_text()
         self.comboDisplayEndianess.set_model(gtk.ListStore(str))
-        self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
+        self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         self.comboDisplayEndianess.show()
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
         table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
@@ -504,12 +516,11 @@ class UImodelization:
         if project.getVocabulary() == None :
             self.log.warn("The current project doesn't have any referenced vocabulary")
             return
-        
-        
+
         x = int(event.x)
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
-        
+       
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
             self.selectedSymbol = clickedSymbol
             self.updateTreeStoreMessage()

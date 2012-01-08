@@ -139,8 +139,6 @@ class TypeConvertor():
     def encodeNetzobRawToGivenField(raw, field):
         res = TypeConvertor.applyFieldEncoding(raw, field)
         return res
-#        res = TypeConvertor.encodeNetzobRawToGivenType(res, field.getFormat())
-#        return res
 
     @staticmethod
     def string2hex(msg):

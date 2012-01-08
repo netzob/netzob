@@ -48,7 +48,7 @@ class TreeSymbolGenerator():
         self.treestore = None
         self.treeview = None
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeSymbolGenerator.py')
+        self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator.py')
     
     #+---------------------------------------------- 
     #| initialization :
@@ -151,10 +151,8 @@ class TreeSymbolGenerator():
     #+---------------------------------------------- 
     def getSymbolAtPosition(self, x, y):
         self.log.debug("Search for the symbol referenced at position {0};{1}".format(str(x), str(y)))
-        
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        
-        
+
         info = self.treeview.get_path_at_pos(x, y)
         if info is not None :
             path = info[0]

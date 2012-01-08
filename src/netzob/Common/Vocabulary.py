@@ -54,9 +54,7 @@ class Vocabulary(object):
     #+-----------------------------------------------------------------------+
     def __init__(self):
         self.symbols = []
-        
- 
-    
+
     def getAllMessages(self):
         messages = []
         for symbol in self.symbols :
@@ -70,7 +68,6 @@ class Vocabulary(object):
                 if msg.getID() == message.getID() :
                     return symbol
         return None
-
     
     def getSymbols(self):
         return self.symbols    
@@ -155,7 +152,6 @@ class Vocabulary(object):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace, version, project)
                 if symbol != None :
                     vocabulary.addSymbol(symbol)
-        
         return vocabulary
 
     #+---------------------------------------------- 
