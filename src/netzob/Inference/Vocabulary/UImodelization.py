@@ -595,7 +595,7 @@ class UImodelization:
                 
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific column
-            subMenu = self.build_encoding_submenu_for_field( selectedField )
+            subMenu = self.build_encoding_submenu_for_field(selectedField)
             item = gtk.MenuItem("Visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -760,7 +760,7 @@ class UImodelization:
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific field
             # Add sub-entries to change the type of a specific column
-            subMenu = self.build_encoding_submenu_for_field( selectedField )
+            subMenu = self.build_encoding_submenu_for_field(selectedField)
             item = gtk.MenuItem("Visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -1302,6 +1302,7 @@ class UImodelization:
         # Apply the new choosen format for this field
         selectedField.setFormat(chosedFormat)
         self.treeMessageGenerator.updateDefault()
+        self.treeTypeStructureGenerator.update()
         
     #+---------------------------------------------- 
     #| build_context_menu_for_symbols :
