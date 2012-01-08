@@ -122,7 +122,8 @@ class RawExport:
             symbols = vocabulary.getSymbols()
             for symbol in symbols :
                 if str(symbol.getID()) == self.selectedSymbol :
-                    self.textarea.get_buffer().set_text(symbol.getXMLDefinition())
+                    self.textarea.get_buffer().set_text("")
+                    self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getXMLDefinition(), "normalTag")
                     found = True
             if found == False :
                 self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))

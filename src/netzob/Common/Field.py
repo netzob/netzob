@@ -72,7 +72,7 @@ class Field(object):
         self.endianess = Endianess.BIG
     
     def getEncodedVersionOfTheRegex(self):
-        if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files store None as a string...
+        if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files may store None as a string...
             return ""
         elif self.regex.find("{") != -1: # This is a real regex
             return self.regex

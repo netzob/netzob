@@ -920,10 +920,34 @@ class Symbol(object):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-        result = "<dictionnary>\n"
-        result += self.alignment
-        result += "\n</dictionnary>\n"
+        result = "<symbol>\n"
+        for field in self.getFields():
+            for n in range( field.getEncapsulationLevel() ):
+                result += "    "
+            # Field attributes
+            result += "    <field name=\"" + field.getName() + "\" "
+            result += "description=\"" + field.getDescription() + "\" "
+            result += "format=\"" + field.getFormat() + "\" "
+            result += "sign=\"" + field.getSign() + "\" "
+            result += "endianess=\"" + field.getEndianess() + "\" "
+            result += ">\n"
+
+            # Variable attributes
+            variable = field.getVariable()
+            if variable != None:
+                result += "        <variable>" + variable.getDescription() + "</variable>"
+            else:
+                result += "        <variable>" + field.getRegex() + "</variable>"
+            result += "\n"
+            result += "    </field>"
+            result += "\n"
+        result += "</symbol>\n"
         return result
+
+        self.format = Format.HEX
+        self.unitSize = UnitSize.NONE
+        self.sign = Sign.UNSIGNED
+        self.endianess = Endianess.BIG
 
     #+---------------------------------------------- 
     #| getScapyDissector : 

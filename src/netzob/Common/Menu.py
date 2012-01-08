@@ -129,11 +129,11 @@ class Menu(object):
         
         exportScapyEntry = gtk.MenuItem("Scapy dissector")
         exportScapyEntry.connect("activate", self.exportScapyAction)
-        self.menuExport.append(exportScapyEntry)      
+#        self.menuExport.append(exportScapyEntry)      
         
         exportWiresharkEntry = gtk.MenuItem("Wireshark dissector")
         exportWiresharkEntry.connect("activate", self.exportWiresharkAction)  
-        self.menuExport.append(gtk.MenuItem("Wireshark dissector"))
+#        self.menuExport.append(gtk.MenuItem("Wireshark dissector"))
         
         exportXMLEntry = gtk.MenuItem("XML")
         exportXMLEntry.connect("activate", self.exportXMLAction)

@@ -10,7 +10,6 @@ v0.3 -- 2012-01-11
     * Add grammar inference support
     * Add simulation module
     * Add import modules : files and library calls
-    * Add export module : Scapy dissector
 
 v0.2 -- 2011-09-01
 
