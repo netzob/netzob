@@ -57,6 +57,9 @@ from netzob.Common.NetzobException import NetzobException
 import libNeedleman
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 
+
+NAMESPACE = "http://www.netzob.org/"
+
 #+---------------------------------------------------------------------------+
 #| Symbol :
 #|     Class definition of a symbol
@@ -920,34 +923,26 @@ class Symbol(object):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-        result = "<symbol>\n"
-        for field in self.getFields():
-            for n in range( field.getEncapsulationLevel() ):
-                result += "    "
-            # Field attributes
-            result += "    <field name=\"" + field.getName() + "\" "
-            result += "description=\"" + field.getDescription() + "\" "
-            result += "format=\"" + field.getFormat() + "\" "
-            result += "sign=\"" + field.getSign() + "\" "
-            result += "endianess=\"" + field.getEndianess() + "\" "
-            result += ">\n"
-
-            # Variable attributes
-            variable = field.getVariable()
-            if variable != None:
-                result += "        <variable>" + variable.getDescription() + "</variable>"
-            else:
-                result += "        <variable>" + field.getRegex() + "</variable>"
-            result += "\n"
-            result += "    </field>"
-            result += "\n"
-        result += "</symbol>\n"
+        
+        # Register the namespace (2 way depending of the version)
+        try :
+            etree.register_namespace('netzob', NAMESPACE)
+        except AttributeError :
+            etree._namespace_map[NAMESPACE] = 'netzob'
+            
+        # create the file
+        root = etree.Element("{" + NAMESPACE + "}netzob")
+        root.set("project", str(self.getProject().getName()))
+        
+        self.save(root, NAMESPACE);
+        tree = ElementTree(root)
+        result = etree.tostring(tree, pretty_print=True)
         return result
-
-        self.format = Format.HEX
-        self.unitSize = UnitSize.NONE
-        self.sign = Sign.UNSIGNED
-        self.endianess = Endianess.BIG
+#
+#        self.format = Format.HEX
+#        self.unitSize = UnitSize.NONE
+#        self.sign = Sign.UNSIGNED
+#        self.endianess = Endianess.BIG
 
     #+---------------------------------------------- 
     #| getScapyDissector : 
