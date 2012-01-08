@@ -340,7 +340,7 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
-        self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
+        self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
@@ -1268,11 +1268,11 @@ class UImodelization:
             textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
 
     #+---------------------------------------------- 
-    #| dbClickToChangeType :
+    #| dbClickToChangeFormat :
     #|   Called when user double click on a row
-    #|    in order to change the column type
+    #|    in order to change the field format
     #+----------------------------------------------
-    def dbClickToChangeType(self, treeview, path, treeviewColumn):
+    def dbClickToChangeFormat(self, treeview, path, treeviewColumn):
         # Retrieve the selected column number
         iField = 0
         for col in treeview.get_columns():
@@ -1288,19 +1288,19 @@ class UImodelization:
         if selectedField == None :
             self.log.warn("Impossible to retrieve the clicked field !")
             return
-        
-        # Find the next possible type for this column
-        possibleTypes = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
+
+        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+#        possibleTypes = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
         i = 0
-        chosedType = selectedField.getFormat()
-        for aType in possibleTypes:
-            if aType == chosedType:
-                chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
+        chosedFormat = selectedField.getFormat()
+        for aFormat in possible_choices:
+            if aFormat == chosedFormat:
+                chosedFormat = possible_choices[(i + 1) % len(possible_choices)]
                 break
             i += 1
 
-        # Apply the new choosen type for this column
-        selectedField.setFormat(chosedType)
+        # Apply the new choosen format for this field
+        selectedField.setFormat(chosedFormat)
         self.treeMessageGenerator.updateDefault()
         
     #+---------------------------------------------- 
@@ -1525,15 +1525,12 @@ class UImodelization:
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         else :
             self.treeMessageGenerator.default(None)
-            
-            
 
     #+---------------------------------------------- 
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreTypeStructure(self):
         self.treeTypeStructureGenerator.update()
-       
     
     #+---------------------------------------------- 
     #| Called when user select a new score limit
