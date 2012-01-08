@@ -61,7 +61,7 @@ from netzob.Inference.Vocabulary.VariableView import VariableView
 
 #+---------------------------------------------- 
 #| UImodelization :
-#|     GUI for message modelization
+#|     GUI for vocabulary inference
 #+---------------------------------------------- 
 class UImodelization:
     TARGET_TYPE_TEXT = 80
@@ -217,7 +217,6 @@ class UImodelization:
 
         # Widget button find size fields
         but = gtk.Button("Find size fields")
-        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
         but.connect("clicked", self.findSizeFields)
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -585,15 +584,9 @@ class UImodelization:
                 
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific column
-            typesList = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
-            typeMenu = gtk.Menu()
-            for aType in typesList:
-                item = gtk.MenuItem(str(aType))
-                item.show()
-                item.connect("activate", self.rightClickToChangeType, selectedField, aType)   
-                typeMenu.append(item)
-            item = gtk.MenuItem("Render in ...")
-            item.set_submenu(typeMenu)
+            subMenu = self.build_encoding_submenu_for_field( selectedField )
+            item = gtk.MenuItem("Visualization")
+            item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
@@ -626,7 +619,6 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
-            
             
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None :
@@ -668,6 +660,67 @@ class UImodelization:
             menu.popup(None, None, None, event.button, event.time)
 
     #+---------------------------------------------- 
+    #| build_encoding_submenu_for_field :
+    #|   Build a submenu for field data visualization.
+    #+----------------------------------------------
+    def build_encoding_submenu_for_field(self, field):
+        menu = gtk.Menu()
+
+        # Format submenu
+        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeFormat, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("Format")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Unitsize submenu
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeUnitSize, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("UnitSize")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Sign submenu
+        possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeSign, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("Sign")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Endianess submenu
+        possible_choices = [Endianess.BIG, Endianess.LITTLE]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeEndianess, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("Endianess")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        return menu
+
+    #+---------------------------------------------- 
     #| button_press_on_treeview_typeStructure :
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
@@ -695,15 +748,10 @@ class UImodelization:
             
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific field
-            typesList = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
-            typeMenu = gtk.Menu()
-            for aType in typesList:
-                item = gtk.MenuItem("Render in : " + str(aType))
-                item.show()
-                item.connect("activate", self.rightClickToChangeType, selectedField, aType)   
-                typeMenu.append(item)
-            item = gtk.MenuItem("Change Type")
-            item.set_submenu(typeMenu)
+            # Add sub-entries to change the type of a specific column
+            subMenu = self.build_encoding_submenu_for_field( selectedField )
+            item = gtk.MenuItem("Visualization")
+            item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
@@ -983,14 +1031,40 @@ class UImodelization:
             message_symbol.removeMessage(message)
             self.update()
             
+    #+---------------------------------------------- 
+    #| rightClickToChangeFormat :
+    #|   Callback to change the field format
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeFormat(self, event, field, aFormat):
+        field.setFormat(aFormat)
+        self.update()
 
     #+---------------------------------------------- 
-    #| rightClickToChangeType :
-    #|   Callback to change the column type
-    #|   by doing a right click
+    #| rightClickToChangeUnitSize :
+    #|   Callback to change the field unitsize
+    #|   by doing a right click on it.
     #+----------------------------------------------
-    def rightClickToChangeType(self, event, field, aType):
-        field.setFormat(aType)
+    def rightClickToChangeUnitSize(self, event, field, unitSize):
+        field.setUnitSize(unitSize)
+        self.update()
+
+    #+---------------------------------------------- 
+    #| rightClickToChangeSign :
+    #|   Callback to change the field sign
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeSign(self, event, field, sign):
+        field.setSign(sign)
+        self.update()
+
+    #+---------------------------------------------- 
+    #| rightClickToChangeEndianess :
+    #|   Callback to change the field endianess
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeEndianess(self, event, field, endianess):
+        field.setEndianess(endianess)
         self.update()
 
     #+---------------------------------------------- 

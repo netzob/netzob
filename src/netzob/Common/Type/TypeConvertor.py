@@ -384,6 +384,9 @@ class TypeConvertor():
             size = 32
         elif unitSize == UnitSize.BITS64:
             size = 64
+        else: # Render with no splitting
+            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
+            return tmp
 
         # Handle endianess
         if endianess == Endianess.BIG:
