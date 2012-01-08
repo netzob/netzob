@@ -72,7 +72,9 @@ class UImodelization:
     #+----------------------------------------------
     def new(self):
         # Update the combo for choosing the format
-        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+# TODO: support DECIMAL and OCTAL
+#        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         for i in range(len(possible_choices)):
             self.comboDisplayFormat.append_text(possible_choices[i])
@@ -80,9 +82,8 @@ class UImodelization:
                 self.comboDisplayFormat.set_active(i)
 
         # Update the combo for choosing the unit size
-        # TODO: support of HALFBYTE and QUADWORD
-#        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.HALFBYTE, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD, UnitSize.QUADWORD]
-        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD]
+        # TODO: support of 4BITS
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         for i in range(len(possible_choices)):
             self.comboDisplayUnitSize.append_text(possible_choices[i])
@@ -173,7 +174,7 @@ class UImodelization:
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button slick regex
-        but = gtk.Button("Slick regexes")
+        but = gtk.Button("Smooth alignment")
         but.connect("clicked", self.slickRegex_cb)
         but.show()
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -188,7 +189,7 @@ class UImodelization:
         frame.add(table)
 
         # Widget button refine regex
-        but = gtk.Button("Refine regexes")
+        but = gtk.Button("Refine alignment")
         but.connect("clicked", self.refineRegexes_cb)
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -200,10 +201,10 @@ class UImodelization:
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button to analyze for ASN.1 presence
-        but = gtk.Button("Find ASN.1 fields")
-        but.connect("clicked", self.findASN1Fields_cb)
-        but.show()
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+#        but = gtk.Button("Find ASN.1 fields")
+#        but.connect("clicked", self.findASN1Fields_cb)
+#        but.show()
+#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         ## Dependencies inference
         frame = gtk.Frame()
@@ -264,8 +265,8 @@ class UImodelization:
         self.comboDisplayFormat.set_model(gtk.ListStore(str))
         self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
         self.comboDisplayFormat.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         # Widget for choosing the unit size
         label = gtk.Label("Unit size : ")
@@ -274,8 +275,8 @@ class UImodelization:
         self.comboDisplayUnitSize.set_model(gtk.ListStore(str))
         self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
         self.comboDisplayUnitSize.show()
-        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         # Widget for choosing the displayed sign
         label = gtk.Label("Sign : ")
@@ -284,8 +285,8 @@ class UImodelization:
         self.comboDisplaySign.set_model(gtk.ListStore(str))
         self.comboDisplaySign.connect("changed", self.updateDisplaySign)
         self.comboDisplaySign.show()
-        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         # Widget for choosing the displayed endianess
         label = gtk.Label("Endianess : ")
@@ -294,8 +295,8 @@ class UImodelization:
         self.comboDisplayEndianess.set_model(gtk.ListStore(str))
         self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         self.comboDisplayEndianess.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -384,7 +385,7 @@ class UImodelization:
         panel.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
-        but = gtk.CheckButton("Slick regexes")
+        but = gtk.CheckButton("Smooth alignment")
         doInternalSlick = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         if doInternalSlick:
             but.set_active(True)
