@@ -93,12 +93,11 @@
 					<restriction base="string">
 						<enumeration value="none"></enumeration>
 						<enumeration value="bit"></enumeration>
-						<enumeration value="half-byte"></enumeration>
-						<enumeration value="byte"></enumeration>
-						<enumeration value="half-word"></enumeration>
-						<enumeration value="word"></enumeration>
-						<enumeration value="double-word"></enumeration>
-						<enumeration value="quad-word"></enumeration>
+						<enumeration value="4-bits"></enumeration>
+						<enumeration value="8-bits"></enumeration>
+						<enumeration value="16-bits"></enumeration>
+						<enumeration value="32-bits"></enumeration>
+						<enumeration value="64-bits"></enumeration>
 					</restriction>
 				</simpleType>
 			</element>
