@@ -1,5 +1,12 @@
-v0.3 -- 2011-12-27
+v0.3 -- 2012-01-11
 
+    * Add concept of variable
+    * Add support for environmental dependencies
+    * Add new visualization of data encoding
+      * Format: hex, string and binary
+      * Unit size: bit, 8-bits, 16-bits, 32-bits and 64-bits
+      * Sign: signed and unsigned
+      * Endianess: big and little endian
     * Add grammar inference support
     * Add simulation module
     * Add import modules : files and library calls
