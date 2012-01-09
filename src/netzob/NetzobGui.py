@@ -116,12 +116,12 @@ class NetzobGui():
         # Adding the different notebook
         self.modelization = UImodelization(self)
         self.grammarInference = UIGrammarInference(self)
-        self.fuzzing = UIfuzzing(self)
+#        self.fuzzing = UIfuzzing(self)
         self.simulator = UISimulator(self)
 
         self.pageList.append(["Vocabulary inference", self.modelization])
         self.pageList.append(["Grammar inference", self.grammarInference])
-        self.pageList.append(["Fuzzing", self.fuzzing])
+#        self.pageList.append(["Fuzzing", self.fuzzing])
         self.pageList.append(["Simulator", self.simulator])
         
         for page in self.pageList:

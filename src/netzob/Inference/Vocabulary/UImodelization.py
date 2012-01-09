@@ -61,7 +61,7 @@ from netzob.Inference.Vocabulary.VariableView import VariableView
 
 #+---------------------------------------------- 
 #| UImodelization :
-#|     GUI for message modelization
+#|     GUI for vocabulary inference
 #+---------------------------------------------- 
 class UImodelization:
     TARGET_TYPE_TEXT = 80
@@ -72,38 +72,51 @@ class UImodelization:
     #+----------------------------------------------
     def new(self):
         # Update the combo for choosing the format
-        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+# TODO: support DECIMAL and OCTAL
+#        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
+        self.comboDisplayFormat.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayFormat.append_text(possible_choices[i])
             if possible_choices[i] == global_format:
                 self.comboDisplayFormat.set_active(i)
+        self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
 
         # Update the combo for choosing the unit size
-        # TODO: support of HALFBYTE and QUADWORD
-#        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.HALFBYTE, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD, UnitSize.QUADWORD]
-        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BYTE, UnitSize.HALFWORD, UnitSize.WORD, UnitSize.DOUBLEWORD]
+        # TODO: support of 4BITS
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        self.comboDisplayUnitSize.disconnect(self.comboDisplayUnitSize_handler)
+        self.comboDisplayUnitSize.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayUnitSize.append_text(possible_choices[i])
             if possible_choices[i] == global_unitsize:
                 self.comboDisplayUnitSize.set_active(i)
+        self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
 
         # Update the combo for choosing the displayed sign
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
         global_sign = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+        self.comboDisplaySign.disconnect(self.comboDisplaySign_handler)
+        self.comboDisplaySign.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplaySign.append_text(possible_choices[i])
             if possible_choices[i] == global_sign:
                 self.comboDisplaySign.set_active(i)
+        self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
 
         # Update the combo for choosing the displayed endianess
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
         global_endianess = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+        self.comboDisplayEndianess.disconnect(self.comboDisplayEndianess_handler)
+        self.comboDisplayEndianess.set_model(gtk.ListStore(str)) # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayEndianess.append_text(possible_choices[i])
             if possible_choices[i] == global_endianess:
                 self.comboDisplayEndianess.set_active(i)
+        self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
         self.updateTreeStoreSymbol()
@@ -173,7 +186,7 @@ class UImodelization:
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button slick regex
-        but = gtk.Button("Slick regexes")
+        but = gtk.Button("Smooth alignment")
         but.connect("clicked", self.slickRegex_cb)
         but.show()
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -188,7 +201,7 @@ class UImodelization:
         frame.add(table)
 
         # Widget button refine regex
-        but = gtk.Button("Refine regexes")
+        but = gtk.Button("Refine alignment")
         but.connect("clicked", self.refineRegexes_cb)
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -200,10 +213,10 @@ class UImodelization:
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button to analyze for ASN.1 presence
-        but = gtk.Button("Find ASN.1 fields")
-        but.connect("clicked", self.findASN1Fields_cb)
-        but.show()
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+#        but = gtk.Button("Find ASN.1 fields")
+#        but.connect("clicked", self.findASN1Fields_cb)
+#        but.show()
+#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         ## Dependencies inference
         frame = gtk.Frame()
@@ -216,7 +229,6 @@ class UImodelization:
 
         # Widget button find size fields
         but = gtk.Button("Find size fields")
-        # TODO: just try to use an ASN.1 parser to find the simple TLV protocols
         but.connect("clicked", self.findSizeFields)
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -262,40 +274,40 @@ class UImodelization:
         label.show()
         self.comboDisplayFormat = gtk.combo_box_entry_new_text()
         self.comboDisplayFormat.set_model(gtk.ListStore(str))
-        self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
+        self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
         self.comboDisplayFormat.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         # Widget for choosing the unit size
         label = gtk.Label("Unit size : ")
         label.show()
         self.comboDisplayUnitSize = gtk.combo_box_entry_new_text()
         self.comboDisplayUnitSize.set_model(gtk.ListStore(str))
-        self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
+        self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
         self.comboDisplayUnitSize.show()
-        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         # Widget for choosing the displayed sign
         label = gtk.Label("Sign : ")
         label.show()
         self.comboDisplaySign = gtk.combo_box_entry_new_text()
         self.comboDisplaySign.set_model(gtk.ListStore(str))
-        self.comboDisplaySign.connect("changed", self.updateDisplaySign)
+        self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
         self.comboDisplaySign.show()
-        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         # Widget for choosing the displayed endianess
         label = gtk.Label("Endianess : ")
         label.show()
         self.comboDisplayEndianess = gtk.combo_box_entry_new_text()
         self.comboDisplayEndianess.set_model(gtk.ListStore(str))
-        self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
+        self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         self.comboDisplayEndianess.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -328,7 +340,7 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
-        self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeType)
+        self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
 
         #+---------------------------------------------- 
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
@@ -384,7 +396,7 @@ class UImodelization:
         panel.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
-        but = gtk.CheckButton("Slick regexes")
+        but = gtk.CheckButton("Smooth alignment")
         doInternalSlick = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         if doInternalSlick:
             but.set_active(True)
@@ -417,7 +429,7 @@ class UImodelization:
     #+----------------------------------------------
     def discoverAlignment_cb_cb(self, widget, dialog):
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        self.alignThread = threading.Thread(None, vocabulary.alignWithNeedlemanWunsh, None, ([self.netzob.getCurrentProject().getConfiguration(), self.update]), {})
+        self.alignThread = threading.Thread(None, vocabulary.alignWithNeedlemanWunsh, None, ([self.netzob.getCurrentProject(), self.update]), {})
         dialog.destroy()
         self.alignThread.start()
         
@@ -504,12 +516,11 @@ class UImodelization:
         if project.getVocabulary() == None :
             self.log.warn("The current project doesn't have any referenced vocabulary")
             return
-        
-        
+
         x = int(event.x)
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
-        
+       
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
             self.selectedSymbol = clickedSymbol
             self.updateTreeStoreMessage()
@@ -584,15 +595,9 @@ class UImodelization:
                 
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific column
-            typesList = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
-            typeMenu = gtk.Menu()
-            for aType in typesList:
-                item = gtk.MenuItem(str(aType))
-                item.show()
-                item.connect("activate", self.rightClickToChangeType, selectedField, aType)   
-                typeMenu.append(item)
-            item = gtk.MenuItem("Render in ...")
-            item.set_submenu(typeMenu)
+            subMenu = self.build_encoding_submenu_for_field(selectedField)
+            item = gtk.MenuItem("Visualization")
+            item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
@@ -625,7 +630,6 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
-     
             
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None :
@@ -667,6 +671,67 @@ class UImodelization:
             menu.popup(None, None, None, event.button, event.time)
 
     #+---------------------------------------------- 
+    #| build_encoding_submenu_for_field :
+    #|   Build a submenu for field data visualization.
+    #+----------------------------------------------
+    def build_encoding_submenu_for_field(self, field):
+        menu = gtk.Menu()
+
+        # Format submenu
+        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeFormat, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("Format")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Unitsize submenu
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeUnitSize, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("UnitSize")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Sign submenu
+        possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeSign, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("Sign")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Endianess submenu
+        possible_choices = [Endianess.BIG, Endianess.LITTLE]
+        subMenu = gtk.Menu()
+        for value in possible_choices:
+            item = gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeEndianess, field, value)
+            subMenu.append(item)
+        item = gtk.MenuItem("Endianess")
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        return menu
+
+    #+---------------------------------------------- 
     #| button_press_on_treeview_typeStructure :
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
@@ -694,15 +759,10 @@ class UImodelization:
             
             menu = gtk.Menu()
             # Add sub-entries to change the type of a specific field
-            typesList = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
-            typeMenu = gtk.Menu()
-            for aType in typesList:
-                item = gtk.MenuItem("Render in : " + str(aType))
-                item.show()
-                item.connect("activate", self.rightClickToChangeType, selectedField, aType)   
-                typeMenu.append(item)
-            item = gtk.MenuItem("Change Type")
-            item.set_submenu(typeMenu)
+            # Add sub-entries to change the type of a specific column
+            subMenu = self.build_encoding_submenu_for_field(selectedField)
+            item = gtk.MenuItem("Visualization")
+            item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
@@ -982,14 +1042,40 @@ class UImodelization:
             message_symbol.removeMessage(message)
             self.update()
             
+    #+---------------------------------------------- 
+    #| rightClickToChangeFormat :
+    #|   Callback to change the field format
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeFormat(self, event, field, aFormat):
+        field.setFormat(aFormat)
+        self.update()
 
     #+---------------------------------------------- 
-    #| rightClickToChangeType :
-    #|   Callback to change the column type
-    #|   by doing a right click
+    #| rightClickToChangeUnitSize :
+    #|   Callback to change the field unitsize
+    #|   by doing a right click on it.
     #+----------------------------------------------
-    def rightClickToChangeType(self, event, field, aType):
-        field.setFormat(aType)
+    def rightClickToChangeUnitSize(self, event, field, unitSize):
+        field.setUnitSize(unitSize)
+        self.update()
+
+    #+---------------------------------------------- 
+    #| rightClickToChangeSign :
+    #|   Callback to change the field sign
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeSign(self, event, field, sign):
+        field.setSign(sign)
+        self.update()
+
+    #+---------------------------------------------- 
+    #| rightClickToChangeEndianess :
+    #|   Callback to change the field endianess
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeEndianess(self, event, field, endianess):
+        field.setEndianess(endianess)
         self.update()
 
     #+---------------------------------------------- 
@@ -1182,11 +1268,11 @@ class UImodelization:
             textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
 
     #+---------------------------------------------- 
-    #| dbClickToChangeType :
+    #| dbClickToChangeFormat :
     #|   Called when user double click on a row
-    #|    in order to change the column type
+    #|    in order to change the field format
     #+----------------------------------------------
-    def dbClickToChangeType(self, treeview, path, treeviewColumn):
+    def dbClickToChangeFormat(self, treeview, path, treeviewColumn):
         # Retrieve the selected column number
         iField = 0
         for col in treeview.get_columns():
@@ -1202,20 +1288,21 @@ class UImodelization:
         if selectedField == None :
             self.log.warn("Impossible to retrieve the clicked field !")
             return
-        
-        # Find the next possible type for this column
-        possibleTypes = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
+
+        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+#        possibleTypes = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
         i = 0
-        chosedType = selectedField.getFormat()
-        for aType in possibleTypes:
-            if aType == chosedType:
-                chosedType = possibleTypes[(i + 1) % len(possibleTypes)]
+        chosedFormat = selectedField.getFormat()
+        for aFormat in possible_choices:
+            if aFormat == chosedFormat:
+                chosedFormat = possible_choices[(i + 1) % len(possible_choices)]
                 break
             i += 1
 
-        # Apply the new choosen type for this column
-        selectedField.setFormat(chosedType)
+        # Apply the new choosen format for this field
+        selectedField.setFormat(chosedFormat)
         self.treeMessageGenerator.updateDefault()
+        self.treeTypeStructureGenerator.update()
         
     #+---------------------------------------------- 
     #| build_context_menu_for_symbols :
@@ -1314,7 +1401,7 @@ class UImodelization:
         if (len(newSymbolName) > 0) :
             newSymbolId = str(uuid.uuid4())
             self.log.debug("a new symbol will be created with the given name : {0}".format(newSymbolName))
-            newSymbol = Symbol(newSymbolId, newSymbolName)
+            newSymbol = Symbol(newSymbolId, newSymbolName, self.netzob.getCurrentProject())
             
             self.netzob.getCurrentProject().getVocabulary().addSymbol(newSymbol)
             
@@ -1439,15 +1526,12 @@ class UImodelization:
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)      
         else :
             self.treeMessageGenerator.default(None)
-            
-            
 
     #+---------------------------------------------- 
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreTypeStructure(self):
         self.treeTypeStructureGenerator.update()
-       
     
     #+---------------------------------------------- 
     #| Called when user select a new score limit
@@ -1635,7 +1719,7 @@ class UImodelization:
             return  
 
         # Create a temporary symbol for testing size fields
-        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol")
+        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol", self.netzob.getCurrentProject())
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format :

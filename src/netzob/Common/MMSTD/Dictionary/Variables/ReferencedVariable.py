@@ -29,41 +29,72 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+import binascii
+import random
+import string
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| Memory :
-#|     Definition of an memory
+#| ReferencedVariable :
+#|     Definition of a referenced variable
 #+---------------------------------------------------------------------------+
-class Memory():
+class ReferencedVariable(Variable):
     
-    def __init__(self, variables):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
-        self.memory = dict()
-        self.variables = variables
+    def __init__(self, id, name, mutable, variableID):
+        Variable.__init__(self, "ReferencedVariable", id, name, mutable)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable.py')
+        self.varID = variableID
     
-    def hasMemorized(self, variable):
-        return variable.getID() in self.memory.keys()
-    
-    def memorize(self, variable, binValue):
-        self.memory[variable.getID()] = binValue
+    def compare(self, value, indice, negative, memory):
+        var = memory.getVariableByID(self.varID)
+        self.log.info("Compare with a referenced variable")
+        return var.compare(value, indice, negative, memory)
         
-    def recall(self, variable):
-        return self.memory[variable.getID()]
+    def send(self, negative, memory):
+        var = memory.getVariableByID(self.varID)
+        return var.send(negative, memory)
+            
+    def getValue(self, negative, memory):
+        var = memory.getVariableByID(self.varID)
+        return var.getValue(negative, memory)
     
-    def recallAll(self):
-        return self.memory
+    def getDescription(self):
+        return "ReferencedVariable (" + self.varID + ")"
         
-    def getVariableByID(self, id):
-        for var in self.variables :
-            if str(var.getID()) == id :
-                return var
-        return None 
+    def save(self, root, namespace):
+        xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlWordVariable.set("id", str(self.getID()))
+        xmlWordVariable.set("name", str(self.getName()))
+        xmlWordVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
+        
+        xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ReferencedVariable")
+        
+        # Definition of the referenced
+        xmlWordVariableRef = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
+        xmlWordVariableRef.text = self.varID
+        return xmlWordVariable
+        
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        if version == "0.1" :
+            varId = xmlRoot.get("id")
+            varName = xmlRoot.get("name")
+            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
+            
+            refVarId = xmlRoot.find("{" + namespace + "}ref").text
+            return ReferencedVariable(varId, varName, varIsMutable, refVarId)
+            
+        return None    
+    

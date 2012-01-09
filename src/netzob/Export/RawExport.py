@@ -72,7 +72,7 @@ class RawExport:
         self.dialog = gtk.Dialog(title="Export project as raw XML", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
-        self.dialog.set_size_request(800, 700)
+        self.dialog.set_size_request(600, 400)
         self.update()
         
     def initPanel(self):
@@ -91,7 +91,7 @@ class RawExport:
         # Create the hbox content in order to display dissector data
         bottomFrame = gtk.Frame()
         bottomFrame.show()
-        bottomFrame.set_size_request(550, -1)
+        bottomFrame.set_size_request(450, -1)
         self.panel.add(bottomFrame)
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -122,7 +122,8 @@ class RawExport:
             symbols = vocabulary.getSymbols()
             for symbol in symbols :
                 if str(symbol.getID()) == self.selectedSymbol :
-                    self.textarea.get_buffer().set_text(symbol.getXMLDefinition())
+                    self.textarea.get_buffer().set_text("")
+                    self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getXMLDefinition(), "normalTag")
                     found = True
             if found == False :
                 self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))

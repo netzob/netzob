@@ -139,8 +139,6 @@ class TypeConvertor():
     def encodeNetzobRawToGivenField(raw, field):
         res = TypeConvertor.applyFieldEncoding(raw, field)
         return res
-#        res = TypeConvertor.encodeNetzobRawToGivenType(res, field.getFormat())
-#        return res
 
     @staticmethod
     def string2hex(msg):
@@ -370,20 +368,23 @@ class TypeConvertor():
         aFormat = field.getFormat()
 
         # Handle unitSize
-        # TODO: handle, HALFBYTE and QUADWORD
+        # TODO: support 4BITS
         if unitSize == UnitSize.NONE:
             tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
             return tmp
         elif unitSize == UnitSize.BIT:
             return " ".join(TypeConvertor.netzobRawToBinary(raw))
-        elif unitSize == UnitSize.BYTE:
-            size = 8 # In bits
-        elif unitSize == UnitSize.HALFWORD:
+        elif unitSize == UnitSize.BITS8:
+            size = 8
+        elif unitSize == UnitSize.BITS16:
             size = 16
-        elif unitSize == UnitSize.WORD:
+        elif unitSize == UnitSize.BITS32:
             size = 32
-        elif unitSize == UnitSize.DOUBLEWORD:
+        elif unitSize == UnitSize.BITS64:
             size = 64
+        else: # Render with no splitting
+            tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
+            return tmp
 
         # Handle endianess
         if endianess == Endianess.BIG:

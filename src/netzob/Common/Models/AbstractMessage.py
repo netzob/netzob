@@ -39,6 +39,7 @@ import glib
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage :
@@ -176,8 +177,10 @@ class AbstractMessage():
                     
                 # Overwrite the background color (red if the variable doesn't match the data)
                 if field.getVariable() != None :
+                    # Creation of a temporary memory just for the current
+                    tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
 
-                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, None) == -1 :
+                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, tmpMemory) == -1 :
                         backgroundColor = 'background="red"'
                     else :
                         backgroundColor = 'background="green"'

@@ -7,4 +7,4 @@ Author: Georges Bossert, Frédéric Guihéry
 Author-email: contact@netzob.org
 License: GPLv3
 Description: UNKNOWN
-Platform: UNKNOWN
+Platform: Linux

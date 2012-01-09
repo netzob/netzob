@@ -31,10 +31,9 @@
 class UnitSize():
     NONE="none"
     BIT="bit"
-    HALFBYTE="half-byte"
-    BYTE="byte"
-    HALFWORD="half-word"
-    WORD="word"
-    DOUBLEWORD="double-word"
-    QUADWORD="quad-word"
+    BITS4="4-bits"
+    BITS8="8-bits"
+    BITS16="16-bits"
+    BITS32="32-bits"
+    BITS64="64-bits"
     

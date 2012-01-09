@@ -57,6 +57,9 @@ from netzob.Common.NetzobException import NetzobException
 import libNeedleman
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 
+
+NAMESPACE = "http://www.netzob.org/"
+
 #+---------------------------------------------------------------------------+
 #| Symbol :
 #|     Class definition of a symbol
@@ -66,7 +69,7 @@ class Symbol(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name):
+    def __init__(self, id, name, project):
         self.id = id
         self.name = name
         self.alignment = ""
@@ -75,6 +78,7 @@ class Symbol(object):
         self.fields = []
         self.alignmentType = "regex"
         self.rawDelimiter = ""
+        self.project = project
     
     #+---------------------------------------------- 
     #| buildRegexAndAlignment : compute regex and 
@@ -919,10 +923,26 @@ class Symbol(object):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-        result = "<dictionnary>\n"
-        result += self.alignment
-        result += "\n</dictionnary>\n"
+        
+        # Register the namespace (2 way depending of the version)
+        try :
+            etree.register_namespace('netzob', NAMESPACE)
+        except AttributeError :
+            etree._namespace_map[NAMESPACE] = 'netzob'
+            
+        # create the file
+        root = etree.Element("{" + NAMESPACE + "}netzob")
+        root.set("project", str(self.getProject().getName()))
+        
+        self.save(root, NAMESPACE);
+        tree = ElementTree(root)
+        result = etree.tostring(tree, pretty_print=True)
         return result
+#
+#        self.format = Format.HEX
+#        self.unitSize = UnitSize.NONE
+#        self.sign = Sign.UNSIGNED
+#        self.endianess = Endianess.BIG
 
     #+---------------------------------------------- 
     #| getScapyDissector : 
@@ -1155,6 +1175,8 @@ class Symbol(object):
         return self.alignmentType
     def getRawDelimiter(self):
         return self.rawDelimiter
+    def getProject(self):
+        return self.project
 
     #+---------------------------------------------- 
     #| SETTERS
@@ -1176,7 +1198,7 @@ class Symbol(object):
     #| Static methods
     #+----------------------------------------------       
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, version):
+    def loadSymbol(xmlRoot, namespace, version, project):
         
         if version == "0.1" :
             nameSymbol = xmlRoot.get("name")
@@ -1186,7 +1208,7 @@ class Symbol(object):
             alignmentType = xmlRoot.get("alignmentType")
             rawDelimiter = xmlRoot.get("rawDelimiter")
             
-            symbol = Symbol(idSymbol, nameSymbol)
+            symbol = Symbol(idSymbol, nameSymbol, project)
             symbol.setAlignment(alignmentSymbol)
             symbol.setScore(scoreSymbol)
             symbol.setAlignmentType(alignmentType)

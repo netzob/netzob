@@ -120,14 +120,14 @@ class TreeMessageGenerator():
         self.treestore = gtk.TreeStore(*treeStoreTypes)
 
         # Build the name row
-        name_line = []
-        name_line.append("HEADER NAME")
-        name_line.append("#ababab")
-        name_line.append(pango.WEIGHT_BOLD)
-        name_line.append(True)
-        for field in self.symbol.getFields():
-            name_line.append(field.getName())
-        self.treestore.append(None, name_line)
+#        name_line = []
+#        name_line.append("HEADER NAME")
+#        name_line.append("#ababab")
+#        name_line.append(pango.WEIGHT_BOLD)
+#        name_line.append(True)
+#        for field in self.symbol.getFields():
+#            name_line.append(field.getName())
+#        self.treestore.append(None, name_line)
 
         # Build the regex row
         regex_row = []
@@ -150,7 +150,8 @@ class TreeMessageGenerator():
         types_line.append(pango.WEIGHT_BOLD)
         types_line.append(True)        
         for field in self.symbol.getFields():
-            types_line.append(self.getSymbol().getStyledPossibleTypesForAField(field))
+#            types_line.append(self.getSymbol().getStyledPossibleTypesForAField(field))
+            types_line.append(field.getFormat())
         self.treestore.append(None, types_line)
         
         # Build the next rows from messages after applying the regex

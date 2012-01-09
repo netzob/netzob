@@ -279,7 +279,7 @@ class NetworkImport:
     #+----------------------------------------------
     def saveMessagesInProject(self, project, messages):
         # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), "NETWORK IMPORT")
+        symbol = Symbol(uuid.uuid4(), "NETWORK IMPORT", project)
         for message in messages :
             symbol.addMessage(message)
 

@@ -59,6 +59,10 @@ class ProjectConfiguration(object):
     VOCABULARY_ENVIRONMENTAL_DEPENDENCIES = "environmental_dependencies"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCY = "environmental_dependency"
     
+    SIMULATION_ACTORS = "actors"
+    SIMULATION_ACTOR = "actor"
+    
+    
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -82,6 +86,8 @@ class ProjectConfiguration(object):
         
         # Grammar
         
+        
+        
     def setVocabularyInferenceParameter(self, name, value):
         self.vocabularyInference[name] = value
         
@@ -93,6 +99,12 @@ class ProjectConfiguration(object):
         
     def getGrammarInferenceParameter(self, name):
         return self.grammarInference[name]
+    
+    def setSimulationParameter(self, name, value):
+        self.simulation[name] = value
+        
+    def getSimulationParameter(self, name):
+        return self.simulation[name]
     
     def save(self, root, namespace):
         xmlConfiguration = etree.SubElement(root, "{" + namespace + "}configuration")
@@ -127,7 +139,9 @@ class ProjectConfiguration(object):
         if envDependencies != None :
             for envDependency in envDependencies :
                 envDependency.save(xmlVocabularyInferenceEnvDependencies, namespace)
-
+                
+        
+        
     #+-----------------------------------------------------------------------+
     #| Static methods
     #+-----------------------------------------------------------------------+                

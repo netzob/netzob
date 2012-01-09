@@ -227,7 +227,7 @@ class UISimulator:
         
         treeview_listActiveActors = gtk.TreeView(self.treestore_listActiveActors)
         treeview_listActiveActors.get_selection().set_mode(gtk.SELECTION_SINGLE)
-        treeview_listActiveActors.set_size_request(500, -1)
+        treeview_listActiveActors.set_size_request(300, -1)
         treeview_listActiveActors.connect("cursor-changed", self.actorDetails)
         cell = gtk.CellRendererText()
         # main col
@@ -255,7 +255,7 @@ class UISimulator:
         
         treeview_inputs = gtk.TreeView(self.treestore_inputs)
         treeview_inputs.get_selection().set_mode(gtk.SELECTION_NONE)
-        treeview_inputs.set_size_request(500, -1)
+        treeview_inputs.set_size_request(300, -1)
 #        treeview_listActiveActors.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # col date
@@ -294,7 +294,7 @@ class UISimulator:
         
         treeview_outputs = gtk.TreeView(self.treestore_outputs)
         treeview_outputs.get_selection().set_mode(gtk.SELECTION_NONE)
-        treeview_outputs.set_size_request(500, -1)
+        treeview_outputs.set_size_request(300, -1)
 #        treeview_listActiveActors.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # col date
@@ -330,7 +330,7 @@ class UISimulator:
         
         treeview_memory = gtk.TreeView(self.treestore_memory)
         treeview_memory.get_selection().set_mode(gtk.SELECTION_NONE)
-        treeview_memory.set_size_request(500, -1)
+        treeview_memory.set_size_request(300, -1)
 #        treeview_listActiveActors.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # col name
@@ -361,7 +361,7 @@ class UISimulator:
         self.xdotWidget = XDotWidget()        
         
         self.xdotWidget.show_all()
-        self.xdotWidget.set_size_request(500, 500)        
+        self.xdotWidget.set_size_request(300, 300)        
         self.panel.attach(self.xdotWidget, 1, 2, 1, 4, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -394,7 +394,6 @@ class UISimulator:
         
         # Update the GUI
         self.refreshGUI(1)
-        
     
     
     #+---------------------------------------------- 
@@ -472,7 +471,7 @@ class UISimulator:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
         
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory())
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))
         
         # And we create an MMSTD visitor for this
         visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar, isMaster, abstractionLayer) 

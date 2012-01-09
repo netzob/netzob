@@ -37,7 +37,7 @@ import select
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
-#+---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+    
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
@@ -115,11 +115,11 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
-        # We create an instanciated network server
+        # We create an instantiated network server
         instanciatedNetworkServer = InstanciatedNetworkServer(self.request)        
         
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory())        
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()))        
         
         # And we create an MMSTD visitor for this
         self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer) 
@@ -152,7 +152,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         self.log.info("A client has just initiated a connection on the server.")
         
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory())
+        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(self.server.getModel().getVocabulary().getVariables()))
         
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
@@ -168,7 +168,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 class NetworkServer(AbstractActor):
     
     def __init__(self, host, protocol, port):
-        AbstractActor.__init__(self, True)
+        AbstractActor.__init__(self, True, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer.py')
         self.port = port
@@ -180,8 +180,8 @@ class NetworkServer(AbstractActor):
     def openServer(self, vocabulary, initialState, master):
         # Instantiates the server
         if self.protocol == "UDP" :
-            self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
             self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
+            self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
         else :
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)

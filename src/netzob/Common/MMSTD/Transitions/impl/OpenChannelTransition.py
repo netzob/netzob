@@ -78,7 +78,7 @@ class OpenChannelTransition(AbstractTransition):
         if abstractionLayer.getCommunicationChannel().isServer() :
             # start a specific listening network thread
             self.activate()
-            self.log.debug("We instanciate a new server and close the current MMSTD")     
+            self.log.info("We instanciate a new server and close the current MMSTD")     
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, False)
             self.deactivate()
             return None
@@ -101,6 +101,7 @@ class OpenChannelTransition(AbstractTransition):
         if abstractionLayer.getCommunicationChannel().isServer() :
             # start a specific listening network thread
             self.activate()     
+            self.log.info("We instanciate a new server and close the current MMSTD")   
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, True)
             self.deactivate()
             return None
@@ -120,7 +121,7 @@ class OpenChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def openConnection(self, abstractionLayer):
-        self.log.debug("OpenChannelTransition executed.")
+        self.log.info("OpenChannelTransition executed with the abstractionLayer : " + str(abstractionLayer))
         
         i = self.maxNumberOfAttempt
         while (not abstractionLayer.isConnected()  and i > 0) :
