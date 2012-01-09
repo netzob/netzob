@@ -125,7 +125,7 @@ class UImodelization:
     #+----------------------------------------------   
     def __init__(self, netzob):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.UImodelization.py')
+        self.log = logging.getLogger('netzob.Inference.Vocabulary.UImodelization.py')
         self.netzob = netzob
         self.selectedSymbol = None
         self.selectedMessage = None
@@ -625,7 +625,7 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
-            
+     
             
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None :
