@@ -66,6 +66,7 @@ setup(
         "netzob.Common.MMSTD.Transitions.impl",
         "netzob.Common.Models",
         "netzob.Common.Models.Factories",
+        "netzob.Common.Type",
         "netzob.Export",
         "netzob.Export.TreeViews",
         "netzob.ExternalLibs",
