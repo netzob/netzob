@@ -279,11 +279,13 @@ class TypeConvertor():
     #| Return the string parameter in bit
     #+----------------------------------------------
     def netzobRawToBinary(raw):
-        if len(raw) % 2 != 0:
-            logging.error("(toBit) Hex string len not even : " + raw)
-            return raw
-        binary = TypeConvertor.netzobRawToPythonRaw(raw)
-        return TypeConvertor.hex2bin(binary).to01()
+        res = bitarray()
+        for c in raw:
+            tmp = bitarray()
+            tmp.fromstring( chr(int(c, 16))  )
+            tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
+            res.extend( tmp )
+        return res.to01()
 
     @staticmethod
     #+---------------------------------------------- 
