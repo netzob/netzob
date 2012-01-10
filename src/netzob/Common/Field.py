@@ -102,7 +102,6 @@ class Field(object):
         cells = symbol.getMessagesValuesByField(self)
         tmpDomain = set()
         for cell in cells:
-            print "-6>" + str(cell)
             tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))
         domain = sorted(tmpDomain)
         
