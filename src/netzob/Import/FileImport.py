@@ -177,7 +177,7 @@ class FileImport:
             path = info[0]
             iter = treeview.get_model().get_iter(path)
             idMessage = str(treeview.get_model().get_value(iter, 0))
-            print idMessage
+            
         
         if idMessage == None :
             return
@@ -204,7 +204,7 @@ class FileImport:
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(self.messages)) + " selected packets in project " + currentProject.getName() + ".")
+            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
@@ -295,14 +295,6 @@ class FileImport:
     def entry_separator_callback(self, widget, entry):
         entry_text = widget.get_text()
         self.lineSeparator = entry_text
-        
-        # transforms ; 2043 in [0x20; 0x43]
-#        i = 0
-#        self.lineSeparator = []
-#        while (i < len(entry_text)) :
-#            d = entry_text[i] + entry_text[i + 1]
-#            self.lineSeparator.append(int(d, 16))
-#            i = i + 2
             
         self.updateMessageList()    
         
@@ -314,12 +306,12 @@ class FileImport:
         new_messages = []
         for message in self.messages :
             lineNumber = 0
-
             
             splittedStrHexData = message.getData().split(self.lineSeparator)
             for s in splittedStrHexData :
                 message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
                 new_messages.append(message)
+                lineNumber += 1
         
         # We save the new messages
         self.messages = []
@@ -341,49 +333,6 @@ class FileImport:
         self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), hexContent, "normalTag")
 
 
-    def updatePacketList(self):
-        self.envDeps.captureEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
-        self.log.info("updating packet list")
-        hexValOfContent = ";".join(str(int(i, 16)) for i in TypeConvertor.string2hex(self.content))
-              
-        
-        ar = hexValOfContent.split(";" + separator + ";")
-        # Create a FileMessage for each line
-        lineNumber = 1
-        self.messages = []        
-        ps = []
-        i = 0
-        for a in ar :
-            if i < len(ar) - 1 :
-                ps.append(a + ";" + separator)
-            else :
-                ps.append(a)
-            i = i + 1
-                
-        self.lineView.get_model().clear()
-            
-        for a in ps :
-            
-            test = a.split(";")
-            fe = []
-            for t in test :
-                h = hex(int(t))[2:]
-                # Add a 0 before an hex value to always have two digit in a hex
-                if len(h) == 1 :
-                    h = "0" + h
-                fe.append(h)
-            
-            # Create a message for each
-            message = FileMessage(uuid.uuid4(), 0, "".join(fe), self.fileName, self.creationDate, self.modificationDate, self.owner, self.size, lineNumber)
-            
-            
-            self.lineView.get_model().append(None, [str(message.getID()), ";".join(fe)])
-            
-            self.messages.append(message)
-            lineNumber = lineNumber + 1
-        
-        
-        
 
     #+---------------------------------------------- 
     #| GETTERS
