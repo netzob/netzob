@@ -80,7 +80,7 @@ class Field(object):
             return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.format)
     
     def isRegexStatic(self):
-        if self.regex.find("{") == -1:
+        if self.regex.find("{") == -1 or self.getName() == "__sep__":
             return True
         else:
             return False
@@ -93,8 +93,11 @@ class Field(object):
         
     def getVariable(self):
         if self.isRegexStatic() :
+            print "variable static"
+            print "==>" + self.getRegex()
             variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
+        print "variable ! static"
         return self.variable
     
     def getDefaultVariable(self, symbol):
@@ -102,6 +105,7 @@ class Field(object):
         cells = symbol.getMessagesValuesByField(self)
         tmpDomain = set()
         for cell in cells:
+            print "-6>" + str(cell)
             tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))
         domain = sorted(tmpDomain)
         

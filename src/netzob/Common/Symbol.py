@@ -221,12 +221,12 @@ class Symbol(object):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field("Name", iField, "")
+            field = Field("Name", iField, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", iField, "")
+            field = Field("__sep__", iField, self.getRawDelimiter())
             field.setFormat(aFormat)
             field.setColor("black")
             self.addField(field)
@@ -292,10 +292,8 @@ class Symbol(object):
         res = []
         for message in self.getMessages():
             messageTable = message.applyAlignment()
-            if len(messageTable) < 1 :
-                res.append("")
-            else :
-                messageElt = messageTable[field.getIndex()]
+            messageElt = messageTable[field.getIndex()]
+            if len(messageElt) > 0 :
                 res.append(messageElt)
         return res
     

@@ -124,6 +124,7 @@ class TreeTypeStructureGenerator():
             
             # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
+            self.log.warn("field.getName() : " + field.getName() + " " + str(field.getIndex()))
             if field.getVariable() != None :
                 variableDescription = field.getVariable().getDescription()
             elif field.getDefaultVariable(self.getSymbol()) != None :
