@@ -169,7 +169,7 @@ class Field(object):
     def getBackgroundColor(self):
         if self.getVariable() == None :
             return "yellow"
-        return "None"
+        return None
     def getFormat(self):
         return self.format
     def getUnitSize(self):

@@ -214,12 +214,12 @@ class TypeConvertor():
     #| Return the string parameter in string
     #+----------------------------------------------
     def netzobRawToString(raw):
-        if len(raw) % 2 != 0:
-            return raw
-
         res = ""
         for i in range(0, len(raw), 2):
-            v = int(raw[i: i + 2], 16)
+            if len(raw[i: i + 2]) % 2 == 0:
+                v = int(raw[i: i + 2], 16)
+            else: # Unaligned octet
+                v = int(raw[i: i + 1], 16)
             if v >= 0x20 and v <= 0x7e: # means between ' ' and '~'
                 res += chr(v)
             else:
