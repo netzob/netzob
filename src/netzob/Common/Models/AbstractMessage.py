@@ -232,12 +232,18 @@ class AbstractMessage():
                 color = 'blue'
             else:
                 color = field.getColor()
+                
+            # Define the background color
+            if field.getBackgroundColor() != None :
+                backgroundColor = 'background="' + field.getBackgroundColor() + '"'
+            else :
+                backgroundColor = ""
 
             if styled:
                 if encoded:
-                    res.append('<span foreground="' + color + '" font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
+                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
                 else:
-                    res.append('<span foreground="' + color + '" font_family="monospace">' + tmp + '</span>')
+                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + tmp + '</span>')
             else:
                 if encoded:
                     res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))

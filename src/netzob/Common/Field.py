@@ -93,11 +93,8 @@ class Field(object):
         
     def getVariable(self):
         if self.isRegexStatic() :
-            print "variable static"
-            print "==>" + self.getRegex()
             variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
-        print "variable ! static"
         return self.variable
     
     def getDefaultVariable(self, symbol):
@@ -173,7 +170,7 @@ class Field(object):
     def getBackgroundColor(self):
         if self.getVariable() == None :
             return "yellow"
-        return None
+        return "None"
     def getFormat(self):
         return self.format
     def getUnitSize(self):
