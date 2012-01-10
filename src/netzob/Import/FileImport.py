@@ -34,6 +34,7 @@ from netzob.Common.Symbol import Symbol
 import uuid
 from netzob.Common.Field import Field
 import datetime
+from bitarray import bitarray
 pygtk.require('2.0')
 import logging
 import os
@@ -84,7 +85,7 @@ class FileImport:
         self.dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
-        self.dialog.set_size_request(900, 700)
+        self.dialog.set_size_request(600, 500)
         
     def init(self):
         # Default line separator is <CR>
@@ -102,20 +103,20 @@ class FileImport:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a file
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        but = gtk.Button("Select file")
+        but = gtk.Button("Select file(s)")
         but.show()
         entry_filepath = gtk.Entry()
 #        entry_filepath.set_width_chars(50)
         entry_filepath.set_text("")
         entry_filepath.show()
         but.connect("clicked", self.select_file, entry_filepath)
-        self.panel.attach(but, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_filepath, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filepath, 2, 4, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Separator
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_separator = gtk.Label("Line-separator :")
+        label_separator = gtk.Label("HEX line-separator (ex: 0A22) :")
         label_separator.show()
         entry_separator = gtk.Entry()
 #        entry_separator.set_width_chars(50)
@@ -123,8 +124,8 @@ class FileImport:
         entry_separator.show()
         entry_separator.connect("activate", self.entry_separator_callback, entry_separator)
 
-        self.panel.attach(label_separator, 2, 3, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(entry_separator, 3, 4, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(label_separator, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_separator, 2, 4, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # File details
@@ -133,30 +134,26 @@ class FileImport:
         self.textview = gtk.TextView()
         self.textview.show()
         self.textview.get_buffer().create_tag("normalTag", family="Courier")
+        
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 4, 1, 10, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-
-       
+        self.panel.attach(scroll, 0, 4, 2, 10, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Extracted data
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll2 = gtk.ScrolledWindow()
         self.lineView = gtk.TreeView(gtk.TreeStore(str, str)) # line number, content
-        self.lineView.get_selection().set_mode(gtk.SELECTION_NONE)
+        self.lineView.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.lineView.connect('button-press-event', self.button_press_on_message)
         cell = gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn('Line number')
+        column = gtk.TreeViewColumn('Message ID')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         self.lineView.append_column(column)
-        # Col type
-        column = gtk.TreeViewColumn('Content')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
-        self.lineView.append_column(column)
+       
         self.lineView.show()
 
         scroll2.add(self.lineView)
@@ -169,6 +166,34 @@ class FileImport:
         but.show()
         but.connect("clicked", self.import_file)
         self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        
+    def button_press_on_message(self, treeview, event):
+        x = int(event.x)
+        y = int(event.y)
+
+        info = treeview.get_path_at_pos(x, y)
+        idMessage = None
+        if info is not None :
+            path = info[0]
+            iter = treeview.get_model().get_iter(path)
+            idMessage = str(treeview.get_model().get_value(iter, 0))
+            print idMessage
+        
+        if idMessage == None :
+            return
+        
+        # Search for the selected message
+        selectedMessage = None
+        for message in self.messages :
+            if str(message.getID()) == idMessage: 
+                selectedMessage = message
+                
+        if selectedMessage == None :
+            self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
+            return
+        
+        self.displayMessage(selectedMessage)
+
 
     #+---------------------------------------------- 
     #| Called when user select a list of packet
@@ -216,52 +241,111 @@ class FileImport:
     #+----------------------------------------------
     def select_file(self, button, label):
         aFile = ""
-        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_OPEN,
+        chooser = gtk.FileChooserDialog(title="Select one or multiple file", action=gtk.FILE_CHOOSER_ACTION_OPEN,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        # Computes the selected file
+        chooser.set_select_multiple(True)
+        
+        filesToBeImported = []
+        
+        # Computes the selected file(s)
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
-            aFile = chooser.get_filename()
-            label.set_text(aFile)
+            for filename in chooser.get_filenames() :
+                if filename != None and filename != "" and os.path.isfile(filename) :
+                    filesToBeImported.append(filename)
         chooser.destroy()
         
-        # Reads the file
-        if aFile != "" and aFile != None:
-            self.fileName = aFile.strip()
-            self.size = os.path.getsize(aFile)
-            self.creationDate = datetime.datetime.fromtimestamp(os.path.getctime(aFile))
-            self.modificationDate = datetime.datetime.fromtimestamp(os.path.getmtime(aFile))
-            self.owner = "none"
-            pktFD = open(aFile, 'r')
-            self.content = pktFD.read()
-            pktFD.close()
-           
-            self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), TypeConvertor.hexdump(self.content), "normalTag")
+        # We capture the current environment
+        self.envDeps.captureEnvData()
+        
+        # We update the label with the list of the selected files
+        label.set_text(";".join(filesToBeImported))
+        
+        # We read each file and create one message for each file
+        fileNumber = 0
+        self.messages = []
+        
+        for file in filesToBeImported :
+            # Extraction of the metadata
+            fileName = file.strip()
+            size = os.path.getsize(file)
+            creationDate = datetime.datetime.fromtimestamp(os.path.getctime(file))
+            modificationDate = datetime.datetime.fromtimestamp(os.path.getmtime(file))
+            owner = "none"
             
-            # Fill the packets list
-            self.updatePacketList()
+            # Retrieve the binary content of the file
+            content = self.getNetzobRawContentOfFile(file)
             
+            # Create a message
+            message = FileMessage(uuid.uuid4(), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
+            self.messages.append(message)
+            self.lineView.get_model().append(None, [message.getID(), content])
+            fileNumber += 1
+        
+        # We clean the display
+        self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), "", "normalTag")
+        
+    def getNetzobRawContentOfFile(self, filename):
+        file = open(filename, "r")
+        content = file.read()
+        file.close()
+        return TypeConvertor.stringToNetzobRaw(content)
+
+     
     def entry_separator_callback(self, widget, entry):
         entry_text = widget.get_text()
+        self.lineSeparator = entry_text
+        
         # transforms ; 2043 in [0x20; 0x43]
-        i = 0
-        self.lineSeparator = []
-        while (i < len(entry_text)) :
-            d = entry_text[i] + entry_text[i + 1]
-            self.lineSeparator.append(int(d, 16))
-            i = i + 2
+#        i = 0
+#        self.lineSeparator = []
+#        while (i < len(entry_text)) :
+#            d = entry_text[i] + entry_text[i + 1]
+#            self.lineSeparator.append(int(d, 16))
+#            i = i + 2
             
-        self.updatePacketList()    
+        self.updateMessageList()    
         
+    def updateMessageList(self):
+        # We read each file and create one message for each file
+        fileNumber = 0
 
-        print "Entry contents: %s\n" % entry_text
+        # We split the content of each message and retrieve new messages
+        new_messages = []
+        for message in self.messages :
+            lineNumber = 0
+
+            
+            splittedStrHexData = message.getData().split(self.lineSeparator)
+            for s in splittedStrHexData :
+                message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
+                new_messages.append(message)
         
+        # We save the new messages
+        self.messages = []
+        self.messages.extend(new_messages)
+        self.lineView.get_model().clear()
+        for message in self.messages :
+            self.lineView.get_model().append(None, [message.getID(), message.getData()])
+        # We clean the display
+        self.textview.get_buffer().delete(self.textview.get_buffer().get_start_iter(), self.textview.get_buffer().get_end_iter())
+        
+        
+        
+    def displayMessage(self, message):
+        # Clean the hexdump view
+        self.textview.get_buffer().delete(self.textview.get_buffer().get_start_iter(), self.textview.get_buffer().get_end_iter())
+        # Fecth the content of the message to display
+        hexContent = TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getData()))
+        # Update the hexdump
+        self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), hexContent, "normalTag")
+
 
     def updatePacketList(self):
         self.envDeps.captureEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
         self.log.info("updating packet list")
         hexValOfContent = ";".join(str(int(i, 16)) for i in TypeConvertor.string2hex(self.content))
-        separator = ";".join(str(i) for i in self.lineSeparator)       
+              
         
         ar = hexValOfContent.split(";" + separator + ";")
         # Create a FileMessage for each line
@@ -293,7 +377,7 @@ class FileImport:
             message = FileMessage(uuid.uuid4(), 0, "".join(fe), self.fileName, self.creationDate, self.modificationDate, self.owner, self.size, lineNumber)
             
             
-            self.lineView.get_model().append(None, [lineNumber, ";".join(fe)])
+            self.lineView.get_model().append(None, [str(message.getID()), ";".join(fe)])
             
             self.messages.append(message)
             lineNumber = lineNumber + 1
