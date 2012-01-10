@@ -109,8 +109,12 @@ class TreeMessageGenerator():
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
         
         # Verifies we have everything needed for the creation of the treeview
-        if (self.symbol == None or len(self.symbol.getMessages()) < 1) or len(self.symbol.getFields()) == 0 :
+        if (self.symbol == None) :
             self.log.warn("Error while trying to update the list of messages")
+            return
+
+        if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0) :
+            self.log.debug("It's an empty symbol so nothing to display")
             return
 
         # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
@@ -118,16 +122,6 @@ class TreeMessageGenerator():
         for field in self.symbol.getFields():
             treeStoreTypes.append(str)
         self.treestore = gtk.TreeStore(*treeStoreTypes)
-
-        # Build the name row
-#        name_line = []
-#        name_line.append("HEADER NAME")
-#        name_line.append("#ababab")
-#        name_line.append(pango.WEIGHT_BOLD)
-#        name_line.append(True)
-#        for field in self.symbol.getFields():
-#            name_line.append(field.getName())
-#        self.treestore.append(None, name_line)
 
         # Build the regex row
         regex_row = []
