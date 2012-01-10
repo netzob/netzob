@@ -29,9 +29,14 @@
 import sys
 import logging.config
 import gobject
+import os
+
+arch = os.uname()[-1]
+python_version = sys.version[:3]
+build_lib_path = "build/lib.linux-" + arch + "-" + python_version
 
 sys.path.insert(0, 'src/')
-sys.path.append('lib/libNeedleman/')
+sys.path.append( build_lib_path )
 
 import netzob.NetzobGui as NetzobGui
 
