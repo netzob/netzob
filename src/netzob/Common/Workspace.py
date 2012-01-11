@@ -218,6 +218,7 @@ class Workspace(object):
         
         # verify we can open and read the file
         if workspaceFile == None :
+            logging.warn("The workspace's configuration file can't be find (No workspace path given).")
             return None
         # is the workspaceFile is a file
         if not os.path.isfile(workspaceFile) :
