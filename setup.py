@@ -95,9 +95,9 @@ setup(
         ],
     scripts=["netzob"],
     version="0.3.0",
-    license="GPLv3"
+    license="GPLv3",
     description="Inferring communication protocols",
-    platform="Linux_x86, Linux_x64"
+    platforms="Linux_x86, Linux_x64",
     author="Georges Bossert, Frédéric Guihéry",
     author_email="contact@netzob.org",
     url="http://www.netzob.org",
