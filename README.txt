@@ -108,6 +108,7 @@ $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 * Email : contact@netzob.org
 * Mailing lists : https://lists.netzob.org/wws/
 * Developer's room : https://dev.netzob.org
+* IRC : #netzob on Freenode
 
 Authors:
 * Georges Bossert
