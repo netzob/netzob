@@ -50,12 +50,12 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 
 #+---------------------------------------------- 
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 
 
 NAMESPACE = "http://www.netzob.org/"
@@ -296,8 +296,29 @@ class Symbol(object):
         for message in self.getMessages():
             messageTable = message.applyAlignment()            
             messageElt = messageTable[field.getIndex()]
-            if len(messageElt) > 0 :
-                res.append(messageElt)
+            res.append( messageElt )
+#            if len(messageElt) > 0 :
+#                res.append( messageElt )
+#            else:
+#                res.append( None )
+        return res
+
+    #+---------------------------------------------- 
+    #| getUniqValuesByField:
+    #|  Return all the uniq cells of a field
+    #+----------------------------------------------
+    def getUniqValuesByField(self, field):
+        # First we verify the field exists in the symbol
+        if not field in self.fields :
+            logging.warn("The computing field is not part of the current symbol")
+            return []
+        
+        res = []
+        for message in self.getMessages():
+            messageTable = message.applyAlignment()            
+            messageElt = messageTable[field.getIndex()]
+            if len(messageElt) > 0 and not messageElt in res :
+                res.append( messageElt )
         return res
     
     #+---------------------------------------------- 
@@ -432,7 +453,7 @@ class Symbol(object):
             return []
         
         # Retrieve all the part of the messages which are in the given field
-        cells = self.getMessagesValuesByField(field)
+        cells = self.getUniqValuesByField(field)
         typeIdentifier = TypeIdentifier()        
         return typeIdentifier.getTypes(cells)
     
@@ -535,12 +556,12 @@ class Symbol(object):
     #|  try to find the size fields of each regex
     #+----------------------------------------------    
     def findSizeFields(self, store):
-        if len(self.fields) == 1:
+        if len(self.fields) <= 1:
             return
         iField = 0
         # We cover each field for a potential size field
         for field in self.getFields():
-            if field.isRegexStatic(): # Means the element is static, and we exclude it for performance issue
+            if field.isRegexStatic(): # Means the element is static, so we assume it's not a good candidate
                 iField += 1
                 continue
             cellsSize = self.getMessagesValuesByField(field)
@@ -557,8 +578,7 @@ class Symbol(object):
                 while k < len(self.getFields()):
                     if k != j:
                         for l in range(len(cellsSize)):
-                            if len(self.getMessagesValuesByField(self.getFieldByIndex(k))) > l:
-                                aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
+                            aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
                     if self.getFieldByIndex(j).isRegexStatic():

@@ -59,7 +59,7 @@ class Entropy(object):
         i = 0
         for field in self.symbol.getFields():
             maxCell = -1
-            for cell in self.symbol.getMessagesValuesByField(field):
+            for cell in self.symbol.getUniqValuesByField(field):
                 for j in range(len(cell) / 2):
                     resX.append(i + j)
                     resY.append(int(cell[j * 2:j * 2 + 2], 16))

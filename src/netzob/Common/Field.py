@@ -99,7 +99,7 @@ class Field(object):
     
     def getDefaultVariable(self, symbol):
         # The default variable its an Alternative of all the possibilities (in binary type)
-        cells = symbol.getMessagesValuesByField(self)
+        cells = symbol.getUniqValuesByField(self)
         tmpDomain = set()
         for cell in cells:
             tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))

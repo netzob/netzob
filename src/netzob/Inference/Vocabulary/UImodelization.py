@@ -927,7 +927,7 @@ class UImodelization:
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def rightClickDomainOfDefinition(self, event, field):
-        cells = self.treeMessageGenerator.getSymbol().getMessagesValuesByField(field)
+        cells = self.treeMessageGenerator.getSymbol().getUniqValuesByField(field)
         tmpDomain = set()
         for cell in cells:
             tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, field.getFormat()))
