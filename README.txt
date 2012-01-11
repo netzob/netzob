@@ -43,12 +43,13 @@ Dependencies :
 * iptables
 * python-bitarray
 * python-pyasn1
+* python-dev
 
 or, on Debian-like operating systems :
 
 $ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python \
   python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables \
-  python-pcapy python-bitarray python-pyasn1
+  python-pcapy python-bitarray python-pyasn1 python-dev
 
 And then, 
 

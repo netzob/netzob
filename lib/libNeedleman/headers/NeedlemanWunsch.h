@@ -18,7 +18,7 @@
 #ifndef __NeedlemanWunsch_header
 #define __NeedlemanWunsch__header
 
-#include <python2.6/Python.h>
+#include <Python.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
