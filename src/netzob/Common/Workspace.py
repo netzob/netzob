@@ -188,6 +188,7 @@ class Workspace(object):
         tracesPath = os.path.join(path, "traces")
         projectsPath = os.path.join(path, "projects")
         prototypesPath = os.path.join(path, "prototypes")
+        loggingPath = os.path.join(path, "logging")
         pathOfLogging = os.path.join(path, "logging/logging.conf")
         
         # we create a "traces" directory if it doesn't yet exist
@@ -205,6 +206,14 @@ class Workspace(object):
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             staticRepositoryPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "repository.xml.default")
             shutil.copy(staticRepositoryPath, os.path.join(prototypesPath, "repository.xml"))
+
+        # we create the "logging" directory if it doesn't yet exist
+        if not os.path.isdir(loggingPath) :
+            os.mkdir(loggingPath)
+            # we upload in it the default repository file
+            from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+            staticLoggingPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "logging.conf.default")
+            shutil.copy(staticLoggingPath, os.path.join(loggingPath, "logging.conf"))
             
         workspace = Workspace(name, datetime.datetime.now(), path, tracesPath, pathOfLogging, prototypesPath)
         workspace.saveConfigFile()

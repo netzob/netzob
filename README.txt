@@ -43,13 +43,17 @@ Dependencies :
 * iptables
 * python-bitarray
 * python-pyasn1
+* python-lxml
 * python-dev
+* libjs-sphinxdoc
+* python-sphinx
 
 or, on Debian-like operating systems :
 
 $ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python \
   python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables \
-  python-pcapy python-bitarray python-pyasn1 python-dev
+  python-pcapy python-bitarray python-pyasn1 python-dev python-lxml         \
+  libjs-sphinxdoc python-sphinx
 
 And then, 
 
@@ -68,10 +72,6 @@ $ ./netzob
 [*******************************************************************************]
 [************************]       4. Documentation     [*************************]
 [*******************************************************************************]
-
-Dependency for documentation building :
-
-* python-sphinx
 
 Documentation generation :
 
