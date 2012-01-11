@@ -242,6 +242,9 @@ class Symbol(object):
                 continue
             elif field.isRegexOnlyDynamic():
                 cells = self.getMessagesValuesByField(field)
+                if len(cells) != len( self.getMessages() ):
+                    # There exists empty cells
+                    continue
                 min = 999999
                 max = 0
                 for cell in cells:
@@ -291,7 +294,7 @@ class Symbol(object):
         
         res = []
         for message in self.getMessages():
-            messageTable = message.applyAlignment()
+            messageTable = message.applyAlignment()            
             messageElt = messageTable[field.getIndex()]
             if len(messageElt) > 0 :
                 res.append(messageElt)
@@ -554,7 +557,8 @@ class Symbol(object):
                 while k < len(self.getFields()):
                     if k != j:
                         for l in range(len(cellsSize)):
-                            aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
+                            if len(self.getMessagesValuesByField(self.getFieldByIndex(k))) > l:
+                                aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
                     if self.getFieldByIndex(j).isRegexStatic():
