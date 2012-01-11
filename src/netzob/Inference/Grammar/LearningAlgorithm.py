@@ -33,6 +33,7 @@ import time
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 #+---------------------------------------------- 
 #| Related third party imports

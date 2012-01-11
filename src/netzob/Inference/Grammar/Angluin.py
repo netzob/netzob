@@ -406,9 +406,6 @@ class Angluin(LearningAlgorithm):
                 value = dicValue[word]
                 # search for the output state
                 mq = word.getMQSuffixedWithMQ(symbol)
-                
-                
-                
                 for wordSandSA in self.getSandSAWords() :
                     self.log.info("IS " + str(wordSandSA) + " eq " + str(mq))
                     if wordSandSA == mq :

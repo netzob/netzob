@@ -8,6 +8,7 @@ v0.3 -- 2012-01-11
       * Sign: signed and unsigned
       * Endianess: big and little endian
     * Add grammar inference support
+      * Add the definition of the MMSTD model
     * Add simulation module
     * Add import modules : files and library calls
 

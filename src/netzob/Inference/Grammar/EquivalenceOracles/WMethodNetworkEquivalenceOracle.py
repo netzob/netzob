@@ -78,7 +78,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         
         
         inputDictionary = []
-        for entry in mmstd.dictionary.getEntries()[:2] :
+        for entry in mmstd.dictionary.getSymbols()[:2] :
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
             self.log.info("INPUT : " + str(letter))

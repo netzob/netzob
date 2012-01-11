@@ -39,6 +39,8 @@ import logging
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunicationLayer
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Grammar import Grammar
 
 #+---------------------------------------------- 
 #| MMSTD :
@@ -78,8 +80,8 @@ class MMSTD(object):
     #| @return the generated traces (a list of symbols) by the MMSTD and the end state
     #+---------------------------------------------------------------------------+
     def getOutputTrace(self, state, symbols):
-        communicationLayer = SimpleCommunicationLayer(symbols, [], self.dictionary)        
-        abstractionLayer = AbstractionLayer(communicationLayer, self.dictionary)
+        communicationLayer = SimpleCommunicationLayer(symbols, [], self.dictionary, Memory(self.dictionary.getVariables()))        
+        abstractionLayer = AbstractionLayer(communicationLayer, self.dictionary, Memory(self.dictionary.getVariables()))
         for i in range(0, len(symbols)) :
             state = state.executeAsClient(abstractionLayer)
         outputMessages = abstractionLayer.getOutputMessages()
@@ -88,9 +90,58 @@ class MMSTD(object):
             generatedSymbols.append(symbol)
             
         return (generatedSymbols, state)
+    
+    #+---------------------------------------------------------------------------+
+    #| toGrammar :
+    #|     Generalize the MMSTD in a normla grammar
+    #+---------------------------------------------------------------------------+
+    def toGrammar(self):
+        result = Grammar("MMSTD", self.initialState)
+        for state in self.getAllStates() :
+            result.addState(state)
+            # Add the transitions (only if doesn't include as only output symbol an EmptySymbol)
+            for transition in state.getTransitions() :
+                if len(transition.getOutputSymbols()) > 0 :
+                    
+                    if len(transition.getOutputSymbols()) == 1:
+                        
+                        outputSymbol = transition.getOutputSymbols()[0][0]
+                        realSymbol = outputSymbol.getEntry()
+                        
+                        if realSymbol.getName() != "EmptySymbol" :
+                            result.addTransition(transition)
+                        else :
+                            state.unregisterTransition(transition)
+                    elif len(transition.getOutputSymbols()) > 1 :
+                        result.addTransition(transition)
+                    else :
+                        self.log.info("Not adding transition : " + transition.getName())
+                
+        return result
         
         
+    #+---------------------------------------------------------------------------+
+    #| getDotCode :
+    #|     Generates the dot code representing the automata
+    #| @return a string containing the dot code of the automata
+    #+---------------------------------------------------------------------------+
+    def getDotCode(self):        
+        dotCode = "digraph G {\n"        
+        # first we include all the states declared in the automata
+        states = self.getAllStates()        
+        for state in states :
+            if state.isActive() :
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"  
+            else :
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"  
+           
+        for inputState in states :
+            for transition in inputState.getTransitions() :
+                outputState = transition.getOutputState()                
+                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
         
+        dotCode = dotCode + "}"      
+        return dotCode    
         
     
     #+---------------------------------------------------------------------------+

@@ -662,6 +662,7 @@ class UIGrammarInference:
         # Dedicated view for the inference process
         inferencePanel = AutomaticGrammarInferenceView(self.netzob.getCurrentProject())
         inferencePanel.display()
+        self.update()
         
     #+---------------------------------------------- 
     #| button_press_on_states :

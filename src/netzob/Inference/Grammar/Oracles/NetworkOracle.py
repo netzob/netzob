@@ -42,6 +42,7 @@ import threading
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 #+---------------------------------------------- 
@@ -63,7 +64,7 @@ class NetworkOracle(threading.Thread):
         self.log.info("Start the network oracle based on given MMSTD")
         
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getDictionary())
+        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getDictionary(), Memory(self.mmstd.getDictionary().getVariables()))
         
         # And we create an MMSTD visitor for this
         self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, True, abstractionLayer) 

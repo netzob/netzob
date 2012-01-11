@@ -74,10 +74,15 @@ class AutomaticGrammarInferenceView(object):
         # Protocol of the server
         ProtocolLabel = gtk.Label("Protocol :")
         ProtocolLabel.show()
-        self.ProtocolEntry = gtk.Entry()
-        self.ProtocolEntry.show()
+        self.combo_protocolOfNetworkActor = gtk.combo_box_entry_new_text()
+        self.combo_protocolOfNetworkActor.set_model(gtk.ListStore(str))
+        self.combo_protocolOfNetworkActor.append_text("TCP")
+        self.combo_protocolOfNetworkActor.append_text("UDP")
+        self.combo_protocolOfNetworkActor.set_active(0)
+        self.combo_protocolOfNetworkActor.show()
+
         mainTable.attach(ProtocolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.ProtocolEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.combo_protocolOfNetworkActor, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Port of the server
         PortLabel = gtk.Label("Port :")
@@ -108,7 +113,7 @@ class AutomaticGrammarInferenceView(object):
         
         # We retrieve the specified value
         actorIP = self.IPEntry.get_text()
-        actorNetworkProtocol = self.ProtocolEntry.get_text()
+        actorNetworkProtocol = self.combo_protocolOfNetworkActor.get_active_text()
         actorPort = int(self.PortEntry.get_text())
         maxNumberOfState = int(self.MaxStatesEntry.get_text())
         
@@ -122,8 +127,16 @@ class AutomaticGrammarInferenceView(object):
         inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle)
         resultedAutomaton = inferer.infer()
         
-        print resultedAutomaton.getDotCode()
+       
         
+        
+        inferedGrammar = resultedAutomaton.toGrammar()
+        if inferedGrammar != None :
+            self.log.info("A grammar has been successfully infered.")
+            self.project.setGrammar(inferedGrammar)
+        else :
+            self.log.warn("The automatic inference process has failed, no grammar was computed")
+            
         
         
         
