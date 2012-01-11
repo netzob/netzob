@@ -91,7 +91,10 @@ setup(
         ('share/icons/hicolor/22x22/apps/', ["resources/static/icons/22x22/netzob.png"]),
         ('share/icons/hicolor/48x48/apps/', ["resources/static/icons/48x48/netzob.png"]),
         ('share/icons/hicolor/64x64/apps/', ["resources/static/icons/64x64/netzob.png"]),
-        ('share/netzob/defaults', ["resources/static/defaults/repository.xml.default"])
+        ('share/netzob/defaults', ["resources/static/defaults/repository.xml.default"]),
+        ('share/netzob/xsds/0.1/', ["resources/static/xsds/0.1/Workspace.xsd",
+                                    "resources/static/xsds/0.1/Project.xsd",
+                                    "resources/static/xsds/0.1/common.xsd"]),
         ],
     scripts=["netzob"],
     version="0.3.0",
