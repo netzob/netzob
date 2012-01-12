@@ -98,7 +98,7 @@ setup(
                                     "resources/static/xsds/0.1/common.xsd"]),
         ],
     scripts=["netzob"],
-    version="0.3.0",
+    version="0.3.1",
     license="GPLv3",
     description="Inferring communication protocols",
     platforms="Linux_x86, Linux_x64",

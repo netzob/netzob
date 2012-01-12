@@ -278,7 +278,7 @@ class Menu(object):
     def aboutDialogAction(self, widget):
         about = gtk.AboutDialog()
         about.set_program_name("Netzob")
-        about.set_version("0.3")
+        about.set_version("0.3.1")
         about.set_copyright("(c) Georges Bossert & Frédéric Guihéry")
         about.set_comments("Communication protocol modelization by reverse engineering")
         about.set_website("http://www.netzob.org")
