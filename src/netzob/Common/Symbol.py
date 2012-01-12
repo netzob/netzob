@@ -1016,13 +1016,31 @@ class Symbol(object):
                         nextField = self.getFieldByIndex(i + 1)
                         if nextField.isRegexOnlyDynamic():
                             res = True
-                            
+                            minSize = 2
+                            maxSize = 2
+
                             # Build the new field
-                            lenColResult = int(precField.getRegex()[4:-2]) + 2 + int(nextField.getRegex()[4:-2]) # We compute the len of the aggregated regex
-                            lenColResult = str(lenColResult)
+                            regex = re.compile(".*{(\d*),(\d*)}.*")
                             
-                            aField.setIndex(precField.getIndex())
-                            aField.setRegex("(.{," + lenColResult + "})")
+                            # Get the minSize/maxSize of precField
+                            m = regex.match( precField.getRegex() )
+                            if m.group(1) != "":
+                                minSize += int(m.group(1))
+                            if m.group(2) != "":
+                                maxSize += int(m.group(2))
+
+                            # Get the minSize/maxSize of nextField
+                            m = regex.match( nextField.getRegex() )
+                            if m.group(1) != "":
+                                minSize += int(m.group(1))
+                            if m.group(2) != "":
+                                maxSize += int(m.group(2))
+
+                            minSize = str(minSize)
+                            maxSize = str(maxSize)
+                            
+                            aField.setIndex( precField.getIndex() )
+                            aField.setRegex( "(.{" + minSize + "," + maxSize + "})" )
                             aField.setFormat(aFormat)
 
                             # Delete the old ones
