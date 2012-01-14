@@ -231,10 +231,7 @@ class TypeConvertor():
     #| Return the string parameter in octal
     #+----------------------------------------------
     def netzobRawToOctal(raw):
-        if len(raw) % 2 != 0:
-            logging.error("(toOctal) Hex string len not even : " + raw)
-            return raw
-
+        logging.error("Not yet implemented")
         # TODO
         return raw
 
@@ -243,10 +240,7 @@ class TypeConvertor():
     #| Return the octal parameter in string
     #+----------------------------------------------
     def octalToNetzobRaw(raw):
-        if len(raw) % 2 != 0:
-            logging.error("(toOctal) Hex string len not even : " + raw)
-            return raw
-
+        logging.error("Not yet implemented")
         # TODO
         return raw
 
@@ -255,22 +249,24 @@ class TypeConvertor():
     #| Return the string parameter in decimal
     #+----------------------------------------------
     def netzobRawToDecimal(raw):
-        if len(raw) % 2 != 0:
-            logging.error("(toOctal) Hex string len not even : " + raw)
-            return raw
-
-        # TODO
-        return raw
+        res = ""
+        raw = raw.strip()
+        
+        if len(raw) % 2 == 0: # Even length
+            for i in range(0, len(raw), 2):
+                res = res + " " + str(int(raw[i: i + 2], 16))
+        else: # Odd length
+            for i in range(0, len(raw) - 1, 2):
+                res = res + " " + str(int(raw[i: i + 2], 16))
+            res = res + " " + str(int(raw[-1], 16))
+        return res    
 
     @staticmethod
     #+---------------------------------------------- 
     #| Return the decimal parameter in string
     #+----------------------------------------------
     def decimalToNetzobRaw(raw):
-        if len(raw) % 2 != 0:
-            logging.error("(toOctal) Hex string len not even : " + raw)
-            return raw
-
+        logging.error("Not yet implemented")        
         # TODO
         return raw
 
@@ -292,9 +288,7 @@ class TypeConvertor():
     #| Return the bits parameter in raw
     #+----------------------------------------------
     def binaryToNetzobRaw(raw):
-        if len(raw) % 2 != 0:
-            logging.error("(toBit) Hex string len not even : " + raw)
-            return raw
+        logging.error("Not yet implemented")
         # TODO
         return raw
 

@@ -72,9 +72,9 @@ class UImodelization:
     #+----------------------------------------------
     def new(self):
         # Update the combo for choosing the format
-# TODO: support DECIMAL and OCTAL
+# TODO: support OCTAL
 #        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
-        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+        possible_choices = [Format.BINARY, Format.DECIMAL, Format.HEX, Format.STRING]
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
         self.comboDisplayFormat.set_model(gtk.ListStore(str)) # Clear the list
@@ -1311,6 +1311,7 @@ class UImodelization:
             self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getID())                
         
     def rightClickEditVariable(self, widget, field):
+        logging.error("Not yet implemented")
         # TODO
         pass
 
