@@ -158,6 +158,7 @@ class UImodelization:
         #+---------------------------------------------- 
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
+        tooltips = gtk.Tooltips()
         topPanel = gtk.HBox(False, spacing=5)
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
@@ -174,6 +175,7 @@ class UImodelization:
         # Widget for discovering the alignment
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Discover alignment")
+        tooltips.set_tip(but, "Automatically discover the best alignment of messages")
         but.connect("clicked", self.discoverAlignment_cb)
         but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -181,6 +183,7 @@ class UImodelization:
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
         but.set_label("Force alignment")
+        tooltips.set_tip(but, "Set a delimiter to force alignment")
         but.connect("clicked", self.forceAlignment_cb)
         but.show()
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
@@ -188,6 +191,7 @@ class UImodelization:
         # Widget button slick regex
         but = gtk.Button("Smooth alignment")
         but.connect("clicked", self.slickRegex_cb)
+        tooltips.set_tip(but, "Merge small static fields with its neighbours")
         but.show()
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
        
@@ -203,12 +207,14 @@ class UImodelization:
         # Widget button refine regex
         but = gtk.Button("Refine alignment")
         but.connect("clicked", self.refineRegexes_cb)
+        tooltips.set_tip(but, "Automatically find the boundaries (min/max of cell's size) for each fields")
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button to show message distribution
         but = gtk.Button("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
+        tooltips.set_tip(but, "Open a graph with messages distribution, separated by fields")
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
@@ -230,12 +236,14 @@ class UImodelization:
         # Widget button find size fields
         but = gtk.Button("Find size fields")
         but.connect("clicked", self.findSizeFields)
+        tooltips.set_tip(but, "Automatically find potential size fields and associated payloads")
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button for environment dependencies
         but = gtk.Button("Environment dependencies")
         but.connect("clicked", self.env_dependencies_cb)
+        tooltips.set_tip(but, "Automatically look for environmental dependencies (retrieved during capture) in messages")
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
@@ -251,12 +259,14 @@ class UImodelization:
         # Widget button data carving
         but = gtk.Button("Data carving")
         but.connect("clicked", self.dataCarving_cb)
+        tooltips.set_tip(but, "Automatically look for known patterns of data (URL, IP, email, etc.)")
         but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
         # Widget button for search
         but = gtk.Button("Search")
         but.connect("clicked", self.search_cb)
+        tooltips.set_tip(but, "A search function available in different encoding format")
         but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
 
