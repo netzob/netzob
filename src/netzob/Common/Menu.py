@@ -162,6 +162,9 @@ class Menu(object):
         
         self.menuWorkspace = gtk.Menu()
         
+        agr = gtk.AccelGroup()
+        self.netzob.add_accel_group(agr)
+                
         menuRootWorkspace = gtk.MenuItem("Workspace")
         menuRootWorkspace.set_submenu(self.menuWorkspace)
         
@@ -183,7 +186,9 @@ class Menu(object):
         self.switchWorkspace = gtk.MenuItem("Switch workspace")
         self.menuWorkspace.append(self.switchWorkspace)
         
-        self.exit = gtk.MenuItem("Exit")
+        self.exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, agr)
+        key, mod = gtk.accelerator_parse("<Control>Q")
+        self.exit.add_accelerator("activate", agr, key, mod, gtk.ACCEL_VISIBLE)
         self.exit.connect("activate", self.exitAction)
         
         self.menuWorkspace.append(self.exit)
