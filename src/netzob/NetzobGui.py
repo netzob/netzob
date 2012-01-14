@@ -57,7 +57,7 @@ from netzob.Common.Workspace import Workspace
 #| NetzobGUI :
 #|     Graphical runtime class
 #+---------------------------------------------- 
-class NetzobGui():
+class NetzobGui(gtk.Window):
 
     #+---------------------------------------------- 
     #| Constructor :
@@ -81,14 +81,14 @@ class NetzobGui():
         self.log.info("Starting netzob")
 
         # Main window definition
-        window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        window.set_default_size(800, 600)
-        window.set_title("Netzob : Inferring communication protocols")
+        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+        self.set_default_size(800, 600)
+        self.set_title("Netzob : Inferring communication protocols")
         
-        window.set_icon_from_file(("%s/logo.png" % 
+        self.set_icon_from_file(("%s/logo.png" % 
                                    ResourcesConfiguration.getStaticResources()))
-        window.connect("delete_event", self.evnmtDelete)
-        window.connect("destroy", self.destroy)
+        self.connect("delete_event", self.evnmtDelete)
+        self.connect("destroy", self.destroy)
         main_vbox = gtk.VBox(False, spacing=0)
         
         # Main menu
@@ -130,8 +130,8 @@ class NetzobGui():
         # Show every widgets
         self.notebook.show()
         main_vbox.show()
-        window.add(main_vbox)
-        window.show()
+        self.add(main_vbox)
+        self.show()
 
     #+---------------------------------------------- 
     #| Update each panels
