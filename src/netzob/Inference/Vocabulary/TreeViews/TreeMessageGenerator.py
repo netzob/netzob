@@ -168,7 +168,7 @@ class TreeMessageGenerator():
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property('background-set' , True)
-            textCellRenderer.connect('edited', self.column_renaming_cb, field)    
+
             # Column Messages
             lvcolumn = gtk.TreeViewColumn(field.getName())
             lvcolumn.pack_start(textCellRenderer, True)
@@ -178,10 +178,6 @@ class TreeMessageGenerator():
 
         self.treeview.set_model(self.treestore)
 
-    def column_renaming_cb(self, cell, path_string, new_text, field):
-        self.treestore[path_string][field.getIndex() + 4] = new_text
-        field.setName(new_text)
-        
     def updateDefault(self):
         self.default(self.symbol)
     
