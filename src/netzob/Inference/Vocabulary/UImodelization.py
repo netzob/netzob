@@ -338,11 +338,18 @@ class UImodelization:
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+---------------------------------------------- 
-        #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
+        #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
         rightPanel = gtk.VPaned()
         rightPanel.show()
         bottomPanel.add(rightPanel)
+        rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())        
+        self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
+        self.log.debug("GUI for sequential part is created")
+
+        #+---------------------------------------------- 
+        #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
+        #+----------------------------------------------
         rightPanel.add(self.treeMessageGenerator.getScrollLib())
         
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
@@ -351,13 +358,6 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
-
-        #+---------------------------------------------- 
-        #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
-        #+----------------------------------------------
-        rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())        
-        self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
-        self.log.debug("GUI for sequential part is created")
 
     #+---------------------------------------------- 
     #| discoverAlignment :
@@ -534,8 +534,9 @@ class UImodelization:
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
             self.selectedSymbol = clickedSymbol
             self.updateTreeStoreMessage()
-            self.treeTypeStructureGenerator.clear()
+            self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
             self.updateTreeStoreTypeStructure()
+
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_symbols(event, clickedSymbol)
 
@@ -563,16 +564,20 @@ class UImodelization:
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
             x = int(event.x)
             y = int(event.y)
-            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
-            aIter = treeview.get_model().get_iter(path)
-            if aIter:
-                if treeview.get_model().iter_is_valid(aIter):
-                    message_id = treeview.get_model().get_value(aIter, 0)
-                    symbol = self.treeMessageGenerator.getSymbol()
-                    self.treeTypeStructureGenerator.setSymbol(symbol)
-                    self.treeTypeStructureGenerator.setMessageByID(message_id)
-                    self.updateTreeStoreTypeStructure()
-
+            try:
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            except:
+                # No message selected
+                pass
+            else:
+                # A message is selected
+                aIter = treeview.get_model().get_iter(path)
+                if aIter:
+                    if treeview.get_model().iter_is_valid(aIter):
+                        message_id = treeview.get_model().get_value(aIter, 0)
+                        symbol = self.treeMessageGenerator.getSymbol()
+                        # Do nothing for now
+                        
         # Popup a menu
         elif event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.log.debug("User requested a contextual menu (treeview messages)")
@@ -604,9 +609,16 @@ class UImodelization:
                 return
                 
             menu = gtk.Menu()
+
+            # Add entry to edit field
+            item = gtk.MenuItem("Edit field")
+            item.show()
+            item.connect("activate", self.displayPopupToEditField, selectedField)
+            menu.append(item)
+
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu_for_field(selectedField)
-            item = gtk.MenuItem("Visualization")
+            item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
@@ -624,19 +636,19 @@ class UImodelization:
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
-            item = gtk.MenuItem("Concatenate")
+            item = gtk.MenuItem("Concatenate field")
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
 
             # Add entry to split the column
-            item = gtk.MenuItem("Split column")
+            item = gtk.MenuItem("Split field")
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
 
             # Add entry to retrieve the field domain of definition
-            item = gtk.MenuItem("Domain of definition")
+            item = gtk.MenuItem("Field's domain of definition")
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
@@ -661,13 +673,17 @@ class UImodelization:
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)   
                 typeMenuVariable.append(itemVariable3)
                 
-            item = gtk.MenuItem("Configure variation ...")
+            item = gtk.MenuItem("Configure variation of field")
             item.set_submenu(typeMenuVariable)
+            item.show()
+            menu.append(item)
+
+            item = gtk.SeparatorMenuItem()
             item.show()
             menu.append(item)
             
             # Add entry to show properties of the message
-            item = gtk.MenuItem("Properties")
+            item = gtk.MenuItem("Message properties")
             item.show()
             item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
             menu.append(item)
@@ -741,15 +757,40 @@ class UImodelization:
 
         return menu
 
+    def displayPopupToEditField(self, event, field):
+        dialog = gtk.MessageDialog(
+        None,
+        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+        gtk.MESSAGE_QUESTION,
+        gtk.BUTTONS_OK,
+        None)
+        dialog.set_markup("<b>Please enter the name of the field :</b>")
+        #create the text input field
+        entry = gtk.Entry()
+        entry.set_text(field.getName())
+        #allow the user to press enter to do ok
+        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        #create a horizontal box to pack the entry and a label
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label("Name : "), False, 5, 5)
+        hbox.pack_end(entry)
+        dialog.vbox.pack_end(hbox, True, True, 0)
+        dialog.show_all()
+        #go go go
+        dialog.run()
+        text = entry.get_text()
+        if (len(text) > 0) :
+            field.setName(text)
+        dialog.destroy()
+        
+        self.update()
+
     #+---------------------------------------------- 
     #| button_press_on_treeview_typeStructure :
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
     def button_press_on_treeview_typeStructure(self, treeview, event):
-        if self.treeTypeStructureGenerator.getMessage() == None:
-            return
-
         # Popup a menu
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.log.debug("User requested a contextual menu (on treeview typeStructure)")
@@ -768,10 +809,16 @@ class UImodelization:
                 return
             
             menu = gtk.Menu()
+
+            # Add entry to edit field
+            item = gtk.MenuItem("Edit field")
+            item.show()
+            item.connect("activate", self.displayPopupToEditField, selectedField)
+            menu.append(item)
+
             # Add sub-entries to change the type of a specific field
-            # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu_for_field(selectedField)
-            item = gtk.MenuItem("Visualization")
+            item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
@@ -786,15 +833,46 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
             concatMenu.append(item)
-            item = gtk.MenuItem("Concatenate")
+            item = gtk.MenuItem("Concatenate field")
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
 
             # Add entry to split the field
-            item = gtk.MenuItem("Split column")
+            item = gtk.MenuItem("Split field")
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
+            menu.append(item)
+
+            # Add entry to retrieve the field domain of definition
+            item = gtk.MenuItem("Field's domain of definition")
+            item.show()
+            item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
+            menu.append(item)
+            
+            # Add sub-entries to change the variable of a specific column
+            if selectedField.getVariable() == None :
+                typeMenuVariable = gtk.Menu()
+                itemVariable = gtk.MenuItem("Create a variable")
+                itemVariable.show()
+                itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)   
+                typeMenuVariable.append(itemVariable)
+            else :
+                typeMenuVariable = gtk.Menu()
+                itemVariable = gtk.MenuItem("Edit variable")
+                itemVariable.show()
+                itemVariable.connect("activate", self.rightClickEditVariable, selectedField)   
+                typeMenuVariable.append(itemVariable)
+            
+            if selectedField.getVariable() != None :
+                itemVariable3 = gtk.MenuItem("Remove variable")
+                itemVariable3.show()
+                itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)   
+                typeMenuVariable.append(itemVariable3)
+                
+            item = gtk.MenuItem("Configure variation of field")
+            item.set_submenu(typeMenuVariable)
+            item.show()
             menu.append(item)
 
             # Add entry to export fields
@@ -1810,7 +1888,6 @@ class UImodelization:
                 symbol.setFields(copy.deepcopy(list(self.treeMessageGenerator.getSymbol().getFields())))
 
                 self.treeTypeStructureGenerator.setSymbol(symbol)
-                self.treeTypeStructureGenerator.setMessageByID(symbol.getMessages()[-1].getID())
 
                 # Optionaly splits the columns if needed, and handles columns propagation
 #                if symbol.splitColumn(size_field, size_field_len) == True:

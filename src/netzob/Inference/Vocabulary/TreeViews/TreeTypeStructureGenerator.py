@@ -35,6 +35,8 @@ from netzob.Common.Field import Field
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------- 
 #| TreeTypeStructureGenerator :
@@ -49,7 +51,6 @@ class TreeTypeStructureGenerator():
     #+---------------------------------------------- 
     def __init__(self):
         self.symbol = None
-        self.message = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeTypeStructureGenerator.py')
    
@@ -59,13 +60,13 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------     
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str, str) # iCol, Name, Data, Variable, Description
+        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Variable, Description
         # creation of the treeview   
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
-        columns = ["iCol", "Name", "Value", "Variable", "Description"]
+        columns = ["iCol", "Name", "Variable", "Description"]
         for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
             column.pack_start(cell, True)
@@ -74,7 +75,7 @@ class TreeTypeStructureGenerator():
         self.treeview.show()
         self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.scroll = gtk.ScrolledWindow()
-#        self.scroll.set_size_request(1000, 500)
+        self.scroll.set_size_request(-1, 250)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
         self.scroll.add(self.treeview)
         self.scroll.show()
@@ -85,7 +86,6 @@ class TreeTypeStructureGenerator():
     #+---------------------------------------------- 
     def clear(self):
         self.symbol = None
-        self.message = None
         self.treestore.clear()
         
     #+---------------------------------------------- 
@@ -93,7 +93,7 @@ class TreeTypeStructureGenerator():
     #|         Update the treestore in error mode
     #+---------------------------------------------- 
     def error(self):
-        self.log.warning("The treeview for the messages is in error mode")      
+        self.log.warning("The treeview for the symbol is in error mode")      
         pass
     
     #+---------------------------------------------- 
@@ -101,36 +101,32 @@ class TreeTypeStructureGenerator():
     #|         Update the treestore in normal mode
     #+---------------------------------------------- 
     def update(self):
-        if self.getSymbol() == None or self.getMessage() == None:
-            self.clear()
-            return
-        
-        # Configure the field alignment
-        splittedMessage = self.getMessage().applyAlignment(styled=True, encoded=True)
-
-        if str(self.message.getID).find("HEADER") != -1:
+        if self.getSymbol() == None:
             self.clear()
             return
 
         self.treestore.clear()
-
         for field in self.getSymbol().getFields():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
                 tab += " "
-            messageElt = splittedMessage[field.getIndex()]
-            if field.getName() == "__sep__":
+            if field.getName() == "__sep__": # Do not show the delimiter fields
                 continue
             
+            # Define the background color
+            if field.getBackgroundColor() != None :
+                backgroundColor = 'background="' + field.getBackgroundColor() + '"'
+            else :
+                backgroundColor = ""
+
             # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
-
             if field.getVariable() != None :
                 variableDescription = field.getVariable().getDescription()
             elif field.getDefaultVariable(self.getSymbol()) != None :
                 variableDescription = field.getDefaultVariable(self.getSymbol()).getDescription()
 
-            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, variableDescription, field.getDescription()])
+            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>', field.getDescription()])
 
     #+---------------------------------------------- 
     #| GETTERS : 
@@ -141,8 +137,6 @@ class TreeTypeStructureGenerator():
         return self.scroll
     def getSymbol(self):
         return self.symbol
-    def getMessage(self):
-        return self.message
 
     #+---------------------------------------------- 
     #| SETTERS : 
@@ -153,8 +147,3 @@ class TreeTypeStructureGenerator():
         self.scroll = scroll
     def setSymbol(self, symbol):
         self.symbol = symbol
-    def setMessage(self, message):
-        self.message = message
-    def setMessageByID(self, message_id):
-        self.message = self.symbol.getMessageByID(message_id)
-
