@@ -209,7 +209,15 @@ class NetzobGui(gtk.Window):
         # Load the automata based on its XML definition
         serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())
         return serverAutomata.getDictionary()
-        
+
+    def getCurrentNotebookPage(self):
+        res = None
+        nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
+        for page in self.pageList:
+            if page[0] == nameTab:
+                res = page[1]
+        return res
+
 
 #+---------------------------------------------- 
 #| RUNTIME
