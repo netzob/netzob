@@ -53,10 +53,11 @@ class VariableView(object):
     #+---------------------------------------------- 
     #| Constructor :
     #+----------------------------------------------   
-    def __init__(self, project, field, variableId, variableName, variableIsMutable):
+    def __init__(self, netzob, field, variableId, variableName, variableIsMutable):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.VariableView.py')
-        self.project = project
+        self.netzob = netzob
+        self.project = self.netzob.getCurrentProject()
         self.varId = variableId
         self.varName = variableName
         self.varIsMutable = variableIsMutable
@@ -114,6 +115,11 @@ class VariableView(object):
         # We register the root variable as the variable of specified field
         self.field.setVariable(self.rootVariable)
         self.dialog.destroy()
+
+        # Update UI
+        page = self.netzob.getCurrentNotebookPage()
+        if page != None:
+            page.update()
     
     def showMenu(self, treeview, event):
         target = treeview.get_path_at_pos(int(event.x), int(event.y))

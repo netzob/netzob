@@ -92,8 +92,6 @@ class FileImport:
         self.lineSeparator = []
         self.fileName = ""
 
-        
-        
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -275,6 +273,8 @@ class FileImport:
             
             # Retrieve the binary content of the file
             content = self.getNetzobRawContentOfFile(file)
+            if not len(content) > 0:
+                continue
             
             # Create a message
             message = FileMessage(uuid.uuid4(), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
@@ -309,9 +309,10 @@ class FileImport:
             
             splittedStrHexData = message.getData().split(self.lineSeparator)
             for s in splittedStrHexData :
-                message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
-                new_messages.append(message)
-                lineNumber += 1
+                if len(s) > 0:
+                    message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
+                    new_messages.append(message)
+                    lineNumber += 1
         
         # We save the new messages
         self.messages = []
@@ -321,8 +322,6 @@ class FileImport:
             self.lineView.get_model().append(None, [message.getID(), message.getData()])
         # We clean the display
         self.textview.get_buffer().delete(self.textview.get_buffer().get_start_iter(), self.textview.get_buffer().get_end_iter())
-        
-        
         
     def displayMessage(self, message):
         # Clean the hexdump view

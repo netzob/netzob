@@ -72,9 +72,9 @@ class UImodelization:
     #+----------------------------------------------
     def new(self):
         # Update the combo for choosing the format
-# TODO: support DECIMAL and OCTAL
+# TODO: support OCTAL
 #        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
-        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+        possible_choices = [Format.BINARY, Format.DECIMAL, Format.HEX, Format.STRING]
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
         self.comboDisplayFormat.set_model(gtk.ListStore(str)) # Clear the list
@@ -159,7 +159,7 @@ class UImodelization:
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
         tooltips = gtk.Tooltips()
-        topPanel = gtk.HBox(False, spacing=5)
+        topPanel = gtk.HBox(False, spacing=2)
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
 
@@ -178,7 +178,7 @@ class UImodelization:
         tooltips.set_tip(but, "Automatically discover the best alignment of messages")
         but.connect("clicked", self.discoverAlignment_cb)
         but.show()
-        table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for forcing alignment delimiter
         but = gtk.Button(gtk.STOCK_OK)
@@ -186,14 +186,14 @@ class UImodelization:
         tooltips.set_tip(but, "Set a delimiter to force alignment")
         but.connect("clicked", self.forceAlignment_cb)
         but.show()
-        table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
         but = gtk.Button("Smooth alignment")
         but.connect("clicked", self.slickRegex_cb)
         tooltips.set_tip(but, "Merge small static fields with its neighbours")
         but.show()
-        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
        
         ## Field type inference
         frame = gtk.Frame()
@@ -209,20 +209,20 @@ class UImodelization:
         but.connect("clicked", self.refineRegexes_cb)
         tooltips.set_tip(but, "Automatically find the boundaries (min/max of cell's size) for each fields")
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
         but = gtk.Button("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
         tooltips.set_tip(but, "Open a graph with messages distribution, separated by fields")
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
 #        but = gtk.Button("Find ASN.1 fields")
 #        but.connect("clicked", self.findASN1Fields_cb)
 #        but.show()
-#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Dependencies inference
         frame = gtk.Frame()
@@ -238,14 +238,14 @@ class UImodelization:
         but.connect("clicked", self.findSizeFields)
         tooltips.set_tip(but, "Automatically find potential size fields and associated payloads")
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for environment dependencies
         but = gtk.Button("Environment dependencies")
         but.connect("clicked", self.env_dependencies_cb)
         tooltips.set_tip(but, "Automatically look for environmental dependencies (retrieved during capture) in messages")
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Semantic inference
         frame = gtk.Frame()
@@ -261,14 +261,14 @@ class UImodelization:
         but.connect("clicked", self.dataCarving_cb)
         tooltips.set_tip(but, "Automatically look for known patterns of data (URL, IP, email, etc.)")
         but.show()
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for search
         but = gtk.Button("Search")
         but.connect("clicked", self.search_cb)
         tooltips.set_tip(but, "A search function available in different encoding format")
         but.show()
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=5, ypadding=5)
+        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Visualization
         frame = gtk.Frame()
@@ -286,8 +286,8 @@ class UImodelization:
         self.comboDisplayFormat.set_model(gtk.ListStore(str))
         self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
         self.comboDisplayFormat.show()
-        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
-        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the unit size
         label = gtk.Label("Unit size : ")
@@ -296,8 +296,8 @@ class UImodelization:
         self.comboDisplayUnitSize.set_model(gtk.ListStore(str))
         self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
         self.comboDisplayUnitSize.show()
-        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
-        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed sign
         label = gtk.Label("Sign : ")
@@ -306,8 +306,8 @@ class UImodelization:
         self.comboDisplaySign.set_model(gtk.ListStore(str))
         self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
         self.comboDisplaySign.show()
-        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
-        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed endianess
         label = gtk.Label("Endianess : ")
@@ -316,8 +316,8 @@ class UImodelization:
         self.comboDisplayEndianess.set_model(gtk.ListStore(str))
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         self.comboDisplayEndianess.show()
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
-        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=0)
+        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         #+---------------------------------------------- 
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -533,9 +533,8 @@ class UImodelization:
        
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
             self.selectedSymbol = clickedSymbol
-            self.updateTreeStoreMessage()
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
-            self.updateTreeStoreTypeStructure()
+            self.update()
 
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_symbols(event, clickedSymbol)
@@ -754,7 +753,6 @@ class UImodelization:
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
-
         return menu
 
     def displayPopupToEditField(self, event, field):
@@ -782,7 +780,6 @@ class UImodelization:
         if (len(text) > 0) :
             field.setName(text)
         dialog.destroy()
-        
         self.update()
 
     #+---------------------------------------------- 
@@ -1104,7 +1101,6 @@ class UImodelization:
         
         dialog.vbox.pack_start(scroll, True, True, 0)
         dialog.show()
-            
         
     #+---------------------------------------------- 
     #| rightClickDeleteMessage :
@@ -1300,12 +1296,8 @@ class UImodelization:
         dialog.destroy()
         
         # Dedicated view for the creation of a variable
-        creationPanel = VariableView(self.netzob.getCurrentProject(), field, variableID, varName, varMutable)
+        creationPanel = VariableView(self.netzob, field, variableID, varName, varMutable)
         creationPanel.display()
-        
-        self.updateTreeStoreMessage()
-        self.updateTreeStoreTypeStructure()
-        
         
     def rightClickRemoveVariable(self, widget, field):
         questionMsg = "Click yes to confirm the removal of the variable {0}".format(field.getVariable().getID())
@@ -1317,12 +1309,11 @@ class UImodelization:
             self.update()
         else :
             self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getID())                
-            
         
     def rightClickEditVariable(self, widget, field):
-        # todo
+        logging.error("Not yet implemented")
+        # TODO
         pass
-
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 2:
@@ -1415,14 +1406,6 @@ class UImodelization:
             menu.append(item)
         menu.popup(None, None, None, event.button, event.time)
 
-
-    #+---------------------------------------------- 
-    #| displayPopupToCreateSymbol_ResponseToDialog :
-    #|   pygtk is so good ! arf :( <-- clap clap :D
-    #+----------------------------------------------
-    def displayPopupToCreateSymbol_ResponseToDialog(self, entry, dialog, response):
-        dialog.response(response)
-
     def displayPopupToEditSymbol(self, event, symbol):
         dialog = gtk.MessageDialog(
         None,
@@ -1448,12 +1431,14 @@ class UImodelization:
         if (len(text) > 0) :
             self.selectedSymbol.setName(text)
         dialog.destroy()
-        
         self.update()
 
+    #+---------------------------------------------- 
+    #| responseToDialog :
+    #|   pygtk is so good ! arf :( <-- clap clap :D
+    #+----------------------------------------------
     def responseToDialog(self, entry, dialog, response):
         dialog.response(response)
-    
     
     #+---------------------------------------------- 
     #| displayPopupToCreateSymbol :
@@ -1473,7 +1458,7 @@ class UImodelization:
         #create the text input field
         entry = gtk.Entry()
         #allow the user to press enter to do ok
-        entry.connect("activate", self.displayPopupToCreateSymbol_ResponseToDialog, dialog, gtk.RESPONSE_OK)
+        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("Name :"), False, 5, 5)
