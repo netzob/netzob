@@ -74,7 +74,7 @@ class UImodelization:
         # Update the combo for choosing the format
 # TODO: support OCTAL
 #        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
-        possible_choices = [Format.BINARY, Format.DECIMAL, Format.HEX, Format.STRING]
+        possible_choices = Format.getSupportedFormats()
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
         self.comboDisplayFormat.set_model(gtk.ListStore(str)) # Clear the list
@@ -703,7 +703,9 @@ class UImodelization:
         menu = gtk.Menu()
 
         # Format submenu
-        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+        
+        # Retrieves all the supported format of visualizations
+        possible_choices = Format.getSupportedFormats()
         subMenu = gtk.Menu()
         for value in possible_choices:
             item = gtk.MenuItem(value)
@@ -1368,7 +1370,7 @@ class UImodelization:
             self.log.warn("Impossible to retrieve the clicked field !")
             return
 
-        possible_choices = [Format.BINARY, Format.HEX, Format.STRING]
+        possible_choices = Format.getSupportedFormats()
 #        possibleTypes = self.treeMessageGenerator.getSymbol().getPossibleTypesForAField(selectedField)
         i = 0
         chosedFormat = selectedField.getFormat()
