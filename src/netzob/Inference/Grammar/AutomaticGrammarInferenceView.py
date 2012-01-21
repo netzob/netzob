@@ -36,6 +36,8 @@ from netzob.Inference.Grammar.GrammarInferer import GrammarInferer
 from netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle import WMethodNetworkEquivalenceOracle
 from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
 from netzob.Simulator.XDotWidget import XDotWidget
+import gobject
+import time
 
 pygtk.require('2.0')
 
@@ -110,6 +112,9 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
         
+    
+    
+        
     def createInferringStatusView(self):
         self.dialog = gtk.Dialog(title="Execution of the inferring process", flags=0, buttons=None)
         
@@ -118,6 +123,7 @@ class AutomaticGrammarInferenceView(object):
         # Insert the current Hypothesis of the automata
         self.xdotWidget = XDotWidget()
         self.xdotWidget.show_all()       
+        self.xdotWidget.set_size_request(500, 500)  
         mainTable.attach(self.xdotWidget, 0, 2, 0, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Insert the updated list of requests and associated responses
@@ -125,11 +131,11 @@ class AutomaticGrammarInferenceView(object):
         self.treestore_queries = gtk.TreeStore(str, str, str) # queries, responses, color
         treeview_queries = gtk.TreeView(self.treestore_queries)
         treeview_queries.get_selection().set_mode(gtk.SELECTION_SINGLE)
-        treeview_queries.set_size_request(-1, 250)
+        treeview_queries.set_size_request(500, 500)
 #        treeview_queries.connect('button-press-event', self.button_press_on_transitions)
         cell = gtk.CellRendererText()
         # col : membership queries
-        col_queries_querie = gtk.TreeViewColumn('Membership query')
+        col_queries_querie = gtk.TreeViewColumn('Membership queries')
         col_queries_querie.pack_start(cell, True)
         col_queries_querie.set_attributes(cell, text=1)
         treeview_queries.append_column(col_queries_querie)
@@ -151,12 +157,30 @@ class AutomaticGrammarInferenceView(object):
         # Insert the stop button
         self.stopButton = gtk.Button("Stop")
         self.stopButton.show()
-#        self.stopButton.connect("clicked", self.startInference)
+        self.stopButton.connect("clicked", self.stopInference)
         mainTable.attach(self.stopButton, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
         
+        # Hum hum ? is it really the right way ?
+        gobject.idle_add(self.dialog.run)
+        
+        
+    
+    def callback_newTurn(self, message):
+#        self.inferer.getSubmitedQueries()
+        
+        
+        hypotheticalAutomaton = self.inferer.getHypotheticalAutomaton()
+        if hypotheticalAutomaton != None :
+            print "update the graphic"
+#            self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
+        else :
+            print "no H"
+    
+    def stopInference(self, button):
+        self.inferer.stop()
     
     def startInference(self, button):
         
@@ -169,17 +193,30 @@ class AutomaticGrammarInferenceView(object):
         # Close the current dialog
         self.dialog.destroy()
         
+        # Lets create a simple network oracle
+        oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
+        # Lets create an equivalence oracle
+        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState)
+        
+        # Lets create the automatic inferer
+        self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, self.callback_newTurn)
+        
         # Open the new dialog which shows the status of the infering process
         self.createInferringStatusView()
-#        
-#        # Lets create a simple network oracle
-#        oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
-#        # Lets create an equivalence oracle
-#        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState)
-#        # Lets start the automatif inferer
-#        inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle)
-#        resultedAutomaton = inferer.infer()
-#        
+        
+        # Start the dedicated thread
+        self.inferer.start()
+        
+        while not self.inferer.hasFinish() :
+            self.updateInferringStatusView()
+        
+        resultedAutomaton = self.inferer.getInferedAutomaton()
+
+    def updateInferringStatusView(self):
+        
+        
+#        print "updating"
+        pass
 #        
 #        inferedGrammar = resultedAutomaton.toGrammar()
 #        if inferedGrammar != None :
