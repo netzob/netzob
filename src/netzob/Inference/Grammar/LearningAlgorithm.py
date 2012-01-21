@@ -57,11 +57,15 @@ class LearningAlgorithm(object):
         self.dictionary = dictionary
         self.communicationChannel = communicationChannel
         self.inferedAutomata = None
+        self.submitedQueries = []
+    
     
     def learn(self):
         self.log.error("The LearningAlgorithm class doesn't support 'learn'.")
         raise NotImplementedError("The LearningAlgorithm class doesn't support 'learn'.")
-        
+    
+    def getSubmitedQueries(self):
+        return self.submitedQueries    
         
     def submitQuery(self, query):
         self.log.info("Submit the following query : " + str(query))
@@ -89,6 +93,10 @@ class LearningAlgorithm(object):
         resultQuery = oracle.getResults()
         
         self.log.info("The following query has been computed : " + str(resultQuery))
+        
+        # Register this query and the associated response
+        self.submitedQueries.append([query, resultQuery])
+        
         # return only the last result
         return resultQuery[len(resultQuery) - 1]
     

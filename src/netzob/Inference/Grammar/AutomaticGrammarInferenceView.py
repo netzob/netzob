@@ -169,8 +169,14 @@ class AutomaticGrammarInferenceView(object):
         
     
     def callback_newTurn(self, message):
-#        self.inferer.getSubmitedQueries()
-        
+        queries = self.inferer.getSubmitedQueries()
+        if queries != None :
+            self.treestore_queries.clear()
+            for query in queries :
+                self.treestore_queries.append(None, [str(query[0]), str(query[1]), "red"])
+            
+            print "A number of " + str(len(queries)) + " has been executed !"
+            
         
         hypotheticalAutomaton = self.inferer.getHypotheticalAutomaton()
         if hypotheticalAutomaton != None :
@@ -206,6 +212,8 @@ class AutomaticGrammarInferenceView(object):
         
         # Start the dedicated thread
         self.inferer.start()
+        
+        
         
         while not self.inferer.hasFinish() :
             self.updateInferringStatusView()

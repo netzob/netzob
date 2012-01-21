@@ -41,39 +41,71 @@ import os
 from Angluin import Angluin
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+import threading
 
 #+---------------------------------------------- 
 #| GrammarInferer :
 #|    Given Angluin's L*a algorithm, it learns
 #|    the grammar of a protocol
 #+---------------------------------------------- 
-class GrammarInferer(object):
+class GrammarInferer(threading.Thread):
      
-    def __init__(self, vocabulary, oracle, equivalenceOracle):
+    def __init__(self, vocabulary, oracle, equivalenceOracle, cb_newTurn):
+        threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.GrammarInferer.py')
         self.vocabulary = vocabulary
         self.oracle = oracle
         self.equivalenceOracle = equivalenceOracle
+        self.cb_newTurn = cb_newTurn
+        self.active = False
+        self.inferedAutomaton = None
+        self.hypotheticalAutomaton = None
+        self.learner = None
+    
+    
+    def run(self):
+        self.log.debug("Starting the Grammar infering process")
+        self.active = True
+        self.infer()
+        self.active = False
         
+    def hasFinish(self):
+        return not self.active
+    
+    def getInferedAutomaton(self):
+        return self.inferedAutomaton
+    
+    def getHypotheticalAutomaton(self):
+        return self.hypotheticalAutomaton
+    
+    def getSubmitedQueries(self):
+        if self.learner != None :
+            return self.learner.getSubmitedQueries()
+        return None
+    
+    def stop(self):
+        self.active = False
     
     def infer(self):
-        
+        self.cb_newTurn("hello")
         # we first initialize the angluin's algo
-        learner = Angluin(self.vocabulary, self.oracle)
+        self.learner = Angluin(self.vocabulary, self.oracle)
         
         equivalent = False
         
-        while not equivalent :
+        while not equivalent and self.active:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the infering process")
             self.log.info("=============================================================================")
             
-            learner.learn()
-            hypotheticalAutomaton = learner.getInferedAutomata()            
+            self.cb_newTurn("new Truen ....")
+            
+            self.learner.learn()
+            self.hypotheticalAutomaton = self.learner.getInferedAutomata()            
             self.log.info("An hypothetical automaton has been computed") 
             
-            counterExample = self.equivalenceOracle.findCounterExample(hypotheticalAutomaton)
+            counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton)
             
             if counterExample == None :
                 self.log.info("No counter-example were found !")
@@ -82,13 +114,13 @@ class GrammarInferer(object):
                 self.log.info("A counter-example has been found")
                 for s in counterExample.getSymbols() :
                     self.log.info("symbol : " + str(s) + " => " + str(s.getID()))                
-                learner.addCounterExamples([counterExample])
+                self.learner.addCounterExamples([counterExample])
             
-        automaton = learner.getInferedAutomata()    
+        automaton = self.learner.getInferedAutomata()    
         
         self.log.info("The infering process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton))
-        return automaton    
+        self.inferedAutomaton = automaton    
             
         
             
