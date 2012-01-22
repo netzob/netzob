@@ -51,14 +51,15 @@ import gobject
 #+---------------------------------------------- 
 class GrammarInferer(threading.Thread):
      
-    def __init__(self, vocabulary, oracle, equivalenceOracle, cb_newTurn):
+    def __init__(self, vocabulary, oracle, equivalenceOracle, cb_submitedQuery, cb_hypotheticalAutomaton):
         threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.GrammarInferer.py')
         self.vocabulary = vocabulary
         self.oracle = oracle
         self.equivalenceOracle = equivalenceOracle
-        self.cb_newTurn = cb_newTurn
+        self.cb_submitedQuery = cb_submitedQuery
+        self.cb_hypotheticalAutomaton = cb_hypotheticalAutomaton
         self.active = False
         self.inferedAutomaton = None
         self.hypotheticalAutomaton = None
@@ -93,16 +94,19 @@ class GrammarInferer(threading.Thread):
        
         equivalent = False
         # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.oracle, self.cb_newTurn)
+        self.learner = Angluin(self.vocabulary, self.oracle, self.cb_submitedQuery)
         
-        while not equivalent and self.active:
+        while not equivalent:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")
             self.log.info("=============================================================================")
             
             self.learner.learn()
-            self.hypotheticalAutomaton = self.learner.getInferedAutomata()            
+            self.hypotheticalAutomaton = self.learner.getInferedAutomata()     
             self.log.info("An hypothetical automaton has been computed") 
+            
+            # Execute the call back function for the hypothetial automaton
+            gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
             
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton)
             

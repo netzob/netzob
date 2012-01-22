@@ -95,6 +95,7 @@ class LearningAlgorithm(object):
         oracle.stop()
         
         resultQuery = oracle.getResults()
+        tmpResultQuery = oracle.getGeneratedOutputSymbols()
         
         self.log.info("The following query has been computed : " + str(resultQuery))
         
@@ -104,11 +105,11 @@ class LearningAlgorithm(object):
         # return only the last result
         if len(resultQuery) > 0 :
             # Execute the call back function
-            gobject.idle_add(self.callbackFunction, query, resultQuery[len(resultQuery) - 1])
+            gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
             return resultQuery[len(resultQuery) - 1]
         else :
             # Execute the call back function
-            gobject.idle_add(self.callbackFunction, query, None)
+            gobject.idle_add(self.callbackFunction, query, "OUPS")
             return resultQuery
     
     def getInferedAutomata(self):

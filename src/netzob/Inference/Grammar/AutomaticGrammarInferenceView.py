@@ -167,7 +167,7 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.show_all()
         
     
-    def callback_newTurn(self, query, resultQuery):
+    def callback_submitedQuery(self, query, resultQuery):
         
         if query == None :
             self.log.debug("Impossible to show a Null query")
@@ -183,34 +183,26 @@ class AutomaticGrammarInferenceView(object):
                 strSymbol = "EmptySymbol"
             
             strQuery = strQuery + strSymbol + ", "
-        if resultQuery != None :
-            strResultQuery = str(resultQuery.getName())
-        else :
-            strResultQuery = "None"
+            
+        # Create a str view of the Result Query
+        strResultQuery = ""
+        for symbol in resultQuery :
+            strSymbol = ""
+            if symbol.getType() == "DictionarySymbol" :
+                strSymbol = symbol.getName()
+            else :
+                strSymbol = str(symbol)
+            
+            strResultQuery = strResultQuery + strSymbol + ","
         
         self.treestore_queries.append(None, [strQuery, strResultQuery, "red"])
-#        
-#        
-#        
-#        self.log.warn("---------------------------------------------------------------")
-#        self.log.warn("---------------------------------------------------------------")
-#        self.log.warn("---------------------------------------------------------------")
-#        self.log.warn("---------------------------------------------------------------")
-#        if self.inferer == None :
-#            self.log.warn("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#            return
-#        queries = self.inferer.getSubmitedQueries()
-#        self.log.warn("A number of " + str(len(queries)))
-#        if queries != None :
-#            self.treestore_queries.clear()
-#            for query in queries :
-#                s
-#            
-#        
-#        hypotheticalAutomaton = self.inferer.getHypotheticalAutomaton()
-#        if hypotheticalAutomaton != None :
-#            print "update the graphic"
-#            self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
+        
+    def callback_hypotheticalAutomaton(self, hypotheticalAutomaton):
+        if hypotheticalAutomaton != None :
+            print "update the graphic"
+            self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
+
+
 
     
     def stopInference(self, button):
@@ -236,7 +228,7 @@ class AutomaticGrammarInferenceView(object):
         equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState)
         
         # Lets create the automatic inferer
-        self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, self.callback_newTurn)
+        self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, self.callback_submitedQuery, self.callback_hypotheticalAutomaton)
         self.inferer.setDaemon(True)
         
         # Open the new dialog which shows the status of the inferring process
