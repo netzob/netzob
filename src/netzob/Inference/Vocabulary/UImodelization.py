@@ -1059,7 +1059,7 @@ class UImodelization:
         if aligned == False: # Copy the entire raw message
             self.netzob.clipboard.set_text( message.getStringData() )
         elif field == None: # Copy the entire aligned message
-            self.netzob.clipboard.set_text( message.applyAlignment(styled=False, encoded=encoded) )
+            self.netzob.clipboard.set_text( str(message.applyAlignment(styled=False, encoded=encoded)) )
         else: # Just copy the selected field
             self.netzob.clipboard.set_text( message.applyAlignment(styled=False, encoded=encoded)[ field.getIndex() ] )
 
