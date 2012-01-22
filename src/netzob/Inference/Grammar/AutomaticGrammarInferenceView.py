@@ -62,6 +62,7 @@ class AutomaticGrammarInferenceView(object):
         self.log = logging.getLogger('netzob.Inference.Grammar.AutomaticGrammarInferenceView.py')
         self.project = project
         self.inferer = None
+        self.computedAutomaton = None
         
     def display(self):
         # Display the form for the creation of a word variable
@@ -155,7 +156,14 @@ class AutomaticGrammarInferenceView(object):
         # Insert the status message
         self.statusLabel = gtk.Label("A number of X states has been created - Current turn contains N MQ")
         self.statusLabel.show()
-        mainTable.attach(self.statusLabel, 0, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.statusLabel, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Insert the Save button
+        self.saveButton = gtk.Button("Save as Grammar")
+        self.saveButton.show()
+        
+        self.saveButton.connect("clicked", self.saveGrammar)
+        mainTable.attach(self.saveButton, 2, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Insert the stop button
         self.stopButton = gtk.Button("Stop")
@@ -209,8 +217,13 @@ class AutomaticGrammarInferenceView(object):
         self.inferer.stop()
     
     def startInferer(self):
-        result1 = (yield ThreadedTask(self.inferer.infer))
-        
+        self.computedAutomaton = (yield ThreadedTask(self.inferer.infer))
+    
+    def saveGrammar(self, button):
+        if self.computedAutomaton != None :
+            self.project.setGrammar(self.computedAutomaton.toGrammar())
+            self.dialog.destroy()
+            
     
     def startInference(self, button):
         # We retrieve the specified value
@@ -237,35 +250,5 @@ class AutomaticGrammarInferenceView(object):
         # Start the inferer
         job = Job(self.startInferer())
         
-        
-        
-#        
-#        # Start the dedicated thread
-#        self.log.warn("Start the INFERER")
-#        self.inferer.start()
-#        
-#        self.log.warn("INFERER STARTED")
-#        while not self.inferer.hasFinish() :
-#            gobject.idle_add(self.updateInferringStatusView)
-#        
-#        self.log.warn("INFERER has finished")
-#        
-#        resultedAutomaton = self.inferer.getInferedAutomaton()
-        
-
-    def updateInferringStatusView(self):
-        
-        
-#        print "updating"
-        pass
-#        
-#        inferedGrammar = resultedAutomaton.toGrammar()
-#        if inferedGrammar != None :
-#            self.log.info("A grammar has been successfully infered.")
-#            self.project.setGrammar(inferedGrammar)
-#        else :
-#            self.log.warn("The automatic inference process has failed, no grammar was computed")
-#            
-#        
-        
+    
         

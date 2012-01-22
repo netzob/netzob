@@ -124,7 +124,7 @@ class GrammarInferer(threading.Thread):
         self.log.info("The inferring process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton))
         self.inferedAutomaton = automaton    
-            
+        return automaton    
         
             
             
