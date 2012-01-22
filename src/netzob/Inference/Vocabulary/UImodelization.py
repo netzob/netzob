@@ -43,6 +43,7 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
+from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
@@ -164,158 +165,125 @@ class UImodelization:
         self.panel.pack_start(topPanel, False, False, 0)
 
         ## Message format inference
-        frame = gtk.Frame()
-        frame.set_label("1 - Message format inference")
-        frame.show()
+        frame = NetzobFrame("1 - Message format inference")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=3, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget for discovering the alignment
-        but = gtk.Button(gtk.STOCK_OK)
-        but.set_label("Discover alignment")
+        but = NetzobButton("Discover alignment")
         tooltips.set_tip(but, "Automatically discover the best alignment of messages")
         but.connect("clicked", self.discoverAlignment_cb)
-        but.show()
+#        but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for forcing alignment delimiter
-        but = gtk.Button(gtk.STOCK_OK)
-        but.set_label("Force alignment")
-        tooltips.set_tip(but, "Set a delimiter to force alignment")
+        but = NetzobButton("Force alignment")
         but.connect("clicked", self.forceAlignment_cb)
-        but.show()
+        tooltips.set_tip(but, "Set a delimiter to force alignment")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
-        but = gtk.Button("Smooth alignment")
+        but = NetzobButton("Smooth alignment")
         but.connect("clicked", self.slickRegex_cb)
         tooltips.set_tip(but, "Merge small static fields with its neighbours")
-        but.show()
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
        
         ## Field type inference
-        frame = gtk.Frame()
-        frame.set_label("2 - Field type inference")
-        frame.show()
+        frame = NetzobFrame("2 - Field type inference")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget button refine regex
-        but = gtk.Button("Refine alignment")
+        but = NetzobButton("Refine alignment")
         but.connect("clicked", self.refineRegexes_cb)
         tooltips.set_tip(but, "Automatically find the boundaries (min/max of cell's size) for each fields")
-        but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
-        but = gtk.Button("Messages distribution")
+        but = NetzobButton("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
         tooltips.set_tip(but, "Open a graph with messages distribution, separated by fields")
-        but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
-#        but = gtk.Button("Find ASN.1 fields")
+#        but = NetzobButton("Find ASN.1 fields")
 #        but.connect("clicked", self.findASN1Fields_cb)
-#        but.show()
 #        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Dependencies inference
-        frame = gtk.Frame()
-        frame.set_label("3 - Dependencies inference")
-        frame.show()
+        frame = NetzobFrame("3 - Dependencies inference")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget button find size fields
-        but = gtk.Button("Find size fields")
+        but = NetzobButton("Find size fields")
         but.connect("clicked", self.findSizeFields)
         tooltips.set_tip(but, "Automatically find potential size fields and associated payloads")
-        but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for environment dependencies
-        but = gtk.Button("Environment dependencies")
+        but = NetzobButton("Environment dependencies")
         but.connect("clicked", self.env_dependencies_cb)
         tooltips.set_tip(but, "Automatically look for environmental dependencies (retrieved during capture) in messages")
-        but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Semantic inference
-        frame = gtk.Frame()
-        frame.set_label("4 - Semantic inference")
-        frame.show()
+        frame = NetzobFrame("4 - Semantic inference")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget button data carving
-        but = gtk.Button("Data carving")
+        but = NetzobButton("Data carving")
         but.connect("clicked", self.dataCarving_cb)
         tooltips.set_tip(but, "Automatically look for known patterns of data (URL, IP, email, etc.)")
-        but.show()
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for search
-        but = gtk.Button("Search")
+        but = NetzobButton("Search")
         but.connect("clicked", self.search_cb)
         tooltips.set_tip(but, "A search function available in different encoding format")
-        but.show()
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Visualization
-        frame = gtk.Frame()
-        frame.set_label("5 - Visualization")
-        frame.show()
+        frame = NetzobFrame("5 - Visualization")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget for choosing the format
-        label = gtk.Label("Format : ")
-        label.show()
-        self.comboDisplayFormat = gtk.combo_box_entry_new_text()
-        self.comboDisplayFormat.set_model(gtk.ListStore(str))
+        label = NetzobLabel("Format : ")
+        self.comboDisplayFormat = NetzobComboBoxEntry()
         self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
-        self.comboDisplayFormat.show()
         table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the unit size
-        label = gtk.Label("Unit size : ")
-        label.show()
-        self.comboDisplayUnitSize = gtk.combo_box_entry_new_text()
-        self.comboDisplayUnitSize.set_model(gtk.ListStore(str))
+        label = NetzobLabel("Unit size : ")
+        self.comboDisplayUnitSize = NetzobComboBoxEntry()
         self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
-        self.comboDisplayUnitSize.show()
         table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed sign
-        label = gtk.Label("Sign : ")
-        label.show()
-        self.comboDisplaySign = gtk.combo_box_entry_new_text()
-        self.comboDisplaySign.set_model(gtk.ListStore(str))
+        label = NetzobLabel("Sign : ")
+        self.comboDisplaySign = NetzobComboBoxEntry()
         self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
-        self.comboDisplaySign.show()
         table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed endianess
-        label = gtk.Label("Endianess : ")
-        label.show()
-        self.comboDisplayEndianess = gtk.combo_box_entry_new_text()
-        self.comboDisplayEndianess.set_model(gtk.ListStore(str))
+        label = NetzobLabel("Endianess : ")
+        self.comboDisplayEndianess = NetzobComboBoxEntry()
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
-        self.comboDisplayEndianess.show()
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
@@ -378,8 +346,7 @@ class UImodelization:
         panel.show()
 
         ## Similarity threshold
-        label = gtk.Label("Similarity threshold:")
-        label.show()
+        label = NetzobLabel("Similarity threshold:")
         combo = gtk.combo_box_entry_new_text()
         combo.set_model(gtk.ListStore(str))
         combo.connect("changed", self.updateScoreLimit)
@@ -417,16 +384,14 @@ class UImodelization:
         panel.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button merge common regexes
-#        but = gtk.Button("Merge common regexes")
+#        but = NetzobButton("Merge common regexes")
 #        but.connect("clicked", self.netzob.symbols.mergeCommonRegexes, self)
         ## TODO: merge common regexes (if it is really usefull)
-#        but.show()
 #        but.set_sensitive(False)
 #        panel.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = gtk.Button("Discover alignment")
-        searchButton.show()
+        searchButton = NetzobButton("Discover alignment")
         searchButton.connect("clicked", self.discoverAlignment_cb_cb, dialog)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -462,8 +427,7 @@ class UImodelization:
         panel.show()
 
         # Label
-        label = gtk.Label("Delimiter: ")
-        label.show()
+        label = NetzobLabel("Delimiter: ")
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Entry for delimiter
@@ -472,8 +436,7 @@ class UImodelization:
         panel.attach(entry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Label
-        label = gtk.Label("Format type: ")
-        label.show()
+        label = NetzobLabel("Format type: ")
         panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
@@ -487,8 +450,7 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = gtk.Button("Force alignment")
-        searchButton.show()
+        searchButton = NetzobButton("Force alignment")
         searchButton.connect("clicked", self.forceAlignment_cb_cb, dialog, typeCombo, entry)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -799,7 +761,7 @@ class UImodelization:
         entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label("Name : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
         hbox.pack_end(entry)
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
@@ -944,8 +906,7 @@ class UImodelization:
         table.show()
 
         # Add to an existing trace
-        label = gtk.Label("Add to an existing trace")
-        label.show()
+        label = NetzobLabel("Add to an existing trace")
         entry = gtk.combo_box_entry_new_text()
         entry.show()
         entry.set_size_request(300, -1)
@@ -955,21 +916,18 @@ class UImodelization:
             if tmpDir == '.svn':
                 continue
             entry.append_text(tmpDir)
-        but = gtk.Button("Save")
+        but = NetzobButton("Save")
         but.connect("clicked", self.add_packets_to_existing_trace, entry, aggregatedCells, dialog)
-        but.show()
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Create a new trace
-        label = gtk.Label("Create a new trace")
-        label.show()
+        label = NetzobLabel("Create a new trace")
         entry = gtk.Entry()
         entry.show()
-        but = gtk.Button("Save")
+        but = NetzobButton("Save")
         but.connect("clicked", self.create_new_trace, entry, aggregatedCells, dialog)
-        but.show()
         table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -1255,31 +1213,26 @@ class UImodelization:
         # Left arrow
         arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
         arrow.show()
-        but = gtk.Button()
+        but = NetzobButton()
         but.add(arrow)
         but.connect("clicked", self.adjustSplitColumn, textview, "left", field)
-        but.show()
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Right arrow
         arrow = gtk.Arrow(gtk.ARROW_RIGHT, gtk.SHADOW_OUT)
         arrow.show()
-        but = gtk.Button()
+        but = NetzobButton()
         but.add(arrow)
         but.connect("clicked", self.adjustSplitColumn, textview, "right", field)
-        but.show()
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Split button
-        but = gtk.Button(label="Split column")
-        but.show()
+        but = NetzobButton("Split column")
         but.connect("clicked", self.doSplitColumn, textview, field, dialog)
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Text view containing selected column messages
-        frame = gtk.Frame()
-        frame.set_label("Content of the column to split")
-        frame.show()
+        frame = NetzobFrame("Content of the column to split")
         textview.set_size_request(400, 300)
 #        cells = self.treeMessageGenerator.getSymbol().getCellsByCol(iCol)
 
@@ -1305,24 +1258,20 @@ class UImodelization:
         
         mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
         # id of the variable
-        variableIDLabel = gtk.Label("ID :")
-        variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDLabel = NetzobLabel("ID :")
+        variableIDValueLabel = NetzobLabel(variableID)
         variableIDValueLabel.set_sensitive(False)
-        variableIDValueLabel.show()
         mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         # name of the variable
-        variableNameLabel = gtk.Label("Name : ")
-        variableNameLabel.show()
+        variableNameLabel = NetzobLabel("Name : ")
         variableNameEntry = gtk.Entry()
         variableNameEntry.show()
         mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # is a mutable variable
-        isMutableVariableLabel = gtk.Label("Mutable : ")
-        isMutableVariableLabel.show()
+        isMutableVariableLabel = NetzobLabel("Mutable : ")
         isMutableVariableButton = gtk.CheckButton("")
         isMutableVariableButton.show()
         
@@ -1470,7 +1419,7 @@ class UImodelization:
         entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label("Name : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
         hbox.pack_end(entry)
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
@@ -1510,7 +1459,7 @@ class UImodelization:
         entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label("Name :"), False, 5, 5)
+        hbox.pack_start(NetzobLabel("Name :"), False, 5, 5)
         hbox.pack_end(entry)
         #add it and show it
         dialog.vbox.pack_end(hbox, True, True, 0)
@@ -1755,7 +1704,7 @@ class UImodelization:
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             scroll = symbol.dataCarving()
             if scroll != None:
-                notebook.append_page(scroll, gtk.Label(symbol.getName()))
+                notebook.append_page(scroll, NetzobLabel(symbol.getName()))
         
 
         dialog.vbox.pack_start(notebook, True, True, 0)
@@ -1789,7 +1738,7 @@ class UImodelization:
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             scroll = symbol.envDependencies(self.netzob.getCurrentProject())
             if scroll != None:
-                notebook.append_page(scroll, gtk.Label(symbol.getName())) 
+                notebook.append_page(scroll, NetzobLabel(symbol.getName())) 
             
         dialog.vbox.pack_start(notebook, True, True, 0)
         dialog.show()
@@ -1828,7 +1777,7 @@ class UImodelization:
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             scroll = symbol.findASN1Fields(self.netzob.getCurrentProject())
             if scroll != None:
-                notebook.append_page(scroll, gtk.Label(symbol.getName())) 
+                notebook.append_page(scroll, NetzobLabel(symbol.getName())) 
             
         dialog.vbox.pack_start(notebook, True, True, 0)
         dialog.show()
@@ -1862,8 +1811,7 @@ class UImodelization:
         treeview.append_column(column)
 
         # Chose button
-        but = gtk.Button(label="Apply size field")
-        but.show()
+        but = NetzobButton("Apply size field")
         but.connect("clicked", self.applySizeField, dialog, tmp_symbol)
         dialog.action_area.pack_start(but, True, True, 0)
 
