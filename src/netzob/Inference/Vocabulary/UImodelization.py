@@ -680,6 +680,33 @@ class UImodelization:
             item = gtk.SeparatorMenuItem()
             item.show()
             menu.append(item)
+
+            # Add entries for copy functions
+            copyMenu = gtk.Menu()
+            item = gtk.MenuItem("Raw message to clipboard")
+            item.show()
+            item.connect("activate", self.rightClickToCopyToClipboard, message_id, False, False, None)
+            copyMenu.append(item)
+            item = gtk.MenuItem("Aligned message to clipboard")
+            item.show()
+            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, None)
+            copyMenu.append(item)
+            item = gtk.MenuItem("Aligned formatted message to clipboard")
+            item.show()
+            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, None)
+            copyMenu.append(item)
+            item = gtk.MenuItem("Field to clipboard")
+            item.show()
+            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, selectedField)
+            copyMenu.append(item)
+            item = gtk.MenuItem("Formatted field to clipboard")
+            item.show()
+            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, selectedField)
+            copyMenu.append(item)
+            item = gtk.MenuItem("Copy")
+            item.set_submenu(copyMenu)
+            item.show()
+            menu.append(item)
             
             # Add entry to show properties of the message
             item = gtk.MenuItem("Message properties")
@@ -1057,6 +1084,26 @@ class UImodelization:
         
         dialog.vbox.pack_start(scroll, True, True, 0)
         dialog.show()
+
+    #+---------------------------------------------- 
+    #| rightClickToCopyToClipboard :
+    #|   Copy the message to the clipboard
+    #+----------------------------------------------
+    def rightClickToCopyToClipboard(self, event, id_message, aligned, encoded, field):
+        self.log.debug("The user wants to copy the following message to the clipboard : " + str(id_message))
+        
+        # Retrieve the selected message
+        message = self.selectedSymbol.getMessageByID(id_message)
+        if message == None :
+            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            return
+
+        if aligned == False: # Copy the entire raw message
+            self.netzob.clipboard.set_text( message.getStringData() )
+        elif field == None: # Copy the entire aligned message
+            self.netzob.clipboard.set_text( message.applyAlignment(styled=False, encoded=encoded) )
+        else: # Just copy the selected field
+            self.netzob.clipboard.set_text( message.applyAlignment(styled=False, encoded=encoded)[ field.getIndex() ] )
 
     #+---------------------------------------------- 
     #| rightClickShowPropertiesOfMessage :

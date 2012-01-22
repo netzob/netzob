@@ -127,6 +127,9 @@ class NetzobGui(gtk.Window):
         for page in self.pageList:
                 self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
 
+        # Initialize a clipboard object
+        self.clipboard = gtk.Clipboard(gtk.gdk.display_get_default(), "CLIPBOARD")
+
         # Show every widgets
         self.notebook.show()
         main_vbox.show()
