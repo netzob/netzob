@@ -167,10 +167,14 @@ class TreeMessageGenerator():
         for field in self.symbol.getFields() :
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
+            textCellRenderer.set_property("size-points", 9)
             textCellRenderer.set_property('background-set' , True)
 
             # Column Messages
             lvcolumn = gtk.TreeViewColumn(field.getName())
+            lvcolumn.set_resizable(True)
+#            lvcolumn.set_sort_column_id(iField)
+#            lvcolumn.set_clickable(True)
             lvcolumn.pack_start(textCellRenderer, True)
             lvcolumn.set_attributes(textCellRenderer, markup=iField, background=1, weight=2, editable=3)
             self.treeview.append_column(lvcolumn)

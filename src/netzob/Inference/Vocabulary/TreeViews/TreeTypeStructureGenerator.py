@@ -66,9 +66,11 @@ class TreeTypeStructureGenerator():
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
+        cell.set_property("size-points", 9)
         columns = ["iCol", "Name", "Variable", "Description"]
         for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
+            column.set_resizable(True)
             column.pack_start(cell, True)
             column.set_attributes(cell, markup=i)
             self.treeview.append_column(column)
