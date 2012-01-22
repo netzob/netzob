@@ -42,6 +42,7 @@ from Angluin import Angluin
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 import threading
+import gobject
 
 #+---------------------------------------------- 
 #| GrammarInferer :
@@ -65,10 +66,11 @@ class GrammarInferer(threading.Thread):
     
     
     def run(self):
-        self.log.debug("Starting the Grammar infering process")
+        self.log.info("Starting the Grammar inferring process")
         self.active = True
         self.infer()
         self.active = False
+        self.log.info("Ending the Grammar inferring process")
         
     def hasFinish(self):
         return not self.active
@@ -82,24 +84,21 @@ class GrammarInferer(threading.Thread):
     def getSubmitedQueries(self):
         if self.learner != None :
             return self.learner.getSubmitedQueries()
-        return None
+        return []
     
     def stop(self):
         self.active = False
     
     def infer(self):
-        self.cb_newTurn("hello")
-        # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.oracle)
-        
+       
         equivalent = False
+        # we first initialize the angluin's algo
+        self.learner = Angluin(self.vocabulary, self.oracle, self.cb_newTurn)
         
         while not equivalent and self.active:
             self.log.info("=============================================================================")
-            self.log.info("Execute one new round of the infering process")
+            self.log.info("Execute one new round of the inferring process")
             self.log.info("=============================================================================")
-            
-            self.cb_newTurn("new Truen ....")
             
             self.learner.learn()
             self.hypotheticalAutomaton = self.learner.getInferedAutomata()            
@@ -118,7 +117,7 @@ class GrammarInferer(threading.Thread):
             
         automaton = self.learner.getInferedAutomata()    
         
-        self.log.info("The infering process is finished !")
+        self.log.info("The inferring process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton))
         self.inferedAutomaton = automaton    
             

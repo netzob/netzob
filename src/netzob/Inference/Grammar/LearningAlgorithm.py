@@ -30,10 +30,7 @@
 #+----------------------------------------------
 import logging
 import time
-from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
-from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
-from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
+
 
 #+---------------------------------------------- 
 #| Related third party imports
@@ -42,7 +39,11 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+---------------------------------------------- 
 #| Local application imports
 #+----------------------------------------------
-
+from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
+from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+import gobject
 
 #+---------------------------------------------- 
 #| LearningAlgorithm :
@@ -51,14 +52,18 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+---------------------------------------------- 
 class LearningAlgorithm(object):
      
-    def __init__(self, dictionary, communicationChannel):
+    def __init__(self, dictionary, communicationChannel, callbackFunction):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
         self.communicationChannel = communicationChannel
         self.inferedAutomata = None
         self.submitedQueries = []
+        self.callbackFunction = callbackFunction
     
+    
+    def attachStatusCallBack(self, callbackFunction):
+        self.callbackFunction = callbackFunction
     
     def learn(self):
         self.log.error("The LearningAlgorithm class doesn't support 'learn'.")
@@ -80,8 +85,8 @@ class LearningAlgorithm(object):
         oracle.setMMSTD(mmstd)
         oracle.start()
         
-#        # wait it has finished
-        self.log.info("Waiting for the oracle to have finish")
+        # wait it has finished
+        self.log.info("Waiting for the oracle to finish")
         while oracle.isAlive() :
             time.sleep(0.01)
         self.log.info("The oracle has finished !")
@@ -89,7 +94,6 @@ class LearningAlgorithm(object):
         # stop the oracle and retrieve the query
         oracle.stop()
         
-#        exit()
         resultQuery = oracle.getResults()
         
         self.log.info("The following query has been computed : " + str(resultQuery))
@@ -98,7 +102,14 @@ class LearningAlgorithm(object):
         self.submitedQueries.append([query, resultQuery])
         
         # return only the last result
-        return resultQuery[len(resultQuery) - 1]
+        if len(resultQuery) > 0 :
+            # Execute the call back function
+            gobject.idle_add(self.callbackFunction, query, resultQuery[len(resultQuery) - 1])
+            return resultQuery[len(resultQuery) - 1]
+        else :
+            # Execute the call back function
+            gobject.idle_add(self.callbackFunction, query, None)
+            return resultQuery
     
     def getInferedAutomata(self):
         return self.inferedAutomata

@@ -38,6 +38,8 @@ from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
 from netzob.Simulator.XDotWidget import XDotWidget
 import gobject
 import time
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Threads.Job import Job
 
 pygtk.require('2.0')
 
@@ -59,6 +61,7 @@ class AutomaticGrammarInferenceView(object):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.AutomaticGrammarInferenceView.py')
         self.project = project
+        self.inferer = None
         
     def display(self):
         # Display the form for the creation of a word variable
@@ -137,12 +140,12 @@ class AutomaticGrammarInferenceView(object):
         # col : membership queries
         col_queries_querie = gtk.TreeViewColumn('Membership queries')
         col_queries_querie.pack_start(cell, True)
-        col_queries_querie.set_attributes(cell, text=1)
+        col_queries_querie.set_attributes(cell, text=0)
         treeview_queries.append_column(col_queries_querie)
         # col : responses to queries
         column_queries_responses = gtk.TreeViewColumn('Responses')
         column_queries_responses.pack_start(cell, True)
-        column_queries_responses.set_attributes(cell, text=2)
+        column_queries_responses.set_attributes(cell, text=1)
         treeview_queries.append_column(column_queries_responses)
         scroll_requests.add(treeview_queries)
         scroll_requests.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -163,33 +166,61 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
         
-        # Hum hum ? is it really the right way ?
-        gobject.idle_add(self.dialog.run)
-        
-        
     
-    def callback_newTurn(self, message):
-        queries = self.inferer.getSubmitedQueries()
-        if queries != None :
-            self.treestore_queries.clear()
-            for query in queries :
-                self.treestore_queries.append(None, [str(query[0]), str(query[1]), "red"])
-            
-            print "A number of " + str(len(queries)) + " has been executed !"
-            
+    def callback_newTurn(self, query, resultQuery):
         
-        hypotheticalAutomaton = self.inferer.getHypotheticalAutomaton()
-        if hypotheticalAutomaton != None :
-            print "update the graphic"
-#            self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
+        if query == None :
+            self.log.debug("Impossible to show a Null query")
+            return
+        
+        # Create a str view of the Query
+        strQuery = ""
+        for symbol in query.getSymbols() :
+            strSymbol = ""
+            if symbol.getType() == "DictionarySymbol" :
+                strSymbol = symbol.getName()
+            else :
+                strSymbol = "EmptySymbol"
+            
+            strQuery = strQuery + strSymbol + ", "
+        if resultQuery != None :
+            strResultQuery = str(resultQuery.getName())
         else :
-            print "no H"
+            strResultQuery = "None"
+        
+        self.treestore_queries.append(None, [strQuery, strResultQuery, "red"])
+#        
+#        
+#        
+#        self.log.warn("---------------------------------------------------------------")
+#        self.log.warn("---------------------------------------------------------------")
+#        self.log.warn("---------------------------------------------------------------")
+#        self.log.warn("---------------------------------------------------------------")
+#        if self.inferer == None :
+#            self.log.warn("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#            return
+#        queries = self.inferer.getSubmitedQueries()
+#        self.log.warn("A number of " + str(len(queries)))
+#        if queries != None :
+#            self.treestore_queries.clear()
+#            for query in queries :
+#                s
+#            
+#        
+#        hypotheticalAutomaton = self.inferer.getHypotheticalAutomaton()
+#        if hypotheticalAutomaton != None :
+#            print "update the graphic"
+#            self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
+
     
     def stopInference(self, button):
         self.inferer.stop()
     
-    def startInference(self, button):
+    def startInferer(self):
+        result1 = (yield ThreadedTask(self.inferer.infer))
         
+    
+    def startInference(self, button):
         # We retrieve the specified value
         actorIP = self.IPEntry.get_text()
         actorNetworkProtocol = self.combo_protocolOfNetworkActor.get_active_text()
@@ -206,19 +237,29 @@ class AutomaticGrammarInferenceView(object):
         
         # Lets create the automatic inferer
         self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, self.callback_newTurn)
+        self.inferer.setDaemon(True)
         
-        # Open the new dialog which shows the status of the infering process
+        # Open the new dialog which shows the status of the inferring process
         self.createInferringStatusView()
         
-        # Start the dedicated thread
-        self.inferer.start()
+        # Start the inferer
+        job = Job(self.startInferer())
         
         
         
-        while not self.inferer.hasFinish() :
-            self.updateInferringStatusView()
+#        
+#        # Start the dedicated thread
+#        self.log.warn("Start the INFERER")
+#        self.inferer.start()
+#        
+#        self.log.warn("INFERER STARTED")
+#        while not self.inferer.hasFinish() :
+#            gobject.idle_add(self.updateInferringStatusView)
+#        
+#        self.log.warn("INFERER has finished")
+#        
+#        resultedAutomaton = self.inferer.getInferedAutomaton()
         
-        resultedAutomaton = self.inferer.getInferedAutomaton()
 
     def updateInferringStatusView(self):
         
