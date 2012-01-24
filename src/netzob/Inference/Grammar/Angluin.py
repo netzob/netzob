@@ -57,8 +57,8 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+---------------------------------------------- 
 class Angluin(LearningAlgorithm):
      
-    def __init__(self, dictionary, communicationChannel, cb):
-        LearningAlgorithm.__init__(self, dictionary, communicationChannel, cb)
+    def __init__(self, dictionary, communicationChannel, cb_query):
+        LearningAlgorithm.__init__(self, dictionary, communicationChannel, cb_query)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
         
@@ -68,6 +68,7 @@ class Angluin(LearningAlgorithm):
         
 
     def initializeObservationTable(self):
+        
         self.log.info("Initialization of the observation table")
         self.suffixes = []
         self.D = []
@@ -167,8 +168,9 @@ class Angluin(LearningAlgorithm):
     def learn(self):
         self.log.info("Learn...")
         self.displayObservationTable()
-        
+
         while (not self.isClosed() or not self.isConsistent()) :
+
             if not self.isClosed():
                 self.log.info("#================================================")
                 self.log.info("The table is not closed")                
@@ -190,7 +192,7 @@ class Angluin(LearningAlgorithm):
             
             self.log.info("Another turn")
             self.displayObservationTable()
-        
+
         self.log.info("Table is closed and consistent")
         # We compute an automata
         self.computeAutomata()
@@ -203,6 +205,7 @@ class Angluin(LearningAlgorithm):
         return True
      
     def isClosed(self):
+
         rowSA = []
         rowS = []
         
@@ -221,6 +224,7 @@ class Angluin(LearningAlgorithm):
         return True
     
     def closeTable(self):
+
         rowSA = []
         rowS = []
         
@@ -240,6 +244,7 @@ class Angluin(LearningAlgorithm):
         return True
     
     def isConsistent(self):
+
         # search for all the rows of S which are equals
         rowS = []
         equalsRows = []
@@ -275,6 +280,7 @@ class Angluin(LearningAlgorithm):
         return True    
     
     def makesTableConsistent(self):
+
         # search for all the rows of S which are equals
         rowS = []
         equalsRows = []

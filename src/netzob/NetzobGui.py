@@ -212,15 +212,16 @@ class NetzobGui(gtk.Window):
     def getCurrentWorkspace(self):
         return self.currentWorkspace
 
-    def getDictionary(self):
-        actorGrammar = "example_learning.xml"
-        grammar_directory = ConfigurationParser().get("automata", "path") 
-        xmlFile = os.path.join(grammar_directory, actorGrammar)
-        tree = ElementTree()
-        tree.parse(xmlFile)
-        # Load the automata based on its XML definition
-        serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())
-        return serverAutomata.getDictionary()
+# To be deleted : in few days
+#    def getDictionary(self):
+#        actorGrammar = "example_learning.xml"
+#        grammar_directory = ConfigurationParser().get("automata", "path") 
+#        xmlFile = os.path.join(grammar_directory, actorGrammar)
+#        tree = ElementTree()
+#        tree.parse(xmlFile)
+#        # Load the automata based on its XML definition
+#        serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())
+#        return serverAutomata.getDictionary()
 
     def getCurrentNotebookPage(self):
         res = None
