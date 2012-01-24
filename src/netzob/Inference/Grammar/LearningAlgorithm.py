@@ -59,6 +59,7 @@ class LearningAlgorithm(object):
         self.communicationChannel = communicationChannel
         self.inferedAutomata = None
         self.submitedQueries = []
+
         self.callbackFunction = callbackFunction
     
     
@@ -71,9 +72,11 @@ class LearningAlgorithm(object):
     
     def getSubmitedQueries(self):
         return self.submitedQueries    
-        
+  
+    
     def submitQuery(self, query):
         self.log.info("Submit the following query : " + str(query))
+        
         
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary)

@@ -63,6 +63,7 @@ class AutomaticGrammarInferenceView(object):
         self.project = project
         self.inferer = None
         self.computedAutomaton = None
+        self.finish = False
         
     def display(self):
         # Display the form for the creation of a word variable
@@ -115,9 +116,7 @@ class AutomaticGrammarInferenceView(object):
         
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
-        
-    
-    
+   
         
     def createInferringStatusView(self):
         self.dialog = gtk.Dialog(title="Execution of the inferring process", flags=0, buttons=None)
@@ -153,30 +152,37 @@ class AutomaticGrammarInferenceView(object):
         scroll_requests.show()
         mainTable.attach(scroll_requests, 2, 4, 0, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
-        # Insert the status message
-        self.statusLabel = gtk.Label("A number of X states has been created - Current turn contains N MQ")
-        self.statusLabel.show()
-        mainTable.attach(self.statusLabel, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
-        # Insert the Save button
-        self.saveButton = gtk.Button("Save as Grammar")
-        self.saveButton.show()
-        
-        self.saveButton.connect("clicked", self.saveGrammar)
-        mainTable.attach(self.saveButton, 2, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        # Progress bar
+        self.progressbar = gtk.ProgressBar(adjustment=None) 
+        self.progressbar.show()
+#        # Insert the status message
+#        self.statusLabel = gtk.Label("A number of X states has been created - Current turn contains N MQ")
+#        self.statusLabel.show()
+        mainTable.attach(self.progressbar, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         # Insert the stop button
         self.stopButton = gtk.Button("Stop")
         self.stopButton.show()
         self.stopButton.connect("clicked", self.stopInference)
-        mainTable.attach(self.stopButton, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.stopButton, 2, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+       
+        # Insert the Save button
+        self.saveButton = gtk.Button("Save as Grammar")
+        self.saveButton.show()
+        self.saveButton.connect("clicked", self.saveGrammar)
+        mainTable.attach(self.saveButton, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
-        
+    
+    
+    def do_pulse(self, *args):
+        if self.finish == False :
+            self.progressbar.pulse()
+            return True
+        return False
     
     def callback_submitedQuery(self, query, resultQuery):
-        
         if query == None :
             self.log.debug("Impossible to show a Null query")
             return
@@ -203,21 +209,22 @@ class AutomaticGrammarInferenceView(object):
             
             strResultQuery = strResultQuery + strSymbol + ","
         
-        self.treestore_queries.append(None, [strQuery, strResultQuery, "red"])
+        self.treestore_queries.append(None, [strQuery, strResultQuery, "blue"])
         
     def callback_hypotheticalAutomaton(self, hypotheticalAutomaton):
         if hypotheticalAutomaton != None :
-            print "update the graphic"
             self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
-
-
 
     
     def stopInference(self, button):
+        self.finish = True
+        self.log.info("Stop the inferer")
         self.inferer.stop()
     
-    def startInferer(self):
-        self.computedAutomaton = (yield ThreadedTask(self.inferer.infer))
+    def startInferer(self):        
+        (yield ThreadedTask(self.inferer.infer))
+        self.computedAutomaton = self.inferer.getInferedAutomaton()
+        self.finish = True
     
     def saveGrammar(self, button):
         if self.computedAutomaton != None :
@@ -242,13 +249,15 @@ class AutomaticGrammarInferenceView(object):
         
         # Lets create the automatic inferer
         self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, self.callback_submitedQuery, self.callback_hypotheticalAutomaton)
-        self.inferer.setDaemon(True)
         
         # Open the new dialog which shows the status of the inferring process
         self.createInferringStatusView()
         
+        # Start the progress bar
+        gobject.timeout_add(200, self.do_pulse) 
+        
         # Start the inferer
-        job = Job(self.startInferer())
+        self.job = Job(self.startInferer())
         
     
         

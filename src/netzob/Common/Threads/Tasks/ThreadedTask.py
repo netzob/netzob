@@ -52,6 +52,9 @@ class ThreadedTask(Task):
         thread.start()
         self.source_id = gobject.timeout_add(50, self._queue_manager, thread, queue)
     
+    def cancel(self):
+        self.function
+    
     def _queue_manager(self, thread, queue):
         if queue.empty():
             if not thread.isAlive():

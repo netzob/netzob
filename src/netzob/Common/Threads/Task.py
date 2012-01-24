@@ -39,3 +39,7 @@ class Task:
 
     def run(self):        
         raise RuntimeError, "Run method must be overriden"
+    
+    def cancel(self):
+        pass
+    

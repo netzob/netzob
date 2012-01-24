@@ -70,7 +70,7 @@ class GrammarInferer(threading.Thread):
         self.log.info("Starting the Grammar inferring process")
         self.active = True
         self.infer()
-        self.active = False
+        self.active = False0
         self.log.info("Ending the Grammar inferring process")
         
     def hasFinish(self):
@@ -91,17 +91,19 @@ class GrammarInferer(threading.Thread):
         self.active = False
     
     def infer(self):
-       
+        self.active = True
         equivalent = False
         # we first initialize the angluin's algo
         self.learner = Angluin(self.vocabulary, self.oracle, self.cb_submitedQuery)
-        
-        while not equivalent:
+        while not equivalent and self.active :
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")
             self.log.info("=============================================================================")
             
             self.learner.learn()
+            if not self.active :
+                break
+            
             self.hypotheticalAutomaton = self.learner.getInferedAutomata()     
             self.log.info("An hypothetical automaton has been computed") 
             
@@ -109,7 +111,8 @@ class GrammarInferer(threading.Thread):
             gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
             
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton)
-            
+            if not self.active :
+                break
             if counterExample == None :
                 self.log.info("No counter-example were found !")
                 equivalent = True
@@ -124,7 +127,7 @@ class GrammarInferer(threading.Thread):
         self.log.info("The inferring process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton))
         self.inferedAutomaton = automaton    
-        return automaton    
+    
         
             
             
