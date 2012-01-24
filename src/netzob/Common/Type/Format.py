@@ -29,18 +29,31 @@
 #| Format representation of data
 #+----------------------------------------------
 class Format():
+    # Primary formats
     BINARY = "binary"
     OCTAL = "octal"
     DECIMAL = "decimal"
     HEX = "hex"
     STRING = "string"
     FLOAT = "float"
+
+    # Complex formats
+    IP = "ip"
     
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| getSupportedFormats :
-    #|     Returns an array composed of the names of all supported formats
+    #|     Returns an array composed of the names of primary supported formats
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+
     def getSupportedFormats():
         return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
+
+    @staticmethod
+    #+---------------------------------------------------------------------------+
+    #| getExtendedSupportedFormats :
+    #|     Returns an array composed of the names of all supported formats
+    #|     for the visualization of messages
+    #+---------------------------------------------------------------------------+
+    def getExtendedSupportedFormats():
+        return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING, Format.IP]

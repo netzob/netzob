@@ -51,6 +51,7 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------- 
 #| C Imports
@@ -312,7 +313,7 @@ class Symbol(object):
         
         res = []
         for message in self.getMessages():
-            messageTable = message.applyAlignment()            
+            messageTable = message.applyAlignment()
             messageElt = messageTable[field.getIndex()]
             res.append( messageElt )
 #            if len(messageElt) > 0 :
@@ -760,16 +761,16 @@ class Symbol(object):
         but = gtk.Button(label="Apply data type on column")
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.envDependenciesResultSelected_cb, treeview, but)
+        treeviewRes.connect("cursor-changed", self.ASN1ResultSelected_cb, treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
 
     #+---------------------------------------------- 
-    #| envDependenciesResultSelected_cb:
+    #| ASN1ResultSelected_cb:
     #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
-    def envDependenciesResultSelected_cb(self, treeview, treeviewTarget, but):
+    def ASN1ResultSelected_cb(self, treeview, treeviewTarget, but):
         treeviewTarget.get_model().clear()
         (model, it) = treeview.get_selection().get_selected()
         if(it):
@@ -833,7 +834,10 @@ class Symbol(object):
         scroll.add(treeviewRes)
         hbox.add(scroll)
 
-        ## Algo : for each field, and then for each value, try to find environmental dependency
+        # TODO: look in all possible formats
+
+        ## Algo : for each field, and then for each value, try to find dependencies
+        # First step: look for captured env. dependencies
         for field in self.getFields():
             cells = []
             try:
@@ -841,16 +845,34 @@ class Symbol(object):
             except NetzobException as e:
                 logging.warning("ERROR: " + str(e.value))
                 break
+
             for envDependency in project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES) :
                 if envDependency.getValue() == "":
                     break
                 matchElts = 0
                 for cell in cells:
-                    matchElts += TypeConvertor.netzobRawToString(cell).count(envDependency.getValue())
+                    matchElts += TypeConvertor.encodeNetzobRawToGivenType(cell, envDependency.getType()).count(str(envDependency.getValue()))
                 if matchElts > 0:
                     store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
-        # Preview of matching fields in a treeview ## ListStore format :
+        # Second step: look for captured message properties
+        for message in self.getMessages():
+            iField = 0
+            messageTable = message.applyAlignment()
+            for cell in messageTable:
+                for prop in message.getProperties():
+                    name = prop[0]
+                    aType = prop[1]
+                    value = prop[2]
+                    if value == "" or name == "Data":
+                        break
+                    matchElts = str(TypeConvertor.encodeNetzobRawToGivenType(cell, aType)).count(str(value))
+                    if matchElts > 0:
+                        store.append([iField, name, aType, value])
+                iField += 1
+
+        # Preview of matching fields in a treeview
+        ## ListStore format :
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
@@ -895,7 +917,7 @@ class Symbol(object):
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getMessagesValuesByField(field):
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
+                    cell = glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(cell, envType))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([ cell ])

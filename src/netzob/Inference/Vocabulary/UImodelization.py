@@ -1116,8 +1116,8 @@ class UImodelization:
         
         # Create the dialog
         dialog = gtk.Dialog(title="Properties of message " + str(message.getID()), flags=0, buttons=None)
-        ## ListStore format : (str=key, str=value)
-        treeview = gtk.TreeView(gtk.ListStore(str, str)) 
+        ## ListStore format : (str=key, str=type, str=value)
+        treeview = gtk.TreeView(gtk.ListStore(str, str, str)) 
         treeview.set_size_request(500, 300)
         treeview.show()
         
@@ -1127,11 +1127,16 @@ class UImodelization:
         columnProperty.pack_start(cell, True)
         columnProperty.set_attributes(cell, text=0)
         
+        columnType = gtk.TreeViewColumn("Type")
+        columnType.pack_start(cell, True)
+        columnType.set_attributes(cell, text=1)
+
         columnValue = gtk.TreeViewColumn("Value")
         columnValue.pack_start(cell, True)
-        columnValue.set_attributes(cell, text=1)        
+        columnValue.set_attributes(cell, text=2)
         
         treeview.append_column(columnProperty)
+        treeview.append_column(columnType)
         treeview.append_column(columnValue)
          
         # Retrieves all the properties of current message and 

@@ -132,6 +132,8 @@ class TypeConvertor():
             return TypeConvertor.netzobRawToBinary(raw)
         elif aType == Format.DECIMAL :
             return TypeConvertor.netzobRawToDecimal(raw)
+        elif aType == Format.IP :
+            return TypeConvertor.netzobRawToIP(raw)
         else :
             return raw
 
@@ -156,6 +158,8 @@ class TypeConvertor():
             return TypeConvertor.binaryToNetzobRaw(raw)
         elif aType == Format.DECIMAL :
             return TypeConvertor.decimalToNetzobRaw(raw)
+        elif aType == Format.IP :
+            return TypeConvertor.ipToNetzobRaw(raw)
         else :
             return raw
     
@@ -274,6 +278,24 @@ class TypeConvertor():
     #| Return the decimal parameter in string
     #+----------------------------------------------
     def decimalToNetzobRaw(raw):
+        logging.error("Not yet implemented")        
+        # TODO
+        return raw
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Return the hex string parameter in IP
+    #+----------------------------------------------
+    def netzobRawToIP(raw):
+        logging.error("Not yet implemented")        
+        # TODO
+        return raw
+
+    @staticmethod
+    #+---------------------------------------------- 
+    #| Return the IP parameter in hex string
+    #+----------------------------------------------
+    def ipToNetzobRaw(raw):
         logging.error("Not yet implemented")        
         # TODO
         return raw
