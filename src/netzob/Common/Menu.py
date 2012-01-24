@@ -37,6 +37,7 @@ import os
 #| Local imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Project import Project
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
 from netzob.Import.IpcImport import IpcImport
@@ -66,6 +67,9 @@ class Menu(object):
         
         # Creation of the Project menu
         self.createProjectMenu()
+
+        # Creation of the View menu
+        self.createViewMenu()
         
         # Creation of the Help menu
         self.createHelpMenu()
@@ -157,6 +161,38 @@ class Menu(object):
             self.manageTraces.set_sensitive(False)
             self.importRootMenu.set_sensitive(True)
             self.exportRootMenu.set_sensitive(True)
+            self.displaySymbolStructure.set_sensitive(True)
+            self.displayMessages.set_sensitive(True)
+            self.displayConsole.set_sensitive(False)
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
+            self.displaySymbolStructure.set_active(isActive)
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
+            self.displayMessages.set_active(isActive)
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
+            self.displayConsole.set_active(isActive)
+
+    def createViewMenu(self):
+        self.menuView = gtk.Menu()
+        
+        menuRootView = gtk.MenuItem("View")
+        menuRootView.set_submenu(self.menuView)
+        
+        self.displaySymbolStructure = gtk.CheckMenuItem("Display symbol structure")
+        self.displaySymbolStructure.connect("activate", self.displaySymbolStructureAction)
+        self.menuView.append(self.displaySymbolStructure)
+        self.displaySymbolStructure.set_sensitive(False)
+
+        self.displayMessages = gtk.CheckMenuItem("Display messages")
+        self.displayMessages.connect("activate", self.displayMessagesAction)
+        self.menuView.append(self.displayMessages)
+        self.displayMessages.set_sensitive(False)
+
+        self.displayConsole = gtk.CheckMenuItem("Display console")
+        self.displayConsole.connect("activate", self.displayConsoleAction)
+        self.menuView.append(self.displayConsole)
+        self.displayConsole.set_sensitive(False)
+        
+        self.menuBar.append(menuRootView)
     
     def createWorkspaceMenu(self):
         
@@ -210,16 +246,13 @@ class Menu(object):
             projectEntry.connect("activate", self.switchProjectAction, project)
             self.selectAProject.append(projectEntry)
         self.selectAProject.show_all()    
-        
     
     def update(self):
         self.updateWorkspaceMenu()
         self.updateProjectMenu()
-        
     
     def getMenuBar(self):
         return self.menuBar
-    
     
     def exitAction(self, widget):
         self.netzob.destroy(widget)
@@ -279,7 +312,30 @@ class Menu(object):
 #        dialog.vbox.pack_start(apiImportPanel.getPanel(), True, True, 0)
 #        dialog.set_size_request(900, 700)
 
-    
+    #+---------------------------------------------- 
+    #| Called when user wants to display symbol structure panel
+    #+----------------------------------------------
+    def displaySymbolStructureAction(self, widget):
+        if self.netzob.getCurrentProject() != None :
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, self.displaySymbolStructure.get_active())
+        self.netzob.updateCurrentPanel()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to display messages panel
+    #+----------------------------------------------
+    def displayMessagesAction(self, widget):
+        if self.netzob.getCurrentProject() != None :
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, self.displayMessages.get_active())
+        self.netzob.updateCurrentPanel()
+
+    #+---------------------------------------------- 
+    #| Called when user wants to display the console
+    #+----------------------------------------------
+    def displayConsoleAction(self, widget):
+        if self.netzob.getCurrentProject() != None :
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, self.displayConsole.get_active())
+        self.netzob.updateCurrentPanel()
+
     def aboutDialogAction(self, widget):
         about = gtk.AboutDialog()
         about.set_program_name("Netzob")

@@ -95,6 +95,20 @@ class TreeMessageGenerator():
     def error(self):
         self.log.warning("The treeview for the messages is in error mode")      
         self.treestore.clear()
+
+    #+---------------------------------------------- 
+    #| show :
+    #|   Display the panel
+    #+---------------------------------------------- 
+    def show(self):
+        self.scroll.show_all()
+
+    #+---------------------------------------------- 
+    #| hide :
+    #|   Hide the panel
+    #+---------------------------------------------- 
+    def hide(self):
+        self.scroll.hide_all()
     
     #+---------------------------------------------- 
     #| default :

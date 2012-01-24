@@ -120,6 +120,25 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
+            if isActive:
+                self.treeTypeStructureGenerator.show()
+            else:
+                self.treeTypeStructureGenerator.hide()
+
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
+            if isActive:
+                self.treeMessageGenerator.show()
+            else:
+                self.treeMessageGenerator.hide()
+
+            #isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
+            #if isActive:
+            #    self.consoleGenerator.show()
+            #else:
+            #    self.consoleGenerator.hide()
+
         self.updateTreeStoreSymbol()
         self.updateTreeStoreMessage()
         self.updateTreeStoreTypeStructure()
@@ -679,7 +698,7 @@ class UImodelization:
             # Add entry to delete the message
             item = gtk.MenuItem("Delete message")
             item.show()
-            item.connect("activate", self.rightClickDeleteMessage, message_id)
+            item.connect("activate", self.rightClickDeleteMessage)
             menu.append(item)
 
             menu.popup(None, None, None, event.button, event.time)
@@ -1113,25 +1132,31 @@ class UImodelization:
     #| rightClickDeleteMessage :
     #|   Delete the requested message
     #+----------------------------------------------
-    def rightClickDeleteMessage(self, event, id_message):
-        self.log.debug("The user wants to delete the message " + str(id_message))
-        
-        message_symbol = self.selectedSymbol
-        message = self.selectedSymbol.getMessageByID(id_message)
-        
-        # Break if the message to move was not found
-        if message == None :
-            self.log.warning("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message))
-            return
-        
-        questionMsg = "Click yes to confirm the deletion of message {0}".format(id_message)
+    def rightClickDeleteMessage(self, event):
+        questionMsg = "Click yes to confirm the deletion of the selected messages"
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
-        if result == gtk.RESPONSE_YES:
-            self.log.debug("The user has confirmed !")
-            message_symbol.removeMessage(message)
-            self.update()
+        if result != gtk.RESPONSE_YES:
+            return
+
+        # Else, retrieve the selected messages
+        (model, paths) = self.treeMessageGenerator.getTreeview().get_selection().get_selected_rows()
+        for path in paths:
+            aIter = model.get_iter(path)
+            if(model.iter_is_valid(aIter)):
+                id_message = model.get_value(aIter, 0)
+                self.log.debug("The user wants to delete the message " + str(id_message))
+        
+                message_symbol = self.selectedSymbol
+                message = self.selectedSymbol.getMessageByID(id_message)
+        
+                # Break if the message to move was not found
+                if message == None :
+                    self.log.warning("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message))
+                    return
+                message_symbol.removeMessage(message)
+        self.update()
             
     #+---------------------------------------------- 
     #| rightClickToChangeFormat :
@@ -1213,7 +1238,8 @@ class UImodelization:
         # Left arrow
         arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
         arrow.show()
-        but = NetzobButton()
+        but = gtk.Button()
+        but.show()
         but.add(arrow)
         but.connect("clicked", self.adjustSplitColumn, textview, "left", field)
         dialog.action_area.pack_start(but, True, True, 0)
@@ -1221,7 +1247,8 @@ class UImodelization:
         # Right arrow
         arrow = gtk.Arrow(gtk.ARROW_RIGHT, gtk.SHADOW_OUT)
         arrow.show()
-        but = NetzobButton()
+        but = gtk.Button()
+        but.show()
         but.add(arrow)
         but.connect("clicked", self.adjustSplitColumn, textview, "right", field)
         dialog.action_area.pack_start(but, True, True, 0)
