@@ -1,8 +1,8 @@
-include COPYING.txt
-include ChangeLog.txt
 include AUTHORS.txt
-include README.txt
+include COPYING.txt
 include NEWS.txt
+include PKG-INFO.txt
+include README.txt
 recursive-include doc *
 recursive-include resources *
 recursive-include lib *
