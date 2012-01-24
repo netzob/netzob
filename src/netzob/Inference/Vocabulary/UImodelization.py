@@ -31,6 +31,9 @@
 import gtk
 import pango
 import pygtk
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+import gobject
+from netzob.Common.Threads.Job import Job
 pygtk.require('2.0')
 import logging
 import threading
@@ -43,7 +46,8 @@ import uuid
 #+---------------------------------------------- 
 #| Local Imports
 #+----------------------------------------------
-from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry
+from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry, \
+    NetzobProgressBar
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
@@ -360,8 +364,8 @@ class UImodelization:
         self.treeTypeStructureGenerator.clear()
         self.update()
 
-        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
-        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        dialog = gtk.Dialog(title="Discover Alignment", flags=0, buttons=None)
+        panel = gtk.Table(rows=4, columns=3, homogeneous=False)
         panel.show()
 
         ## Similarity threshold
@@ -402,17 +406,14 @@ class UImodelization:
         but.show()
         panel.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        # Widget button merge common regexes
-#        but = NetzobButton("Merge common regexes")
-#        but.connect("clicked", self.netzob.symbols.mergeCommonRegexes, self)
-        ## TODO: merge common regexes (if it is really usefull)
-#        but.set_sensitive(False)
-#        panel.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        # Progress bar
+        self.progressbarAlignment = NetzobProgressBar()
+        panel.attach(self.progressbarAlignment, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = NetzobButton("Discover alignment")
         searchButton.connect("clicked", self.discoverAlignment_cb_cb, dialog)
-        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(searchButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -422,11 +423,34 @@ class UImodelization:
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
     def discoverAlignment_cb_cb(self, widget, dialog):
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        self.alignThread = threading.Thread(None, vocabulary.alignWithNeedlemanWunsh, None, ([self.netzob.getCurrentProject(), self.update]), {})
-        dialog.destroy()
-        self.alignThread.start()
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()        
+        self.currentExecutionOfAlignmentHasFinished = False        
+        # Start the progress bar
+        gobject.timeout_add(200, self.do_pulse_for_discoverAlignement)        
+        # Start the alignment JOB
+        Job(self.startDiscoverAlignment(vocabulary, dialog))
         
+    #+---------------------------------------------- 
+    #| startDiscoverAlignment :
+    #|   Execute the Job of the Alignment in a unsynchronized way
+    #+----------------------------------------------
+    def startDiscoverAlignment(self, vocabulary, dialog):                
+        self.currentExecutionOfAlignmentHasFinished = False
+        (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.update))
+        self.currentExecutionOfAlignmentHasFinished = True
+        dialog.destroy()
+    
+    #+---------------------------------------------- 
+    #| do_pulse_for_discoverAlignement :
+    #|   Computes if the progress bar must be updated or not
+    #+----------------------------------------------
+    def do_pulse_for_discoverAlignement(self):
+        if self.currentExecutionOfAlignmentHasFinished == False : 
+            self.progressbarAlignment.pulse()
+            return True 
+        return False
+    
+       
     #+---------------------------------------------- 
     #| forceAlignment_cb :
     #|   Force the delimiter for sequence alignment
@@ -1076,11 +1100,11 @@ class UImodelization:
             return
 
         if aligned == False: # Copy the entire raw message
-            self.netzob.clipboard.set_text( message.getStringData() )
+            self.netzob.clipboard.set_text(message.getStringData())
         elif field == None: # Copy the entire aligned message
-            self.netzob.clipboard.set_text( str(message.applyAlignment(styled=False, encoded=encoded)) )
+            self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)))
         else: # Just copy the selected field
-            self.netzob.clipboard.set_text( message.applyAlignment(styled=False, encoded=encoded)[ field.getIndex() ] )
+            self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[ field.getIndex() ])
 
     #+---------------------------------------------- 
     #| rightClickShowPropertiesOfMessage :

@@ -81,3 +81,14 @@ def NetzobComboBoxEntry():
     cell = combo.get_cells()[0] # Get the cellrenderer
     cell.set_property("size-points", 9)
     return combo
+
+#+---------------------------------------------------------------------------+
+#| NetzobProgressBar :
+#+---------------------------------------------------------------------------+
+def NetzobProgressBar(text=None):
+    pb = gtk.ProgressBar(adjustment=None) 
+    if text != None :
+        pb.set_text(text)
+    
+    pb.show()
+    return pb
