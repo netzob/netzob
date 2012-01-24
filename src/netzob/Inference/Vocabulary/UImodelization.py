@@ -766,29 +766,48 @@ class UImodelization:
         return menu
 
     def displayPopupToEditField(self, event, field):
-        dialog = gtk.MessageDialog(
-        None,
-        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-        gtk.MESSAGE_QUESTION,
-        gtk.BUTTONS_OK,
-        None)
-        dialog.set_markup("<b>Please enter the name of the field :</b>")
-        #create the text input field
-        entry = gtk.Entry()
-        entry.set_text(field.getName())
-        #allow the user to press enter to do ok
-        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
-        #create a horizontal box to pack the entry and a label
+        dialog = gtk.MessageDialog(None,
+                                   gtk.DIALOG_MODAL,
+                                   gtk.MESSAGE_INFO,
+                                   gtk.BUTTONS_CANCEL ,
+                                   "Modify field attributes")
+        vbox = gtk.VBox()
+        # Create hbox for field name
         hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, 5, 5)
         hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
-        hbox.pack_end(entry)
-        dialog.vbox.pack_end(hbox, True, True, 0)
+        entryName = gtk.Entry()
+        entryName.set_text(field.getName())
+        # Allow the user to press enter to do ok
+        entryName.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        hbox.pack_end(entryName)
+
+        # Create hbox for field regex
+        hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, 5, 5)
+        hbox.pack_start(NetzobLabel("Regex (be careful !) : "), False, 5, 5)
+        entryRegex = gtk.Entry()
+        entryRegex.set_text(field.getRegex())
+        # Allow the user to press enter to do ok
+        entryRegex.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        hbox.pack_end(entryRegex)
+        dialog.vbox.pack_end(vbox, True, True, 0)
         dialog.show_all()
-        #go go go
-        dialog.run()
-        text = entry.get_text()
+        dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
+        result = dialog.run()
+        if result != gtk.RESPONSE_OK:
+            dialog.destroy()
+            return
+
+        # Update field name
+        text = entryName.get_text()
         if (len(text) > 0) :
             field.setName(text)
+
+        # Update field regex
+        text = entryRegex.get_text()
+        if (len(text) > 0) :
+            field.setRegex(text)
         dialog.destroy()
         self.update()
 
