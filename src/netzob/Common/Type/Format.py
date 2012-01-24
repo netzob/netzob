@@ -43,4 +43,4 @@ class Format():
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+
     def getSupportedFormats():
-        return [Format.BINARY, Format.DECIMAL, Format.HEX, Format.STRING]
+        return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
