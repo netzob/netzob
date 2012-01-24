@@ -193,6 +193,24 @@ class Symbol(object):
             self.addField(field)
             iField = iField + 1
 
+        # We look for useless fields
+        doLoop = True
+        # We loop until we don't pop any field
+        while doLoop == True:
+            doLoop = False
+            for field in self.getFields():
+                # We try to see if this field produces only empty values when applied on messages
+                messagesValuesByField = self.getMessagesValuesByField(field)
+                messagesValuesByField = "".join(messagesValuesByField)
+                if messagesValuesByField == "":
+                    self.getFields().pop( field.getIndex() ) # We remove this useless field
+                    # Adpat index of the following fields, before breaking
+                    for fieldNext in self.getFields() :
+                        if fieldNext.getIndex() > field.getIndex() :
+                            fieldNext.setIndex(fieldNext.getIndex() - 1)
+                    doLoop = True
+                    break
+
     #+---------------------------------------------- 
     #| alignWithDelimiter:
     #|  Align each messages with a specific delimiter
@@ -430,7 +448,7 @@ class Symbol(object):
         # Remove the truncated one
         self.fields.remove(field)
         
-        # modify index to adapt 
+        # Modify index to adapt 
         for field in self.getFields() :
             if field.getIndex() > field1.getIndex() :
                 field.setIndex(field.getIndex() + 1)
@@ -918,8 +936,11 @@ class Symbol(object):
     def addField(self, field):
         self.fields.append(field)
 
-    def popField(self):
-        self.fields.pop()
+    def popField(self, index=None):
+        if index == None:
+            self.fields.pop()
+        else:
+            self.fields.pop(index)
     
     def save(self, root, namespace):
         xmlSymbol = etree.SubElement(root, "{" + namespace + "}symbol")
