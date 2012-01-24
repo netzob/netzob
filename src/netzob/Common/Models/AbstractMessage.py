@@ -150,12 +150,13 @@ class AbstractMessage():
             m = compiledRegex.match(data)
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
-#            return res
+
         if m == None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
-            return [ self.getStringData() ]
+            raise NetzobException("The regex of the group doesn't match one of its message")
+#            return [ self.getStringData() ]
         iCol = 0
         dynamicCol = 1
         for field in self.symbol.getFields():

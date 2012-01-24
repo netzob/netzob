@@ -60,14 +60,14 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------     
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Variable, Description
+        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Description, Variable
         # creation of the treeview   
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
         cell.set_property("size-points", 9)
-        columns = ["iCol", "Name", "Variable", "Description"]
+        columns = ["iCol", "Name", "Description", "Variable"]
         for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
             column.set_resizable(True)
@@ -142,7 +142,7 @@ class TreeTypeStructureGenerator():
             elif field.getDefaultVariable(self.getSymbol()) != None :
                 variableDescription = field.getDefaultVariable(self.getSymbol()).getDescription()
 
-            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>', field.getDescription()])
+            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
 
     #+---------------------------------------------- 
     #| GETTERS : 

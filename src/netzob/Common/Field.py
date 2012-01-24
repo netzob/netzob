@@ -98,7 +98,7 @@ class Field(object):
         return self.variable
     
     def getDefaultVariable(self, symbol):
-        # The default variable its an Alternative of all the possibilities (in binary type)
+        # The default variable is an alternative of all the possibilities (in binary type)
         cells = symbol.getUniqValuesByField(self)
         tmpDomain = set()
         for cell in cells:

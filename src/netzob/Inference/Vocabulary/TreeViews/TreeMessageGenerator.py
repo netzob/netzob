@@ -37,6 +37,7 @@ import gtk
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Field import Field
+from netzob.Common.NetzobException import NetzobException
 
 #+---------------------------------------------- 
 #| TreeMessageGenerator :
@@ -164,13 +165,17 @@ class TreeMessageGenerator():
         
         # Build the next rows from messages after applying the regex
         for message in self.symbol.getMessages():
-            # for each message we create a line and computes its cols
+            # For each message we create a line and computes its cols
+            try:
+                messageTable = message.applyAlignment(styled=True, encoded=True)
+            except NetzobException:
+                continue # We don't display the message in error
             line = []
             line.append(message.getID())
             line.append("#ffffff")
             line.append(pango.WEIGHT_NORMAL)
             line.append(False)
-            line.extend(message.applyAlignment(styled=True, encoded=True))
+            line.extend(messageTable)
             self.treestore.append(None, line)
 
         # Remove all the columns of the current treeview
