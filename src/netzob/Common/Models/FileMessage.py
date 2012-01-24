@@ -39,7 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
-
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| FileMessage :
@@ -68,20 +68,20 @@ class FileMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Computes and returns the properties of the current message
-    #| @return an array with all the properties [[key,val],...]
+    #| @return an array with all the properties [[key,type,val],...]
     #+-----------------------------------------------------------------------+
     def getProperties(self):
         properties = []        
-        properties.append(['ID', str(self.getID())])
-        properties.append(['Type', self.getType()])
-        properties.append(['Timestamp', self.getTimestamp()])
-        properties.append(['Filename', self.getFilename()])
-        properties.append(['Creation Date', self.getCreationDate()])
-        properties.append(['Modification Date', self.getModificationDate()])
-        properties.append(['Owner', self.getOwner()])
-        properties.append(['Size', self.getSize()])
-        properties.append(['Line number', self.getLineNumber()])        
-        properties.append(['Data', self.getStringData()])
+        properties.append(['ID', Format.STRING, str(self.getID())])
+        properties.append(['Type', Format.STRING, self.getType()])
+        properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
+        properties.append(['Filename', Format.STRING, self.getFilename()])
+        properties.append(['Creation Date', Format.STRING, self.getCreationDate()])
+        properties.append(['Modification Date', Format.STRING, self.getModificationDate()])
+        properties.append(['Owner', Format.STRING, self.getOwner()])
+        properties.append(['Size', Format.DECIMAL, self.getSize()])
+        properties.append(['Line number', Format.DECIMAL, self.getLineNumber()])        
+        properties.append(['Data', Format.STRING, self.getStringData()])
         
         return properties 
         

@@ -39,6 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| NetworkMessage :
@@ -65,19 +66,19 @@ class NetworkMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Computes and returns the properties of the current message
-    #| @return an array with all the properties [[key,val],...]
+    #| @return an array with all the properties [[key,type,val],...]
     #+-----------------------------------------------------------------------+
     def getProperties(self):
-        properties = []        
-        properties.append(['ID', str(self.getID())])
-        properties.append(['Type', self.getType()])
-        properties.append(['Timestamp', self.getTimestamp()])
-        properties.append(['Protocol', self.getProtocol()])
-        properties.append(['IP source', self.getIPSource()])
-        properties.append(['IP target', self.getIPDestination()])
-        properties.append(['Source port', self.getL4SourcePort()])
-        properties.append(['Target port', self.getL4DestinationPort()])
-        properties.append(['Data', self.getStringData()])
+        properties = []
+        properties.append(['ID', Format.STRING, str(self.getID())])
+        properties.append(['Type', Format.STRING, self.getType()])
+        properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
+        properties.append(['Protocol', Format.STRING, self.getProtocol()])
+        properties.append(['IP source', Format.IP, self.getIPSource()])
+        properties.append(['IP target', Format.IP, self.getIPDestination()])
+        properties.append(['Source port', Format.DECIMAL, self.getL4SourcePort()])
+        properties.append(['Target port', Format.DECIMAL, self.getL4DestinationPort()])
+        properties.append(['Data', Format.HEX, self.getStringData()])
         
         return properties    
         
