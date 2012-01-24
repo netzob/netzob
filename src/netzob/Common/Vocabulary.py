@@ -94,21 +94,35 @@ class Vocabulary(object):
                 if not variable in variables :
                     variables.append(variable)
         return variables
-        
+    
+    def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
+        if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION) :
+            reductionStep = 1     
+        else :
+            reductionStep = 0
+            
+        nbSteps = len(self.symbols) + 1 + reductionStep
+        logging.debug("The number of estimated steps for Needleman is " + str(nbSteps))
+        return nbSteps
+    
     #+---------------------------------------------- 
     #| alignWithNeedlemanWunsh:
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self, project, callback):
+    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb, callback):
         tmpSymbols = []
         t1 = time.time()
+        fraction = 0.0
+        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
 
         # We try to clusterize each symbol
         for symbol in self.symbols :
             clusterer = Clusterer(project, [symbol], explodeSymbols=True)
             clusterer.mergeSymbols()
             tmpSymbols.extend(clusterer.getSymbols())
+            fraction = fraction + step
+            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
                 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
@@ -116,12 +130,18 @@ class Vocabulary(object):
         clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
         clusterer.mergeSymbols()
         
+        fraction = fraction + step
+        percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
+        
         # Now we execute the second part of NETZOB Magical Algorithms :)
         # clean the single symbols  
         mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)          
         if mergeOrphanReduction :
             logging.info("Merging the orphan symbols") 
             clusterer.mergeOrphanSymbols()
+            fraction = fraction + step
+            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
+        
 
         logging.info("Time of parsing : " + str(time.time() - t1))
         
