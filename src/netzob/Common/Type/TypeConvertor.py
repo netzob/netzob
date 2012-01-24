@@ -231,9 +231,17 @@ class TypeConvertor():
     #| Return the string parameter in octal
     #+----------------------------------------------
     def netzobRawToOctal(raw):
-        logging.error("Not yet implemented")
-        # TODO
-        return raw
+        res = ""
+        raw = raw.strip()
+        
+        if len(raw) % 2 == 0: # Even length
+            for i in range(0, len(raw), 2):
+                res = res + " " + oct(int(raw[i: i + 2], 16))
+        else: # Odd length
+            for i in range(0, len(raw) - 1, 2):
+                res = res + " " + oct(int(raw[i: i + 2], 16))
+            res = res + " " + oct(int(raw[-1], 16))
+        return res    
 
     @staticmethod
     #+---------------------------------------------- 
