@@ -7,12 +7,12 @@ API
 
 API description
 
-.. automodule:: netzob.Common.ConfigurationParser
+.. automodule:: netzob.Common.Workspace
 
-    .. autoclass:: ConfigurationParser
+    .. autoclass:: Workspace
 
-.. automodule:: netzob.Common.TypeIdentifier
+.. automodule:: netzob.Common.Project
     
-    .. autoclass:: TypeIdentifier
+    .. autoclass:: Project
     
     	
