@@ -97,6 +97,20 @@ class TreeTypeStructureGenerator():
     def error(self):
         self.log.warning("The treeview for the symbol is in error mode")      
         pass
+
+    #+---------------------------------------------- 
+    #| show :
+    #|   Display the panel
+    #+---------------------------------------------- 
+    def show(self):
+        self.scroll.show_all()
+
+    #+---------------------------------------------- 
+    #| hide :
+    #|   Hide the panel
+    #+---------------------------------------------- 
+    def hide(self):
+        self.scroll.hide_all()
     
     #+---------------------------------------------- 
     #| default :

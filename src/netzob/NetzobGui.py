@@ -143,6 +143,15 @@ class NetzobGui(gtk.Window):
         for page in self.pageList:
             page[1].clear()
             page[1].update()
+
+    #+---------------------------------------------- 
+    #| Update the current panel
+    #+----------------------------------------------
+    def updateCurrentPanel(self):
+        nameTab = self.notebook.get_tab_label_text( self.notebook.get_nth_page( self.notebook.get_current_page() ) )
+        for page in self.pageList:
+            if page[0] == nameTab:
+                page[1].update()
         
     def switchCurrentProject(self, project):        
         self.log.debug("The current project is : " + project.getName())

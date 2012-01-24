@@ -120,6 +120,25 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
+            if isActive:
+                self.treeTypeStructureGenerator.show()
+            else:
+                self.treeTypeStructureGenerator.hide()
+
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
+            if isActive:
+                self.treeMessageGenerator.show()
+            else:
+                self.treeMessageGenerator.hide()
+
+            #isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
+            #if isActive:
+            #    self.consoleGenerator.show()
+            #else:
+            #    self.consoleGenerator.hide()
+
         self.updateTreeStoreSymbol()
         self.updateTreeStoreMessage()
         self.updateTreeStoreTypeStructure()
