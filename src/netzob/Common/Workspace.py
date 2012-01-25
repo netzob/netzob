@@ -41,6 +41,7 @@ import shutil
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.XSDResolver import XSDResolver
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 
@@ -249,6 +250,8 @@ class Workspace(object):
                 workspace = parsingFunc(workspacePath, workspaceFile)
                 if workspace != None :
                     return workspace
+            else :
+                logging.fatal("The specified Workspace file is not valid according to the XSD.")
         
         return None
         
@@ -272,9 +275,17 @@ class Workspace(object):
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
         
-        schema_root = etree.XML(schemaContent)
-        schema = etree.XMLSchema(schema_root)
-        
+        # Extended version of an XSD validator
+        # Create an xmlParser for the schema
+        schemaParser = etree.XMLParser()
+        # Register a resolver (to locate the other XSDs according to the path of static resources)
+        xsdResolver = XSDResolver()
+        xsdResolver.addMapping("common.xsd", os.path.join(os.path.dirname(schemaFile), "common.xsd"))
+
+        schemaParser.resolvers.add(xsdResolver)
+        schemaParsed = etree.parse(schemaContent, parser=schemaParser)
+        schema = etree.XMLSchema(schemaParsed)
+                
         try :
             xmlRoot = etree.parse(xmlFile)
             schema.assertValid(xmlRoot)
@@ -282,7 +293,7 @@ class Workspace(object):
         except :
             log = schema.error_log
             error = log.last_error
-            logging.info(error)
+            logging.warn(error)
             return False
         return False
     

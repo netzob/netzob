@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.netzob.org/project"
+<schema 
+	targetNamespace="http://www.netzob.org/project"
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:netzob-project="http://www.netzob.org/project" xmlns:Q1="http://www.netzob.org/common">
+	xmlns:netzob-project="http://www.netzob.org/project" 
+	xmlns:netzob-common="http://www.netzob.org/common">
 
-	<complexType name="Project">
+    <import schemaLocation="resources/static/xsds/0.1/common.xsd" namespace="http://www.netzob.org/common"></import>
+    
+    <complexType name="Project">
 		<sequence>
 			<element name="configuration"
 				type="netzob-project:Project_configuration" minOccurs="0">
@@ -269,11 +273,11 @@
 
 	<complexType name="Messages">
 		<choice minOccurs="0" maxOccurs="unbounded">
-			<element name="message" type="netzob-project:Message"></element>
+			<element name="message" type="netzob-common:Message"></element>
 		</choice>
 	</complexType>
 
-
+<!-- 
 
 	<complexType name="NetworkMessage">
 		<complexContent>
@@ -374,7 +378,7 @@
 			</simpleType>
 		</attribute>
 		<attribute name="timestamp" type="int" use="required"></attribute>
-	</complexType>
+	</complexType> -->
 
 
 	<complexType name="Fields">

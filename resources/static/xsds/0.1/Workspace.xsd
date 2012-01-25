@@ -2,14 +2,18 @@
 <schema targetNamespace="http://www.netzob.org/workspace"
 	elementFormDefault="qualified" 
 	xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:netzob-ws="http://www.netzob.org/workspace" version="0.1">
+	xmlns:netzob-ws="http://www.netzob.org/workspace" 
+	xmlns:netzob-common="http://www.netzob.org/common"
+	version="0.1">
 	
-	<complexType name="Workspace">
+    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
+    <complexType name="Workspace">
     	<sequence>
     		<element name="configuration"
     			type="netzob-ws:Workspace_configuration" maxOccurs="1" minOccurs="1">
     		</element>
     		<element name="projects" type="netzob-ws:Projects"></element>
+    		<element name="imports" type="netzob-ws:Imports" minOccurs="0"></element>
     	</sequence>
     	<attribute name="creation_date" type="dateTime"
     		use="required">
@@ -21,6 +25,21 @@
     			</restriction>
     		</simpleType>
     	</attribute>
+	</complexType>
+
+	<complexType name="Imports">
+		<sequence>
+			<element name="import" type="netzob-ws:Import" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="Import">
+		<sequence>
+			<element name="message" type="netzob-common:Message" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+		<attribute name="date" type="dateTime"></attribute>
+		<attribute name="type" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Projects">
