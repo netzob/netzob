@@ -255,7 +255,7 @@ class Symbol(object):
     #| simpleAlignment:
     #|  Align each messages just to show their differences
     #+----------------------------------------------
-    def simpleAlignment(self, projectConfiguration):
+    def simpleAlignment(self, projectConfiguration, unitSize):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.setFields([])
@@ -308,7 +308,8 @@ class Symbol(object):
             if resultMask[it] == "1": # The current column is dynamic
                 if isLastDyn:
                     nbElements += 1
-                else: # We change the field
+                else:
+                    # We change the field
                     iField += 1
                     field = Field("Name", iField, currentStaticField)
                     field.setColor("black")

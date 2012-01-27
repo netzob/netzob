@@ -160,9 +160,9 @@ class Vocabulary(object):
     #| simpleAlignment:
     #|  Align each message just to show their differences
     #+----------------------------------------------
-    def simpleAlignment(self, configuration):
+    def simpleAlignment(self, configuration, unitSize):
         for symbol in self.symbols :
-            symbol.simpleAlignment(configuration)
+            symbol.simpleAlignment(configuration, unitSize)
        
     def save(self, root, namespace):
         xmlVocabulary = etree.SubElement(root, "{" + namespace + "}vocabulary")

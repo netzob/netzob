@@ -475,7 +475,7 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Force alignment", flags=0, buttons=None)
         panel = gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
@@ -531,9 +531,50 @@ class UImodelization:
     #|   Apply a simple alignement
     #+----------------------------------------------
     def simpleAlignment_cb(self, widget):
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.simpleAlignment(self.netzob.getCurrentProject().getConfiguration())
+        if self.netzob.getCurrentProject() == None:
+            logging.info("A project must be loaded to start an analysis")
+            return
+
+        self.selectedSymbol = None
+        self.treeMessageGenerator.clear()
+        self.treeSymbolGenerator.clear()
+        self.treeTypeStructureGenerator.clear()
         self.update()
+        dialog = gtk.Dialog(title="Simple alignment", flags=0, buttons=None)
+        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        panel.show()
+
+        # Label
+        label = NetzobLabel("Minimum alignment size: ")
+        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Delimiter type
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        typeCombo = NetzobComboBoxEntry()
+        for i in range(len(possible_choices)):
+            typeCombo.append_text(possible_choices[i])
+            if possible_choices[i] == UnitSize.NONE:
+                typeCombo.set_active(i)
+        panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # Button
+        searchButton = NetzobButton("Force alignment")
+        searchButton.connect("clicked", self.simpleAlignment_cb_cb, dialog, typeCombo)
+        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+    #+---------------------------------------------- 
+    #| simpleAlignment_cb_cb :
+    #|   Apply a simple alignement
+    #+----------------------------------------------
+    def simpleAlignment_cb_cb(self, widget, dialog, unitSize_widget):
+        unitSize = unitSize_widget.get_active_text()
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        vocabulary.simpleAlignment(self.netzob.getCurrentProject().getConfiguration(), unitSize)
+        self.update()
+        dialog.destroy()
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_symbols :
