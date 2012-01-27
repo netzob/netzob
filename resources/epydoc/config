@@ -68,6 +68,7 @@ sourcecode: yes
 # effective option at the time of generation and the reported logs.
 include-log: no
 
+frames: no
 
 
 
