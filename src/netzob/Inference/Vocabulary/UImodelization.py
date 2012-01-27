@@ -31,9 +31,7 @@
 import gtk
 import pango
 import pygtk
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 import gobject
-from netzob.Common.Threads.Job import Job
 pygtk.require('2.0')
 import logging
 import threading
@@ -48,6 +46,8 @@ import uuid
 #+----------------------------------------------
 from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry, \
     NetzobProgressBar
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
@@ -77,8 +77,6 @@ class UImodelization:
     #+----------------------------------------------
     def new(self):
         # Update the combo for choosing the format
-# TODO: support OCTAL
-#        possible_choices = [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
         possible_choices = Format.getSupportedFormats()
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
@@ -207,11 +205,17 @@ class UImodelization:
         tooltips.set_tip(but, "Set a delimiter to force alignment")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
+        # Widget for simple alignment
+        but = NetzobButton("Simple alignment")
+        but.connect("clicked", self.simpleAlignment_cb)
+        tooltips.set_tip(but, "In order to show the simple differences between messages")
+        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+
         # Widget button slick regex
         but = NetzobButton("Smooth alignment")
         but.connect("clicked", self.slickRegex_cb)
         tooltips.set_tip(but, "Merge small static fields with its neighbours")
-        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
        
         ## Field type inference
         frame = NetzobFrame("2 - Field type inference")
@@ -521,6 +525,15 @@ class UImodelization:
                                       delimiter)
         self.update()
         dialog.destroy()
+
+    #+---------------------------------------------- 
+    #| simpleAlignment_cb :
+    #|   Apply a simple alignement
+    #+----------------------------------------------
+    def simpleAlignment_cb(self, widget):
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        vocabulary.simpleAlignment(self.netzob.getCurrentProject().getConfiguration())
+        self.update()
     
     #+---------------------------------------------- 
     #| button_press_on_treeview_symbols :
@@ -1843,6 +1856,7 @@ class UImodelization:
 
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             symbol.slickRegex(self.netzob.getCurrentProject())
+        self.update()
 
     #+---------------------------------------------- 
     #| Called when user wants to find ASN.1 fields

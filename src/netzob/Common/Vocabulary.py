@@ -155,6 +155,14 @@ class Vocabulary(object):
     def alignWithDelimiter(self, configuration, aFormat, delimiter):
         for symbol in self.symbols :
             symbol.alignWithDelimiter(configuration, aFormat, delimiter)
+
+    #+---------------------------------------------- 
+    #| simpleAlignment:
+    #|  Align each message just to show their differences
+    #+----------------------------------------------
+    def simpleAlignment(self, configuration):
+        for symbol in self.symbols :
+            symbol.simpleAlignment(configuration)
        
     def save(self, root, namespace):
         xmlVocabulary = etree.SubElement(root, "{" + namespace + "}vocabulary")
