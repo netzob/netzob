@@ -70,6 +70,7 @@ class NetzobGui(gtk.Window):
             sys.exit()
 
         # loading the workspace
+        logging.debug("Loaded Workspace : " + str(ResourcesConfiguration.getWorkspaceFile()))
         self.currentWorkspace = Workspace.loadWorkspace(ResourcesConfiguration.getWorkspaceFile())
         self.currentProject = self.currentWorkspace.getLastProject()
         
@@ -148,7 +149,7 @@ class NetzobGui(gtk.Window):
     #| Update the current panel
     #+----------------------------------------------
     def updateCurrentPanel(self):
-        nameTab = self.notebook.get_tab_label_text( self.notebook.get_nth_page( self.notebook.get_current_page() ) )
+        nameTab = self.notebook.get_tab_label_text(self.notebook.get_nth_page(self.notebook.get_current_page()))
         for page in self.pageList:
             if page[0] == nameTab:
                 page[1].update()

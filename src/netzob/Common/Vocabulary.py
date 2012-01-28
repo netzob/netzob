@@ -96,6 +96,12 @@ class Vocabulary(object):
         return variables
     
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
+        # The alignment is proceeded as follows :
+        # align and cluster each individual group
+        # align and cluster the groups together
+        # orphan reduction
+        
+        
         if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION) :
             reductionStep = 1     
         else :
@@ -116,14 +122,16 @@ class Vocabulary(object):
         fraction = 0.0
         step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
 
-        # We try to clusterize each symbol
+        # We try to cluster each symbol
         for symbol in self.symbols :
+            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
             clusterer = Clusterer(project, [symbol], explodeSymbols=True)
             clusterer.mergeSymbols()
             tmpSymbols.extend(clusterer.getSymbols())
             fraction = fraction + step
-            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-                
+        
+        percentOfAlignmentProgessBar_cb(fraction, None)
+        
         # Now that all the symbols are reorganized separately
         # we should consider merging them
         logging.info("Merging the symbols extracted from the different files")
@@ -156,20 +164,20 @@ class Vocabulary(object):
         for symbol in self.symbols :
             symbol.alignWithDelimiter(configuration, aFormat, delimiter)
        
-    def save(self, root, namespace):
-        xmlVocabulary = etree.SubElement(root, "{" + namespace + "}vocabulary")
-        xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace + "}symbols")
+    def save(self, root, namespace_project, namespace_common):
+        xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
+        xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}symbols")
         for symbol in self.symbols :
-            symbol.save(xmlSymbols, namespace)
+            symbol.save(xmlSymbols, namespace_project, namespace_common)
     
     @staticmethod
-    def loadVocabulary(xmlRoot, namespace, version, project):
+    def loadVocabulary(xmlRoot, namespace, namespace_common, version, project):
         vocabulary = Vocabulary()
         
         if version == "0.1" :
             # parse all the symbols which are declared in the vocabulary
             for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol") :
-                symbol = Symbol.loadSymbol(xmlSymbol, namespace, version, project)
+                symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project)
                 if symbol != None :
                     vocabulary.addSymbol(symbol)
         return vocabulary

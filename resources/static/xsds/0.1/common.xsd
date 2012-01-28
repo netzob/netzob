@@ -3,6 +3,12 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:netzob-common="http://www.netzob.org/common">
 
+	<complexType name="Messages">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="message" type="netzob-common:Message"></element>
+		</choice>
+	</complexType>
+
 	<complexType name="NetworkMessage">
 		<complexContent>
 			<extension base="netzob-common:Message">

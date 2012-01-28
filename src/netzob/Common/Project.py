@@ -35,6 +35,7 @@ import re
 import uuid
 from lxml.etree import ElementTree
 from lxml import etree
+
 import types
 
 #+---------------------------------------------------------------------------+
@@ -46,8 +47,10 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.XSDResolver import XSDResolver
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
+COMMON_NAMESPACE = "http://www.netzob.org/common"
 
 def loadProject_0_1(projectFile):  
     # Parse the XML Document as 0.1 version
@@ -60,8 +63,10 @@ def loadProject_0_1(projectFile):
    
     try :
         etree.register_namespace('netzob', PROJECT_NAMESPACE)
+        etree.register_namespace('netzob-common', COMMON_NAMESPACE)
     except AttributeError :
         etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
+        etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
     
     projectID = xmlProject.get('id')
     projectName = xmlProject.get('name', 'none')
@@ -76,7 +81,7 @@ def loadProject_0_1(projectFile):
     
     # Parse the vocabulary
     if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") != None :
-        projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, "0.1", project)
+        projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, COMMON_NAMESPACE, "0.1", project)
         project.setVocabulary(projectVocabulary)
        
     # Parse the grammar
@@ -119,8 +124,10 @@ class Project(object):
         # Register the namespace (2 way depending of the version)
         try :
             etree.register_namespace('netzob', PROJECT_NAMESPACE)
+            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
         except AttributeError :
             etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
+            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
         
         # Dump the file
         root = etree.Element("{" + PROJECT_NAMESPACE + "}project")
@@ -135,7 +142,7 @@ class Project(object):
         # Save the configuration in it
         self.getConfiguration().save(root, PROJECT_NAMESPACE)
         # Save the vocabulary in it
-        self.getVocabulary().save(root, PROJECT_NAMESPACE)
+        self.getVocabulary().save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
         # Save the grammar in it
         if self.getGrammar() != None :
             self.getGrammar().save(root, PROJECT_NAMESPACE)
@@ -221,12 +228,13 @@ class Project(object):
                 if project != None :
                     return project
             else:
-                logging.warn("not valid")
+                logging.warn("The project declared in file (" + projectFile + ") is not valid")
         return None
         
       
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
+        print schemaFile
         # is the schema is a file
         if not os.path.isfile(schemaFile) :
             logging.warn("The specified schema file (" + str(schemaFile) + ") is not valid : its not a file.")
@@ -244,9 +252,15 @@ class Project(object):
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
         
-        schema_root = etree.XML(schemaContent)
-        schema = etree.XMLSchema(schema_root)
-        
+        # Extended version of an XSD validator
+        # Create an xmlParser for the schema
+        schemaParser = etree.XMLParser()
+        # Register a resolver (to locate the other XSDs according to the path of static resources)
+        xsdResolver = XSDResolver()
+        xsdResolver.addMapping("common.xsd", os.path.join(os.path.dirname(schemaFile), "common.xsd"))
+        schemaParser.resolvers.add(xsdResolver)
+        schemaParsed = etree.parse(schemaContent, parser=schemaParser)
+        schema = etree.XMLSchema(schemaParsed)
         # We parse the given XML file
         try :
             xmlRoot = etree.parse(xmlFile)
@@ -256,12 +270,12 @@ class Project(object):
             except :
                 log = schema.error_log
                 error = log.last_error
-                logging.warn(error)
+                logging.debug(error)
                 return False
             
         except etree.XMLSyntaxError, e:
-            log = e.error_log.filter_from_level(etree.ErrorLevels.FATAL)
-            logging.warn(log)
+            log = e.error_log.filter_from_level(etree.ErrorLevels.FATAL)            
+            logging.debug(log)
         
         
         

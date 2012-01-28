@@ -67,32 +67,32 @@ class FileMessageFactory():
     #|     Generate the XML representation of a file message
     #| @return a string which include the xml definition of the file msg
     #+-----------------------------------------------------------------------+    
-    def save(message, xmlMessages, namespace):
-        root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
+    def save(message, xmlMessages, namespace_project, namespace_common):
+        root = etree.SubElement(xmlMessages, "{" + namespace_common + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:FileMessage")
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:FileMessage")
         # data
-        subData = etree.SubElement(root, "{" + namespace + "}data")
+        subData = etree.SubElement(root, "{" + namespace_common + "}data")
         subData.text = str(message.getData())
         # line number
-        subLineNumber = etree.SubElement(root, "{" + namespace + "}lineNumber")
+        subLineNumber = etree.SubElement(root, "{" + namespace_common + "}lineNumber")
         subLineNumber.text = str(message.getLineNumber())
         # filename
-        subFilename = etree.SubElement(root, "{" + namespace + "}filename")
+        subFilename = etree.SubElement(root, "{" + namespace_common + "}filename")
         subFilename.text = str(message.getFilename())
         # creationDate
-        subCreationDate = etree.SubElement(root, "{" + namespace + "}creationDate")
+        subCreationDate = etree.SubElement(root, "{" + namespace_common + "}creationDate")
         subCreationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getCreationDate())
         # creationDate
-        subModificationDate = etree.SubElement(root, "{" + namespace + "}modificationDate")
+        subModificationDate = etree.SubElement(root, "{" + namespace_common + "}modificationDate")
         subModificationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getModificationDate())
         
         # owner
-        subOwner = etree.SubElement(root, "{" + namespace + "}owner")
+        subOwner = etree.SubElement(root, "{" + namespace_common + "}owner")
         subOwner.text = message.getOwner()
         # size
-        subSize = etree.SubElement(root, "{" + namespace + "}size")
+        subSize = etree.SubElement(root, "{" + namespace_common + "}size")
         subSize.text = str(message.getSize())
         
         
@@ -109,7 +109,7 @@ class FileMessageFactory():
     def loadFromXML(rootElement, namespace, version):        
         
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:FileMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage" :
             raise NameError("The parsed xml doesn't represent a File message.")
         
         # Verifies the data field

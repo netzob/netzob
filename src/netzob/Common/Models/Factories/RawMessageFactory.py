@@ -57,11 +57,11 @@ class RawMessageFactory():
     #| save
     #|     Generate the XML representation of a Network message
     #+-----------------------------------------------------------------------+    
-    def save(message, xmlMessages, namespace):
+    def save(message, xmlMessages, namespace_project, namespace):
         root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:RawMessage")
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:RawMessage")
         # data
         subData = etree.SubElement(root, "data")
         subData.text = str(message.getData())
@@ -78,8 +78,8 @@ class RawMessageFactory():
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):        
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:RawMessage" :
-            raise NameError("The parsed xml doesn't represent an IPC message.")
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:RawMessage" :
+            raise NameError("The parsed xml doesn't represent a Raw message.")
         
         # Verifies the data field
         if rootElement.find("{" + namespace + "}data") == None or len(rootElement.find("{" + namespace + "}data").text) == 0:

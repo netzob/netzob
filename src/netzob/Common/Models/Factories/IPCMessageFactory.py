@@ -62,11 +62,11 @@ class IPCMessageFactory():
     #| save
     #|     Generate the XML representation of an IPC message
     #+-----------------------------------------------------------------------+    
-    def save(message, xmlMessages, namespace):
+    def save(message, xmlMessages, namespace_project, namespace):
         root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:IPCMessage")
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:IPCMessage")
         # data
         subData = etree.SubElement(root, "{" + namespace + "}data")
         subData.text = str(message.getData())
@@ -95,7 +95,7 @@ class IPCMessageFactory():
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):        
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:IPCMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IPCMessage" :
             raise NameError("The parsed xml doesn't represent an IPC message.")
         
         # Verifies the data field

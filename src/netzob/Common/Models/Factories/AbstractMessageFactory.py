@@ -54,15 +54,15 @@ class AbstractMessageFactory():
     #| save
     #|     Generate an XML representation of a message
     #+-----------------------------------------------------------------------+
-    def save(message, root, namespace):
+    def save(message, root, namespace_project, namespace_common):
         if message.getType() == "File" :
-            return FileMessageFactory.save(message, root, namespace)
+            return FileMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "Network" :
-            return NetworkMessageFactory.save(message, root, namespace)
+            return NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "IPC" :
-            return IPCMessageFactory.save(message, root, namespace)
+            return IPCMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "RAW" :
-            return RawMessageFactory.save(message, root, namespace)
+            return RawMessageFactory.save(message, root, namespace_project, namespace_common)
         else :
             raise NameError('''There is no factory which would support 
             the generation of an xml representation of the message : ''' + str(message))
@@ -78,19 +78,17 @@ class AbstractMessageFactory():
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):        
-        
-        
         # Computes which type is it
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract" :
             raise NameError("The parsed xml doesn't represent a valid type message.")
         
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:FileMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage" :
             return FileMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:NetworkMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage" :
             return NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:IPCMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage" :
             return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RawMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage" :
             return RawMessageFactory.loadFromXML(rootElement, namespace, version)
         else :
             raise NameError("The parsed xml doesn't represent a valid type message.")

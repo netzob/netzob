@@ -53,11 +53,11 @@ class NetworkMessageFactory():
     #| save
     #|     Generate the XML representation of a Network message
     #+-----------------------------------------------------------------------+    
-    def save(message, xmlMessages, namespace):
+    def save(message, xmlMessages, namespace_project, namespace):
         root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
-        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NetworkMessage")
+        root.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob-common:NetworkMessage")
         # data
         subData = etree.SubElement(root, "{" + namespace + "}data")
         subData.text = str(message.getData())
@@ -90,7 +90,7 @@ class NetworkMessageFactory():
     def loadFromXML(rootElement, namespace, version):        
         
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:NetworkMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:NetworkMessage" :
             raise NameError("The parsed xml doesn't represent a Network message.")
         
         # Verifies the data field

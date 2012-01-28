@@ -204,7 +204,7 @@ class Symbol(object):
                 messagesValuesByField = self.getMessagesValuesByField(field)
                 messagesValuesByField = "".join(messagesValuesByField)
                 if messagesValuesByField == "":
-                    self.getFields().pop( field.getIndex() ) # We remove this useless field
+                    self.getFields().pop(field.getIndex()) # We remove this useless field
                     # Adpat index of the following fields, before breaking
                     for fieldNext in self.getFields() :
                         if fieldNext.getIndex() > field.getIndex() :
@@ -261,7 +261,7 @@ class Symbol(object):
                 continue
             elif field.isRegexOnlyDynamic():
                 cells = self.getMessagesValuesByField(field)
-                if len(cells) != len( self.getMessages() ):
+                if len(cells) != len(self.getMessages()):
                     # There exists empty cells
                     continue
                 min = 999999
@@ -315,7 +315,7 @@ class Symbol(object):
         for message in self.getMessages():
             messageTable = message.applyAlignment()
             messageElt = messageTable[field.getIndex()]
-            res.append( messageElt )
+            res.append(messageElt)
 #            if len(messageElt) > 0 :
 #                res.append( messageElt )
 #            else:
@@ -337,7 +337,7 @@ class Symbol(object):
             messageTable = message.applyAlignment()            
             messageElt = messageTable[field.getIndex()]
             if len(messageElt) > 0 and not messageElt in res :
-                res.append( messageElt )
+                res.append(messageElt)
         return res
     
     #+---------------------------------------------- 
@@ -964,8 +964,8 @@ class Symbol(object):
         else:
             self.fields.pop(index)
     
-    def save(self, root, namespace):
-        xmlSymbol = etree.SubElement(root, "{" + namespace + "}symbol")
+    def save(self, root, namespace_project, namespace_common):
+        xmlSymbol = etree.SubElement(root, "{" + namespace_project + "}symbol")
         xmlSymbol.set("alignment", str(self.getAlignment()))
         xmlSymbol.set("id", str(self.getID()))
         xmlSymbol.set("name", str(self.getName()))
@@ -974,13 +974,13 @@ class Symbol(object):
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
         
         # Save the messages
-        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace + "}messages")
+        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages")
         for message in self.messages :
-            AbstractMessageFactory.save(message, xmlMessages, namespace)
+            AbstractMessageFactory.save(message, xmlMessages, namespace_project, namespace_common)
         # Save the fields
-        xmlFields = etree.SubElement(xmlSymbol, "{" + namespace + "}fields")
+        xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
         for field in self.getFields() :
-            field.save(xmlFields, namespace)
+            field.save(xmlFields, namespace_project)
 
     #+---------------------------------------------- 
     #| getXMLDefinition : 
@@ -991,9 +991,11 @@ class Symbol(object):
         
         # Register the namespace (2 way depending of the version)
         try :
-            etree.register_namespace('netzob', NAMESPACE)
+            etree.register_namespace('netzob', PROJECT_NAMESPACE)
+            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
         except AttributeError :
-            etree._namespace_map[NAMESPACE] = 'netzob'
+            etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
+            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
             
         # create the file
         root = etree.Element("{" + NAMESPACE + "}netzob")
@@ -1066,14 +1068,14 @@ class Symbol(object):
                             regex = re.compile(".*{(\d*),(\d*)}.*")
                             
                             # Get the minSize/maxSize of precField
-                            m = regex.match( precField.getRegex() )
+                            m = regex.match(precField.getRegex())
                             if m.group(1) != "":
                                 minSize += int(m.group(1))
                             if m.group(2) != "":
                                 maxSize += int(m.group(2))
 
                             # Get the minSize/maxSize of nextField
-                            m = regex.match( nextField.getRegex() )
+                            m = regex.match(nextField.getRegex())
                             if m.group(1) != "":
                                 minSize += int(m.group(1))
                             if m.group(2) != "":
@@ -1082,8 +1084,8 @@ class Symbol(object):
                             minSize = str(minSize)
                             maxSize = str(maxSize)
                             
-                            aField.setIndex( precField.getIndex() )
-                            aField.setRegex( "(.{" + minSize + "," + maxSize + "})" )
+                            aField.setIndex(precField.getIndex())
+                            aField.setRegex("(.{" + minSize + "," + maxSize + "})")
                             aField.setFormat(aFormat)
 
                             # Delete the old ones
@@ -1281,7 +1283,7 @@ class Symbol(object):
     #| Static methods
     #+----------------------------------------------       
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, version, project):
+    def loadSymbol(xmlRoot, namespace, namespace_common, version, project):
         
         if version == "0.1" :
             nameSymbol = xmlRoot.get("name")
@@ -1300,8 +1302,8 @@ class Symbol(object):
             # we parse the messages
             if xmlRoot.find("{" + namespace + "}messages") != None :
                 xmlMessages = xmlRoot.find("{" + namespace + "}messages")
-                for xmlMessage in xmlMessages.findall("{" + namespace + "}message") :
-                    message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace, version)
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message") :
+                    message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
                     if message != None :
                         message.setSymbol(symbol)
                         symbol.addMessage(message)
