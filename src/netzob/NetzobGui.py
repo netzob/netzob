@@ -191,10 +191,7 @@ class NetzobGui(gtk.Window):
         if self.getCurrentProject() != None and self.getCurrentProject().hasPendingModifications(self.getCurrentWorkspace()) :
             self.offerToSaveCurrentProject()
         # We also save the workspace
-        try :
-            self.getCurrentWorkspace().saveConfigFile()
-        except :
-            pass
+        self.getCurrentWorkspace().saveConfigFile()
         
         for page in self.pageList:
             page[1].kill()

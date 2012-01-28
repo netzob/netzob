@@ -53,7 +53,7 @@ class AbstractImporter:
     #|   Add a selection of messages to an existing project
     #|   it also saves them in the workspace
     #+-----------------------------------------------------------------------+
-    def saveMessagesInProject(self, workspace, project, messages):
+    def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
         
         # We create a symbol dedicated for this
         symbol = Symbol(uuid.uuid4(), self.type, project)
@@ -65,14 +65,15 @@ class AbstractImporter:
         # and register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
         # Add the environmental dependencies to the project
-        project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
+        if fetchEnv :
+            project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
                                                                    self.envDeps.getEnvData())        
         # Computes current date
         date = datetime.now()
         description = "No description (yet not implemented)"
         
         # Now we also save the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, type, description, project.getName())
+        trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
         for message in messages :
             trace.addMessage(message)
         workspace.addImportedTrace(trace)

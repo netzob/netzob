@@ -45,6 +45,7 @@ from netzob.Import.FileImport import FileImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.TraceManager import TraceManager
 
 #+---------------------------------------------------------------------------+
 #| Menu :
@@ -102,9 +103,6 @@ class Menu(object):
         self.saveProject.connect("activate", self.saveProjectAction)
         self.menuProject.append(self.saveProject)
         
-        self.manageTraces = gtk.MenuItem("Manage traces")
-        self.menuProject.append(self.manageTraces)
-        
         self.menuImport = gtk.Menu()
         self.importRootMenu = gtk.MenuItem("Import traces")
         self.importRootMenu.set_submenu(self.menuImport)
@@ -151,14 +149,12 @@ class Menu(object):
         if self.netzob.getCurrentProject() == None :
             # Deactivate almost everything
             self.saveProject.set_sensitive(False)
-            self.manageTraces.set_sensitive(False)
             self.importRootMenu.set_sensitive(False)
             self.exportRootMenu.set_sensitive(False)
             self.helpContent.set_sensitive(False)
         else :
             # Activate everything
             self.saveProject.set_sensitive(True)
-            self.manageTraces.set_sensitive(False)
             self.importRootMenu.set_sensitive(True)
             self.exportRootMenu.set_sensitive(True)
             self.displaySymbolStructure.set_sensitive(True)
@@ -216,6 +212,10 @@ class Menu(object):
         self.manageProject = gtk.MenuItem("Manage projects")
         self.menuWorkspace.append(self.manageProject)
         
+        self.manageTraces = gtk.MenuItem("Manage traces")
+        self.manageTraces.connect("activate", self.manageTracesAction)
+        self.menuWorkspace.append(self.manageTraces)
+        
         self.options = gtk.MenuItem("Options")
         self.menuWorkspace.append(self.options)
         
@@ -232,7 +232,7 @@ class Menu(object):
         
     def updateWorkspaceMenu(self):
         self.createProject.set_sensitive(True)
-        
+        self.manageTraces.set_sensitive(True)
         self.manageProject.set_sensitive(False)    
         self.options.set_sensitive(False)
         self.switchWorkspace.set_sensitive(False)
@@ -256,6 +256,12 @@ class Menu(object):
     
     def exitAction(self, widget):
         self.netzob.destroy(widget)
+        
+    #+---------------------------------------------- 
+    #| Called when user wants to manage the traces
+    #+----------------------------------------------
+    def manageTracesAction(self, widget):
+        TraceManager(self.netzob.getCurrentWorkspace())
     
     def switchProjectAction(self, widget, newProject):
         self.netzob.switchCurrentProject(newProject)

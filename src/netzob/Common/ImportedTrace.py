@@ -51,10 +51,10 @@ class ImportedTrace(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, importID, date, type, description, projectName):
+    def __init__(self, importID, date, dataType, description, projectName):
         self.importID = importID
         self.date = date
-        self.type = type
+        self.dataType = dataType
         self.description = description
         self.projectName = projectName
         self.messages = []
@@ -62,7 +62,7 @@ class ImportedTrace(object):
     def save(self, root, namespace_workspace, namespace_common):
         xmlSymbol = etree.SubElement(root, "{" + namespace_workspace + "}import")
         xmlSymbol.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
-        xmlSymbol.set("type", str(self.getType()))
+        xmlSymbol.set("type", str(self.getDataType()))
         xmlSymbol.set("description", str(self.getDescription()))
         xmlSymbol.set("projectName", str(self.getProjectName()))
         xmlSymbol.set("importID", str(self.getImportID()))
@@ -81,8 +81,8 @@ class ImportedTrace(object):
         return self.importID
     def getDate(self):
         return self.date
-    def getType(self):
-        return self.type
+    def getDataType(self):
+        return self.dataType
     def getDescription(self):
         return self.description
     def getProjectName(self):
@@ -94,8 +94,8 @@ class ImportedTrace(object):
         self.importID = importID
     def setDate(self, date):
         self.date = date
-    def setType(self, type):
-        self.type = type
+    def setDataType(self, dataType):
+        self.dataType = dataType
     def setDescription(self, description):
         self.description = description
     def setProjectName(self, projectName):
@@ -110,13 +110,14 @@ class ImportedTrace(object):
     def loadSymbol(xmlRoot, namespace, namespace_common, version):
         
         if version == "0.1" :
-            date = TypeConvertor.xsdDatetime2PythonDatetime(xmlRoot.get("date"))
-            type = xmlRoot.get("type")
+            print str(xmlRoot.get("date"))
+            date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
+            dataType = xmlRoot.get("type")
             description = xmlRoot.get("description", "")
             importID = xmlRoot.get("importID")
             projectName = xmlRoot.get("projectName")
             
-            importedTrace = ImportedTrace(importID, date, type, description, projectName)
+            importedTrace = ImportedTrace(importID, date, dataType, description, projectName)
             
             # we parse the messages
             if xmlRoot.find("{" + namespace + "}messages") != None :

@@ -198,7 +198,7 @@ class TypeConvertor():
             values = dict((k, int(v)) for k, v in values.iteritems()
                               if not k.startswith("tz"))
             try:
-                return datetime.datetime(**values), tz
+                return datetime.datetime(**values)
             except ValueError:
                 pass
             return None, None
@@ -308,9 +308,9 @@ class TypeConvertor():
         res = bitarray()
         for c in raw:
             tmp = bitarray()
-            tmp.fromstring( chr(int(c, 16))  )
+            tmp.fromstring(chr(int(c, 16)))
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
-            res.extend( tmp )
+            res.extend(tmp)
         return res.to01()
 
     @staticmethod

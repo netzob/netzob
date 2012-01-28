@@ -236,7 +236,7 @@ class PcapImport(AbstractImporter):
         md.destroy()
         
         if resp == gtk.RESPONSE_OK:
-            self.saveMessagesInProject(currentProject, messages)
+            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages, False)
         self.dialog.destroy()
         
         # We update the gui

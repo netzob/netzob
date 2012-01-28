@@ -55,7 +55,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     tree.parse(workspaceFile)
     xmlWorkspace = tree.getroot()
     wsName = xmlWorkspace.get('name', 'none')
-    wsCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlWorkspace.get('creation_date'))[0]
+    wsCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlWorkspace.get('creation_date'))
     
     # Parse the configuration to retrieve the main paths
     xmlWorkspaceConfig = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}configuration")
@@ -204,7 +204,6 @@ class Workspace(object):
             importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE)
             
         tree = ElementTree(root)
-        print "wokspace file " + str(workspaceFile)
         tree.write(workspaceFile)
     
     
