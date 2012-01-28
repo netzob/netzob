@@ -252,6 +252,97 @@ class Symbol(object):
         self.popField()
 
     #+---------------------------------------------- 
+    #| simpleAlignment:
+    #|  Align each messages just to show their differences
+    #+----------------------------------------------
+    def simpleAlignment(self, projectConfiguration, unitSize):
+        self.alignmentType = "regex"
+        self.rawDelimiter = ""
+        self.setFields([])
+
+        # Retrieve the biggest message
+        maxLen = 0
+        for message in self.getMessages():
+            curLen = len( message.getStringData() )
+            if curLen > maxLen:
+                maxLen = curLen
+
+        # Try to see if the column is static or variable
+        resultString = ""
+        resultMask = ""
+        # Loop until maxLen
+        for it in range(maxLen):
+            ref = ""
+            isDifferent = False
+            # Loop through each cells of the column
+            for message in self.getMessages():
+                try:
+                    tmp = message.getStringData()[ it ]
+                    if ref == "":
+                        ref = tmp
+                    if ref != tmp:
+                        isDifferent = True
+                        break
+                except IndexError:
+                    isDifferent = True
+                    pass
+
+            if isDifferent:
+                resultString += "-"
+                resultMask += "1"
+            else:
+                resultString += ref
+                resultMask += "0"
+
+        ## Build of the fields
+        currentStaticField = ""
+        if resultMask[0] == "1": # The first column is dynamic
+            isLastDyn = True
+        else:
+            currentStaticField += resultString[0]
+            isLastDyn = False
+
+        nbElements = 1
+        iField = -1
+        for it in range(1, len(resultMask) ):
+            if resultMask[it] == "1": # The current column is dynamic
+                if isLastDyn:
+                    nbElements += 1
+                else:
+                    # We change the field
+                    iField += 1
+                    field = Field("Name", iField, currentStaticField)
+                    field.setColor("black")
+                    self.addField(field)
+                    # We start a new field
+                    currentStaticField = ""
+                    nbElements = 1 
+                isLastDyn = True
+            else: # The current column is static
+                if isLastDyn: # We change the field
+                    iField += 1
+                    field = Field("Name", iField, "(.{," + str(nbElements) + "})")
+                    field.setColor("blue")
+                    self.addField(field)
+                    # We start a new field
+                    currentStaticField = resultString[it]
+                    nbElements = 1 
+                else: 
+                    currentStaticField += resultString[it]
+                    nbElements += 1
+                isLastDyn = False
+
+        # We add the last field
+        iField += 1
+        if resultMask[-1] == "1": # If the last column is dynamic
+            field = Field("Name", iField, "(.{," + str(nbElements) + "})")
+            field.setColor("blue")
+        else:
+            field = Field("Name", iField, currentStaticField)
+            field.setColor("black")
+        self.addField(field)
+
+    #+---------------------------------------------- 
     #| Regex handling
     #+----------------------------------------------
     def refineRegexes(self):
@@ -1042,7 +1133,7 @@ class Symbol(object):
     #|  sequences that are between big dynamic sequences
     #+----------------------------------------------
     def slickRegex(self, project):
-        if self.getAlignmentType() != "regex":
+        if self.getAlignmentType() == "delimiter":
             logging.warn("SlickRegex(): only applicable to a symbol with dynamic alignment")
             return
 
@@ -1052,17 +1143,17 @@ class Symbol(object):
         res = False
         i = 1
         nbFields = len(self.getFields())
-        while i < nbFields - 2:
+        while i < nbFields - 1:
             aField = self.getFieldByIndex(i)
             if aField.isRegexStatic():
-                if len(aField.getRegex()) == 2: # Means a potential negligeable element that can be merged with its neighbours
+                if len(aField.getRegex()) <= 2: # Means a potential negligeable element that can be merged with its neighbours
                     precField = self.getFieldByIndex(i - 1)
                     if precField.isRegexOnlyDynamic():
                         nextField = self.getFieldByIndex(i + 1)
                         if nextField.isRegexOnlyDynamic():
                             res = True
-                            minSize = 2
-                            maxSize = 2
+                            minSize = len(aField.getRegex())
+                            maxSize = len(aField.getRegex())
 
                             # Build the new field
                             regex = re.compile(".*{(\d*),(\d*)}.*")
