@@ -5,7 +5,7 @@
 	xmlns:netzob-project="http://www.netzob.org/project" 
 	xmlns:netzob-common="http://www.netzob.org/common">
 
-    <import schemaLocation="resources/static/xsds/0.1/common.xsd" namespace="http://www.netzob.org/common"></import>
+    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
     
     <complexType name="Project">
 		<sequence>
@@ -277,108 +277,6 @@
 		</choice>
 	</complexType>
 
-<!-- 
-
-	<complexType name="NetworkMessage">
-		<complexContent>
-			<extension base="netzob-project:Message">
-				<sequence>
-					<element name="ip_source" type="string"></element>
-					<element name="ip_destination" type="string"></element>
-					<element name="protocol">
-						<simpleType>
-							<restriction base="string">
-								<enumeration value="TCP"></enumeration>
-								<enumeration value="UDP"></enumeration>
-							</restriction>
-						</simpleType>
-					</element>
-					<element name="l4_source_port">
-						<simpleType>
-							<restriction base="int">
-								<minExclusive value="1"></minExclusive>
-							</restriction>
-						</simpleType>
-					</element>
-					<element name="l4_destination_port">
-						<simpleType>
-							<restriction base="string">
-								<minLength value="1"></minLength>
-							</restriction>
-						</simpleType>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="FileMessage">
-		<complexContent>
-			<extension base="netzob-project:Message">
-				<sequence>
-					<element name="lineNumber">
-						<simpleType>
-							<restriction base="int">
-								<minInclusive value="0"></minInclusive>
-							</restriction>
-						</simpleType>
-					</element>
-					<element name="filename">
-						<simpleType>
-							<restriction base="string">
-								<minLength value="1"></minLength>
-							</restriction>
-						</simpleType>
-					</element>
-					<element name="creationDate" type="string" maxOccurs="1"></element>
-					<element name="modificationDate" type="string"></element>
-					<element name="owner" type="string"></element>
-					<element name="size" type="int"></element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="IPCMessage">
-		<complexContent>
-			<extension base="netzob-project:Message">
-				<sequence>
-					<element name="category" type="string"></element>
-					<element name="key" type="string"></element>
-					<element name="type" type="string"></element>
-					<element name="direction" type="string"></element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="RawMessage">
-		<complexContent>
-			<extension base="netzob-project:Message">
-			</extension>
-		</complexContent>
-	</complexType>
-
-
-	<complexType name="Message" abstract="true">
-		<sequence>
-			<element name="data">
-				<simpleType>
-					<restriction base="string">
-						<minLength value="1"></minLength>
-					</restriction>
-				</simpleType>
-			</element>
-		</sequence>
-		<attribute name="id" use="required">
-			<simpleType>
-				<restriction base="string">
-					<minLength value="1"></minLength>
-				</restriction>
-			</simpleType>
-		</attribute>
-		<attribute name="timestamp" type="int" use="required"></attribute>
-	</complexType> -->
 
 
 	<complexType name="Fields">
