@@ -32,9 +32,7 @@ import gtk
 import gobject
 import re
 import pygtk
-from netzob.Common.Symbol import Symbol
 import uuid
-from netzob.Common.Field import Field
 pygtk.require('2.0')
 import logging
 import threading
@@ -49,12 +47,14 @@ import subprocess
 #+----------------------------------------------
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
-
+from netzob.Common.Field import Field
+from netzob.Import.AbstractImporter import AbstractImporter
+from netzob.Common.Symbol import Symbol
 #+---------------------------------------------- 
 #| IPpc :
 #|     ensures the capture of informations through IPC proxing
 #+---------------------------------------------- 
-class IpcImport:
+class IpcImport(AbstractImporter):
     
     def new(self):
         pass
@@ -75,8 +75,9 @@ class IpcImport:
     #| Constructor :
     #+----------------------------------------------   
     def __init__(self, zob):
+        AbstractImporter.__init__(self, "IPC IMPORT")    
         self.zob = zob
-
+        
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.ipc.py')
         
@@ -341,29 +342,12 @@ class IpcImport:
         md.destroy()
         
         if resp == gtk.RESPONSE_OK:
-            self.saveMessagesInProject(currentProject, messages)
+            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages)
         self.dialog.destroy()
         
         # We update the gui
         self.zob.update()
-        
-        
-        
-    #+---------------------------------------------- 
-    #| Add a selection of packets to an existing project
-    #+----------------------------------------------
-    def saveMessagesInProject(self, project, messages):
-        
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), "IPC IMPORT", project)
-        for message in messages :
-            symbol.addMessage(message)
-        
-        
-        symbol.addField(Field.createDefaultField())
-        project.getVocabulary().addSymbol(symbol)
-
-
+   
     #+---------------------------------------------- 
     #| Called when launching sniffing process
     #+----------------------------------------------

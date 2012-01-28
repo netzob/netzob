@@ -72,6 +72,11 @@ class NetzobGui(gtk.Window):
         # loading the workspace
         logging.debug("Loaded Workspace : " + str(ResourcesConfiguration.getWorkspaceFile()))
         self.currentWorkspace = Workspace.loadWorkspace(ResourcesConfiguration.getWorkspaceFile())
+        
+        if self.currentWorkspace == None :
+            logging.fatal("Stopping the execution (no workspace computed) !")
+            sys.exit()
+        
         self.currentProject = self.currentWorkspace.getLastProject()
         
         # Second we create the logging infrastructure

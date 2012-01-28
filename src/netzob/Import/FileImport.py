@@ -35,6 +35,7 @@ import uuid
 from netzob.Common.Field import Field
 import datetime
 from bitarray import bitarray
+from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import os
@@ -53,7 +54,7 @@ from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 #| FileImport :
 #|     GUI for capturing messages
 #+---------------------------------------------- 
-class FileImport:
+class FileImport(AbstractImporter):
     
     def new(self):
         pass
@@ -70,7 +71,8 @@ class FileImport:
     #+---------------------------------------------- 
     #| Constructor :
     #+----------------------------------------------   
-    def __init__(self, zob):        
+    def __init__(self, zob):    
+        AbstractImporter.__init__(self, "FILE IMPORT")    
         self.zob = zob
 
         # create the environmental dependancy object
@@ -208,7 +210,7 @@ class FileImport:
         md.destroy()
         
         if resp == gtk.RESPONSE_OK:
-            self.saveMessagesInProject(currentProject, self.messages)
+            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, self.messages)
         self.dialog.destroy()
         
         # We update the gui
@@ -216,24 +218,7 @@ class FileImport:
         
         
         
-    #+---------------------------------------------- 
-    #| Add a selection of packets to an existing project
-    #+----------------------------------------------
-    def saveMessagesInProject(self, project, messages):
-        
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), "FILE IMPORT", project)
-        for message in messages :
-            symbol.addMessage(message)
-        
-        
-        symbol.addField(Field.createDefaultField())
-        project.getVocabulary().addSymbol(symbol)
-
-        # Add the environmental dependencies to the project
-        project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                   self.envDeps.getEnvData())        
-
+    
     #+---------------------------------------------- 
     #| Called when user import a file
     #+----------------------------------------------

@@ -34,6 +34,7 @@ import uuid
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
 import errno
+from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import os
@@ -57,7 +58,7 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 #| Pcap :
 #|     GUI for capturing messages imported through a provided PCAP
 #+---------------------------------------------- 
-class PcapImport:
+class PcapImport(AbstractImporter):
     
     def new(self):
         pass
@@ -75,6 +76,7 @@ class PcapImport:
     #| Constructor :
     #+----------------------------------------------   
     def __init__(self, zob):        
+        AbstractImporter.__init__(self, "PCAP IMPORT")     
         self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.pcap.py')
@@ -239,23 +241,6 @@ class PcapImport:
         
         # We update the gui
         self.zob.update()
-        
-        
-        
-    #+---------------------------------------------- 
-    #| Add a selection of packets to an existing project
-    #+----------------------------------------------
-    def saveMessagesInProject(self, project, messages):
-        
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), "PCAP IMPORT", project)
-        for message in messages :
-            symbol.addMessage(message)
-        
-        
-        symbol.addField(Field.createDefaultField())
-        project.getVocabulary().addSymbol(symbol)
-
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details

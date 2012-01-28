@@ -42,8 +42,10 @@ import shutil
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.XSDResolver import XSDResolver
+from netzob.Common.ImportedTrace import ImportedTrace
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
+COMMON_NAMESPACE = "http://www.netzob.org/common"
 
 def loadWorkspace_0_1(workspacePath, workspaceFile):  
     
@@ -73,9 +75,18 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
         if xmlProjects.get("last", "none") != "none" :
             lastProject = xmlProjects.get("last", "none") 
     
+    
     # Instantiation of the workspace
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
     
+    # Load the already imported traces
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}imports") != None :
+        xmlImports = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}imports")
+        for xmlImport in xmlImports.findall("{" + WORKSPACE_NAMESPACE + "}import") :
+            imported = ImportedTrace.loadSymbol(xmlImport, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1")
+            if imported != None :
+                workspace.addImportedTrace(imported)
+
     
     # Load the projects
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None :
@@ -104,7 +115,7 @@ class Workspace(object):
     #| Constructor
     #| @param path : path of the workspace
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None):
+    def __init__(self, name, creationDate, path, pathOfTraces, pathOfLogging, pathOfPrototypes, lastProjectPath=None, importedTraces=[]):
         self.name = name
         self.path = path
         self.creationDate = creationDate
@@ -113,6 +124,7 @@ class Workspace(object):
         self.pathOfLogging = pathOfLogging
         self.pathOfPrototypes = pathOfPrototypes
         self.lastProjectPath = lastProjectPath
+        self.importedTraces = importedTraces
         
         
     def getProjects(self):
@@ -135,6 +147,12 @@ class Workspace(object):
     def referenceLastProject(self, lastProject):
         self.lastProjectPath = lastProject
     
+    def getImportedTraces(self):
+        return self.importedTraces
+    def addImportedTrace(self, importedTrace):
+        self.importedTraces.append(importedTrace)
+        self.saveConfigFile()
+        
     #+-----------------------------------------------------------------------+
     #| referenceProject :
     #|     reference a project in the workspace
@@ -155,8 +173,10 @@ class Workspace(object):
         # Register the namespace (2 way depending of the version)
         try :
             etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
+            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
         except AttributeError :
             etree._namespace_map[WORKSPACE_NAMESPACE] = 'netzob'
+            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
             
         # Dump the file
         root = etree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
@@ -178,9 +198,13 @@ class Workspace(object):
         for projectPath in self.getProjectsPath():
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
             xmlProject.set("path", projectPath)
-        
-        
+            
+        xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}imports")       
+        for importedTrace in self.getImportedTraces():
+            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE)
+            
         tree = ElementTree(root)
+        print "wokspace file " + str(workspaceFile)
         tree.write(workspaceFile)
     
     

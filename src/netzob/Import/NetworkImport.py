@@ -31,6 +31,7 @@
 import gtk
 import pygtk
 import uuid
+from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import threading
@@ -60,7 +61,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #| Network :
 #|     This class offers the capability to capture traffic from live network 
 #+---------------------------------------------------------------------------+
-class NetworkImport:
+class NetworkImport(AbstractImporter):
     
     def new(self):
         pass
@@ -78,7 +79,8 @@ class NetworkImport:
     #| Constructor :
     #| @param zob: a reference to the main netzob.py 
     #+-----------------------------------------------------------------------+  
-    def __init__(self, zob):        
+    def __init__(self, zob):  
+        AbstractImporter.__init__(self, "NETWORK IMPORT")       
         self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.Network.py')
@@ -268,28 +270,12 @@ class NetworkImport:
         md.destroy()
         
         if resp == gtk.RESPONSE_OK:
-            self.saveMessagesInProject(currentProject, messages)
+            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages)
         self.dialog.destroy()
         
         # We update the gui
         self.zob.update()
-        
-    #+---------------------------------------------- 
-    #| Add a selection of packets to an existing project
-    #+----------------------------------------------
-    def saveMessagesInProject(self, project, messages):
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), "NETWORK IMPORT", project)
-        for message in messages :
-            symbol.addMessage(message)
 
-        # Add the symbol to the project
-        symbol.addField(Field.createDefaultField())
-        project.getVocabulary().addSymbol(symbol)
-
-        # Add the environmental dependencies to the project
-        project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                   self.envDeps.getEnvData())
 
     #+---------------------------------------------- 
     #| Called when user select a packet for details

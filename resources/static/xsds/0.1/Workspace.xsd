@@ -35,11 +35,15 @@
 	
 	<complexType name="Import">
 		<sequence>
-			<element name="message" type="netzob-common:Message" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="messages" type="netzob-common:Messages"
+				minOccurs="0">
+			</element>
 		</sequence>
 		<attribute name="date" type="dateTime"></attribute>
 		<attribute name="type" type="string"></attribute>
-		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+		<attribute name="importID" type="string"></attribute>
+		<attribute name="projectName" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Projects">
