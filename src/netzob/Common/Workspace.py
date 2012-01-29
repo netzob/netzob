@@ -152,6 +152,10 @@ class Workspace(object):
     def addImportedTrace(self, importedTrace):
         self.importedTraces.append(importedTrace)
         self.saveConfigFile()
+    def removeImportedTrace(self, importedTrace):
+        self.importedTraces.remove(importedTrace)
+        self.saveConfigFile()
+    
         
     #+-----------------------------------------------------------------------+
     #| referenceProject :
