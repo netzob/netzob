@@ -430,7 +430,7 @@ class UImodelization:
         vocabulary = self.netzob.getCurrentProject().getVocabulary()        
         self.currentExecutionOfAlignmentHasFinished = False        
         # Start the progress bar
-#        gobject.timeout_add(200, self.do_pulse_for_discoverAlignement)        
+        gobject.timeout_add(200, self.do_pulse_for_discoverAlignement)        
         # Start the alignment JOB
         Job(self.startDiscoverAlignment(vocabulary, dialog))
         
@@ -445,21 +445,21 @@ class UImodelization:
         dialog.destroy()
     
     def percentOfAlignmentProgessBar(self, percent, message):
-        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
+#        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
         if message == None :
-            self.progressbarAlignment.set_text("")
+            gobject.idle_add(self.progressbarAlignment.set_text, "")
         else :
-            self.progressbarAlignment.set_text(message)
+            gobject.idle_add(self.progressbarAlignment.set_text, message)
 #    
 #    #+---------------------------------------------- 
 #    #| do_pulse_for_discoverAlignement :
 #    #|   Computes if the progress bar must be updated or not
 #    #+----------------------------------------------
-#    def do_pulse_for_discoverAlignement(self):
-#        if self.currentExecutionOfAlignmentHasFinished == False : 
-#            self.progressbarAlignment.pulse()
-#            return True 
-#        return False
+    def do_pulse_for_discoverAlignement(self):
+        if self.currentExecutionOfAlignmentHasFinished == False : 
+            self.progressbarAlignment.pulse()
+            return True 
+        return False
            
     #+---------------------------------------------- 
     #| forceAlignment_cb :
