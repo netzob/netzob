@@ -80,12 +80,14 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
     
     # Load the already imported traces
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}imports") != None :
-        xmlImports = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}imports")
-        for xmlImport in xmlImports.findall("{" + WORKSPACE_NAMESPACE + "}import") :
-            imported = ImportedTrace.loadSymbol(xmlImport, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1")
-            if imported != None :
-                workspace.addImportedTrace(imported)
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") != None :
+        
+        xmlTraces = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces")
+        for xmlTrace in xmlTraces.findall("{" + WORKSPACE_NAMESPACE + "}trace") :
+            print "ok"
+            trace = ImportedTrace.loadSymbol(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
+            if trace != None :
+                workspace.addImportedTrace(trace)
 
     
     # Load the projects
@@ -198,14 +200,16 @@ class Workspace(object):
         xmlPrototypes = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}prototypes")
         xmlPrototypes.text = str(self.getPathOfPrototypes())
         
-        xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")        
+        xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")   
+        logging.info("Projects included in workspace.xml :")     
         for projectPath in self.getProjectsPath():
+            logging.info("--> " + projectPath)
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
             xmlProject.set("path", projectPath)
             
-        xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}imports")       
+        xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")       
         for importedTrace in self.getImportedTraces():
-            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE)
+            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, self.getPathOfTraces())
             
         tree = ElementTree(root)
         tree.write(workspaceFile)

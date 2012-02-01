@@ -13,7 +13,7 @@
     			type="netzob-ws:Workspace_configuration" maxOccurs="1" minOccurs="1">
     		</element>
     		<element name="projects" type="netzob-ws:Projects"></element>
-    		<element name="imports" type="netzob-ws:Imports" minOccurs="0"></element>
+    		<element name="traces" type="netzob-ws:Traces" minOccurs="0"></element>
     	</sequence>
     	<attribute name="creation_date" type="dateTime"
     		use="required">
@@ -27,18 +27,13 @@
     	</attribute>
 	</complexType>
 
-	<complexType name="Imports">
+	<complexType name="Traces">
 		<sequence>
-			<element name="import" type="netzob-ws:Import" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="trace" type="netzob-ws:Trace" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 	
-	<complexType name="Import">
-		<sequence>
-			<element name="messages" type="netzob-common:Messages"
-				minOccurs="0">
-			</element>
-		</sequence>
+	<complexType name="Trace">
 		<attribute name="date" type="dateTime"></attribute>
 		<attribute name="type" type="string"></attribute>
 		<attribute name="description" type="string"></attribute>

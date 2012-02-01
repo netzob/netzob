@@ -30,17 +30,17 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import time
+import gzip
+import os.path
 from lxml.etree import ElementTree
 from lxml import etree
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from StringIO import StringIO
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-
-
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 
 #+---------------------------------------------------------------------------+
 #| ImportedTrace :
@@ -58,20 +58,48 @@ class ImportedTrace(object):
         self.description = description
         self.projectName = projectName
         self.messages = []
+        
     
-    def save(self, root, namespace_workspace, namespace_common):
-        xmlSymbol = etree.SubElement(root, "{" + namespace_workspace + "}import")
+    def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
+        xmlSymbol = etree.SubElement(root, "{" + namespace_workspace + "}trace")
         xmlSymbol.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
         xmlSymbol.set("type", str(self.getDataType()))
         xmlSymbol.set("description", str(self.getDescription()))
         xmlSymbol.set("projectName", str(self.getProjectName()))
         xmlSymbol.set("importID", str(self.getImportID()))
-        logging.warn("saving the following imported trace")
+        
+        # Creation of the XML File (in buffer)
+        # Compress it using gzip and save the tar.gz
+        tracesFile = os.path.join(pathOfTraces, str(self.getImportID()) + ".gz")
+        logging.info("Save the config file of the trace " + str(self.getImportID()) + " in " + tracesFile)
+        
+        # Register the namespace (2 way depending of the version)
+        try :
+            etree.register_namespace('netzob-common', namespace_common)
+        except AttributeError :
+            etree._namespace_map[namespace_common] = 'netzob-common'
+        
         # Save the messages
-        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_workspace + "}messages")
+        root = etree.Element("{" + namespace_workspace + "}trace")
+        root.set("id", str(self.getImportID()))
+        xmlMessages = etree.SubElement(root, "{" + namespace_common + "}messages")
         for message in self.getMessages() :
             AbstractMessageFactory.save(message, xmlMessages, namespace_workspace, namespace_common)
-            
+        
+        tree = ElementTree(root)
+        contentOfFile = str(etree.tostring(tree.getroot()))
+        
+        # if outputfile already exists we delete it
+        if os.path.isfile(tracesFile) :
+            logging.debug("The compressed version (" + tracesFile + ") of the file already exists, we replace it with the new one")
+            os.remove(tracesFile)
+        
+        # Compress and write the file
+        gzipFile = gzip.open(tracesFile, 'wb')
+        gzipFile.write(contentOfFile)
+        gzipFile.close()
+    
+    
     
     
     def addMessage(self, message):
@@ -107,10 +135,9 @@ class ImportedTrace(object):
     #| Static methods
     #+----------------------------------------------       
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version):
+    def loadSymbol(xmlRoot, namespace, namespace_common, version, pathOfTraces):
         
         if version == "0.1" :
-            print str(xmlRoot.get("date"))
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
             dataType = xmlRoot.get("type")
             description = xmlRoot.get("description", "")
@@ -118,15 +145,27 @@ class ImportedTrace(object):
             projectName = xmlRoot.get("projectName")
             
             importedTrace = ImportedTrace(importID, date, dataType, description, projectName)
-            
-            # we parse the messages
-            if xmlRoot.find("{" + namespace + "}messages") != None :
-                xmlMessages = xmlRoot.find("{" + namespace + "}messages")
-                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message") :
-                    message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
-                    if message != None :
-                        importedTrace.addMessage(message)
+            tracesFile = os.path.join(pathOfTraces, str(importID) + ".gz")
+            if not os.path.isfile(tracesFile) :
+                logging.warn("The trace file " + str(tracesFile) + " is referenced but doesn't exist.")
+            else :
+                gzipFile = gzip.open(tracesFile, 'rb')
+                xml_content = gzipFile.read()
+                gzipFile.close()
+                
+                # We parse the xml content and fetch messages
+                tree = etree.parse(StringIO(xml_content))
+                xmlRoot = tree.getroot()
+                
+                if xmlRoot.find("{" + namespace_common + "}messages") != None :
+                    xmlMessages = xmlRoot.find("{" + namespace_common + "}messages")
+                    for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message") :
+                        message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
+                        if message != None :
+                            importedTrace.addMessage(message)
                     
             return importedTrace
         return None
         
+
+    
