@@ -190,8 +190,6 @@ class NetzobGui(gtk.Window):
         # it means we simulate a save and compare the XML with the current one
         if self.getCurrentProject() != None and self.getCurrentProject().hasPendingModifications(self.getCurrentWorkspace()) :
             self.offerToSaveCurrentProject()
-        # We also save the workspace
-        self.getCurrentWorkspace().saveConfigFile()
         
         for page in self.pageList:
             page[1].kill()

@@ -153,10 +153,10 @@ class Workspace(object):
         return self.importedTraces
     def addImportedTrace(self, importedTrace):
         self.importedTraces.append(importedTrace)
-        self.saveConfigFile()
+#        self.saveConfigFile()
     def removeImportedTrace(self, importedTrace):
         self.importedTraces.remove(importedTrace)
-        self.saveConfigFile()
+#        self.saveConfigFile()
     
         
     #+-----------------------------------------------------------------------+
@@ -171,7 +171,7 @@ class Workspace(object):
             logging.warn("The project declared in " + path + " is already referenced in the workspace.")
         
     def saveConfigFile(self):
-        
+        print "=============================================================="
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
         
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
@@ -201,11 +201,14 @@ class Workspace(object):
         xmlPrototypes.text = str(self.getPathOfPrototypes())
         
         xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")   
-        logging.info("Projects included in workspace.xml :")     
-        for projectPath in self.getProjectsPath():
-            logging.info("--> " + projectPath)
+        logging.info("Projects included in workspace.xml :")  
+        for project in self.getProjects() :
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
-            xmlProject.set("path", projectPath)
+            xmlProject.set("path", project.getPath())
+#               
+#        for projectPath in self.getProjectsPath():
+#            logging.info("--> " + projectPath)
+#            
             
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")       
         for importedTrace in self.getImportedTraces():
@@ -254,7 +257,6 @@ class Workspace(object):
     
     @staticmethod
     def loadWorkspace(workspacePath):    
-        
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
         
         # verify we can open and read the file

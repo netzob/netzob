@@ -63,12 +63,15 @@ class TraceManager():
     #| Constructor :
     #| @param workspace : the current workspace
     #+-----------------------------------------------------------------------+  
-    def __init__(self, workspace):
+    def __init__(self, workspace, cb_update):
         self.workspace = workspace
         
         self.createDialog()
         
         self.updateContent()
+        self.cb_update = cb_update
+        self.cb_update()
+        
         
     def createDialog(self):
         self.dialog = gtk.Dialog(title="Trace Manager", flags=0, buttons=None)
@@ -269,6 +272,8 @@ class TraceManager():
         (yield ThreadedTask(self.importTraceInProject, trace, project))
         self.currentExecutionOfAlignmentHasFinished = True
         dialog.destroy()
+        (yield ThreadedTask(self.cb_update))
+        
     
     def importTraceInProject(self, trace, project):
         percent = 0.0
@@ -286,6 +291,7 @@ class TraceManager():
         # and register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
         project.saveConfigFile(self.workspace)
+        
         
     
     def deleteTrace(self, event, trace):

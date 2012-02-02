@@ -261,7 +261,8 @@ class Menu(object):
     #| Called when user wants to manage the traces
     #+----------------------------------------------
     def manageTracesAction(self, widget):
-        TraceManager(self.netzob.getCurrentWorkspace())
+        TraceManager(self.netzob.getCurrentWorkspace(), self.netzob.update)
+        
     
     def switchProjectAction(self, widget, newProject):
         self.netzob.switchCurrentProject(newProject)

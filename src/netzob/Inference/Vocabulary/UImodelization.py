@@ -122,6 +122,7 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
+        print "updating...."
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             if isActive:

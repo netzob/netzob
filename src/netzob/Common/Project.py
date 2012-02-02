@@ -150,7 +150,7 @@ class Project(object):
        
     def saveConfigFile(self, workspace):     
            
-        projectPath = os.path.join(os.path.join(workspace.getPath(), "projects"), self.getPath())
+        projectPath = os.path.join(os.path.join(workspace.getPath(), self.getPath()))
         projectFile = os.path.join(projectPath, Project.CONFIGURATION_FILENAME)
         
         logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
@@ -163,6 +163,9 @@ class Project(object):
         root = self.generateXMLConfigFile()
         tree = ElementTree(root)
         tree.write(projectFile)
+        
+        # Saving the workspace configuration file
+#        workspace.saveConfigFile()
 
     
     def hasPendingModifications(self, workspace):
@@ -189,13 +192,13 @@ class Project(object):
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
-        path = idProject + "/"
+        path = "projects/" + idProject + "/"
         creationDate = datetime.datetime.now()
         project = Project(idProject, name, creationDate, path)
         # Creation of the config file
         project.saveConfigFile(workspace)
         # Register the project in the workspace
-        workspace.referenceProject("projects/" + project.getPath())
+        workspace.referenceProject(project.getPath())
         workspace.saveConfigFile()
         
         return project
