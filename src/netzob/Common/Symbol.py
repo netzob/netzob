@@ -1080,13 +1080,9 @@ class Symbol(object):
     #+----------------------------------------------
     def getXMLDefinition(self):
         
-        # Register the namespace (2 way depending of the version)
-        try :
-            etree.register_namespace('netzob', PROJECT_NAMESPACE)
-            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-        except AttributeError :
-            etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
-            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
+        # Register the namespace
+        etree.register_namespace('netzob', PROJECT_NAMESPACE)
+        etree.register_namespace('netzob-common', COMMON_NAMESPACE)
             
         # create the file
         root = etree.Element("{" + NAMESPACE + "}netzob")
