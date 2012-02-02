@@ -280,7 +280,7 @@ class PcapImport(AbstractImporter):
         try:
             fp = open(pcapFile)
             fp.close()
-        except IOError as e:
+        except IOError, e:
             errorMessage = "Error while trying to open the file " + pcapFile + "."
             if e.errno == errno.EACCES:
                 errorMessage = "Error while trying to open the file " + pcapFile + ", more permissions are required for reading it."

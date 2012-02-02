@@ -933,7 +933,7 @@ class Symbol(object):
             cells = []
             try:
                 cells = self.getMessagesValuesByField(field)
-            except NetzobException as e:
+            except NetzobException, e:
                 logging.warning("ERROR: " + str(e.value))
                 break
 
