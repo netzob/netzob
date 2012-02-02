@@ -58,15 +58,11 @@ def loadProject_0_1(projectFile):
     tree.parse(projectFile)
 
     xmlProject = tree.getroot()
-    # Register the namespace (2 way depending of the version)
 
-    try:
-        etree.register_namespace('netzob', PROJECT_NAMESPACE)
-        etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-    except AttributeError:
-        etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
-        etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
-
+    # Register the namespace
+    etree.register_namespace('netzob', PROJECT_NAMESPACE)
+    etree.register_namespace('netzob-common', COMMON_NAMESPACE)
+    
     projectID = xmlProject.get('id')
     projectName = xmlProject.get('name', 'none')
     projectCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlProject.get('creation_date'))
@@ -120,15 +116,11 @@ class Project(object):
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
 
     def generateXMLConfigFile(self):
-
-        # Register the namespace (2 way depending of the version)
-        try:
-            etree.register_namespace('netzob', PROJECT_NAMESPACE)
-            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-        except AttributeError:
-            etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
-            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
-
+        
+        # Register the namespace
+        etree.register_namespace('netzob', PROJECT_NAMESPACE)
+        etree.register_namespace('netzob-common', COMMON_NAMESPACE)
+        
         # Dump the file
         root = etree.Element("{" + PROJECT_NAMESPACE + "}project")
         root.set("id", str(self.getID()))
