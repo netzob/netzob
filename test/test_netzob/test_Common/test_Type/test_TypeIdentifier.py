@@ -76,33 +76,3 @@ class test_TypeIdentifier(unittest.TestCase):
         hexOfNumber = str(hex(ord(alpha)))[2:]
         self.assertIn(Format.BINARY, typeIdentifier.getTypes(hexOfNumber))
         
-        # Alphanum
-        
-        # ASCII
-        
-        # Base64
-        
-        # Binary
-        
-        
-#        
-#        
-#        if aggregatedValues.isdigit():
-#            typesList.append("num")
-#        if aggregatedValues.isalpha():
-#            typesList.append("alpha")
-#        if aggregatedValues.isalnum():
-#            typesList.append("alphanum")
-#        if self.isAscii(aggregatedValues):
-#            typesList.append("ascii")
-#        if self.isBase64(stringsTable):
-#            typesList.append("base64enc")
-#            typesList.append("base64dec")
-#        typesList.append("binary")
-#        
-##        
-#        
-#    def test_isAscii(self, string):
-#        pass
-#    def isBase64(self, stringsTable):
-#        pass
