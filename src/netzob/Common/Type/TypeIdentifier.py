@@ -72,7 +72,7 @@ class TypeIdentifier():
         if self.isBase64(stringsTable):
             typesList.append("base64enc")
             typesList.append("base64dec")
-        typesList.append("binary")
+        typesList.append(Format.BINARY)
 
         return typesList
     
