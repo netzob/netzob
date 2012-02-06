@@ -36,6 +36,7 @@ class Format():
     HEX = "hex"
     STRING = "string"
     FLOAT = "float"
+    NUM = "num"
 
     # Complex formats
     IP = "ip"
