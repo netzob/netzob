@@ -29,5 +29,5 @@
 #| Endianess switch
 #+----------------------------------------------
 class Endianess():
-    BIG="big-endian"
-    LITTLE="little-endian"
+    BIG = "big-endian"
+    LITTLE = "little-endian"
