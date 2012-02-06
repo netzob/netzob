@@ -31,6 +31,7 @@
 import base64
 import logging
 import StringIO
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------- 
 #| Local Imports
@@ -61,13 +62,13 @@ class TypeIdentifier():
         if aggregatedValues == "":
             return typesList
         if aggregatedValues.isdigit():
-            typesList.append("num")
+            typesList.append(Format.DECIMAL)
         if aggregatedValues.isalpha():
-            typesList.append("alpha")
+            typesList.append(Format.ALPHA)
         if aggregatedValues.isalnum():
-            typesList.append("alphanum")
+            typesList.append(Format.ALPHA_NUM)
         if self.isAscii(aggregatedValues):
-            typesList.append("ascii")
+            typesList.append(Format.ASCII)
         if self.isBase64(stringsTable):
             typesList.append("base64enc")
             typesList.append("base64dec")

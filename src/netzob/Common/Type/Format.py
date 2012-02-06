@@ -37,6 +37,9 @@ class Format():
     STRING = "string"
     FLOAT = "float"
     NUM = "num"
+    ALPHA = "alpha"
+    ALPHA_NUM = "alphanum"
+    ASCII = "ascii"
 
     # Complex formats
     IP = "ip"
