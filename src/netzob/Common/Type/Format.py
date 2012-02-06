@@ -40,6 +40,8 @@ class Format():
     ALPHA = "alpha"
     ALPHA_NUM = "alphanum"
     ASCII = "ascii"
+    BASE64_ENC = "base64enc"
+    BASE64_DEC = "base64dec"
 
     # Complex formats
     IP = "ip"

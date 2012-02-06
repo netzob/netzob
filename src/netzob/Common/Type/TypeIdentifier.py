@@ -70,8 +70,8 @@ class TypeIdentifier():
         if self.isAscii(aggregatedValues):
             typesList.append(Format.ASCII)
         if self.isBase64(stringsTable):
-            typesList.append("base64enc")
-            typesList.append("base64dec")
+            typesList.append(Format.BASE64_ENC)
+            typesList.append(Format.BASE64_DEC)
         typesList.append(Format.BINARY)
 
         return typesList
