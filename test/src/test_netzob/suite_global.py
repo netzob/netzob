@@ -31,14 +31,31 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import sys
-from unittest import TestLoader
-
-from test_netzob import test_Common
-from netzob import Common
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from test_netzob import suite_Common
+from common.xmlrunner import XMLTestRunner
+from test_netzob import test_NetzobGui
+
+
+
+def getSuite():
+    globalSuite = unittest.TestSuite()
+    
+    modulesOfTests = [test_NetzobGui]
+    modulesOfSuites = [suite_Common]
+    
+    # Add individual tests    
+    for module in modulesOfTests :
+        globalSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+        
+    # Add suites    
+    for module in modulesOfSuites :
+        globalSuite.addTests(module.getSuite())
+        
+    return globalSuite
 
     
 if __name__ == "__main__":    
@@ -49,20 +66,16 @@ if __name__ == "__main__":
     if (len(sys.argv) == 2) :
         outputStdout = False
         reportFile = sys.argv[1]
-        
-    testloader = TestLoader()
-    commonSuite = testloader.loadTestsFromModule(test_Common)
     
-    availableSuites = (commonSuite)
-    globalTestSuite = unittest.TestSuite(availableSuites)
+    # We retrieve the current test suite
+    currentTestSuite = getSuite()
     
-    
-    
+    # We execute the test suite
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()
-        testResult = runner.run(globalTestSuite)
+        testResult = runner.run(currentTestSuite)
     else :
         File = open(reportFile, "w")
         reporter = XMLTestRunner(File)
-        reporter.run(globalTestSuite)
+        reporter.run(currentTestSuite)
         File.close()
