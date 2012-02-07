@@ -32,6 +32,19 @@ import gobject
 import os
 import unittest
 
+sys.path.insert(0, '../src/')
+
+try:
+    # Verify that libNeedleman is in the path
+    import libNeedleman
+except:
+    # Else, assume the path is gotten from the 'python setup.py build' command
+    arch = os.uname()[-1]
+    python_version = sys.version[:3]
+    build_lib_path = "../build/lib.linux-" + arch + "-" + python_version
+    sys.path.append(build_lib_path)
+
+
 sys.path.insert(0, 'src/')
 
 from common.xmlrunner import XMLTestRunner
