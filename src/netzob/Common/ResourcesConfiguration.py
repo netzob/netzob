@@ -178,4 +178,6 @@ class ResourcesConfiguration(object):
         else :
             return NetzobResources.WORKSPACE_DIR
 
+
+    
         
