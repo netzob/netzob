@@ -143,7 +143,7 @@ class IpcImport(AbstractImporter):
 
         # File descriptor list
         scroll = gtk.ScrolledWindow()
-        self.fdTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
+        self.fdTreeview = gtk.TreeView(gtk.TreeStore(str, str, str))  # file descriptor, type, name
         self.fdTreeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         cell = gtk.CellRendererText()
         # Col file descriptor
@@ -213,7 +213,7 @@ class IpcImport(AbstractImporter):
 
         # Packet list
         scroll = gtk.ScrolledWindow()
-        self.pktTreestore = gtk.TreeStore(int, int, str, str, int) # pktID, fd, direction (read/write), data, timestamp
+        self.pktTreestore = gtk.TreeStore(int, int, str, str, int)  # pktID, fd, direction (read/write), data, timestamp
         treeview = gtk.TreeView(self.pktTreestore)
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         cell = gtk.CellRendererText()
@@ -281,7 +281,7 @@ class IpcImport(AbstractImporter):
     def retrieveFDs(self, f_fs=True, f_net=True, f_proc=True):
         if self.pid == None:
             return []
-        if False: # f_net and (not f_fs) and (not f_proc): # -i for optimization
+        if False:  # f_net and (not f_fs) and (not f_proc): # -i for optimization
             cmd = "/usr/bin/lsof -i -a -d 0-1024 -a -p " + str(self.pid) + " | grep -v \"SIZE/OFF\" |awk -F \" \" {' print $5 \" \" $8 \" \" $9 \" \" $7'}"
         else:
             grep = "."

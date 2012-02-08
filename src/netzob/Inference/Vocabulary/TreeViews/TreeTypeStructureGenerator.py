@@ -60,7 +60,7 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Description, Variable
+        self.treestore = gtk.TreeStore(int, str, str, str)  # iCol, Name, Description, Variable
         # creation of the treeview
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
@@ -126,7 +126,7 @@ class TreeTypeStructureGenerator():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
                 tab += " "
-            if field.getName() == "__sep__": # Do not show the delimiter fields
+            if field.getName() == "__sep__":  # Do not show the delimiter fields
                 continue
 
             # Define the background color

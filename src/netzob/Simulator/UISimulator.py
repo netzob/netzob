@@ -217,7 +217,7 @@ class UISimulator:
         # Panel hosting the list of curent actors
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll_listActiveActors = gtk.ScrolledWindow()
-        self.treestore_listActiveActors = gtk.TreeStore(str, str) # actor's name, typ
+        self.treestore_listActiveActors = gtk.TreeStore(str, str)  # actor's name, typ
 
 #        self.treestore_listActiveActors.append(None, ["actor1", "Server"])
 #        self.treestore_listActiveActors.append(None, ["actor2", "Client"])
@@ -245,7 +245,7 @@ class UISimulator:
         # Inputs
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll_inputs = gtk.ScrolledWindow()
-        self.treestore_inputs = gtk.TreeStore(str, str, str) # date, input message symbol
+        self.treestore_inputs = gtk.TreeStore(str, str, str)  # date, input message symbol
 
 #        self.treestore_inputs.append(None, ["12:45:01", "message 1"])
 #        self.treestore_inputs.append(None, ["12:45:11", "message 2"])
@@ -284,7 +284,7 @@ class UISimulator:
         # Outputs
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll_outputs = gtk.ScrolledWindow()
-        self.treestore_outputs = gtk.TreeStore(str, str, str) # date, output message, symbol
+        self.treestore_outputs = gtk.TreeStore(str, str, str)  # date, output message, symbol
 
 #        self.treestore_outputs.append(None, ["12:45:01", "message 1"])
 #        self.treestore_outputs.append(None, ["12:45:11", "message 2"])
@@ -322,7 +322,7 @@ class UISimulator:
         # Memory
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll_memory = gtk.ScrolledWindow()
-        self.treestore_memory = gtk.TreeStore(str, str, str) # name, type, value
+        self.treestore_memory = gtk.TreeStore(str, str, str)  # name, type, value
 
 #        self.treestore_memory.append(None, ["var1", "IP", "192.168.0.10"])
 #        self.treestore_memory.append(None, ["var2", "WORD", "PSEUDO"])

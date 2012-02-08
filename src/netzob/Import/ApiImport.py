@@ -111,7 +111,7 @@ class ApiImport:
         # List of DLL
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll = gtk.ScrolledWindow()
-        self.dllTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
+        self.dllTreeview = gtk.TreeView(gtk.TreeStore(str, str, str))  # file descriptor, type, name
         self.dllTreeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         cell = gtk.CellRendererText()
         # Col file descriptor
@@ -178,7 +178,7 @@ class ApiImport:
 
         # Packet list
         scroll = gtk.ScrolledWindow()
-        self.pktTreestore = gtk.TreeStore(int, str, str, str, int) # pktID, Function, Parameter, data, timestamp
+        self.pktTreestore = gtk.TreeStore(int, str, str, str, int)  # pktID, Function, Parameter, data, timestamp
         treeview = gtk.TreeView(self.pktTreestore)
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         cell = gtk.CellRendererText()

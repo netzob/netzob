@@ -59,7 +59,7 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Data, Description
+        self.treestore = gtk.TreeStore(int, str, str, str)  # iCol, Name, Data, Description
         # creation of the treeview
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)

@@ -92,7 +92,7 @@ class Clusterer(object):
         format = ""
 
         for symbol in self.symbols:
-            if symbol.getAlignment() != "": # If we already computed the alignement of the symbol, then use it
+            if symbol.getAlignment() != "":  # If we already computed the alignement of the symbol, then use it
                 format += "1" + "G"
                 messageTmp = ""
                 alignmentTmp = ""
@@ -110,9 +110,9 @@ class Clusterer(object):
                 format += str(len(symbol.getMessages())) + "G"
                 for m in symbol.getMessages():
                     format += str(len(m.getReducedStringData()) / 2) + "M"
-                    serialSymbols += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData()) # The message
+                    serialSymbols += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())  # The message
 #                    print m.getReducedStringData()
-                    serialSymbols += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]) # The alignement == "\x00" * len(the message), the first time
+                    serialSymbols += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)])  # The alignement == "\x00" * len(the message), the first time
 #                    print "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]).encode("hex")
 
         # Execute the Clustering part in C :) (thx fgy)

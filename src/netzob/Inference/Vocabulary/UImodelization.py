@@ -80,7 +80,7 @@ class UImodelization:
         possible_choices = Format.getSupportedFormats()
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
-        self.comboDisplayFormat.set_model(gtk.ListStore(str)) # Clear the list
+        self.comboDisplayFormat.set_model(gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayFormat.append_text(possible_choices[i])
             if possible_choices[i] == global_format:
@@ -92,7 +92,7 @@ class UImodelization:
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         self.comboDisplayUnitSize.disconnect(self.comboDisplayUnitSize_handler)
-        self.comboDisplayUnitSize.set_model(gtk.ListStore(str)) # Clear the list
+        self.comboDisplayUnitSize.set_model(gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayUnitSize.append_text(possible_choices[i])
             if possible_choices[i] == global_unitsize:
@@ -103,7 +103,7 @@ class UImodelization:
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
         global_sign = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
         self.comboDisplaySign.disconnect(self.comboDisplaySign_handler)
-        self.comboDisplaySign.set_model(gtk.ListStore(str)) # Clear the list
+        self.comboDisplaySign.set_model(gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplaySign.append_text(possible_choices[i])
             if possible_choices[i] == global_sign:
@@ -114,7 +114,7 @@ class UImodelization:
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
         global_endianess = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
         self.comboDisplayEndianess.disconnect(self.comboDisplayEndianess_handler)
-        self.comboDisplayEndianess.set_model(gtk.ListStore(str)) # Clear the list
+        self.comboDisplayEndianess.set_model(gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayEndianess.append_text(possible_choices[i])
             if possible_choices[i] == global_endianess:
@@ -609,7 +609,7 @@ class UImodelization:
         # re-enable selection
         treeview.get_selection().set_select_function(lambda * ignore: True)
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
-        if (self.defer_select and target and self.defer_select == target[0] and not (event.x == 0 and event.y == 0)): # certain drag and drop
+        if (self.defer_select and target and self.defer_select == target[0] and not (event.x == 0 and event.y == 0)):  # certain drag and drop
             treeview.set_cursor(target[0], target[1], False)
             self.defer_select = False
 
@@ -1179,11 +1179,11 @@ class UImodelization:
             self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
             return
 
-        if aligned == False: # Copy the entire raw message
+        if aligned == False:  # Copy the entire raw message
             self.netzob.clipboard.set_text(message.getStringData())
-        elif field == None: # Copy the entire aligned message
+        elif field == None:  # Copy the entire aligned message
             self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)))
-        else: # Just copy the selected field
+        else:  # Just copy the selected field
             self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[field.getIndex()])
 
     #+----------------------------------------------

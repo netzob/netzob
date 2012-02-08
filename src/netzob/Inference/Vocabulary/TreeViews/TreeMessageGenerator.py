@@ -146,9 +146,9 @@ class TreeMessageGenerator():
         regex_row.append(True)
 
         for field in self.symbol.getFields():
-            if field.getRegex().find("{") != -1: # This is a real regex
+            if field.getRegex().find("{") != -1:  # This is a real regex
                 regex_row.append(field.getRegex())
-            else: # This is a simple value
+            else:  # This is a simple value
                 regex_row.append(field.getEncodedVersionOfTheRegex())
         self.treestore.append(None, regex_row)
 
@@ -169,7 +169,7 @@ class TreeMessageGenerator():
             try:
                 messageTable = message.applyAlignment(styled=True, encoded=True)
             except NetzobException:
-                continue # We don't display the message in error
+                continue  # We don't display the message in error
             line = []
             line.append(message.getID())
             line.append("#ffffff")

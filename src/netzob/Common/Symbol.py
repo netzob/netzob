@@ -204,7 +204,7 @@ class Symbol(object):
                 messagesValuesByField = self.getMessagesValuesByField(field)
                 messagesValuesByField = "".join(messagesValuesByField)
                 if messagesValuesByField == "":
-                    self.getFields().pop(field.getIndex()) # We remove this useless field
+                    self.getFields().pop(field.getIndex())  # We remove this useless field
                     # Adpat index of the following fields, before breaking
                     for fieldNext in self.getFields():
                         if fieldNext.getIndex() > field.getIndex():
@@ -229,7 +229,7 @@ class Symbol(object):
                              len(tmpStr))
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
-        if minNbSplit <= 1: # If the delimiter does not create splitted fields
+        if minNbSplit <= 1:  # If the delimiter does not create splitted fields
             field = Field("Name", 0, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
@@ -296,7 +296,7 @@ class Symbol(object):
 
         ## Build of the fields
         currentStaticField = ""
-        if resultMask[0] == "1": # The first column is dynamic
+        if resultMask[0] == "1":  # The first column is dynamic
             isLastDyn = True
         else:
             currentStaticField += resultString[0]
@@ -305,7 +305,7 @@ class Symbol(object):
         nbElements = 1
         iField = -1
         for it in range(1, len(resultMask)):
-            if resultMask[it] == "1": # The current column is dynamic
+            if resultMask[it] == "1":  # The current column is dynamic
                 if isLastDyn:
                     nbElements += 1
                 else:
@@ -318,8 +318,8 @@ class Symbol(object):
                     currentStaticField = ""
                     nbElements = 1
                 isLastDyn = True
-            else: # The current column is static
-                if isLastDyn: # We change the field
+            else:  # The current column is static
+                if isLastDyn:  # We change the field
                     iField += 1
                     field = Field("Name", iField, "(.{," + str(nbElements) + "})")
                     field.setColor("blue")
@@ -334,7 +334,7 @@ class Symbol(object):
 
         # We add the last field
         iField += 1
-        if resultMask[-1] == "1": # If the last column is dynamic
+        if resultMask[-1] == "1":  # If the last column is dynamic
             field = Field("Name", iField, "(.{," + str(nbElements) + "})")
             field.setColor("blue")
         else:
@@ -450,16 +450,16 @@ class Symbol(object):
         if field2.getRegex() == "":
             newRegex = field1.getRegex()
 
-        if field1.getRegex()[0] == "(" and field2.getRegex()[0] != "(": # Dyn + Static fields
+        if field1.getRegex()[0] == "(" and field2.getRegex()[0] != "(":  # Dyn + Static fields
             newRegex = field1.getRegex()[:-1] + field2.getRegex() + ")"
 
-        if field1.getRegex()[0] != "(" and field2.getRegex()[0] == "(": # Static + Dyn fields
+        if field1.getRegex()[0] != "(" and field2.getRegex()[0] == "(":  # Static + Dyn fields
             newRegex = "(" + field1.getRegex() + field2.getRegex()[1:]
 
-        if field1.getRegex()[0] == "(" and field2.getRegex()[0] == "(": # Dyn + Dyn fields
+        if field1.getRegex()[0] == "(" and field2.getRegex()[0] == "(":  # Dyn + Dyn fields
             newRegex = field1.getRegex()[:-1] + field2.getRegex()[1:]
 
-        if field1.getRegex()[0] != "(" and field2.getRegex()[0] != "(": # Static + Static fields (should not happen...)
+        if field1.getRegex()[0] != "(" and field2.getRegex()[0] != "(":  # Static + Static fields (should not happen...)
             newRegex = field1.getRegex() + field2.getRegex()
 
         # Default representation is BINARY
@@ -591,7 +591,7 @@ class Symbol(object):
         vbox.show()
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing potential data carving results ## ListStore format:
+        # Treeview containing potential data carving results  ## ListStore format:
         # int: iField
         # str: data type (url, ip, email, etc.)
         store = gtk.ListStore(int, str)
@@ -633,7 +633,7 @@ class Symbol(object):
                 if matchElts > 0:
                     store.append([field.getIndex(), carver])
 
-        # Preview of matching fields in a treeview ## ListStore format:
+        # Preview of matching fields in a treeview  ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
@@ -671,7 +671,7 @@ class Symbol(object):
         iField = 0
         # We cover each field for a potential size field
         for field in self.getFields():
-            if field.isRegexStatic(): # Means the element is static, so we assume it's not a good candidate
+            if field.isRegexStatic():  # Means the element is static, so we assume it's not a good candidate
                 iField += 1
                 continue
             cellsSize = self.getMessagesValuesByField(field)
@@ -698,7 +698,7 @@ class Symbol(object):
                         lenJ = 2
                         stop = 0
                     for m in range(lenJ, stop, -2):
-                        for n in [4, 0, 1]: # loop over different possible encoding of size field
+                        for n in [4, 0, 1]:  # loop over different possible encoding of size field
                             res = True
                             for l in range(len(cellsSize)):
                                 if self.getFieldByIndex(j).isRegexStatic():
@@ -714,7 +714,7 @@ class Symbol(object):
                                     expectedSizeType = "H"
                                 elif len(rawMsgSize) == 4:
                                     expectedSizeType = "I"
-                                else: # Do not consider size field with len > 4
+                                else:  # Do not consider size field with len > 4
                                     res = False
                                     break
                                 (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
@@ -723,7 +723,7 @@ class Symbol(object):
                                     res = False
                                     break
                             if res:
-                                if self.getFieldByIndex(j).isRegexStatic(): # Means the regex j element is static and a sub-part is concerned
+                                if self.getFieldByIndex(j).isRegexStatic():  # Means the regex j element is static and a sub-part is concerned
                                     store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                     logging.info("In symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:
@@ -766,7 +766,7 @@ class Symbol(object):
                             treeviewTarget.get_model().append([cell])
                         segments.append((match.start(0), match.end(0)))
 
-                    segments.reverse() # We start from the end to avoid shifting
+                    segments.reverse()  # We start from the end to avoid shifting
                     for (start, end) in segments:
                         cell = cell[:end] + "</span>" + cell[end:]
                         cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
@@ -784,7 +784,7 @@ class Symbol(object):
         vbox.show()
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing ASN.1 results ## ListStore format:
+        # Treeview containing ASN.1 results  ## ListStore format:
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
         # str: type
@@ -831,7 +831,7 @@ class Symbol(object):
 #                    print "PAN: " + repr(res)
 #                        store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
-        # Preview of matching fields in a treeview ## ListStore format:
+        # Preview of matching fields in a treeview  ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
@@ -901,7 +901,7 @@ class Symbol(object):
         vbox.show()
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing potential data carving results ## ListStore format:
+        # Treeview containing potential data carving results  ## ListStore format:
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
         # str: type
@@ -1107,7 +1107,7 @@ class Symbol(object):
     #|   @return a string containing the scapy dissector of the symbol
     #+----------------------------------------------
     def getScapyDissector(self):
-        self.refineRegexes() # In order to force the calculation of each field limits
+        self.refineRegexes()  # In order to force the calculation of each field limits
         s = ""
         s += "class " + self.getName() + "(Packet):\n"
         s += "    name = \"" + self.getName() + "\"\n"
@@ -1116,13 +1116,13 @@ class Symbol(object):
         for field in self.getFields():
             if self.field.isRegexStatic():
                 s += "                    StrFixedLenField(\"" + field.getName() + "\", " + field.getEncodedVersionOfTheRegex() + ")\n"
-            else: # Variable field of fixed size
+            else:  # Variable field of fixed size
                 s += "                    StrFixedLenField(\"" + field.getName() + "\", None)\n"
-            ## If this is a variable field # TODO
+            ## If this is a variable field  # TODO
                 # StrLenField("the_varfield", "the_default_value", length_from = lambda pkt: pkt.the_lenfield)
         s += "                 ]\n"
 
-        ## Bind current layer with the underlying one # TODO
+        ## Bind current layer with the underlying one  # TODO
         # bind_layers(TCP, HTTP, sport=80)
         # bind_layers(TCP, HTTP, dport=80)
         return s
@@ -1146,7 +1146,7 @@ class Symbol(object):
         while i < nbFields - 1:
             aField = self.getFieldByIndex(i)
             if aField.isRegexStatic():
-                if len(aField.getRegex()) <= 2: # Means a potential negligeable element that can be merged with its neighbours
+                if len(aField.getRegex()) <= 2:  # Means a potential negligeable element that can be merged with its neighbours
                     precField = self.getFieldByIndex(i - 1)
                     if precField.isRegexOnlyDynamic():
                         nextField = self.getFieldByIndex(i + 1)
@@ -1189,11 +1189,11 @@ class Symbol(object):
                                     field.setIndex(field.getIndex() - 2)
                             # Sort fields by their index
                             self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-                            break # Just do it one time to avoid conflicts in self.fields structure
+                            break  # Just do it one time to avoid conflicts in self.fields structure
             i += 1
 
         if res:
-            self.slickRegex(project) # Try to loop until no more merges are done
+            self.slickRegex(project)  # Try to loop until no more merges are done
             logging.debug("The regex has been slicked")
 
     """ TODO
@@ -1227,7 +1227,7 @@ class Symbol(object):
         rawData = data.encode("hex")
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing potential data carving results ## ListStore format:
+        # Treeview containing potential data carving results  ## ListStore format:
         # int: iCol
         # str: encoding
         store = gtk.ListStore(int, str)
@@ -1265,7 +1265,7 @@ class Symbol(object):
 
         ## TODO: Algo (second step) : for each message, try to find data
 
-        # Preview of matching fields in a treeview ## ListStore format:
+        # Preview of matching fields in a treeview  ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         treeviewRes.connect("cursor-changed", self.searchResultSelected_cb, treeview, data)

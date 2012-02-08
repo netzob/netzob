@@ -160,7 +160,7 @@ class NetworkImport(AbstractImporter):
 
         # Packet list
         scroll = gtk.ScrolledWindow()
-        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int) # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
+        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         treeview = gtk.TreeView(self.treestore)
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         treeview.connect("cursor-changed", self.packet_details)
@@ -296,7 +296,7 @@ class NetworkImport(AbstractImporter):
     #+----------------------------------------------
     def launch_sniff(self, button, dev, filter, count, time):
         button.set_sensitive(False)
-        self.envDeps.captureEnvData() # Retrieve the environmental data (os specific, system specific, etc.)
+        self.envDeps.captureEnvData()  # Retrieve the environmental data (os specific, system specific, etc.)
         self.packets = []
         self.treestore.clear()
         self.textview.get_buffer().set_text("")

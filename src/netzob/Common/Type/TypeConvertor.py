@@ -222,9 +222,9 @@ class TypeConvertor():
         for i in range(0, len(raw), 2):
             if len(raw[i: i + 2]) % 2 == 0:
                 v = int(raw[i: i + 2], 16)
-            else: # Unaligned octet
+            else:  # Unaligned octet
                 v = int(raw[i: i + 1], 16)
-            if v >= 0x20 and v <= 0x7e: # means between ' ' and '~'
+            if v >= 0x20 and v <= 0x7e:  # means between ' ' and '~'
                 res += chr(v)
             else:
                 res += "."
@@ -238,10 +238,10 @@ class TypeConvertor():
         res = ""
         raw = raw.strip()
 
-        if len(raw) % 2 == 0: # Even length
+        if len(raw) % 2 == 0:  # Even length
             for i in range(0, len(raw), 2):
                 res = res + " " + oct(int(raw[i: i + 2], 16))
-        else: # Odd length
+        else:  # Odd length
             for i in range(0, len(raw) - 1, 2):
                 res = res + " " + oct(int(raw[i: i + 2], 16))
             res = res + " " + oct(int(raw[-1], 16))
@@ -264,10 +264,10 @@ class TypeConvertor():
         res = ""
         raw = raw.strip()
 
-        if len(raw) % 2 == 0: # Even length
+        if len(raw) % 2 == 0:  # Even length
             for i in range(0, len(raw), 2):
                 res = res + " " + str(int(raw[i: i + 2], 16))
-        else: # Odd length
+        else:  # Odd length
             for i in range(0, len(raw) - 1, 2):
                 res = res + " " + str(int(raw[i: i + 2], 16))
             res = res + " " + str(int(raw[-1], 16))
@@ -330,10 +330,10 @@ class TypeConvertor():
         res = ""
         msg = msg.strip()
 
-        if len(msg) % 2 == 0: # Even length
+        if len(msg) % 2 == 0:  # Even length
             for i in range(0, len(msg), 2):
                 res = res + chr(int(msg[i: i + 2], 16))
-        else: # Odd length
+        else:  # Odd length
             for i in range(0, len(msg) - 1, 2):
                 res = res + chr(int(msg[i: i + 2], 16))
             res = res + chr(int(msg[-1], 16))
@@ -408,7 +408,7 @@ class TypeConvertor():
             size = 32
         elif unitSize == UnitSize.BITS64:
             size = 64
-        else: # Render with no splitting
+        else:  # Render with no splitting
             tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
             return tmp
 
@@ -423,7 +423,7 @@ class TypeConvertor():
             tmp = raw[i:i + (size / 4)]
             initTmp = tmp
 
-            if len(tmp) == 2: # In half-bytes
+            if len(tmp) == 2:  # In half-bytes
                 sizeStr = "B"
             elif len(tmp) == 4:
                 sizeStr = "H"
@@ -434,9 +434,9 @@ class TypeConvertor():
             else:
                 sizeStr = "Q"
                 if endianess == Endianess.BIG:
-                    tmp = (16 - len(tmp)) * "0" + tmp # Put padding on the left
+                    tmp = (16 - len(tmp)) * "0" + tmp  # Put padding on the left
                 else:
-                    tmp = tmp + (16 - len(tmp)) * "0" # Put padding on the right
+                    tmp = tmp + (16 - len(tmp)) * "0"  # Put padding on the right
 
             tmp = TypeConvertor.netzobRawToPythonRaw(tmp)
 
@@ -462,4 +462,4 @@ class TypeConvertor():
 
             res += str(tmp) + " "
 
-        return res[:-1] # We delete the last space character
+        return res[:-1]  # We delete the last space character

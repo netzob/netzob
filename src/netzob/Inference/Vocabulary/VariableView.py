@@ -75,7 +75,7 @@ class VariableView(object):
         # Create the main panel
         self.panel = gtk.Table(rows=2, columns=3, homogeneous=False)
 
-        self.treestore = gtk.TreeStore(str, str) # id of the data, description
+        self.treestore = gtk.TreeStore(str, str)  # id of the data, description
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.connect('button-press-event', self.showMenu)
         # messages list
@@ -390,7 +390,7 @@ class VariableView(object):
         varLabel.show()
         self.varCombo = gtk.combo_box_entry_new_text()
         self.varCombo.show()
-        self.varStore = gtk.ListStore(str, str) #description, id,
+        self.varStore = gtk.ListStore(str, str)  #description, id,
         self.varCombo.set_model(self.varStore)
 
         # We retrieve all the existing variables in the project

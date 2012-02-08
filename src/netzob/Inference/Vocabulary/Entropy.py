@@ -68,7 +68,7 @@ class Entropy(object):
             i += maxCell
             segments.append(i)
 
-        fig = figure()#figsize=(800, 500))#, dpi=75)
+        fig = figure()  # figsize=(800, 500))#, dpi=75)
         axis = fig.add_subplot(111, frame_on=False)
         axis.hold(True)
         axis.plot(resX, resY, '.')

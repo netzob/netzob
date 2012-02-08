@@ -141,7 +141,7 @@ class InjectorGenerator():
         source += '''
 
 /* should be getting lib mmap size dynamically */
-/* from map file; this #define is temporary */
+/* from map file; this  #define is temporary */
 #define LIBSIZE 5472
 
 /* struct to get symbol relocation info */

@@ -160,7 +160,7 @@ class AbstractMessage():
         iCol = 0
         dynamicCol = 1
         for field in self.symbol.getFields():
-            if field.getRegex().find("(") != -1: # Means this column is not static
+            if field.getRegex().find("(") != -1:  # Means this column is not static
                 start = m.start(dynamicCol)
                 end = m.end(dynamicCol)
 

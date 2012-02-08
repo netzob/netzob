@@ -126,7 +126,7 @@ class UIGrammarInference:
 
         # The list of current states
         scroll_listStates = gtk.ScrolledWindow()
-        self.treestore_listStates = gtk.TreeStore(str, str, str) # id, name, type
+        self.treestore_listStates = gtk.TreeStore(str, str, str)  # id, name, type
         treeview_listStates = gtk.TreeView(self.treestore_listStates)
         treeview_listStates.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview_listStates.set_size_request(-1, 250)
@@ -158,7 +158,7 @@ class UIGrammarInference:
 
         # The list of current transitions
         scroll_listTransitions = gtk.ScrolledWindow()
-        self.treestore_listTransitions = gtk.TreeStore(str, str, str, str, str) # id, name, start state, end state, type
+        self.treestore_listTransitions = gtk.TreeStore(str, str, str, str, str)  # id, name, start state, end state, type
         treeview_listTransitions = gtk.TreeView(self.treestore_listTransitions)
         treeview_listTransitions.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview_listTransitions.set_size_request(-1, 250)
@@ -401,7 +401,7 @@ class UIGrammarInference:
         inputSymbolLabel.show()
 
         inputSymbolCombo = gtk.ComboBox()
-        inputSymbolCombo.set_model(gtk.ListStore(str, str)) #entry name, entry id
+        inputSymbolCombo.set_model(gtk.ListStore(str, str))  #entry name, entry id
         inputSymbolComboCell = gtk.CellRendererText()
         inputSymbolCombo.pack_start(inputSymbolComboCell, True)
         inputSymbolCombo.add_attribute(inputSymbolComboCell, 'text', 0)
@@ -422,7 +422,7 @@ class UIGrammarInference:
         outputSymbolLabel.show()
 
         outputSymbolCombo = gtk.ComboBox()
-        outputSymbolCombo.set_model(gtk.ListStore(str, str)) #entry name, entry id
+        outputSymbolCombo.set_model(gtk.ListStore(str, str))  #entry name, entry id
         outputSymbolComboCell = gtk.CellRendererText()
         outputSymbolCombo.pack_start(outputSymbolComboCell, True)
         outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 0)
@@ -454,7 +454,7 @@ class UIGrammarInference:
         removeOutputSymbolButton.set_sensitive(False)
 
 
-        outputSymbolsTreeStore = gtk.TreeStore(str, str, str, str) # id, name, time, proba
+        outputSymbolsTreeStore = gtk.TreeStore(str, str, str, str)  # id, name, time, proba
 
         addOutputSymbolButton = gtk.Button("Add")
         addOutputSymbolButton.connect("clicked", self.addSymbolToTheList, symbols, outputSymbolsTreeStore, outputSymbolCombo, outputTimeEntry, outputProbabilityEntry)
@@ -516,7 +516,7 @@ class UIGrammarInference:
         inputSymbol = DictionarySymbol(inputEntry)
 
         # retrieve the output symbols
-        outputSymbols = [] # [[symbol, proba, time], ...]
+        outputSymbols = []  # [[symbol, proba, time], ...]
         for outputData in outputSymbolsTreeStore:
             outputSymbolID = outputData[0]
             outputSymbolName = outputData[1]

@@ -144,7 +144,7 @@ class FileImport(AbstractImporter):
         # Extracted data
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         scroll2 = gtk.ScrolledWindow()
-        self.lineView = gtk.TreeView(gtk.TreeStore(str, str)) # line number, content
+        self.lineView = gtk.TreeView(gtk.TreeStore(str, str))  # line number, content
         self.lineView.get_selection().set_mode(gtk.SELECTION_SINGLE)
         self.lineView.connect('button-press-event', self.button_press_on_message)
         cell = gtk.CellRendererText()

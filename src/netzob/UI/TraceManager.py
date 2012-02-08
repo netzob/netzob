@@ -79,7 +79,7 @@ class TraceManager():
         mainTable = gtk.Table(rows=2, columns=1, homogeneous=False)
 
         scroll = gtk.ScrolledWindow()
-        self.treestoreTraces = gtk.TreeStore(str, str, str, str, str, int) # id, date, type, project name, description, nb message,
+        self.treestoreTraces = gtk.TreeStore(str, str, str, str, str, int)  # id, date, type, project name, description, nb message,
         treeview = gtk.TreeView(self.treestoreTraces)
         treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview.connect('button-press-event', self.button_press_on_treeview_traces)
@@ -118,7 +118,7 @@ class TraceManager():
 
 
         scroll2 = gtk.ScrolledWindow()
-        self.treestoreMessages = gtk.TreeStore(str, str, str) # id, timestamp, data,
+        self.treestoreMessages = gtk.TreeStore(str, str, str)  # id, timestamp, data,
         treeviewMessage = gtk.TreeView(self.treestoreMessages)
         treeviewMessage.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 #        treeview.connect("cursor-changed", self.packet_details)

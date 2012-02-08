@@ -78,7 +78,7 @@ def NetzobComboBoxEntry():
     combo = gtk.combo_box_entry_new_text()
     combo.show()
     combo.set_model(gtk.ListStore(str))
-    cell = combo.get_cells()[0] # Get the cellrenderer
+    cell = combo.get_cells()[0]  # Get the cellrenderer
     cell.set_property("size-points", 9)
     return combo
 

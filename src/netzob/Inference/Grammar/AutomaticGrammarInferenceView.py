@@ -131,7 +131,7 @@ class AutomaticGrammarInferenceView(object):
 
         # Insert the updated list of requests and associated responses
         scroll_requests = gtk.ScrolledWindow()
-        self.treestore_queries = gtk.TreeStore(str, str, str) # queries, responses, color
+        self.treestore_queries = gtk.TreeStore(str, str, str)  # queries, responses, color
         treeview_queries = gtk.TreeView(self.treestore_queries)
         treeview_queries.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview_queries.set_size_request(500, 500)

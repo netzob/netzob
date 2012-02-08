@@ -107,7 +107,7 @@ class PcapImport(AbstractImporter):
 
         # Scapy filter
         label = gtk.Label("Scapy filter")
-#        label.show() # TODO : implement the filter
+#        label.show()  # TODO : implement the filter
         entry_filter = gtk.Entry()
         entry_filter.set_width_chars(50)
         entry_filter.show()
@@ -123,7 +123,7 @@ class PcapImport(AbstractImporter):
 
         # Packet list
         scroll = gtk.ScrolledWindow()
-        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int) # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
+        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         treeview = gtk.TreeView(self.treestore)
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         treeview.set_size_request(500, -1)
