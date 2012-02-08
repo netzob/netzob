@@ -56,7 +56,7 @@ class XSDResolver(Resolver):
     def resolve(self, url, id, context):
         for declaredFilename in self.mapping.keys():
             if declaredFilename == url:
-                test = self.resolve_filename(self.mapping[declaredFilename] , context)
+                test = self.resolve_filename(self.mapping[declaredFilename], context)
                 return test
 
         return self.resolve_string(url, context)

@@ -411,10 +411,10 @@ class IpcImport(AbstractImporter):
         m = compiledRegex.match(data)
         if m == None:
             return self.doSniff
-        direction = data[m.start(1) : m.end(1)]
-        fd = int(data[m.start(2) : m.end(2)])
-        pkt = data[m.start(3) : m.end(3)]
-        returnCode = int(data[m.start(4) : m.end(4)])
+        direction = data[m.start(1): m.end(1)]
+        fd = int(data[m.start(2): m.end(2)])
+        pkt = data[m.start(3): m.end(3)]
+        returnCode = int(data[m.start(4): m.end(4)])
 
         # Apply filter
         if self.sniffOption == "fs":

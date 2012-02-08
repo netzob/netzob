@@ -187,7 +187,7 @@ class TreeMessageGenerator():
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property("size-points", 9)
-            textCellRenderer.set_property('background-set' , True)
+            textCellRenderer.set_property('background-set', True)
 
             # Column Messages
             lvcolumn = gtk.TreeViewColumn(field.getName())

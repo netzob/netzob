@@ -141,7 +141,7 @@ class NetworkImport(AbstractImporter):
         entry_count.show()
         entry_count.set_text("10")
         self.panel.attach(label, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_count, 1, 2, 2 , 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(entry_count, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Time capturing limit
         label = gtk.Label("Timeout")

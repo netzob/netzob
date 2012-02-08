@@ -854,7 +854,7 @@ class UImodelization:
         dialog = gtk.MessageDialog(None,
                                    gtk.DIALOG_MODAL,
                                    gtk.MESSAGE_INFO,
-                                   gtk.BUTTONS_CANCEL ,
+                                   gtk.BUTTONS_CANCEL,
                                    "Modify field attributes")
         vbox = gtk.VBox()
         # Create hbox for field name
