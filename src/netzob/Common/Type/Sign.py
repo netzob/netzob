@@ -29,5 +29,5 @@
 #| Sign switch
 #+----------------------------------------------
 class Sign():
-    SIGNED="signed"
-    UNSIGNED="unsigned"
+    SIGNED = "signed"
+    UNSIGNED = "unsigned"
