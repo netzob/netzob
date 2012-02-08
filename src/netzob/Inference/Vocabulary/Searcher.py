@@ -39,14 +39,14 @@ from netzob.Inference.Vocabulary.SearchTask import SearchTask
 #+----------------------------------------------
 
 #+----------------------------------------------
-#| Searcher :
+#| Searcher:
 #|     Provides multiple algorithms for a searching after a pattern in a
 #|     set of computed messages
 #+----------------------------------------------
 class Searcher(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param project : the project where the search will be executed
     #+----------------------------------------------
     def __init__(self, project):
@@ -56,7 +56,7 @@ class Searcher(object):
 
 
     #+----------------------------------------------
-    #| getSearchedDataForBinary :
+    #| getSearchedDataForBinary:
     #|   Generates data which can represent the specified Binary
     #| @param value the value to search for
     #+----------------------------------------------
@@ -65,7 +65,7 @@ class Searcher(object):
 
 
     #+----------------------------------------------
-    #| getSearchedDataForOctal :
+    #| getSearchedDataForOctal:
     #|   Generates data which can represent the specified Octal
     #| @param value the value to search for
     #+----------------------------------------------
@@ -74,7 +74,7 @@ class Searcher(object):
 
 
     #+----------------------------------------------
-    #| getSearchedDataForDecimal :
+    #| getSearchedDataForDecimal:
     #|   Generates data which can represent the specified Decimal
     #| @param value the value to search for
     #+----------------------------------------------
@@ -83,7 +83,7 @@ class Searcher(object):
 
 
     #+----------------------------------------------
-    #| getSearchedDataForHexadecimal :
+    #| getSearchedDataForHexadecimal:
     #|   Generates data which can represent the specified Hexa
     #| @param value the value to search for
     #+----------------------------------------------
@@ -91,7 +91,7 @@ class Searcher(object):
         return []
 
     #+----------------------------------------------
-    #| getSearchedDataForString :
+    #| getSearchedDataForString:
     #|   Generates data which can represent the specified string
     #| @param value the value to search for
     #+----------------------------------------------
@@ -103,7 +103,7 @@ class Searcher(object):
         return [task]
 
     #+----------------------------------------------
-    #| getSearchedDataForIP :
+    #| getSearchedDataForIP:
     #|   Generates data which can represent the specified IP
     #| @param value the value to search for
     #+----------------------------------------------
@@ -112,22 +112,22 @@ class Searcher(object):
 
 
     #+----------------------------------------------
-    #| search :
+    #| search:
     #|   Search a set of specified data in the messages
     #| @param tasks the set of "search" task
     #+----------------------------------------------
     def search(self, tasks):
         results = []
-        for task in tasks :
-            for symbols in self.project.getVocabulary().getSymbols() :
-                for message in symbols.getMessages() :
-                    for variation in task.getVariations() :
+        for task in tasks:
+            for symbols in self.project.getVocabulary().getSymbols():
+                for message in symbols.getMessages():
+                    for variation in task.getVariations():
                         task.registerResults(self.extendedSearch(variation, message))
 
         return tasks
 
     #+----------------------------------------------
-    #| extendedSearch :
+    #| extendedSearch:
     #|   Search for a data in a specified message
     #+----------------------------------------------
     def extendedSearch(self, data, message):
@@ -144,10 +144,10 @@ class Searcher(object):
 
         # Search naturally all the possible places of data in message
         indice = 0
-        while indice + len(data) <= len(message.getStringData()) :
+        while indice + len(data) <= len(message.getStringData()):
             self.log.info("indice = " + str(indice))
             self.log.info(message.getStringData()[indice:len(data) + indice] + "== " + data)
-            if message.getStringData()[indice:len(data) + indice] == data :
+            if message.getStringData()[indice:len(data) + indice] == data:
                 # We have a match
                 searchResult = SearchResult(message)
                 searchResult.addSegment(indice, len(data))

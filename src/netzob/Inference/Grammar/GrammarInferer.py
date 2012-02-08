@@ -45,7 +45,7 @@ import threading
 import gobject
 
 #+----------------------------------------------
-#| GrammarInferer :
+#| GrammarInferer:
 #|    Given Angluin's L*a algorithm, it learns
 #|    the grammar of a protocol
 #+----------------------------------------------
@@ -83,7 +83,7 @@ class GrammarInferer(threading.Thread):
         return self.hypotheticalAutomaton
 
     def getSubmitedQueries(self):
-        if self.learner != None :
+        if self.learner != None:
             return self.learner.getSubmitedQueries()
         return []
 
@@ -95,13 +95,13 @@ class GrammarInferer(threading.Thread):
         equivalent = False
         # we first initialize the angluin's algo
         self.learner = Angluin(self.vocabulary, self.oracle, self.cb_submitedQuery)
-        while not equivalent and self.active :
+        while not equivalent and self.active:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")
             self.log.info("=============================================================================")
 
             self.learner.learn()
-            if not self.active :
+            if not self.active:
                 break
 
             self.hypotheticalAutomaton = self.learner.getInferedAutomata()
@@ -111,14 +111,14 @@ class GrammarInferer(threading.Thread):
             gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton)
-            if not self.active :
+            if not self.active:
                 break
-            if counterExample == None :
+            if counterExample == None:
                 self.log.info("No counter-example were found !")
                 equivalent = True
-            else :
+            else:
                 self.log.info("A counter-example has been found")
-                for s in counterExample.getSymbols() :
+                for s in counterExample.getSymbols():
                     self.log.info("symbol : " + str(s) + " => " + str(s.getID()))
                 self.learner.addCounterExamples([counterExample])
 

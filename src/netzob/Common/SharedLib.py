@@ -42,7 +42,7 @@ from netzob.Import.GOTPoisoning import HijackedFunction
 
 
 #+---------------------------------------------------------------------------+
-#| SharedLib :
+#| SharedLib:
 #|     Model object of a shared lib
 #+---------------------------------------------------------------------------+
 class SharedLib(object):
@@ -64,10 +64,10 @@ class SharedLib(object):
     @staticmethod
     def loadFromXML(rootElement):
         # First we verify rootElement is a message
-        if rootElement.tag != "lib" :
+        if rootElement.tag != "lib":
             raise NameError("The parsed xml doesn't represent a shared lib.")
         # Then we verify its a Network Message
-        if rootElement.get("name", "none") == "none" :
+        if rootElement.get("name", "none") == "none":
             raise NameError("The parsed xml doesn't represent a shared lib with a valid name.")
 
         # parse the name of the lib
@@ -77,7 +77,7 @@ class SharedLib(object):
 
         functions = []
         # parse the declared functions
-        for xmlFunc in rootElement.findall("functions//function") :
+        for xmlFunc in rootElement.findall("functions//function"):
             function = HijackedFunction.HijackedFunction.loadFromXML(xmlFunc)
             functions.append(function)
 
@@ -95,18 +95,18 @@ class SharedLib(object):
         nameWithoutPath = path.split(os.sep)[len(path.split(os.sep)) - 1]
 
         # Remove the extension
-        if (len(nameWithoutPath) > 3 and nameWithoutPath[len(nameWithoutPath) - 3:] == ".so") :
+        if (len(nameWithoutPath) > 3 and nameWithoutPath[len(nameWithoutPath) - 3:] == ".so"):
             nameWithoutPath = nameWithoutPath[:len(nameWithoutPath) - 3]
 
         libName = nameWithoutPath
         libVersion = "0.0"
 
         # find version number
-        try :
-            if (string.index(nameWithoutPath, "-") > 1) :
+        try:
+            if (string.index(nameWithoutPath, "-") > 1):
                 libName = nameWithoutPath[:nameWithoutPath.index("-")]
                 libVersion = nameWithoutPath[nameWithoutPath.index("-") + 1:]
-        except :
+        except:
             pass
 
 

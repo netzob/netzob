@@ -40,7 +40,7 @@ from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+----------------------------------------------
-#| Ipc :
+#| Ipc:
 #|     ensures the capture of informations through IPC proxing
 #+----------------------------------------------
 class Ipc:
@@ -65,7 +65,7 @@ class Ipc:
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the netzob main object
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -116,7 +116,7 @@ class Ipc:
                 symbol = None
 
                 for tmp_symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                    if str(tmp_symbol.getID()) == idSymbol :
+                    if str(tmp_symbol.getID()) == idSymbol:
                         symbol = tmp_symbol
 
                 # Retrieve a random message in order to show a type structure
@@ -126,7 +126,7 @@ class Ipc:
                 self.treeTypeStructureGenerator.update()
 
     #+----------------------------------------------
-    #| button_press_on_field :
+    #| button_press_on_field:
     #|   Create a menu to display available operations
     #|   on the treeview symbols
     #+----------------------------------------------

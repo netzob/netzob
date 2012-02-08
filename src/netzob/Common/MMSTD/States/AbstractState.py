@@ -36,7 +36,7 @@ import logging
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| AbstractState :
+#| AbstractState:
 #|     Definition of a state
 #+---------------------------------------------------------------------------+
 class AbstractState():
@@ -135,9 +135,9 @@ class AbstractState():
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:NormalState" :
+        if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:NormalState":
             from netzob.Common.MMSTD.States.impl.NormalState import NormalState
             return NormalState.loadFromXML(xmlRoot, namespace, version)
-        else :
+        else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None

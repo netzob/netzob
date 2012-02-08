@@ -36,13 +36,13 @@ import logging
 #+----------------------------------------------
 
 #+----------------------------------------------
-#| SearchTask :
+#| SearchTask:
 #|     Describes a search operation
 #+----------------------------------------------
 class SearchTask(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param data: the searched data
     #| @param type: the type of the searched data
     #+----------------------------------------------

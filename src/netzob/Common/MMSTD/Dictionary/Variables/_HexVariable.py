@@ -42,7 +42,7 @@ import random
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 #+---------------------------------------------------------------------------+
-#| HexVariable :
+#| HexVariable:
 #|     Definition of an hex variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class HexVariable(Variable):
@@ -57,11 +57,11 @@ class HexVariable(Variable):
         self.min = -1
         self.max = -1
         self.reset = "normal"
-        if self.value != None :
+        if self.value != None:
             self.binValue = None
             #TypeConvertor.hex2bin(self.value, 'big')
             self.strValue = value
-        else :
+        else:
             self.binValue = None
             self.strValue = None
 
@@ -72,9 +72,9 @@ class HexVariable(Variable):
         return (self.binValue, self.strValue)
 
 
-    def generateValue(self, negative, dictionary) :
+    def generateValue(self, negative, dictionary):
         self.log.debug("Generate value of hex")
-        if self.min != -1 and self.max != -1 :
+        if self.min != -1 and self.max != -1:
             # generate a value in int
             r = random.randint(self.min, self.max)
             self.log.debug("Generating hex of value : " + str(r))
@@ -87,13 +87,13 @@ class HexVariable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
-        if self.binValue != None and not isForced :
+        if self.binValue != None and not isForced:
             self.log.debug("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
             return indice + len(self.binValue)
 
         tmp = val[indice:]
         self.log.debug("Learn hex given its size : " + str(self.size) + " from " + str(tmp))
-        if len(tmp) >= self.size :
+        if len(tmp) >= self.size:
 
             self.binValue = val[indice:indice + self.size]
             self.strValue = "ERROR "
@@ -103,10 +103,10 @@ class HexVariable(Variable):
             self.log.debug("learning value : " + self.strValue)
 
             return indice + self.size
-        else :
+        else:
             return -1
 
-    def setReset(self, reset) :
+    def setReset(self, reset):
         self.reset = reset
     def setSize(self, size):
         self.size = size

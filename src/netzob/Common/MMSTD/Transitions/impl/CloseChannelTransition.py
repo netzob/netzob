@@ -45,7 +45,7 @@ from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
-#| CloseChannelTransition :
+#| CloseChannelTransition:
 #|    Special transition in charge of closing the transition
 #+---------------------------------------------------------------------------+
 class CloseChannelTransition(AbstractTransition):
@@ -74,9 +74,9 @@ class CloseChannelTransition(AbstractTransition):
         self.activate()
         result = self.closeConnection(abstractionLayer)
         self.deactivate()
-        if result :
+        if result:
             return self.outputState
-        else :
+        else:
             return None
 
     #+-----------------------------------------------------------------------+
@@ -89,9 +89,9 @@ class CloseChannelTransition(AbstractTransition):
         self.activate()
         result = self.closeConnection(abstractionLayer)
         self.deactivate()
-        if result :
+        if result:
             return self.outputState
-        else :
+        else:
             return None
 
     #+-----------------------------------------------------------------------+
@@ -110,7 +110,7 @@ class CloseChannelTransition(AbstractTransition):
     def getDescription(self):
         return "CloseChannelTransition"
 
-    def getDisconnectionTime(self) :
+    def getDisconnectionTime(self):
         return self.disconnectionTime
 
     def save(self, root, namespace):
@@ -146,10 +146,10 @@ class CloseChannelTransition(AbstractTransition):
 
         inputStateTransition = None
         outputStateTransition = None
-        for state in states :
-            if state.getID() == idStartTransition :
+        for state in states:
+            if state.getID() == idStartTransition:
                 inputStateTransition = state
-            if state.getID() == idEndTransition :
+            if state.getID() == idEndTransition:
                 outputStateTransition = state
 
         disconnectionTime = int(xmlTransition.find("{" + namespace + "}disconnectionTime").text)

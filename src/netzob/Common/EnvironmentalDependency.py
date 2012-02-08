@@ -32,7 +32,7 @@ from lxml.etree import ElementTree
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
-#| EnvironmentalDependency :
+#| EnvironmentalDependency:
 #|     Class definition of an environmental dependency
 #+---------------------------------------------------------------------------+
 class EnvironmentalDependency(object):

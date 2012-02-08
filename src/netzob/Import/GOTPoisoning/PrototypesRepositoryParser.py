@@ -41,7 +41,7 @@ from netzob.Common import SharedLib
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
-#| PrototypesRepositoryParser :
+#| PrototypesRepositoryParser:
 #|     Parses the repository of prototypes
 #+---------------------------------------------------------------------------+
 
@@ -50,7 +50,7 @@ class PrototypesRepositoryParser():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of all thge prototypes
     #| @param file: name of the file

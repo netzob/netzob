@@ -40,7 +40,7 @@ import logging
 
 
 #+---------------------------------------------------------------------------+
-#| MMSTDDictionary :
+#| MMSTDDictionary:
 #|     Definition of a dictionary
 #+---------------------------------------------------------------------------+
 class MMSTDDictionary():
@@ -55,16 +55,16 @@ class MMSTDDictionary():
 
 
     def getEntry(self, id):
-        for entry in self.entries :
-            if entry.getID() == id :
+        for entry in self.entries:
+            if entry.getID() == id:
                 return entry
 
         return None
 
 
     def getVariableByID(self, id):
-        for variable in self.variables :
-            if variable.getID() == id :
+        for variable in self.variables:
+            if variable.getID() == id:
                 return variable
         return None
 

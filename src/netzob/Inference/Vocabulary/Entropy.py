@@ -36,12 +36,12 @@ from pylab import figure, show
 #+----------------------------------------------
 
 #+----------------------------------------------
-#| Entropy :
+#| Entropy:
 #|     Class for calculating and viewing entropy information
 #+----------------------------------------------
 class Entropy(object):
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, symbol):
         # create logger with the given configuration
@@ -49,7 +49,7 @@ class Entropy(object):
         self.symbol = symbol
 
     #+----------------------------------------------
-    #| buildDistributionView :
+    #| buildDistributionView:
     #|   show messages distribution
     #+----------------------------------------------
     def buildDistributionView(self):

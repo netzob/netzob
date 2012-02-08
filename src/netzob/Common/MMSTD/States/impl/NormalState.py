@@ -43,7 +43,7 @@ from lxml import etree
 from netzob.Common.MMSTD.States.AbstractState import AbstractState
 
 #+---------------------------------------------------------------------------+
-#| NormalState :
+#| NormalState:
 #|     Definition of a normal state
 #+---------------------------------------------------------------------------+
 class NormalState(AbstractState):
@@ -69,7 +69,7 @@ class NormalState(AbstractState):
     #| @param transition the transition to unregister
     #+-----------------------------------------------------------------------+
     def unregisterTransition(self, transition):
-        if transition in self.transitions :
+        if transition in self.transitions:
             self.transitions.remove(transition)
 
     #+-----------------------------------------------------------------------+
@@ -78,15 +78,15 @@ class NormalState(AbstractState):
     #| @param transition the transition to associate
     #+-----------------------------------------------------------------------+
     def registerTransition(self, transition):
-        if transition.getType() == "SemiStochastic" :
+        if transition.getType() == "SemiStochastic":
             inputSymbol = transition.getInputSymbol()
             found = False
-            for t in self.transitions :
-                if t.getType() == "SemiStochastic" and t.getInputSymbol() == inputSymbol :
+            for t in self.transitions:
+                if t.getType() == "SemiStochastic" and t.getInputSymbol() == inputSymbol:
                     found = True
-            if not found :
+            if not found:
                 self.transitions.append(transition)
-        else :
+        else:
             self.transitions.append(transition)
 
     #+-----------------------------------------------------------------------+
@@ -99,12 +99,12 @@ class NormalState(AbstractState):
         self.log.debug("Execute state " + self.name + " as a client")
 
         # if no transition exists we quit
-        if len(self.getTransitions()) == 0 :
+        if len(self.getTransitions()) == 0:
             self.log.warn("The current state has no transitions available.")
             return None
 
         # If there is a "special" transition we execute them
-        for transition in self.getTransitions() :
+        for transition in self.getTransitions():
             if transition.getType() == "OpenChannel" or transition.getType() == "CloseChannel":
                 newState = transition.executeAsClient(abstractionLayer)
                 return newState
@@ -115,17 +115,17 @@ class NormalState(AbstractState):
         # Wait for a message
 
         tupleReception = abstractionLayer.receiveSymbol()
-        if tupleReception == (None, None) :
+        if tupleReception == (None, None):
             self.log.warn("Warning the abstraction layer returns null")
             return None
 
 
         (receivedSymbol, message) = tupleReception
-        if not receivedSymbol == None :
+        if not receivedSymbol == None:
             self.log.debug("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one
-            for transition in self.getTransitions() :
-                if transition.isValid(receivedSymbol) :
+            for transition in self.getTransitions():
+                if transition.isValid(receivedSymbol):
                     self.log.debug("Received data '" + str(message) + "' is valid for transition " + str(transition.getID()))
                     newState = transition.executeAsClient(abstractionLayer)
                     self.deactivate()
@@ -145,7 +145,7 @@ class NormalState(AbstractState):
         self.log.debug("Execute state " + self.name + " as a master")
 
         # Verify we can do something now
-        if (len(self.getTransitions()) == 0) :
+        if (len(self.getTransitions()) == 0):
             return None
 
         # given the current state, pick randomly a message and send it after having wait

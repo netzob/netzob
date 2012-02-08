@@ -40,14 +40,14 @@ from netzob.Common.Field import Field
 from netzob.Common.NetzobException import NetzobException
 
 #+----------------------------------------------
-#| TreeMessageGenerator :
+#| TreeMessageGenerator:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the messages
 #+----------------------------------------------
 class TreeMessageGenerator():
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self):
@@ -56,7 +56,7 @@ class TreeMessageGenerator():
         self.log = logging.getLogger('netzob.Modelization.TreeStores.TreeMessageGenerator.py')
 
     #+----------------------------------------------
-    #| initialization :
+    #| initialization:
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
@@ -82,7 +82,7 @@ class TreeMessageGenerator():
         self.scroll.show()
 
     #+----------------------------------------------
-    #| clear :
+    #| clear:
     #|         Clear the class
     #+----------------------------------------------
     def clear(self):
@@ -90,7 +90,7 @@ class TreeMessageGenerator():
         self.treestore.clear()
 
     #+----------------------------------------------
-    #| error :
+    #| error:
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
@@ -98,37 +98,37 @@ class TreeMessageGenerator():
         self.treestore.clear()
 
     #+----------------------------------------------
-    #| show :
+    #| show:
     #|   Display the panel
     #+----------------------------------------------
     def show(self):
         self.scroll.show_all()
 
     #+----------------------------------------------
-    #| hide :
+    #| hide:
     #|   Hide the panel
     #+----------------------------------------------
     def hide(self):
         self.scroll.hide_all()
 
     #+----------------------------------------------
-    #| default :
+    #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self, symbol):
         self.treestore.clear()
-        if symbol == None :
+        if symbol == None:
             return
 
         self.symbol = symbol
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
 
         # Verifies we have everything needed for the creation of the treeview
-        if (self.symbol == None) :
+        if (self.symbol == None):
             self.log.warn("Error while trying to update the list of messages")
             return
 
-        if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0) :
+        if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0):
             self.log.debug("It's an empty symbol so nothing to display")
             return
 
@@ -179,11 +179,11 @@ class TreeMessageGenerator():
             self.treestore.append(None, line)
 
         # Remove all the columns of the current treeview
-        for col in self.treeview.get_columns() :
+        for col in self.treeview.get_columns():
             self.treeview.remove_column(col)
 
         iField = 4
-        for field in self.symbol.getFields() :
+        for field in self.symbol.getFields():
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property("size-points", 9)
@@ -205,7 +205,7 @@ class TreeMessageGenerator():
         self.default(self.symbol)
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview

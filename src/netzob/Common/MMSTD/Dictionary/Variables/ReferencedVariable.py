@@ -47,7 +47,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| ReferencedVariable :
+#| ReferencedVariable:
 #|     Definition of a referenced variable
 #+---------------------------------------------------------------------------+
 class ReferencedVariable(Variable):
@@ -88,7 +88,7 @@ class ReferencedVariable(Variable):
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))

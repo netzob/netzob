@@ -40,13 +40,13 @@ from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Common.Type.Format import Format
 
 #+----------------------------------------------
-#| SearchView :
+#| SearchView:
 #|     Class dedicated to host the search view
 #+----------------------------------------------
 class SearchView(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, project):
         # create logger with the given configuration
@@ -87,12 +87,12 @@ class SearchView(object):
 
     def prepareSearchingOperation(self, button):
         searchedPattern = self.searchEntry.get_text()
-        if len(searchedPattern) == 0 :
+        if len(searchedPattern) == 0:
             self.log.info("Do not start the searching process since no pattern was provided by the user")
             return
 
         typeOfPattern = self.typeCombo.get_active_text()
-        if len(typeOfPattern) == 0 :
+        if len(typeOfPattern) == 0:
             self.log.info("Do not start the searching process since no type was provided by the user")
             return
 
@@ -106,25 +106,25 @@ class SearchView(object):
 
         # First we generate the different researched data
         searchedData = []
-        if typeOfPattern == Format.IP :
+        if typeOfPattern == Format.IP:
             searchedData.extend(searcher.getSearchedDataForIP(pattern))
-        if typeOfPattern == Format.BINARY :
+        if typeOfPattern == Format.BINARY:
             searchedData.extend(searcher.getSearchedDataForBinary(pattern))
-        if typeOfPattern == Format.OCTAL :
+        if typeOfPattern == Format.OCTAL:
             searchedData.extend(searcher.getSearchedDataForOctal(pattern))
-        if typeOfPattern == Format.DECIMAL :
+        if typeOfPattern == Format.DECIMAL:
             searchedData.extend(searcher.getSearchedDataForDecimal(pattern))
-        if typeOfPattern == Format.HEX :
+        if typeOfPattern == Format.HEX:
             searchedData.extend(searcher.getSearchedDataForHexadecimal(pattern))
-        if typeOfPattern == Format.STRING :
+        if typeOfPattern == Format.STRING:
             searchedData.extend(searcher.getSearchedDataForString(pattern))
 
-        if len(searchedData) == 0 :
+        if len(searchedData) == 0:
             self.log.warn("No data to search after were computed.")
             return
 
         self.log.debug("The following data will be searched for :")
-        for data in searchedData :
+        for data in searchedData:
             self.log.info(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
@@ -146,8 +146,8 @@ class SearchView(object):
         treestore = gtk.TreeStore(str)
 
 
-        for task in tasks :
-            for result in task.getResults() :
+        for task in tasks:
+            for result in task.getResults():
                 # retrieve the symbol associated with the message
                 symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
 

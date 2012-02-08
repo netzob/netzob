@@ -42,7 +42,7 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 
 
 #+---------------------------------------------------------------------------+
-#| InstanciatedNetworkServer :
+#| InstanciatedNetworkServer:
 #|     Definition of an instanciated network server
 #+---------------------------------------------------------------------------+
 class InstanciatedNetworkServer(AbstractActor):
@@ -83,23 +83,23 @@ class InstanciatedNetworkServer(AbstractActor):
 
 
         chars = []
-        try :
-            if timeout > 0 :
+        try:
+            if timeout > 0:
                 ready = select.select([self.socket], [], [], timeout)
                 if ready[0]:
                     chars = self.socket.recv(4096)
-            else :
+            else:
                 ready = select.select([self.socket], [], [])
                 self.log.debug("ready = " + str(ready[0]))
                 if ready[0]:
                     chars = self.socket.recv(4096)
-        except :
+        except:
             self.log.debug("Impossible to read from the network socket")
             return None
 
 
 
-        if (len(chars) == 0) :
+        if (len(chars) == 0):
             return result
         result.fromstring(chars)
 

@@ -39,7 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Memory :
+#| Memory:
 #|     Definition of an memory
 #+---------------------------------------------------------------------------+
 class Memory():
@@ -63,7 +63,7 @@ class Memory():
         return self.memory
 
     def getVariableByID(self, id):
-        for var in self.variables :
-            if str(var.getID()) == id :
+        for var in self.variables:
+            if str(var.getID()) == id:
                 return var
         return None

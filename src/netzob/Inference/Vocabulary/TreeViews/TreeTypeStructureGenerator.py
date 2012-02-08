@@ -39,14 +39,14 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+----------------------------------------------
-#| TreeTypeStructureGenerator :
+#| TreeTypeStructureGenerator:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the type structure
 #+----------------------------------------------
 class TreeTypeStructureGenerator():
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self):
@@ -55,7 +55,7 @@ class TreeTypeStructureGenerator():
         self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeTypeStructureGenerator.py')
 
     #+----------------------------------------------
-    #| initialization :
+    #| initialization:
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
@@ -83,7 +83,7 @@ class TreeTypeStructureGenerator():
         self.scroll.show()
 
     #+----------------------------------------------
-    #| clear :
+    #| clear:
     #|         Clear the class
     #+----------------------------------------------
     def clear(self):
@@ -91,7 +91,7 @@ class TreeTypeStructureGenerator():
         self.treestore.clear()
 
     #+----------------------------------------------
-    #| error :
+    #| error:
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
@@ -99,21 +99,21 @@ class TreeTypeStructureGenerator():
         pass
 
     #+----------------------------------------------
-    #| show :
+    #| show:
     #|   Display the panel
     #+----------------------------------------------
     def show(self):
         self.scroll.show_all()
 
     #+----------------------------------------------
-    #| hide :
+    #| hide:
     #|   Hide the panel
     #+----------------------------------------------
     def hide(self):
         self.scroll.hide_all()
 
     #+----------------------------------------------
-    #| default :
+    #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def update(self):
@@ -130,22 +130,22 @@ class TreeTypeStructureGenerator():
                 continue
 
             # Define the background color
-            if field.getBackgroundColor() != None :
+            if field.getBackgroundColor() != None:
                 backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-            else :
+            else:
                 backgroundColor = ""
 
             # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
-            if field.getVariable() != None :
+            if field.getVariable() != None:
                 variableDescription = field.getVariable().getDescription()
-            elif field.getDefaultVariable(self.getSymbol()) != None :
+            elif field.getDefaultVariable(self.getSymbol()) != None:
                 variableDescription = field.getDefaultVariable(self.getSymbol()).getDescription()
 
             self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
@@ -155,7 +155,7 @@ class TreeTypeStructureGenerator():
         return self.symbol
 
     #+----------------------------------------------
-    #| SETTERS :
+    #| SETTERS:
     #+----------------------------------------------
     def setTreeview(self, treeview):
         self.treeview = treeview

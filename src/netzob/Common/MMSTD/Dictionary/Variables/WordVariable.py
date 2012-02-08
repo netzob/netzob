@@ -47,7 +47,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| WordVariable :
+#| WordVariable:
 #|     Definition of a word variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
@@ -62,14 +62,14 @@ class WordVariable(Variable):
     def compare(self, value, indice, negative, memory):
         self.log.debug("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
         tmp = value[indice:]
-        if len(tmp) >= len(self.binVal) :
-            if tmp[:len(self.binVal)] == self.binVal :
+        if len(tmp) >= len(self.binVal):
+            if tmp[:len(self.binVal)] == self.binVal:
                 self.log.debug("Compare successful")
                 return indice + len(self.binVal)
-            else :
+            else:
                 self.log.info("error in the comparison : " + str(tmp[:len(self.binVal)]) + " != " + str(self.binVal))
                 return -1
-        else :
+        else:
             self.log.debug("Compare fail")
             return -1
 
@@ -80,9 +80,9 @@ class WordVariable(Variable):
         return (self.binVal, self.strVal)
 
     def getDescription(self):
-        if self.isMutable() :
+        if self.isMutable():
             mut = "[M]"
-        else :
+        else:
             mut = "[!M]"
         return "WordVariable " + mut + " (" + self.strVal + ")"
 
@@ -100,13 +100,13 @@ class WordVariable(Variable):
 #    def learn(self, val, indice, isForced, dictionary):
 #        self.log.debug("Received : " + str(val))
 #
-#        if self.binVal == None or isForced :
+#        if self.binVal == None or isForced:
 #            tmp = val[indice:]
 #
 #            res = ""
 #            i = 0
 #            finish = False
-#            while not finish :
+#            while not finish:
 #                v = int(tmp[i: i + 2], 16)
 #                if v > 0x21 and v <= 0x7e:
 #                    res += chr(v)
@@ -114,7 +114,7 @@ class WordVariable(Variable):
 #                else:
 #                    finish = True
 #
-#            if i > 0 :
+#            if i > 0:
 #                self.strVal = res
 #                self.binVal = binascii.unhexlify(self.strVal)
 #
@@ -139,7 +139,7 @@ class WordVariable(Variable):
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))

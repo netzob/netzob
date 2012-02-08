@@ -40,7 +40,7 @@ import logging
 
 
 #+----------------------------------------------
-#| AbstractEquivalenceOracle :
+#| AbstractEquivalenceOracle:
 #+----------------------------------------------
 class AbstractEquivalenceOracle(object):
 

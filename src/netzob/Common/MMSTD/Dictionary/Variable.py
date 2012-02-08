@@ -41,7 +41,7 @@ import logging
 
 
 #+---------------------------------------------------------------------------+
-#| Variable :
+#| Variable:
 #|     Definition of a variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class Variable():
@@ -99,28 +99,28 @@ class Variable():
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             # Word Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
                 return WordVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Binary Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
                 return BinaryVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Aggregate Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
                 return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Alternate Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
                 return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Referenced Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
                 return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)

@@ -45,7 +45,7 @@ from bitarray import bitarray
 
 
 #+---------------------------------------------------------------------------+
-#| AggregrateVariable :
+#| AggregrateVariable:
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
@@ -54,7 +54,7 @@ class AggregateVariable(Variable):
         Variable.__init__(self, "Aggregate", id, name, True)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
-        if vars != None :
+        if vars != None:
             self.vars.extend(vars)
 
     def addChild(self, variable):
@@ -62,20 +62,20 @@ class AggregateVariable(Variable):
 
     def compare(self, value, indice, negative, memory):
         result = indice
-        for var in self.vars :
+        for var in self.vars:
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription())
             result = var.compare(value, result, negative, memory)
-            if result == -1 or result == None :
+            if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 return result
-            else :
+            else:
                 self.log.debug("Compare successfull")
         return result
 
     def send(self, negative, memory):
         binResult = bitarray()
         strResult = ""
-        for var in self.vars :
+        for var in self.vars:
             (b, s) = var.send(negative, memory)
             print "==>" + str(b)
             binResult += b
@@ -85,7 +85,7 @@ class AggregateVariable(Variable):
 
     def getDescription(self):
         values = []
-        for var in self.vars :
+        for var in self.vars:
             values.append(var.getDescription())
         return "AggregateVariable [" + " AND ".join(values) + "]"
 
@@ -98,18 +98,18 @@ class AggregateVariable(Variable):
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
 
         # Definition of the variables
-        for var in self.vars :
+        for var in self.vars:
             var.save(xmlVariable, namespace)
 
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
 
             children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
 
@@ -122,26 +122,26 @@ class AggregateVariable(Variable):
 #    def getValue(self, negative, dictionary):
 #        binResult = []
 #        strResult = []
-#        for idVar in self.vars :
+#        for idVar in self.vars:
 #            var = dictionary.getVariableByID(int(idVar))
 #            (binVal, strVal) = var.getValue(negative, dictionary)
-#            if binVal == None :
+#            if binVal == None:
 #                return (None, None)
-#            else :
+#            else:
 #                binResult.append(binVal)
 #                strResult.append(strVal)
 #        return ("".join(binResult), "".join(strResult))
 #
 #    def generateValue(self, negative, dictionary):
-#        for idVar in self.vars :
+#        for idVar in self.vars:
 #            var = dictionary.getVariableByID(int(idVar))
 #            var.generateValue(negative, dictionary)
 #
 #    def learn(self, val, indice, isForced, dictionary):
 #        new_indice = indice
-#        for idVar in self.vars :
+#        for idVar in self.vars:
 #            var = dictionary.getVariableByID(int(idVar))
 #            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
-#            if tmp_indice != -1 :
+#            if tmp_indice != -1:
 #                new_indice = tmp_indice
 #        return new_indice

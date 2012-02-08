@@ -44,7 +44,7 @@ import datetime
 
 
 #+---------------------------------------------------------------------------+
-#| FileMessageFactory :
+#| FileMessageFactory:
 #|     Factory dedicated to the manipulation of file messages
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| XML Definition
@@ -99,7 +99,7 @@ class FileMessageFactory():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of a file message
     #| @param rootElement: XML root of the file message
@@ -109,7 +109,7 @@ class FileMessageFactory():
     def loadFromXML(rootElement, namespace, version):
 
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage":
             raise NameError("The parsed xml doesn't represent a File message.")
 
         # Verifies the data field
@@ -135,9 +135,9 @@ class FileMessageFactory():
         msg_creationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}creationDate").text)
 
         # Retrieves the modification date
-        if rootElement.find("{" + namespace + "}modificationDate").text != None :
+        if rootElement.find("{" + namespace + "}modificationDate").text != None:
             msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
-        else :
+        else:
             msg_modificationDate = msg_creationDate
 
         # Retrieves the owner

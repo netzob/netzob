@@ -51,7 +51,7 @@ from netzob.Import.GOTPoisoning.InjectorGenerator import InjectorGenerator
 from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 
 #+---------------------------------------------------------------------------+
-#| Api :
+#| Api:
 #|     GUI for capturing messages from api hooking
 #+---------------------------------------------------------------------------+
 class ApiImport:
@@ -69,7 +69,7 @@ class ApiImport:
         pass
 
     #+-----------------------------------------------------------------------+
-    #| Constructor :
+    #| Constructor:
     #+-----------------------------------------------------------------------+
     def __init__(self, netzob):
         self.netzob = netzob
@@ -81,9 +81,9 @@ class ApiImport:
 
         # First we parse the repository
         repositoryFile = self.netzob.getCurrentWorkspace().getPathOfPrototypes() + os.sep + "repository.xml"
-        if repositoryFile == "" or not os.path.isfile(repositoryFile) :
+        if repositoryFile == "" or not os.path.isfile(repositoryFile):
             self.log.warn("Unable to find a repository file for API injector.")
-        else :
+        else:
             self.repositoryOfSharedLib = PrototypesRepositoryParser.loadFromXML(repositoryFile)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,7 +216,7 @@ class ApiImport:
         self.listOfProcess = ExecutionContext.getCurrentProcesses()
 
         # add in the list all the process
-        for process in self.listOfProcess :
+        for process in self.listOfProcess:
             self.processStore.append_text(str(process.getPid()) + "\t" + process.getName())
         self.processStore.handler_unblock(self.handlerID)
 
@@ -229,17 +229,17 @@ class ApiImport:
         pid = int(strProcessSelected.split()[0])
         self.selectedProcess = None
 
-        for process in self.listOfProcess :
-            if process.getPid() == pid :
+        for process in self.listOfProcess:
+            if process.getPid() == pid:
                 self.selectedProcess = process
 
-        if self.selectedProcess != None :
+        if self.selectedProcess != None:
             libs = self.selectedProcess.getSharedLibs()
             self.dllTreeview.get_model().clear()
-            for lib in libs :
+            for lib in libs:
                 self.dllTreeview.get_model().append(None, [lib.getName(), lib.getVersion(), lib.getPath()])
 
-        else :
+        else:
             self.log.error("A selected process cannot be found !")
 
     #+----------------------------------------------
@@ -261,27 +261,27 @@ class ApiImport:
             libPath = model.get_value(iter, 2)
             found = True
 
-        if found == False :
+        if found == False:
             self.log.error("The selected process cannot be find !")
             return
 
         self.dllStore.get_model().clear()
 
         # search for available prototypes given lib in repository
-        for lib in self.repositoryOfSharedLib :
-            if lib.getName() == libName :
+        for lib in self.repositoryOfSharedLib:
+            if lib.getName() == libName:
                 self.selectedDLL = lib
-                for func in lib.getFunctions() :
+                for func in lib.getFunctions():
                     self.dllStore.append_text(func.getPrototype())
 
     #+----------------------------------------------
     #| Called when user select a prototype
     #+----------------------------------------------
     def prototypeSelected_cb(self, widget):
-        if self.selectedProcess == None :
+        if self.selectedProcess == None:
             self.log.warning("You have to select a process if you want to capture it")
             return
-        if self.selectedDLL == None :
+        if self.selectedDLL == None:
             self.log.warning("You have to select a DLL if you want to capture it")
             return
 
@@ -291,25 +291,25 @@ class ApiImport:
         self.selectedFunction = None
 
         for function in self.selectedDLL.getFunctions():
-            if function.getPrototype() == prototype :
+            if function.getPrototype() == prototype:
                 self.selectedFunction = function
 
-        if self.selectedFunction == None :
+        if self.selectedFunction == None:
             self.log.error("Impossible to retrieve the selected function")
-        else :
+        else:
             self.log.info("Selected function done!")
 
     #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
     def startCaptureFunction(self, button):
-        if self.selectedProcess == None :
+        if self.selectedProcess == None:
             self.log.warning("You have to select a process if you want to capture it")
             return
-        if self.selectedDLL == None :
+        if self.selectedDLL == None:
             self.log.warning("You have to select a DLL if you want to capture it")
             return
-        if self.selectedFunction == None :
+        if self.selectedFunction == None:
             self.log.warning("You have to select a function if you want to capture it")
             return
 
@@ -346,7 +346,7 @@ class ApiImport:
         self.fifo = open(self.fifoFile, 'r')
         receivedMessage = self.readline(self.fifo)
         self.log.info("FIFO : " + receivedMessage)
-        while (receivedMessage != "STOP\n") :
+        while (receivedMessage != "STOP\n"):
             self.pktTreestore.append(None, [len(self.packets), "NONE", "NC", receivedMessage, int(time.time())])
             receivedMessage = self.readline(self.fifo)
             self.log.info("FIFO : " + receivedMessage)
@@ -357,12 +357,12 @@ class ApiImport:
     def createFifo(self):
         self.log.info("Creating the FIFO file : " + self.fifoFile)
         # Create the fifo
-        try :
+        try:
             os.mkfifo(self.fifoFile)
         except OSError, e:
             self.log.error("Failed to create FIFO: %s" % e)
             return False
-        else :
+        else:
             self.log.info("The fifo has been created...")
             return True
 
@@ -375,7 +375,7 @@ class ApiImport:
 
     def sniffThread(self):
         # Create the receptor (FIFO creation)
-        if not self.createFifo() :
+        if not self.createFifo():
             self.log.error("Cannot execute GOT Poisoning since FIFO file was not created !")
             return
 

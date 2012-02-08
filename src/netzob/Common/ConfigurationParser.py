@@ -38,32 +38,32 @@ import ConfigParser
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 #+----------------------------------------------
-#| ConfigurationParser :
+#| ConfigurationParser:
 #|     extracts from the configuration file the$
 #|     requested value
 #+----------------------------------------------
 class ConfigurationParser(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self):
         self.configurationFilePath = os.path.join(ResourcesConfiguration.getWorkspaceFile(), ResourcesConfiguration.CONFFILE)
 
         # If the config file exists we parse it
         # if not we create an in-memory default one
-        if self.configurationFilePath == None or not os.path.isfile(self.configurationFilePath) :
+        if self.configurationFilePath == None or not os.path.isfile(self.configurationFilePath):
             # create default in memory file
             self.config = ConfigurationParser.createDefault()
             self.config.write(open(self.configurationFilePath, "w"))
-        else :
+        else:
             # Configure the configuration parser
             self.config = ConfigParser.ConfigParser()
             # Parse the configuration file
             self.config.read(self.configurationFilePath)
 
     #+----------------------------------------------
-    #| get :
+    #| get:
     #|     computes the requested value from the
     #|    requested section
     #| @param section : the section in config file
@@ -71,15 +71,15 @@ class ConfigurationParser(object):
     #| @return the requested value
     #+----------------------------------------------
     def get(self, section, name):
-        if self.config.has_section(section) :
+        if self.config.has_section(section):
             return self.config.get(section, name)
-        else :
+        else:
             return None
 
     def getInt(self, section, name):
-        if self.config.has_section(section) :
+        if self.config.has_section(section):
             return self.config.getint(section, name)
-        else :
+        else:
             return None
 
     def getFloat(self, section, name):
@@ -90,11 +90,11 @@ class ConfigurationParser(object):
     #+----------------------------------------------
     def set(self, section, name, value):
 
-        if not self.config.has_section(section) :
+        if not self.config.has_section(section):
             self.config.add_section(section)
 
         self.config.set(section, name, value)
-        if self.configurationFilePath != "" and os.path.isfile(self.configurationFilePath) :
+        if self.configurationFilePath != "" and os.path.isfile(self.configurationFilePath):
             self.config.write(open(self.configurationFilePath, "w"))
 
     @staticmethod

@@ -130,7 +130,7 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # save it
         self.server.addGeneratedInstance(self.subVisitor)
 
-        while (self.subVisitor.isAlive()) :
+        while (self.subVisitor.isAlive()):
             ready = select.select([self.request], [], [], 1)
             time.sleep(0.1)
 
@@ -161,7 +161,7 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
 
 #+---------------------------------------------------------------------------+
-#| NetworkServer :
+#| NetworkServer:
 #|     Definition of a server which follows the definition of the provided
 #|     automata.
 #+---------------------------------------------------------------------------+
@@ -179,10 +179,10 @@ class NetworkServer(AbstractActor):
 
     def openServer(self, vocabulary, initialState, master):
         # Instantiates the server
-        if self.protocol == "UDP" :
+        if self.protocol == "UDP":
             self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
-        else :
+        else:
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
 
@@ -207,7 +207,7 @@ class NetworkServer(AbstractActor):
     def getMemory(self):
         return []
     def getGeneratedInstances(self):
-        if self.server == None :
+        if self.server == None:
             return []
         return self.server.getGeneratedInstances()
 

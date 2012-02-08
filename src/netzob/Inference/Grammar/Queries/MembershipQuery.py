@@ -44,7 +44,7 @@ from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseCha
 from netzob.Common.MMSTD.MMSTD import MMSTD
 
 #+----------------------------------------------
-#| MembershipQuery :
+#| MembershipQuery:
 #| Represents a set of query which will be submited to
 #| an oracle
 #+----------------------------------------------
@@ -59,15 +59,15 @@ class MembershipQuery(object):
         self.symbols.append(symbol)
 
     def getSymbols(self):
-        if len(self.symbols) <= 1 :
+        if len(self.symbols) <= 1:
             return self.symbols
-        else :
+        else:
             return self.getSymbolsWhichAreNotEmpty()
 
     def getSymbolsWhichAreNotEmpty(self):
         result = []
-        for s in self.symbols :
-            if s.getType() != "EmptySymbol" :
+        for s in self.symbols:
+            if s.getType() != "EmptySymbol":
                 result.append(s)
         return result
 
@@ -82,7 +82,7 @@ class MembershipQuery(object):
 
         previousState = initialState
         idState = 2
-        for symbol in self.symbols :
+        for symbol in self.symbols:
             # we create the current state
             currentState = NormalState(idState, "State " + str(idState))
             # we create a normal transition between it and the previous state
@@ -102,39 +102,39 @@ class MembershipQuery(object):
 
     def multiply(self, mqs):
         result = []
-        for mq in mqs :
+        for mq in mqs:
             result.append(self.getMQSuffixedWithMQ(mq))
         return result
 
 
     def getNotEmptyPrefixes(self):
         result = []
-        for i in range(0, len(self.getSymbolsWhichAreNotEmpty())) :
+        for i in range(0, len(self.getSymbolsWhichAreNotEmpty())):
             result.append(MembershipQuery(self.getSymbolsWhichAreNotEmpty()[:i + 1]))
         return result
 
 
     def getMQSuffixedWithMQ(self, mq):
         result = MembershipQuery([])
-        for s in self.getSymbols() :
+        for s in self.getSymbols():
             result.addSymbol(s)
 
-        for symbol in mq.getSymbols() :
+        for symbol in mq.getSymbols():
             result.addSymbol(symbol)
         return result
 
     def isStrictlyEqual(self, other):
-        if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())) :
+        if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())):
             symbols = self.getSymbolsWhichAreNotEmpty()
             symbols2 = other.getSymbolsWhichAreNotEmpty()
 
             nbSymbol = len(symbols)
 
-            for i in range(0, nbSymbol) :
-                if symbols[i].getID() != symbols2[i].getID() :
+            for i in range(0, nbSymbol):
+                if symbols[i].getID() != symbols2[i].getID():
                     return False
             return True
-        else :
+        else:
             return False
 
 
@@ -143,20 +143,20 @@ class MembershipQuery(object):
 
 
     def __cmp__(self, other):
-        if other == None :
+        if other == None:
             return -1
-        if self.isStrictlyEqual(other) :
+        if self.isStrictlyEqual(other):
             return 0
-        elif (len(self.getSymbolsWhichAreNotEmpty()) > len(other.getSymbolsWhichAreNotEmpty())) :
+        elif (len(self.getSymbolsWhichAreNotEmpty()) > len(other.getSymbolsWhichAreNotEmpty())):
             return 1
-        else :
+        else:
             return -1
 
 
     def __str__(self, *args, **kwargs):
 
         result = "MQ ("
-        for symbol in self.getSymbols() :
+        for symbol in self.getSymbols():
             result = result + str(symbol) + ", "
 
         return result + ")"

@@ -46,7 +46,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 import gobject
 
 #+----------------------------------------------
-#| LearningAlgorithm :
+#| LearningAlgorithm:
 #|    Abstract class which provides to his children
 #| the necessary functions to learn
 #+----------------------------------------------
@@ -90,7 +90,7 @@ class LearningAlgorithm(object):
 
         # wait it has finished
         self.log.info("Waiting for the oracle to finish")
-        while oracle.isAlive() :
+        while oracle.isAlive():
             time.sleep(0.01)
         self.log.info("The oracle has finished !")
 
@@ -106,11 +106,11 @@ class LearningAlgorithm(object):
         self.submitedQueries.append([query, resultQuery])
 
         # return only the last result
-        if len(resultQuery) > 0 :
+        if len(resultQuery) > 0:
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
             return resultQuery[len(resultQuery) - 1]
-        else :
+        else:
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, "OUPS")
             return resultQuery

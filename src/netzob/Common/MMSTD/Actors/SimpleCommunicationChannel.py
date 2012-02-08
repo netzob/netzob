@@ -36,7 +36,7 @@ from collections import deque
 from AbstractActor import AbstractActor
 
 #+---------------------------------------------------------------------------+
-#| SimpleCommunicationLayer :
+#| SimpleCommunicationLayer:
 #|     Definition of a simple communicationLayer
 #+---------------------------------------------------------------------------+
 class SimpleCommunicationLayer(AbstractActor):
@@ -62,13 +62,13 @@ class SimpleCommunicationLayer(AbstractActor):
 
     def read(self, timeout):
         self.log.debug("We read it !")
-        if (len(self.predefinedInputs) > 0) :
+        if (len(self.predefinedInputs) > 0):
             symbol = self.predefinedInputs.popleft()
             self.log.debug("We simulate the reception of symbol " + str(symbol))
             (value, strvalue) = symbol.getValueToSend(False, self.memory)
             self.inputMessages.append(value)
             return value
-        else :
+        else:
             self.log.debug("No more inputs to simulate, nothing was read ")
             return None
 

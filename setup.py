@@ -39,7 +39,7 @@ moduleLibNeedleman = Extension('libNeedleman',
                                extra_link_args=["-fopenmp"],
                                sources=['lib/libNeedleman/NeedlemanWunsch.c'])
 
-#+---------------------------------------------------------------------------- 
+#+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
@@ -125,13 +125,13 @@ setup(
 Inferring communication protocols
 -------------------------------------
 
-Netzob simplifies the work for security auditors by providing a complete framework 
-for the reverse engineering of communication protocols. 
+Netzob simplifies the work for security auditors by providing a complete framework
+for the reverse engineering of communication protocols.
 
-It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP) 
-and variable fields protocols (like ASN.1 based formats). 
-Netzob is therefore suitable for reversing network protocols, structured files and system and process 
-flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in 
-multiple contexts (network, file, process and kernel data acquisition). 
+It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP)
+and variable fields protocols (like ASN.1 based formats).
+Netzob is therefore suitable for reversing network protocols, structured files and system and process
+flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in
+multiple contexts (network, file, process and kernel data acquisition).
 """
     )

@@ -41,7 +41,7 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
-#| IPCMessage :
+#| IPCMessage:
 #|     Definition of an IPC message
 #+---------------------------------------------------------------------------+
 class IPCMessage(AbstractMessage):
@@ -80,7 +80,7 @@ class IPCMessage(AbstractMessage):
         return properties
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getCategory(self):
         return self.category
@@ -92,7 +92,7 @@ class IPCMessage(AbstractMessage):
         return self.direction
 
     #+----------------------------------------------
-    #| SETTERS :
+    #| SETTERS:
     #+----------------------------------------------
     def setCategory(self, category):
         self.category = category

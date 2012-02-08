@@ -53,14 +53,14 @@ pygtk.require('2.0')
 
 
 #+---------------------------------------------------------------------------+
-#| TraceManager :
+#| TraceManager:
 #|     This class displays the GUI to manage all the manipulated traces in a
 #|     workspace
 #+---------------------------------------------------------------------------+
 class TraceManager():
 
     #+-----------------------------------------------------------------------+
-    #| Constructor :
+    #| Constructor:
     #| @param workspace : the current workspace
     #+-----------------------------------------------------------------------+
     def __init__(self, workspace, cb_update):
@@ -153,13 +153,13 @@ class TraceManager():
 
     def updateContentMessage(self, trace=None):
         self.treestoreMessages.clear()
-        if trace != None :
-            for message in trace.getMessages() :
+        if trace != None:
+            for message in trace.getMessages():
                 self.treestoreMessages.append(None, [str(message.getID()), str(message.getTimestamp()), str(message.getData())])
 
     def updateContent(self):
         self.treestoreTraces.clear()
-        for trace in self.workspace.getImportedTraces() :
+        for trace in self.workspace.getImportedTraces():
             id = str(trace.getImportID())
             date = str(trace.getDate())
             type = str(trace.getDataType())
@@ -170,7 +170,7 @@ class TraceManager():
 
 
     #+----------------------------------------------
-    #| button_press_on_treeview_symbols :
+    #| button_press_on_treeview_symbols:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
@@ -181,26 +181,26 @@ class TraceManager():
 
         info = treeview.get_path_at_pos(x, y)
 
-        if info is not None :
+        if info is not None:
             path = info[0]
             iter = treeview.get_model().get_iter(path)
             idTrace = str(treeview.get_model().get_value(iter, 0))
-            if idTrace is not None :
-                for trace in self.workspace.getImportedTraces() :
-                    if str(trace.getImportID()) == idTrace :
+            if idTrace is not None:
+                for trace in self.workspace.getImportedTraces():
+                    if str(trace.getImportID()) == idTrace:
                         selectedTrace = trace
-        if selectedTrace == None :
+        if selectedTrace == None:
             logging.warn("The provided ID do not match any trace.")
             return
 
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and selectedTrace != None :
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and selectedTrace != None:
             self.updateContentMessage(selectedTrace)
 
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.show_menu_trace(event, selectedTrace)
 
     #+----------------------------------------------
-    #| show_menu_trace :
+    #| show_menu_trace:
     #|   Create a menu to display available operations for a trace
     #+----------------------------------------------
     def show_menu_trace(self, event, trace):
@@ -235,7 +235,7 @@ class TraceManager():
         panel.attach(label3, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         # Delimiter type
         projectCombo = NetzobComboBoxEntry()
-        for project in self.workspace.getProjects() :
+        for project in self.workspace.getProjects():
             projectCombo.append_text(project.getName())
 
         panel.attach(projectCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -256,11 +256,11 @@ class TraceManager():
     def importTraceAction(self, event, trace, projectCombo, dialog):
         selectedProject = None
         selectedProjectName = projectCombo.get_active_text()
-        for project in self.workspace.getProjects() :
-            if project.getName() == selectedProjectName :
+        for project in self.workspace.getProjects():
+            if project.getName() == selectedProjectName:
                 selectedProject = project
 
-        if selectedProject == None :
+        if selectedProject == None:
             logging.warn("Impossible to retrieve the selected project based on its name " + str(selectedProjectName))
             return
 
@@ -280,7 +280,7 @@ class TraceManager():
         inc = 1.0 / len(trace.getMessages())
         # We create a symbol dedicated for the trace
         symbol = Symbol(uuid.uuid4(), trace.getDataType(), project)
-        for message in trace.getMessages() :
+        for message in trace.getMessages():
             percent += inc
             symbol.addMessage(message)
             gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
@@ -303,6 +303,6 @@ class TraceManager():
             self.workspace.removeImportedTrace(trace)
             self.updateContent()
             self.updateContentMessage()
-        else :
+        else:
             self.log.debug("The user didn't confirm the deletion of the trace " + trace.getImportID())
 

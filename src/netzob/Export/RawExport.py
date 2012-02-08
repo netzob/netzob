@@ -39,7 +39,7 @@ pygtk.require('2.0')
 from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 
 #+----------------------------------------------
-#| RawExport :
+#| RawExport:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
 class RawExport:
@@ -60,7 +60,7 @@ class RawExport:
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the main netzob object
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -112,20 +112,20 @@ class RawExport:
                 self.updateTextArea()
 
     def updateTextArea(self):
-        if self.selectedSymbol == None :
+        if self.selectedSymbol == None:
             self.log.debug("No selected symbol")
             self.textarea.get_buffer().set_text("Select a symbol to see its XML definition")
-        else :
+        else:
             found = False
             project = self.netzob.getCurrentProject()
             vocabulary = project.getVocabulary()
             symbols = vocabulary.getSymbols()
-            for symbol in symbols :
-                if str(symbol.getID()) == self.selectedSymbol :
+            for symbol in symbols:
+                if str(symbol.getID()) == self.selectedSymbol:
                     self.textarea.get_buffer().set_text("")
                     self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getXMLDefinition(), "normalTag")
                     found = True
-            if found == False :
+            if found == False:
                 self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))
 
     #+----------------------------------------------

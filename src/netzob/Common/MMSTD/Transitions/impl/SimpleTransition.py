@@ -40,7 +40,7 @@ import logging
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 
 #+---------------------------------------------------------------------------+
-#| SimpleTransition :
+#| SimpleTransition:
 #|     Definition of a simple transition (only sends something after X ms)
 #+---------------------------------------------------------------------------+
 class SimpleTransition(AbstractTransition):

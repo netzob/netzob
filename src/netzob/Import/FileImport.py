@@ -51,7 +51,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
 #+----------------------------------------------
-#| FileImport :
+#| FileImport:
 #|     GUI for capturing messages
 #+----------------------------------------------
 class FileImport(AbstractImporter):
@@ -69,7 +69,7 @@ class FileImport(AbstractImporter):
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, zob):
         AbstractImporter.__init__(self, "FILE IMPORT")
@@ -173,22 +173,22 @@ class FileImport(AbstractImporter):
 
         info = treeview.get_path_at_pos(x, y)
         idMessage = None
-        if info is not None :
+        if info is not None:
             path = info[0]
             iter = treeview.get_model().get_iter(path)
             idMessage = str(treeview.get_model().get_value(iter, 0))
 
 
-        if idMessage == None :
+        if idMessage == None:
             return
 
         # Search for the selected message
         selectedMessage = None
-        for message in self.messages :
+        for message in self.messages:
             if str(message.getID()) == idMessage:
                 selectedMessage = message
 
-        if selectedMessage == None :
+        if selectedMessage == None:
             self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
             return
 
@@ -233,9 +233,9 @@ class FileImport(AbstractImporter):
         # Computes the selected file(s)
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
-            for filename in chooser.get_filenames() :
+            for filename in chooser.get_filenames():
                 filename = unicode( filename, "utf-8" )
-                if filename != None and filename != "" and os.path.isfile(filename) :
+                if filename != None and filename != "" and os.path.isfile(filename):
                     filesToBeImported.append(filename)
         chooser.destroy()
 
@@ -249,7 +249,7 @@ class FileImport(AbstractImporter):
         fileNumber = 0
         self.messages = []
 
-        for file in filesToBeImported :
+        for file in filesToBeImported:
             # Extraction of the metadata
             fileName = file.strip()
             size = os.path.getsize(file)
@@ -290,11 +290,11 @@ class FileImport(AbstractImporter):
 
         # We split the content of each message and retrieve new messages
         new_messages = []
-        for message in self.messages :
+        for message in self.messages:
             lineNumber = 0
 
             splittedStrHexData = message.getData().split(self.lineSeparator)
-            for s in splittedStrHexData :
+            for s in splittedStrHexData:
                 if len(s) > 0:
                     message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
                     new_messages.append(message)
@@ -304,7 +304,7 @@ class FileImport(AbstractImporter):
         self.messages = []
         self.messages.extend(new_messages)
         self.lineView.get_model().clear()
-        for message in self.messages :
+        for message in self.messages:
             self.lineView.get_model().append(None, [message.getID(), message.getData()])
         # We clean the display
         self.textview.get_buffer().delete(self.textview.get_buffer().get_start_iter(), self.textview.get_buffer().get_end_iter())

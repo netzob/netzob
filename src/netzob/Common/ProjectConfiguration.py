@@ -43,7 +43,7 @@ from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 
 #+---------------------------------------------------------------------------+
-#| ProjectConfiguration :
+#| ProjectConfiguration:
 #|     Class definition of the configuration of a Project
 #+---------------------------------------------------------------------------+
 class ProjectConfiguration(object):
@@ -69,7 +69,7 @@ class ProjectConfiguration(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self) :
+    def __init__(self):
         self.vocabularyInference = dict()
         self.grammarInference = dict()
         self.simulation = dict()
@@ -151,8 +151,8 @@ class ProjectConfiguration(object):
 
         xmlVocabularyInferenceEnvDependencies = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
         envDependencies = self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
-        if envDependencies != None :
-            for envDependency in envDependencies :
+        if envDependencies != None:
+            for envDependency in envDependencies:
                 envDependency.save(xmlVocabularyInferenceEnvDependencies, namespace)
 
 
@@ -170,9 +170,9 @@ class ProjectConfiguration(object):
 
         projectConfiguration = ProjectConfiguration()
 
-        if version == "0.1" :
+        if version == "0.1":
             # Load the configuration of the vocabulary inference
-            if xmlRoot.find("{" + namespace + "}vocabulary_inference") != None :
+            if xmlRoot.find("{" + namespace + "}vocabulary_inference") != None:
 
                 xmlVocabularyInference = xmlRoot.find("{" + namespace + "}vocabulary_inference")
 
@@ -233,13 +233,13 @@ class ProjectConfiguration(object):
 
                 # Environmental dependencies
                 xmlEnvDependencies = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
-                if xmlEnvDependencies != None :
+                if xmlEnvDependencies != None:
                     envDependencies = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
-                    for xmlEnvDependency in xmlEnvDependencies.findall("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCY) :
+                    for xmlEnvDependency in xmlEnvDependencies.findall("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCY):
                         envDependencyName = xmlEnvDependency.get("name", "none")
                         envDependencyType = xmlEnvDependency.get("type", "none")
                         envDependencyValue = xmlEnvDependency.text
-                        if envDependencyValue == None :
+                        if envDependencyValue == None:
                             envDependencyValue = ""
                         envDependencies.append(EnvironmentalDependency(envDependencyName, envDependencyType, envDependencyValue))
 

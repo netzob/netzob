@@ -47,7 +47,7 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 
 #+----------------------------------------------
-#| WMethodNetworkEquivalenceOracle :
+#| WMethodNetworkEquivalenceOracle:
 #+----------------------------------------------
 class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
@@ -63,10 +63,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         (traceState2, endStateTrace2) = mmstd.getOutputTrace(state2, mq.getSymbols())
         self.log.info("Trace 1 = " + str(traceState1))
         self.log.info("Trace 2 = " + str(traceState2))
-        if traceState1 == traceState2 :
+        if traceState1 == traceState2:
             self.log.info("Impossible to distinguish the strings")
             return False
-        else :
+        else:
             self.log.info("YES, its distinguished strings")
             return True
 
@@ -78,7 +78,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
 
         inputDictionary = []
-        for entry in mmstd.dictionary.getSymbols()[:2] :
+        for entry in mmstd.dictionary.getSymbols()[:2]:
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
             self.log.info("INPUT : " + str(letter))
@@ -90,57 +90,57 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         # STEP 1 : Estimate the maximum number of states (m) in the correct implementation
         #          of the FSM (DONE PREVISOULY AND TRANSMITED THROUGH PARAM self.maxsize
         # STEP 2 : Construct the characterization set W for [MMSTD]
-        # STEP 3 :
+        # STEP 3:
         #          (a) Construct the "testing tree" for MMSTD
         #          (b) Generate the transition cover set P from the testing tree
         # STEP 4 : Construct set Z from W and m
         # STEP 5 : We have the list of so desired test cases = P.Z
 
-        # STEP 2 :
-        # - Construct a sequence of k-equivalence partitions of the states of MMSTD :
+        # STEP 2:
+        # - Construct a sequence of k-equivalence partitions of the states of MMSTD:
 
         # Find all the couples of states
         couples = []
         states = mmstd.getAllStates()
         W = []
         self.log.info("The MMSTD has " + str(len(states)) + " states")
-        for state in states :
-            for state2 in states :
-                if state != state2 :
+        for state in states:
+            for state2 in states:
+                if state != state2:
                     found = False
-                    for (s1, s2) in couples :
-                        if not ((s1 == state) and (s2 == state2) or ((s1 == state2) and (s2 == state))) :
+                    for (s1, s2) in couples:
+                        if not ((s1 == state) and (s2 == state2) or ((s1 == state2) and (s2 == state))):
                             found = True
-                    if not found :
+                    if not found:
                         couples.append((state, state))
         self.log.info("A number of " + str(len(couples)) + " couples was found")
 
-        for (state1, state2) in couples :
+        for (state1, state2) in couples:
             self.log.info("Search a distinguish string between " + state1.getName() + " and " + state2.getName())
             z = MembershipQuery([EmptySymbol()])
 
             mqToTest = deque([])
-            for letter in inputDictionary :
+            for letter in inputDictionary:
                 mqToTest.append(z.getMQSuffixedWithMQ(MembershipQuery([letter])))
 
             lastIndiguishableZ = z
             distinguishableZ = z
             done = False
             i = 0
-            while not done :
+            while not done:
                 mq = mqToTest.popleft()
-                if i > self.m * self.m :
+                if i > self.m * self.m:
                     break
 
 
                 self.log.info("Can we distinguish with MQ = " + str(mq))
-                if not self.canWeDistinguishStates(mmstd, mq, state1, state2) :
+                if not self.canWeDistinguishStates(mmstd, mq, state1, state2):
                     done = False
                     lastIndiguishableZ = mq
-                    for letter in inputDictionary :
+                    for letter in inputDictionary:
                         z = mq.getMQSuffixedWithMQ(MembershipQuery([letter]))
                         mqToTest.append(z)
-                else :
+                else:
                     done = True
                     distinguishableZ = mq
 
@@ -158,16 +158,16 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         openMQ = deque([currentMQ])
         closeMQ = []
         statesSeen = [mmstd.getInitialState()]
-        while len(openMQ) > 0 :
+        while len(openMQ) > 0:
             mq = openMQ.popleft()
             tmpstatesSeen = []
-            for letter in inputDictionary :
+            for letter in inputDictionary:
                 z = mq.getMQSuffixedWithMQ(MembershipQuery([letter]))
                 (trace, outputState) = mmstd.getOutputTrace(mmstd.getInitialState(), z.getSymbols())
-                if outputState in statesSeen :
+                if outputState in statesSeen:
                     # we close this one
                     closeMQ.append(z)
-                else :
+                else:
                     tmpstatesSeen.append(outputState)
                     closeMQ.append(z)
                     # still open
@@ -182,50 +182,50 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         self.log.info("Computing Z :")
         Z = []
         # First we append W in Z
-        for w in W :
+        for w in W:
             Z.append(w)
 
         v = self.m - len(states)
-        if v < 0 :
+        if v < 0:
             v = 0
 
 
         mqInputs = []
-        for input in inputDictionary :
+        for input in inputDictionary:
             mqInputs.append(MembershipQuery([input]))
 
         X = dict()
         X[0] = W
 
-        for i in range(1, v + 1) :
+        for i in range(1, v + 1):
             self.log.info("Computing X^" + str(i) + " :")
             self.log.info("MQ INputs : " + str(len(mqInputs)))
             self.log.info("W : " + str(len(W)))
             X[i] = []
             previousX = X[i - 1]
             self.log.info(previousX)
-            for x in previousX :
+            for x in previousX:
                 X[i].extend(x.multiply(mqInputs))
-            for w in W :
+            for w in W:
                 Z.extend(X[i])
 
-        for z in Z :
+        for z in Z:
             self.log.info("z = " + str(z))
 
 
         # STEP 5 : We have the list of so desired test cases T = P.Z
         T = []
-        for p in P :
+        for p in P:
             T.extend(p.multiply(Z))
 
         self.log.info("Tests cases are : ")
-        for t in T :
+        for t in T:
             self.log.info("=> " + str(t))
 
 
         testsResults = dict()
         # We compute the response to the different tests over our learning model and compare them with the real one
-        for test in T :
+        for test in T:
             # Compute our results
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
             # Compute real results
@@ -233,7 +233,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             oracle = NetworkOracle(self.communicationChannel)
             oracle.setMMSTD(testedMmstd)
             oracle.start()
-            while oracle.isAlive() :
+            while oracle.isAlive():
                 time.sleep(0.01)
             oracle.stop()
             resultQuery = oracle.getGeneratedOutputSymbols()
@@ -241,7 +241,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             mqOur = MembershipQuery(traceTest)
             mqTheir = MembershipQuery(resultQuery)
 
-            if not mqOur.isStrictlyEqual(mqTheir) :
+            if not mqOur.isStrictlyEqual(mqTheir):
                 self.log.info("TEST : " + str(test))
                 self.log.info("OUR : " + str(mqOur))
                 self.log.info("THEIR : " + str(mqTheir))

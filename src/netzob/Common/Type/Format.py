@@ -48,7 +48,7 @@ class Format():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| getSupportedFormats :
+    #| getSupportedFormats:
     #|     Returns an array composed of the names of primary supported formats
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+
@@ -57,7 +57,7 @@ class Format():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| getExtendedSupportedFormats :
+    #| getExtendedSupportedFormats:
     #|     Returns an array composed of the names of all supported formats
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+

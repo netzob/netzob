@@ -51,7 +51,7 @@ from netzob.Common.Field import Field
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.Common.Symbol import Symbol
 #+----------------------------------------------
-#| IPpc :
+#| IPpc:
 #|     ensures the capture of informations through IPC proxing
 #+----------------------------------------------
 class IpcImport(AbstractImporter):
@@ -72,7 +72,7 @@ class IpcImport(AbstractImporter):
             self.aSniffThread._Thread__stop()
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, zob):
         AbstractImporter.__init__(self, "IPC IMPORT")

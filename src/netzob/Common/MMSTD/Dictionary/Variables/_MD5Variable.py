@@ -43,7 +43,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| MD5Variable :
+#| MD5Variable:
 #|     Definition of an md5 variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class MD5Variable(Variable):
@@ -78,11 +78,11 @@ class MD5Variable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
 
-        if self.strVal == None or isForced :
+        if self.strVal == None or isForced:
             tmp = val[indice:]
             self.log.debug("Taille MD5 " + str(len(tmp)))
             # MD5 size = 16 bytes = 16*8 = 128
-            if (len(tmp) >= 128) :
+            if (len(tmp) >= 128):
                 binVal = tmp[0:128]
                 # We verify its realy the MD5
                 var = dictionary.getVariableByID(self.id_var)
@@ -99,15 +99,15 @@ class MD5Variable(Variable):
                 self.log.debug("We should received an MD5 = " + str(TypeConvertor.hex2bin(md5Hex)))
                 self.log.debug("We have received " + str(binVal))
 
-                if (TypeConvertor.hex2bin(md5Hex) == binVal) :
+                if (TypeConvertor.hex2bin(md5Hex) == binVal):
                     self.binVal = TypeConvertor.hex2bin(md5Hex)
                     self.strVal = TypeConvertor.bin2strhex(self.binVal)
                     self.log.debug("Perfect, there are equals we return  " + str(len(binVal)))
                     return indice + len(binVal)
-                else :
+                else:
                     return -1
 
-            else :
+            else:
                 return -1
 
 

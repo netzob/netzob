@@ -41,7 +41,7 @@ from bitarray import bitarray
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
 #+---------------------------------------------------------------------------+
-#| Aggregate :
+#| Aggregate:
 #|     Definition of an aggregation
 #+---------------------------------------------------------------------------+
 class Aggregate(AbstractValue):
@@ -59,7 +59,7 @@ class Aggregate(AbstractValue):
     def send(self, negative, dictionary):
         binResult = bitarray(endian='big')
         strResult = []
-        for value in self.values :
+        for value in self.values:
             (binVal, strVal) = value.send(negative, dictionary)
             self.log.debug("Aggregate : " + str(binVal) + " [" + str(strVal) + "]")
             binResult.extend(binVal)
@@ -70,22 +70,22 @@ class Aggregate(AbstractValue):
     def compare(self, val, indice, negative, dictionary):
         result = indice
         self.log.debug("Will compare with :")
-        for value in self.values :
+        for value in self.values:
             self.log.debug(str(value.getType()))
 
-        for value in self.values :
+        for value in self.values:
             self.log.debug("Indice = " + str(result) + " : " + value.getType())
             result = value.compare(val, result, negative, dictionary)
-            if result == -1 or result == None :
+            if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 return -1
-            else :
+            else:
                 self.log.debug("Compare successfull")
 
         return result
 
     def restore(self):
-        for value in self.values :
+        for value in self.values:
             value.restore()
 
     #+-----------------------------------------------------------------------+

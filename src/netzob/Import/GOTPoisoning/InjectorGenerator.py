@@ -40,7 +40,7 @@ import os
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| InjectorGenerator :
+#| InjectorGenerator:
 #|     Describes and generates a GOT Injector
 #+---------------------------------------------------------------------------+
 class InjectorGenerator():
@@ -80,7 +80,7 @@ class InjectorGenerator():
 
     #+-----------------------------------------------------------------------+
     #| produceShellCode
-    #|     Generates the shellcode in function of :
+    #|     Generates the shellcode in function of:
     #|     - the path of the parasite lib
     #|     -
     #| @param function HijackedFunction to include
@@ -93,7 +93,7 @@ class InjectorGenerator():
         , "e8", "c0", "ff", "ff", "ff"]
 
         print self.libPath
-        for x in self.libPath :
+        for x in self.libPath:
             shellcode.append(hex(ord(x))[2:])
         shellcode.append("00")
         return shellcode

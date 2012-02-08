@@ -46,7 +46,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 #+----------------------------------------------
-#| NetworkOracle :
+#| NetworkOracle:
 #+----------------------------------------------
 class NetworkOracle(threading.Thread):
 
@@ -70,7 +70,7 @@ class NetworkOracle(threading.Thread):
         self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, True, abstractionLayer)
         self.oracle.start()
 
-        while (self.oracle.isAlive()) :
+        while (self.oracle.isAlive()):
             time.sleep(0.01)
 
         self.log.warn("The network ORACLE has finished")
@@ -87,7 +87,7 @@ class NetworkOracle(threading.Thread):
     def getGeneratedOutputSymbols(self):
         symbols = []
         abstractionLayer = self.oracle.getAbstractionLayer()
-        for o in abstractionLayer.getGeneratedOutputSymbols() :
+        for o in abstractionLayer.getGeneratedOutputSymbols():
             symbols.append(DictionarySymbol(o))
         return symbols
 
@@ -95,7 +95,7 @@ class NetworkOracle(threading.Thread):
         symbols = []
         # Retrieve all the IO from the abstraction layer
         abstractionLayer = self.oracle.getAbstractionLayer()
-        for io in abstractionLayer.getGeneratedInputAndOutputsSymbols() :
+        for io in abstractionLayer.getGeneratedInputAndOutputsSymbols():
             symbols.append(DictionarySymbol(io))
         return symbols
 

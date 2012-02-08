@@ -47,7 +47,7 @@ class TimeoutException(Exception):
     pass
 
 #+---------------------------------------------------------------------------+
-#| AbstractionLayer :
+#| AbstractionLayer:
 #|     Definition of an abstractionLayer
 #+---------------------------------------------------------------------------+
 class AbstractionLayer():
@@ -73,10 +73,10 @@ class AbstractionLayer():
 
         # if it's an instanciated network server we kill it
         # and create a new one !
-        if self.communicationChannel.isAnInstanciated() :
+        if self.communicationChannel.isAnInstanciated():
 #            self.communicationChannel = self.communicationChannel.createNewServer()
             pass
-        else :
+        else:
             self.communicationChannel.openServer(vocabulary, outputState, isMaster)
 
     def closeServer(self):
@@ -86,38 +86,38 @@ class AbstractionLayer():
 
     def connect(self):
         self.log.debug("Connect ...")
-        if self.connected :
+        if self.connected:
             self.log.warn("Impossible to connect : already connected")
-        else :
-            # if its a server :
-            if self.communicationChannel.isServer() :
+        else:
+            # if its a server:
+            if self.communicationChannel.isServer():
                 self.log.info("Opening the server to outside connections")
 
-            else :
-            # if its a client :
+            else:
+            # if its a client:
                 self.log.info("Connecting the client...")
                 self.connected = self.communicationChannel.open()
 
     def disconnect(self):
         self.log.warn("Disconnect ...")
-        if self.connected :
+        if self.connected:
             self.log.debug("Disconnecting ...")
             self.connected = not self.communicationChannel.close()
             self.log.debug("Connected = " + str(self.connected))
-            # if its a server :
-            if self.communicationChannel.isServer() :
+            # if its a server:
+            if self.communicationChannel.isServer():
                 self.log.debug("Close the server")
                 self.closeServer()
 
-            else :
-            # if its a client :
+            else:
+            # if its a client:
                 self.log.debug("Close the client...")
-                try :
+                try:
                     self.connected = self.communicationChannel.close()
-                except :
+                except:
                     self.log.warn("Error while trying to disconnect")
 
-        else :
+        else:
             self.log.debug("Impossible to disconnect : not connected")
 
 
@@ -135,12 +135,12 @@ class AbstractionLayer():
         # First we read from the input the message
         receivedData = self.communicationChannel.read(timeout)
 
-        if receivedData == None :
+        if receivedData == None:
             self.log.warn("The communication channel seems to be closed !")
 #            return (EmptySymbol(), None)
             return (None, None)
 
-        if len(receivedData) > 0 :
+        if len(receivedData) > 0:
             now = datetime.datetime.now()
             receptionTime = now.strftime("%H:%M:%S")
             self.log.info("Received following message : " + str(receivedData))
@@ -153,9 +153,9 @@ class AbstractionLayer():
             self.manipulatedSymbols.append(symbol)
             self.outputSymbols.append(symbol)
             return (symbol, receivedData)
-        else :
-            if len(self.manipulatedSymbols) > 5 :
-                if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == "EmptySymbol" :
+        else:
+            if len(self.manipulatedSymbols) > 5:
+                if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == "EmptySymbol":
                     self.log.warn("Consider client has disconnected since no valid symbol received for the second time")
                     return (None, None)
 
@@ -190,14 +190,14 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+
     def abstract(self, message):
         # we search in the vocabulary an entry which match the message
-        for symbol in self.vocabulary.getSymbols() :
+        for symbol in self.vocabulary.getSymbols():
             print message
             print TypeConvertor.strBitarray2Bitarray(message)
             if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.memory) != -1:
                 self.log.debug("Entry in the vocabulary found")
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
                 return symbol
-            else :
+            else:
                 self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
                 # we first restore possibly learnt value
                 self.log.debug("Restore possibly learnt value")

@@ -38,7 +38,7 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 
 #+---------------------------------------------------------------------------+
-#| EmptySymbol :
+#| EmptySymbol:
 #|     Definition of an empty symbol
 #+---------------------------------------------------------------------------+
 class EmptySymbol(AbstractSymbol):
@@ -54,7 +54,7 @@ class EmptySymbol(AbstractSymbol):
         if symbol.__class__.__name__ == EmptySymbol.__name__:
             self.log.debug("The symbols are equivalents")
             return True
-        else :
+        else:
             self.log.debug("The symbols are not equivalents")
             return False
 

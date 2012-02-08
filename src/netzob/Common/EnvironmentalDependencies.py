@@ -41,13 +41,13 @@ from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from netzob.Common.Type.Format import Format
 
 #+----------------------------------------------
-#| EnvDependancies :
+#| EnvDependancies:
 #|     Handle environmental dependancies
 #+----------------------------------------------
 class EnvironmentalDependencies(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self):
         # create logger with the given configuration

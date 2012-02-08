@@ -46,7 +46,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
-#| BinaryVarible :
+#| BinaryVarible:
 #|     Definition of a binary variable
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
@@ -54,24 +54,24 @@ class BinaryVariable(Variable):
     def __init__(self, id, name, mutable, value):
         Variable.__init__(self, "Binary", id, name, mutable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
-        if value == "" or value == None :
+        if value == "" or value == None:
             self.binVal = None
             self.strVal = None
-        else :
+        else:
             self.strVal = str(value)
             self.binVal = TypeConvertor.strBitarray2Bitarray(value)
 
     def compare(self, value, indice, negative, memory):
         self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
         tmp = value[indice:]
-        if len(tmp) >= len(self.binVal) :
-            if tmp[:len(self.binVal)] == self.binVal :
+        if len(tmp) >= len(self.binVal):
+            if tmp[:len(self.binVal)] == self.binVal:
                 self.log.info("Compare successful")
                 return indice + len(self.binVal)
-            else :
+            else:
                 self.log.info("error in the comparison")
                 return -1
-        else :
+        else:
             self.log.info("Compare fail")
             return -1
 
@@ -82,9 +82,9 @@ class BinaryVariable(Variable):
         return (self.binVal, self.strVal)
 
     def getDescription(self):
-        if self.isMutable() :
+        if self.isMutable():
             mut = "[M]"
-        else :
+        else:
             mut = "[!M]"
         return "BinaryVariable " + mut + " (" + self.strVal + ")"
 
@@ -103,7 +103,7 @@ class BinaryVariable(Variable):
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))

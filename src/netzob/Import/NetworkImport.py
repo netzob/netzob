@@ -58,7 +58,7 @@ from netzob.Common.Field import Field
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| Network :
+#| Network:
 #|     This class offers the capability to capture traffic from live network
 #+---------------------------------------------------------------------------+
 class NetworkImport(AbstractImporter):
@@ -76,7 +76,7 @@ class NetworkImport(AbstractImporter):
         pass
 
     #+-----------------------------------------------------------------------+
-    #| Constructor :
+    #| Constructor:
     #| @param zob: a reference to the main netzob.py
     #+-----------------------------------------------------------------------+
     def __init__(self, zob):
@@ -118,7 +118,7 @@ class NetworkImport(AbstractImporter):
             self.log.warn("You don't have enough permissions to open any network interface on this system.")
             interfaces = []
 
-        for interface in interfaces :
+        for interface in interfaces:
             listNetworkDevice.append_text(str(interface))
 
         self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -251,7 +251,7 @@ class NetworkImport(AbstractImporter):
                         Sport = udp.get_uh_sport()
                         Dport = udp.get_uh_dport()
                         Data = udp.get_data_as_string()
-                    if ip.get_ip_p() == Packets.TCP.protocol :
+                    if ip.get_ip_p() == Packets.TCP.protocol:
                         tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = tcp.get_th_sport()
                         Dport = tcp.get_th_dport()
@@ -317,9 +317,9 @@ class NetworkImport(AbstractImporter):
         self.log.info("Launching sniff process on dev " + dev + " with : count=" + count.get_text() + ", timeout=" + time.get_text() + ", filter=\"" + filter.get_text() + "\"")
         sniffer = pcapy.open_live(dev, 1024, False, int(time.get_text()))
 
-        try :
+        try:
             sniffer.setfilter(filter.get_text())
-        except :
+        except:
             self.log.warn("The provided filter is not valid (it should respects the BPF format")
             button.set_sensitive(True)
             return
@@ -339,13 +339,13 @@ class NetworkImport(AbstractImporter):
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
             if ip.get_ip_p() == Packets.UDP.protocol:
                 udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                if len(udp.get_data_as_string()) > 0 :
+                if len(udp.get_data_as_string()) > 0:
                     self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
                     self.packets.append(payload)
 
-            if ip.get_ip_p() == Packets.TCP.protocol :
+            if ip.get_ip_p() == Packets.TCP.protocol:
                 tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                if len(tcp.get_data_as_string()) > 0 :
+                if len(tcp.get_data_as_string()) > 0:
                     self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
                     self.packets.append(payload)
 

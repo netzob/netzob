@@ -53,7 +53,7 @@ from netzob.Common.MMSTD.Actors import MMSTDVisitor
 from netzob.Simulator.XDotWidget import XDotWidget
 
 #+----------------------------------------------
-#| UISimulator :
+#| UISimulator:
 #|     GUI for the simulation of actors
 #+----------------------------------------------
 class UISimulator:
@@ -81,7 +81,7 @@ class UISimulator:
 
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the netzob main class
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -113,9 +113,9 @@ class UISimulator:
         label_actorName.show()
         self.entry_actorName = gtk.Entry()
 
-        if config.get("simulating", "actorName") != None :
+        if config.get("simulating", "actorName") != None:
             self.entry_actorName.set_text(config.get("simulating", "actorName"))
-        else :
+        else:
             self.entry_actorName.set_text("")
 
         self.entry_actorName.show()
@@ -132,9 +132,9 @@ class UISimulator:
         self.combo_typeOfActor.append_text("CLIENT")
         self.combo_typeOfActor.append_text("MASTER")
 
-        if (config.get("simulating", "typeOfActor") == "CLIENT") :
+        if (config.get("simulating", "typeOfActor") == "CLIENT"):
             self.combo_typeOfActor.set_active(0)
-        if (config.get("simulating", "typeOfActor") == "MASTER") :
+        if (config.get("simulating", "typeOfActor") == "MASTER"):
             self.combo_typeOfActor.set_active(1)
 
         self.combo_typeOfActor.show()
@@ -149,9 +149,9 @@ class UISimulator:
         self.combo_typeOfNetworkActor.append_text("CLIENT")
         self.combo_typeOfNetworkActor.append_text("SERVER")
 
-        if (config.get("simulating", "networkLayer") == "CLIENT") :
+        if (config.get("simulating", "networkLayer") == "CLIENT"):
             self.combo_typeOfNetworkActor.set_active(0)
-        if (config.get("simulating", "networkLayer") == "SERVER") :
+        if (config.get("simulating", "networkLayer") == "SERVER"):
             self.combo_typeOfNetworkActor.set_active(1)
 
         self.combo_typeOfNetworkActor.show()
@@ -166,9 +166,9 @@ class UISimulator:
         self.combo_protocolOfNetworkActor.append_text("TCP")
         self.combo_protocolOfNetworkActor.append_text("UDP")
 
-        if (config.get("simulating", "networkProtocol") == "TCP") :
+        if (config.get("simulating", "networkProtocol") == "TCP"):
             self.combo_protocolOfNetworkActor.set_active(0)
-        if (config.get("simulating", "networkProtocol") == "UDP") :
+        if (config.get("simulating", "networkProtocol") == "UDP"):
             self.combo_protocolOfNetworkActor.set_active(1)
 
         self.combo_protocolOfNetworkActor.show()
@@ -179,9 +179,9 @@ class UISimulator:
         label_IP = gtk.Label("IP : ")
         label_IP.show()
         self.entry_IP = gtk.Entry()
-        if (config.get("simulating", "ip") != None) :
+        if (config.get("simulating", "ip") != None):
             self.entry_IP.set_text(config.get("simulating", "ip"))
-        else :
+        else:
             self.entry_IP.set_text("")
 
         self.entry_IP.show()
@@ -194,9 +194,9 @@ class UISimulator:
         self.entry_Port = gtk.Entry()
 
 
-        if (config.getInt("simulating", "port") != None) :
+        if (config.getInt("simulating", "port") != None):
             self.entry_Port.set_text(str(config.getInt("simulating", "port")))
-        else :
+        else:
             self.entry_Port.set_text("")
 
         self.entry_Port.show()
@@ -397,36 +397,36 @@ class UISimulator:
 
 
     #+----------------------------------------------
-    #| startSelectedActor :
+    #| startSelectedActor:
     #| Starts the selected actor
     #+----------------------------------------------
     def startSelectedActor(self, widget):
-        if self.selectedActor == None :
+        if self.selectedActor == None:
             return
 
         self.log.info("Start the actor " + self.selectedActor.getName())
         self.selectedActor.start()
 
     #+----------------------------------------------
-    #| stopSelectedActor :
+    #| stopSelectedActor:
     #| Stops the selected actor
     #+----------------------------------------------
     def stopSelectedActor(self, widget):
-        if self.selectedActor == None :
+        if self.selectedActor == None:
             return
 
         self.log.info("Stop the actor " + self.selectedActor.getName())
         self.selectedActor.stop()
 
     #+----------------------------------------------
-    #| deleteSelectedActor :
+    #| deleteSelectedActor:
     #| Delete the selected actor (if stopped)
     #+----------------------------------------------
     def deleteSelectedActor(self, widget):
-        if self.selectedActor == None :
+        if self.selectedActor == None:
             return
 
-        if self.selectedActor.isActive() :
+        if self.selectedActor.isActive():
             self.log.info("Impossible to delete an active actor. It must be stopped before")
             return
 
@@ -437,7 +437,7 @@ class UISimulator:
 
 
     #+----------------------------------------------
-    #| addActor :
+    #| addActor:
     #| Creates and registers an actor based on the form
     #+----------------------------------------------
     def addActor(self, widget):
@@ -450,8 +450,8 @@ class UISimulator:
         actorPort = self.entry_Port.get_text()
 
         # We verify we have everything and the actor's name is unique
-        for actor in self.actors :
-            if actor.getName() == actorName :
+        for actor in self.actors:
+            if actor.getName() == actorName:
                 self.log.warn("Impossible to create the requested actor since another one has the same name")
                 return
 
@@ -459,15 +459,15 @@ class UISimulator:
 
         grammar = self.netzob.getCurrentProject().getGrammar()
         # We create an actor based on given informations
-        if actorGrammarType == "MASTER" :
+        if actorGrammarType == "MASTER":
             isMaster = True
-        else :
+        else:
             isMaster = False
 
         # Create the network layer
-        if actorNetworkType == "SERVER" :
+        if actorNetworkType == "SERVER":
             communicationChannel = NetworkServer.NetworkServer(actorIP, actorNetworkProtocol, int(actorPort))
-        else :
+        else:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
 
         # Create the abstraction layer for this connection
@@ -493,29 +493,29 @@ class UISimulator:
 
     def updateListOfActors(self):
 #        self.treestore_listActiveActors.clear()
-        for actor in self.actors :
+        for actor in self.actors:
 
             # Do we add this actor ?
             treestoreActor = None
-            for line in self.treestore_listActiveActors :
-                if line[0] == actor.getName() :
+            for line in self.treestore_listActiveActors:
+                if line[0] == actor.getName():
                     treestoreActor = self.treestore_listActiveActors.get_iter(line.path)
                     found = True
 
-            if treestoreActor == None :
+            if treestoreActor == None:
                 treestoreActor = self.treestore_listActiveActors.append(None, [actor.getName(), "type"])
 
             # Retrieve generates instances by the communication channel
             communicationChannel = actor.getAbstractionLayer().getCommunicationChannel()
             instances = communicationChannel.getGeneratedInstances()
-            for instance in instances :
+            for instance in instances:
 
                 # do we add this instance
                 found = False
-                for line in self.treestore_listActiveActors :
-                    if line[0] == instance.getName() :
+                for line in self.treestore_listActiveActors:
+                    if line[0] == instance.getName():
                         found = True
-                if not found :
+                if not found:
                     self.treestore_listActiveActors.append(treestoreActor, [instance.getName(), "type"])
 
     def actorDetails(self, treeview):
@@ -528,17 +528,17 @@ class UISimulator:
                 actorName = model.get_value(iter, 0)
                 actorType = model.get_value(iter, 1)
 
-        for actor in self.actors :
-            if actor.getName() == actorName :
+        for actor in self.actors:
+            if actor.getName() == actorName:
                 self.selectedActor = actor
             # Retrieve generates instances by the communication channel
             communicationChannel = actor.getAbstractionLayer().getCommunicationChannel()
             instances = communicationChannel.getGeneratedInstances()
-            for instance in instances :
-                if instance.getName() == actorName :
+            for instance in instances:
+                if instance.getName() == actorName:
                     self.selectedActor = instance
 
-        if self.selectedActor == None :
+        if self.selectedActor == None:
             self.log.warn("Impossible to retrieve the requested actor")
             return
 
@@ -548,7 +548,7 @@ class UISimulator:
 
 
     def updateGUIForActor(self):
-        if self.selectedActor == None :
+        if self.selectedActor == None:
             return
 
         # First we display its model
@@ -558,21 +558,21 @@ class UISimulator:
 
         # Now we display its received message
         self.treestore_inputs.clear()
-        for inputMessage in self.selectedActor.getInputMessages() :
+        for inputMessage in self.selectedActor.getInputMessages():
             self.treestore_inputs.append(None, inputMessage)
 
         # Now we display its emitted message
         self.treestore_outputs.clear()
-        for outputMessage in self.selectedActor.getOutputMessages() :
+        for outputMessage in self.selectedActor.getOutputMessages():
             self.treestore_outputs.append(None, outputMessage)
 
         # Now we update its memory
         self.treestore_memory.clear()
-        for memory_id in self.selectedActor.getMemory().recallAll().keys() :
+        for memory_id in self.selectedActor.getMemory().recallAll().keys():
             self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallAll()[memory_id]])
 
     def refreshGUI(self, tempo=0.5):
-        if not self.finish :
+        if not self.finish:
             threading.Timer(tempo, self.refreshGUI, [tempo]).start()
             self.updateListOfActors()
             self.updateGUIForActor()

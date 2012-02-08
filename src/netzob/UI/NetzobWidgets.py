@@ -34,7 +34,7 @@ import pygtk
 pygtk.require('2.0')
 
 #+---------------------------------------------------------------------------+
-#| NetzobLabel :
+#| NetzobLabel:
 #| @param text: the string of the label
 #+---------------------------------------------------------------------------+
 def NetzobLabel(text):
@@ -44,7 +44,7 @@ def NetzobLabel(text):
     return label
 
 #+---------------------------------------------------------------------------+
-#| NetzobButton :
+#| NetzobButton:
 #| @param text: the string of the button
 #+---------------------------------------------------------------------------+
 def NetzobButton(text):
@@ -60,7 +60,7 @@ def NetzobButton(text):
     return but
 
 #+---------------------------------------------------------------------------+
-#| NetzobFrame :
+#| NetzobFrame:
 #| @param text: the string of the frame
 #+---------------------------------------------------------------------------+
 def NetzobFrame(text):
@@ -72,7 +72,7 @@ def NetzobFrame(text):
     return frame
 
 #+---------------------------------------------------------------------------+
-#| NetzobComboBoxEntry :
+#| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
 def NetzobComboBoxEntry():
     combo = gtk.combo_box_entry_new_text()
@@ -83,11 +83,11 @@ def NetzobComboBoxEntry():
     return combo
 
 #+---------------------------------------------------------------------------+
-#| NetzobProgressBar :
+#| NetzobProgressBar:
 #+---------------------------------------------------------------------------+
 def NetzobProgressBar(text=None):
     pb = gtk.ProgressBar(adjustment=None)
-    if text != None :
+    if text != None:
         pb.set_text(text)
 
     pb.show()

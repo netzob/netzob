@@ -41,7 +41,7 @@ from bitarray import bitarray
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
 #+---------------------------------------------------------------------------+
-#| EndValue :
+#| EndValue:
 #|     Represents the end of a symbol
 #+---------------------------------------------------------------------------+
 class EndValue(AbstractValue):
@@ -57,13 +57,13 @@ class EndValue(AbstractValue):
 
     def compare(self, val, indice, negative, dictionary):
         self.log.debug("Endvalue ? indice = " + str(indice))
-        if len(val[indice:]) == 0 :
+        if len(val[indice:]) == 0:
             self.log.debug("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
             return indice
-        else :
+        else:
             cr = bitarray('00001010', endian='big')
 
-            if val[indice:] == cr :
+            if val[indice:] == cr:
                 self.log.debug("Compare successfull we consider \\n as the end")
                 return indice + len(cr)
 

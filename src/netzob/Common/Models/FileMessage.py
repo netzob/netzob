@@ -42,7 +42,7 @@ from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
-#| FileMessage :
+#| FileMessage:
 #|     Definition of a file message
 #+---------------------------------------------------------------------------+
 class FileMessage(AbstractMessage):
@@ -86,7 +86,7 @@ class FileMessage(AbstractMessage):
         return properties
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getLineNumber(self):
         return self.lineNumber
@@ -102,12 +102,12 @@ class FileMessage(AbstractMessage):
         return self.size
 
     #+----------------------------------------------
-    #| SETTERS :
+    #| SETTERS:
     #+----------------------------------------------
     def setLineNumber(self, lineNumber):
-        try :
+        try:
             self.lineNumber = int(lineNumber)
-        except :
+        except:
             self.log.warning("Impossible to set the given line number since its not an int !")
     def setFilename(self, filename):
         self.filename = filename

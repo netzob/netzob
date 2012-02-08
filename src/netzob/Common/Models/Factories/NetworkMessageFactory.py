@@ -42,7 +42,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| NetworkMessageFactory :
+#| NetworkMessageFactory:
 #|     Factory dedicated to the manipulation of network messages
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #+---------------------------------------------------------------------------+
@@ -80,7 +80,7 @@ class NetworkMessageFactory():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of a network message
     #| @param rootElement: XML root of the network message
@@ -90,7 +90,7 @@ class NetworkMessageFactory():
     def loadFromXML(rootElement, namespace, version):
 
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:NetworkMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:NetworkMessage":
             raise NameError("The parsed xml doesn't represent a Network message.")
 
         # Verifies the data field

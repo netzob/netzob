@@ -44,7 +44,7 @@ from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractMessageFactory :
+#| AbstractMessageFactory:
 #|     Factory dedicated to the manipulation of file messages
 #+---------------------------------------------------------------------------+
 class AbstractMessageFactory():
@@ -55,22 +55,22 @@ class AbstractMessageFactory():
     #|     Generate an XML representation of a message
     #+-----------------------------------------------------------------------+
     def save(message, root, namespace_project, namespace_common):
-        if message.getType() == "File" :
+        if message.getType() == "File":
             return FileMessageFactory.save(message, root, namespace_project, namespace_common)
-        elif message.getType() == "Network" :
+        elif message.getType() == "Network":
             return NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
-        elif message.getType() == "IPC" :
+        elif message.getType() == "IPC":
             return IPCMessageFactory.save(message, root, namespace_project, namespace_common)
-        elif message.getType() == "RAW" :
+        elif message.getType() == "RAW":
             return RawMessageFactory.save(message, root, namespace_project, namespace_common)
-        else :
+        else:
             raise NameError('''There is no factory which would support
             the generation of an xml representation of the message : ''' + str(message))
 
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of a file message
     #| @param rootElement: XML root of the file message
@@ -79,18 +79,18 @@ class AbstractMessageFactory():
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):
         # Computes which type is it
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
             raise NameError("The parsed xml doesn't represent a valid type message.")
 
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage":
             return FileMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
             return NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage":
             return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage":
             return RawMessageFactory.loadFromXML(rootElement, namespace, version)
-        else :
+        else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None
 

@@ -37,7 +37,7 @@ import threading
 
 
 #+---------------------------------------------------------------------------+
-#| MMSTDVisitor :
+#| MMSTDVisitor:
 #|     Definition of a visitor of an MMSTD automata
 #+---------------------------------------------------------------------------+
 class MMSTDVisitor(threading.Thread):
@@ -55,9 +55,9 @@ class MMSTDVisitor(threading.Thread):
     def run(self):
         self.log.debug("Starting the MMSTDVisitor")
         self.active = True
-        if self.isMaster :
+        if self.isMaster:
             self.runAsMaster()
-        else :
+        else:
             self.runAsClient()
         self.log.debug("End of execution for the MMSTDVisitor")
 
@@ -74,9 +74,9 @@ class MMSTDVisitor(threading.Thread):
     def runAsMaster(self):
         self.log.debug("The MMSTD Visitor is running as a master")
         currentState = self.model.getInitialState()
-        while self.active :
+        while self.active:
             currentState = currentState.executeAsMaster(self.abstractionLayer)
-            if currentState == None :
+            if currentState == None:
                 self.active = False
         self.log.debug("The MASTER stops !")
 
@@ -85,10 +85,10 @@ class MMSTDVisitor(threading.Thread):
         self.log.debug("The MMSTD Visitor is running as a client")
 
         currentState = self.model.getInitialState()
-        while self.active :
+        while self.active:
             self.log.debug("Run as a client the state " + str(currentState.getName()))
             currentState = currentState.executeAsClient(self.abstractionLayer)
-            if currentState == None :
+            if currentState == None:
                 self.log.warn("The execution of the transition didn't provide the next state")
                 self.active = False
         self.log.debug("The CLIENT stops !")

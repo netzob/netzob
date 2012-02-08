@@ -35,7 +35,7 @@ import os
 #+---------------------------------------------------------------------------+
 from netzob.Common.SharedLib import SharedLib
 #+---------------------------------------------------------------------------+
-#| Process :
+#| Process:
 #|     Model object of a simple process definition
 #+---------------------------------------------------------------------------+
 class Process(object):
@@ -65,10 +65,10 @@ class Process(object):
             perm = ar[1]
             path = ar[2][:len(ar[2]) - 1]
             found = False
-            for l in libs :
-                if l.getPath() == path :
+            for l in libs:
+                if l.getPath() == path:
                     found = True
-            if found == False :
+            if found == False:
                 (libName, libVersion) = SharedLib.findNameAndVersion(path)
 
 

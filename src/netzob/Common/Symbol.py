@@ -62,7 +62,7 @@ import libNeedleman
 NAMESPACE = "http://www.netzob.org/"
 
 #+---------------------------------------------------------------------------+
-#| Symbol :
+#| Symbol:
 #|     Class definition of a symbol
 #+---------------------------------------------------------------------------+
 class Symbol(object):
@@ -95,7 +95,7 @@ class Symbol(object):
         self.fields = []
 
         # If only one message (easy)
-        if len(self.getMessages()) == 1 :
+        if len(self.getMessages()) == 1:
             field = Field("Field 0", 0, self.getMessages()[0].getStringData())
             field.setFormat(aFormat)
             self.addField(field)
@@ -112,16 +112,16 @@ class Symbol(object):
         for m in self.getMessages():
             format += str(len(m.getReducedStringData()) / 2) + "M"
             serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
-            if m.getLeftReductionFactor() > maxLeftReducedStringData :
+            if m.getLeftReductionFactor() > maxLeftReducedStringData:
                 maxLeftReducedStringData = m.getLeftReductionFactor()
-            if m.getRightReductionFactor() > maxRightReducedStringData :
+            if m.getRightReductionFactor() > maxRightReducedStringData:
                 maxRightReducedStringData = m.getRightReductionFactor()
-            if m.getReducedSize() > maxReducedSize :
+            if m.getReducedSize() > maxReducedSize:
                 maxReducedSize = m.getReducedSize()
 
-        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK) :
+        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
             doInternalSlick = 1
-        else :
+        else:
             doInternalSlick = 0
 
         # Align sequences in C library
@@ -145,11 +145,11 @@ class Symbol(object):
                     align += aRegex[i:i + 1].encode("hex")
             i += 1
 
-        if maxLeftReducedStringData > 0 :
+        if maxLeftReducedStringData > 0:
             logging.warning("add on the left part adding a bit of --")
             for i in range(0, maxReducedSize):
                 align = "--" + align
-        if maxRightReducedStringData > 0 :
+        if maxRightReducedStringData > 0:
             logging.warning("add on the right part adding a bit of --")
             for i in range(0, maxReducedSize):
                 align = align + "--"
@@ -164,23 +164,23 @@ class Symbol(object):
         start = 0
         regex = []
         found = False
-        for i in range(len(align)) :
+        for i in range(len(align)):
             if (align[i] == "-"):
-                if (found == False) :
+                if (found == False):
                     start = i
                     found = True
-            else :
-                if (found == True) :
+            else:
+                if (found == True):
                     found = False
                     nbTiret = i - start
                     regex.append("(.{," + str(nbTiret) + "})")
                     regex.append(align[i])
-                else :
+                else:
                     if len(regex) == 0:
                         regex.append(align[i])
                     else:
                         regex[-1] += align[i]
-        if (found == True) :
+        if (found == True):
             nbTiret = i - start
             regex.append("(.{," + str(nbTiret) + "})")
 
@@ -206,8 +206,8 @@ class Symbol(object):
                 if messagesValuesByField == "":
                     self.getFields().pop(field.getIndex()) # We remove this useless field
                     # Adpat index of the following fields, before breaking
-                    for fieldNext in self.getFields() :
-                        if fieldNext.getIndex() > field.getIndex() :
+                    for fieldNext in self.getFields():
+                        if fieldNext.getIndex() > field.getIndex():
                             fieldNext.setIndex(fieldNext.getIndex() - 1)
                     doLoop = True
                     break
@@ -378,8 +378,8 @@ class Symbol(object):
     #|  Return the message which ID is provided
     #+----------------------------------------------
     def getMessageByID(self, messageID):
-        for message in self.messages :
-            if str(message.getID()) == str(messageID) :
+        for message in self.messages:
+            if str(message.getID()) == str(messageID):
                 return message
 
         return None
@@ -398,7 +398,7 @@ class Symbol(object):
     #+----------------------------------------------
     def getMessagesValuesByField(self, field):
         # First we verify the field exists in the symbol
-        if not field in self.fields :
+        if not field in self.fields:
             logging.warn("The computing field is not part of the current symbol")
             return []
 
@@ -407,7 +407,7 @@ class Symbol(object):
             messageTable = message.applyAlignment()
             messageElt = messageTable[field.getIndex()]
             res.append(messageElt)
-#            if len(messageElt) > 0 :
+#            if len(messageElt) > 0:
 #                res.append( messageElt )
 #            else:
 #                res.append( None )
@@ -419,7 +419,7 @@ class Symbol(object):
     #+----------------------------------------------
     def getUniqValuesByField(self, field):
         # First we verify the field exists in the symbol
-        if not field in self.fields :
+        if not field in self.fields:
             logging.warn("The computing field is not part of the current symbol")
             return []
 
@@ -427,7 +427,7 @@ class Symbol(object):
         for message in self.getMessages():
             messageTable = message.applyAlignment()
             messageElt = messageTable[field.getIndex()]
-            if len(messageElt) > 0 and not messageElt in res :
+            if len(messageElt) > 0 and not messageElt in res:
                 res.append(messageElt)
         return res
 
@@ -438,10 +438,10 @@ class Symbol(object):
     def concatFields(self, iField):
         field1 = None
         field2 = None
-        for field in self.fields :
-            if field.getIndex() == iField :
+        for field in self.fields:
+            if field.getIndex() == iField:
                 field1 = field
-            elif field.getIndex() == iField + 1 :
+            elif field.getIndex() == iField + 1:
                 field2 = field
         # Build the merged regex
         newRegex = ""
@@ -471,8 +471,8 @@ class Symbol(object):
         self.fields.remove(field2)
 
         # Update the index of the fields placed after it
-        for field in self.fields :
-            if field.getIndex() > newField.getIndex() :
+        for field in self.fields:
+            if field.getIndex() > newField.getIndex():
                 field.setIndex(field.getIndex() - 1)
         self.fields.append(newField)
         # sort fields by their index
@@ -528,21 +528,21 @@ class Symbol(object):
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
-        if field.getDescription() != None and len(field.getDescription()) > 0 :
+        if field.getDescription() != None and len(field.getDescription()) > 0:
             field1.setDescription("(1/2) " + field.getDescription())
         field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2)
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
         field2.setColor(field.getColor())
-        if field.getDescription() != None and len(field.getDescription()) > 0 :
+        if field.getDescription() != None and len(field.getDescription()) > 0:
             field2.setDescription("(2/2) " + field.getDescription())
 
         # Remove the truncated one
         self.fields.remove(field)
 
         # Modify index to adapt
-        for field in self.getFields() :
-            if field.getIndex() > field1.getIndex() :
+        for field in self.getFields():
+            if field.getIndex() > field1.getIndex():
                 field.setIndex(field.getIndex() + 1)
 
         self.fields.append(field1)
@@ -558,7 +558,7 @@ class Symbol(object):
     #+-----------------------------------------------------------------------+
     def getPossibleTypesForAField(self, field):
         # first we verify the field exists in the symbol
-        if not field in self.fields :
+        if not field in self.fields:
             logging.warn("The computing field is not part of the current symbol")
             return []
 
@@ -591,7 +591,7 @@ class Symbol(object):
         vbox.show()
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing potential data carving results ## ListStore format :
+        # Treeview containing potential data carving results ## ListStore format:
         # int: iField
         # str: data type (url, ip, email, etc.)
         store = gtk.ListStore(int, str)
@@ -627,13 +627,13 @@ class Symbol(object):
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
-                for cell in self.getMessagesValuesByField(field) :
+                for cell in self.getMessagesValuesByField(field):
                     for match in regex.finditer(TypeConvertor.netzobRawToString(cell)):
                         matchElts += 1
                 if matchElts > 0:
                     store.append([field.getIndex(), carver])
 
-        # Preview of matching fields in a treeview ## ListStore format :
+        # Preview of matching fields in a treeview ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
@@ -758,7 +758,7 @@ class Symbol(object):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
-                for cell in self.getMessagesValuesByField(self.getFieldByIndex(fieldIndex)) :
+                for cell in self.getMessagesValuesByField(self.getFieldByIndex(fieldIndex)):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
@@ -784,7 +784,7 @@ class Symbol(object):
         vbox.show()
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing ASN.1 results ## ListStore format :
+        # Treeview containing ASN.1 results ## ListStore format:
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
         # str: type
@@ -831,7 +831,7 @@ class Symbol(object):
 #                    print "PAN: " + repr(res)
 #                        store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])
 
-        # Preview of matching fields in a treeview ## ListStore format :
+        # Preview of matching fields in a treeview ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
@@ -901,7 +901,7 @@ class Symbol(object):
         vbox.show()
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing potential data carving results ## ListStore format :
+        # Treeview containing potential data carving results ## ListStore format:
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
         # str: type
@@ -937,7 +937,7 @@ class Symbol(object):
                 logging.warning("ERROR: " + str(e.value))
                 break
 
-            for envDependency in project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES) :
+            for envDependency in project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES):
                 if envDependency.getValue() == "":
                     break
                 matchElts = 0
@@ -963,7 +963,7 @@ class Symbol(object):
                 iField += 1
 
         # Preview of matching fields in a treeview
-        ## ListStore format :
+        ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
@@ -1028,7 +1028,7 @@ class Symbol(object):
     def getVariables(self):
         result = []
         for field in self.getFields():
-            if field.getVariable() != None :
+            if field.getVariable() != None:
                 result.append(field.getVariable())
         return result
 
@@ -1040,8 +1040,8 @@ class Symbol(object):
         self.messages.remove(message)
 
     def addMessage(self, message):
-        for msg in self.messages :
-            if msg.getID() == message.getID() :
+        for msg in self.messages:
+            if msg.getID() == message.getID():
                 return
         message.setSymbol(self)
         self.messages.append(message)
@@ -1066,25 +1066,25 @@ class Symbol(object):
 
         # Save the messages
         xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages")
-        for message in self.messages :
+        for message in self.messages:
             AbstractMessageFactory.save(message, xmlMessages, namespace_project, namespace_common)
         # Save the fields
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
-        for field in self.getFields() :
+        for field in self.getFields():
             field.save(xmlFields, namespace_project)
 
     #+----------------------------------------------
-    #| getXMLDefinition :
+    #| getXMLDefinition:
     #|   Returns the XML description of the symbol
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
 
         # Register the namespace (2 way depending of the version)
-        try :
+        try:
             etree.register_namespace('netzob', PROJECT_NAMESPACE)
             etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-        except AttributeError :
+        except AttributeError:
             etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
             etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
 
@@ -1103,7 +1103,7 @@ class Symbol(object):
 #        self.endianess = Endianess.BIG
 
     #+----------------------------------------------
-    #| getScapyDissector :
+    #| getScapyDissector:
     #|   @return a string containing the scapy dissector of the symbol
     #+----------------------------------------------
     def getScapyDissector(self):
@@ -1184,8 +1184,8 @@ class Symbol(object):
                             self.fields.remove(precField)
 
                             # Update the index of the fields placed after the new one
-                            for field in self.fields :
-                                if field.getIndex() > aField.getIndex() :
+                            for field in self.fields:
+                                if field.getIndex() > aField.getIndex():
                                     field.setIndex(field.getIndex() - 2)
                             # Sort fields by their index
                             self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
@@ -1227,7 +1227,7 @@ class Symbol(object):
         rawData = data.encode("hex")
         hbox = gtk.HPaned()
         hbox.show()
-        # Treeview containing potential data carving results ## ListStore format :
+        # Treeview containing potential data carving results ## ListStore format:
         # int: iCol
         # str: encoding
         store = gtk.ListStore(int, str)
@@ -1265,7 +1265,7 @@ class Symbol(object):
 
         ## TODO: Algo (second step) : for each message, try to find data
 
-        # Preview of matching fields in a treeview ## ListStore format :
+        # Preview of matching fields in a treeview ## ListStore format:
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         treeviewRes.connect("cursor-changed", self.searchResultSelected_cb, treeview, data)
@@ -1320,10 +1320,10 @@ class Symbol(object):
     def getRoot(self):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
-        for field in self.getFields() :
-            if field.getVariable() == None :
+        for field in self.getFields():
+            if field.getVariable() == None:
                 variable = field.getDefaultVariable(self)
-            else :
+            else:
                 variable = field.getVariable()
 
             rootSymbol.addChild(variable)
@@ -1376,7 +1376,7 @@ class Symbol(object):
     @staticmethod
     def loadSymbol(xmlRoot, namespace, namespace_common, version, project):
 
-        if version == "0.1" :
+        if version == "0.1":
             nameSymbol = xmlRoot.get("name")
             idSymbol = xmlRoot.get("id")
             alignmentSymbol = xmlRoot.get("alignment", None)
@@ -1391,20 +1391,20 @@ class Symbol(object):
             symbol.setRawDelimiter(rawDelimiter)
 
             # we parse the messages
-            if xmlRoot.find("{" + namespace + "}messages") != None :
+            if xmlRoot.find("{" + namespace + "}messages") != None:
                 xmlMessages = xmlRoot.find("{" + namespace + "}messages")
-                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message") :
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                     message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
-                    if message != None :
+                    if message != None:
                         message.setSymbol(symbol)
                         symbol.addMessage(message)
 
             # we parse the fields
-            if xmlRoot.find("{" + namespace + "}fields") != None :
+            if xmlRoot.find("{" + namespace + "}fields") != None:
                 xmlFields = xmlRoot.find("{" + namespace + "}fields")
-                for xmlField in xmlFields.findall("{" + namespace + "}field") :
+                for xmlField in xmlFields.findall("{" + namespace + "}field"):
                     field = Field.loadFromXML(xmlField, namespace, version)
-                    if field != None :
+                    if field != None:
                         symbol.addField(field)
             return symbol
         return None

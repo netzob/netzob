@@ -41,7 +41,7 @@ from netzob.Fuzzing.Ipc import Ipc
 from netzob.Fuzzing.File import File
 
 #+----------------------------------------------
-#| UIfuzzing :
+#| UIfuzzing:
 #|     GUI for fuzzing applications
 #+----------------------------------------------
 class UIfuzzing:
@@ -69,7 +69,7 @@ class UIfuzzing:
         self.filePanel.save()
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, netzob):
         # create logger with the given configuration

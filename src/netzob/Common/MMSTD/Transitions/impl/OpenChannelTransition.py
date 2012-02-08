@@ -45,7 +45,7 @@ from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
-#| OpenChannelTransition :
+#| OpenChannelTransition:
 #|    Special transition in charge of opening the transition
 #+---------------------------------------------------------------------------+
 class OpenChannelTransition(AbstractTransition):
@@ -75,20 +75,20 @@ class OpenChannelTransition(AbstractTransition):
 
         self.log.debug("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
 
-        if abstractionLayer.getCommunicationChannel().isServer() :
+        if abstractionLayer.getCommunicationChannel().isServer():
             # start a specific listening network thread
             self.activate()
             self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, False)
             self.deactivate()
             return None
-        else :
+        else:
             self.activate()
             result = self.openConnection(abstractionLayer)
             self.deactivate()
-            if result :
+            if result:
                 return self.outputState
-            else :
+            else:
                 return None
 
     #+-----------------------------------------------------------------------+
@@ -98,20 +98,20 @@ class OpenChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):
-        if abstractionLayer.getCommunicationChannel().isServer() :
+        if abstractionLayer.getCommunicationChannel().isServer():
             # start a specific listening network thread
             self.activate()
             self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, True)
             self.deactivate()
             return None
-        else :
+        else:
             self.activate()
             result = self.openConnection(abstractionLayer)
             self.deactivate()
-            if result :
+            if result:
                 return self.outputState
-            else :
+            else:
                 return None
 
     #+-----------------------------------------------------------------------+
@@ -124,18 +124,18 @@ class OpenChannelTransition(AbstractTransition):
         self.log.info("OpenChannelTransition executed with the abstractionLayer : " + str(abstractionLayer))
 
         i = self.maxNumberOfAttempt
-        while (not abstractionLayer.isConnected()  and i > 0) :
+        while (not abstractionLayer.isConnected()  and i > 0):
             time.sleep(int(self.connectionTime) / 1000)
             abstractionLayer.connect()
-            if abstractionLayer.isConnected() :
+            if abstractionLayer.isConnected():
                 self.log.debug("Connected !")
-            else :
+            else:
                 self.log.warn("Error, the connection attempt failed")
             i = i - 1
 
-        if (abstractionLayer.isConnected()) :
+        if (abstractionLayer.isConnected()):
             return True
-        else :
+        else:
             self.log.warn("Max connection attempt reached !")
             return False
 
@@ -179,11 +179,11 @@ class OpenChannelTransition(AbstractTransition):
 
         inputStateTransition = None
         outputStateTransition = None
-        for state in states :
+        for state in states:
 
-            if state.getID() == idStartTransition :
+            if state.getID() == idStartTransition:
                 inputStateTransition = state
-            if state.getID() == idEndTransition :
+            if state.getID() == idEndTransition:
                 outputStateTransition = state
 
         connectionTime = int(xmlTransition.find("{" + namespace + "}connectionTime").text)

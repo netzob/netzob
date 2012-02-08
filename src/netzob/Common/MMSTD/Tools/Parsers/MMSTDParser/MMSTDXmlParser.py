@@ -47,14 +47,14 @@ from netzob.Common.MMSTD.Tools.Parsers.DictionaryParser import DictionaryXmlPars
 from netzob.Common.MMSTD import MMSTD
 
 #+----------------------------------------------
-#| MMSTDXmlParser :
+#| MMSTDXmlParser:
 #|    Parser for an MMSTD
 #+----------------------------------------------
 class MMSTDXmlParser(object):
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of an MMSTD
     #| @param rootElement: XML root of the MMSTD definition
@@ -62,13 +62,13 @@ class MMSTDXmlParser(object):
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement):
-        if rootElement.tag != "automata" :
+        if rootElement.tag != "automata":
             raise NameError("The parsed XML doesn't represent an automata.")
 
-        if rootElement.get("type", "none") != "mmstd" :
+        if rootElement.get("type", "none") != "mmstd":
             raise NameError("The parsed XML doesn't represent an MMSTD")
 
-        if rootElement.get("dictionary", "none") == "none" :
+        if rootElement.get("dictionary", "none") == "none":
             raise NameError("The MMSTD doesn't have any dictionary declared")
 
 
@@ -82,26 +82,26 @@ class MMSTDXmlParser(object):
         # parse for all the states
         states = []
         initialState = None
-        for xmlState in rootElement.findall("state") :
+        for xmlState in rootElement.findall("state"):
             idState = int(xmlState.get("id", "-1"))
             classState = xmlState.get("class", "NormalState")
             nameState = xmlState.get("name", "none")
             state = NormalState.NormalState(idState, nameState)
             states.append(state)
-            if idState == 0 :
+            if idState == 0:
                 initialState = state
 
         # parse for all the transitions
-        for xmlTransition in rootElement.findall("transition") :
+        for xmlTransition in rootElement.findall("transition"):
 
             classTransition = xmlTransition.get("class", "none")
 
             transition = None
-            if classTransition == "SemiStochasticTransition" :
+            if classTransition == "SemiStochasticTransition":
                 transition = SemiStochasticTransition.SemiStochasticTransition.parse(xmlTransition, dictionary, states)
-            elif classTransition == "OpenChannelTransition" :
+            elif classTransition == "OpenChannelTransition":
                 transition = OpenChannelTransition.OpenChannelTransition.parse(xmlTransition, states)
-            elif classTransition == "CloseChannelTransition" :
+            elif classTransition == "CloseChannelTransition":
                 transition = CloseChannelTransition.CloseChannelTransition.parse(xmlTransition, states)
 
 

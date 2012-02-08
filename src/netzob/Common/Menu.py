@@ -48,7 +48,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
 
 #+---------------------------------------------------------------------------+
-#| Menu :
+#| Menu:
 #|     Class definition of the menu
 #+---------------------------------------------------------------------------+
 class Menu(object):
@@ -146,13 +146,13 @@ class Menu(object):
         self.menuBar.append(menuRootProject)
 
     def updateProjectMenu(self):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             # Deactivate almost everything
             self.saveProject.set_sensitive(False)
             self.importRootMenu.set_sensitive(False)
             self.exportRootMenu.set_sensitive(False)
             self.helpContent.set_sensitive(False)
-        else :
+        else:
             # Activate everything
             self.saveProject.set_sensitive(True)
             self.importRootMenu.set_sensitive(True)
@@ -241,7 +241,7 @@ class Menu(object):
         # Update the list of project
         for i in self.selectAProject.get_children():
             self.selectAProject.remove(i)
-        for project in self.netzob.getCurrentWorkspace().getProjects() :
+        for project in self.netzob.getCurrentWorkspace().getProjects():
             projectEntry = gtk.MenuItem(project.getName())
             projectEntry.connect("activate", self.switchProjectAction, project)
             self.selectAProject.append(projectEntry)
@@ -323,7 +323,7 @@ class Menu(object):
     #| Called when user wants to display symbol structure panel
     #+----------------------------------------------
     def displaySymbolStructureAction(self, widget):
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, self.displaySymbolStructure.get_active())
         self.netzob.updateCurrentPanel()
 
@@ -331,7 +331,7 @@ class Menu(object):
     #| Called when user wants to display messages panel
     #+----------------------------------------------
     def displayMessagesAction(self, widget):
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, self.displayMessages.get_active())
         self.netzob.updateCurrentPanel()
 
@@ -339,7 +339,7 @@ class Menu(object):
     #| Called when user wants to display the console
     #+----------------------------------------------
     def displayConsoleAction(self, widget):
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, self.displayConsole.get_active())
         self.netzob.updateCurrentPanel()
 
@@ -389,10 +389,10 @@ class Menu(object):
 
         # We verify the project name doesn't already exist
         found = False
-        for project in  self.netzob.getCurrentWorkspace().getProjects() :
-            if project.getName() == projectName :
+        for project in  self.netzob.getCurrentWorkspace().getProjects():
+            if project.getName() == projectName:
                 found = True
-        if found :
+        if found:
             dialogBis = gtk.Dialog(title="Error", flags=0, buttons=None)
             label = gtk.Label("This project name already exists")
             label.show()

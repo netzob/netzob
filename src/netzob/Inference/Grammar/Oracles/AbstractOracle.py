@@ -40,7 +40,7 @@ import logging
 
 
 #+----------------------------------------------
-#| AbstractOracle :
+#| AbstractOracle:
 #+----------------------------------------------
 class AbstractOracle(object):
 

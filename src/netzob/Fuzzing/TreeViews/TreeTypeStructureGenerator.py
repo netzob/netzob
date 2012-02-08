@@ -36,14 +36,14 @@ import gtk
 #+----------------------------------------------
 
 #+----------------------------------------------
-#| TreeTypeStructureGenerator :
+#| TreeTypeStructureGenerator:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the type structure
 #+----------------------------------------------
 class TreeTypeStructureGenerator():
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -54,7 +54,7 @@ class TreeTypeStructureGenerator():
         self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator.py')
 
     #+----------------------------------------------
-    #| initialization :
+    #| initialization:
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
@@ -79,7 +79,7 @@ class TreeTypeStructureGenerator():
         self.scroll.show()
 
     #+----------------------------------------------
-    #| clear :
+    #| clear:
     #|         Clear the class
     #+----------------------------------------------
     def clear(self):
@@ -88,7 +88,7 @@ class TreeTypeStructureGenerator():
         self.treestore.clear()
 
     #+----------------------------------------------
-    #| error :
+    #| error:
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
@@ -96,7 +96,7 @@ class TreeTypeStructureGenerator():
         pass
 
     #+----------------------------------------------
-    #| update :
+    #| update:
     #|   Update the treestore
     #+----------------------------------------------
     def update(self):
@@ -127,7 +127,7 @@ class TreeTypeStructureGenerator():
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
@@ -139,7 +139,7 @@ class TreeTypeStructureGenerator():
         return self.message
 
     #+----------------------------------------------
-    #| SETTERS :
+    #| SETTERS:
     #+----------------------------------------------
     def setTreeview(self, treeview):
         self.treeview = treeview

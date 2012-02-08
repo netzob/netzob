@@ -39,7 +39,7 @@ pygtk.require('2.0')
 from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 
 #+----------------------------------------------
-#| ScapyExport :
+#| ScapyExport:
 #|     Class for building a scapy dissector
 #+----------------------------------------------
 class ScapyExport:
@@ -60,7 +60,7 @@ class ScapyExport:
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the main netzob object
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -114,16 +114,16 @@ class ScapyExport:
                 self.updateTextareaWithDissector()
 
     def updateTextareaWithDissector(self):
-        if self.selectedSymbol == None :
+        if self.selectedSymbol == None:
             self.textarea.get_buffer().set_text("Select a symbol to see its Scapy dissector")
-        else :
+        else:
             found = False
             for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
                 if str(symbol.getID()) == self.selectedSymbol:
                     self.textarea.get_buffer().set_text("")
                     self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getScapyDissector(), "normalTag")
                     found = True
-            if found == False :
+            if found == False:
                 self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))
 
     #+----------------------------------------------

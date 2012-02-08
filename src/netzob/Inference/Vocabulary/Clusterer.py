@@ -46,7 +46,7 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 import libNeedleman
 
 #+----------------------------------------------
-#| Clusterer :
+#| Clusterer:
 #|     Reorganize a set of symbols
 #+----------------------------------------------
 class Clusterer(object):
@@ -66,7 +66,7 @@ class Clusterer(object):
         else:
             # Create a symbol for each message
             self.symbols = []
-            for symbol in symbols :
+            for symbol in symbols:
                 for m in symbol.getMessages():
                     tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol", self.getProject())
                     tmpSymbol.addMessage(m)
@@ -74,7 +74,7 @@ class Clusterer(object):
                     self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
 
     #+----------------------------------------------
-    #| retrieveMaxIJ :
+    #| retrieveMaxIJ:
     #|   given a list of symbols, it computes the
     #|   the possible two symbols which can be merged
     #| @return (i,j,max) (i,j) path in the matrix of
@@ -86,7 +86,7 @@ class Clusterer(object):
         # Serialize the symbols before feeding the C library
         if self.configuration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
             doInternalSlick = 1
-        else :
+        else:
             doInternalSlick = 0
         serialSymbols = ""
         format = ""
@@ -135,7 +135,7 @@ class Clusterer(object):
 
         gobject.idle_add(self.resetProgressBar)
         progressionStep = 1.0 / nbIteration
-        for iteration in range(0, nbIteration) :
+        for iteration in range(0, nbIteration):
             self.log.debug("Iteration {0} started...".format(str(iteration)))
             # Create the score matrix for each symbol
             (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ()
@@ -160,26 +160,26 @@ class Clusterer(object):
 
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
-            if (maximum >= min_equivalence) :
+            if (maximum >= min_equivalence):
                 self.log.info("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
                 self.mergeEffectiveRowCol(i_maximum, j_maximum)
-            else :
+            else:
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(min_equivalence)))
                 break
 
         # Compute the regex/alignment of each symbol
         gobject.idle_add(self.resetProgressBar)
-        if len(self.symbols) == 0 :
+        if len(self.symbols) == 0:
             progressionStep = 1.0
-        else :
+        else:
             progressionStep = 1.0 / len(self.symbols)
-        for g in self.symbols :
+        for g in self.symbols:
             g.buildRegexAndAlignment(self.configuration)
             gobject.idle_add(self.doProgressBarStep, progressionStep)
         gobject.idle_add(self.resetProgressBar)
 
     #+----------------------------------------------
-    #| mergeOrphanSymbols :
+    #| mergeOrphanSymbols:
     #|   try to merge orphan symbols by progressively
     #|   reducing the taken into account size of msgs
     #+----------------------------------------------
@@ -191,26 +191,26 @@ class Clusterer(object):
         currentReductionIsLeft = False
         increment = 10
 
-        while leftReductionFactor < 80 and rightReductionFactor < 80 :
+        while leftReductionFactor < 80 and rightReductionFactor < 80:
 
             # First we retrieve the current orphans
             orphans = []
             tmp_symbols = []
             # extract orphans
-            for symbol in self.symbols :
-                if len(symbol.getMessages()) == 1 :
+            for symbol in self.symbols:
+                if len(symbol.getMessages()) == 1:
                     orphans.append(symbol)
             # create a tmp symbols array where symbols will be added once computed
-            for symbol in self.symbols :
-                if len(symbol.getMessages()) > 1 :
+            for symbol in self.symbols:
+                if len(symbol.getMessages()) > 1:
                     tmp_symbols.append(symbol)
 
-            if len(orphans) <= 1 :
+            if len(orphans) <= 1:
                 self.log.info("Number of orphan symbols : {0}. The orphan merging op. is finished !".format(len(orphans)))
                 break;
 
             self.symbols = orphans
-            if currentReductionIsLeft :
+            if currentReductionIsLeft:
                 leftReductionFactor = leftReductionFactor + increment
                 # Reduce the size of the messages by 50% from the left
                 for orphan in self.symbols:
@@ -220,7 +220,7 @@ class Clusterer(object):
                 self.mergeEffectiveSymbols()
                 currentReductionIsLeft = False
 
-            if not currentReductionIsLeft :
+            if not currentReductionIsLeft:
                 rightReductionFactor = rightReductionFactor + increment
                 # Reduce the size of the messages from the right
                 for orphan in self.symbols:
@@ -231,20 +231,20 @@ class Clusterer(object):
                 currentReductionIsLeft = True
 
 
-            for orphan in self.symbols :
+            for orphan in self.symbols:
                 tmp_symbols.append(orphan)
             self.symbols = tmp_symbols
 
         # Compute the regex/alignment of each symbol
         gobject.idle_add(self.resetProgressBar)
         progressionStep = 1.0 / len(self.symbols)
-        for g in self.symbols :
+        for g in self.symbols:
             g.buildRegexAndAlignment()
             gobject.idle_add(self.doProgressBarStep, progressionStep)
         gobject.idle_add(self.resetProgressBar)
 
     #+----------------------------------------------
-    #| mergeRowCol :
+    #| mergeRowCol:
     #|   Merge the symbols i and j in the "symbols" structure
     #+----------------------------------------------
     def mergeEffectiveRowCol(self, i_maximum, j_maximum):
@@ -262,7 +262,7 @@ class Clusterer(object):
         messages.extend(symbol2.getMessages())
 
         newSymbol = Symbol(str(uuid.uuid4()), "Symbol", self.project)
-        for message in messages :
+        for message in messages:
             newSymbol.addMessage(message)
 
         # Append th new symbol to the "symbols" structure
@@ -273,7 +273,7 @@ class Clusterer(object):
 
 
     #+----------------------------------------------
-    #| doProgressBarStep :
+    #| doProgressBarStep:
     #+----------------------------------------------
     def doProgressBarStep(self, step):
         pass
@@ -281,14 +281,14 @@ class Clusterer(object):
 #        self.netzob.progressBar.set_fraction(new_val)
 
     #+----------------------------------------------
-    #| resetProgressBar :
+    #| resetProgressBar:
     #+----------------------------------------------
     def resetProgressBar(self):
         pass
 #        self.netzob.progressBar.set_fraction(0)
 
     #+----------------------------------------------
-    #| GETTER/SETTER :
+    #| GETTER/SETTER:
     #+----------------------------------------------
     def getSymbols(self):
         return self.symbols

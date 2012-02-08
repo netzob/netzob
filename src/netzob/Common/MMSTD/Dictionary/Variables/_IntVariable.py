@@ -43,7 +43,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| IntVariable :
+#| IntVariable:
 #|     Definition of an int variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class IntVariable(Variable):
@@ -59,10 +59,10 @@ class IntVariable(Variable):
         self.min = -1
         self.max = -1
         self.reset = "normal"
-        if self.value != None :
+        if self.value != None:
             self.binValue = TypeConvertor.int2bin(self.value, self.size)
             self.strValue = TypeConvertor.int2string(self.value)
-        else :
+        else:
             self.binValue = None
             self.strValue = None
 
@@ -73,7 +73,7 @@ class IntVariable(Variable):
 
     def restore(self):
         self.log.debug("Restore ...")
-        if self.binValueBeforeLearning != None and self.strValueBeforeLearning != None :
+        if self.binValueBeforeLearning != None and self.strValueBeforeLearning != None:
             self.log.debug("Restore the previsouly learned value")
             self.binValue = self.binValueBeforeLearning
             self.strValue = self.strValueBeforeLearning
@@ -82,9 +82,9 @@ class IntVariable(Variable):
         return (self.binValue, self.strValue)
 
 
-    def generateValue(self, negative, dictionary) :
+    def generateValue(self, negative, dictionary):
         self.log.debug("Generate value of hex")
-        if self.min != -1 and self.max != -1 :
+        if self.min != -1 and self.max != -1:
             # generate a value in int
             r = random.randint(self.min, self.max)
             self.log.debug("Generating hex of value : " + str(r))
@@ -93,13 +93,13 @@ class IntVariable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
-        if self.binValue != None and not isForced :
+        if self.binValue != None and not isForced:
             self.log.debug("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
             return indice + len(self.binValue)
 
         tmp = val[indice:]
         self.log.debug("Learn hex given its size : " + str(self.size) + " from " + str(tmp))
-        if len(tmp) >= self.size :
+        if len(tmp) >= self.size:
 
             self.binValueBeforeLearning = self.binValue
             self.strValueBeforeLearning = self.strValue
@@ -111,11 +111,11 @@ class IntVariable(Variable):
             self.log.debug("learning value : " + self.strValue)
 
             return indice + self.size
-        else :
+        else:
             return -1
 
 
-    def setReset(self, reset) :
+    def setReset(self, reset):
         self.reset = reset
     def setSize(self, size):
         self.size = size

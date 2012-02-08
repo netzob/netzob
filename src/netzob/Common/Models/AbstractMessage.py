@@ -42,7 +42,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 #+---------------------------------------------------------------------------+
-#| AbstractMessage :
+#| AbstractMessage:
 #|     Definition of a message
 #+---------------------------------------------------------------------------+
 class AbstractMessage():
@@ -50,9 +50,9 @@ class AbstractMessage():
     def __init__(self, id, timestamp, data, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
-        if id == None :
+        if id == None:
             self.id = uuid.uuid4()
-        else :
+        else:
             self.id = id
 
         self.timestamp = timestamp
@@ -92,16 +92,16 @@ class AbstractMessage():
         start = 0
         end = len(self.getStringData())
 
-        if self.getLeftReductionFactor() > 0 :
+        if self.getLeftReductionFactor() > 0:
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
-            if (end - start) % 2 == 1 :
+            if (end - start) % 2 == 1:
                 start = start - 1
-        if self.getRightReductionFactor() > 0 :
+        if self.getRightReductionFactor() > 0:
             end = self.getRightReductionFactor() * len(self.getStringData()) / 100
-            if (end - start) % 2 == 1 :
+            if (end - start) % 2 == 1:
                 end = end + 1
 
-        if (end - start) % 2 == 1 :
+        if (end - start) % 2 == 1:
             end = end + 1
 
         return len(self.getStringData()) - (end - start)
@@ -110,13 +110,13 @@ class AbstractMessage():
         start = 0
         end = len(self.getStringData())
 
-        if self.getLeftReductionFactor() > 0 :
+        if self.getLeftReductionFactor() > 0:
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
-            if (end - start) % 2 == 1 :
+            if (end - start) % 2 == 1:
                 start = start - 1
-        if self.getRightReductionFactor() > 0 :
+        if self.getRightReductionFactor() > 0:
             end = self.getRightReductionFactor() * len(self.getStringData()) / 100
-            if (end - start) % 2 == 1 :
+            if (end - start) % 2 == 1:
                 end = end + 1
 
 
@@ -171,19 +171,19 @@ class AbstractMessage():
                     color = field.getColor()
 
                 # Define the background color
-                if field.getBackgroundColor() != None :
+                if field.getBackgroundColor() != None:
                     backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-                else :
+                else:
                     backgroundColor = ""
 
                 # Overwrite the background color (red if the variable doesn't match the data)
-                if field.getVariable() != None :
+                if field.getVariable() != None:
                     # Creation of a temporary memory just for the current
                     tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
 
-                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, tmpMemory) == -1 :
+                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, tmpMemory) == -1:
                         backgroundColor = 'background="red"'
-                    else :
+                    else:
                         backgroundColor = 'background="green"'
 
                 if styled:
@@ -235,9 +235,9 @@ class AbstractMessage():
                 color = field.getColor()
 
             # Define the background color
-            if field.getBackgroundColor() != None :
+            if field.getBackgroundColor() != None:
                 backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-            else :
+            else:
                 backgroundColor = ""
 
             if styled:

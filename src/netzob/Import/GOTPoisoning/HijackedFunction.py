@@ -38,10 +38,10 @@ import logging
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| HijackedFunction :
+#| HijackedFunction:
 #|     Definition of a function to hijack
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| A function to hijack has the following members :
+#| A function to hijack has the following members:
 #|     - a name
 #|     - a return type
 #|     - a set of parameter
@@ -66,18 +66,18 @@ class HijackedFunction():
         source += "\t" + self.returnType + " (*origfunc)("
         i = 0
         params = ""
-        for param in self.parameters :
+        for param in self.parameters:
             params += param[0] + " " + param[1] + "_"
-            if i != len(self.parameters) - 1 :
+            if i != len(self.parameters) - 1:
                 params += ", "
             i = i + 1
         source += params + ") = 0x00000000;\n\n"
 
         paramNames = ""
         i = 0
-        for param in self.parameters :
+        for param in self.parameters:
             paramNames += param[1]
-            if i != len(self.parameters) - 1 :
+            if i != len(self.parameters) - 1:
                 paramNames += ", "
             i = i + 1
 
@@ -101,9 +101,9 @@ class HijackedFunction():
     def getPrototype(self):
         params = ""
         i = 0
-        for param in self.parameters :
+        for param in self.parameters:
             params = params + param[0] + " " + param[1]
-            if i < len(self.parameters) - 1 :
+            if i < len(self.parameters) - 1:
                 params = params + ", "
             i = i + 1
         prototype = self.returnType + " " + self.name + " (" + params + ")"
@@ -117,9 +117,9 @@ class HijackedFunction():
     def getParasitePrototype(self):
         params = ""
         i = 0
-        for param in self.parameters :
+        for param in self.parameters:
             params = params + param[0] + " " + param[1]
-            if i < len(self.parameters) - 1 :
+            if i < len(self.parameters) - 1:
                 params = params + ", "
             i = i + 1
 
@@ -134,9 +134,9 @@ class HijackedFunction():
     def getParasiteFunctionDeclaration(self):
         params = ""
         i = 0
-        for param in self.parameters :
+        for param in self.parameters:
             params += param[0] + " " + param[1]
-            if i != len(self.parameters) - 1 :
+            if i != len(self.parameters) - 1:
                 params += ", "
             i = i + 1
 
@@ -145,9 +145,9 @@ class HijackedFunction():
 
     @staticmethod
     def loadFromXML(rootElement):
-        if rootElement.tag != "function" :
+        if rootElement.tag != "function":
             raise NameError("The parsed xml doesn't represent a function of a shared a lib.")
-        if rootElement.get("name", "none") == "none" :
+        if rootElement.get("name", "none") == "none":
             raise NameError("The parsed xml doesn't have a valid name which is mandatory for a function")
 
         funcName = rootElement.get("name", "none")
@@ -155,10 +155,10 @@ class HijackedFunction():
         funcParams = []
 
         # parse the parameters
-        for xmlParam in rootElement.findall("params//param") :
-            if xmlParam.get("name", "none") == "none" :
+        for xmlParam in rootElement.findall("params//param"):
+            if xmlParam.get("name", "none") == "none":
                 raise NameError("The parsed xml doesn't have a valid param name")
-            if xmlParam.get("type", "none") == "none" :
+            if xmlParam.get("type", "none") == "none":
                 raise NameError("The parsed xml doesn't have a valid type")
             pName = xmlParam.get("name", "none")
             pType = xmlParam.get("type", "none")
@@ -170,13 +170,13 @@ class HijackedFunction():
 #        source = "\tint fd = _open(\"/tmp/content2.log\");\n"
 #
 #        # parse the exports
-#        for xmlExport in rootElement.findall("exports//export") :
-#            if xmlExport.get("var", "none") == "none" :
+#        for xmlExport in rootElement.findall("exports//export"):
+#            if xmlExport.get("var", "none") == "none":
 #                raise NameError("The exported var should have a name")
 #
 #            exportVar = xmlExport.get("var", "none")
 #            exportSize = ""
-#            if (xmlExport.get("size", "none")!="none") :
+#            if (xmlExport.get("size", "none")!="none"):
 #                exportSize = xmlExport.get("size", "none")
 #
 #            source = source + "\t _write(fd, "+exportVar+" , "+exportSize+");\n"

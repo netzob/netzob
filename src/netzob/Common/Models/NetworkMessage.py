@@ -42,7 +42,7 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
-#| NetworkMessage :
+#| NetworkMessage:
 #|     Definition of a network message
 #+---------------------------------------------------------------------------+
 class NetworkMessage(AbstractMessage):
@@ -83,7 +83,7 @@ class NetworkMessage(AbstractMessage):
         return properties
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getProtocol(self):
         return self.protocol
@@ -99,7 +99,7 @@ class NetworkMessage(AbstractMessage):
         return self.timestamp
 
     #+----------------------------------------------
-    #| SETTERS :
+    #| SETTERS:
     #+----------------------------------------------
     def setProtocol(self, protocol):
         self.protocol = protocol
@@ -108,16 +108,16 @@ class NetworkMessage(AbstractMessage):
     def setIPDestination(self, ipDestination):
         self.ip_destination = ipDestination
     def setL4SourcePort(self, l4sourcePort):
-        try :
+        try:
             self.l4_source_port = int(l4sourcePort)
-        except :
+        except:
             self.log.warning("Impossible to set the given L4 source port since its not an int ! " + l4sourcePort)
             self.l4_source_port = -1
 
     def setL4DestinationPort(self, l4targetPort):
-        try :
+        try:
             self.l4_destination_port = int(l4targetPort)
-        except :
+        except:
             self.log.warning("Impossible to set the given L4 target port since its not an int !")
             self.l4_destination_port = -1
 

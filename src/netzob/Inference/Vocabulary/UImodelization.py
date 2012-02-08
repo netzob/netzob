@@ -65,7 +65,7 @@ from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import Tre
 from netzob.Inference.Vocabulary.VariableView import VariableView
 
 #+----------------------------------------------
-#| UImodelization :
+#| UImodelization:
 #|     GUI for vocabulary inference
 #+----------------------------------------------
 class UImodelization:
@@ -156,7 +156,7 @@ class UImodelization:
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the netzob main class
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -356,7 +356,7 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
 
     #+----------------------------------------------
-    #| discoverAlignment :
+    #| discoverAlignment:
     #|   Parse the traces and store the results
     #+----------------------------------------------
     def discoverAlignment_cb(self, widget):
@@ -424,7 +424,7 @@ class UImodelization:
         dialog.show()
 
     #+----------------------------------------------
-    #| discoverAlignment_cb_cb :
+    #| discoverAlignment_cb_cb:
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
     def discoverAlignment_cb_cb(self, widget, dialog):
@@ -436,7 +436,7 @@ class UImodelization:
         Job(self.startDiscoverAlignment(vocabulary, dialog))
 
     #+----------------------------------------------
-    #| startDiscoverAlignment :
+    #| startDiscoverAlignment:
     #|   Execute the Job of the Alignment in a unsynchronized way
     #+----------------------------------------------
     def startDiscoverAlignment(self, vocabulary, dialog):
@@ -447,23 +447,23 @@ class UImodelization:
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
-        if message == None :
+        if message == None:
             gobject.idle_add(self.progressbarAlignment.set_text, "")
-        else :
+        else:
             gobject.idle_add(self.progressbarAlignment.set_text, message)
 #
 #    #+----------------------------------------------
-#    #| do_pulse_for_discoverAlignement :
+#    #| do_pulse_for_discoverAlignement:
 #    #|   Computes if the progress bar must be updated or not
 #    #+----------------------------------------------
     def do_pulse_for_discoverAlignement(self):
-        if self.currentExecutionOfAlignmentHasFinished == False :
+        if self.currentExecutionOfAlignmentHasFinished == False:
             self.progressbarAlignment.pulse()
             return True
         return False
 
     #+----------------------------------------------
-    #| forceAlignment_cb :
+    #| forceAlignment_cb:
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
     def forceAlignment_cb(self, widget):
@@ -512,7 +512,7 @@ class UImodelization:
         dialog.show()
 
     #+----------------------------------------------
-    #| forceAlignment_cb_cb :
+    #| forceAlignment_cb_cb:
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
     def forceAlignment_cb_cb(self, widget, dialog, aFormat, delimiter):
@@ -528,7 +528,7 @@ class UImodelization:
         dialog.destroy()
 
     #+----------------------------------------------
-    #| simpleAlignment_cb :
+    #| simpleAlignment_cb:
     #|   Apply a simple alignement
     #+----------------------------------------------
     def simpleAlignment_cb(self, widget):
@@ -567,7 +567,7 @@ class UImodelization:
         dialog.show()
 
     #+----------------------------------------------
-    #| simpleAlignment_cb_cb :
+    #| simpleAlignment_cb_cb:
     #|   Apply a simple alignement
     #+----------------------------------------------
     def simpleAlignment_cb_cb(self, widget, dialog, unitSize_widget):
@@ -578,7 +578,7 @@ class UImodelization:
         dialog.destroy()
 
     #+----------------------------------------------
-    #| button_press_on_treeview_symbols :
+    #| button_press_on_treeview_symbols:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
@@ -586,10 +586,10 @@ class UImodelization:
         self.log.debug("User requested a contextual menu (treeview symbol)")
 
         project = self.netzob.getCurrentProject()
-        if project == None :
+        if project == None:
             self.log.warn("No current project loaded")
             return
-        if project.getVocabulary() == None :
+        if project.getVocabulary() == None:
             self.log.warn("The current project doesn't have any referenced vocabulary")
             return
 
@@ -597,7 +597,7 @@ class UImodelization:
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
 
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None :
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
             self.selectedSymbol = clickedSymbol
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
             self.update()
@@ -614,7 +614,7 @@ class UImodelization:
             self.defer_select = False
 
     #+----------------------------------------------
-    #| button_press_on_treeview_messages :
+    #| button_press_on_treeview_messages:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
@@ -666,10 +666,10 @@ class UImodelization:
                 iField += 1
 
             selectedField = None
-            for field in self.treeMessageGenerator.getSymbol().getFields() :
-                if field.getIndex() == iField :
+            for field in self.treeMessageGenerator.getSymbol().getFields():
+                if field.getIndex() == iField:
                     selectedField = field
-            if selectedField == None :
+            if selectedField == None:
                 self.log.warn("Impossible to retrieve the clicked field !")
                 return
 
@@ -690,7 +690,7 @@ class UImodelization:
 
             # Add entries to concatenate column
             concatMenu = gtk.Menu()
-            if selectedField.getIndex() > 0 :
+            if selectedField.getIndex() > 0:
                 item = gtk.MenuItem("with precedent field")
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
@@ -719,20 +719,20 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None :
+            if selectedField.getVariable() == None:
                 typeMenuVariable = gtk.Menu()
                 itemVariable = gtk.MenuItem("Create a variable")
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
-            else :
+            else:
                 typeMenuVariable = gtk.Menu()
                 itemVariable = gtk.MenuItem("Edit variable")
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None :
+            if selectedField.getVariable() != None:
                 itemVariable3 = gtk.MenuItem("Remove variable")
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
@@ -789,7 +789,7 @@ class UImodelization:
             menu.popup(None, None, None, event.button, event.time)
 
     #+----------------------------------------------
-    #| build_encoding_submenu_for_field :
+    #| build_encoding_submenu_for_field:
     #|   Build a submenu for field data visualization.
     #+----------------------------------------------
     def build_encoding_submenu_for_field(self, field):
@@ -886,18 +886,18 @@ class UImodelization:
 
         # Update field name
         text = entryName.get_text()
-        if (len(text) > 0) :
+        if (len(text) > 0):
             field.setName(text)
 
         # Update field regex
         text = entryRegex.get_text()
-        if (len(text) > 0) :
+        if (len(text) > 0):
             field.setRegex(text)
         dialog.destroy()
         self.update()
 
     #+----------------------------------------------
-    #| button_press_on_treeview_typeStructure :
+    #| button_press_on_treeview_typeStructure:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
@@ -912,10 +912,10 @@ class UImodelization:
 
 
             selectedField = None
-            for field in self.treeMessageGenerator.getSymbol().getFields() :
-                if field.getIndex() == iField :
+            for field in self.treeMessageGenerator.getSymbol().getFields():
+                if field.getIndex() == iField:
                     selectedField = field
-            if selectedField == None :
+            if selectedField == None:
                 self.log.warn("Impossible to retrieve the clicked field !")
                 return
 
@@ -962,20 +962,20 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None :
+            if selectedField.getVariable() == None:
                 typeMenuVariable = gtk.Menu()
                 itemVariable = gtk.MenuItem("Create a variable")
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
-            else :
+            else:
                 typeMenuVariable = gtk.Menu()
                 itemVariable = gtk.MenuItem("Edit variable")
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None :
+            if selectedField.getVariable() != None:
                 itemVariable3 = gtk.MenuItem("Remove variable")
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
@@ -995,7 +995,7 @@ class UImodelization:
             menu.popup(None, None, None, event.button, event.time)
 
     #+----------------------------------------------
-    #| exportSelectedFields_cb :
+    #| exportSelectedFields_cb:
     #|   Callback to export the selected fields
     #|   as a new trace
     #+----------------------------------------------
@@ -1009,10 +1009,10 @@ class UImodelization:
                 iField = model.get_value(aIter, 0)
 
                 selectedField = None
-                for field in self.treeMessageGenerator.getSymbol().getFields() :
-                    if field.getIndex() == iField :
+                for field in self.treeMessageGenerator.getSymbol().getFields():
+                    if field.getIndex() == iField:
                         selectedField = field
-                if selectedField == None :
+                if selectedField == None:
                     self.log.warn("Impossible to retrieve the clicked field !")
                     return
 
@@ -1118,7 +1118,7 @@ class UImodelization:
     """
 
     #+----------------------------------------------
-    #| rightClickDomainOfDefinition :
+    #| rightClickDomainOfDefinition:
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def rightClickDomainOfDefinition(self, event, field):
@@ -1131,7 +1131,7 @@ class UImodelization:
         dialog = gtk.Dialog(title="Domain of definition for the column " + field.getName(), flags=0, buttons=None)
 
         # Text view containing domain of definition
-        ## ListStore format :
+        ## ListStore format:
         # str: symbol.id
         treeview = gtk.TreeView(gtk.ListStore(str))
         treeview.set_size_request(500, 300)
@@ -1148,10 +1148,10 @@ class UImodelization:
         treeview.append_column(column)
 
         currentProject = self.netzob.getCurrentProject()
-        if currentProject == None :
+        if currentProject == None:
             self.log.warn("No current project found")
             return
-        if currentProject.getVocabulary() == None :
+        if currentProject.getVocabulary() == None:
             self.log.warn("The project has no vocbaulary to work with.")
             return
 
@@ -1167,7 +1167,7 @@ class UImodelization:
         dialog.show()
 
     #+----------------------------------------------
-    #| rightClickToCopyToClipboard :
+    #| rightClickToCopyToClipboard:
     #|   Copy the message to the clipboard
     #+----------------------------------------------
     def rightClickToCopyToClipboard(self, event, id_message, aligned, encoded, field):
@@ -1175,7 +1175,7 @@ class UImodelization:
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(id_message)
-        if message == None :
+        if message == None:
             self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
             return
 
@@ -1187,7 +1187,7 @@ class UImodelization:
             self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[ field.getIndex() ])
 
     #+----------------------------------------------
-    #| rightClickShowPropertiesOfMessage :
+    #| rightClickShowPropertiesOfMessage:
     #|   Show a popup to present the properties of the selected message
     #+----------------------------------------------
     def rightClickShowPropertiesOfMessage(self, event, id_message):
@@ -1195,7 +1195,7 @@ class UImodelization:
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(id_message)
-        if message == None :
+        if message == None:
             self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
             return
 
@@ -1238,7 +1238,7 @@ class UImodelization:
         dialog.show()
 
     #+----------------------------------------------
-    #| rightClickDeleteMessage :
+    #| rightClickDeleteMessage:
     #|   Delete the requested message
     #+----------------------------------------------
     def rightClickDeleteMessage(self, event):
@@ -1261,14 +1261,14 @@ class UImodelization:
                 message = self.selectedSymbol.getMessageByID(id_message)
 
                 # Break if the message to move was not found
-                if message == None :
+                if message == None:
                     self.log.warning("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message))
                     return
                 message_symbol.removeMessage(message)
         self.update()
 
     #+----------------------------------------------
-    #| rightClickToChangeFormat :
+    #| rightClickToChangeFormat:
     #|   Callback to change the field format
     #|   by doing a right click on it.
     #+----------------------------------------------
@@ -1277,7 +1277,7 @@ class UImodelization:
         self.update()
 
     #+----------------------------------------------
-    #| rightClickToChangeUnitSize :
+    #| rightClickToChangeUnitSize:
     #|   Callback to change the field unitsize
     #|   by doing a right click on it.
     #+----------------------------------------------
@@ -1286,7 +1286,7 @@ class UImodelization:
         self.update()
 
     #+----------------------------------------------
-    #| rightClickToChangeSign :
+    #| rightClickToChangeSign:
     #|   Callback to change the field sign
     #|   by doing a right click on it.
     #+----------------------------------------------
@@ -1295,7 +1295,7 @@ class UImodelization:
         self.update()
 
     #+----------------------------------------------
-    #| rightClickToChangeEndianess :
+    #| rightClickToChangeEndianess:
     #|   Callback to change the field endianess
     #|   by doing a right click on it.
     #+----------------------------------------------
@@ -1418,7 +1418,7 @@ class UImodelization:
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK :
+        if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return
 
@@ -1441,7 +1441,7 @@ class UImodelization:
         if result == gtk.RESPONSE_YES:
             field.setVariable(None)
             self.update()
-        else :
+        else:
             self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getID())
 
     def rightClickEditVariable(self, widget, field):
@@ -1481,7 +1481,7 @@ class UImodelization:
             textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
 
     #+----------------------------------------------
-    #| dbClickToChangeFormat :
+    #| dbClickToChangeFormat:
     #|   Called when user double click on a row
     #|    in order to change the field format
     #+----------------------------------------------
@@ -1494,11 +1494,11 @@ class UImodelization:
             iField += 1
 
         selectedField = None
-        for field in self.treeMessageGenerator.getSymbol().getFields() :
-            if field.getIndex() == iField :
+        for field in self.treeMessageGenerator.getSymbol().getFields():
+            if field.getIndex() == iField:
                 selectedField = field
 
-        if selectedField == None :
+        if selectedField == None:
             self.log.warn("Impossible to retrieve the clicked field !")
             return
 
@@ -1518,7 +1518,7 @@ class UImodelization:
         self.treeTypeStructureGenerator.update()
 
     #+----------------------------------------------
-    #| build_context_menu_for_symbols :
+    #| build_context_menu_for_symbols:
     #|   Create a menu to display available operations
     #|   on the treeview symbols
     #+----------------------------------------------
@@ -1562,20 +1562,20 @@ class UImodelization:
         #go go go
         dialog.run()
         text = entry.get_text()
-        if (len(text) > 0) :
+        if (len(text) > 0):
             self.selectedSymbol.setName(text)
         dialog.destroy()
         self.update()
 
     #+----------------------------------------------
-    #| responseToDialog :
+    #| responseToDialog:
     #|   pygtk is so good ! arf :( <-- clap clap :D
     #+----------------------------------------------
     def responseToDialog(self, entry, dialog, response):
         dialog.response(response)
 
     #+----------------------------------------------
-    #| displayPopupToCreateSymbol :
+    #| displayPopupToCreateSymbol:
     #|   Display a form to create a new symbol.
     #|   Based on the famous dialogs
     #+----------------------------------------------
@@ -1605,7 +1605,7 @@ class UImodelization:
         newSymbolName = entry.get_text()
         dialog.destroy()
 
-        if (len(newSymbolName) > 0) :
+        if (len(newSymbolName) > 0):
             newSymbolId = str(uuid.uuid4())
             self.log.debug("a new symbol will be created with the given name : {0}".format(newSymbolName))
             newSymbol = Symbol(newSymbolId, newSymbolName, self.netzob.getCurrentProject())
@@ -1616,14 +1616,14 @@ class UImodelization:
             self.update()
 
     #+----------------------------------------------
-    #| displayPopupToRemoveSymbol :
+    #| displayPopupToRemoveSymbol:
     #|   Display a popup to remove a symbol
     #|   the removal of a symbol can only occurs
     #|   if its an empty symbol
     #+----------------------------------------------
     def displayPopupToRemoveSymbol(self, event, symbol):
 
-        if (len(symbol.getMessages()) == 0) :
+        if (len(symbol.getMessages()) == 0):
             self.log.debug("Can remove the symbol {0} since it's an empty one.".format(symbol.getName()))
             questionMsg = "Click yes to confirm the removal of the symbol {0}".format(symbol.getName())
             md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
@@ -1633,10 +1633,10 @@ class UImodelization:
                 self.netzob.getCurrentProject().getVocabulary().removeSymbol(symbol)
                 #Update Left and Right
                 self.update()
-            else :
+            else:
                 self.log.debug("The user didn't confirm the deletion of the symbol " + symbol.getName())
 
-        else :
+        else:
             self.log.debug("Can't remove the symbol {0} since its not an empty one.".format(symbol.getName()))
             errorMsg = "The selected symbol cannot be removed since it contains messages."
             md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, errorMsg)
@@ -1644,13 +1644,13 @@ class UImodelization:
             md.destroy()
 
     #+----------------------------------------------
-    #| drop_fromDND :
+    #| drop_fromDND:
     #|   defines the operation executed when a message is
     #|   is dropped out current symbol to the selected symbol
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
         ids = selection.data
-        for msg_id in ids.split(";") :
+        for msg_id in ids.split(";"):
 
             modele = treeview.get_model()
             info_depot = treeview.get_dest_row_at_pos(x, y)
@@ -1658,26 +1658,26 @@ class UImodelization:
             # First we search for the message to move
             message = None
             message_symbol = self.selectedSymbol
-            for msg in message_symbol.getMessages() :
-                if str(msg.getID()) == msg_id :
+            for msg in message_symbol.getMessages():
+                if str(msg.getID()) == msg_id:
                     message = msg
 
             # Break if the message to move was not found
-            if message == None :
+            if message == None:
                 self.log.warning("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id))
                 return
 
             self.log.debug("The message having the ID [{0}] has been found !".format(msg_id))
 
             # Now we search for the new symbol of the message
-            if info_depot :
+            if info_depot:
                 chemin, position = info_depot
                 iter = modele.get_iter(chemin)
                 new_symbol_id = str(modele.get_value(iter, 0))
 
                 new_message_symbol = self.netzob.getCurrentProject().getVocabulary().getSymbol(new_symbol_id)
 
-            if new_message_symbol == None :
+            if new_message_symbol == None:
                 self.log.warning("Impossible to retrieve the symbol in which the selected message must be moved out.")
                 return
 
@@ -1695,7 +1695,7 @@ class UImodelization:
         return
 
     #+----------------------------------------------
-    #| drag_fromDND :
+    #| drag_fromDND:
     #|   defines the operation executed when a message is
     #|   is dragged out current symbol
     #+----------------------------------------------
@@ -1714,10 +1714,10 @@ class UImodelization:
     #+----------------------------------------------
     def updateTreeStoreSymbol(self):
         # Updates the treestore with a selected message
-        if (self.selectedMessage != None) :
+        if (self.selectedMessage != None):
             self.treeSymbolGenerator.messageSelected(self.selectedMessage)
             self.selectedMessage = None
-        else :
+        else:
             # Default display of the symbols
             self.treeSymbolGenerator.default()
 
@@ -1726,12 +1726,12 @@ class UImodelization:
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
         # If we found it we can update the content of the treestore
-        if self.selectedSymbol != None :
+        if self.selectedSymbol != None:
             self.treeMessageGenerator.default(self.selectedSymbol)
 #            # enable dragging message out of current symbol
 #            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
-        else :
+        else:
             self.treeMessageGenerator.default(None)
 
     #+----------------------------------------------
@@ -1745,28 +1745,28 @@ class UImodelization:
     #+----------------------------------------------
     def updateScoreLimit(self, combo):
         val = combo.get_active_text()
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD, int(val))
 
     #+----------------------------------------------
     #| Called when user wants to slick internally in libNeedleman
     #+----------------------------------------------
     def activeInternalSlickRegexes(self, checkButton):
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, checkButton.get_active())
 
     #+----------------------------------------------
     #| Called when user wants to activate orphan reduction
     #+----------------------------------------------
     def activeOrphanReduction(self, checkButton):
-        if self.netzob.getCurrentProject() != None :
+        if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, checkButton.get_active())
 
     #+----------------------------------------------
     #| Called when user wants to modify the format displayed
     #+----------------------------------------------
     def updateDisplayFormat(self, combo):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
         aFormat = combo.get_active_text()
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, aFormat)
@@ -1779,7 +1779,7 @@ class UImodelization:
     #| Called when user wants to modify the unit size displayed
     #+----------------------------------------------
     def updateDisplayUnitSize(self, combo):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
         unitSize = combo.get_active_text()
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
@@ -1792,7 +1792,7 @@ class UImodelization:
     #| Called when user wants to modify the sign displayed
     #+----------------------------------------------
     def updateDisplaySign(self, combo):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
         sign = combo.get_active_text()
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
@@ -1805,7 +1805,7 @@ class UImodelization:
     #| Called when user wants to modify the endianess displayed
     #+----------------------------------------------
     def updateDisplayEndianess(self, combo):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
         endianess = combo.get_active_text()
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
@@ -1831,7 +1831,7 @@ class UImodelization:
     def dataCarving_cb(self, button):
         dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
 
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
 
         notebook = gtk.Notebook()
@@ -1852,7 +1852,7 @@ class UImodelization:
     def search_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
 
         searchPanel = SearchView(self.netzob.getCurrentProject())
@@ -1865,7 +1865,7 @@ class UImodelization:
     def env_dependencies_cb(self, button):
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
 
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
 
         notebook = gtk.Notebook()
@@ -1893,7 +1893,7 @@ class UImodelization:
     #| Called when user wants to slick the current regexes
     #+----------------------------------------------
     def slickRegex_cb(self, but):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
 
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
@@ -1904,7 +1904,7 @@ class UImodelization:
     #| Called when user wants to find ASN.1 fields
     #+----------------------------------------------
     def findASN1Fields_cb(self, button):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
 
         dialog = gtk.Dialog(title="Find ASN.1 fields", flags=0, buttons=None)
@@ -1923,14 +1923,14 @@ class UImodelization:
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
-        if self.netzob.getCurrentProject() == None :
+        if self.netzob.getCurrentProject() == None:
             return
 
         # Create a temporary symbol for testing size fields
         tmp_symbol = Symbol("tmp_symbol", "tmp_symbol", self.netzob.getCurrentProject())
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
-        ## ListStore format :
+        ## ListStore format:
         # str: symbol.id
         # int: size field column
         # int: size field size

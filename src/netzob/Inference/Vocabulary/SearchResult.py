@@ -35,13 +35,13 @@ import logging
 #+----------------------------------------------
 
 #+----------------------------------------------
-#| SearchResult :
+#| SearchResult:
 #|     Definition of the result of a search operation
 #+----------------------------------------------
 class SearchResult(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, message):
         # create logger with the given configuration

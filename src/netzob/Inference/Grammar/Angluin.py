@@ -52,7 +52,7 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 
 
 #+----------------------------------------------
-#| Angluin :
+#| Angluin:
 #|    Definition of the Angluin L*A algorithm to infer MEALY automatas
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
@@ -77,7 +77,7 @@ class Angluin(LearningAlgorithm):
         self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
-        for entry in self.dictionary.getSymbols()[:2] :
+        for entry in self.dictionary.getSymbols()[:2]:
             letter = DictionarySymbol(entry)
             mq = MembershipQuery([letter])
             self.addWordInD(mq)
@@ -96,7 +96,7 @@ class Angluin(LearningAlgorithm):
 
 
     def addWordInD(self, words):
-        if words in self.D :
+        if words in self.D:
             self.log.info("The words " + str(words) + " already exists in D")
             return
         self.log.info("Adding word " + str(words) + " in D")
@@ -104,21 +104,21 @@ class Angluin(LearningAlgorithm):
         self.observationTable[words] = None
         # We compute the value of all existing S and SA
         cel = dict()
-        for wordS in self.S :
+        for wordS in self.S:
             mq = wordS.getMQSuffixedWithMQ(words)
             cel[wordS] = self.submitQuery(mq)
-        for wordSA in self.SA :
+        for wordSA in self.SA:
             mq = wordSA.getMQSuffixedWithMQ(words)
             cel[wordSA] = self.submitQuery(mq)
         self.observationTable[words] = cel
 
     def addWordInS(self, word):
         # first we verify the word is not already in S
-        if word in self.S :
+        if word in self.S:
             self.log.info("The word " + str(word) + " already exists in S")
             return
 
-        if word in self.SA :
+        if word in self.SA:
             self.log.info("The word " + str(word) + " already exists in SA")
             self.SA.remove(word)
 
@@ -126,28 +126,28 @@ class Angluin(LearningAlgorithm):
         self.S.append(word)
 
         # We create a MQ which looks like : MQ(word,letter)
-        for letter in self.D :
+        for letter in self.D:
             mq = word.getMQSuffixedWithMQ(letter)
             # we add it in the observation table
-            if self.observationTable[letter] != None :
+            if self.observationTable[letter] != None:
                 cel = self.observationTable[letter]
-            else :
+            else:
                 cel = dict()
 
             cel[word] = self.submitQuery(mq)
             self.observationTable[letter] = cel
 
         # Now we add
-        for letter in self.D :
+        for letter in self.D:
             self.addWordInSA(word.getMQSuffixedWithMQ(letter))
 
     def addWordInSA(self, word):
         # first we verify the word is not already in SA
-        if word in self.SA :
+        if word in self.SA:
             self.log.info("The word " + str(word) + " already exists in SA")
             return
 
-        if word in self.S :
+        if word in self.S:
             self.log.info("The word " + str(word) + " already exists in S (addWordInSA)")
             return
 
@@ -155,11 +155,11 @@ class Angluin(LearningAlgorithm):
         self.log.info("Adding word " + str(word) + " to SA")
         self.SA.append(word)
 
-        for letter in self.D :
+        for letter in self.D:
             mq = word.getMQSuffixedWithMQ(letter)
-            if self.observationTable[letter] != None :
+            if self.observationTable[letter] != None:
                 cel = self.observationTable[letter]
-            else :
+            else:
                 cel = dict()
             cel[word] = self.submitQuery(mq)
             self.observationTable[letter] = cel
@@ -169,7 +169,7 @@ class Angluin(LearningAlgorithm):
         self.log.info("Learn...")
         self.displayObservationTable()
 
-        while (not self.isClosed() or not self.isConsistent()) :
+        while (not self.isClosed() or not self.isConsistent()):
 
             if not self.isClosed():
                 self.log.info("#================================================")
@@ -177,7 +177,7 @@ class Angluin(LearningAlgorithm):
                 self.log.info("#================================================")
                 self.closeTable()
                 self.displayObservationTable()
-            else :
+            else:
                 self.log.info("Table is closed !")
 
             if not self.isConsistent():
@@ -186,7 +186,7 @@ class Angluin(LearningAlgorithm):
                 self.log.info("#================================================")
                 self.makesTableConsistent()
                 self.displayObservationTable()
-            else :
+            else:
                 self.log.info("Table is consistent !")
 
 
@@ -209,16 +209,16 @@ class Angluin(LearningAlgorithm):
         rowSA = []
         rowS = []
 
-        for wordSA in self.SA :
+        for wordSA in self.SA:
             rowSA = self.getRowOfObservationTable(wordSA)
             found = False
-            for wordS in self.S :
+            for wordS in self.S:
                 rowS = self.getRowOfObservationTable(wordS)
 
-                if self.rowsEquals(rowS, rowSA) :
+                if self.rowsEquals(rowS, rowSA):
                     found = True
 
-            if not found :
+            if not found:
                 self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
                 return False
         return True
@@ -228,16 +228,16 @@ class Angluin(LearningAlgorithm):
         rowSA = []
         rowS = []
 
-        for wordSA in self.SA :
+        for wordSA in self.SA:
             rowSA = self.getRowOfObservationTable(wordSA)
             found = False
-            for wordS in self.S :
+            for wordS in self.S:
                 rowS = self.getRowOfObservationTable(wordS)
 
-                if self.rowsEquals(rowS, rowSA) :
+                if self.rowsEquals(rowS, rowSA):
                     found = True
 
-            if not found :
+            if not found:
                 self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
                 self.moveWordFromSAtoS(wordSA)
                 return False
@@ -248,19 +248,19 @@ class Angluin(LearningAlgorithm):
         # search for all the rows of S which are equals
         rowS = []
         equalsRows = []
-        for wordS in self.S :
+        for wordS in self.S:
             rowS.append((wordS, self.getRowOfObservationTable(wordS)))
-        for (word, row) in rowS :
-            for (word2, row2) in rowS :
-                if word != word2 and self.rowsEquals(row, row2) :
+        for (word, row) in rowS:
+            for (word2, row2) in rowS:
+                if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
         self.log.info("Equals Rows in S are from words : ")
-        for (w1, w2) in equalsRows :
+        for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
             # We verify all the equals rows are still equals one letter more
-            for a in self.initialD :
+            for a in self.initialD:
                 w1a = w1.getMQSuffixedWithMQ(a)
                 w2a = w2.getMQSuffixedWithMQ(a)
                 self.log.info("Searching for word " + str(w1a))
@@ -284,19 +284,19 @@ class Angluin(LearningAlgorithm):
         # search for all the rows of S which are equals
         rowS = []
         equalsRows = []
-        for wordS in self.S :
+        for wordS in self.S:
             rowS.append((wordS, self.getRowOfObservationTable(wordS)))
-        for (word, row) in rowS :
-            for (word2, row2) in rowS :
-                if word != word2 and self.rowsEquals(row, row2) :
+        for (word, row) in rowS:
+            for (word2, row2) in rowS:
+                if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
         self.log.info("Equals Rows in S are from words : ")
-        for (w1, w2) in equalsRows :
+        for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
             # We verify all the equals rows are still equals one letter more
-            for a in self.initialD :
+            for a in self.initialD:
                 w1a = w1.getMQSuffixedWithMQ(a)
                 w2a = w2.getMQSuffixedWithMQ(a)
                 row_w1a = self.getRowOfObservationTable(w1a)
@@ -304,8 +304,8 @@ class Angluin(LearningAlgorithm):
                 if not self.rowsEquals(row_w1a, row_w2a):
                     # We find the E (col) which makes the unconsistency
                     e = None
-                    for i in range(0, len(row_w1a)) :
-                        if row_w1a[i] != row_w2a[i] :
+                    for i in range(0, len(row_w1a)):
+                        if row_w1a[i] != row_w2a[i]:
                             e = self.D[i]
                     self.log.info("E found is " + str(e))
                     newCol = a.getMQSuffixedWithMQ(e)
@@ -329,17 +329,17 @@ class Angluin(LearningAlgorithm):
 
 
     def rowsEquals(self, r1, r2):
-        if (len(r1) != len(r2)) :
+        if (len(r1) != len(r2)):
             return False
 
-        for i in range(0, len(r1)) :
-            if r1[i] != r2[i] :
+        for i in range(0, len(r1)):
+            if r1[i] != r2[i]:
                 return False
         return True
 
 
     def moveWordFromSAtoS(self, wordSA):
-        if not wordSA in self.SA :
+        if not wordSA in self.SA:
             self.log.warn("Impossible to move the word from SA since it doesn't exist")
             return
         self.SA.remove(wordSA)
@@ -348,35 +348,35 @@ class Angluin(LearningAlgorithm):
 
     def getRowOfObservationTable(self, rowName):
         cols = []
-        for letter in self.D :
+        for letter in self.D:
             val = self.observationTable[letter]
             mem = None
-            for rN in val.keys() :
-                if rN == rowName :
+            for rN in val.keys():
+                if rN == rowName:
                     mem = rN
                     break
-            if mem != None :
+            if mem != None:
                 cols.append(self.observationTable[letter][mem])
         return cols
 
     def getUniqueRowsInS(self):
         # Unique rows in S => new states (name = value of the row)
         uniqueRowsInS = []
-        for wordS in self.S :
+        for wordS in self.S:
             rowS = self.getRowOfObservationTable(wordS)
             found = False
-            for (w, r) in uniqueRowsInS :
-                if self.rowsEquals(r, rowS) :
+            for (w, r) in uniqueRowsInS:
+                if self.rowsEquals(r, rowS):
                     found = True
-            if not found :
+            if not found:
                 uniqueRowsInS.append((wordS, rowS))
         return uniqueRowsInS
 
     def getSandSAWords(self):
         result = []
-        for wordS in self.S :
+        for wordS in self.S:
             result.append(wordS)
-        for wordSA in self.SA :
+        for wordSA in self.SA:
             result.append(wordSA)
         return result
 
@@ -390,7 +390,7 @@ class Angluin(LearningAlgorithm):
 
         # Create the states of the automata
         uniqueRowsInS = self.getUniqueRowsInS()
-        for (w, r) in uniqueRowsInS :
+        for (w, r) in uniqueRowsInS:
             self.log.info("The row with word " + str(w) + " is unique !")
             # We create a State for each unique row
             nameState = self.appendValuesInRow(r)
@@ -405,24 +405,24 @@ class Angluin(LearningAlgorithm):
             idState = idState + 1
 
         # Create the transitions of the automata
-        for (word, state) in wordAndStates :
-            for symbol in self.initialD :
-                # retrieve the value :
+        for (word, state) in wordAndStates:
+            for symbol in self.initialD:
+                # retrieve the value:
                 dicValue = self.observationTable[symbol]
                 value = dicValue[word]
                 # search for the output state
                 mq = word.getMQSuffixedWithMQ(symbol)
-                for wordSandSA in self.getSandSAWords() :
+                for wordSandSA in self.getSandSAWords():
                     self.log.info("IS " + str(wordSandSA) + " eq " + str(mq))
-                    if wordSandSA == mq :
+                    if wordSandSA == mq:
                         rowOutputState = self.getRowOfObservationTable(wordSandSA)
                         outputStateName = self.appendValuesInRow(rowOutputState)
-                        # search for the state having this name :
+                        # search for the state having this name:
                         outputState = None
-                        for (w2, s2) in wordAndStates :
-                            if s2.getName() == outputStateName :
+                        for (w2, s2) in wordAndStates:
+                            if s2.getName() == outputStateName:
                                 outputState = s2
-                        if outputState != None :
+                        if outputState != None:
                             inputSymbol = symbol.getSymbols()[0]
                             transition = SemiStochasticTransition(idTransition, "Transition " + str(idTransition), state, outputState, inputSymbol)
                             transition.addOutputSymbol(value, 100, 1000)
@@ -431,19 +431,19 @@ class Angluin(LearningAlgorithm):
                             self.log.info("We create a transition from " + str(state.getName()) + " input : " + str(symbol) + " output : " + str(value) + " outputstate " + str(outputState))
 
 
-        if startState != None :
+        if startState != None:
             self.log.info("An infered automata has been computed.")
             self.inferedAutomata = MMSTD(startState, self.dictionary)
 
     def addCounterExamples(self, counterExamples):
         self.log.info("Modify the automata in order to consider the " + str(len(counterExamples)) + " counterexamples")
-        for counterExample in counterExamples :
+        for counterExample in counterExamples:
             # we add all the prefix of the counterexample to S
             prefixes = counterExample.getNotEmptyPrefixes()
             self.log.info("A number of " + str(len(prefixes)) + " will be added !")
-            for p in prefixes :
+            for p in prefixes:
                 self.log.info("=> " + str(p))
-            for prefix in prefixes :
+            for prefix in prefixes:
                 self.displayObservationTable()
                 self.addWordInS(prefix)
                 self.displayObservationTable()
@@ -451,7 +451,7 @@ class Angluin(LearningAlgorithm):
 
     def appendValuesInRow(self, row):
         result = []
-        for i in range(0, len(row)) :
+        for i in range(0, len(row)):
             result.append(str(row[i]))
         return '-'.join(result)
 
@@ -462,24 +462,24 @@ class Angluin(LearningAlgorithm):
         horizontal2 = "================================================================================="
         self.log.info(horizontal)
         line = []
-        for letter in self.D :
+        for letter in self.D:
             line.append(str(letter))
         self.log.info("\t|\t|" + "\t|".join(line))
         self.log.info(horizontal2)
 
-        for mqS in self.S :
+        for mqS in self.S:
             line = []
             line.append(str(mqS))
-            for letter in self.D :
+            for letter in self.D:
                 tmp = self.observationTable[letter]
                 line.append(str(tmp[mqS]))
             self.log.info("\t|".join(line))
             self.log.info(horizontal)
         self.log.info(horizontal2)
-        for mqSA in self.SA :
+        for mqSA in self.SA:
             line = []
             line.append(str(mqSA))
-            for letter in self.D :
+            for letter in self.D:
                 tmp = self.observationTable[letter]
                 line.append(str(tmp[mqSA]))
             self.log.info("\t|".join(line))

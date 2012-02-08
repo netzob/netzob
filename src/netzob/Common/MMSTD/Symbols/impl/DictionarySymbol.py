@@ -37,7 +37,7 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 
 #+---------------------------------------------------------------------------+
-#| DictionarySymbol :
+#| DictionarySymbol:
 #|     Definition of a symbol based on a dictionary
 #+---------------------------------------------------------------------------+
 class DictionarySymbol(AbstractSymbol):
@@ -50,10 +50,10 @@ class DictionarySymbol(AbstractSymbol):
 
 
     def isEquivalent(self, symbol):
-        if self.entry.getID() == symbol.getID() :
+        if self.entry.getID() == symbol.getID():
             self.log.debug("The symbols are equivalents")
             return True
-        else :
+        else:
             self.log.debug("The symbols are not equivalents")
             return False
 
@@ -81,9 +81,9 @@ class DictionarySymbol(AbstractSymbol):
         return str(self.entry)
 
     def __cmp__(self, other):
-        if other == None :
+        if other == None:
             return 0
-        if self.getID() == other.getID() :
+        if self.getID() == other.getID():
             return 0
-        else :
+        else:
             return 1

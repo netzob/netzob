@@ -44,7 +44,7 @@ from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+---------------------------------------------------------------------------+
-#| Network :
+#| Network:
 #|     This class offers the capability to fuzz network flows in live
 #+---------------------------------------------------------------------------+
 class Network:
@@ -68,7 +68,7 @@ class Network:
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the netzob main object
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -195,7 +195,7 @@ class Network:
                 symbol = None
 
                 for tmp_symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                    if str(tmp_symbol.getID()) == idSymbol :
+                    if str(tmp_symbol.getID()) == idSymbol:
                         symbol = tmp_symbol
 
                 # Retrieve a random message in order to show a type structure
@@ -205,7 +205,7 @@ class Network:
                 self.treeTypeStructureGenerator.update()
 
     #+----------------------------------------------
-    #| button_press_on_field :
+    #| button_press_on_field:
     #|   Create a menu to display available operations
     #|   on the treeview symbols
     #+----------------------------------------------

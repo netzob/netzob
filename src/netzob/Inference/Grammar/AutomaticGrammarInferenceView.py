@@ -49,13 +49,13 @@ pygtk.require('2.0')
 
 
 #+----------------------------------------------
-#| AutomaticGrammarInferenceView :
+#| AutomaticGrammarInferenceView:
 #|     Class dedicated to host the creation of the view for the inference
 #+----------------------------------------------
 class AutomaticGrammarInferenceView(object):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, project):
         # create logger with the given configuration
@@ -177,34 +177,34 @@ class AutomaticGrammarInferenceView(object):
 
 
     def do_pulse(self, *args):
-        if self.finish == False :
+        if self.finish == False:
             self.progressbar.pulse()
             return True
         return False
 
     def callback_submitedQuery(self, query, resultQuery):
-        if query == None :
+        if query == None:
             self.log.debug("Impossible to show a Null query")
             return
 
         # Create a str view of the Query
         strQuery = ""
-        for symbol in query.getSymbols() :
+        for symbol in query.getSymbols():
             strSymbol = ""
-            if symbol.getType() == "DictionarySymbol" :
+            if symbol.getType() == "DictionarySymbol":
                 strSymbol = symbol.getName()
-            else :
+            else:
                 strSymbol = "EmptySymbol"
 
             strQuery = strQuery + strSymbol + ", "
 
         # Create a str view of the Result Query
         strResultQuery = ""
-        for symbol in resultQuery :
+        for symbol in resultQuery:
             strSymbol = ""
-            if symbol.getType() == "DictionarySymbol" :
+            if symbol.getType() == "DictionarySymbol":
                 strSymbol = symbol.getName()
-            else :
+            else:
                 strSymbol = str(symbol)
 
             strResultQuery = strResultQuery + strSymbol + ","
@@ -212,7 +212,7 @@ class AutomaticGrammarInferenceView(object):
         self.treestore_queries.append(None, [strQuery, strResultQuery, "blue"])
 
     def callback_hypotheticalAutomaton(self, hypotheticalAutomaton):
-        if hypotheticalAutomaton != None :
+        if hypotheticalAutomaton != None:
             self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
 
 
@@ -227,7 +227,7 @@ class AutomaticGrammarInferenceView(object):
         self.finish = True
 
     def saveGrammar(self, button):
-        if self.computedAutomaton != None :
+        if self.computedAutomaton != None:
             self.project.setGrammar(self.computedAutomaton.toGrammar())
             self.dialog.destroy()
 

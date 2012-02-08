@@ -43,7 +43,7 @@ from netzob.Common.MMSTD.States.AbstractState import AbstractState
 
 
 #+---------------------------------------------------------------------------+
-#| StartState :
+#| StartState:
 #|     Definition of a starting state (open the communication layer)
 #+---------------------------------------------------------------------------+
 class StartState(AbstractState):
@@ -81,7 +81,7 @@ class StartState(AbstractState):
         self.log.debug("Execute state " + self.name + " as a client")
 
         # if no transition exists we quit
-        if len(self.getTransitions()) == 0 :
+        if len(self.getTransitions()) == 0:
             return None
 
         self.activate()
@@ -92,11 +92,11 @@ class StartState(AbstractState):
 
         # Wait for a message
         (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-        if not receivedSymbol == None :
+        if not receivedSymbol == None:
             self.log.debug("The following symbol has been received : " + str(receivedSymbol))
             # Now we verify this symbol is an accepted one
-            for transition in self.getTransitions() :
-                if transition.isValid(receivedSymbol) :
+            for transition in self.getTransitions():
+                if transition.isValid(receivedSymbol):
                     self.log.debug("Received data '" + message + "' is valid for transition " + str(transition.getID()))
                     newState = transition.executeAsClient(abstractionLayer)
                     self.deactivate()
@@ -113,7 +113,7 @@ class StartState(AbstractState):
     #+-----------------------------------------------------------------------+
     def executeAsMaster(self, abstractionLayer):
         # Verify we can do something now
-        if (len(self.getTransitions()) == 0) :
+        if (len(self.getTransitions()) == 0):
             return None
 
         self.activate()

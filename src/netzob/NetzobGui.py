@@ -55,13 +55,13 @@ from netzob.Common.Workspace import Workspace
 
 
 #+----------------------------------------------
-#| NetzobGUI :
+#| NetzobGUI:
 #|     Graphical runtime class
 #+----------------------------------------------
 class NetzobGui(gtk.Window):
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self):
 

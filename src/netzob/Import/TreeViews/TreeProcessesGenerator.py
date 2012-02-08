@@ -13,14 +13,14 @@ import os
 from netzob.Common.ExecutionContext import ExecutionContext
 
 #+----------------------------------------------
-#| TreeProcessGenerator :
+#| TreeProcessGenerator:
 #|     update and generates the treestore
 #|     dedicated to the processes
 #+----------------------------------------------
 class TreeProcessesGenerator():
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param processes : the processes
     #+----------------------------------------------
     def __init__(self, processes):
@@ -31,11 +31,11 @@ class TreeProcessesGenerator():
         self.log = logging.getLogger('netzob.Capturing.TreeViews.TreeProcessesGenerator.py')
 
     #+----------------------------------------------
-    #| initialization :
+    #| initialization:
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
-        # Tree store contains :
+        # Tree store contains:
         # str : text ( process Command )
         # str : text ( process PID )
         # str : color foreground
@@ -61,14 +61,14 @@ class TreeProcessesGenerator():
         self.treeview.show()
 
     #+----------------------------------------------
-    #| clear :
+    #| clear:
     #|         Clear the class
     #+----------------------------------------------
     def clear(self):
         del self.processes[:]
 
     #+----------------------------------------------
-    #| default :
+    #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self):
@@ -77,7 +77,7 @@ class TreeProcessesGenerator():
 
         self.updateProcessesList()
 
-        for process in self.processes :
+        for process in self.processes:
             iter = self.treestore.append(None, [process.getName(), process.getPid(), '#000000', '#FFFFFF'])
 
 
@@ -89,7 +89,7 @@ class TreeProcessesGenerator():
 
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
@@ -99,7 +99,7 @@ class TreeProcessesGenerator():
         return self.processes
 
     #+----------------------------------------------
-    #| SETTERS :
+    #| SETTERS:
     #+----------------------------------------------
     def setProcess(self, processes):
         self.processes = processes

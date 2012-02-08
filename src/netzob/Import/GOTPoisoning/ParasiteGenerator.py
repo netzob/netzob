@@ -40,7 +40,7 @@ import os
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| ParasiteGenerator :
+#| ParasiteGenerator:
 #|     Describes and generates a GOT parasite
 #+---------------------------------------------------------------------------+
 class ParasiteGenerator():
@@ -61,7 +61,7 @@ class ParasiteGenerator():
     #|     Include a new function in the pool of function to hijack
     #| @param function HijackedFunction to include
     #+-----------------------------------------------------------------------+
-    def addAnHijackedFunctions(self, function) :
+    def addAnHijackedFunctions(self, function):
         self.hijackedFunctions.append(function)
 
     #+-----------------------------------------------------------------------+
@@ -97,7 +97,7 @@ class ParasiteGenerator():
 
     def getParasitesSignature(self):
         signatures = []
-        for func in self.hijackedFunctions :
+        for func in self.hijackedFunctions:
             f = os.popen("objdump -d " + self.tmp_folder + "/libNetzob.so.1.0")
             signature = []
             flag = False
@@ -107,8 +107,8 @@ class ParasiteGenerator():
                     flag = True
                 elif flag == True and sizeSignature > 0:
                     tmp = line.split("\t")[1]
-                    for t in tmp.split() :
-                        if sizeSignature > 0 :
+                    for t in tmp.split():
+                        if sizeSignature > 0:
                             signature.append(t)
                         sizeSignature = sizeSignature - 1
             signatures.append(signature)
@@ -122,7 +122,7 @@ class ParasiteGenerator():
         function = '''
 static int _open(char * filename) {
     /**
-     * sys_open :
+     * sys_open:
      * %eax <- 5
      * %ebx <- const char *
      * %ecx <- int
@@ -151,7 +151,7 @@ static int _open(char * filename) {
 
 static void _close(int fd) {
     /**
-     * sys_close :
+     * sys_close:
      * %eax <- 6
      * %ebx <- fd
      */
@@ -211,7 +211,7 @@ static void _saveStringWithSize(char * param0, int size) {
     def getSourceCodeParasiteCoreFunctions(self):
         coreFunctions = ""
 
-        for function in self.hijackedFunctions :
+        for function in self.hijackedFunctions:
             coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getSource() + "\n" + function.getEndOfFunction() + "\n}\n"
 #            coreFunctions += function.getParasiteFunctionDeclaration() + "\n{\n" + function.getEndOfFunction()+"\n}\n"
         return coreFunctions
@@ -244,7 +244,7 @@ static void _saveStringWithSize(char * param0, int size) {
 
 '''
         # Add the prototypes of the functions
-        for function in self.hijackedFunctions :
+        for function in self.hijackedFunctions:
             header += "// " + function.getPrototype() + "\n"
             header += function.getParasitePrototype() + ";\n"
 

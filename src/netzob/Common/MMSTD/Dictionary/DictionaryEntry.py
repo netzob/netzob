@@ -39,7 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| DictionaryEntry :
+#| DictionaryEntry:
 #|     Definition of an entry in a dictionary
 #+---------------------------------------------------------------------------+
 class DictionaryEntry():
@@ -52,7 +52,7 @@ class DictionaryEntry():
         self.value = value
 
     #+---------------------------------------------------------------------------+
-    #| generate :
+    #| generate:
     #|     Generate the value of the entry
     #+---------------------------------------------------------------------------+
     def generate(self):
@@ -60,7 +60,7 @@ class DictionaryEntry():
         self.value.generate()
 
     #+---------------------------------------------------------------------------+
-    #| forget :
+    #| forget:
     #|     Forgets the value of the entry
     #| @param temporary flag indicated the forget operation must be temporary
     #+---------------------------------------------------------------------------+
@@ -69,7 +69,7 @@ class DictionaryEntry():
         self.value.forget(temporary)
 
     #+---------------------------------------------------------------------------+
-    #| undoForget :
+    #| undoForget:
     #|     Since a forget operation can be temporary, this method allows to
     #|     reverse it
     #+---------------------------------------------------------------------------+
@@ -78,7 +78,7 @@ class DictionaryEntry():
         self.value.undoForget()
 
     #+---------------------------------------------------------------------------+
-    #| send :
+    #| send:
     #|     Prepare to send this entry
     #| @param negative a flag which indicates if we send or not the negative
     #|        value of the entry
@@ -90,7 +90,7 @@ class DictionaryEntry():
         return self.value.send(negative, dictionary)
 
     #+---------------------------------------------------------------------------+
-    #| compare :
+    #| compare:
     #|     Compare this entry with a specific value
     #| @param val the string value to which we must compare
     #| @param indice position in the value of the analysis
@@ -103,7 +103,7 @@ class DictionaryEntry():
         return self.value.compare(val, indice, negative, dictionary)
 
     #+---------------------------------------------------------------------------+
-    #| learn :
+    #| learn:
     #|     Learn the following value
     #| @param val the string value to learn
     #| @param indice position in the value of the analysis

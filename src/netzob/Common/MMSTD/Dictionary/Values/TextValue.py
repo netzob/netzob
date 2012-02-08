@@ -41,7 +41,7 @@ from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| TextValue :
+#| TextValue:
 #|     Represents a text value
 #+---------------------------------------------------------------------------+
 class TextValue(AbstractValue):
@@ -61,11 +61,11 @@ class TextValue(AbstractValue):
         self.log.debug("Compare received : '" + str(val[indice:]) + "' with '" + str(self.bintext) + "' ")
 
         tmp = val[indice:]
-        if len(tmp) >= len(self.bintext) :
-            if tmp[:len(self.bintext)] == self.bintext :
+        if len(tmp) >= len(self.bintext):
+            if tmp[:len(self.bintext)] == self.bintext:
                 self.log.debug("Compare successful")
                 return indice + len(self.bintext)
-        else :
+        else:
             self.log.debug("Compare fail")
             return -1
 

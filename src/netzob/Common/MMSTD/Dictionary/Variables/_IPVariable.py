@@ -42,7 +42,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 
 #+---------------------------------------------------------------------------+
-#| IPVariable :
+#| IPVariable:
 #|     Definition of a n IP variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class IPVariable(Variable):
@@ -50,10 +50,10 @@ class IPVariable(Variable):
     def __init__(self, id, name, defaultVar):
         Variable.__init__(self, id, name, "IP")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.IPVariable.py')
-        if defaultVar == "" or defaultVar == None :
+        if defaultVar == "" or defaultVar == None:
             self.binVal = None
             self.strVal = None
-        else :
+        else:
             self.strVal = defaultVar
             self.binVal = self.string2bin(self.strVal)
 
@@ -62,9 +62,9 @@ class IPVariable(Variable):
 
     def string2bin(self, aStr):
         chars = []
-        for c in aStr :
+        for c in aStr:
             v = str(hex(ord(c))).replace("0x", "")
-            if len(str(v)) != 2 :
+            if len(str(v)) != 2:
                 v = "0" + str(v)
             chars.append(v)
 
@@ -77,13 +77,13 @@ class IPVariable(Variable):
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Received : " + str(val))
 
-        if self.strVal == None or isForced :
+        if self.strVal == None or isForced:
             tmp = val[indice:]
 
             res = ""
             i = 0
             finish = False
-            while not finish :
+            while not finish:
                 v = int(tmp[i: i + 2], 16)
                 if v > 0x21 and v <= 0x7e:
                     res += chr(v)
@@ -91,7 +91,7 @@ class IPVariable(Variable):
                 else:
                     finish = True
 
-            if i > 0 :
+            if i > 0:
                 self.strVal = res
                 self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
                 self.binVal = self.string2bin(self.strVal)

@@ -61,10 +61,10 @@ def loadProject_0_1(projectFile):
     xmlProject = tree.getroot()
     # Register the namespace (2 way depending of the version)
 
-    try :
+    try:
         etree.register_namespace('netzob', PROJECT_NAMESPACE)
         etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-    except AttributeError :
+    except AttributeError:
         etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
         etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
 
@@ -75,17 +75,17 @@ def loadProject_0_1(projectFile):
     project = Project(projectID, projectName, projectCreationDate, projectPath)
 
     # Parse the configuration
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") != None :
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") != None:
         projectConfiguration = ProjectConfiguration.loadProjectConfiguration(xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration"), PROJECT_NAMESPACE, "0.1")
         project.setConfiguration(projectConfiguration)
 
     # Parse the vocabulary
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") != None :
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") != None:
         projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, COMMON_NAMESPACE, "0.1", project)
         project.setVocabulary(projectVocabulary)
 
     # Parse the grammar
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") != None :
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") != None:
         projectGrammar = Grammar.loadGrammar(xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar"), projectVocabulary, PROJECT_NAMESPACE, "0.1")
         project.setGrammar(projectGrammar)
 
@@ -93,7 +93,7 @@ def loadProject_0_1(projectFile):
 
 
 #+---------------------------------------------------------------------------+
-#| Project :
+#| Project:
 #|     Class definition of a Project
 #+---------------------------------------------------------------------------+
 class Project(object):
@@ -101,7 +101,7 @@ class Project(object):
     # The name of the configuration file
     CONFIGURATION_FILENAME = "config.xml"
 
-    # /!\ WARNING :
+    # /!\ WARNING:
     # The dict{} which defines the parsing function associated with each schema
     # is added to the end of the document
 
@@ -122,10 +122,10 @@ class Project(object):
     def generateXMLConfigFile(self):
 
         # Register the namespace (2 way depending of the version)
-        try :
+        try:
             etree.register_namespace('netzob', PROJECT_NAMESPACE)
             etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-        except AttributeError :
+        except AttributeError:
             etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
             etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
 
@@ -134,9 +134,9 @@ class Project(object):
         root.set("id", str(self.getID()))
         root.set("path", str(self.getPath()))
         # Warning, changed because of project = Project.createProject(self.netzob.getCurrentWorkspace(), projectName)
-        if isinstance(self.getCreationDate(), types.TupleType) :
+        if isinstance(self.getCreationDate(), types.TupleType):
             root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()[0]))
-        else :
+        else:
             root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
         root.set("name", str(self.getName()))
         # Save the configuration in it
@@ -144,7 +144,7 @@ class Project(object):
         # Save the vocabulary in it
         self.getVocabulary().save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
         # Save the grammar in it
-        if self.getGrammar() != None :
+        if self.getGrammar() != None:
             self.getGrammar().save(root, PROJECT_NAMESPACE)
         return root
 
@@ -156,7 +156,7 @@ class Project(object):
         logging.info("Save the config file of project " + self.getName() + " in " + projectFile)
 
         # First we verify and create if necessary the directory of the project
-        if not os.path.exists(projectPath) :
+        if not os.path.exists(projectPath):
             logging.info("Creation of the directory " + projectPath)
             os.mkdir(projectPath)
         # We generate the XML Config file
@@ -172,7 +172,7 @@ class Project(object):
         result = True
 
         # TODO : Some errors may occur here...
-        try :
+        try:
             tree = ElementTree(self.generateXMLConfigFile())
             currentXml = etree.tostring(tree)
 
@@ -180,9 +180,9 @@ class Project(object):
             xmlProject = tree.getroot()
             oldXml = etree.tostring(xmlProject)
 
-            if currentXml == oldXml :
+            if currentXml == oldXml:
                 result = False
-        except :
+        except:
             pass
 
 
@@ -209,26 +209,26 @@ class Project(object):
         projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
-        if projectFile == None :
+        if projectFile == None:
             return None
         # is the projectFile is a file
-        if not os.path.isfile(projectFile) :
+        if not os.path.isfile(projectFile):
             logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not valid : its not a file.")
             return None
         # is it readable
-        if not os.access(projectFile, os.R_OK) :
+        if not os.access(projectFile, os.R_OK):
             logging.warn("The specified project's configuration file (" + str(projectFile) + ") is not readable.")
             return None
 
         # We validate the file given the schemas
-        for xmlSchemaFile in Project.PROJECT_SCHEMAS.keys() :
+        for xmlSchemaFile in Project.PROJECT_SCHEMAS.keys():
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
-            if Project.isSchemaValidateXML(xmlSchemaPath, projectFile) :
+            if Project.isSchemaValidateXML(xmlSchemaPath, projectFile):
                 logging.info("The file " + str(projectFile) + " validates the project configuration file.")
                 parsingFunc = Project.PROJECT_SCHEMAS[xmlSchemaFile]
                 project = parsingFunc(projectFile)
-                if project != None :
+                if project != None:
                     return project
             else:
                 logging.warn("The project declared in file (" + projectFile + ") is not valid")
@@ -239,11 +239,11 @@ class Project(object):
     def isSchemaValidateXML(schemaFile, xmlFile):
         print schemaFile
         # is the schema is a file
-        if not os.path.isfile(schemaFile) :
+        if not os.path.isfile(schemaFile):
             logging.warn("The specified schema file (" + str(schemaFile) + ") is not valid : its not a file.")
             return False
         # is it readable
-        if not os.access(schemaFile, os.R_OK) :
+        if not os.access(schemaFile, os.R_OK):
             logging.warn("The specified schema file (" + str(schemaFile) + ") is not readable.")
             return False
 
@@ -265,12 +265,12 @@ class Project(object):
         schemaParsed = etree.parse(schemaContent, parser=schemaParser)
         schema = etree.XMLSchema(schemaParsed)
         # We parse the given XML file
-        try :
+        try:
             xmlRoot = etree.parse(xmlFile)
-            try :
+            try:
                 schema.assertValid(xmlRoot)
                 return True
-            except :
+            except:
                 log = schema.error_log
                 error = log.last_error
                 logging.debug(error)

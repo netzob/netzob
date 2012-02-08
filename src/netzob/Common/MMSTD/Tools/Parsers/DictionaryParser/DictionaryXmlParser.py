@@ -58,14 +58,14 @@ from netzob.Common.MMSTD.Dictionary import MMSTDDictionary
 
 
 #+----------------------------------------------
-#| DictionaryXmlParser :
+#| DictionaryXmlParser:
 #|    Parser for an XML Dictionary
 #+----------------------------------------------
 class DictionaryXmlParser(object):
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of a dictionary
     #| @param rootElement: XML root of the dictionary definition
@@ -75,63 +75,63 @@ class DictionaryXmlParser(object):
     def loadFromXML(rootElement, file):
         log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
 
-        if rootElement.tag != "dictionary" :
+        if rootElement.tag != "dictionary":
             raise NameError("The parsed XML doesn't represent a dictionary.")
 
         # First we identify all the variables
         variables = []
-        for xmlVariable in rootElement.findall("var") :
+        for xmlVariable in rootElement.findall("var"):
             idVar = int(xmlVariable.get("id", "-1"))
             nameVar = xmlVariable.get("name", "none")
             typeVar = xmlVariable.get("type", "none")
 
             variable = None
-            if typeVar == "HEX" :
+            if typeVar == "HEX":
                 size = int(xmlVariable.get("size", "-1"))
                 min = int(xmlVariable.get("min", "-1"))
                 max = int(xmlVariable.get("max", "-1"))
                 reset = xmlVariable.get("reset", "normal")
                 variable = HexVariable(idVar, nameVar, xmlVariable.text)
-                if size != -1 :
+                if size != -1:
                     variable.setSize(size)
-                if min != -1 :
+                if min != -1:
                     variable.setMin(min)
-                if max != -1 :
+                if max != -1:
                     variable.setMax(max)
                 variable.setReset(reset)
-            elif typeVar == "INT" :
+            elif typeVar == "INT":
                 size = int(xmlVariable.get("size", "-1"))
                 min = int(xmlVariable.get("min", "-1"))
                 max = int(xmlVariable.get("max", "-1"))
                 reset = xmlVariable.get("reset", "normal")
                 variable = IntVariable(idVar, nameVar, size, xmlVariable.text)
-                if min != -1 :
+                if min != -1:
                     variable.setMin(min)
-                if max != -1 :
+                if max != -1:
                     variable.setMax(max)
                 variable.setReset(reset)
 
 
-            elif typeVar == "MD5" :
+            elif typeVar == "MD5":
                 initVar = xmlVariable.get("init", "")
                 valVar = int(xmlVariable.get("idVariable", "0"))
                 variable = MD5Variable(idVar, nameVar, initVar, valVar)
-            elif typeVar == "AGGREGATE" :
+            elif typeVar == "AGGREGATE":
                 variable = AggregateVariable(idVar, nameVar, xmlVariable.text.split(';'))
-            elif typeVar == "WORD" :
+            elif typeVar == "WORD":
                 variable = WordVariable(idVar, nameVar, xmlVariable.text)
-            elif typeVar == "IP" :
+            elif typeVar == "IP":
                 variable = IPVariable(idVar, nameVar, xmlVariable.text)
-            elif typeVar == "DYN_LEN_STRING" :
+            elif typeVar == "DYN_LEN_STRING":
                 variable = DynLenStringVariable(idVar, nameVar, int(xmlVariable.text))
 
-            if variable != None :
+            if variable != None:
                 variables.append(variable)
 
 
         # Parse the entries declared in dictionary
         entries = []
-        for xmlEntry in rootElement.findall("entry") :
+        for xmlEntry in rootElement.findall("entry"):
             idEntry = int(xmlEntry.get("id", "-1"))
             nameEntry = xmlEntry.get("name", "none")
 
@@ -141,14 +141,14 @@ class DictionaryXmlParser(object):
 
             # Let's rock baby !
             # We start the parsing process of the dictionary
-            for xmlValue in list(xmlEntry) :
-                if xmlValue.tag == "text" :
+            for xmlValue in list(xmlEntry):
+                if xmlValue.tag == "text":
                     currentValue.registerValue(DictionaryXmlParser.getTextValue(xmlValue))
-                elif xmlValue.tag == "end" :
+                elif xmlValue.tag == "end":
                     currentValue.registerValue(DictionaryXmlParser.getEndValue(xmlValue))
-                elif xmlValue.tag == "var" :
+                elif xmlValue.tag == "var":
                     currentValue.registerValue(DictionaryXmlParser.getVarValue(xmlValue, variables))
-                else :
+                else:
                     log.warn("The tag " + xmlValue.tag + " has not been parsed !")
 
 
@@ -167,9 +167,9 @@ class DictionaryXmlParser(object):
     @staticmethod
     def getTextValue(xmlElement):
         value = None
-        if xmlElement.tag == "text" and len(xmlElement.text) > 0 :
+        if xmlElement.tag == "text" and len(xmlElement.text) > 0:
             value = TextValue.TextValue(xmlElement.text)
-        else :
+        else:
             # create logger with the given configuration
             log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
             log.warn("Error in the XML Dictionary, the xmlElement is not a text value")
@@ -178,9 +178,9 @@ class DictionaryXmlParser(object):
     @staticmethod
     def getEndValue(xmlElement):
         value = None
-        if xmlElement.tag == "end" :
+        if xmlElement.tag == "end":
             value = EndValue.EndValue()
-        else :
+        else:
             # create logger with the given configuration
             log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
             log.warn("Error in the XML Dictionary, the xmlElement is not an end value")
@@ -189,16 +189,16 @@ class DictionaryXmlParser(object):
     @staticmethod
     def getVarValue(xmlElement, variables):
         value = None
-        if xmlElement.tag == "var" and xmlElement.get("id", "none") != "none" :
+        if xmlElement.tag == "var" and xmlElement.get("id", "none") != "none":
             idVariable = int(xmlElement.get("id", "-1"))
             resetCondition = xmlElement.get("reset", "normal")
             variable = None
-            for tmp_var in variables :
-                if tmp_var.getID() == idVariable :
+            for tmp_var in variables:
+                if tmp_var.getID() == idVariable:
                     variable = tmp_var
 
             value = VarValue.VarValue(variable, resetCondition)
-        else :
+        else:
             # create logger with the given configuration
             log = logging.getLogger('netzob.Common.MMSTD.Tools.Parser.DictionaryXmlParser.py')
             log.warn("Error in the XML Dictionary, the xmlElement is not a var value")

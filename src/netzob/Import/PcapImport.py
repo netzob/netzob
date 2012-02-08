@@ -55,7 +55,7 @@ from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 
 #+----------------------------------------------
-#| Pcap :
+#| Pcap:
 #|     GUI for capturing messages imported through a provided PCAP
 #+----------------------------------------------
 class PcapImport(AbstractImporter):
@@ -73,7 +73,7 @@ class PcapImport(AbstractImporter):
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, zob):
         AbstractImporter.__init__(self, "PCAP IMPORT")
@@ -216,7 +216,7 @@ class PcapImport(AbstractImporter):
                         Sport = udp.get_uh_sport()
                         Dport = udp.get_uh_dport()
                         Data = udp.get_data_as_string()
-                    if ip.get_ip_p() == Packets.TCP.protocol :
+                    if ip.get_ip_p() == Packets.TCP.protocol:
                         tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = tcp.get_th_sport()
                         Dport = tcp.get_th_dport()
@@ -310,9 +310,9 @@ class PcapImport(AbstractImporter):
 
         filter = aFilter.get_text()
 #        reader.setfilter(r'ip proto \tcp or \udp')
-        try :
+        try:
             reader.setfilter(filter)
-        except :
+        except:
             self.logging.warn("The provided filter is not valid (it should respects the BPF format")
             button.set_sensitive(True)
             return
@@ -337,7 +337,7 @@ class PcapImport(AbstractImporter):
                 self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
                 self.packets.append(payload)
 
-            if ip.get_ip_p() == Packets.TCP.protocol :
+            if ip.get_ip_p() == Packets.TCP.protocol:
                 tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
                 self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
                 self.packets.append(payload)

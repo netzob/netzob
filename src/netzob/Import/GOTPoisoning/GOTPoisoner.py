@@ -39,7 +39,7 @@ import os
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| GOTPoisoner :
+#| GOTPoisoner:
 #|     Inject a parasite into specified process
 #+---------------------------------------------------------------------------+
 class GOTPoisoner():
@@ -56,7 +56,7 @@ class GOTPoisoner():
 
 
         functionNames = []
-        for func in self.parasite.getFunctions() :
+        for func in self.parasite.getFunctions():
             functionNames.append(func.getName())
 
         f = os.popen(self.injector.getFolder() + "/netzob_injector " + str(pid) + " " + " ".join(functionNames))

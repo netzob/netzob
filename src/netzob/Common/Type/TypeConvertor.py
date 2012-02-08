@@ -68,9 +68,9 @@ class TypeConvertor():
 
     @staticmethod
     def bool2str(b):
-        if b :
+        if b:
             return "true"
-        else :
+        else:
             return "false"
 
     #+----------------------------------------------
@@ -122,19 +122,19 @@ class TypeConvertor():
 
     @staticmethod
     def encodeNetzobRawToGivenType(raw, aType):
-        if aType == Format.STRING :
+        if aType == Format.STRING:
             return TypeConvertor.netzobRawToString(raw)
-        elif aType == Format.HEX :
+        elif aType == Format.HEX:
             return raw
-        elif aType == Format.OCTAL :
+        elif aType == Format.OCTAL:
             return TypeConvertor.netzobRawToOctal(raw)
-        elif aType == Format.BINARY :
+        elif aType == Format.BINARY:
             return TypeConvertor.netzobRawToBinary(raw)
-        elif aType == Format.DECIMAL :
+        elif aType == Format.DECIMAL:
             return TypeConvertor.netzobRawToDecimal(raw)
-        elif aType == Format.IP :
+        elif aType == Format.IP:
             return TypeConvertor.netzobRawToIP(raw)
-        else :
+        else:
             return raw
 
     @staticmethod
@@ -148,25 +148,25 @@ class TypeConvertor():
 
     @staticmethod
     def encodeGivenTypeToNetzobRaw(raw, aType):
-        if aType == Format.STRING :
+        if aType == Format.STRING:
             return TypeConvertor.stringToNetzobRaw(raw)
-        elif aType == Format.HEX :
+        elif aType == Format.HEX:
             return raw
-        elif aType == Format.OCTAL :
+        elif aType == Format.OCTAL:
             return TypeConvertor.octalToNetzobRaw(raw)
-        elif aType == Format.BINARY :
+        elif aType == Format.BINARY:
             return TypeConvertor.binaryToNetzobRaw(raw)
-        elif aType == Format.DECIMAL :
+        elif aType == Format.DECIMAL:
             return TypeConvertor.decimalToNetzobRaw(raw)
-        elif aType == Format.IP :
+        elif aType == Format.IP:
             return TypeConvertor.ipToNetzobRaw(raw)
-        else :
+        else:
             return raw
 
     @staticmethod
     def pythonDatetime2XSDDatetime(date):
         # XSD Format : [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]
-#        if date == None :
+#        if date == None:
 #            return ""
         if not isinstance(date, datetime.datetime) and isinstance(date[0], datetime.datetime):
             date = date[0]
@@ -206,9 +206,9 @@ class TypeConvertor():
     @staticmethod
     def stringToNetzobRaw(aStr):
         raw = []
-        for c in aStr :
+        for c in aStr:
             strhexc = str(hex(ord(c)))[2:]
-            if len(strhexc) < 2 :
+            if len(strhexc) < 2:
                 strhexc = "0" + strhexc
             raw.append(strhexc)
         return ''.join(raw)
@@ -359,7 +359,7 @@ class TypeConvertor():
         def GetPrintableChar(str):
             if str.isalnum():
                 return str
-            elif str == '\n' :
+            elif str == '\n':
                 return "<CR>"
             else:
                 return '.'

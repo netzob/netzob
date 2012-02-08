@@ -44,7 +44,7 @@ from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
 
 #+----------------------------------------------
-#| ResourcesConfiguration :
+#| ResourcesConfiguration:
 #|    Configure and verify all the resources
 #+----------------------------------------------
 class ResourcesConfiguration(object):
@@ -56,7 +56,7 @@ class ResourcesConfiguration(object):
 
     @staticmethod
     #+----------------------------------------------
-    #| initializeResources :
+    #| initializeResources:
     #+----------------------------------------------
     def initializeResources():
         # We search for the
@@ -68,17 +68,17 @@ class ResourcesConfiguration(object):
         # While, on everyday execution, both the static and the userpath should exists
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
-        if staticPath == None :
+        if staticPath == None:
             logging.fatal("The static resources were not found !")
             return False
 
         userPath = ResourcesConfiguration.verifyUserResources()
-        if userPath == None :
+        if userPath == None:
             logging.info("The user resources were not found, we ask to the user its Netzob home directory")
             userPath = ResourcesConfiguration.askForUserDir()
-            if userPath == None :
+            if userPath == None:
                 return False
-            else :
+            else:
                 # the user has specified its home directory so we store it in
                 # a dedicated local file
                 localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
@@ -101,7 +101,7 @@ class ResourcesConfiguration(object):
             workspacePath = chooser.get_filename()
         chooser.destroy()
 
-        if workspacePath != None :
+        if workspacePath != None:
             ResourcesConfiguration.createWorkspace(workspacePath)
 
         return workspacePath
@@ -110,20 +110,20 @@ class ResourcesConfiguration(object):
     def createWorkspace(path):
         logging.info("Hosting workspace on " + str(path))
         # we do nothing if a global config file already exists
-        if os.path.isfile(os.path.join(path, Workspace.CONFIGURATION_FILENAME)) :
+        if os.path.isfile(os.path.join(path, Workspace.CONFIGURATION_FILENAME)):
             return
-        else :
+        else:
             workspace = Workspace.createWorkspace("New Workspace", path)
             return workspace
 
     @staticmethod
     def verifyStaticResources():
         staticPath = NetzobResources.STATIC_DIR
-        if staticPath == "" :
+        if staticPath == "":
             return None
 
         logging.debug("Static path declared : " + staticPath)
-        if (os.path.isdir(staticPath)) :
+        if (os.path.isdir(staticPath)):
             return staticPath
 
         return None
@@ -136,18 +136,18 @@ class ResourcesConfiguration(object):
         workspacePath = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
 
         # Workspace not declared
-        if workspacePath == None :
+        if workspacePath == None:
             return None
         # is the workspace a directory
-        if not os.path.isdir(workspacePath) :
+        if not os.path.isdir(workspacePath):
             logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not valid : its not a directory.")
             return None
         # is it readable
-        if not os.access(workspacePath, os.R_OK) :
+        if not os.access(workspacePath, os.R_OK):
             logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not readable.")
             return None
         # is it writable
-        if not os.access(workspacePath, os.W_OK) :
+        if not os.access(workspacePath, os.W_OK):
             logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not writable.")
             return None
 
@@ -156,13 +156,13 @@ class ResourcesConfiguration(object):
     @staticmethod
     def extractWorkspaceDefinitionFromFile(localFilePath):
         workspacePath = None
-        if os.path.isfile(localFilePath) :
+        if os.path.isfile(localFilePath):
             localFile = open(localFilePath, 'r')
 
-            for line in localFile :
+            for line in localFile:
                 strippedLine = line.rstrip('\n\r')
                 indexDelimitor = strippedLine.find(ResourcesConfiguration.DELIMITOR_LOCALFILE)
-                if indexDelimitor > 0 and strippedLine[:indexDelimitor] == ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE and len(strippedLine[indexDelimitor + 1:]) > 0 :
+                if indexDelimitor > 0 and strippedLine[:indexDelimitor] == ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE and len(strippedLine[indexDelimitor + 1:]) > 0:
                     workspacePath = strippedLine[indexDelimitor + 1:]
                     break
             localFile.close()
@@ -173,9 +173,9 @@ class ResourcesConfiguration(object):
         return NetzobResources.STATIC_DIR
     @staticmethod
     def getWorkspaceFile():
-        if NetzobResources.WORKSPACE_DIR == None :
+        if NetzobResources.WORKSPACE_DIR == None:
             return ResourcesConfiguration.verifyUserResources()
-        else :
+        else:
             return NetzobResources.WORKSPACE_DIR
 
 

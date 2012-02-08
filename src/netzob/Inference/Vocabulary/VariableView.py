@@ -44,14 +44,14 @@ pygtk.require('2.0')
 
 
 #+----------------------------------------------
-#| VariableView :
+#| VariableView:
 #|     Class dedicated to host the creation of a variable
 #+----------------------------------------------
 class VariableView(object):
 
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, netzob, field, variableId, variableName, variableIsMutable):
         # create logger with the given configuration
@@ -136,11 +136,11 @@ class VariableView(object):
                 if treeview.get_model().iter_is_valid(aIter):
                     variable_id = treeview.get_model().get_value(aIter, 0)
 
-                    for varid in self.datas.keys() :
-                        if varid == variable_id :
+                    for varid in self.datas.keys():
+                        if varid == variable_id:
                             rootVariable = self.datas[varid]
 
-        if rootVariable == None :
+        if rootVariable == None:
             self.log.debug("Impossible to find the selected variable.")
             return
 
@@ -227,7 +227,7 @@ class VariableView(object):
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK :
+        if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return
 
@@ -283,7 +283,7 @@ class VariableView(object):
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK :
+        if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return
 
@@ -340,7 +340,7 @@ class VariableView(object):
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK :
+        if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return
 
@@ -395,7 +395,7 @@ class VariableView(object):
 
         # We retrieve all the existing variables in the project
         existingVariables = self.project.getVocabulary().getVariables()
-        for existingVariable in existingVariables :
+        for existingVariable in existingVariables:
             self.varCombo.get_model().append([existingVariable.getDescription(), existingVariable.getID()])
 
         mainTable.attach(varLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -405,7 +405,7 @@ class VariableView(object):
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK :
+        if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return
 

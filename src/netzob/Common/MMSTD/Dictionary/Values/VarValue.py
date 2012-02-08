@@ -41,7 +41,7 @@ from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
 
 #+---------------------------------------------------------------------------+
-#| VarValue :
+#| VarValue:
 #|     Represents a var value
 #+---------------------------------------------------------------------------+
 class VarValue(AbstractValue):
@@ -56,7 +56,7 @@ class VarValue(AbstractValue):
 
 
     #+---------------------------------------------------------------------------+
-    #| restore :
+    #| restore:
     #|     Simple !! :) Call this method if you want to forget the last learned value
     #+---------------------------------------------------------------------------+
     def restore(self):
@@ -79,12 +79,12 @@ class VarValue(AbstractValue):
             new_indice = self.variable.learn(val, indice, isForced, dictionary)
 
             return new_indice
-        else :
+        else:
             self.log.debug("Compare " + val[indice:] + " with " + strvalue + "[" + ''.join(binvalue) + "]")
-            if val[indice:].startswith(''.join(binvalue)) :
+            if val[indice:].startswith(''.join(binvalue)):
                 self.log.debug("Compare successful")
                 return indice + len(binvalue)
-            else :
+            else:
                 self.log.debug("Compare fail")
         return -1
 

@@ -42,10 +42,10 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| RawMessageFactory :
+#| RawMessageFactory:
 #|     Factory dedicated to the manipulation of raw messages
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| XML Definition :
+#| XML Definition:
 #| <message type="RAW" id="" timestamp="">
 #|     <data></data>
 #| </message>
@@ -69,7 +69,7 @@ class RawMessageFactory():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of a RAW message
     #| @param rootElement: XML root of the RAW message
@@ -78,7 +78,7 @@ class RawMessageFactory():
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:RawMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:RawMessage":
             raise NameError("The parsed xml doesn't represent a Raw message.")
 
         # Verifies the data field

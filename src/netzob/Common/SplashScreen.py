@@ -43,7 +43,7 @@ import os
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 #+----------------------------------------------
-#| SplashScreen :
+#| SplashScreen:
 #|    Manage a splashscreen for Netzob startup
 #+----------------------------------------------
 class SplashScreen(object):
@@ -77,9 +77,9 @@ class SplashScreen(object):
 
 
         workspace = ResourcesConfiguration.getWorkspace()
-        if workspace != None :
+        if workspace != None:
             self.lbl = gtk.Label("Current workspace : " + workspace)
-        else :
+        else:
             self.lbl = gtk.Label("Current workspace : NO WORKSPACE COMPUTED !")
         self.lbl.set_alignment(0, 0.5)
 

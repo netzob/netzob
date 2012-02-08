@@ -40,7 +40,7 @@ from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
 #+----------------------------------------------
-#| FileImport :
+#| FileImport:
 #|     GUI for capturing messages
 #+----------------------------------------------
 class File:
@@ -62,7 +62,7 @@ class File:
         pass
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #| @param netzob: the netzob main object
     #+----------------------------------------------
     def __init__(self, netzob):
@@ -113,7 +113,7 @@ class File:
                 symbol = None
 
                 for tmp_symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-                    if str(tmp_symbol.getID()) == idSymbol :
+                    if str(tmp_symbol.getID()) == idSymbol:
                         symbol = tmp_symbol
 
                 # Retrieve a random message in order to show a type structure
@@ -123,7 +123,7 @@ class File:
                 self.treeTypeStructureGenerator.update()
 
     #+----------------------------------------------
-    #| button_press_on_field :
+    #| button_press_on_field:
     #|   Create a menu to display available operations
     #|   on the treeview symbols
     #+----------------------------------------------

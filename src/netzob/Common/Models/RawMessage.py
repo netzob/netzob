@@ -41,7 +41,7 @@ from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
-#| RawMessage :
+#| RawMessage:
 #|     Definition of a raw message
 #+---------------------------------------------------------------------------+
 class RawMessage(AbstractMessage):

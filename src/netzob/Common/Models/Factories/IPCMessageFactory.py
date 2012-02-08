@@ -41,10 +41,10 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| IPCMessageFactory :
+#| IPCMessageFactory:
 #|     Factory dedicated to the manipulation of IPC messages
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#| XML Definition :
+#| XML Definition:
 #| <message type="IPC" id="">
 #|     <category></category>
 #|     <key></key>
@@ -86,7 +86,7 @@ class IPCMessageFactory():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
     #[     the definition of an IPC message
     #| @param rootElement: XML root of the IPC message
@@ -95,7 +95,7 @@ class IPCMessageFactory():
     #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IPCMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IPCMessage":
             raise NameError("The parsed xml doesn't represent an IPC message.")
 
         # Verifies the data field

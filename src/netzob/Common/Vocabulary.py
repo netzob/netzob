@@ -44,7 +44,7 @@ from netzob.Common.Field import Field
 
 
 #+---------------------------------------------------------------------------+
-#| Vocabulary :
+#| Vocabulary:
 #|     Class definition of the vocabulary
 #+---------------------------------------------------------------------------+
 class Vocabulary(object):
@@ -57,15 +57,15 @@ class Vocabulary(object):
 
     def getAllMessages(self):
         messages = []
-        for symbol in self.symbols :
-            for msg in symbol.getMessages() :
+        for symbol in self.symbols:
+            for msg in symbol.getMessages():
                 messages.append(msg)
         return messages
 
     def getSymbolWhichContainsMessage(self, message):
-        for symbol in self.symbols :
-            for msg in symbol.getMessages() :
-                if msg.getID() == message.getID() :
+        for symbol in self.symbols:
+            for msg in symbol.getMessages():
+                if msg.getID() == message.getID():
                     return symbol
         return None
 
@@ -73,15 +73,15 @@ class Vocabulary(object):
         return self.symbols
 
     def getSymbol(self, symbolID):
-        for symbol in self.symbols :
-            if symbol.getID() == symbolID :
+        for symbol in self.symbols:
+            if symbol.getID() == symbolID:
                 return symbol
         return None
 
     def addSymbol(self, symbol):
-        if not symbol in self.symbols :
+        if not symbol in self.symbols:
             self.symbols.append(symbol)
-        else :
+        else:
             logging.warn("The symbol cannot be added in the vocabulary since it's already declared in.")
 
     def removeSymbol(self, symbol):
@@ -89,22 +89,22 @@ class Vocabulary(object):
 
     def getVariables(self):
         variables = []
-        for symbol in self.symbols :
-            for variable in symbol.getVariables() :
-                if not variable in variables :
+        for symbol in self.symbols:
+            for variable in symbol.getVariables():
+                if not variable in variables:
                     variables.append(variable)
         return variables
 
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
-        # The alignment is proceeded as follows :
+        # The alignment is proceeded as follows:
         # align and cluster each individual group
         # align and cluster the groups together
         # orphan reduction
 
 
-        if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION) :
+        if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION):
             reductionStep = 1
-        else :
+        else:
             reductionStep = 0
 
         nbSteps = len(self.symbols) + 1 + reductionStep
@@ -123,7 +123,7 @@ class Vocabulary(object):
         step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
 
         # We try to cluster each symbol
-        for symbol in self.symbols :
+        for symbol in self.symbols:
             percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
             clusterer = Clusterer(project, [symbol], explodeSymbols=True)
             clusterer.mergeSymbols()
@@ -144,7 +144,7 @@ class Vocabulary(object):
         # Now we execute the second part of NETZOB Magical Algorithms :)
         # clean the single symbols
         mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-        if mergeOrphanReduction :
+        if mergeOrphanReduction:
             logging.info("Merging the orphan symbols")
             clusterer.mergeOrphanSymbols()
             fraction = fraction + step
@@ -161,7 +161,7 @@ class Vocabulary(object):
     #|  Align each message of each symbol with a specific delimiter
     #+----------------------------------------------
     def alignWithDelimiter(self, configuration, aFormat, delimiter):
-        for symbol in self.symbols :
+        for symbol in self.symbols:
             symbol.alignWithDelimiter(configuration, aFormat, delimiter)
 
     #+----------------------------------------------
@@ -169,24 +169,24 @@ class Vocabulary(object):
     #|  Align each message just to show their differences
     #+----------------------------------------------
     def simpleAlignment(self, configuration, unitSize):
-        for symbol in self.symbols :
+        for symbol in self.symbols:
             symbol.simpleAlignment(configuration, unitSize)
 
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
         xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}symbols")
-        for symbol in self.symbols :
+        for symbol in self.symbols:
             symbol.save(xmlSymbols, namespace_project, namespace_common)
 
     @staticmethod
     def loadVocabulary(xmlRoot, namespace, namespace_common, version, project):
         vocabulary = Vocabulary()
 
-        if version == "0.1" :
+        if version == "0.1":
             # parse all the symbols which are declared in the vocabulary
-            for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol") :
+            for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project)
-                if symbol != None :
+                if symbol != None:
                     vocabulary.addSymbol(symbol)
         return vocabulary
 

@@ -40,7 +40,7 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 
 
 #+---------------------------------------------------------------------------+
-#| NetworkClient :
+#| NetworkClient:
 #|     Definition of a network client
 #+---------------------------------------------------------------------------+
 class NetworkClient(AbstractActor):
@@ -58,17 +58,17 @@ class NetworkClient(AbstractActor):
 
 
     def open(self):
-        try :
-            if (self.protocol == "UDP") :
+        try:
+            if (self.protocol == "UDP"):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            else :
+            else:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.host, self.port))
             self.socket.setblocking(0)
-        except :
+        except:
             self.socket = None
 
-        if self.socket == None :
+        if self.socket == None:
             self.log.warn("Impossible to open the socket created in the NetworkClient")
             return False
 
@@ -79,10 +79,10 @@ class NetworkClient(AbstractActor):
     def close(self):
         self.log.debug("Closing the network client")
         self.stop()
-        try :
+        try:
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
-        except :
+        except:
             self.log.debug("No need to close the socket since it's not even open")
             return True
         return True
@@ -92,23 +92,23 @@ class NetworkClient(AbstractActor):
         result = bitarray(endian='big')
 
         chars = []
-        try :
-            if timeout > 0 :
+        try:
+            if timeout > 0:
                 ready = select.select([self.socket], [], [], timeout)
                 if ready[0]:
                     chars = self.socket.recv(4096)
-            else :
+            else:
                 ready = select.select([self.socket], [], [])
                 self.log.debug("ready = " + str(ready[0]))
                 if ready[0]:
                     chars = self.socket.recv(4096)
-        except :
+        except:
             self.log.debug("Impossible to read from the network socket")
             return None
 
 
         self.log.debug("Read finished")
-        if (len(chars) == 0) :
+        if (len(chars) == 0):
             return result
         result.fromstring(chars)
 
@@ -118,10 +118,10 @@ class NetworkClient(AbstractActor):
     def write(self, message):
         self.log.debug("Write down !")
         self.outputMessages.append(message)
-        try :
+        try:
             self.outputFile.write(message.tostring())
             self.outputFile.flush()
-        except :
+        except:
             self.log.warn("An error occured while trying to write on the communication channel")
 
 

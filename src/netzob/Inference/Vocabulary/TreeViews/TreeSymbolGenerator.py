@@ -36,12 +36,12 @@ import gtk
 #+----------------------------------------------
 
 #+----------------------------------------------
-#| TreeSymbolGenerator :
+#| TreeSymbolGenerator:
 #+----------------------------------------------
 class TreeSymbolGenerator():
 
     #+----------------------------------------------
-    #| Constructor :
+    #| Constructor:
     #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
@@ -51,11 +51,11 @@ class TreeSymbolGenerator():
         self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator.py')
 
     #+----------------------------------------------
-    #| initialization :
+    #| initialization:
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
-        # Tree store contains :
+        # Tree store contains:
         # str : text ( symbol Name )
         # str : text ( score )
         # str : color foreground
@@ -81,14 +81,14 @@ class TreeSymbolGenerator():
         self.treeview.show()
 
     #+----------------------------------------------
-    #| clear :
+    #| clear:
     #|         Clear the class
     #+----------------------------------------------
     def clear(self):
         pass
 
     #+----------------------------------------------
-    #| default :
+    #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self):
@@ -98,7 +98,7 @@ class TreeSymbolGenerator():
         # We retrieve the current project
         project = self.netzob.getCurrentProject()
 
-        if project != None :
+        if project != None:
             # We retrieve the vocabulary of the project
             vocabulary = project.getVocabulary()
 
@@ -108,11 +108,11 @@ class TreeSymbolGenerator():
             # We retrieve the symbols declared in (symbol = symbol)
             symbols = vocabulary.getSymbols()
 
-            for symbol in symbols :
+            for symbol in symbols:
                 iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
     #+----------------------------------------------
-    #| messageSelected :
+    #| messageSelected:
     #|         Update the treestore when a message
     #|         is a selected
     #| @param selectedMessage the selected message
@@ -121,28 +121,28 @@ class TreeSymbolGenerator():
         self.log.debug("Updating the treestore of the symbol with a selected message")
         self.treestore.clear()
         project = self.netzob.getCurrentProject()
-        if project == None :
+        if project == None:
             return
         for symbol in project.getVocabulary().getSymbols():
             tmp_sequences = []
-            if (len(symbol.getRegex()) > 0) :
+            if (len(symbol.getRegex()) > 0):
                     tmp_sequences.append(symbol.getRegex())
 
             tmp_sequences.append(self.selectedMessage.getStringData())
             tmp_alignator = NeedlemanWunsch()
 
             tmp_score = symbol.getScore()
-            if (len(tmp_sequences) >= 2) :
+            if (len(tmp_sequences) >= 2):
                 tmp_regex = tmp_alignator.getRegex(tmp_sequences)
                 tmp_score = tmp_alignator.computeScore(tmp_regex)
             if (tmp_score >= symbol.getScore()):
                 color = '#66FF00'
-            else :
+            else:
                 color = '#FF0000'
                 iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0}".format(symbol.getName()), "{0}".format(symbol.getScore()), '#000000', color])
 
     #+----------------------------------------------
-    #| getSymbolAtPosition :
+    #| getSymbolAtPosition:
     #|         retrieves the symbol wich is inserted
     #|         in the treeview at the given position
     #| @param x the position in X
@@ -154,20 +154,20 @@ class TreeSymbolGenerator():
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
 
         info = self.treeview.get_path_at_pos(x, y)
-        if info is not None :
+        if info is not None:
             path = info[0]
             iter = self.treeview.get_model().get_iter(path)
             idSymbol = str(self.treeview.get_model().get_value(iter, 0))
-            if idSymbol is not None :
+            if idSymbol is not None:
                 self.log.debug("An entry with the ID {0} has been found.".format(idSymbol))
                 for symbol in vocabulary.getSymbols():
-                    if (str(symbol.getID()) == idSymbol) :
+                    if (str(symbol.getID()) == idSymbol):
                         self.log.debug("The requested symbol with ID {0} has been found".format(symbol.getID()))
                         return symbol
         return None
 
     #+----------------------------------------------
-    #| GETTERS :
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview

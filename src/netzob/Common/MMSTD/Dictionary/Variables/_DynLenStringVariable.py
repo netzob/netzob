@@ -44,7 +44,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
-#| DynLenStringVariable :
+#| DynLenStringVariable:
 #|     Definition of a dynamic sized string variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class DynLenStringVariable(Variable):
@@ -83,7 +83,7 @@ class DynLenStringVariable(Variable):
         self.log.debug("nb_letter = " + str(nb_letter))
         tmp = val[indice:]
         self.log.debug("tmp size : " + str(len(tmp)))
-        if (len(tmp) >= nb_letter) :
+        if (len(tmp) >= nb_letter):
             self.binVal = tmp[:nb_letter]
             self.strVal = TypeConvertor.bin2string(self.binVal)
             self.log.debug("Value learnt : " + self.strVal)
