@@ -40,7 +40,7 @@ from netzob.Common.Project import Project
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
-from netzob.Import.IpcImport import IpcImport
+#from netzob.Import.IpcImport import IpcImport
 from netzob.Import.FileImport import FileImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport

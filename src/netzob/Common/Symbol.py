@@ -56,7 +56,7 @@ from netzob.Common.Type.Format import Format
 #+---------------------------------------------- 
 #| C Imports
 #+----------------------------------------------
-import libNeedleman
+import _libNeedleman
 
 
 NAMESPACE = "http://www.netzob.org/"
@@ -130,7 +130,7 @@ class Symbol(object):
         logging.debug("len messages : " + str(len(self.getMessages())))
         logging.debug("format = " + format)
         logging.debug("serial = " + serialMessages)
-        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
+        (score, aRegex, aMask) = _libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
         
         self.setScore(score)
 
