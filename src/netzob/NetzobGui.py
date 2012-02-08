@@ -179,8 +179,9 @@ class NetzobGui(gtk.Window):
         
     def startGui(self):
         # UI thread launching
-        self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
-        self.uiThread.start()
+        #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
+        #self.uiThread.start()
+		  self.guiThread()
 
     def evnmtDelete(self, widget, event, data=None):
         return False
