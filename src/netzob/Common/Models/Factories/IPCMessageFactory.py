@@ -132,5 +132,3 @@ class IPCMessageFactory():
         result = IPCMessage(msg_id, msg_timestamp, msg_data, msg_category, msg_key, msg_direction)
 
         return result
-
-

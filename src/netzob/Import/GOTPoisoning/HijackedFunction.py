@@ -206,5 +206,3 @@ class HijackedFunction():
         self.parameters = parameters
     def setSource(self, source):
         self.source = source
-
-

@@ -160,5 +160,3 @@ class MembershipQuery(object):
             result = result + str(symbol) + ", "
 
         return result + ")"
-
-

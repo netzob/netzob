@@ -113,5 +113,3 @@ class MD5Variable(Variable):
 
         self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
         return -1
-
-

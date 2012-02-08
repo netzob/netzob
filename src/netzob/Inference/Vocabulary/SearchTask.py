@@ -65,4 +65,3 @@ class SearchTask(object):
 
     def getVariations(self):
         return self.searchedDatas.keys()
-

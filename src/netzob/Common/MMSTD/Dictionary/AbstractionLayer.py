@@ -234,4 +234,3 @@ class AbstractionLayer():
         return self.vocabulary
     def getCommunicationChannel(self):
         return self.communicationChannel
-

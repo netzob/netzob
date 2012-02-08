@@ -108,4 +108,3 @@ class MMSTDXmlParser(object):
         # create an MMSTD
         automata = MMSTD.MMSTD(initialState, dictionary)
         return automata
-

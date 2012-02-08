@@ -144,4 +144,3 @@ class NetworkClient(AbstractActor):
 
     def setPort(self, port):
         self.port = port
-

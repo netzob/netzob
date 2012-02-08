@@ -118,5 +118,3 @@ class MMSTDVisitor(threading.Thread):
         self.model = model
     def setName(self, name):
         self.name = name
-
-

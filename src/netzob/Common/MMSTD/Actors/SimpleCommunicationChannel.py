@@ -88,6 +88,3 @@ class SimpleCommunicationLayer(AbstractActor):
     def stop(self):
         self.log.debug("Stopping the thread of the client")
         AbstractActor.stop(self)
-
-
-

@@ -105,5 +105,3 @@ class Aggregate(AbstractValue):
         self.name = name
     def setType(self, type):
         self.type = type
-
-

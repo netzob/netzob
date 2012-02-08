@@ -420,5 +420,3 @@ class VariableView(object):
 
         # We close the current dialog
         dialog.destroy()
-
-

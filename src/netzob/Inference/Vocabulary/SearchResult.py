@@ -57,8 +57,3 @@ class SearchResult(object):
 
     def getSegments(self):
         return self.segments
-
-
-
-
-

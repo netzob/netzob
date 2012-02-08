@@ -67,8 +67,3 @@ class PrototypesRepositoryParser():
             libs.append(lib)
 
         return libs
-
-
-
-
-

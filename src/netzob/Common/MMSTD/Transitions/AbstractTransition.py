@@ -164,5 +164,3 @@ class AbstractTransition():
         else:
             raise NameError("The parsed xml doesn't represent a valid type message (" + xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") + ").")
             return None
-
-

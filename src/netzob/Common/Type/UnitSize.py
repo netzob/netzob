@@ -36,4 +36,3 @@ class UnitSize():
     BITS16 = "16-bits"
     BITS32 = "32-bits"
     BITS64 = "64-bits"
-

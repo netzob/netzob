@@ -111,4 +111,3 @@ class BinaryVariable(Variable):
             return BinaryVariable(varId, varName, varIsMutable, varValue)
 
         return None
-

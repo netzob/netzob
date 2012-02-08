@@ -123,5 +123,3 @@ class NetworkMessage(AbstractMessage):
 
     def setTimestamp(self, timestamp):
         self.timestamp = timestamp
-
-

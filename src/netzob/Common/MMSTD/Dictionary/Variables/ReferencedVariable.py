@@ -97,4 +97,3 @@ class ReferencedVariable(Variable):
             return ReferencedVariable(varId, varName, varIsMutable, refVarId)
 
         return None
-

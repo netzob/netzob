@@ -60,4 +60,3 @@ class XSDResolver(Resolver):
                 return test
 
         return self.resolve_string(url, context)
-

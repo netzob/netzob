@@ -101,5 +101,3 @@ class IPVariable(Variable):
 
 
         return -1
-
-

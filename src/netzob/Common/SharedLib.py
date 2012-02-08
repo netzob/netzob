@@ -130,5 +130,3 @@ class SharedLib(object):
         self.functions = functions
     def getFunctions(self):
         return self.functions
-
-

@@ -154,4 +154,3 @@ class FileMessageFactory():
         result = FileMessage(msg_id, msg_timestamp, msg_data, msg_filename, msg_creationDate, msg_modificationDate, msg_owner, msg_size, msg_lineNumber)
 
         return result
-

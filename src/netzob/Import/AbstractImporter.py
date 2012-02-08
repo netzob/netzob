@@ -77,4 +77,3 @@ class AbstractImporter:
         for message in messages:
             trace.addMessage(message)
         workspace.addImportedTrace(trace)
-

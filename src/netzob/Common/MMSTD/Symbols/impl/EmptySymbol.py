@@ -78,4 +78,3 @@ class EmptySymbol(AbstractSymbol):
 #        self.id = id
 #    def setEntry(self, entry):
 #        self.entry = entry
-

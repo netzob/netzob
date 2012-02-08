@@ -42,4 +42,3 @@ class Task:
 
     def cancel(self):
         pass
-

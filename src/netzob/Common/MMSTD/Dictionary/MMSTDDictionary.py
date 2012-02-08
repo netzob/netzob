@@ -77,4 +77,3 @@ class MMSTDDictionary():
         return self.entries
     def getVariables(self):
         return self.variables
-

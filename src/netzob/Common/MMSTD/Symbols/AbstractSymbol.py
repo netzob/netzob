@@ -51,5 +51,3 @@ class AbstractSymbol():
     #+-----------------------------------------------------------------------+
     def getType(self):
         return self.type
-
-

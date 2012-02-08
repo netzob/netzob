@@ -197,6 +197,3 @@ class Vocabulary(object):
     def findSizeFields(self, store):
         for symbol in self.getSymbols():
             symbol.findSizeFields(store)
-
-
-

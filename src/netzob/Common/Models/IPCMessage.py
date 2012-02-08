@@ -102,5 +102,3 @@ class IPCMessage(AbstractMessage):
         self.type = type
     def setDirection(self, direction):
         self.direction = direction
-
-

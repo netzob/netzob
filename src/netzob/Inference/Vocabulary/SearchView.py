@@ -172,9 +172,3 @@ class SearchView(object):
         self.tree.show()
 
         self.panel.attach(self.tree, 0, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-
-
-
-
-

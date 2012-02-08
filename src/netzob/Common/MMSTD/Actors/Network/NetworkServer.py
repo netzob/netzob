@@ -223,4 +223,3 @@ class NetworkServer(AbstractActor):
 
     def setPort(self, port):
         self.port = port
-

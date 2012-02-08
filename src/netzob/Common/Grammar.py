@@ -184,9 +184,3 @@ class Grammar(object):
         return self.states
     def getTransitions(self):
         return self.transitions
-
-
-
-
-
-

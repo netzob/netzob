@@ -166,6 +166,3 @@ class ImportedTrace(object):
 
             return importedTrace
         return None
-
-
-

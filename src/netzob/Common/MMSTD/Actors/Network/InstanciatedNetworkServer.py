@@ -131,4 +131,3 @@ class InstanciatedNetworkServer(AbstractActor):
 
     def setPort(self, port):
         self.port = port
-

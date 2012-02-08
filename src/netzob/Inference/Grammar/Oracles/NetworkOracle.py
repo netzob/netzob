@@ -98,4 +98,3 @@ class NetworkOracle(threading.Thread):
         for io in abstractionLayer.getGeneratedInputAndOutputsSymbols():
             symbols.append(DictionarySymbol(io))
         return symbols
-

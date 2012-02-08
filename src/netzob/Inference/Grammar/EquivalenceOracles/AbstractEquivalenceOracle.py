@@ -53,4 +53,3 @@ class AbstractEquivalenceOracle(object):
     def findCounterExample(self, mmstd):
         self.log.error("The oracle doesn't support 'findCounterExample'.")
         raise NotImplementedError("The oracle doesn't support 'findCounterExample'.")
-

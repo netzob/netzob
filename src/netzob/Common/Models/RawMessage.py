@@ -69,5 +69,3 @@ class RawMessage(AbstractMessage):
         properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
 
         return properties
-
-

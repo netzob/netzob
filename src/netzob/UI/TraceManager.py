@@ -305,4 +305,3 @@ class TraceManager():
             self.updateContentMessage()
         else:
             self.log.debug("The user didn't confirm the deletion of the trace " + trace.getImportID())
-

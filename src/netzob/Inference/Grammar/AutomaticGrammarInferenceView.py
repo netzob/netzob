@@ -258,6 +258,3 @@ class AutomaticGrammarInferenceView(object):
 
         # Start the inferer
         self.job = Job(self.startInferer())
-
-
-

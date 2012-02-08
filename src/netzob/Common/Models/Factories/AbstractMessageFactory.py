@@ -93,4 +93,3 @@ class AbstractMessageFactory():
         else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None
-

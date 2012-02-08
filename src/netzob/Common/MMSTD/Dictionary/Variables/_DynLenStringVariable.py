@@ -91,5 +91,3 @@ class DynLenStringVariable(Variable):
 
 
         return -1
-
-

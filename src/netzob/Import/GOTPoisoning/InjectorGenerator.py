@@ -998,4 +998,3 @@ int main(int argc, char **argv)
         return "\\x" + "\\x".join(self.parasite.getParasitesSignature()[0])
     def getFolder(self):
         return self.tmp_folder
-

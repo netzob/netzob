@@ -148,4 +148,3 @@ class WordVariable(Variable):
             return WordVariable(varId, varName, varIsMutable, varValue)
 
         return None
-

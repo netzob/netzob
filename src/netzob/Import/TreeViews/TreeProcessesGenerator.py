@@ -103,4 +103,3 @@ class TreeProcessesGenerator():
     #+----------------------------------------------
     def setProcess(self, processes):
         self.processes = processes
-

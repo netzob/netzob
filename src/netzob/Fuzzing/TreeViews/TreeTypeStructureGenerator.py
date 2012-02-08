@@ -151,4 +151,3 @@ class TreeTypeStructureGenerator():
         self.message = message
     def setMessageByID(self, message_id):
         self.message = self.symbol.getMessageByID(message_id)
-

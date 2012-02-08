@@ -66,5 +66,3 @@ class LoggingConfiguration(object):
             f = logging.Formatter("[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s")
             h.setFormatter(f)
             logger.addHandler(h)
-
-

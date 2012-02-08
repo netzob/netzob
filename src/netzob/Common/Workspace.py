@@ -347,4 +347,3 @@ class Workspace(object):
         return self.pathOfLogging
     def getPathOfPrototypes(self):
         return self.pathOfPrototypes
-

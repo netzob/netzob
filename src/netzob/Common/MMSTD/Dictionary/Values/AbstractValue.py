@@ -59,5 +59,3 @@ class AbstractValue():
 
     def setType(self, type):
         self.type = type
-
-

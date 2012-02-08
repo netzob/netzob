@@ -174,5 +174,3 @@ class MMSTD(object):
                             toAnalyze.append(outputState)
                     states.append(currentState)
         return states
-
-

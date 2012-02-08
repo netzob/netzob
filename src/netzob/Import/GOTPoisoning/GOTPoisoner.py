@@ -62,8 +62,3 @@ class GOTPoisoner():
         f = os.popen(self.injector.getFolder() + "/netzob_injector " + str(pid) + " " + " ".join(functionNames))
         for i in f.readlines():
             print "EXEC:", i,
-
-
-
-
-

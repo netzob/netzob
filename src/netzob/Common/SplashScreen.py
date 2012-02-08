@@ -88,4 +88,3 @@ class SplashScreen(object):
 
         self.window.add(main_vbox)
         self.window.show_all()
-

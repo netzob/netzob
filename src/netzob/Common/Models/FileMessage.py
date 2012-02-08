@@ -119,5 +119,3 @@ class FileMessage(AbstractMessage):
         self.owner = owner
     def setSize(self, size):
         self.size = size
-
-

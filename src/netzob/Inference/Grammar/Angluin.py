@@ -489,4 +489,3 @@ class Angluin(LearningAlgorithm):
 
 
 #        self.addWordInS(MembershipQuery([]))
-

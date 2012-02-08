@@ -1408,7 +1408,3 @@ class Symbol(object):
                         symbol.addField(field)
             return symbol
         return None
-
-
-
-

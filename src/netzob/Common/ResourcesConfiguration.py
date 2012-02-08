@@ -177,7 +177,3 @@ class ResourcesConfiguration(object):
             return ResourcesConfiguration.verifyUserResources()
         else:
             return NetzobResources.WORKSPACE_DIR
-
-
-
-

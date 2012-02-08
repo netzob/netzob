@@ -128,5 +128,3 @@ class NetworkMessageFactory():
         result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort)
 
         return result
-
-
