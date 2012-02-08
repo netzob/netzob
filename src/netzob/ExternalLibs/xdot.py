@@ -816,7 +816,7 @@ class Lexer:
                 raise ParseError(msg, self.filename, line, col)
             else:
                 break
-        return Token(type = type, text = text, line = line, col = col)
+        return Token(type=type, text=text, line=line, col=col)
 
     def consume(self, text):
         # update line number
@@ -846,10 +846,10 @@ class Parser:
     def match(self, type):
         if self.lookahead.type != type:
             raise ParseError(
-                msg = 'unexpected token %r' % self.lookahead.text,
-                filename = self.lexer.filename,
-                line = self.lookahead.line,
-                col = self.lookahead.col)
+                msg='unexpected token %r' % self.lookahead.text,
+                filename=self.lexer.filename,
+                line=self.lookahead.line,
+                col=self.lookahead.col)
 
     def skip(self, type):
         while self.lookahead.type != type:
@@ -1091,7 +1091,7 @@ class DotParser(Parser):
 class XDotParser(DotParser):
 
     def __init__(self, xdotcode):
-        lexer = DotLexer(buf = xdotcode)
+        lexer = DotLexer(buf=xdotcode)
         DotParser.__init__(self, lexer)
 
         self.nodes = []
