@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -37,7 +37,7 @@ import select
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
-#+---------------------------------------------------------------------------+    
+#+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
@@ -46,114 +46,114 @@ from netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer import Instanc
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 #+---------------------------------------------------------------------------+
-#| Container 
+#| Container
 #+---------------------------------------------------------------------------+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    
+
     def __init__(self, connectionInfos, UDPConnectionHandler):
-        SocketServer.TCPServer.__init__(self, connectionInfos, UDPConnectionHandler)  
+        SocketServer.TCPServer.__init__(self, connectionInfos, UDPConnectionHandler)
         self.instances = []
-        
-    
+
+
     def getVocabulary(self):
         return self.vocabulary
     def getInitialState(self):
         return self.initialState
     def isMaster(self):
         return self.master
-    
+
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
     def setInitialState(self, initialState):
         self.initialState = initialState
     def setMaster(self, master):
         self.master = master
-    
+
     def addGeneratedInstance(self, instance):
         self.instances.append(instance)
     def removeGeneratedInstance(self, instance):
-        self.instances.remove(instance)    
-    
+        self.instances.remove(instance)
+
     def getGeneratedInstances(self):
         return self.instances
-    
+
     def shutdown(self):
         logging.info("shutingdown")
         SocketServer.TCPServer.shutdown(self)
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
-    
+
     def getVocabulary(self):
         return self.vocabulary
     def getInitialState(self):
         return self.initialState
     def isMaster(self):
         return self.master
-    
+
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
     def setInitialState(self, initialState):
         self.initialState = initialState
     def setMaster(self, master):
         self.master = master
-    
+
 
 class TCPConnectionHandler(SocketServer.BaseRequestHandler):
-    
+
     def __init__(self, request, client_address, server):
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
         self.subVisitor = None
-    
+
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
-        
+
         initialState = self.server.getInitialState()
         vocabulary = self.server.getVocabulary()
         isMaster = self.server.isMaster()
-        
+
         # we create a sub automata
         automata = MMSTD(initialState, vocabulary)
 
         # We create an instantiated network server
-        instanciatedNetworkServer = InstanciatedNetworkServer(self.request)        
-        
+        instanciatedNetworkServer = InstanciatedNetworkServer(self.request)
+
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()))        
-        
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()))
+
         # And we create an MMSTD visitor for this
-        self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer) 
-        
+        self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer)
+
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
         self.subVisitor.start()
-        
+
         # save it
         self.server.addGeneratedInstance(self.subVisitor)
-        
+
         while (self.subVisitor.isAlive()) :
             ready = select.select([self.request], [], [], 1)
             time.sleep(0.1)
-        
+
         self.log.warn("End of the execution of the TCP Connection handler")
 #    def finish(self):
 #        self.log.info("Closing the NetworkServer since the client is disconnected")
 #        SocketServer.BaseRequestHandler.finish(self)
 #        self.subVisitor.stop()
-        
-            
-    
-        
-        
-        
+
+
+
+
+
+
 class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
-      
+
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
-        
+
         # Create the input and output abstraction layer
         abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(self.server.getModel().getVocabulary().getVariables()))
-        
+
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
@@ -162,11 +162,11 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
 #+---------------------------------------------------------------------------+
 #| NetworkServer :
-#|     Definition of a server which follows the definition of the provided 
+#|     Definition of a server which follows the definition of the provided
 #|     automata.
 #+---------------------------------------------------------------------------+
 class NetworkServer(AbstractActor):
-    
+
     def __init__(self, host, protocol, port):
         AbstractActor.__init__(self, True, False)
         # create logger with the given configuration
@@ -176,7 +176,7 @@ class NetworkServer(AbstractActor):
         self.protocol = protocol
         self.server = None
         self.instantiatedServers = []
-        
+
     def openServer(self, vocabulary, initialState, master):
         # Instantiates the server
         if self.protocol == "UDP" :
@@ -185,21 +185,21 @@ class NetworkServer(AbstractActor):
         else :
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
-            
-            
-            
+
+
+
         self.server.setVocabulary(vocabulary)
         self.server.setInitialState(initialState)
         self.server.setMaster(master)
-        
+
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.log.info("Start the server")
         self.server_thread.start()
-        
+
     def close(self):
         self.log.info("Shuting down the server")
         self.server.shutdown()
-        
+
     def getInputMessages(self):
         return []
     def getOutputMessages(self):
@@ -210,17 +210,17 @@ class NetworkServer(AbstractActor):
         if self.server == None :
             return []
         return self.server.getGeneratedInstances()
-    
+
     def stop(self):
         self.log.debug("Stopping the thread of the network server")
         AbstractActor.stop(self)
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getPort(self):
         return self.port
-    
+
     def setPort(self, port):
         self.port = port
-    
+

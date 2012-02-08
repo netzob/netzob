@@ -40,21 +40,21 @@ class TaskError(Exception):
     pass
 
 class ThreadedTask(Task):
-    """Run a function in a new thread and return its output."""               
+    """Run a function in a new thread and return its output."""
     def __init__(self, fun, *args, **kwargs):
         self.function = (fun, args, kwargs)
-                
+
     def run(self):
         """Start thread and set callback to get the result value."""
-        queue = Queue()        
+        queue = Queue()
         thread = Thread(target=self._thread, args=(self.function, queue))
         thread.setDaemon(True)
         thread.start()
         self.source_id = gobject.timeout_add(50, self._queue_manager, thread, queue)
-    
+
     def cancel(self):
         self.function
-    
+
     def _queue_manager(self, thread, queue):
         if queue.empty():
             if not thread.isAlive():

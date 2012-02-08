@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
@@ -47,28 +47,28 @@ from lxml import etree
 
 #+---------------------------------------------------------------------------+
 class PrototypesRepositoryParser():
-    
+
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML :
     #|     Function which parses an XML and extract from it
     #[     the definition of all thge prototypes
-    #| @param file: name of the file 
+    #| @param file: name of the file
     #| @return a list of FunctionPrototypes
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
     def loadFromXML(file):
-        libs = []        
+        libs = []
         # first we parse the file to retrieve its root element
         rootElement = etree.parse(file).getroot()
         # we found all the declared libs
         for xmlLib in rootElement.findall("lib"):
             lib = SharedLib.SharedLib.loadFromXML(xmlLib)
             libs.append(lib)
-            
+
         return libs
-    
-        
-        
-    
-    
+
+
+
+
+

@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -48,7 +48,7 @@ from netzob.Common.Field import Field
 #|     Class definition of the vocabulary
 #+---------------------------------------------------------------------------+
 class Vocabulary(object):
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -68,25 +68,25 @@ class Vocabulary(object):
                 if msg.getID() == message.getID() :
                     return symbol
         return None
-    
+
     def getSymbols(self):
-        return self.symbols    
-    
+        return self.symbols
+
     def getSymbol(self, symbolID):
         for symbol in self.symbols :
             if symbol.getID() == symbolID :
                 return symbol
         return None
-        
+
     def addSymbol(self, symbol):
         if not symbol in self.symbols :
             self.symbols.append(symbol)
         else :
             logging.warn("The symbol cannot be added in the vocabulary since it's already declared in.")
-            
+
     def removeSymbol(self, symbol):
         self.symbols.remove(symbol)
-        
+
     def getVariables(self):
         variables = []
         for symbol in self.symbols :
@@ -94,24 +94,24 @@ class Vocabulary(object):
                 if not variable in variables :
                     variables.append(variable)
         return variables
-    
+
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
         # The alignment is proceeded as follows :
         # align and cluster each individual group
         # align and cluster the groups together
         # orphan reduction
-        
-        
+
+
         if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION) :
-            reductionStep = 1     
+            reductionStep = 1
         else :
             reductionStep = 0
-            
+
         nbSteps = len(self.symbols) + 1 + reductionStep
         logging.debug("The number of estimated steps for Needleman is " + str(nbSteps))
         return nbSteps
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| alignWithNeedlemanWunsh:
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
@@ -129,34 +129,34 @@ class Vocabulary(object):
             clusterer.mergeSymbols()
             tmpSymbols.extend(clusterer.getSymbols())
             fraction = fraction + step
-        
+
         percentOfAlignmentProgessBar_cb(fraction, None)
-        
+
         # Now that all the symbols are reorganized separately
         # we should consider merging them
         logging.info("Merging the symbols extracted from the different files")
         clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
         clusterer.mergeSymbols()
-        
+
         fraction = fraction + step
         percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-        
+
         # Now we execute the second part of NETZOB Magical Algorithms :)
-        # clean the single symbols  
-        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)          
+        # clean the single symbols
+        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
         if mergeOrphanReduction :
-            logging.info("Merging the orphan symbols") 
+            logging.info("Merging the orphan symbols")
             clusterer.mergeOrphanSymbols()
             fraction = fraction + step
             percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-        
+
 
         logging.info("Time of parsing : " + str(time.time() - t1))
-        
+
         self.symbols = clusterer.getSymbols()
         callback()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| alignWithDelimiter:
     #|  Align each message of each symbol with a specific delimiter
     #+----------------------------------------------
@@ -164,24 +164,24 @@ class Vocabulary(object):
         for symbol in self.symbols :
             symbol.alignWithDelimiter(configuration, aFormat, delimiter)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| simpleAlignment:
     #|  Align each message just to show their differences
     #+----------------------------------------------
     def simpleAlignment(self, configuration, unitSize):
         for symbol in self.symbols :
             symbol.simpleAlignment(configuration, unitSize)
-       
+
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
         xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}symbols")
         for symbol in self.symbols :
             symbol.save(xmlSymbols, namespace_project, namespace_common)
-    
+
     @staticmethod
     def loadVocabulary(xmlRoot, namespace, namespace_common, version, project):
         vocabulary = Vocabulary()
-        
+
         if version == "0.1" :
             # parse all the symbols which are declared in the vocabulary
             for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol") :
@@ -190,13 +190,13 @@ class Vocabulary(object):
                     vocabulary.addSymbol(symbol)
         return vocabulary
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| findSizeField:
     #|  try to find the size field of each symbols
-    #+----------------------------------------------    
+    #+----------------------------------------------
     def findSizeFields(self, store):
         for symbol in self.getSymbols():
             symbol.findSizeFields(store)
-        
-        
-        
+
+
+

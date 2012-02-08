@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -41,7 +41,7 @@ import logging
 #|     Definition of a transition
 #+---------------------------------------------------------------------------+
 class AbstractTransition():
-    
+
     #+-----------------------------------------------------------------------+
     #| WARNING :
     #|     it does not register the transition on the input state !!!!!!!
@@ -55,17 +55,17 @@ class AbstractTransition():
         self.outputState = outputState
         self.inputState = inputState
         self.active = False
-    
+
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Abstract method to compute if current transition is valid with
-    #|     given input symbol 
+    #|     given input symbol
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def isValid(self, inputSymbol):
         self.log.error("The transition class doesn't support 'isValid'.")
         raise NotImplementedError("The transition class doesn't support 'isValid'.")
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Abstract method to execute the current transition as a client given the
@@ -76,7 +76,7 @@ class AbstractTransition():
     def executeAsClient(self, abstractionLayer):
         self.log.error("The transition class doesn't support 'executeAsClient'.")
         raise NotImplementedError("The transition class doesn't support 'executeAsClient'.")
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Abstract method to execute the current transition as a server given the
@@ -87,7 +87,7 @@ class AbstractTransition():
     def executeAsMaster(self, abstractLayer):
         self.log.error("The transition class doesn't support 'executeAsMaster'.")
         raise NotImplementedError("The transition class doesn't support 'executeAsMaster'.")
-    
+
     #+-----------------------------------------------------------------------+
     #| getDescription
     #|     computes and return a description for the current transition
@@ -97,8 +97,8 @@ class AbstractTransition():
     def getDescription(self):
         self.log.error("The transition class doesn't support 'getDescription'.")
         raise NotImplementedError("The transition class doesn't support 'getDescription'.")
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| toXMLString
     #|     Abstract method to retrieve the XML definition of current transition
@@ -107,8 +107,8 @@ class AbstractTransition():
     def toXMLString(self, idStartState):
         self.log.error("The transition class doesn't support 'toXMLString'.")
         raise NotImplementedError("The transition class doesn't support 'toXMLString'.")
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| active
     #|    active the current state
@@ -121,7 +121,7 @@ class AbstractTransition():
     #+-----------------------------------------------------------------------+
     def deactivate(self):
         self.active = False
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -137,7 +137,7 @@ class AbstractTransition():
         return self.active
     def getType(self):
         return self.type
-        
+
     def setID(self, id):
         self.id = id
     def setName(self, name):
@@ -146,7 +146,7 @@ class AbstractTransition():
         self.outputState = outputState
     def setInputState(self, inputState):
         self.inputState = inputState
-        
+
     @staticmethod
     def loadFromXML(states, vocabulary, xmlRoot, namespace, version):
         if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:OpenChannelTransition" :
@@ -163,6 +163,6 @@ class AbstractTransition():
             return SemiStochasticTransition.loadFromXML(states, vocabulary, xmlRoot, namespace, version)
         else :
             raise NameError("The parsed xml doesn't represent a valid type message (" + xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") + ").")
-            return None    
-    
-    
+            return None
+
+

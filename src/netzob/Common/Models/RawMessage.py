@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -49,25 +49,25 @@ class RawMessage(AbstractMessage):
         AbstractMessage.__init__(self, id, timestamp, data, "RAW")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.RAWMessage.py')
-    
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return RawMessageFactory
-    
+
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Computes and returns the properties of the current message
     #| @return an array with all the properties [[key,val],...]
     #+-----------------------------------------------------------------------+
     def getProperties(self):
-        properties = []        
+        properties = []
         properties.append(['ID', Format.STRING, str(self.getID())])
         properties.append(['Type', Format.STRING, self.getType()])
         properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
-        
-        return properties   
-        
+
+        return properties
+
 

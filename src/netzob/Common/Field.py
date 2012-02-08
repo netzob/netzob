@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import re
@@ -33,7 +33,7 @@ from lxml.etree import ElementTree
 from lxml import etree
 import uuid
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Local imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
@@ -52,7 +52,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import Alternate
 #|     Class definition of a field
 #+---------------------------------------------------------------------------+
 class Field(object):
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -70,7 +70,7 @@ class Field(object):
         self.unitSize = UnitSize.NONE
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
-    
+
     def getEncodedVersionOfTheRegex(self):
         if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files may store None as a string...
             return ""
@@ -78,7 +78,7 @@ class Field(object):
             return self.regex
         else: # This is a simple value
             return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.format)
-    
+
     def isRegexStatic(self):
         if self.regex.find("{") == -1 or self.getName() == "__sep__":
             return True
@@ -89,14 +89,14 @@ class Field(object):
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
             return True
         else:
-            return False  
-        
+            return False
+
     def getVariable(self):
         if self.isRegexStatic() :
             variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
         return self.variable
-    
+
     def getDefaultVariable(self, symbol):
         # The default variable is an alternative of all the possibilities (in binary type)
         cells = symbol.getUniqValuesByField(self)
@@ -104,19 +104,19 @@ class Field(object):
         for cell in cells:
             tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))
         domain = sorted(tmpDomain)
-        
+
         variable = AggregateVariable(uuid.uuid4(), "Aggregate", None)
         alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", None)
         for d in domain :
             binaryVariable = BinaryVariable(uuid.uuid4(), "Val", False, d)
             alternateVar.addChild(binaryVariable)
         variable.addChild(alternateVar)
-        
+
         return variable
-    
+
     def setVariable(self, variable):
         self.variable = variable
-        
+
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
@@ -124,10 +124,10 @@ class Field(object):
 
         xmlFieldEncapsulationLevel = etree.SubElement(xmlField, "{" + namespace + "}encapsulation_level")
         xmlFieldEncapsulationLevel.text = str(self.getEncapsulationLevel())
-        
+
         xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
-        
+
         xmlFieldFormat = etree.SubElement(xmlField, "{" + namespace + "}format")
         xmlFieldFormat.text = str(self.getFormat())
 
@@ -139,19 +139,19 @@ class Field(object):
 
         xmlFieldEndianess = etree.SubElement(xmlField, "{" + namespace + "}endianess")
         xmlFieldEndianess.text = str(self.getEndianess())
-        
+
         xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
         xmlFieldDescription.text = str(self.getDescription())
-        
+
         xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
         xmlFieldColor.text = str(self.getColor())
-        
+
         if self.getVariable() != None :
             self.getVariable().save(xmlField, namespace)
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| GETTERS
-    #+----------------------------------------------         
+    #+----------------------------------------------
     def getName(self):
         return self.name
     def getEncapsulationLevel(self):
@@ -179,9 +179,9 @@ class Field(object):
     def getEndianess(self):
         return self.endianess
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| SETTERS
-    #+----------------------------------------------         
+    #+----------------------------------------------
     def setName(self, name):
         self.name = name
     def setEncapsulationLevel(self, level):
@@ -203,13 +203,13 @@ class Field(object):
     def setEndianess(self, endianess):
         self.endianess = endianess
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Static methods
-    #+----------------------------------------------             
+    #+----------------------------------------------
     @staticmethod
     def createDefaultField():
         return Field("Default", 0, "(.{,})")
-    
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1" :
@@ -218,7 +218,7 @@ class Field(object):
             field_regex = ""
             if xmlRoot.find("{" + namespace + "}regex") != None :
                 field_regex = xmlRoot.find("{" + namespace + "}regex").text
-            
+
             field = Field(field_name, field_index, field_regex)
 
             if xmlRoot.find("{" + namespace + "}encapsulation_level") != None :
@@ -244,15 +244,15 @@ class Field(object):
             if xmlRoot.find("{" + namespace + "}description") != None :
                 field_description = xmlRoot.find("{" + namespace + "}description").text
                 field.setDescription(field_description)
-            
+
             if xmlRoot.find("{" + namespace + "}color") != None :
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
-            
+
             if xmlRoot.find("{" + namespace + "}variable") != None :
                 var = Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
                 field.setVariable(var)
-                
+
             return field
-            
+
         return None

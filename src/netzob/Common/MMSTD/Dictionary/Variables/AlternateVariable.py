@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -49,17 +49,17 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #|     Definition of an alternative of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AlternateVariable(Variable):
-    
+
     def __init__(self, id, name, vars):
         Variable.__init__(self, "Alternate", id, name, True)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.vars = []
         if vars != None :
             self.vars.extend(vars)
-            
+
     def addChild(self, variable):
         self.vars.append(variable)
-    
+
     def compare(self, value, indice, negative, memory):
         saved = indice
         for var in self.vars :
@@ -69,12 +69,12 @@ class AlternateVariable(Variable):
                 self.log.info("Compare successfull")
                 return result
         return -1
-    
+
     def send(self, negative, memory):
         self.log.info("send")
-        
+
         idRandom = random.randint(0, len(self.vars) - 1)
-        
+
         if self.isMutable() :
             # try to load the old choice
             # if it exists we use it,
@@ -85,19 +85,19 @@ class AlternateVariable(Variable):
             else :
                 self.log.info("We'll remember this choice")
                 memory.memorize(self, idRandom)
-        
-        
+
+
         picked = self.vars[idRandom]
-        
+
         return picked.send(negative, memory)
-        
+
     def getDescription(self):
         values = []
         for var in self.vars :
             values.append(var.getDescription())
-            
+
         return "AlternateVariable [" + " OR ".join(values) + "]"
-    
+
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
@@ -105,33 +105,33 @@ class AlternateVariable(Variable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
-        
+
         # Definition of the variables
         for var in self.vars :
             var.save(xmlVariable, namespace)
-        
-        
+
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1" :
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-            
+
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            
+
             return AlternateVariable(varId, varName, children)
-            
+
         return None
-    
-    
-    
+
+
+
 #    def getValue(self, negative, dictionary):
 #        binResult = []
-#        strResult = []        
+#        strResult = []
 #        for idVar in self.vars :
 #            var = dictionary.getVariableByID(int(idVar))
 #            (binVal, strVal) = var.getValue(negative, dictionary)
@@ -140,13 +140,13 @@ class AlternateVariable(Variable):
 #            else :
 #                binResult.append(binVal)
 #                strResult.append(strVal)
-#        return ("".join(binResult), "".join(strResult))       
-#    
+#        return ("".join(binResult), "".join(strResult))
+#
 #    def generateValue(self, negative, dictionary):
 #        for idVar in self.vars :
 #            var = dictionary.getVariableByID(int(idVar))
 #            var.generateValue(negative, dictionary)
-#            
+#
 #    def learn(self, val, indice, isForced, dictionary):
 #        new_indice = indice
 #        for idVar in self.vars :

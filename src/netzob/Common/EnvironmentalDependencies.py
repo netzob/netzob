@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import os
@@ -40,22 +40,22 @@ import time
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from netzob.Common.Type.Format import Format
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| EnvDependancies :
 #|     Handle environmental dependancies
-#+---------------------------------------------- 
+#+----------------------------------------------
 class EnvironmentalDependencies(object):
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Constructor :
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.EnvDependancies.py')
         self.envData = [] # List containing environmental data
 
-    #+---------------------------------------------- 
-    #| captureEnvData: 
+    #+----------------------------------------------
+    #| captureEnvData:
     #|   Capture environmental data,
     #|   like local IP address, Ethernet address, etc.
     #+----------------------------------------------
@@ -87,10 +87,10 @@ class EnvironmentalDependencies(object):
         self.envData.append( EnvironmentalDependency("ip_address", Format.STRING, ip_address) )
         self.envData.append( EnvironmentalDependency("mac_address", Format.STRING, hex(int(get_mac_address()))[2:-1]) )
 
-        # Misc        
+        # Misc
         self.envData.append( EnvironmentalDependency("date", Format.STRING, str(time.time())) ) # elapsed second since epoch in UTC
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getEnvData(self):

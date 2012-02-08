@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -47,14 +47,14 @@ from netzob.Common.MMSTD.States.AbstractState import AbstractState
 #|     Definition of a starting state (open the communication layer)
 #+---------------------------------------------------------------------------+
 class StartState(AbstractState):
-    
+
     def __init__(self, id, name):
         AbstractState.__init__(self, "StartState", id, name)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.StartState.py')
         self.transitions = []
 
-    
+
     #+-----------------------------------------------------------------------+
     #| getTransitions
     #|     Return the associated transitions
@@ -62,7 +62,7 @@ class StartState(AbstractState):
     #+-----------------------------------------------------------------------+
     def getTransitions(self):
         return self.transitions
-    
+
     #+-----------------------------------------------------------------------+
     #| registerTransition
     #|     Associate a new transition ot the current state
@@ -70,7 +70,7 @@ class StartState(AbstractState):
     #+-----------------------------------------------------------------------+
     def registerTransition(self, transition):
         self.transitions.append(transition)
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Execute the state as a client
@@ -79,17 +79,17 @@ class StartState(AbstractState):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
         self.log.debug("Execute state " + self.name + " as a client")
-        
+
         # if no transition exists we quit
         if len(self.getTransitions()) == 0 :
             return None
-        
+
         self.activate()
-        
+
         # We open the connection
         abstractionLayer.connect()
-        
-        
+
+
         # Wait for a message
         (receivedSymbol, message) = abstractionLayer.receiveSymbol()
         if not receivedSymbol == None :
@@ -101,10 +101,10 @@ class StartState(AbstractState):
                     newState = transition.executeAsClient(abstractionLayer)
                     self.deactivate()
                     return newState
-            self.log.warn("The message abstracted in a symbol is not valid according to the automata")       
+            self.log.warn("The message abstracted in a symbol is not valid according to the automata")
         self.deactivate()
         return self
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Execute the state as a server
@@ -115,40 +115,40 @@ class StartState(AbstractState):
         # Verify we can do something now
         if (len(self.getTransitions()) == 0) :
             return None
-        
+
         self.activate()
         self.log.debug("Execute state " + self.name + " as a master")
-        
+
         # We open the connection
         abstractionLayer.connect()
-        
+
         # given the current state, pick randomly a message and send it after having wait
         # the normal reaction time
         idRandom = random.randint(0, len(self.getTransitions()) - 1)
         pickedTransition = self.getTransitions()[idRandom]
         self.log.debug("Randomly picked the transition " + pickedTransition.getName())
-        
+
         newState = pickedTransition.executeAsMaster(abstractionLayer)
         self.deactivate()
         return newState
-    
-    
+
+
     def save(self, root, namespace):
         xmlState = etree.SubElement(root, "{" + namespace + "}state")
         xmlState.set("id", str(self.getID()))
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:StartState")
-    
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         idState = xmlRoot.get("id")
         nameState = xmlRoot.get("name")
-        
+
         state = StartState(idState, nameState)
         return state
-    
-    
-    
+
+
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -156,10 +156,10 @@ class StartState(AbstractState):
         return self.id
     def getName(self):
         return self.name
-        
+
     def setID(self, id):
         self.id = id
     def setName(self, name):
         self.name = name
-    
-    
+
+

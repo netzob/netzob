@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
 import gtk
@@ -59,7 +59,7 @@ def NetzobButton(text):
         label.modify_font(pango.FontDescription("sans 9"))
     return but
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| NetzobFrame :
 #| @param text: the string of the frame
 #+---------------------------------------------------------------------------+
@@ -86,9 +86,9 @@ def NetzobComboBoxEntry():
 #| NetzobProgressBar :
 #+---------------------------------------------------------------------------+
 def NetzobProgressBar(text=None):
-    pb = gtk.ProgressBar(adjustment=None) 
+    pb = gtk.ProgressBar(adjustment=None)
     if text != None :
         pb.set_text(text)
-    
+
     pb.show()
     return pb

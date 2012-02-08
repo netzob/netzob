@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import string
@@ -57,10 +57,10 @@ class SharedLib(object):
         self.version = version
         self.path = path
         self.functions = []
-    
-    
-    
-    
+
+
+
+
     @staticmethod
     def loadFromXML(rootElement):
         # First we verify rootElement is a message
@@ -69,51 +69,51 @@ class SharedLib(object):
         # Then we verify its a Network Message
         if rootElement.get("name", "none") == "none" :
             raise NameError("The parsed xml doesn't represent a shared lib with a valid name.")
-        
+
         # parse the name of the lib
         libName = rootElement.get("name", "none")
         libVersion = rootElement.get("version", "0.0")
-        
-        
+
+
         functions = []
         # parse the declared functions
         for xmlFunc in rootElement.findall("functions//function") :
             function = HijackedFunction.HijackedFunction.loadFromXML(xmlFunc)
             functions.append(function)
-        
-        
+
+
         lib = SharedLib(libName, libVersion, "")
         lib.setFunctions(functions)
-        
+
         return lib
-        
-        
-    
+
+
+
     @staticmethod
     def findNameAndVersion(path):
-        
+
         nameWithoutPath = path.split(os.sep)[len(path.split(os.sep)) - 1]
-        
+
         # Remove the extension
         if (len(nameWithoutPath) > 3 and nameWithoutPath[len(nameWithoutPath) - 3:] == ".so") :
             nameWithoutPath = nameWithoutPath[:len(nameWithoutPath) - 3]
-        
+
         libName = nameWithoutPath
-        libVersion = "0.0"   
-        
+        libVersion = "0.0"
+
         # find version number
         try :
             if (string.index(nameWithoutPath, "-") > 1) :
-                libName = nameWithoutPath[:nameWithoutPath.index("-")]    
-                libVersion = nameWithoutPath[nameWithoutPath.index("-") + 1:]   
+                libName = nameWithoutPath[:nameWithoutPath.index("-")]
+                libVersion = nameWithoutPath[nameWithoutPath.index("-") + 1:]
         except :
             pass
-            
-        
+
+
         return (libName, libVersion)
-    
-    
-        
+
+
+
     def setName(self, name):
         self.name = name
     def getName(self):
@@ -124,11 +124,11 @@ class SharedLib(object):
         self.version = version
     def getPath(self):
         return self.path
-    def setPath(self, path):    
+    def setPath(self, path):
         self.path = path
     def setFunctions(self, functions):
         self.functions = functions
     def getFunctions(self):
         return self.functions
-    
-    
+
+

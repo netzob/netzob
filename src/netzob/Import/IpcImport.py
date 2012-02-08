@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
@@ -42,7 +42,7 @@ import random
 from ptrace.linux_proc import readProcesses, readProcessCmdline
 import subprocess
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Models.IPCMessage import IPCMessage
@@ -50,12 +50,12 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Field import Field
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.Common.Symbol import Symbol
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| IPpc :
 #|     ensures the capture of informations through IPC proxing
-#+---------------------------------------------- 
+#+----------------------------------------------
 class IpcImport(AbstractImporter):
-    
+
     def new(self):
         pass
 
@@ -70,35 +70,35 @@ class IpcImport(AbstractImporter):
             self.stracePid.kill()
         if self.aSniffThread != None and self.aSniffThread.isAlive():
             self.aSniffThread._Thread__stop()
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Constructor :
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self, zob):
-        AbstractImporter.__init__(self, "IPC IMPORT")    
+        AbstractImporter.__init__(self, "IPC IMPORT")
         self.zob = zob
-        
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.ipc.py')
-        
+
         self.packets = []
         self.init()
-        
-        
+
+
         self.dialog = gtk.Dialog(title="Capture IPC flow", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
-        
-        
-    def init(self):  
+
+
+    def init(self):
         self.pid = None
         self.stracePid = None
         self.aSniffThread = None
         self.doSniff = False
         self.selected_fds = set()
         self.sniffOption = None
-        
+
         # Network Capturing Panel
         self.panel = gtk.Table(rows=6, columns=4, homogeneous=False)
         self.panel.show()
@@ -115,7 +115,7 @@ class IpcImport(AbstractImporter):
         self.panel.attach(self.processStore, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # FD filter
-        hbox = gtk.HBox(False, spacing=10)        
+        hbox = gtk.HBox(False, spacing=10)
         hbox.show()
         self.filter1 = gtk.CheckButton("File system")
         self.filter2 = gtk.CheckButton("Network")
@@ -140,7 +140,7 @@ class IpcImport(AbstractImporter):
         self.panel.attach(hbox, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.handlerID = self.processStore.connect("changed", self.processSelected_cb)
         self.updateProcessList_cb(None)
-        
+
         # File descriptor list
         scroll = gtk.ScrolledWindow()
         self.fdTreeview = gtk.TreeView(gtk.TreeStore(str, str, str)) # file descriptor, type, name
@@ -244,17 +244,17 @@ class IpcImport(AbstractImporter):
         but.connect("clicked", self.save_packets, treeview)
         self.panel.attach(but, 2, 4, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user wants to update the process list
     #+----------------------------------------------
     def updateProcessList_cb(self, button):
         self.processStore.handler_block(self.handlerID)
         self.processStore.get_model().clear()
         for pid in readProcesses():
-            self.processStore.append_text(str(pid) + "\t" + readProcessCmdline(pid)[0])        
+            self.processStore.append_text(str(pid) + "\t" + readProcessCmdline(pid)[0])
         self.processStore.handler_unblock(self.handlerID)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a process
     #+----------------------------------------------
     def processSelected_cb(self, widget):
@@ -268,14 +268,14 @@ class IpcImport(AbstractImporter):
         self.butUpdateFlows.set_sensitive(True)
 
         self.fdTreeview.get_model().clear()
-        processSelected = self.processStore.get_active_text()        
+        processSelected = self.processStore.get_active_text()
         self.pid = int(processSelected.split()[0])
         name = processSelected.split()[1]
         fds = self.retrieveFDs(self.filter1.get_active(), self.filter2.get_active(), self.filter3.get_active())
         for fd in fds:
             self.fdTreeview.get_model().append(None, fd)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Retrieve the filtered FD
     #+----------------------------------------------
     def retrieveFDs(self, f_fs=True, f_net=True, f_proc=True):
@@ -301,21 +301,21 @@ class IpcImport(AbstractImporter):
             fdescrs.append(elts)
         return fdescrs
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a fd
     #+----------------------------------------------
     def fdSelected_cb(self, treeview):
         self.butSniffFiltered.set_sensitive(True)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
-        
+
         currentProject = self.zob.getCurrentProject()
         selection = treeview.get_selection()
         messages = []
-        
+
         (model, paths) = selection.get_selected_rows()
         for path in paths:
             iter = model.get_iter(path)
@@ -327,12 +327,12 @@ class IpcImport(AbstractImporter):
                 msg_rawPayload = self.packets[packetID]
                 if msg_rawPayload == "":
                     continue
-                
+
                 #Compute the messages
                 message = IPCMessage(msg_fd, msg_timestamp, msg_rawPayload.replace("\\x", ""), "none", msg_fd, msg_direction)
                 messages.append(message)
-        
-        
+
+
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
@@ -340,15 +340,15 @@ class IpcImport(AbstractImporter):
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
-        
+
         if resp == gtk.RESPONSE_OK:
             self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages)
         self.dialog.destroy()
-        
+
         # We update the gui
         self.zob.update()
-   
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
     def startSniff_cb(self, button, sniffOption):
@@ -374,7 +374,7 @@ class IpcImport(AbstractImporter):
         self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
         self.aSniffThread.start()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when stopping sniffing process
     #+----------------------------------------------
     def stopSniff_cb(self, button):
@@ -393,7 +393,7 @@ class IpcImport(AbstractImporter):
             self.aSniffThread._Thread__stop()
         self.aSniffThread = None
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Thread for sniffing a process
     #+----------------------------------------------
     def sniffThread(self):
@@ -401,7 +401,7 @@ class IpcImport(AbstractImporter):
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         gobject.io_add_watch(self.stracePid.stderr, gobject.IO_IN | gobject.IO_HUP, self.handle_new_pkt)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Handle new packet received by strace
     #+----------------------------------------------
     def handle_new_pkt(self, src, event):
@@ -439,7 +439,7 @@ class IpcImport(AbstractImporter):
         self.packets.append(pkt)
         return self.doSniff
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getTypeFromFD(self, fd):
@@ -450,6 +450,6 @@ class IpcImport(AbstractImporter):
             return "fs"
         else:
             return "ipc"
-        
+
     def getPanel(self):
         return self.panel

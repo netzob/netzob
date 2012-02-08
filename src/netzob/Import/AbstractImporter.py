@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
 import uuid
@@ -44,22 +44,22 @@ from netzob.Common.Symbol import Symbol
 #|     Mother class which provides common methods too any kind of importers
 #+---------------------------------------------------------------------------+
 class AbstractImporter:
-    
-    def __init__(self, type):     
+
+    def __init__(self, type):
         self.type = type
-        
+
     #+-----------------------------------------------------------------------+
     #| saveMessagesInProject :
     #|   Add a selection of messages to an existing project
     #|   it also saves them in the workspace
     #+-----------------------------------------------------------------------+
     def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
-        
+
         # We create a symbol dedicated for this
         symbol = Symbol(uuid.uuid4(), self.type, project)
         for message in messages :
             symbol.addMessage(message)
-        
+
         # We create a default field for the symbol
         symbol.addField(Field.createDefaultField())
         # and register the symbol in the vocabulary of the project
@@ -67,14 +67,14 @@ class AbstractImporter:
         # Add the environmental dependencies to the project
         if fetchEnv :
             project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                   self.envDeps.getEnvData())        
+                                                                   self.envDeps.getEnvData())
         # Computes current date
         date = datetime.now()
         description = "No description (yet not implemented)"
-        
+
         # Now we also save the messages in the workspace
         trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
         for message in messages :
             trace.addMessage(message)
         workspace.addImportedTrace(trace)
-    
+

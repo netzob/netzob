@@ -25,17 +25,17 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
 import logging
 import os
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
 from Angluin import Angluin
@@ -44,13 +44,13 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 import threading
 import gobject
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| GrammarInferer :
 #|    Given Angluin's L*a algorithm, it learns
 #|    the grammar of a protocol
-#+---------------------------------------------- 
+#+----------------------------------------------
 class GrammarInferer(threading.Thread):
-     
+
     def __init__(self, vocabulary, oracle, equivalenceOracle, cb_submitedQuery, cb_hypotheticalAutomaton):
         threading.Thread.__init__(self)
         # create logger with the given configuration
@@ -64,32 +64,32 @@ class GrammarInferer(threading.Thread):
         self.inferedAutomaton = None
         self.hypotheticalAutomaton = None
         self.learner = None
-    
-    
+
+
     def run(self):
         self.log.info("Starting the Grammar inferring process")
         self.active = True
         self.infer()
         self.active = False0
         self.log.info("Ending the Grammar inferring process")
-        
+
     def hasFinish(self):
         return not self.active
-    
+
     def getInferedAutomaton(self):
         return self.inferedAutomaton
-    
+
     def getHypotheticalAutomaton(self):
         return self.hypotheticalAutomaton
-    
+
     def getSubmitedQueries(self):
         if self.learner != None :
             return self.learner.getSubmitedQueries()
         return []
-    
+
     def stop(self):
         self.active = False
-    
+
     def infer(self):
         self.active = True
         equivalent = False
@@ -99,17 +99,17 @@ class GrammarInferer(threading.Thread):
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")
             self.log.info("=============================================================================")
-            
+
             self.learner.learn()
             if not self.active :
                 break
-            
-            self.hypotheticalAutomaton = self.learner.getInferedAutomata()     
-            self.log.info("An hypothetical automaton has been computed") 
-            
+
+            self.hypotheticalAutomaton = self.learner.getInferedAutomata()
+            self.log.info("An hypothetical automaton has been computed")
+
             # Execute the call back function for the hypothetial automaton
             gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
-            
+
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton)
             if not self.active :
                 break
@@ -119,17 +119,17 @@ class GrammarInferer(threading.Thread):
             else :
                 self.log.info("A counter-example has been found")
                 for s in counterExample.getSymbols() :
-                    self.log.info("symbol : " + str(s) + " => " + str(s.getID()))                
+                    self.log.info("symbol : " + str(s) + " => " + str(s.getID()))
                 self.learner.addCounterExamples([counterExample])
-            
-        automaton = self.learner.getInferedAutomata()    
-        
+
+        automaton = self.learner.getInferedAutomata()
+
         self.log.info("The inferring process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton))
-        self.inferedAutomaton = automaton    
-    
-        
-            
-            
-        
-    
+        self.inferedAutomaton = automaton
+
+
+
+
+
+

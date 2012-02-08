@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 from bitarray import bitarray
@@ -35,7 +35,7 @@ import logging
 import base64
 import struct
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.Format import Format
@@ -46,62 +46,62 @@ from netzob.Common.Type.Endianess import Endianess
 
 class TypeConvertor():
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Transform a string to its binary representation
     #| @param the string to transform
     #| @endian the endian selected (little or big) (normal = big)
-    #| @return 
+    #| @return
     #+----------------------------------------------
     @staticmethod
     def string2bin(aStr, endian):
         result = bitarray(endian=endian)
         result.fromstring(aStr)
         return result
-    
+
     @staticmethod
     def bin2string(bin):
         return bin.tostring()
-    
+
     @staticmethod
     def str2bool(val):
         return val.lower() in ("yes", "true", "t", "1")
-    
+
     @staticmethod
     def bool2str(b):
         if b :
             return "true"
         else :
             return "false"
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Transforms : bitarray('011101010') -> 011101010
     #+----------------------------------------------
-    @staticmethod   
+    @staticmethod
     def bitarray2StrBitarray(bin):
         return str(bin)[10:len(str(bin)) - 2]
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Transforms : 011101010 -> bitarray('011101010')
     #+----------------------------------------------
     @staticmethod
     def strBitarray2Bitarray(strBin):
         result = bitarray(strBin)
         return result
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Transform an hex to the bits : \xc9\xa1\x8d => bitarray
-    #| @return 
+    #| @return
     #+----------------------------------------------
     @staticmethod
     def hex2bin(hex):
         result = bitarray(endian='big')
         result.fromstring(hex)
         return result
-    
+
     @staticmethod
     def bin2strhex(bin):
         return str(hex(int(bin.to01(), 2)))
-    
+
     @staticmethod
     def int2bin(i, nbbits):
         l = nbbits - len(bin(i)[2:])
@@ -109,17 +109,17 @@ class TypeConvertor():
         b.setall(False)
         b.extend(bin(i)[2:])
         return b
-    
+
     @staticmethod
     def bin2int(bin):
         return int(bin.to01(), 2)
-    @staticmethod   
+    @staticmethod
     def string2int(aStr):
         return int(aStr)
     @staticmethod
     def int2string(int):
         return str(int)
-    
+
     @staticmethod
     def encodeNetzobRawToGivenType(raw, aType):
         if aType == Format.STRING :
@@ -162,7 +162,7 @@ class TypeConvertor():
             return TypeConvertor.ipToNetzobRaw(raw)
         else :
             return raw
-    
+
     @staticmethod
     def pythonDatetime2XSDDatetime(date):
         # XSD Format : [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm]
@@ -171,7 +171,7 @@ class TypeConvertor():
         if not isinstance(date, datetime.datetime) and isinstance(date[0], datetime.datetime):
             date = date[0]
         return str(date.isoformat('T'))[:19]
-    
+
     @staticmethod
     # Warning str must contain an XSD Datetime typed data
     def xsdDatetime2PythonDatetime(s):
@@ -212,9 +212,9 @@ class TypeConvertor():
                 strhexc = "0" + strhexc
             raw.append(strhexc)
         return ''.join(raw)
-    
+
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the string parameter in string
     #+----------------------------------------------
     def netzobRawToString(raw):
@@ -231,13 +231,13 @@ class TypeConvertor():
         return res
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the string parameter in octal
     #+----------------------------------------------
     def netzobRawToOctal(raw):
         res = ""
         raw = raw.strip()
-        
+
         if len(raw) % 2 == 0: # Even length
             for i in range(0, len(raw), 2):
                 res = res + " " + oct(int(raw[i: i + 2], 16))
@@ -245,10 +245,10 @@ class TypeConvertor():
             for i in range(0, len(raw) - 1, 2):
                 res = res + " " + oct(int(raw[i: i + 2], 16))
             res = res + " " + oct(int(raw[-1], 16))
-        return res    
+        return res
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the octal parameter in string
     #+----------------------------------------------
     def octalToNetzobRaw(raw):
@@ -257,13 +257,13 @@ class TypeConvertor():
         return raw
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the string parameter in decimal
     #+----------------------------------------------
     def netzobRawToDecimal(raw):
         res = ""
         raw = raw.strip()
-        
+
         if len(raw) % 2 == 0: # Even length
             for i in range(0, len(raw), 2):
                 res = res + " " + str(int(raw[i: i + 2], 16))
@@ -271,37 +271,37 @@ class TypeConvertor():
             for i in range(0, len(raw) - 1, 2):
                 res = res + " " + str(int(raw[i: i + 2], 16))
             res = res + " " + str(int(raw[-1], 16))
-        return res    
+        return res
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the decimal parameter in string
     #+----------------------------------------------
     def decimalToNetzobRaw(raw):
-        logging.error("Not yet implemented")        
+        logging.error("Not yet implemented")
         # TODO
         return raw
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the hex string parameter in IP
     #+----------------------------------------------
     def netzobRawToIP(raw):
-        logging.error("Not yet implemented")        
+        logging.error("Not yet implemented")
         # TODO
         return raw
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the IP parameter in hex string
     #+----------------------------------------------
     def ipToNetzobRaw(raw):
-        logging.error("Not yet implemented")        
+        logging.error("Not yet implemented")
         # TODO
         return raw
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the string parameter in bit
     #+----------------------------------------------
     def netzobRawToBinary(raw):
@@ -314,7 +314,7 @@ class TypeConvertor():
         return res.to01()
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return the bits parameter in raw
     #+----------------------------------------------
     def binaryToNetzobRaw(raw):
@@ -323,13 +323,13 @@ class TypeConvertor():
         return raw
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Transform the current hex message ( '1fdf' ) in binary python raw ( '\x1f\xdf' )
-    #+----------------------------------------------          
+    #+----------------------------------------------
     def netzobRawToPythonRaw(msg):
         res = ""
         msg = msg.strip()
-        
+
         if len(msg) % 2 == 0: # Even length
             for i in range(0, len(msg), 2):
                 res = res + chr(int(msg[i: i + 2], 16))
@@ -337,12 +337,12 @@ class TypeConvertor():
             for i in range(0, len(msg) - 1, 2):
                 res = res + chr(int(msg[i: i + 2], 16))
             res = res + chr(int(msg[-1], 16))
-        return res    
+        return res
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Transform the current binary python raw message ( '\x1f\xdf' ) in hex ( '1fdf' )
-    #+----------------------------------------------          
+    #+----------------------------------------------
     def pythonRawToNetzobRaw(msg):
         res = ""
         for i in range(0, len(msg), 1):
@@ -350,9 +350,9 @@ class TypeConvertor():
         return res
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return a hexdump of a hex message
-    #+----------------------------------------------          
+    #+----------------------------------------------
     def hexdump(buf, start=0):
         length = len(buf)
         res = StringIO.StringIO()
@@ -370,7 +370,7 @@ class TypeConvertor():
                 l = 16
             else:
                 l = length - i
-            
+
             res.write('0x%08x  ' % (i + start))
             s = ' '.join(["%02x" % ord(c) for c in buf[i:i + l]])
             res.write(s)
@@ -384,9 +384,9 @@ class TypeConvertor():
         return res.getvalue()
 
     @staticmethod
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Transform each chunk according to the endianess
-    #+----------------------------------------------          
+    #+----------------------------------------------
     def applyFieldEncoding(raw, field):
         unitSize = field.getUnitSize()
         endianess = field.getEndianess()

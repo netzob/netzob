@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Class for representation potential unit size for data representation
 #+----------------------------------------------
 class UnitSize():
@@ -36,4 +36,4 @@ class UnitSize():
     BITS16="16-bits"
     BITS32="32-bits"
     BITS64="64-bits"
-    
+

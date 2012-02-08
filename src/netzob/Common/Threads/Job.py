@@ -31,20 +31,20 @@
 import functools
 
 class Job:
-    """Wrap a co-routines that yields asynchronous tasks (see Task class).""" 
+    """Wrap a co-routines that yields asynchronous tasks (see Task class)."""
     def __init__(self, generator):
         self.generator = generator
         self._advance_task(generator.send, None)
-            
+
     def _start_task(self, task):
         return_cb = functools.partial(self._advance_task, self.generator.send)
         exception_cb = functools.partial(self._advance_task, self.generator.throw)
         task.config(return_cb, exception_cb)
         task.run()
-    
+
     def _advance_task(self, genmethod, result=None):
         try:
             task = genmethod(result)
         except StopIteration:
             return
-        self._start_task(task)  
+        self._start_task(task)

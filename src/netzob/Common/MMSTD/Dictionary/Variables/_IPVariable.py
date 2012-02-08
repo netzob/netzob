@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -46,7 +46,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #|     Definition of a n IP variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class IPVariable(Variable):
-    
+
     def __init__(self, id, name, defaultVar):
         Variable.__init__(self, id, name, "IP")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.IPVariable.py')
@@ -56,30 +56,30 @@ class IPVariable(Variable):
         else :
             self.strVal = defaultVar
             self.binVal = self.string2bin(self.strVal)
-            
+
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
-    
+
     def string2bin(self, aStr):
         chars = []
         for c in aStr :
             v = str(hex(ord(c))).replace("0x", "")
-            if len(str(v)) != 2 : 
+            if len(str(v)) != 2 :
                 v = "0" + str(v)
-            chars.append(v)    
-   
+            chars.append(v)
+
     def generateValue(self, negative, dictionary):
         # NOT YET GENERATED
         self.strVal = "192.168.0.10"
         self.binVal = self.string2bin(self.strVal)
-        
-        
+
+
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Received : " + str(val))
-        
+
         if self.strVal == None or isForced :
             tmp = val[indice:]
-                
+
             res = ""
             i = 0
             finish = False
@@ -90,16 +90,16 @@ class IPVariable(Variable):
                     i = i + 2
                 else:
                     finish = True
-                
+
             if i > 0 :
                 self.strVal = res
                 self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
                 self.binVal = self.string2bin(self.strVal)
-                
+
                 return indice + i
-            
-        
-                
+
+
+
         return -1
-   
-   
+
+

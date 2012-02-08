@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -47,14 +47,14 @@ from netzob.Common.MMSTD.States.AbstractState import AbstractState
 #|     Definition of a normal state
 #+---------------------------------------------------------------------------+
 class NormalState(AbstractState):
-    
+
     def __init__(self, id, name):
         AbstractState.__init__(self, "NormalState", id, name)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.NormalState.py')
         self.transitions = []
 
-    
+
     #+-----------------------------------------------------------------------+
     #| getTransitions
     #|     Return the associated transitions
@@ -62,7 +62,7 @@ class NormalState(AbstractState):
     #+-----------------------------------------------------------------------+
     def getTransitions(self):
         return self.transitions
-    
+
     #+-----------------------------------------------------------------------+
     #| unregisterTransition
     #|     Remove from the associate transitions the specified one
@@ -71,7 +71,7 @@ class NormalState(AbstractState):
     def unregisterTransition(self, transition):
         if transition in self.transitions :
             self.transitions.remove(transition)
-            
+
     #+-----------------------------------------------------------------------+
     #| registerTransition
     #|     Associate a new transition to the current state
@@ -88,7 +88,7 @@ class NormalState(AbstractState):
                 self.transitions.append(transition)
         else :
             self.transitions.append(transition)
-        
+
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Execute the state as a client
@@ -97,29 +97,29 @@ class NormalState(AbstractState):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
         self.log.debug("Execute state " + self.name + " as a client")
-        
+
         # if no transition exists we quit
         if len(self.getTransitions()) == 0 :
             self.log.warn("The current state has no transitions available.")
             return None
-        
+
         # If there is a "special" transition we execute them
         for transition in self.getTransitions() :
             if transition.getType() == "OpenChannel" or transition.getType() == "CloseChannel":
                 newState = transition.executeAsClient(abstractionLayer)
                 return newState
-        
-        
-        
+
+
+
         self.activate()
         # Wait for a message
-        
+
         tupleReception = abstractionLayer.receiveSymbol()
         if tupleReception == (None, None) :
             self.log.warn("Warning the abstraction layer returns null")
             return None
-        
-        
+
+
         (receivedSymbol, message) = tupleReception
         if not receivedSymbol == None :
             self.log.debug("The following symbol has been received : " + str(receivedSymbol))
@@ -130,10 +130,10 @@ class NormalState(AbstractState):
                     newState = transition.executeAsClient(abstractionLayer)
                     self.deactivate()
                     return newState
-            self.log.warn("The message abstracted in a symbol is not valid according to the automata")       
+            self.log.warn("The message abstracted in a symbol is not valid according to the automata")
         self.deactivate()
         return self
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Execute the state as a server
@@ -143,37 +143,37 @@ class NormalState(AbstractState):
     def executeAsMaster(self, abstractionLayer):
         self.activate()
         self.log.debug("Execute state " + self.name + " as a master")
-        
+
         # Verify we can do something now
         if (len(self.getTransitions()) == 0) :
             return None
-        
+
         # given the current state, pick randomly a message and send it after having wait
         # the normal reaction time
         idRandom = random.randint(0, len(self.getTransitions()) - 1)
         pickedTransition = self.getTransitions()[idRandom]
         self.log.info("Randomly picked the transition " + pickedTransition.getName())
-        
+
         newState = pickedTransition.executeAsMaster(abstractionLayer)
         self.deactivate()
         return newState
-    
+
     def save(self, root, namespace):
         xmlState = etree.SubElement(root, "{" + namespace + "}state")
         xmlState.set("id", str(self.getID()))
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NormalState")
-        
-    
+
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         idState = xmlRoot.get("id")
         nameState = xmlRoot.get("name")
-        
+
         state = NormalState(idState, nameState)
         return state
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -181,10 +181,10 @@ class NormalState(AbstractState):
         return self.id
     def getName(self):
         return self.name
-        
+
     def setID(self, id):
         self.id = id
     def setName(self, name):
         self.name = name
-    
-    
+
+

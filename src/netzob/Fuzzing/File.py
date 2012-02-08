@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import gtk
@@ -33,16 +33,16 @@ import pygtk
 pygtk.require('2.0')
 import logging
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| FileImport :
 #|     GUI for capturing messages
-#+---------------------------------------------- 
+#+----------------------------------------------
 class File:
 
     def new(self):
@@ -61,23 +61,23 @@ class File:
     def save(self):
         pass
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Constructor :
     #| @param netzob: the netzob main object
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self, netzob):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.File.py')
         self.netzob = netzob
         self.symbols = []
         self.selectedSymbol = None
- 
+
         self.panel = gtk.HPaned()
         self.panel.show()
 
-        #+---------------------------------------------- 
+        #+----------------------------------------------
         #| LEFT PART OF THE GUI : TREEVIEW
-        #+----------------------------------------------           
+        #+----------------------------------------------
         vb_left_panel = gtk.VBox(False, spacing=0)
         self.panel.add(vb_left_panel)
         vb_left_panel.set_size_request(-1, -1)
@@ -88,10 +88,10 @@ class File:
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
         vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
-        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected) 
+        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
 #        self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
-        #+---------------------------------------------- 
+        #+----------------------------------------------
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
         vb_right_panel = gtk.VBox(False, spacing=0)
@@ -122,13 +122,13 @@ class File:
                 self.treeTypeStructureGenerator.setMessage(message)
                 self.treeTypeStructureGenerator.update()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| button_press_on_field :
     #|   Create a menu to display available operations
     #|   on the treeview symbols
     #+----------------------------------------------
     def button_press_on_field(self, button, event):
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:        
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             # Retrieves the symbol on which the user has clicked on
             x = int(event.x)
             y = int(event.y)
@@ -145,7 +145,7 @@ class File:
     def fuzz_field_cb(self, widget, field):
         print "Fuzz field : " + str(field)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):

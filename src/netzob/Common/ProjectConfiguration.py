@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
@@ -47,7 +47,7 @@ from netzob.Common.Type.Endianess import Endianess
 #|     Class definition of the configuration of a Project
 #+---------------------------------------------------------------------------+
 class ProjectConfiguration(object):
-    
+
     VOCABULARY_EQUIVALENCE_THRESHOLD = "equivalence_threshold"
     VOCABULARY_ORPHAN_REDUCTION = "orphan_reduction"
     VOCABULARY_NB_ITERATION = "nb_iteration"
@@ -61,11 +61,11 @@ class ProjectConfiguration(object):
     VOCABULARY_DISPLAY_CONSOLE = "display_console"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCIES = "environmental_dependencies"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCY = "environmental_dependency"
-    
+
     SIMULATION_ACTORS = "actors"
     SIMULATION_ACTOR = "actor"
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -74,7 +74,7 @@ class ProjectConfiguration(object):
         self.grammarInference = dict()
         self.simulation = dict()
         self.resetParameters()
-        
+
     def resetParameters(self):
         # Vocabulary
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD, 60)
@@ -89,42 +89,42 @@ class ProjectConfiguration(object):
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, False)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, False)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES, [])
-        
+
         # Grammar
-        
-        
-        
+
+
+
     def setVocabularyInferenceParameter(self, name, value):
         self.vocabularyInference[name] = value
-        
+
     def getVocabularyInferenceParameter(self, name):
         return self.vocabularyInference[name]
-    
+
     def setGrammarInferenceParameter(self, name, value):
         self.grammarInference[name] = value
-        
+
     def getGrammarInferenceParameter(self, name):
         return self.grammarInference[name]
-    
+
     def setSimulationParameter(self, name, value):
         self.simulation[name] = value
-        
+
     def getSimulationParameter(self, name):
         return self.simulation[name]
-    
+
     def save(self, root, namespace):
         xmlConfiguration = etree.SubElement(root, "{" + namespace + "}configuration")
         xmlVocabularyInference = etree.SubElement(xmlConfiguration, "{" + namespace + "}vocabulary_inference")
-        
+
         xmlVocabularyInferenceEquivalenceThreshold = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         xmlVocabularyInferenceEquivalenceThreshold.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD))
-        
+
         xmlVocabularyInferenceOrphanReduction = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
         xmlVocabularyInferenceOrphanReduction.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)).lower()
-        
+
         xmlVocabularyInferenceNbIteration = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_NB_ITERATION)
         xmlVocabularyInferenceNbIteration.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION))
-        
+
         xmlVocabularyInferenceDoInternalSlick = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         xmlVocabularyInferenceDoInternalSlick.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)).lower()
 
@@ -136,7 +136,7 @@ class ProjectConfiguration(object):
 
         xmlVocabularyInferenceDisplayConsole = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
         xmlVocabularyInferenceDisplayConsole.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)).lower()
-        
+
         xmlVocabularyInferenceGlobalFormat = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         xmlVocabularyInferenceGlobalFormat.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT))
 
@@ -148,49 +148,49 @@ class ProjectConfiguration(object):
 
         xmlVocabularyInferenceGlobalEndianess = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
         xmlVocabularyInferenceGlobalEndianess.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS))
-        
+
         xmlVocabularyInferenceEnvDependencies = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
         envDependencies = self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
         if envDependencies != None :
             for envDependency in envDependencies :
                 envDependency.save(xmlVocabularyInferenceEnvDependencies, namespace)
-                
-        
-        
+
+
+
     #+-----------------------------------------------------------------------+
     #| Static methods
-    #+-----------------------------------------------------------------------+                
+    #+-----------------------------------------------------------------------+
     @staticmethod
     def loadDefaultProjectConfiguration():
         projectConfiguration = ProjectConfiguration()
         return projectConfiguration
-    
+
     @staticmethod
     def loadProjectConfiguration(xmlRoot, namespace, version):
-        
+
         projectConfiguration = ProjectConfiguration()
 
-        if version == "0.1" :  
+        if version == "0.1" :
             # Load the configuration of the vocabulary inference
             if xmlRoot.find("{" + namespace + "}vocabulary_inference") != None :
-                
+
                 xmlVocabularyInference = xmlRoot.find("{" + namespace + "}vocabulary_inference")
-                            
+
                 # Equivalence threshold
                 xmlEquivalence = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
                 if xmlEquivalence != None and xmlEquivalence.text != None and len(xmlEquivalence.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD, int(xmlEquivalence.text))
-                
+
                 # Orphan reduction
                 xmlOrphanReduction = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
                 if xmlOrphanReduction != None and xmlOrphanReduction.text != None and len(xmlOrphanReduction.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, TypeConvertor.str2bool(xmlOrphanReduction.text))
-                    
+
                 # Nb iteration
                 xmlNbIteration = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_NB_ITERATION)
                 if xmlNbIteration != None and xmlNbIteration.text != None and len(xmlNbIteration.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION, int(xmlNbIteration.text))
-                    
+
                 # Do Internal Slick
                 xmlDoInternalSlick = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
                 if xmlDoInternalSlick != None and xmlDoInternalSlick.text != None and len(xmlDoInternalSlick.text) > 0:
@@ -210,7 +210,7 @@ class ProjectConfiguration(object):
                 xmlDisplayConsole = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
                 if xmlDisplayConsole != None and xmlDisplayConsole.text != None and len(xmlDisplayConsole.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, TypeConvertor.str2bool(xmlDisplayConsole.text))
-                    
+
                 # Global format
                 xmlGlobalFormat = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
                 if xmlGlobalFormat != None and xmlGlobalFormat.text != None and len(xmlGlobalFormat.text) > 0:
@@ -230,7 +230,7 @@ class ProjectConfiguration(object):
                 xmlGlobalEndianess = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
                 if xmlGlobalEndianess != None and xmlGlobalEndianess.text != None and len(xmlGlobalEndianess.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, xmlGlobalEndianess.text)
-                    
+
                 # Environmental dependencies
                 xmlEnvDependencies = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES)
                 if xmlEnvDependencies != None :
@@ -242,9 +242,9 @@ class ProjectConfiguration(object):
                         if envDependencyValue == None :
                             envDependencyValue = ""
                         envDependencies.append(EnvironmentalDependency(envDependencyName, envDependencyType, envDependencyValue))
-            
+
             # Load the configuration of the grammar inference
-            
+
             # Load the configuration of the simulation
-        
+
         return projectConfiguration

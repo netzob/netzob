@@ -26,7 +26,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -44,7 +44,7 @@ from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransitio
 #|     Class definition of a grammar
 #+---------------------------------------------------------------------------+
 class Grammar(object):
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -55,16 +55,16 @@ class Grammar(object):
         self.states = []
         self.initialState = initialState
         self.states.append(initialState)
-        
+
     def setInitialState(self, state):
-        self.initialState = state    
-    
+        self.initialState = state
+
     def addState(self, state):
         if not state in self.states :
             self.states.append(state)
         else :
             logging.warn("The state cannot be added one more time in the grammar.")
-            
+
     def removeState(self, state):
         # First we remove the transitions
         transitionsToRemove = []
@@ -73,47 +73,47 @@ class Grammar(object):
                 transitionsToRemove.append(transition)
         for transition in state.getTransitions() :
             transitionsToRemove.append(transition)
-            
-            
+
+
         for transition in transitionsToRemove :
             self.removeTransition(transition)
-        
+
         self.states.remove(state)
-        
+
     def removeTransition(self, transition):
         if transition in self.transitions :
             for state in self.states :
                 state.unregisterTransition(transition)
-            
+
             self.transitions.remove(transition)
-            
+
     def addTransition(self, transition):
         if not transition in self.transitions :
             self.transitions.append(transition)
-    
+
     #+---------------------------------------------------------------------------+
     #| getDotCode :
     #|     Generates the dot code representing the automata
     #| @return a string containing the dot code of the automata
     #+---------------------------------------------------------------------------+
-    def getDotCode(self):        
-        dotCode = "digraph G {\n"        
+    def getDotCode(self):
+        dotCode = "digraph G {\n"
         # first we include all the states declared in the automata
-        states = self.getStates()        
+        states = self.getStates()
         for state in states :
             if state.isActive() :
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"  
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"
             else :
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"  
-           
+                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"
+
         for inputState in states :
             for transition in inputState.getTransitions() :
-                outputState = transition.getOutputState()                
+                outputState = transition.getOutputState()
                 dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
-        
-        dotCode = dotCode + "}"      
+
+        dotCode = dotCode + "}"
         return dotCode
-            
+
     def save(self, root, namespace):
         xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")
         xmlGrammar.set("type", str(self.getType()))
@@ -121,14 +121,14 @@ class Grammar(object):
         xmlStates = etree.SubElement(xmlGrammar, "{" + namespace + "}states")
         for state in self.getStates():
             state.save(xmlStates, namespace)
-        
+
         xmlTransitions = etree.SubElement(xmlGrammar, "{" + namespace + "}transitions")
         for transition in self.getTransitions():
             transition.save(xmlTransitions, namespace)
-        
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Static methods
-    #+----------------------------------------------    
+    #+----------------------------------------------
     @staticmethod
     def loadGrammar(xmlRoot, vocabulary, namespace, version):
         if version == "0.1" :
@@ -142,7 +142,7 @@ class Grammar(object):
                     state = AbstractState.loadFromXML(xmlState, namespace, version)
                     if state != None :
                         states.append(state)
-                        
+
                 # Retrieve all the transitions
                 if xmlRoot.find("{" + namespace + "}transitions") != None :
                     xmlTransitions = xmlRoot.find("{" + namespace + "}transitions")
@@ -150,13 +150,13 @@ class Grammar(object):
                         transition = AbstractTransition.loadFromXML(states, vocabulary, xmlTransition, namespace, version)
                         if transition != None :
                             transitions.append(transition)
-                
+
                 # First we retrieve the initial state to create the grammar
                 initialState = None
                 for state in states :
                     if state.getID() == initialStateID :
                         initialState = state
-                    
+
                 if initialState == None :
                     logging.warn("Impossible to retrieve the initial state of the saved grammar")
                     return None
@@ -165,17 +165,17 @@ class Grammar(object):
                 # Register all the states
                 for state in states :
                     grammar.addState(state)
-                    
+
                 for transition in transitions :
                     grammar.addTransition(transition)
-                
+
                 return grammar
             else :
                 logging.warn("Impossible to parse the grammar since its type (" + grammarType + ") is not supported.")
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
-    #+----------------------------------------------                    
+    #+----------------------------------------------
     def getType(self):
         return self.type
     def getInitialState(self):
@@ -184,9 +184,9 @@ class Grammar(object):
         return self.states
     def getTransitions(self):
         return self.transitions
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+

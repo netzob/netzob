@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import subprocess
@@ -42,10 +42,10 @@ from netzob.Common.Process import Process
 #|    env vars, ...)
 #+---------------------------------------------------------------------------+
 class ExecutionContext(object):
-  
+
     def __init__(self):
         pass
-    
+
     @staticmethod
     def getCurrentProcesses():
         result = []
@@ -62,5 +62,5 @@ class ExecutionContext(object):
                 cmd = infos[len(infos) - 1]
                 process = Process(cmd, pid, user)
                 result.append(process)
-            
+
         return result

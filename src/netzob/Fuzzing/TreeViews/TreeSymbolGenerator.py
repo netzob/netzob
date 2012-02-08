@@ -25,35 +25,35 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import logging
 import gtk
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| TreeSymbolGenerator :
-#+---------------------------------------------- 
+#+----------------------------------------------
 class TreeSymbolGenerator():
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Constructor :
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
         self.treestore = None
         self.treeview = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeSymbolGenerator.py')
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| initialization :
     #| builds and configures the treeview
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def initialization(self):
         # Tree store contains :
         # str : text ( symbol Name )
@@ -68,31 +68,31 @@ class TreeSymbolGenerator():
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll.show()
         self.scroll.set_size_request(200, 200)
-        self.scroll.add(self.treeview)        
+        self.scroll.add(self.treeview)
 
         lvcolumn = gtk.TreeViewColumn('Symbols')
         lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
         lvcolumn.pack_start(cell, True)
         cell.set_property('background-set' , True)
-        cell.set_property('foreground-set' , True)            
+        cell.set_property('foreground-set' , True)
         lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| clear :
     #|         Clear the class
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def clear(self):
         pass
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| update :
     #|         Update the treestore in normal mode
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def update(self):
-        self.log.debug("Updating the treestore of the symbol in default mode")        
+        self.log.debug("Updating the treestore of the symbol in default mode")
         self.treestore.clear()
 
         if self.netzob.getCurrentProject() == None:
@@ -101,8 +101,8 @@ class TreeSymbolGenerator():
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
-    #+---------------------------------------------- 
-    #| GETTERS : 
+    #+----------------------------------------------
+    #| GETTERS :
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview

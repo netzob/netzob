@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -52,7 +52,7 @@ from lxml import etree
 #|     Definition of a semi stochastic transition
 #+---------------------------------------------------------------------------+
 class SemiStochasticTransition(AbstractTransition):
-    
+
     def __init__(self, id, name, inputState, outputState, inputSymbol):
         AbstractTransition.__init__(self, "SemiStochastic", id, name, inputState, outputState)
         # create logger with the given configuration
@@ -60,7 +60,7 @@ class SemiStochasticTransition(AbstractTransition):
         self.inputSymbol = inputSymbol
         # Output Symbols : [[Symbol, Probability, Time], [Symbol, Probability, Time]]
         self.outputSymbols = []
-    
+
     #+-----------------------------------------------------------------------+
     #| getOutputSymbols
     #|     Return the associated output symbols
@@ -68,7 +68,7 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def getOutputSymbols(self):
         return self.outputSymbols
-    
+
     #+-----------------------------------------------------------------------+
     #| getInputSymbol
     #|     Return the associated oinput symbol
@@ -76,7 +76,7 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def getInputSymbol(self):
         return self.inputSymbol
-    
+
     #+-----------------------------------------------------------------------+
     #| addOutputSymbol
     #|     Add an output symbol to the current transition
@@ -87,8 +87,8 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def addOutputSymbol(self, outputSymbol, probability, time):
         self.outputSymbols.append([outputSymbol, probability, time])
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Computes if the received symbol is valid
@@ -96,7 +96,7 @@ class SemiStochasticTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def isValid(self, receivedSymbol):
         return self.inputSymbol.getID() == receivedSymbol.getID()
-    
+
     #+-----------------------------------------------------------------------+
     #| pickOutputSymbol
     #|     Randomly select an output symbol
@@ -105,7 +105,7 @@ class SemiStochasticTransition(AbstractTransition):
     def pickOutputSymbol(self):
         r = random.randrange(0, len(self.outputSymbols))
         return self.outputSymbols[r]
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Randomly pick an outputSymbol and send it
@@ -117,14 +117,14 @@ class SemiStochasticTransition(AbstractTransition):
         self.log.debug("Executing transition " + self.name + " with input : " + str(self.inputSymbol))
         if (len(self.outputSymbols) > 0) :
             [outputSymbol, probability, reactionTime] = self.pickOutputSymbol()
-            
+
             # before sending it we simulate the reaction time
             time.sleep(int(reactionTime) / 1000)
-            
+
             abstractionLayer.writeSymbol(outputSymbol)
         self.deactivate()
         return self.outputState
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Send input symbol and waits to received one of the output symbol
@@ -142,67 +142,67 @@ class SemiStochasticTransition(AbstractTransition):
             # Wait for a message
             self.log.debug("Start waiting for something")
             (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-            
+
             if receivedSymbol == None :
                 finish = True
-            
+
             self.log.info("The MASTER received " + str(receivedSymbol.getName()))
             if (not (isinstance(receivedSymbol, EmptySymbol))):
                 self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
                 if (len(self.outputSymbols) == 0) :
                     self.log.debug("Nothing is considered since the server didn't expect anything.")
                     finish = True
-                
+
                 for arSymbol in self.outputSymbols :
                     [symbol, proba, time] = arSymbol
                     if symbol.getID() == receivedSymbol.getID() :
                         self.log.debug("Received symbol is understood !!")
                         finish = True
-            
+
         self.deactivate()
         return self.outputState
-     
-    
+
+
     def getDescription(self):
         inputSymbolName = self.getInputSymbol().getName()
-        
+
         desc = []
         for outSymbolDesc in self.getOutputSymbols() :
             desc.append("(" + str(outSymbolDesc[0].getName()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
-        
-         
+
+
         return "(" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
-    
-    
-    
+
+
+
     def save(self, root, namespace):
         xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")
         xmlTransition.set("id", str(self.getID()))
         xmlTransition.set("name", str(self.getName()))
         xmlTransition.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:SemiStochasticTransition")
-        
+
         xmlStartState = etree.SubElement(xmlTransition, "{" + namespace + "}startState")
         xmlStartState.text = str(self.getInputState().getID())
-        
+
         xmlEndState = etree.SubElement(xmlTransition, "{" + namespace + "}endState")
         xmlEndState.text = str(self.getOutputState().getID())
-        
+
         xmlInput = etree.SubElement(xmlTransition, "{" + namespace + "}input")
         xmlInput.set("symbol", self.getInputSymbol().getID())
-        
+
         xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols :
             [symbol, proba, time] = arSymbol
             xmlOutput = etree.SubElement(xmlOutputs, "{" + namespace + "}output")
             xmlOutput.set("time", str(time))
             xmlOutput.set("probability", str(proba))
-            xmlOutput.set("symbol", str(symbol.getID())) 
-        
-    
+            xmlOutput.set("symbol", str(symbol.getID()))
+
+
     #+-----------------------------------------------------------------------+
     #| parse
     #|     Extract from an XML declaration the definition of the transition
-    #| @param dictionary the dictionary which is used in the current MMSTD 
+    #| @param dictionary the dictionary which is used in the current MMSTD
     #| @param states the states already parsed while analyzing the MMSTD
     #| @return the instanciated object declared in the XML
     #+-----------------------------------------------------------------------+
@@ -210,10 +210,10 @@ class SemiStochasticTransition(AbstractTransition):
     def loadFromXML(states, vocabulary, xmlTransition, namespace, version):
         idTransition = xmlTransition.get("id")
         nameTransition = xmlTransition.get("name")
-            
+
         idStartTransition = xmlTransition.find("{" + namespace + "}startState").text.strip()
         idEndTransition = xmlTransition.find("{" + namespace + "}endState").text.strip()
-        
+
         inputStateTransition = None
         outputStateTransition = None
         for state in states :
@@ -221,33 +221,33 @@ class SemiStochasticTransition(AbstractTransition):
                 inputStateTransition = state
             if state.getID() == idEndTransition :
                 outputStateTransition = state
-                    
+
         xmlInput = xmlTransition.find("{" + namespace + "}input")
         inputSymbolID = xmlInput.get("symbol")
         # We retrieve the symbol associated with it
         inputSymbol = vocabulary.getSymbol(inputSymbolID)
-        
+
         if inputSymbol == None :
             logging.warn("The vocabulary doesn't reference a symbol which ID is " + inputSymbolID)
             return None
-            
-        
-            
+
+
+
         transition = SemiStochasticTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, inputSymbol)
-            
+
         xmlOutputs = xmlTransition.findall("{" + namespace + "}outputs/{" + namespace + "}output")
         for xmlOutput in xmlOutputs :
             outputSymbolId = xmlOutput.get("symbol")
             outputTime = int(xmlOutput.get("time"))
             outputProbability = float(xmlOutput.get("probability"))
-            
+
             outputSymbol = vocabulary.getSymbol(outputSymbolId)
-        
+
             if outputSymbol == None :
                 logging.warn("The vocabulary doesn't reference a symbol which ID is " + outputSymbolId)
                 return None
-            
+
             transition.addOutputSymbol(outputSymbol, outputProbability, outputTime)
-                
+
         inputStateTransition.registerTransition(transition)
         return transition

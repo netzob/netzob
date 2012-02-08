@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -40,7 +40,7 @@ from AbstractActor import AbstractActor
 #|     Definition of a simple communicationLayer
 #+---------------------------------------------------------------------------+
 class SimpleCommunicationLayer(AbstractActor):
-    
+
     def __init__(self, inputs, outputs, dictionary, memory):
         AbstractActor.__init__(self, False, False)
         # create logger with the given configuration
@@ -48,18 +48,18 @@ class SimpleCommunicationLayer(AbstractActor):
         self.predefinedInputs = deque(inputs)
         self.predefinedOutputs = deque(outputs)
         self.inputMessages = []
-        self.outputMessages = []        
+        self.outputMessages = []
         self.dictionary = dictionary
         self.memory = memory
-        
+
     def open(self):
         self.log.debug("We open it !")
         return True
-    
+
     def close(self):
         self.log.debug("We close it !")
         return True
-    
+
     def read(self, timeout):
         self.log.debug("We read it !")
         if (len(self.predefinedInputs) > 0) :
@@ -71,23 +71,23 @@ class SimpleCommunicationLayer(AbstractActor):
         else :
             self.log.debug("No more inputs to simulate, nothing was read ")
             return None
-       
-        
+
+
     def write(self, message):
-        self.log.debug("Write down !")  
+        self.log.debug("Write down !")
         self.outputMessages.append(message)
-        
-        
+
+
     def getInputMessages(self):
         return self.inputMessages
     def getOutputMessages(self):
         return self.outputMessages
     def getGeneratedInstances(self):
         return []
-    
+
     def stop(self):
         self.log.debug("Stopping the thread of the client")
         AbstractActor.stop(self)
-    
-   
-    
+
+
+

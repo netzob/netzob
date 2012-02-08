@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -44,37 +44,37 @@ import logging
 #|     Definition of a dictionary
 #+---------------------------------------------------------------------------+
 class MMSTDDictionary():
-    
+
     def __init__(self, variables, entries):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.MMSTDDictionary.py')
         self.variables = variables
         self.entries = entries
-    
-    
-        
-    
+
+
+
+
     def getEntry(self, id):
         for entry in self.entries :
             if entry.getID() == id :
                 return entry
-            
+
         return None
-    
-    
+
+
     def getVariableByID(self, id):
-        for variable in self.variables :            
+        for variable in self.variables :
             if variable.getID() == id :
                 return variable
         return None
-    
-    
-    
+
+
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getEntries(self):
-        return self.entries 
+        return self.entries
     def getVariables(self):
         return self.variables
-    
+

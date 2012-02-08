@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
@@ -48,7 +48,7 @@ from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 #|     Factory dedicated to the manipulation of file messages
 #+---------------------------------------------------------------------------+
 class AbstractMessageFactory():
-    
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
@@ -64,24 +64,24 @@ class AbstractMessageFactory():
         elif message.getType() == "RAW" :
             return RawMessageFactory.save(message, root, namespace_project, namespace_common)
         else :
-            raise NameError('''There is no factory which would support 
+            raise NameError('''There is no factory which would support
             the generation of an xml representation of the message : ''' + str(message))
-    
-    
+
+
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML :
     #|     Function which parses an XML and extract from it
     #[     the definition of a file message
-    #| @param rootElement: XML root of the file message 
+    #| @param rootElement: XML root of the file message
     #| @return an instance of a message
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):        
+    def loadFromXML(rootElement, namespace, version):
         # Computes which type is it
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract" :
             raise NameError("The parsed xml doesn't represent a valid type message.")
-        
+
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage" :
             return FileMessageFactory.loadFromXML(rootElement, namespace, version)
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage" :
@@ -93,4 +93,4 @@ class AbstractMessageFactory():
         else :
             raise NameError("The parsed xml doesn't represent a valid type message.")
             return None
-        
+

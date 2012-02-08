@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import base64
@@ -33,22 +33,22 @@ import logging
 import StringIO
 from netzob.Common.Type.Format import Format
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 
 class TypeIdentifier():
-    
+
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.TypeIdentifier.py')
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Identify the possible types from a hexa string
     #+----------------------------------------------
     def getTypes(self, stringsTable):
         entireString = "".join(stringsTable)
-        
+
         setSpace = set()
         for i in range(0, len(entireString), 2):
             setSpace.add(int(entireString[i:i + 2], 16))
@@ -75,8 +75,8 @@ class TypeIdentifier():
         typesList.append(Format.BINARY)
 
         return typesList
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Return True if the string parameter is ASCII
     #+----------------------------------------------
     def isAscii(self, string):
@@ -84,9 +84,9 @@ class TypeIdentifier():
             string.decode('ascii')
             return True
         except UnicodeDecodeError:
-            return False 
+            return False
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Return True if the string table parameter is base64
     #|  encoded
     #+----------------------------------------------
@@ -103,4 +103,4 @@ class TypeIdentifier():
         except TypeError:
             res = False
 
-        return res    
+        return res

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -46,22 +46,22 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #|     Definition of a message
 #+---------------------------------------------------------------------------+
 class AbstractMessage():
-    
+
     def __init__(self, id, timestamp, data, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         if id == None :
             self.id = uuid.uuid4()
         else :
-            self.id = id 
-            
+            self.id = id
+
         self.timestamp = timestamp
         self.data = data
         self.type = type
         self.symbol = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-    
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #|     Abstract method to retrieve the associated factory
@@ -70,7 +70,7 @@ class AbstractMessage():
     def getFactory(self):
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
-    
+
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Abstract method to retrieve the properties of the message
@@ -79,50 +79,50 @@ class AbstractMessage():
     def getProperties(self):
         self.log.error("The message class doesn't have a method 'getProperties' !")
         raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #|`getStringData : compute a string representation
-    #| of the data 
+    #| of the data
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
         return str(self.data)
-    
+
     def getReducedSize(self):
         start = 0
         end = len(self.getStringData())
-        
+
         if self.getLeftReductionFactor() > 0 :
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
             if (end - start) % 2 == 1 :
                 start = start - 1
         if self.getRightReductionFactor() > 0 :
-            end = self.getRightReductionFactor() * len(self.getStringData()) / 100 
+            end = self.getRightReductionFactor() * len(self.getStringData()) / 100
             if (end - start) % 2 == 1 :
-                end = end + 1 
-        
+                end = end + 1
+
         if (end - start) % 2 == 1 :
-            end = end + 1 
-            
+            end = end + 1
+
         return len(self.getStringData()) - (end - start)
-    
-    def getReducedStringData(self):        
+
+    def getReducedStringData(self):
         start = 0
         end = len(self.getStringData())
-        
+
         if self.getLeftReductionFactor() > 0 :
             start = self.getLeftReductionFactor() * len(self.getStringData()) / 100
             if (end - start) % 2 == 1 :
-                start = start - 1 
+                start = start - 1
         if self.getRightReductionFactor() > 0 :
-            end = self.getRightReductionFactor() * len(self.getStringData()) / 100 
+            end = self.getRightReductionFactor() * len(self.getStringData()) / 100
             if (end - start) % 2 == 1 :
                 end = end + 1
-                
-                  
-        return "".join(self.getStringData()[start:end]) 
 
-    #+---------------------------------------------- 
+
+        return "".join(self.getStringData()[start:end])
+
+    #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
     #|  and return a table
     #+----------------------------------------------
@@ -132,7 +132,7 @@ class AbstractMessage():
         else:
             return self.applyDelimiter(styled, encoded)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
     #|  and return a table
     #+----------------------------------------------
@@ -169,13 +169,13 @@ class AbstractMessage():
                     color = 'blue'
                 else:
                     color = field.getColor()
-                    
+
                 # Define the background color
                 if field.getBackgroundColor() != None :
                     backgroundColor = 'background="' + field.getBackgroundColor() + '"'
                 else :
                     backgroundColor = ""
-                    
+
                 # Overwrite the background color (red if the variable doesn't match the data)
                 if field.getVariable() != None :
                     # Creation of a temporary memory just for the current
@@ -185,7 +185,7 @@ class AbstractMessage():
                         backgroundColor = 'background="red"'
                     else :
                         backgroundColor = 'background="green"'
-                    
+
                 if styled:
                     if encoded:
                         res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)) + '</span>')
@@ -211,7 +211,7 @@ class AbstractMessage():
             iCol = iCol + 1
         return res
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message
     #|  and return a table
     #+----------------------------------------------
@@ -233,7 +233,7 @@ class AbstractMessage():
                 color = 'blue'
             else:
                 color = field.getColor()
-                
+
             # Define the background color
             if field.getBackgroundColor() != None :
                 backgroundColor = 'background="' + field.getBackgroundColor() + '"'
@@ -251,7 +251,7 @@ class AbstractMessage():
                 else:
                     res.append(tmp)
         return res
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -269,7 +269,7 @@ class AbstractMessage():
         return self.leftReductionFactor
     def getTimestamp(self):
         return self.timestamp
-    
+
     def setID(self, id):
         self.id = id
     def setType(self, type):

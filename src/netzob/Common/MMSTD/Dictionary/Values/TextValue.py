@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -45,38 +45,38 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #|     Represents a text value
 #+---------------------------------------------------------------------------+
 class TextValue(AbstractValue):
-    
+
     def __init__(self, text):
         AbstractValue.__init__(self, "TextValue")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.TextValue.py')
-        
+
         self.strtext = text
         self.bintext = TypeConvertor.string2bin(self.strtext, 'big')
-        
+
     def send(self, negative, dictionary):
         return (self.bintext, self.strtext)
-        
+
     def compare(self, val, indice, negative, dictionary):
         self.log.debug("Compare received : '" + str(val[indice:]) + "' with '" + str(self.bintext) + "' ")
-        
+
         tmp = val[indice:]
         if len(tmp) >= len(self.bintext) :
             if tmp[:len(self.bintext)] == self.bintext :
                 self.log.debug("Compare successful")
-                return indice + len(self.bintext)                                
+                return indice + len(self.bintext)
         else :
             self.log.debug("Compare fail")
             return -1
-     
-    
+
+
     def restore(self):
         return
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-  
-    
-    
+
+
+

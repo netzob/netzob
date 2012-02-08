@@ -25,18 +25,18 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
 import logging
 import time
 import threading
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
@@ -45,57 +45,57 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| NetworkOracle :
-#+---------------------------------------------- 
+#+----------------------------------------------
 class NetworkOracle(threading.Thread):
-     
+
     def __init__(self, communicationChannel):
         threading.Thread.__init__(self)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')       
+        self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')
         self.communicationChannel = communicationChannel
-    
-        
+
+
     def setMMSTD(self, mmstd):
         self.mmstd = mmstd
-        
-    def run(self): 
+
+    def run(self):
         self.log.info("Start the network oracle based on given MMSTD")
-        
+
         # Create the abstraction layer for this connection
         abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getDictionary(), Memory(self.mmstd.getDictionary().getVariables()))
-        
+
         # And we create an MMSTD visitor for this
-        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, True, abstractionLayer) 
-        self.oracle.start()  
-        
+        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, True, abstractionLayer)
+        self.oracle.start()
+
         while (self.oracle.isAlive()) :
             time.sleep(0.01)
-            
+
         self.log.warn("The network ORACLE has finished")
-        
-        
-        
+
+
+
     def stop(self):
         self.log.info("Stop the network oracle")
         self.oracle.stop()
-    
+
     def hasFinish(self):
         return not self.oracle.isActive()
-        
+
     def getGeneratedOutputSymbols(self):
         symbols = []
-        abstractionLayer = self.oracle.getAbstractionLayer()      
+        abstractionLayer = self.oracle.getAbstractionLayer()
         for o in abstractionLayer.getGeneratedOutputSymbols() :
             symbols.append(DictionarySymbol(o))
         return symbols
-        
+
     def getResults(self):
         symbols = []
         # Retrieve all the IO from the abstraction layer
-        abstractionLayer = self.oracle.getAbstractionLayer()        
+        abstractionLayer = self.oracle.getAbstractionLayer()
         for io in abstractionLayer.getGeneratedInputAndOutputsSymbols() :
             symbols.append(DictionarySymbol(io))
         return symbols
-    
+

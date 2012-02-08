@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
@@ -57,12 +57,12 @@ from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Network :
-#|     This class offers the capability to capture traffic from live network 
+#|     This class offers the capability to capture traffic from live network
 #+---------------------------------------------------------------------------+
 class NetworkImport(AbstractImporter):
-    
+
     def new(self):
         pass
 
@@ -74,30 +74,30 @@ class NetworkImport(AbstractImporter):
 
     def kill(self):
         pass
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor :
-    #| @param zob: a reference to the main netzob.py 
-    #+-----------------------------------------------------------------------+  
-    def __init__(self, zob):  
-        AbstractImporter.__init__(self, "NETWORK IMPORT")       
+    #| @param zob: a reference to the main netzob.py
+    #+-----------------------------------------------------------------------+
+    def __init__(self, zob):
+        AbstractImporter.__init__(self, "NETWORK IMPORT")
         self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.Network.py')
         self.packets = []
-        
+
         self.init()
-        
+
         self.dialog = gtk.Dialog(title="Capture network trafic", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
-        
+
     def init(self):
 
         # create the environmental dependancy object
         self.envDeps = EnvironmentalDependencies()
-        
+
         # Network Capturing Panel
         self.panel = gtk.Table(rows=7, columns=4, homogeneous=False)
         self.panel.show()
@@ -110,17 +110,17 @@ class NetworkImport(AbstractImporter):
         listNetworkDevice.set_size_request(300, -1)
         listNetworkDevice.set_model(gtk.ListStore(str))
         listNetworkDevice.get_model().clear()
-        
+
         # list of interfaces
         try:
             interfaces = pcapy.findalldevs()
         except:
             self.log.warn("You don't have enough permissions to open any network interface on this system.")
             interfaces = []
-        
+
         for interface in interfaces :
-            listNetworkDevice.append_text(str(interface))        
-        
+            listNetworkDevice.append_text(str(interface))
+
         self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(listNetworkDevice, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -151,7 +151,7 @@ class NetworkImport(AbstractImporter):
         entry_time.set_text("10")
         self.panel.attach(label, 0, 1, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(entry_time, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-        
+
         # Sniff launching button
         but = gtk.Button(label="Sniff traffic")
         but.show()
@@ -211,7 +211,7 @@ class NetworkImport(AbstractImporter):
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 2, 4, 0, 7, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
@@ -228,39 +228,39 @@ class NetworkImport(AbstractImporter):
                 proto = model.get_value(iter, 1)
                 timestamp = str(model.get_value(iter, 6))
                 packetPayload = self.packets[packetID]
-                
+
                 eth_decoder = Decoders.EthDecoder()
                 ip_decoder = Decoders.IPDecoder()
                 udp_decoder = Decoders.UDPDecoder()
                 tcp_decoder = Decoders.TCPDecoder()
-        
+
                 IPsrc = None
                 IPdst = None
                 Sport = None
                 Dport = None
                 Data = None
-                
+
                 ethernet = eth_decoder.decode(packetPayload)
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
                     IPsrc = ip.get_ip_src()
                     IPdst = ip.get_ip_dst()
-                    
-                    if ip.get_ip_p() == Packets.UDP.protocol: 
+
+                    if ip.get_ip_p() == Packets.UDP.protocol:
                         udp = udp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = udp.get_uh_sport()
                         Dport = udp.get_uh_dport()
                         Data = udp.get_data_as_string()
                     if ip.get_ip_p() == Packets.TCP.protocol :
-                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
+                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = tcp.get_th_sport()
                         Dport = tcp.get_th_dport()
                         Data = tcp.get_data_as_string()
-                
+
                 # Compute the messages
-                message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)    
+                message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)
                 messages.append(message)
-        
+
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
@@ -268,16 +268,16 @@ class NetworkImport(AbstractImporter):
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
-        
+
         if resp == gtk.RESPONSE_OK:
             self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages)
         self.dialog.destroy()
-        
+
         # We update the gui
         self.zob.update()
 
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
     def packet_details(self, treeview):
@@ -291,7 +291,7 @@ class NetworkImport(AbstractImporter):
                 self.textview.get_buffer().set_text("")
                 self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), str(decoder.decode(payload)), "normalTag")
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
     def launch_sniff(self, button, dev, filter, count, time):
@@ -303,7 +303,7 @@ class NetworkImport(AbstractImporter):
         aSniffThread = threading.Thread(None, self.sniffingThread, None, (button, dev, filter, count, time), {})
         aSniffThread.start()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Thread for sniffing work
     #+----------------------------------------------
     def sniffingThread(self, button, devstore, filter, count, time):
@@ -313,8 +313,8 @@ class NetworkImport(AbstractImporter):
         if est_actif < 0:
             dev = ""
         dev = modele[est_actif][0]
-        
-        self.log.info("Launching sniff process on dev " + dev + " with : count=" + count.get_text() + ", timeout=" + time.get_text() + ", filter=\"" + filter.get_text() + "\"")        
+
+        self.log.info("Launching sniff process on dev " + dev + " with : count=" + count.get_text() + ", timeout=" + time.get_text() + ", filter=\"" + filter.get_text() + "\"")
         sniffer = pcapy.open_live(dev, 1024, False, int(time.get_text()))
 
         try :
@@ -323,7 +323,7 @@ class NetworkImport(AbstractImporter):
             self.log.warn("The provided filter is not valid (it should respects the BPF format")
             button.set_sensitive(True)
             return
-        
+
         sniffer.loop(int(count.get_text()), self.packetHandler)
         button.set_sensitive(True)
 
@@ -333,23 +333,23 @@ class NetworkImport(AbstractImporter):
         ip_decoder = Decoders.IPDecoder()
         udp_decoder = Decoders.UDPDecoder()
         tcp_decoder = Decoders.TCPDecoder()
-        
+
         ethernet = eth_decoder.decode(payload)
         if ethernet.get_ether_type() == Packets.IP.ethertype:
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
-            if ip.get_ip_p() == Packets.UDP.protocol: 
+            if ip.get_ip_p() == Packets.UDP.protocol:
                 udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
                 if len(udp.get_data_as_string()) > 0 :
                     self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
                     self.packets.append(payload)
-                            
+
             if ip.get_ip_p() == Packets.TCP.protocol :
-                tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])  
+                tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
                 if len(tcp.get_data_as_string()) > 0 :
                     self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
                     self.packets.append(payload)
-                    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):

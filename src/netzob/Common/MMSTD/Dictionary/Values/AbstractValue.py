@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -44,13 +44,13 @@ import logging
 #|     Abstraction of a value
 #+---------------------------------------------------------------------------+
 class AbstractValue():
-    
+
     def __init__(self, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.AbstractValue.py')
         self.type = type
-        
-       
+
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -59,5 +59,5 @@ class AbstractValue():
 
     def setType(self, type):
         self.type = type
-    
-    
+
+

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
@@ -50,18 +50,18 @@ from lxml import etree
 #|     <key></key>
 #|     <name></name>
 #|     <type></type>
-#|     <direction></direction> 
+#|     <direction></direction>
 #|     <timestamp></timestamp>
 #|     <data></data>
 #| </message>
 #+---------------------------------------------------------------------------+
 class IPCMessageFactory():
-    
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| save
     #|     Generate the XML representation of an IPC message
-    #+-----------------------------------------------------------------------+    
+    #+-----------------------------------------------------------------------+
     def save(message, xmlMessages, namespace_project, namespace):
         root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
@@ -82,55 +82,55 @@ class IPCMessageFactory():
         # direction
         subDirection = etree.SubElement(root, "{" + namespace + "}direction")
         subDirection.text = str(message.getDirection())
-        
-    
+
+
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML :
     #|     Function which parses an XML and extract from it
     #[     the definition of an IPC message
-    #| @param rootElement: XML root of the IPC message 
+    #| @param rootElement: XML root of the IPC message
     #| @return an instance of a n IPC Message
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):        
+    def loadFromXML(rootElement, namespace, version):
         # Then we verify its an IPC Message
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:IPCMessage" :
             raise NameError("The parsed xml doesn't represent an IPC message.")
-        
+
         # Verifies the data field
         if rootElement.find("{" + namespace + "}data") == None or len(rootElement.find("{" + namespace + "}data").text) == 0:
             raise NameError("The parsed message has no data specified")
-        
+
         # Parse the data field and transform it into a byte array
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-        
+
         # Retrieve the id
         msg_id = rootElement.get("id")
-        
+
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))
-        
+
         # Retrieves the category
         msg_category = rootElement.find("{" + namespace + "}category").text
-       
+
         # Retrieves the key
         msg_key = rootElement.find("{" + namespace + "}key").text
-        
+
         # Retrieves the type
         msg_type = rootElement.find("{" + namespace + "}type").text
-            
+
         # Retrieves the direction
         msg_direction = rootElement.find("{" + namespace + "}direction").text
-        
-        
-        
-        # TODO : verify this ! Circular imports in python !      
-        # WARNING : verify this ! Circular imports in python !  
+
+
+
+        # TODO : verify this ! Circular imports in python !
+        # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.IPCMessage import IPCMessage
-        
+
         result = IPCMessage(msg_id, msg_timestamp, msg_data, msg_category, msg_key, msg_direction)
-        
+
         return result
-    
-    
+
+

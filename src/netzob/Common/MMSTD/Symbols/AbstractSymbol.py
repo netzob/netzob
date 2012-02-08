@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -39,17 +39,17 @@ import logging
 #|     Definition of a symbol
 #+---------------------------------------------------------------------------+
 class AbstractSymbol():
-    
+
     def __init__(self, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.AbstractSymbol.py')
         self.type = type
-    
-    
+
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getType(self):
         return self.type
-    
-    
+
+

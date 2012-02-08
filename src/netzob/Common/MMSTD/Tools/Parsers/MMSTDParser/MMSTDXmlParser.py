@@ -25,17 +25,17 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
 import os
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
 from lxml.etree import ElementTree
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
 from netzob.Common.ConfigurationParser import ConfigurationParser
@@ -46,42 +46,42 @@ from netzob.Common.MMSTD.Transitions.impl import CloseChannelTransition
 from netzob.Common.MMSTD.Tools.Parsers.DictionaryParser import DictionaryXmlParser
 from netzob.Common.MMSTD import MMSTD
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| MMSTDXmlParser :
 #|    Parser for an MMSTD
-#+---------------------------------------------- 
+#+----------------------------------------------
 class MMSTDXmlParser(object):
-    
+
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML :
     #|     Function which parses an XML and extract from it
     #[     the definition of an MMSTD
-    #| @param rootElement: XML root of the MMSTD definition 
+    #| @param rootElement: XML root of the MMSTD definition
     #| @return an instance of an MMSTD
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement):     
+    def loadFromXML(rootElement):
         if rootElement.tag != "automata" :
             raise NameError("The parsed XML doesn't represent an automata.")
-        
+
         if rootElement.get("type", "none") != "mmstd" :
             raise NameError("The parsed XML doesn't represent an MMSTD")
-        
+
         if rootElement.get("dictionary", "none") == "none" :
             raise NameError("The MMSTD doesn't have any dictionary declared")
-        
-        
+
+
         automatonDir = ConfigurationParser().get("automata", "path")
         dictionaryFile = os.path.join(automatonDir, rootElement.get("dictionary", "none"))
         # Parsing dictionary file
         dicoTree = ElementTree()
-        dicoTree.parse(dictionaryFile)           
+        dicoTree.parse(dictionaryFile)
         dictionary = DictionaryXmlParser.DictionaryXmlParser.loadFromXML(dicoTree.getroot(), dictionaryFile)
-        
+
         # parse for all the states
         states = []
-        initialState = None 
+        initialState = None
         for xmlState in rootElement.findall("state") :
             idState = int(xmlState.get("id", "-1"))
             classState = xmlState.get("class", "NormalState")
@@ -90,12 +90,12 @@ class MMSTDXmlParser(object):
             states.append(state)
             if idState == 0 :
                 initialState = state
-            
+
         # parse for all the transitions
         for xmlTransition in rootElement.findall("transition") :
-            
+
             classTransition = xmlTransition.get("class", "none")
-            
+
             transition = None
             if classTransition == "SemiStochasticTransition" :
                 transition = SemiStochasticTransition.SemiStochasticTransition.parse(xmlTransition, dictionary, states)
@@ -103,9 +103,9 @@ class MMSTDXmlParser(object):
                 transition = OpenChannelTransition.OpenChannelTransition.parse(xmlTransition, states)
             elif classTransition == "CloseChannelTransition" :
                 transition = CloseChannelTransition.CloseChannelTransition.parse(xmlTransition, states)
-        
-        
+
+
         # create an MMSTD
         automata = MMSTD.MMSTD(initialState, dictionary)
         return automata
-    
+

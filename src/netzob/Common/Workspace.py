@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -47,41 +47,41 @@ from netzob.Common.ImportedTrace import ImportedTrace
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
-def loadWorkspace_0_1(workspacePath, workspaceFile):  
-    
+def loadWorkspace_0_1(workspacePath, workspaceFile):
+
     # Parse the XML Document as 0.1 version
     tree = ElementTree()
-    
+
     tree.parse(workspaceFile)
     xmlWorkspace = tree.getroot()
     wsName = xmlWorkspace.get('name', 'none')
     wsCreationDate = TypeConvertor.xsdDatetime2PythonDatetime(xmlWorkspace.get('creation_date'))
-    
+
     # Parse the configuration to retrieve the main paths
     xmlWorkspaceConfig = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}configuration")
     pathOfTraces = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}traces").text
-    
+
     pathOfLogging = None
     if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text) > 0:
         pathOfLogging = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text
-        
+
     pathOfPrototypes = None
     if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text) > 0:
         pathOfPrototypes = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text
-    
+
     lastProject = None
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None :
         xmlProjects = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects")
         if xmlProjects.get("last", "none") != "none" :
-            lastProject = xmlProjects.get("last", "none") 
-    
-    
+            lastProject = xmlProjects.get("last", "none")
+
+
     # Instantiation of the workspace
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
-    
+
     # Load the already imported traces
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") != None :
-        
+
         xmlTraces = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces")
         for xmlTrace in xmlTraces.findall("{" + WORKSPACE_NAMESPACE + "}trace") :
             print "ok"
@@ -89,7 +89,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             if trace != None :
                 workspace.addImportedTrace(trace)
 
-    
+
     # Load the projects
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None :
         for xmlProject in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}projects/{" + WORKSPACE_NAMESPACE + "}project") :
@@ -97,22 +97,22 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             workspace.referenceProject(project_path)
             if project_path == lastProject and lastProject != None:
                 workspace.referenceLastProject(lastProject)
-            
-    return workspace    
- 
+
+    return workspace
+
 #+---------------------------------------------------------------------------+
 #| Workspace :
 #|     Class definition of a Workspace
 #+---------------------------------------------------------------------------+
 class Workspace(object):
-    
+
     # The name of the configuration file
     CONFIGURATION_FILENAME = "workspace.xml"
-    
+
     # /!\ WARNING :
     # The dict{} which defines the parsing function associated with each schema
     # is added to the end of the document
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #| @param path : path of the workspace
@@ -127,8 +127,8 @@ class Workspace(object):
         self.pathOfPrototypes = pathOfPrototypes
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
-        
-        
+
+
     def getProjects(self):
         projects = []
         for project_path in self.getProjectsPath() :
@@ -137,18 +137,18 @@ class Workspace(object):
             if project != None :
                 projects.append(project)
         return projects
-    
+
     def getLastProject(self):
         if self.lastProjectPath == None :
             return None
-        
+
         from netzob.Common.Project import Project
         project = Project.loadProject(self, self.lastProjectPath)
         return project
-    
+
     def referenceLastProject(self, lastProject):
         self.lastProjectPath = lastProject
-    
+
     def getImportedTraces(self):
         return self.importedTraces
     def addImportedTrace(self, importedTrace):
@@ -157,8 +157,8 @@ class Workspace(object):
     def removeImportedTrace(self, importedTrace):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
-    
-        
+
+
     #+-----------------------------------------------------------------------+
     #| referenceProject :
     #|     reference a project in the workspace
@@ -169,13 +169,13 @@ class Workspace(object):
             self.projects_path.append(path)
         else :
             logging.warn("The project declared in " + path + " is already referenced in the workspace.")
-        
+
     def saveConfigFile(self):
         print "=============================================================="
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
-        
+
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
-        
+
         # Register the namespace (2 way depending of the version)
         try :
             etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
@@ -183,57 +183,57 @@ class Workspace(object):
         except AttributeError :
             etree._namespace_map[WORKSPACE_NAMESPACE] = 'netzob'
             etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
-            
+
         # Dump the file
         root = etree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
         root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
         root.set("name", str(self.getName()))
-        
+
         xmlWorkspaceConfig = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}configuration")
-        
+
         xmlTraces = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}traces")
         xmlTraces.text = str(self.getPathOfTraces())
-        
+
         xmlLogging = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}logging")
         xmlLogging.text = str(self.getPathOfLogging())
-        
+
         xmlPrototypes = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}prototypes")
         xmlPrototypes.text = str(self.getPathOfPrototypes())
-        
-        xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")   
-        logging.info("Projects included in workspace.xml :")  
+
+        xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")
+        logging.info("Projects included in workspace.xml :")
         for project in self.getProjects() :
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
             xmlProject.set("path", project.getPath())
-#               
+#
 #        for projectPath in self.getProjectsPath():
 #            logging.info("--> " + projectPath)
-#            
-            
-        xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")       
+#
+
+        xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
             importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, self.getPathOfTraces())
-            
+
         tree = ElementTree(root)
         tree.write(workspaceFile)
-    
-    
+
+
     @staticmethod
-    def createWorkspace(name, path):        
+    def createWorkspace(name, path):
         tracesPath = os.path.join(path, "traces")
         projectsPath = os.path.join(path, "projects")
         prototypesPath = os.path.join(path, "prototypes")
         loggingPath = os.path.join(path, "logging")
         pathOfLogging = os.path.join(path, "logging/logging.conf")
-        
+
         # we create a "traces" directory if it doesn't yet exist
         if not os.path.isdir(tracesPath) :
             os.mkdir(tracesPath)
-            
+
         # we create a "projects" directory if it doesn't yet exist
         if not os.path.isdir(projectsPath) :
             os.mkdir(projectsPath)
-        
+
         # we create the "prototypes" directory if it doesn't yet exist
         if not os.path.isdir(prototypesPath) :
             os.mkdir(prototypesPath)
@@ -249,16 +249,16 @@ class Workspace(object):
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             staticLoggingPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "logging.conf.default")
             shutil.copy(staticLoggingPath, os.path.join(loggingPath, "logging.conf"))
-            
+
         workspace = Workspace(name, datetime.datetime.now(), path, tracesPath, pathOfLogging, prototypesPath)
         workspace.saveConfigFile()
-        
+
         return workspace
-    
+
     @staticmethod
-    def loadWorkspace(workspacePath):    
+    def loadWorkspace(workspacePath):
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
-        
+
         # verify we can open and read the file
         if workspaceFile == None :
             logging.warn("The workspace's configuration file can't be find (No workspace path given).")
@@ -271,9 +271,9 @@ class Workspace(object):
         if not os.access(workspaceFile, os.R_OK) :
             logging.warn("The specified workspace's configuration file (" + str(workspaceFile) + ") is not readable.")
             return None
-        
+
         # We validate the file given the schemas
-        for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys() :            
+        for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys() :
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
@@ -285,10 +285,10 @@ class Workspace(object):
                     return workspace
             else :
                 logging.fatal("The specified Workspace file is not valid according to the XSD.")
-        
+
         return None
-        
-    
+
+
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
         # is the schema is a file
@@ -299,15 +299,15 @@ class Workspace(object):
         if not os.access(schemaFile, os.R_OK) :
             logging.warn("The specified schema file (" + str(schemaFile) + ") is not readable.")
             return False
-        
+
         schemaF = open(schemaFile, "r")
         schemaContent = schemaF.read()
         schemaF.close()
-        
+
         if schemaContent == None or len(schemaContent) == 0:
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
-        
+
         # Extended version of an XSD validator
         # Create an xmlParser for the schema
         schemaParser = etree.XMLParser()
@@ -318,7 +318,7 @@ class Workspace(object):
         schemaParser.resolvers.add(xsdResolver)
         schemaParsed = etree.parse(schemaContent, parser=schemaParser)
         schema = etree.XMLSchema(schemaParsed)
-                
+
         try :
             xmlRoot = etree.parse(xmlFile)
             schema.assertValid(xmlRoot)
@@ -329,10 +329,10 @@ class Workspace(object):
             logging.warn(error)
             return False
         return False
-    
+
     # Dictionary of workspace versions, must be sorted by version DESC
-    WORKSPACE_SCHEMAS = {"xsds/0.1/Workspace.xsd": loadWorkspace_0_1}   
-    
+    WORKSPACE_SCHEMAS = {"xsds/0.1/Workspace.xsd": loadWorkspace_0_1}
+
     def getName(self):
         return self.name
     def getCreationDate(self):
@@ -347,4 +347,4 @@ class Workspace(object):
         return self.pathOfLogging
     def getPathOfPrototypes(self):
         return self.pathOfPrototypes
-    
+

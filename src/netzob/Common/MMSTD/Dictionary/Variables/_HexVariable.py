@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -46,32 +46,32 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #|     Definition of an hex variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class HexVariable(Variable):
-    
-    
-    
+
+
+
     def __init__(self, id, name, value):
         Variable.__init__(self, id, name, "HEX")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
         self.value = value
         self.size = -1
         self.min = -1
-        self.max = -1   
-        self.reset = "normal"    
+        self.max = -1
+        self.reset = "normal"
         if self.value != None :
-            self.binValue = None 
+            self.binValue = None
             #TypeConvertor.hex2bin(self.value, 'big')
             self.strValue = value
         else :
             self.binValue = None
             self.strValue = None
-            
+
         self.log.debug("Bin-value = " + str(self.binValue) + ", str-value = " + str(self.strValue))
-        
+
     def getValue(self, negative, dictionary):
         self.log.debug("Getvalue of hex")
         return (self.binValue, self.strValue)
-        
-    
+
+
     def generateValue(self, negative, dictionary) :
         self.log.debug("Generate value of hex")
         if self.min != -1 and self.max != -1 :
@@ -84,24 +84,24 @@ class HexVariable(Variable):
             self.binValue = None
             #TypeConvertor.hex2bin(v, 'big')
             self.strValue = str(v)
-       
+
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
         if self.binValue != None and not isForced :
             self.log.debug("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
             return indice + len(self.binValue)
-        
+
         tmp = val[indice:]
-        self.log.debug("Learn hex given its size : " + str(self.size) + " from " + str(tmp)) 
+        self.log.debug("Learn hex given its size : " + str(self.size) + " from " + str(tmp))
         if len(tmp) >= self.size :
-            
+
             self.binValue = val[indice:indice + self.size]
             self.strValue = "ERROR "
             #TypeConvertor.bin2hex(self.binValue)
-            
+
             self.log.debug("learning value : " + str(self.binValue))
             self.log.debug("learning value : " + self.strValue)
-            
+
             return indice + self.size
         else :
             return -1
@@ -113,4 +113,4 @@ class HexVariable(Variable):
     def setMin(self, min):
         self.min = int(min)
     def setMax(self, max):
-        self.max = int(max) 
+        self.max = int(max)

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import gtk
@@ -33,17 +33,17 @@ import pygtk
 pygtk.require('2.0')
 import logging
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Fuzzing.Network import Network
 from netzob.Fuzzing.Ipc import Ipc
 from netzob.Fuzzing.File import File
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| UIfuzzing :
 #|     GUI for fuzzing applications
-#+---------------------------------------------- 
+#+----------------------------------------------
 class UIfuzzing:
     def new(self):
         pass
@@ -62,15 +62,15 @@ class UIfuzzing:
         self.netPanel.kill()
         self.ipcPanel.kill()
         self.filePanel.kill()
-    
+
     def save(self, file):
         self.netPanel.save()
         self.ipcPanel.save()
         self.filePanel.save()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Constructor :
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self, netzob):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.UIfuzzing.py')

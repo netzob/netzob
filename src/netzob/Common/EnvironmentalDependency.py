@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
@@ -36,7 +36,7 @@ from lxml import etree
 #|     Class definition of an environmental dependency
 #+---------------------------------------------------------------------------+
 class EnvironmentalDependency(object):
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -44,7 +44,7 @@ class EnvironmentalDependency(object):
         self.name = name
         self.type = aType
         self.value = value
-    
+
     def save(self, root, namespace):
         environmental_dependency = etree.SubElement(root, "{" + namespace + "}environmental_dependency")
         environmental_dependency.set("name", str(self.name))
@@ -53,7 +53,7 @@ class EnvironmentalDependency(object):
 
     #+-----------------------------------------------------------------------+
     #| GETTERS
-    #+-----------------------------------------------------------------------+   
+    #+-----------------------------------------------------------------------+
     def getName(self):
         return self.name
     def getType(self):
@@ -63,7 +63,7 @@ class EnvironmentalDependency(object):
 
     #+-----------------------------------------------------------------------+
     #| SETTERS
-    #+-----------------------------------------------------------------------+       
+    #+-----------------------------------------------------------------------+
     def setName(self, name):
         self.name = name
     def setType(self, type):

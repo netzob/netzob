@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -55,14 +55,14 @@ class NetworkMessage(AbstractMessage):
         self.l4_destination_port = l4_destination_port
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
-    
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return NetworkMessageFactory
-    
+
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Computes and returns the properties of the current message
@@ -79,11 +79,11 @@ class NetworkMessage(AbstractMessage):
         properties.append(['Source port', Format.DECIMAL, self.getL4SourcePort()])
         properties.append(['Target port', Format.DECIMAL, self.getL4DestinationPort()])
         properties.append(['Data', Format.HEX, self.getStringData()])
-        
-        return properties    
-        
-    #+---------------------------------------------- 
-    #| GETTERS : 
+
+        return properties
+
+    #+----------------------------------------------
+    #| GETTERS :
     #+----------------------------------------------
     def getProtocol(self):
         return self.protocol
@@ -97,9 +97,9 @@ class NetworkMessage(AbstractMessage):
         return self.l4_destination_port
     def getTimestamp(self):
         return self.timestamp
-       
-    #+---------------------------------------------- 
-    #| SETTERS : 
+
+    #+----------------------------------------------
+    #| SETTERS :
     #+----------------------------------------------
     def setProtocol(self, protocol):
         self.protocol = protocol
@@ -113,15 +113,15 @@ class NetworkMessage(AbstractMessage):
         except :
             self.log.warning("Impossible to set the given L4 source port since its not an int ! " + l4sourcePort)
             self.l4_source_port = -1
-            
+
     def setL4DestinationPort(self, l4targetPort):
         try :
             self.l4_destination_port = int(l4targetPort)
         except :
             self.log.warning("Impossible to set the given L4 target port since its not an int !")
             self.l4_destination_port = -1
-        
+
     def setTimestamp(self, timestamp):
         self.timestamp = timestamp
-  
+
 

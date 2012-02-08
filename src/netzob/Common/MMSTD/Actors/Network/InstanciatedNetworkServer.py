@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -46,27 +46,27 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 #|     Definition of an instanciated network server
 #+---------------------------------------------------------------------------+
 class InstanciatedNetworkServer(AbstractActor):
-    
+
     def __init__(self, socket):
         AbstractActor.__init__(self, True, True)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer.py')
         self.socket = socket
         self.inputMessages = []
-        self.outputMessages = []        
-    
-   
+        self.outputMessages = []
+
+
     def createNewServer(self):
         host = "localhost"
         protocol = "TCP"
         port = 6666
         from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
         return NetworkServer(host, protocol, port)
-    
+
     def open(self):
         self.log.warn("Impossible to open an InstanciatedNetworkServer")
         return False
-    
+
     def close(self):
         self.log.debug("Closing the socket")
         if self.socket == None:
@@ -76,13 +76,13 @@ class InstanciatedNetworkServer(AbstractActor):
         self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
         return True
-    
+
     def read(self, timeout):
         self.log.debug("Reading from the socket some data")
-        result = bitarray(endian='big')       
-        
-        
-        chars = []    
+        result = bitarray(endian='big')
+
+
+        chars = []
         try :
             if timeout > 0 :
                 ready = select.select([self.socket], [], [], timeout)
@@ -96,39 +96,39 @@ class InstanciatedNetworkServer(AbstractActor):
         except :
             self.log.debug("Impossible to read from the network socket")
             return None
-        
-        
-                
-        if (len(chars) == 0) : 
+
+
+
+        if (len(chars) == 0) :
             return result
         result.fromstring(chars)
-        
+
 #        self.inputMessages.append(receivedData)
-        
+
         self.log.debug("Received : " + str(result))
         return result
-        
+
     def write(self, message):
         self.log.debug("Writing to the socket")
         self.outputMessages.append(message)
         self.socket.send(message.tostring())
-        
-        self.log.debug("Write down !")        
-        
+
+        self.log.debug("Write down !")
+
     def getInputMessages(self):
         return self.inputMessages
     def getOutputMessages(self):
         return self.outputMessages
-    
+
     def isOpen(self):
         return self.open
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getPort(self):
         return self.port
-    
+
     def setPort(self, port):
         self.port = port
-    
+

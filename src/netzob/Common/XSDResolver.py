@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
@@ -45,19 +45,19 @@ from lxml.etree import Resolver
 #|    of the static resources
 #+---------------------------------------------------------------------------+
 class XSDResolver(Resolver):
-    
+
     def __init__(self):
-        Resolver.__init__(self)   
+        Resolver.__init__(self)
         self.mapping = dict()
-        
+
     def addMapping(self, declaredFilename, realFilename):
         self.mapping[declaredFilename] = realFilename
-   
+
     def resolve(self, url, id, context):
         for declaredFilename in self.mapping.keys() :
             if declaredFilename == url :
                 test = self.resolve_filename(self.mapping[declaredFilename] , context)
                 return test
-        
+
         return self.resolve_string(url, context)
 

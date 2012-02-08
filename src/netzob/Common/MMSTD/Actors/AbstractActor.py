@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -42,7 +42,7 @@ import logging
 #|     Definition of an actor
 #+---------------------------------------------------------------------------+
 class AbstractActor():
-    
+
     def __init__(self, isServer, instanciated):
 #        Thread.__init__(self)
         # create logger with the given configuration
@@ -51,23 +51,23 @@ class AbstractActor():
         self.is_server = isServer
         self.active = False
         self.instanciated = instanciated
-    
+
     def isAnInstanciated(self):
         return self.instanciated
-        
+
     def stop(self):
         self.Terminated = True
-        
-        
+
+
     def isServer(self):
-        return self.is_server    
-    
+        return self.is_server
+
     def isActive(self):
         return self.active
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-  
-    
-    
+
+
+

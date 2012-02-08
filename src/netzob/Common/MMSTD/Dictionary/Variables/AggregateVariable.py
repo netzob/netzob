@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -49,17 +49,17 @@ from bitarray import bitarray
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
-    
+
     def __init__(self, id, name, vars):
         Variable.__init__(self, "Aggregate", id, name, True)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
         if vars != None :
             self.vars.extend(vars)
-            
+
     def addChild(self, variable):
         self.vars.append(variable)
-        
+
     def compare(self, value, indice, negative, memory):
         result = indice
         for var in self.vars :
@@ -71,7 +71,7 @@ class AggregateVariable(Variable):
             else :
                 self.log.debug("Compare successfull")
         return result
-        
+
     def send(self, negative, memory):
         binResult = bitarray()
         strResult = ""
@@ -82,13 +82,13 @@ class AggregateVariable(Variable):
             strResult = strResult + s
         return (binResult, strResult)
 
-    
+
     def getDescription(self):
         values = []
         for var in self.vars :
-            values.append(var.getDescription())            
+            values.append(var.getDescription())
         return "AggregateVariable [" + " AND ".join(values) + "]"
-    
+
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
@@ -96,32 +96,32 @@ class AggregateVariable(Variable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
-        
+
         # Definition of the variables
         for var in self.vars :
             var.save(xmlVariable, namespace)
-        
-        
+
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1" :
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            
+
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            
+
             return AggregateVariable(varId, varName, children)
-            
+
         return None
-    
-    
-    
+
+
+
 #    def getValue(self, negative, dictionary):
 #        binResult = []
-#        strResult = []        
+#        strResult = []
 #        for idVar in self.vars :
 #            var = dictionary.getVariableByID(int(idVar))
 #            (binVal, strVal) = var.getValue(negative, dictionary)
@@ -130,13 +130,13 @@ class AggregateVariable(Variable):
 #            else :
 #                binResult.append(binVal)
 #                strResult.append(strVal)
-#        return ("".join(binResult), "".join(strResult))       
-#    
+#        return ("".join(binResult), "".join(strResult))
+#
 #    def generateValue(self, negative, dictionary):
 #        for idVar in self.vars :
 #            var = dictionary.getVariableByID(int(idVar))
 #            var.generateValue(negative, dictionary)
-#            
+#
 #    def learn(self, val, indice, isForced, dictionary):
 #        new_indice = indice
 #        for idVar in self.vars :

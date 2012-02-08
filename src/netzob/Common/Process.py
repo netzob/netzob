@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import os
@@ -48,11 +48,11 @@ class Process(object):
     def __init__(self, name, pid, user):
         self.name = name
         self.pid = int(pid)
-        self.user = user        
-        
+        self.user = user
+
     #+-----------------------------------------------------------------------+
     #| getSharedLibs
-    #| @return a list of shared libraries linked with current process    
+    #| @return a list of shared libraries linked with current process
     #+-----------------------------------------------------------------------+
     def getSharedLibs(self):
         libs = []
@@ -70,14 +70,14 @@ class Process(object):
                     found = True
             if found == False :
                 (libName, libVersion) = SharedLib.findNameAndVersion(path)
-                
-                
-                
+
+
+
                 lib = SharedLib(libName, libVersion, path)
                 libs.append(lib)
         return libs
-        
-        
+
+
     def setPid(self, pid):
         self.pid = int(pid)
     def setName(self, name):

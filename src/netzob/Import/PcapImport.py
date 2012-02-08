@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import gtk
@@ -48,18 +48,18 @@ import pcapy
 import impacket.ImpactDecoder as Decoders
 import impacket.ImpactPacket as Packets
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Pcap :
 #|     GUI for capturing messages imported through a provided PCAP
-#+---------------------------------------------- 
+#+----------------------------------------------
 class PcapImport(AbstractImporter):
-    
+
     def new(self):
         pass
 
@@ -71,17 +71,17 @@ class PcapImport(AbstractImporter):
 
     def kill(self):
         pass
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Constructor :
-    #+----------------------------------------------   
-    def __init__(self, zob):        
-        AbstractImporter.__init__(self, "PCAP IMPORT")     
+    #+----------------------------------------------
+    def __init__(self, zob):
+        AbstractImporter.__init__(self, "PCAP IMPORT")
         self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Capturing.pcap.py')
         self.packets = []
-        
+
         self.init()
         self.dialog = gtk.Dialog(title="Import PCAP file", flags=0, buttons=None)
         self.dialog.show()
@@ -90,7 +90,7 @@ class PcapImport(AbstractImporter):
 
 
     def init(self):
-        
+
 
         # Network Capturing Panel
         self.panel = gtk.Table(rows=5, columns=4, homogeneous=False)
@@ -174,11 +174,11 @@ class PcapImport(AbstractImporter):
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a list of packet
     #+----------------------------------------------
     def save_packets(self, button, treeview):
-        
+
         currentProject = self.zob.getCurrentProject()
         # We compute the selected messages
         # Create the new XML structure
@@ -192,41 +192,41 @@ class PcapImport(AbstractImporter):
                 proto = model.get_value(iter, 1)
                 timestamp = str(model.get_value(iter, 6))
                 packetPayload = self.packets[packetID]
-                
+
                 eth_decoder = Decoders.EthDecoder()
                 ip_decoder = Decoders.IPDecoder()
                 udp_decoder = Decoders.UDPDecoder()
                 tcp_decoder = Decoders.TCPDecoder()
-        
+
                 IPsrc = None
                 IPdst = None
                 Sport = None
                 Dport = None
                 Data = None
-                
-                
+
+
                 ethernet = eth_decoder.decode(packetPayload)
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
                     IPsrc = ip.get_ip_src()
                     IPdst = ip.get_ip_dst()
-                    
-                    if ip.get_ip_p() == Packets.UDP.protocol: 
+
+                    if ip.get_ip_p() == Packets.UDP.protocol:
                         udp = udp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = udp.get_uh_sport()
                         Dport = udp.get_uh_dport()
                         Data = udp.get_data_as_string()
                     if ip.get_ip_p() == Packets.TCP.protocol :
-                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])  
+                        tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = tcp.get_th_sport()
                         Dport = tcp.get_th_dport()
                         Data = tcp.get_data_as_string()
-                
+
                 # Compute the messages
                 message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)
                 messages.append(message)
-                
-        
+
+
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
@@ -234,15 +234,15 @@ class PcapImport(AbstractImporter):
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
-        
+
         if resp == gtk.RESPONSE_OK:
             self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages, False)
         self.dialog.destroy()
-        
+
         # We update the gui
         self.zob.update()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
     def packet_details(self, treeview):
@@ -255,7 +255,7 @@ class PcapImport(AbstractImporter):
                 payload = self.packets[packetID]
                 self.textview.get_buffer().set_text(str(decoder.decode(payload)))
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user import a pcap file
     #+----------------------------------------------
     def import_pcap(self, button, label):
@@ -266,15 +266,15 @@ class PcapImport(AbstractImporter):
             label.set_text(chooser.get_filename())
         chooser.destroy()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
     def launch_sniff(self, button, aFilter, label_file):
         self.textview.get_buffer().set_text("")
-        
+
         # retrieve the choosen pcap file
         pcapFile = label_file.get_text()
-        
+
         # Before reading it we verify we have the necessary rights to open it
         # and to read it. If not we display an error message
         try:
@@ -284,30 +284,30 @@ class PcapImport(AbstractImporter):
             errorMessage = "Error while trying to open the file " + pcapFile + "."
             if e.errno == errno.EACCES:
                 errorMessage = "Error while trying to open the file " + pcapFile + ", more permissions are required for reading it."
-            
+
             logging.warn(errorMessage)
             md = gtk.MessageDialog(None,
                 gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR,
                 gtk.BUTTONS_CLOSE, errorMessage)
             md.run()
             md.destroy()
-            
+
             return
-            
-            
+
+
             raise
-       
-        
-        
+
+
+
         button.set_sensitive(False)
         self.packets = []
         self.treestore.clear()
-        
-        
+
+
         # read it with pcapy
         reader = pcapy.open_offline(pcapFile)
-        
-        
+
+
         filter = aFilter.get_text()
 #        reader.setfilter(r'ip proto \tcp or \udp')
         try :
@@ -316,11 +316,11 @@ class PcapImport(AbstractImporter):
             self.logging.warn("The provided filter is not valid (it should respects the BPF format")
             button.set_sensitive(True)
             return
-        
+
         self.log.info("Starting import from " + pcapFile + " (linktype:" + str(reader.datalink()) + ")")
         reader.loop(0, self.packetHandler)
         button.set_sensitive(True)
-        
+
     def packetHandler(self, header, payload):
         # Definition of the protocol decoders (impacket)
         eth_decoder = Decoders.EthDecoder()
@@ -328,25 +328,25 @@ class PcapImport(AbstractImporter):
         udp_decoder = Decoders.UDPDecoder()
         tcp_decoder = Decoders.TCPDecoder()
 
-        
+
         ethernet = eth_decoder.decode(payload)
         if ethernet.get_ether_type() == Packets.IP.ethertype:
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
-            if ip.get_ip_p() == Packets.UDP.protocol: 
+            if ip.get_ip_p() == Packets.UDP.protocol:
                 udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
                 self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
                 self.packets.append(payload)
-                        
+
             if ip.get_ip_p() == Packets.TCP.protocol :
-                tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])  
+                tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
                 self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
                 self.packets.append(payload)
-                        
-           
-        
 
 
-    #+---------------------------------------------- 
+
+
+
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):

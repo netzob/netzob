@@ -25,32 +25,32 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
 import logging
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
 
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| AbstractEquivalenceOracle :
-#+---------------------------------------------- 
+#+----------------------------------------------
 class AbstractEquivalenceOracle(object):
-     
+
     def __init__(self, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle.py')
-        self.type = type        
-         
-        
-    def findCounterExample(self, mmstd): 
+        self.type = type
+
+
+    def findCounterExample(self, mmstd):
         self.log.error("The oracle doesn't support 'findCounterExample'.")
         raise NotImplementedError("The oracle doesn't support 'findCounterExample'.")
-   
+

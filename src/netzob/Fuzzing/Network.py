@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import gtk
@@ -43,9 +43,9 @@ import socket
 from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Network :
-#|     This class offers the capability to fuzz network flows in live 
+#|     This class offers the capability to fuzz network flows in live
 #+---------------------------------------------------------------------------+
 class Network:
     def new(self):
@@ -63,27 +63,27 @@ class Network:
 #        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
         if self.aFuzzThread != None and self.aFuzzThread.isAlive():
             self.aFuzzThread._Thread__stop()
-    
+
     def save(self):
         pass
-   
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| Constructor :
     #| @param netzob: the netzob main object
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self, netzob):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.Network.py')
         self.netzob = netzob
         self.selectedSymbol = None
         self.aFuzzThread = None
-        self.packets = [] 
+        self.packets = []
         self.panel = gtk.VPaned()
         self.panel.show()
 
-        #+---------------------------------------------- 
+        #+----------------------------------------------
         #| LEFT PART OF THE GUI : TREEVIEW
-        #+----------------------------------------------           
+        #+----------------------------------------------
         topPanel = gtk.HPaned()
         topPanel.show()
         self.panel.add(topPanel)
@@ -96,9 +96,9 @@ class Network:
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
         vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
-        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected) 
+        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
 
-        #+---------------------------------------------- 
+        #+----------------------------------------------
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
         vb_right_panel = gtk.VBox(False, spacing=0)
@@ -110,7 +110,7 @@ class Network:
         vb_right_panel.add(self.treeTypeStructureGenerator.getScrollLib())
         topPanel.add(vb_right_panel)
 
-        #+---------------------------------------------- 
+        #+----------------------------------------------
         #| BOTTOM PART OF THE GUI : PACKET CAPTURING
         #+----------------------------------------------
         # Network Capturing Panel
@@ -181,10 +181,10 @@ class Network:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         sniffPanel.attach(scroll, 2, 4, 0, 6, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| update:
     #|   Update the Treestore
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def symbolSelected(self, treeview):
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
@@ -204,13 +204,13 @@ class Network:
                 self.treeTypeStructureGenerator.setMessage(message)
                 self.treeTypeStructureGenerator.update()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| button_press_on_field :
     #|   Create a menu to display available operations
     #|   on the treeview symbols
     #+----------------------------------------------
     def button_press_on_field(self, button, event):
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:        
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             # Retrieves the symbol on which the user has clicked on
             x = int(event.x)
             y = int(event.y)
@@ -227,7 +227,7 @@ class Network:
     def fuzz_field_cb(self, widget, field):
         print "Fuzz field : " + str(field)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
     def packet_details(self, treeview):
@@ -238,7 +238,7 @@ class Network:
                 packetID = model.get_value(iter, 0)
                 self.textview.get_buffer().set_text(self.packets[packetID].show())
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
     def launchFuzz_cb(self, button, aFilter):
@@ -250,7 +250,7 @@ class Network:
         self.aFuzzThread = threading.Thread(None, self.fuzzThread, None, (button, aFilter), {})
         self.aFuzzThread.start()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Thread for fuzzing
     #+----------------------------------------------
     def fuzzThread(self, button, aFilter):
@@ -268,9 +268,9 @@ class Network:
         q.bind(socket.AF_INET)
         q.set_callback(self.nfqueue_cb)
         q.create_queue(0)
-        q.set_queue_maxlen(5000)   
+        q.set_queue_maxlen(5000)
         try:
-            
+
 
             ## TODO : do it in a dedicated process
 
@@ -284,7 +284,7 @@ class Network:
 #        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
         gobject.idle_add(button.set_sensitive, True)
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when we reiceve a corresponding packet to fuzz
     #+----------------------------------------------
     def nfqueue_cb(self, dummy, payload):
@@ -321,7 +321,7 @@ class Network:
         new_ip_pkt.data = self.fuzzPacket( ip_pkt.data )
         return payload.set_verdict_modified(nfqueue.NF_ACCEPT, str(new_ip_pkt), len(new_ip_pkt))
     """
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Main function to fuzz packets
     #+----------------------------------------------
     def fuzzPacket(self, packet):
@@ -337,7 +337,7 @@ class Network:
                 res += strIN[i]
         return res
     """
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -51,50 +51,50 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #|     Definition of a referenced variable
 #+---------------------------------------------------------------------------+
 class ReferencedVariable(Variable):
-    
+
     def __init__(self, id, name, mutable, variableID):
         Variable.__init__(self, "ReferencedVariable", id, name, mutable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable.py')
         self.varID = variableID
-    
+
     def compare(self, value, indice, negative, memory):
         var = memory.getVariableByID(self.varID)
         self.log.info("Compare with a referenced variable")
         return var.compare(value, indice, negative, memory)
-        
+
     def send(self, negative, memory):
         var = memory.getVariableByID(self.varID)
         return var.send(negative, memory)
-            
+
     def getValue(self, negative, memory):
         var = memory.getVariableByID(self.varID)
         return var.getValue(negative, memory)
-    
+
     def getDescription(self):
         return "ReferencedVariable (" + self.varID + ")"
-        
+
     def save(self, root, namespace):
         xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlWordVariable.set("id", str(self.getID()))
         xmlWordVariable.set("name", str(self.getName()))
         xmlWordVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
-        
+
         xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ReferencedVariable")
-        
+
         # Definition of the referenced
         xmlWordVariableRef = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
         xmlWordVariableRef.text = self.varID
         return xmlWordVariable
-        
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1" :
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-            
+
             refVarId = xmlRoot.find("{" + namespace + "}ref").text
             return ReferencedVariable(varId, varName, varIsMutable, refVarId)
-            
-        return None    
-    
+
+        return None
+
