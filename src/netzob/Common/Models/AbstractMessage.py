@@ -156,7 +156,7 @@ class AbstractMessage():
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-#            return [ self.getStringData() ]
+#            return [self.getStringData()]
         iCol = 0
         dynamicCol = 1
         for field in self.symbol.getFields():
@@ -225,7 +225,7 @@ class AbstractMessage():
             else:
                 iField += 1
                 try:
-                    tmp = self.getStringData().split(delimiter)[ iField ]
+                    tmp = self.getStringData().split(delimiter)[iField]
                 except IndexError:
                     tmp = ""
 

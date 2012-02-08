@@ -263,7 +263,7 @@ class Symbol(object):
         # Retrieve the biggest message
         maxLen = 0
         for message in self.getMessages():
-            curLen = len( message.getStringData() )
+            curLen = len(message.getStringData())
             if curLen > maxLen:
                 maxLen = curLen
 
@@ -277,7 +277,7 @@ class Symbol(object):
             # Loop through each cells of the column
             for message in self.getMessages():
                 try:
-                    tmp = message.getStringData()[ it ]
+                    tmp = message.getStringData()[it]
                     if ref == "":
                         ref = tmp
                     if ref != tmp:
@@ -408,9 +408,9 @@ class Symbol(object):
             messageElt = messageTable[field.getIndex()]
             res.append(messageElt)
 #            if len(messageElt) > 0:
-#                res.append( messageElt )
+#                res.append(messageElt)
 #            else:
-#                res.append( None )
+#                res.append(None)
         return res
 
     #+----------------------------------------------
@@ -763,14 +763,14 @@ class Symbol(object):
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
                         if match == None:
-                            treeviewTarget.get_model().append([ cell ])
+                            treeviewTarget.get_model().append([cell])
                         segments.append((match.start(0), match.end(0)))
 
                     segments.reverse() # We start from the end to avoid shifting
                     for (start, end) in segments:
                         cell = cell[:end] + "</span>" + cell[end:]
                         cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
-                    treeviewTarget.get_model().append([ cell ])
+                    treeviewTarget.get_model().append([cell])
 
     #+----------------------------------------------
     #| findASN1Fields:
@@ -811,7 +811,7 @@ class Symbol(object):
         ## Algo : for each message, try to decode ASN.1 data
 
         for message in self.getMessages():
-#            tmpStr = TypeConvertor.netzobRawToBinary( message.getStringData() )
+#            tmpStr = TypeConvertor.netzobRawToBinary(message.getStringData())
             tmpStr = message.getStringData()
 
             for end in range(1, len(tmpStr)):
@@ -879,7 +879,7 @@ class Symbol(object):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
-                    treeviewTarget.get_model().append([ cell ])
+                    treeviewTarget.get_model().append([cell])
 
     #+----------------------------------------------
     #| applyDependency_cb:
@@ -1011,7 +1011,7 @@ class Symbol(object):
                     cell = glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(cell, envType))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
-                    treeviewTarget.get_model().append([ cell ])
+                    treeviewTarget.get_model().append([cell])
 
     #+----------------------------------------------
     #| applyDependency_cb:
@@ -1111,7 +1111,7 @@ class Symbol(object):
         s = ""
         s += "class " + self.getName() + "(Packet):\n"
         s += "    name = \"" + self.getName() + "\"\n"
-        s += "    fields_desc = [ \n"
+        s += "    fields_desc = [\n"
 
         for field in self.getFields():
             if self.field.isRegexStatic():
@@ -1120,11 +1120,11 @@ class Symbol(object):
                 s += "                    StrFixedLenField(\"" + field.getName() + "\", None)\n"
             ## If this is a variable field # TODO
                 # StrLenField("the_varfield", "the_default_value", length_from = lambda pkt: pkt.the_lenfield)
-        s += "                  ]\n"
+        s += "                 ]\n"
 
         ## Bind current layer with the underlying one # TODO
-        # bind_layers( TCP, HTTP, sport=80 )
-        # bind_layers( TCP, HTTP, dport=80 )
+        # bind_layers(TCP, HTTP, sport=80)
+        # bind_layers(TCP, HTTP, dport=80)
         return s
 
     #+----------------------------------------------
@@ -1303,12 +1303,12 @@ class Symbol(object):
                         arrayCell = cell.split(data)
                     elif encoding == "binary":
                         arrayCell = cell.split(data)
-                    arrayCell = [ glib.markup_escape_text(a) for a in arrayCell ]
+                    arrayCell = [glib.markup_escape_text(a) for a in arrayCell]
                     if len(arrayCell) > 1:
                         styledCell = str("<span foreground=\"red\" font_family=\"monospace\">" + data + "</span>").join(arrayCell)
                     else:
                         styledCell = cell
-                    treeviewTarget.get_model().append([ styledCell ])
+                    treeviewTarget.get_model().append([styledCell])
 
     """
 

@@ -657,7 +657,7 @@ class XDotAttrParser:
         if style == "solid":
             self.pen.dash = ()
         elif style == "dashed":
-            self.pen.dash = (6, )       # 6pt on, 6pt off
+            self.pen.dash = (6,)       # 6pt on, 6pt off
         elif style == "dotted":
             self.pen.dash = (2, 4)       # 2pt on, 4pt off
 
@@ -725,7 +725,7 @@ class Scanner:
         self.tokens_re = re.compile(
             '|'.join(['(' + regexp + ')' for type, regexp, test_lit in self.tokens]),
              flags
-        )
+       )
 
     def next(self, buf, pos):
         if pos >= len(buf):
@@ -890,7 +890,7 @@ class DotScanner(Scanner):
     tokens = [
         # whitespace and comments
         (SKIP,
-            r'[ \t\f\r\n\v]+|'
+            r'[\t\f\r\n\v]+|'
             r'//[^\r\n]*|'
             r'/\*.*?\*/|'
             r'#[^\r\n]*',
@@ -910,7 +910,7 @@ class DotScanner(Scanner):
 
         # Edge operators
         (EDGE_OP, r'-[>-]', False),
-    ]
+   ]
 
     # symbol table
     symbols = {
@@ -1452,7 +1452,7 @@ class DotWidget(gtk.DrawingArea):
             stderr=subprocess.PIPE,
             shell=False,
             universal_newlines=True
-        )
+       )
         xdotcode, error = p.communicate(dotcode)
         sys.stderr.write(error)
         if p.returncode != 0:
@@ -1507,7 +1507,7 @@ class DotWidget(gtk.DrawingArea):
         cr.rectangle(
             event.area.x, event.area.y,
             event.area.width, event.area.height
-        )
+       )
         cr.clip()
 
         cr.set_source_rgba(1.0, 1.0, 1.0, 1.0)
@@ -1561,7 +1561,7 @@ class DotWidget(gtk.DrawingArea):
         self.zoom_ratio = min(
             float(rect.width)/float(width),
             float(rect.height)/float(height)
-        )
+       )
         self.zoom_to_fit_on_resize = False
         self.x = (x1 + x2) / 2
         self.y = (y1 + y2) / 2
@@ -1576,7 +1576,7 @@ class DotWidget(gtk.DrawingArea):
         zoom_ratio = min(
             float(rect.width)/float(self.graph.width),
             float(rect.height)/float(self.graph.height)
-        )
+       )
         self.zoom_image(zoom_ratio, center=True)
         self.zoom_to_fit_on_resize = True
 
@@ -1782,7 +1782,7 @@ class DotWindow(gtk.Window):
             ('ZoomOut', gtk.STOCK_ZOOM_OUT, None, None, None, self.widget.on_zoom_out),
             ('ZoomFit', gtk.STOCK_ZOOM_FIT, None, None, None, self.widget.on_zoom_fit),
             ('Zoom100', gtk.STOCK_ZOOM_100, None, None, None, self.widget.on_zoom_100),
-        ))
+       ))
 
         # Add the actiongroup to the uimanager
         uimanager.insert_action_group(actiongroup, 0)

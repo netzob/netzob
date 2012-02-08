@@ -95,7 +95,7 @@ class WordVariable(Variable):
 #        self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
 #        self.binVal = self.string2bin(self.strVal)
 #        self.log.debug("Generated : " + self.strVal)
-#        self.log.debug("Generated -bin )= " + str(self.binVal))
+#        self.log.debug("Generated -bin)= " + str(self.binVal))
 #
 #    def learn(self, val, indice, isForced, dictionary):
 #        self.log.debug("Received : " + str(val))

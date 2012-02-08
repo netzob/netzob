@@ -113,7 +113,7 @@ class Clusterer(object):
                     serialSymbols += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData()) # The message
 #                    print m.getReducedStringData()
                     serialSymbols += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]) # The alignement == "\x00" * len(the message), the first time
-#                    print "".join( ['\x00' for x in range(len(m.getReducedStringData()) / 2)] ).encode("hex")
+#                    print "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]).encode("hex")
 
         # Execute the Clustering part in C :) (thx fgy)
 
@@ -144,13 +144,13 @@ class Clusterer(object):
             ## Just for debug purpose
             for symbol in self.symbols:
                 symbol.buildRegexAndAlignment()
-                compiledRegex = re.compile("".join( symbol.getRegex() ))
+                compiledRegex = re.compile("".join(symbol.getRegex()))
                 for message in symbol.getMessages():
 #                    print message.getStringData()
                     data = message.getStringData()
                     m = compiledRegex.match(data)
                     if m == None:
-                        print "".join( symbol.getRegex() )
+                        print "".join(symbol.getRegex())
                         print message.getStringData()
                         print "PAN"
                     else:

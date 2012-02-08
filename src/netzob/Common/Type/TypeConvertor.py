@@ -182,7 +182,7 @@ class TypeConvertor():
         (?P<microsecond>\.[0-9]{1,6})?
         (?P<tz>
           Z | (?P<tz_hr>[-+][0-9]{2}) : (?P<tz_min>[0-9]{2})
-        )?
+       )?
         $ """, s, re.X)
         if m is not None:
             values = m.groupdict()
@@ -324,7 +324,7 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
-    #| Transform the current hex message ( '1fdf' ) in binary python raw ( '\x1f\xdf' )
+    #| Transform the current hex message ('1fdf') in binary python raw ('\x1f\xdf')
     #+----------------------------------------------
     def netzobRawToPythonRaw(msg):
         res = ""
@@ -341,7 +341,7 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
-    #| Transform the current binary python raw message ( '\x1f\xdf' ) in hex ( '1fdf' )
+    #| Transform the current binary python raw message ('\x1f\xdf') in hex ('1fdf')
     #+----------------------------------------------
     def pythonRawToNetzobRaw(msg):
         res = ""

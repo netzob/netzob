@@ -56,7 +56,7 @@ class MMSTDXmlParser(object):
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of an MMSTD
+    #[    the definition of an MMSTD
     #| @param rootElement: XML root of the MMSTD definition
     #| @return an instance of an MMSTD
     #| @throw NameError if XML invalid

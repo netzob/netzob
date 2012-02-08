@@ -36,8 +36,8 @@ class TreeProcessesGenerator():
     #+----------------------------------------------
     def initialization(self):
         # Tree store contains:
-        # str : text ( process Command )
-        # str : text ( process PID )
+        # str : text (process Command)
+        # str : text (process PID)
         # str : color foreground
         # str : color background
         self.treestore = gtk.TreeStore(str, str, str, str)

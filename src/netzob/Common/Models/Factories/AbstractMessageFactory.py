@@ -72,7 +72,7 @@ class AbstractMessageFactory():
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of a file message
+    #[    the definition of a file message
     #| @param rootElement: XML root of the file message
     #| @return an instance of a message
     #| @throw NameError if XML invalid

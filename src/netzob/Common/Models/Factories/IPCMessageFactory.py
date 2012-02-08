@@ -88,7 +88,7 @@ class IPCMessageFactory():
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of an IPC message
+    #[    the definition of an IPC message
     #| @param rootElement: XML root of the IPC message
     #| @return an instance of a n IPC Message
     #| @throw NameError if XML invalid

@@ -52,7 +52,7 @@ class PrototypesRepositoryParser():
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of all thge prototypes
+    #[    the definition of all thge prototypes
     #| @param file: name of the file
     #| @return a list of FunctionPrototypes
     #| @throw NameError if XML invalid

@@ -61,19 +61,19 @@ class EnvironmentalDependencies(object):
     #+----------------------------------------------
     def captureEnvData(self):
         # OS specific
-        self.envData.append( EnvironmentalDependency("os_name", Format.STRING, os.uname()[0]) ) # for example 'Linux'
-        self.envData.append( EnvironmentalDependency("os_family", Format.STRING, os.name) ) # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
-        self.envData.append( EnvironmentalDependency("os_version", Format.STRING, os.uname()[2]) ) # result of 'uname -r' under linux
-        self.envData.append( EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4]) ) # result of 'uname -m' under linux
+        self.envData.append(EnvironmentalDependency("os_name", Format.STRING, os.uname()[0])) # for example 'Linux'
+        self.envData.append(EnvironmentalDependency("os_family", Format.STRING, os.name)) # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
+        self.envData.append(EnvironmentalDependency("os_version", Format.STRING, os.uname()[2])) # result of 'uname -r' under linux
+        self.envData.append(EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4])) # result of 'uname -m' under linux
 
         # User specific
-        self.envData.append( EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']) )
-        self.envData.append( EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']) )
-        self.envData.append( EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']) )
+        self.envData.append(EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']))
+        self.envData.append(EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']))
+        self.envData.append(EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']))
 
         # System specific
-        self.envData.append( EnvironmentalDependency("hostname", Format.STRING, socket.gethostname()) )
-        self.envData.append( EnvironmentalDependency("domainname", Format.STRING, "".join( socket.getfqdn().split(".", 1)[1:] )) )
+        self.envData.append(EnvironmentalDependency("hostname", Format.STRING, socket.gethostname()))
+        self.envData.append(EnvironmentalDependency("domainname", Format.STRING, "".join(socket.getfqdn().split(".", 1)[1:])))
 
         # Trick to retrieve the usual IP address
         try:
@@ -84,11 +84,11 @@ class EnvironmentalDependencies(object):
         except:
             ip_address = "127.0.0.1"
 
-        self.envData.append( EnvironmentalDependency("ip_address", Format.STRING, ip_address) )
-        self.envData.append( EnvironmentalDependency("mac_address", Format.STRING, hex(int(get_mac_address()))[2:-1]) )
+        self.envData.append(EnvironmentalDependency("ip_address", Format.STRING, ip_address))
+        self.envData.append(EnvironmentalDependency("mac_address", Format.STRING, hex(int(get_mac_address()))[2:-1]))
 
         # Misc
-        self.envData.append( EnvironmentalDependency("date", Format.STRING, str(time.time())) ) # elapsed second since epoch in UTC
+        self.envData.append(EnvironmentalDependency("date", Format.STRING, str(time.time()))) # elapsed second since epoch in UTC
 
     #+----------------------------------------------
     #| GETTERS

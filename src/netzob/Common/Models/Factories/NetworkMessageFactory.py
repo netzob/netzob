@@ -82,7 +82,7 @@ class NetworkMessageFactory():
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of a network message
+    #[    the definition of a network message
     #| @param rootElement: XML root of the network message
     #| @return an instance of a NetworkMessage
     #| @throw NameError if XML invalid

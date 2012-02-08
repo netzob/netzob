@@ -52,8 +52,8 @@ class TreeSymbolGenerator():
     #+----------------------------------------------
     def initialization(self):
         # Tree store contains:
-        # str : text ( symbol Name )
-        # str : text ( score )
+        # str : text (symbol Name)
+        # str : text (score)
         # str : color foreground
         # str : color background
         self.treestore = gtk.TreeStore(str, str, str, str, str)

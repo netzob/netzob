@@ -67,7 +67,7 @@ class DictionaryXmlParser(object):
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of a dictionary
+    #[    the definition of a dictionary
     #| @param rootElement: XML root of the dictionary definition
     #| @return an instance of a dictionary
     #| @throw NameError if XML invalid

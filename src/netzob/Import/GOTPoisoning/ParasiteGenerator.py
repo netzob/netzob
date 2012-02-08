@@ -131,7 +131,7 @@ static int _open(char * filename) {
     long id_fd;
 
     __asm__ __volatile__
-    (        "pushl %%ebx\\n\\t"        // sauvegarde EBX
+    (      "pushl %%ebx\\n\\t"        // sauvegarde EBX
             "movl %%esi,%%ebx\\n\\t"    // on met ESI dans EBX
             "mov $0x441, %%cx\\n\\t"        // on set le flag
             "mov $422, %%dx\\n\\t"
@@ -141,7 +141,7 @@ static int _open(char * filename) {
             :"a" (SYS_open),
             "S" ((long) filename),//ESI
             "d" ((long) 0)//EDX
-    );
+   );
 
     if (id_fd >= 0) {
         return (int) id_fd;
@@ -156,14 +156,14 @@ static void _close(int fd) {
      * %ebx <- fd
      */
     __asm__ __volatile__
-    (        "pushl %%ebx\\n\\t"        // sauvegarde EBX
+    (      "pushl %%ebx\\n\\t"        // sauvegarde EBX
             "movl %%esi,%%ebx\\n\\t"    // on met ESI dans EBX
             "int $0x80\\n\\t"
             "popl %%ebx"
             : /* no output */
             :"a" (SYS_close),
             "S" ((long) fd)//ESI
-    );
+   );
 
 }
 
@@ -181,7 +181,7 @@ static int _write(int fd, void *buf, int count) {
             "S" ((long) fd),
             "c" ((long) buf),
             "d" ((long) count)
-    );
+   );
     if (ret >= 0) {
         return (int) ret;
     }

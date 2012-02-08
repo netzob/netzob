@@ -234,7 +234,7 @@ class FileImport(AbstractImporter):
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
             for filename in chooser.get_filenames():
-                filename = unicode( filename, "utf-8" )
+                filename = unicode(filename, "utf-8")
                 if filename != None and filename != "" and os.path.isfile(filename):
                     filesToBeImported.append(filename)
         chooser.destroy()

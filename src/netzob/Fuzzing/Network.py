@@ -303,7 +303,7 @@ class Network:
                               str(proto_pkt.sport),
                               str(proto_pkt.dport),
                               int(time.time())]
-                             )
+                            )
         elif ip_pkt.p == ip.IP_PROTO_UDP:
             proto_pkt = udp.UDP(str(ip_pkt.data))
             gobject.idle_add(self.treestore.append,
@@ -315,10 +315,10 @@ class Network:
                               str(proto_pkt.sport),
                               str(proto_pkt.dport),
                               int(time.time())]
-                             )
-        self.packets.append(repr( ip_pkt ))
+                            )
+        self.packets.append(repr(ip_pkt))
         new_ip_pkt = ip_pkt
-        new_ip_pkt.data = self.fuzzPacket( ip_pkt.data )
+        new_ip_pkt.data = self.fuzzPacket(ip_pkt.data)
         return payload.set_verdict_modified(nfqueue.NF_ACCEPT, str(new_ip_pkt), len(new_ip_pkt))
     """
     #+----------------------------------------------

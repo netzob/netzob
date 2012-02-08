@@ -71,7 +71,7 @@ class RawMessageFactory():
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of a RAW message
+    #[    the definition of a RAW message
     #| @param rootElement: XML root of the RAW message
     #| @return an instance of a n IPC Message
     #| @throw NameError if XML invalid

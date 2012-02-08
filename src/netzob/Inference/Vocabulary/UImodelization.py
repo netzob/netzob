@@ -498,8 +498,8 @@ class UImodelization:
         typeCombo.show()
         typeStore = gtk.ListStore(str)
         typeCombo.set_model(typeStore)
-        typeCombo.get_model().append([ Format.STRING ])
-        typeCombo.get_model().append([ Format.HEX ])
+        typeCombo.get_model().append([Format.STRING])
+        typeCombo.get_model().append([Format.HEX])
         typeCombo.set_active(0)
         panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -1184,7 +1184,7 @@ class UImodelization:
         elif field == None: # Copy the entire aligned message
             self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)))
         else: # Just copy the selected field
-            self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[ field.getIndex() ])
+            self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[field.getIndex()])
 
     #+----------------------------------------------
     #| rightClickShowPropertiesOfMessage:
@@ -1529,7 +1529,7 @@ class UImodelization:
                   (gtk.STOCK_EDIT, self.displayPopupToEditSymbol, (symbol != None)),
                   (gtk.STOCK_ADD, self.displayPopupToCreateSymbol, (symbol == None)),
                   (gtk.STOCK_REMOVE, self.displayPopupToRemoveSymbol, (symbol != None))
-        ]
+       ]
 
         menu = gtk.Menu()
         for stock_id, callback, sensitive in entries:
@@ -1569,7 +1569,7 @@ class UImodelization:
 
     #+----------------------------------------------
     #| responseToDialog:
-    #|   pygtk is so good ! arf :( <-- clap clap :D
+    #|   pygtk is so good ! arf :(<-- clap clap :D
     #+----------------------------------------------
     def responseToDialog(self, entry, dialog, response):
         dialog.response(response)
