@@ -61,6 +61,10 @@ import libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 
+# Note: this is probably useless, as it is arleady specified in Project.py
+PROJECT_NAMESPACE = "http://www.netzob.org/project"
+COMMON_NAMESPACE = "http://www.netzob.org/common"
+
 #+---------------------------------------------------------------------------+
 #| Symbol :
 #|     Class definition of a symbol
@@ -1092,7 +1096,7 @@ class Symbol(object):
         root = etree.Element("{" + NAMESPACE + "}netzob")
         root.set("project", str(self.getProject().getName()))
         
-        self.save(root, NAMESPACE);
+        self.save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE);
         tree = ElementTree(root)
         result = etree.tostring(tree, pretty_print=True)
         return result
