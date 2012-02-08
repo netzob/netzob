@@ -40,6 +40,7 @@ import time
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from netzob.Common.Type.Format import Format
 
+
 #+----------------------------------------------
 #| EnvDependancies:
 #|     Handle environmental dependancies
@@ -52,7 +53,7 @@ class EnvironmentalDependencies(object):
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.EnvDependancies.py')
-        self.envData = [] # List containing environmental data
+        self.envData = []  # List containing environmental data
 
     #+----------------------------------------------
     #| captureEnvData:
@@ -61,10 +62,10 @@ class EnvironmentalDependencies(object):
     #+----------------------------------------------
     def captureEnvData(self):
         # OS specific
-        self.envData.append(EnvironmentalDependency("os_name", Format.STRING, os.uname()[0])) # for example 'Linux'
-        self.envData.append(EnvironmentalDependency("os_family", Format.STRING, os.name)) # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
-        self.envData.append(EnvironmentalDependency("os_version", Format.STRING, os.uname()[2])) # result of 'uname -r' under linux
-        self.envData.append(EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4])) # result of 'uname -m' under linux
+        self.envData.append(EnvironmentalDependency("os_name", Format.STRING, os.uname()[0]))  # for example 'Linux'
+        self.envData.append(EnvironmentalDependency("os_family", Format.STRING, os.name))  # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
+        self.envData.append(EnvironmentalDependency("os_version", Format.STRING, os.uname()[2]))  # result of 'uname -r' under linux
+        self.envData.append(EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4]))  # result of 'uname -m' under linux
 
         # User specific
         self.envData.append(EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']))
@@ -88,7 +89,7 @@ class EnvironmentalDependencies(object):
         self.envData.append(EnvironmentalDependency("mac_address", Format.STRING, hex(int(get_mac_address()))[2:-1]))
 
         # Misc
-        self.envData.append(EnvironmentalDependency("date", Format.STRING, str(time.time()))) # elapsed second since epoch in UTC
+        self.envData.append(EnvironmentalDependency("date", Format.STRING, str(time.time())))  # elapsed second since epoch in UTC
 
     #+----------------------------------------------
     #| GETTERS

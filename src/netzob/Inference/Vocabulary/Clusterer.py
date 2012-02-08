@@ -207,7 +207,7 @@ class Clusterer(object):
 
             if len(orphans) <= 1:
                 self.log.info("Number of orphan symbols : {0}. The orphan merging op. is finished !".format(len(orphans)))
-                break;
+                break
 
             self.symbols = orphans
             if currentReductionIsLeft:

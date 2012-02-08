@@ -85,7 +85,7 @@ class Process(object):
     def setUser(self, user):
         self.user = user
     def getPid(self):
-        return self.pid;
+        return self.pid
     def getName(self):
         return self.name
     def getUser(self):
