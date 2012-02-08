@@ -39,6 +39,7 @@ from multiprocessing import Queue
 class TaskError(Exception):
     pass
 
+
 class ThreadedTask(Task):
     """Run a function in a new thread and return its output."""
     def __init__(self, fun, *args, **kwargs):

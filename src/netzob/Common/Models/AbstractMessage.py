@@ -41,6 +41,7 @@ from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
+
 #+---------------------------------------------------------------------------+
 #| AbstractMessage:
 #|     Definition of a message

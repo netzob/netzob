@@ -35,6 +35,7 @@ import subprocess
 #+---------------------------------------------------------------------------+
 from netzob.Common.Process import Process
 
+
 #+---------------------------------------------------------------------------+
 #| ExecutionContext:
 #|    A set of methods to extract the current

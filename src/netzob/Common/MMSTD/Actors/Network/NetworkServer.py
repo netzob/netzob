@@ -45,6 +45,7 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 from netzob.Common.MMSTD.Actors.Network.InstanciatedNetworkServer import InstanciatedNetworkServer
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
+
 #+---------------------------------------------------------------------------+
 #| Container
 #+---------------------------------------------------------------------------+
@@ -80,6 +81,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def shutdown(self):
         logging.info("shutingdown")
         SocketServer.TCPServer.shutdown(self)
+
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 

@@ -43,6 +43,7 @@ import shutil
 from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
 
+
 #+----------------------------------------------
 #| ResourcesConfiguration:
 #|    Configure and verify all the resources

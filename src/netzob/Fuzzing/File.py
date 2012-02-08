@@ -39,6 +39,7 @@ import logging
 from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
+
 #+----------------------------------------------
 #| FileImport:
 #|     GUI for capturing messages

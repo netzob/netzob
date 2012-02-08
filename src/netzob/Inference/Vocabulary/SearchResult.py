@@ -34,6 +34,7 @@ import logging
 #| Local Imports
 #+----------------------------------------------
 
+
 #+----------------------------------------------
 #| SearchResult:
 #|     Definition of the result of a search operation

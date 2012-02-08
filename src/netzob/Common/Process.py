@@ -34,6 +34,8 @@ import os
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.SharedLib import SharedLib
+
+
 #+---------------------------------------------------------------------------+
 #| Process:
 #|     Model object of a simple process definition

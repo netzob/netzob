@@ -52,6 +52,7 @@ from netzob.Common.XSDResolver import XSDResolver
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
+
 def loadProject_0_1(projectFile):
     # Parse the XML Document as 0.1 version
     tree = ElementTree()

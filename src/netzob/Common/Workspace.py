@@ -47,6 +47,7 @@ from netzob.Common.ImportedTrace import ImportedTrace
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
+
 def loadWorkspace_0_1(workspacePath, workspaceFile):
 
     # Parse the XML Document as 0.1 version
@@ -99,6 +100,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
                 workspace.referenceLastProject(lastProject)
 
     return workspace
+
 
 #+---------------------------------------------------------------------------+
 #| Workspace:

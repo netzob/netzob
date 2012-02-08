@@ -44,6 +44,7 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 import threading
 import gobject
 
+
 #+----------------------------------------------
 #| GrammarInferer:
 #|    Given Angluin's L*a algorithm, it learns

@@ -42,6 +42,7 @@ import hashlib
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| MD5Variable:
 #|     Definition of an md5 variable defined in a dictionary

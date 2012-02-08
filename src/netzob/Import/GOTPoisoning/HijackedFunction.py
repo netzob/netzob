@@ -37,6 +37,7 @@ import logging
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| HijackedFunction:
 #|     Definition of a function to hijack

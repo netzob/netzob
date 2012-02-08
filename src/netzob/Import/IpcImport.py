@@ -50,6 +50,8 @@ from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Field import Field
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.Common.Symbol import Symbol
+
+
 #+----------------------------------------------
 #| IPpc:
 #|     ensures the capture of informations through IPC proxing

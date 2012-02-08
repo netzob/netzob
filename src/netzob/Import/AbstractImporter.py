@@ -39,6 +39,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
 
+
 #+---------------------------------------------------------------------------+
 #| AbstractImporter:
 #|     Mother class which provides common methods too any kind of importers

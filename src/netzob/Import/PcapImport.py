@@ -54,6 +54,7 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 
+
 #+----------------------------------------------
 #| Pcap:
 #|     GUI for capturing messages imported through a provided PCAP

@@ -52,6 +52,7 @@ from netzob.Common.MMSTD.Dictionary import AbstractionLayer
 from netzob.Common.MMSTD.Actors import MMSTDVisitor
 from netzob.Simulator.XDotWidget import XDotWidget
 
+
 #+----------------------------------------------
 #| UISimulator:
 #|     GUI for the simulation of actors

@@ -35,6 +35,7 @@ from collections import deque
 #+---------------------------------------------------------------------------+
 from AbstractActor import AbstractActor
 
+
 #+---------------------------------------------------------------------------+
 #| SimpleCommunicationLayer:
 #|     Definition of a simple communicationLayer

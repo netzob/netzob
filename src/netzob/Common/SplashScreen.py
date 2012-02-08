@@ -42,6 +42,7 @@ import os
 #+----------------------------------------------
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
+
 #+----------------------------------------------
 #| SplashScreen:
 #|    Manage a splashscreen for Netzob startup

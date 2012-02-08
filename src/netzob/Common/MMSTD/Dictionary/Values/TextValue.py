@@ -40,6 +40,7 @@ import logging
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| TextValue:
 #|     Represents a text value

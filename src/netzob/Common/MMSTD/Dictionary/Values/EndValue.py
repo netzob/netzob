@@ -40,6 +40,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
+
 #+---------------------------------------------------------------------------+
 #| EndValue:
 #|     Represents the end of a symbol

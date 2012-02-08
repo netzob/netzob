@@ -42,6 +42,7 @@ import random
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| IntVariable:
 #|     Definition of an int variable defined in a dictionary

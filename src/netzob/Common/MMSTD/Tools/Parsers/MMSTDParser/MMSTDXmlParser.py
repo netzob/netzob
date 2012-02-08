@@ -46,6 +46,7 @@ from netzob.Common.MMSTD.Transitions.impl import CloseChannelTransition
 from netzob.Common.MMSTD.Tools.Parsers.DictionaryParser import DictionaryXmlParser
 from netzob.Common.MMSTD import MMSTD
 
+
 #+----------------------------------------------
 #| MMSTDXmlParser:
 #|    Parser for an MMSTD

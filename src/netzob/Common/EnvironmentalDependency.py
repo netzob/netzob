@@ -31,6 +31,7 @@
 from lxml.etree import ElementTree
 from lxml import etree
 
+
 #+---------------------------------------------------------------------------+
 #| EnvironmentalDependency:
 #|     Class definition of an environmental dependency

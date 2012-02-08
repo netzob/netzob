@@ -25,6 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+
 #+----------------------------------------------
 #| Class for representation potential unit size for data representation
 #+----------------------------------------------

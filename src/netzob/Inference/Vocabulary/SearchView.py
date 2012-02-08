@@ -39,6 +39,7 @@ pygtk.require('2.0')
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Common.Type.Format import Format
 
+
 #+----------------------------------------------
 #| SearchView:
 #|     Class dedicated to host the search view

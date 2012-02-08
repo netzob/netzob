@@ -43,6 +43,7 @@ import string
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| DynLenStringVariable:
 #|     Definition of a dynamic sized string variable defined in a dictionary

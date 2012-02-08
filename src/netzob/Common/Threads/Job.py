@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import functools
 
+
 class Job:
     """Wrap a co-routines that yields asynchronous tasks (see Task class)."""
     def __init__(self, generator):

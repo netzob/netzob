@@ -46,6 +46,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 class TimeoutException(Exception):
     pass
 
+
 #+---------------------------------------------------------------------------+
 #| AbstractionLayer:
 #|     Definition of an abstractionLayer

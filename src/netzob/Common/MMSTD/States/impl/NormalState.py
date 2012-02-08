@@ -42,6 +42,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.States.AbstractState import AbstractState
 
+
 #+---------------------------------------------------------------------------+
 #| NormalState:
 #|     Definition of a normal state

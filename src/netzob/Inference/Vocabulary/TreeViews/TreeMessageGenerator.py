@@ -39,6 +39,7 @@ import gtk
 from netzob.Common.Field import Field
 from netzob.Common.NetzobException import NetzobException
 
+
 #+----------------------------------------------
 #| TreeMessageGenerator:
 #|     update and generates the treeview and its

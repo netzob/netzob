@@ -61,6 +61,7 @@ import libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 
+
 #+---------------------------------------------------------------------------+
 #| Symbol:
 #|     Class definition of a symbol

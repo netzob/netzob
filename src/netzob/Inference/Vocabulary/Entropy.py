@@ -35,6 +35,7 @@ from pylab import figure, show
 #| Local Imports
 #+----------------------------------------------
 
+
 #+----------------------------------------------
 #| Entropy:
 #|     Class for calculating and viewing entropy information

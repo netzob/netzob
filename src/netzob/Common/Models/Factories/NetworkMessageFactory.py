@@ -41,6 +41,7 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| NetworkMessageFactory:
 #|     Factory dedicated to the manipulation of network messages

@@ -41,6 +41,7 @@ import random
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
+
 #+---------------------------------------------------------------------------+
 #| HexVariable:
 #|     Definition of an hex variable defined in a dictionary

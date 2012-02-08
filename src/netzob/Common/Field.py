@@ -47,6 +47,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 
+
 #+---------------------------------------------------------------------------+
 #| Field:
 #|     Class definition of a field

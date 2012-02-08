@@ -40,6 +40,7 @@ from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Type.Format import Format
 
+
 #+---------------------------------------------------------------------------+
 #| IPCMessage:
 #|     Definition of an IPC message

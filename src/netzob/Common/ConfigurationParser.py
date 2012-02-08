@@ -37,6 +37,7 @@ import ConfigParser
 #+----------------------------------------------
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
+
 #+----------------------------------------------
 #| ConfigurationParser:
 #|     extracts from the configuration file the$

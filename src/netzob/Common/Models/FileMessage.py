@@ -41,6 +41,7 @@ from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.Type.Format import Format
 
+
 #+---------------------------------------------------------------------------+
 #| FileMessage:
 #|     Definition of a file message

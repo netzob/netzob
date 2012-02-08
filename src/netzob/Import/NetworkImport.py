@@ -57,6 +57,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| Network:
 #|     This class offers the capability to capture traffic from live network

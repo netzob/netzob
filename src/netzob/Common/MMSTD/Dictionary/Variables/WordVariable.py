@@ -46,6 +46,7 @@ from lxml import etree
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| WordVariable:
 #|     Definition of a word variable defined in a dictionary

@@ -43,6 +43,7 @@ import socket
 from netzob.Fuzzing.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 from netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 
+
 #+---------------------------------------------------------------------------+
 #| Network:
 #|     This class offers the capability to fuzz network flows in live

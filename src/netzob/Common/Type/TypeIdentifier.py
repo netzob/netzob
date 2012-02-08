@@ -37,6 +37,7 @@ from netzob.Common.Type.Format import Format
 #| Local Imports
 #+----------------------------------------------
 
+
 class TypeIdentifier():
 
     def __init__(self):

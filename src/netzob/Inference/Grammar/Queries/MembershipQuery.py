@@ -43,6 +43,7 @@ from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChann
 from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
 from netzob.Common.MMSTD.MMSTD import MMSTD
 
+
 #+----------------------------------------------
 #| MembershipQuery:
 #| Represents a set of query which will be submited to

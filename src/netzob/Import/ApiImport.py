@@ -50,6 +50,7 @@ from netzob.Import.GOTPoisoning.ParasiteGenerator import ParasiteGenerator
 from netzob.Import.GOTPoisoning.InjectorGenerator import InjectorGenerator
 from netzob.Import.GOTPoisoning.GOTPoisoner import GOTPoisoner
 
+
 #+---------------------------------------------------------------------------+
 #| Api:
 #|     GUI for capturing messages from api hooking

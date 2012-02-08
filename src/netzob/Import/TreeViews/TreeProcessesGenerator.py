@@ -12,6 +12,7 @@ import os
 #+----------------------------------------------
 from netzob.Common.ExecutionContext import ExecutionContext
 
+
 #+----------------------------------------------
 #| TreeProcessGenerator:
 #|     update and generates the treestore

@@ -45,6 +45,7 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 #+----------------------------------------------
 import libNeedleman
 
+
 #+----------------------------------------------
 #| Clusterer:
 #|     Reorganize a set of symbols

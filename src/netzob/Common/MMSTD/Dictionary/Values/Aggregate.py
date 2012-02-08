@@ -40,6 +40,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
+
 #+---------------------------------------------------------------------------+
 #| Aggregate:
 #|     Definition of an aggregation

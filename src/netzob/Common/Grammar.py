@@ -39,6 +39,7 @@ from lxml import etree
 from netzob.Common.MMSTD.States.AbstractState import AbstractState
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 
+
 #+---------------------------------------------------------------------------+
 #| Grammar:
 #|     Class definition of a grammar

@@ -38,6 +38,7 @@ pygtk.require('2.0')
 #+----------------------------------------------
 from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 
+
 #+----------------------------------------------
 #| ScapyExport:
 #|     Class for building a scapy dissector

@@ -42,6 +42,7 @@ from StringIO import StringIO
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 
+
 #+---------------------------------------------------------------------------+
 #| ImportedTrace:
 #|     Class definition of an imported trace registered in a workspace

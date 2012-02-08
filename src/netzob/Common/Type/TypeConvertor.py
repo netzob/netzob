@@ -44,6 +44,7 @@ import StringIO
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 
+
 class TypeConvertor():
 
     #+----------------------------------------------

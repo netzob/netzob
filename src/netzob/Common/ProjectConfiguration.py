@@ -42,6 +42,7 @@ from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 
+
 #+---------------------------------------------------------------------------+
 #| ProjectConfiguration:
 #|     Class definition of the configuration of a Project

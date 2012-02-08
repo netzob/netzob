@@ -50,6 +50,7 @@ from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiSt
 from netzob.Common.Grammar import Grammar
 from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
 
+
 #+---------------------------------------------------------------------------+
 #| UIGrammarInference:
 #|    Graphical display of the inferring process of a grammar

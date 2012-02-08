@@ -64,6 +64,7 @@ from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessa
 from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 from netzob.Inference.Vocabulary.VariableView import VariableView
 
+
 #+----------------------------------------------
 #| UImodelization:
 #|     GUI for vocabulary inference

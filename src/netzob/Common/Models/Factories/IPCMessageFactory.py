@@ -40,6 +40,7 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| IPCMessageFactory:
 #|     Factory dedicated to the manipulation of IPC messages

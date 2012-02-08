@@ -41,6 +41,7 @@ from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.Type.Format import Format
 
+
 #+---------------------------------------------------------------------------+
 #| NetworkMessage:
 #|     Definition of a network message

@@ -42,6 +42,7 @@ from netzob.Common.MMSTD.Actors.SimpleCommunicationChannel import SimpleCommunic
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Grammar import Grammar
 
+
 #+----------------------------------------------
 #| MMSTD:
 #|    Definition of an "Machine de Mealy Stochastiques

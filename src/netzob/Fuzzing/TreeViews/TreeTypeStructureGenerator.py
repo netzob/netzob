@@ -35,6 +35,7 @@ import gtk
 #| Local Imports
 #+----------------------------------------------
 
+
 #+----------------------------------------------
 #| TreeTypeStructureGenerator:
 #|     update and generates the treeview and its

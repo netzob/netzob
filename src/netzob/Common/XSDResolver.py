@@ -39,6 +39,7 @@ from lxml.etree import Resolver
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| XSDResolver:
 #|    Computes the resolution of an import in an XSD according to the path

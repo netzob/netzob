@@ -40,6 +40,7 @@ from netzob.Fuzzing.Network import Network
 from netzob.Fuzzing.Ipc import Ipc
 from netzob.Fuzzing.File import File
 
+
 #+----------------------------------------------
 #| UIfuzzing:
 #|     GUI for fuzzing applications

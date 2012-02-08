@@ -45,6 +45,7 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 import gobject
 
+
 #+----------------------------------------------
 #| LearningAlgorithm:
 #|    Abstract class which provides to his children

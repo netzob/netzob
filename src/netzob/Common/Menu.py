@@ -47,6 +47,7 @@ from netzob.Export.RawExport import RawExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
 
+
 #+---------------------------------------------------------------------------+
 #| Menu:
 #|     Class definition of the menu

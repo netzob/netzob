@@ -38,6 +38,7 @@ from netzob.Inference.Vocabulary.SearchTask import SearchTask
 #| Local Imports
 #+----------------------------------------------
 
+
 #+----------------------------------------------
 #| Searcher:
 #|     Provides multiple algorithms for a searching after a pattern in a

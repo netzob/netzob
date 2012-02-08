@@ -33,6 +33,7 @@ import pango
 import pygtk
 pygtk.require('2.0')
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobLabel:
 #| @param text: the string of the label
@@ -42,6 +43,7 @@ def NetzobLabel(text):
     label.show()
     label.modify_font(pango.FontDescription("sans 9"))
     return label
+
 
 #+---------------------------------------------------------------------------+
 #| NetzobButton:
@@ -59,6 +61,7 @@ def NetzobButton(text):
         label.modify_font(pango.FontDescription("sans 9"))
     return but
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobFrame:
 #| @param text: the string of the frame
@@ -71,6 +74,7 @@ def NetzobFrame(text):
     label.modify_font(pango.FontDescription("sans 9"))
     return frame
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
@@ -81,6 +85,7 @@ def NetzobComboBoxEntry():
     cell = combo.get_cells()[0]  # Get the cellrenderer
     cell.set_property("size-points", 9)
     return combo
+
 
 #+---------------------------------------------------------------------------+
 #| NetzobProgressBar:

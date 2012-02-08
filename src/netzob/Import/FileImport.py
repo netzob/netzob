@@ -50,6 +50,7 @@ from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
+
 #+----------------------------------------------
 #| FileImport:
 #|     GUI for capturing messages
