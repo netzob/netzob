@@ -390,7 +390,7 @@ class VariableView(object):
         varLabel.show()
         self.varCombo = gtk.combo_box_entry_new_text()
         self.varCombo.show()
-        self.varStore = gtk.ListStore(str, str)  #description, id,
+        self.varStore = gtk.ListStore(str, str)  # description, id,
         self.varCombo.set_model(self.varStore)
 
         # We retrieve all the existing variables in the project

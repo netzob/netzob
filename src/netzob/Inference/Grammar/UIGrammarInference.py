@@ -401,7 +401,7 @@ class UIGrammarInference:
         inputSymbolLabel.show()
 
         inputSymbolCombo = gtk.ComboBox()
-        inputSymbolCombo.set_model(gtk.ListStore(str, str))  #entry name, entry id
+        inputSymbolCombo.set_model(gtk.ListStore(str, str))  # entry name, entry id
         inputSymbolComboCell = gtk.CellRendererText()
         inputSymbolCombo.pack_start(inputSymbolComboCell, True)
         inputSymbolCombo.add_attribute(inputSymbolComboCell, 'text', 0)
@@ -422,7 +422,7 @@ class UIGrammarInference:
         outputSymbolLabel.show()
 
         outputSymbolCombo = gtk.ComboBox()
-        outputSymbolCombo.set_model(gtk.ListStore(str, str))  #entry name, entry id
+        outputSymbolCombo.set_model(gtk.ListStore(str, str))  # entry name, entry id
         outputSymbolComboCell = gtk.CellRendererText()
         outputSymbolCombo.pack_start(outputSymbolComboCell, True)
         outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 0)
