@@ -39,7 +39,7 @@ class Task:
         self.exception_cb = exception_cb
 
     def run(self):
-        raise RuntimeError, "Run method must be overriden"
+        raise RuntimeError("Run method must be overriden")
 
     def cancel(self):
         pass
