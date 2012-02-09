@@ -87,7 +87,7 @@ class FileImport(AbstractImporter):
         self.dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
-        self.dialog.set_size_request(600, 500)
+        self.dialog.set_size_request(1000, 600)
         
     def init(self):
         # Default line separator is <CR>
@@ -111,7 +111,7 @@ class FileImport(AbstractImporter):
         entry_filepath.show()
         but.connect("clicked", self.select_file, entry_filepath)
         self.panel.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(entry_filepath, 2, 4, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filepath, 2, 6, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Separator
@@ -125,7 +125,7 @@ class FileImport(AbstractImporter):
         entry_separator.connect("activate", self.entry_separator_callback, entry_separator)
 
         self.panel.attach(label_separator, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(entry_separator, 2, 4, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_separator, 2, 6, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # File details
@@ -138,7 +138,7 @@ class FileImport(AbstractImporter):
         scroll.add(self.textview)
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 4, 2, 10, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll, 0, 6, 2, 10, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Extracted data
@@ -159,7 +159,7 @@ class FileImport(AbstractImporter):
         scroll2.add(self.lineView)
         scroll2.show()
         scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll2, 4, 8, 0, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(scroll2, 6, 8, 0, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
         but = gtk.Button(label="Import")
@@ -234,7 +234,7 @@ class FileImport(AbstractImporter):
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
             for filename in chooser.get_filenames() :
-                filename = unicode( filename, "utf-8" )
+                filename = unicode(filename, "utf-8")
                 if filename != None and filename != "" and os.path.isfile(filename) :
                     filesToBeImported.append(filename)
         chooser.destroy()
