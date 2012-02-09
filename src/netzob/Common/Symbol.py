@@ -61,6 +61,10 @@ import libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 
+# Note: this is probably useless, as it is already specified in Project.py
+# Please FGY : do not delete ! ;)
+PROJECT_NAMESPACE = "http://www.netzob.org/project"
+COMMON_NAMESPACE = "http://www.netzob.org/common"
 
 #+---------------------------------------------------------------------------+
 #| Symbol:
