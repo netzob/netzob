@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 import logging
 import random
-from lxml.etree import ElementTree
 from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -41,9 +40,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-
-
 #+---------------------------------------------------------------------------+
 #| AlternateVariable:
 #|     Definition of an alternative of variables defined in a dictionary
@@ -51,7 +47,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 class AlternateVariable(Variable):
 
     def __init__(self, id, name, vars):
-        Variable.__init__(self, "Alternate", id, name, True)
+        Variable.__init__(self, "Alternate", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.vars = []
         if vars != None:
@@ -60,49 +56,39 @@ class AlternateVariable(Variable):
     def addChild(self, variable):
         self.vars.append(variable)
 
-    def compare(self, value, indice, negative, memory):
+    def getValue(self, negative, vocabulary, memory):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
+        raise NotImplementedError("The current variable doesn't support 'getValue'.")    
+    # Returns (b, s)
+    # b = bitarray
+    # s = strvalue
+    def send(self, negative, vocabulary, memory):
+        self.log.info("send")
+        idRandom = random.randint(0, len(self.vars) - 1)
+        picked = self.vars[idRandom]
+        return picked.send(negative, vocabulary, memory)
+    
+    def getDescription(self, negative, vocabulary, memory):
+        values = []
+        for var in self.vars:
+            values.append(var.getDescription(negative, vocabulary, memory))
+        return "AlternateVariable [" + " OR ".join(values) + "]"
+
+    def compare(self, value, indice, negative, vocabulary, memory):
         saved = indice
         for var in self.vars:
             self.log.info("Indice = " + str(saved) + " : " + var.getDescription())
-            result = var.compare(value, saved, negative, memory)
+            result = var.compare(value, saved, negative, vocabulary, memory)
             if result != -1 and result != None:
-                self.log.info("Compare successfull")
+                self.log.info("Compare successful")
                 return result
         return -1
-
-    def send(self, negative, memory):
-        self.log.info("send")
-
-        idRandom = random.randint(0, len(self.vars) - 1)
-
-        if self.isMutable():
-            # try to load the old choice
-            # if it exists we use it,
-            # if not we take a choice and we save it
-            if memory.hasMemorized(self):
-                self.log.info("We remember an old choice !")
-                idRandom = memory.recall(self)
-            else:
-                self.log.info("We'll remember this choice")
-                memory.memorize(self, idRandom)
-
-        picked = self.vars[idRandom]
-
-        return picked.send(negative, memory)
-
-    def getDescription(self):
-        values = []
-        for var in self.vars:
-            values.append(var.getDescription())
-
-        return "AlternateVariable [" + " OR ".join(values) + "]"
 
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
 
         # Definition of the variables
@@ -114,42 +100,10 @@ class AlternateVariable(Variable):
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
 
             return AlternateVariable(varId, varName, children)
-
         return None
-
-
-
-#    def getValue(self, negative, dictionary):
-#        binResult = []
-#        strResult = []
-#        for idVar in self.vars:
-#            var = dictionary.getVariableByID(int(idVar))
-#            (binVal, strVal) = var.getValue(negative, dictionary)
-#            if binVal == None:
-#                return (None, None)
-#            else:
-#                binResult.append(binVal)
-#                strResult.append(strVal)
-#        return ("".join(binResult), "".join(strResult))
-#
-#    def generateValue(self, negative, dictionary):
-#        for idVar in self.vars:
-#            var = dictionary.getVariableByID(int(idVar))
-#            var.generateValue(negative, dictionary)
-#
-#    def learn(self, val, indice, isForced, dictionary):
-#        new_indice = indice
-#        for idVar in self.vars:
-#            var = dictionary.getVariableByID(int(idVar))
-#            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
-#            if tmp_indice != -1:
-#                new_indice = tmp_indice
-#        return new_indice
