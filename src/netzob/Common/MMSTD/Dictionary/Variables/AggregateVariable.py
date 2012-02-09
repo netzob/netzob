@@ -65,8 +65,15 @@ class AggregateVariable(Variable):
     #|     else its NONE
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
-        raise NotImplementedError("The current variable doesn't support 'getValue'.")    
+        binResult = bitarray()
+        strResult = ""
+        for var in self.vars:
+            (b, s) = var.getValue(negative, vocabulary, memory)
+            self.log.debug("getValue : " + str(b))
+            binResult += b
+            strResult = strResult + s
+        return (binResult, strResult)
+        
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -78,7 +85,7 @@ class AggregateVariable(Variable):
         binResult = bitarray()
         strResult = ""
         for var in self.vars:
-            (b, s) = var.send(negative, vocabulary, memory)
+            (b, s) = var.getValueToSend(negative, vocabulary, memory)
             self.log.debug("getValueToSend : " + str(b))
             binResult += b
             strResult = strResult + s
