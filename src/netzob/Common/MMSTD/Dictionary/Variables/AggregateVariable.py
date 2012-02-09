@@ -64,7 +64,7 @@ class AggregateVariable(Variable):
         binResult = bitarray()
         strResult = ""
         for var in self.vars:
-            (b, s) = var.send(negative, memory)
+            (b, s) = var.send(negative, vocabulary, memory)
             self.log.debug("send : " + str(b))
             binResult += b
             strResult = strResult + s
@@ -80,7 +80,7 @@ class AggregateVariable(Variable):
         result = indice
         for var in self.vars:
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
-            result = var.compare(value, result, negative, memory)
+            result = var.compare(value, result, negative, vocabulary, memory)
             if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 return result
