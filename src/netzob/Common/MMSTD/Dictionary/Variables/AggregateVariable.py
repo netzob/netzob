@@ -39,7 +39,6 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from bitarray import bitarray
 
@@ -50,8 +49,8 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
 
-    def __init__(self, id, name, vars):
-        Variable.__init__(self, "Aggregate", id, name, True)
+    def __init__(self, idVar, name, vars=None):
+        Variable.__init__(self, "Aggregate", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
         if vars != None:
@@ -60,42 +59,44 @@ class AggregateVariable(Variable):
     def addChild(self, variable):
         self.vars.append(variable)
 
-    def compare(self, value, indice, negative, memory):
+    def getValue(self, negative, vocabulary, memory):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
+        raise NotImplementedError("The current variable doesn't support 'getValue'.")
+    
+    def send(self, negative, vocabulary, memory):
+        binResult = bitarray()
+        strResult = ""
+        for var in self.vars:
+            (b, s) = var.send(negative, memory)
+            self.log.debug("send : " + str(b))
+            binResult += b
+            strResult = strResult + s
+        return (binResult, strResult)
+    
+    def getDescription(self, negative, vocabulary, memory):
+        values = []
+        for var in self.vars:
+            values.append(var.getDescription(negative, vocabulary, memory))
+        return "AggregateVariable [" + " AND ".join(values) + "]"
+
+    def compare(self, value, indice, negative, vocabulary, memory):
         result = indice
         for var in self.vars:
-            self.log.debug("Indice = " + str(result) + " : " + var.getDescription())
+            self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.compare(value, result, negative, memory)
             if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 return result
             else:
-                self.log.debug("Compare successfull")
+                self.log.debug("Compare successful")
         return result
-
-    def send(self, negative, memory):
-        binResult = bitarray()
-        strResult = ""
-        for var in self.vars:
-            (b, s) = var.send(negative, memory)
-            print "==>" + str(b)
-            binResult += b
-            strResult = strResult + s
-        return (binResult, strResult)
-
-    def getDescription(self):
-        values = []
-        for var in self.vars:
-            values.append(var.getDescription())
-        return "AggregateVariable [" + " AND ".join(values) + "]"
 
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
-
         # Definition of the variables
         for var in self.vars:
             var.save(xmlVariable, namespace)
@@ -105,7 +106,6 @@ class AggregateVariable(Variable):
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)

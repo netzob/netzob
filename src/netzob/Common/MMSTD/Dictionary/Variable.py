@@ -47,17 +47,19 @@ import logging
 class Variable():
 
     
-    def __init__(self, type, id, name):
+    def __init__(self, typeVariable, idVar, name):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
-        self.id = id
+        self.id = idVar
         self.name = name
-        self.type = type
- 
+        self.typeVariable = typeVariable
+
     def getValue(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
-        raise NotImplementedError("The current variable doesn't support 'getValue'.")
-    
+        raise NotImplementedError("The current variable doesn't support 'getValue'.")    
+    # Returns (b, s)
+    # b = bitarray
+    # s = strvalue
     def send(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function send")
         raise NotImplementedError("The current variable doesn't support 'send'.")
@@ -66,13 +68,13 @@ class Variable():
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
 
-    def save(self, root, namespace):
-        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
-        raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
-
     def compare(self, value, indice, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
+
+    def save(self, root, namespace):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
+        raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
@@ -83,18 +85,17 @@ class Variable():
     def getName(self):
         return self.name
 
-    def getType(self):
-        return self.type    
-        
+    def getTypeVariable(self):
+        return self.typeVariable            
 
-    def setID(self, id):
-        self.id = id
+    def setID(self, idVar):
+        self.id = idVar
 
     def setName(self, name):
         self.name = name
 
-    def setType(self, type):
-        self.type = type
+    def setTypeVariable(self, typeVariable):
+        self.typeVariable = typeVariable
     
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
