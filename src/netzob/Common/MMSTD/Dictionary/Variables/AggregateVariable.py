@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from lxml.etree import ElementTree
 from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -39,9 +38,7 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from bitarray import bitarray
-
 
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable:
@@ -110,36 +107,5 @@ class AggregateVariable(Variable):
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-
             return AggregateVariable(varId, varName, children)
-
         return None
-
-
-
-#    def getValue(self, negative, dictionary):
-#        binResult = []
-#        strResult = []
-#        for idVar in self.vars:
-#            var = dictionary.getVariableByID(int(idVar))
-#            (binVal, strVal) = var.getValue(negative, dictionary)
-#            if binVal == None:
-#                return (None, None)
-#            else:
-#                binResult.append(binVal)
-#                strResult.append(strVal)
-#        return ("".join(binResult), "".join(strResult))
-#
-#    def generateValue(self, negative, dictionary):
-#        for idVar in self.vars:
-#            var = dictionary.getVariableByID(int(idVar))
-#            var.generateValue(negative, dictionary)
-#
-#    def learn(self, val, indice, isForced, dictionary):
-#        new_indice = indice
-#        for idVar in self.vars:
-#            var = dictionary.getVariableByID(int(idVar))
-#            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
-#            if tmp_indice != -1:
-#                new_indice = tmp_indice
-#        return new_indice
