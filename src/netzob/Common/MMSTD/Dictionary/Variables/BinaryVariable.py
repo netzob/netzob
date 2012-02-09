@@ -29,13 +29,11 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from lxml.etree import ElementTree
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -50,49 +48,108 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
 
-    def __init__(self, id, name, mutable, value):
-        Variable.__init__(self, "Binary", id, name, mutable)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
-        if value == "" or value == None:
-            self.binVal = None
-            self.strVal = None
-        else:
-            self.strVal = str(value)
-            self.binVal = TypeConvertor.strBitarray2Bitarray(value)
-
-    def compare(self, value, indice, negative, memory):
+    def __init__(self, id, name, originalValue, startValue, endValue, padding):
+        Variable.__init__(self, "Binary", id, name)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')        
+        self.originalValue = originalValue
+        self.startValue = startValue
+        self.endValue = endValue
+        self.padding = padding
+        
+        # Set the current value
+        self.computeCurrentValue(self.originalValue)
+    
+    def computeCurrentValue(self, strValue):
+        if strValue != None :
+            strCurrentValue = str(strValue)
+            binCurrentValue = TypeConvertor.strBitarray2Bitarray(strValue)
+            self.currentValue = (strCurrentValue, binCurrentValue)
+        else :
+            self.currentValue = None
+                
+            
+    #+-----------------------------------------------------------------------+
+    #| getValue :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     else its NONE
+    #+-----------------------------------------------------------------------+
+    def getValue(self, negative, vocabulary, memory):
+        if self.currentValue != None :
+            return self.currentValue
+        
+        if memory.hasMemorized(self) :
+            return memory.recall(self)
+        
+        return None
+           
+    #+-----------------------------------------------------------------------+
+    #| getValueToSend :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     or it generates one and save its value in memory
+    #+-----------------------------------------------------------------------+
+    def getValueToSend(self, negative, vocabulary, memory):
+        if self.currentValue != None :
+            return self.currentValue
+        
+        if memory.hasMemorized(self) :
+            return memory.recall(self)
+        
+        # We generate a new value
+        self.computeCurrentValue(self.generateValue())
+        
+        # We save in memory the current value
+        memory.memorize(self, self.currentValue)
+        
+        # We return the newly generated and memorized value
+        return self.currentValue
+        
+        
+    #+-----------------------------------------------------------------------+
+    #| getDescription :
+    #|     Returns the full description of the variable
+    #+-----------------------------------------------------------------------+
+    def getDescription(self, negative, vocabulary, memory):
+        return "BinaryVariable " + str(self.getValue()) + ")"
+    
+    #+-----------------------------------------------------------------------+
+    #| compare :
+    #|     Returns the number of letters which match the variable
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def compare(self, value, indice, negative, vocabulary, memory):
         self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
         tmp = value[indice:]
-        if len(tmp) >= len(self.binVal):
-            if tmp[:len(self.binVal)] == self.binVal:
+        
+        (binVal, strVal) = self.currentValue
+        
+        if len(tmp) >= len(binVal):
+            if tmp[:len(binVal)] == binVal:
                 self.log.info("Compare successful")
-                return indice + len(self.binVal)
+                return indice + len(binVal)
             else:
                 self.log.info("error in the comparison")
                 return -1
         else:
             self.log.info("Compare fail")
             return -1
-
-    def send(self, negative, memory):
-        return (self.binVal, self.strVal)
-
-    def getValue(self):
-        return (self.binVal, self.strVal)
-
-    def getDescription(self):
-        if self.isMutable():
-            mut = "[M]"
-        else:
-            mut = "[!M]"
-        return "BinaryVariable " + mut + " (" + self.strVal + ")"
-
-    def save(self, root, namespace):
+        
+#    TODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODO >>> 
+        
+    #+-----------------------------------------------------------------------+
+    #| toXML : TODO TODO
+    #|     Returns the XML description of the variable 
+    #+-----------------------------------------------------------------------+
+    def toXML(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:BinaryVariable")
 
         # Definition of a binary variable
@@ -104,7 +161,6 @@ class BinaryVariable(Variable):
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
             varValue = TypeConvertor.strBitarray2Bitarray(xmlRoot.find("{" + namespace + "}value").text)
             return BinaryVariable(varId, varName, varIsMutable, varValue)
 
