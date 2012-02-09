@@ -193,7 +193,7 @@ class NetzobGui(gtk.Window):
 
     def evnmtDelete(self, widget, event, data=None):
         return False
-    
+
     def destroy(self, widget, data=None):
         # Before exiting, we compute if its necessary to save
         # it means we simulate a save and compare the XML with the current one
