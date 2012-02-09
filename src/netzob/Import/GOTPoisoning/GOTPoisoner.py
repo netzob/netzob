@@ -24,7 +24,7 @@
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -38,32 +38,26 @@ import os
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
-#| GOTPoisoner :
+#| GOTPoisoner:
 #|     Inject a parasite into specified process
 #+---------------------------------------------------------------------------+
 class GOTPoisoner():
-    
+
     def __init__(self, parasite, injector):
         # create logger with the given configuration
         self.logger = logging.getLogger('netzob.Capturing.GOTPoisoning.GOTPoisoner.py')
         self.parasite = parasite
         self.injector = injector
-        
+
     def injectProcess(self, pid):
         self.logger.info("Inject into process " + str(pid))
-        
-        
-        
+
         functionNames = []
-        for func in self.parasite.getFunctions() :
+        for func in self.parasite.getFunctions():
             functionNames.append(func.getName())
-        
+
         f = os.popen(self.injector.getFolder() + "/netzob_injector " + str(pid) + " " + " ".join(functionNames))
         for i in f.readlines():
             print "EXEC:", i,
-        
-        
-    
-    
-   

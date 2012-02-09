@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -38,32 +38,33 @@ import logging
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
-#| Memory :
+#| Memory:
 #|     Definition of an memory
 #+---------------------------------------------------------------------------+
 class Memory():
-    
+
     def __init__(self, variables):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
         self.memory = dict()
         self.variables = variables
-    
+
     def hasMemorized(self, variable):
         return variable.getID() in self.memory.keys()
-    
+
     def memorize(self, variable, binValue):
         self.memory[variable.getID()] = binValue
-        
+
     def recall(self, variable):
         return self.memory[variable.getID()]
-    
+
     def recallAll(self):
         return self.memory
-        
+
     def getVariableByID(self, id):
-        for var in self.variables :
-            if str(var.getID()) == id :
+        for var in self.variables:
+            if str(var.getID()) == id:
                 return var
-        return None 
+        return None

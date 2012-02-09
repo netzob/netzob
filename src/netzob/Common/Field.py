@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import re
@@ -33,7 +33,7 @@ from lxml.etree import ElementTree
 from lxml import etree
 import uuid
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Local imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
@@ -47,12 +47,13 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 
+
 #+---------------------------------------------------------------------------+
-#| Field :
+#| Field:
 #|     Class definition of a field
 #+---------------------------------------------------------------------------+
 class Field(object):
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -70,15 +71,15 @@ class Field(object):
         self.unitSize = UnitSize.NONE
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
-    
+
     def getEncodedVersionOfTheRegex(self):
-        if self.regex == "" or self.regex == None or self.regex == "None": # TODO: becareful with the fact that XML files may store None as a string...
+        if self.regex == "" or self.regex == None or self.regex == "None":  # TODO: becareful with the fact that XML files may store None as a string...
             return ""
-        elif self.regex.find("{") != -1: # This is a real regex
+        elif self.regex.find("{") != -1:  # This is a real regex
             return self.regex
-        else: # This is a simple value
+        else:  # This is a simple value
             return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.format)
-    
+
     def isRegexStatic(self):
         if self.regex.find("{") == -1 or self.getName() == "__sep__":
             return True
@@ -89,14 +90,14 @@ class Field(object):
         if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
             return True
         else:
-            return False  
-        
+            return False
+
     def getVariable(self):
-        if self.isRegexStatic() :
+        if self.isRegexStatic():
             variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
             return variable
         return self.variable
-    
+
     def getDefaultVariable(self, symbol):
         # The default variable is an alternative of all the possibilities (in binary type)
         cells = symbol.getUniqValuesByField(self)
@@ -104,19 +105,19 @@ class Field(object):
         for cell in cells:
             tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))
         domain = sorted(tmpDomain)
-        
+
         variable = AggregateVariable(uuid.uuid4(), "Aggregate", None)
         alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", None)
-        for d in domain :
+        for d in domain:
             binaryVariable = BinaryVariable(uuid.uuid4(), "Val", False, d)
             alternateVar.addChild(binaryVariable)
         variable.addChild(alternateVar)
-        
+
         return variable
-    
+
     def setVariable(self, variable):
         self.variable = variable
-        
+
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
@@ -124,10 +125,10 @@ class Field(object):
 
         xmlFieldEncapsulationLevel = etree.SubElement(xmlField, "{" + namespace + "}encapsulation_level")
         xmlFieldEncapsulationLevel.text = str(self.getEncapsulationLevel())
-        
+
         xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
         xmlFieldRegex.text = str(self.getRegex())
-        
+
         xmlFieldFormat = etree.SubElement(xmlField, "{" + namespace + "}format")
         xmlFieldFormat.text = str(self.getFormat())
 
@@ -139,120 +140,139 @@ class Field(object):
 
         xmlFieldEndianess = etree.SubElement(xmlField, "{" + namespace + "}endianess")
         xmlFieldEndianess.text = str(self.getEndianess())
-        
+
         xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
         xmlFieldDescription.text = str(self.getDescription())
-        
+
         xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
         xmlFieldColor.text = str(self.getColor())
-        
-        if self.getVariable() != None :
+
+        if self.getVariable() != None:
             self.getVariable().save(xmlField, namespace)
-    
-    #+---------------------------------------------- 
+
+    #+----------------------------------------------
     #| GETTERS
-    #+----------------------------------------------         
+    #+----------------------------------------------
     def getName(self):
         return self.name
+
     def getEncapsulationLevel(self):
         return self.encapsulation_level
+
     def getRegex(self):
         return self.regex
+
     def getDescription(self):
         return self.description
+
     def getColor(self):
-        if not self.isRegexStatic() :
+        if not self.isRegexStatic():
             return "blue"
         return self.color
+
     def getIndex(self):
         return self.index
+
     def getBackgroundColor(self):
-        if self.getVariable() == None :
+        if self.getVariable() == None:
             return "yellow"
         return None
+
     def getFormat(self):
         return self.format
+
     def getUnitSize(self):
         return self.unitSize
+
     def getSign(self):
         return self.sign
+
     def getEndianess(self):
         return self.endianess
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| SETTERS
-    #+----------------------------------------------         
+    #+----------------------------------------------
     def setName(self, name):
         self.name = name
+
     def setEncapsulationLevel(self, level):
         self.encapsulation_level = level
+
     def setRegex(self, regex):
         self.regex = regex
+
     def setDescription(self, description):
         self.description = description
+
     def setColor(self, color):
         self.color = color
+
     def setIndex(self, index):
         self.index = index
+
     def setFormat(self, aFormat):
         self.format = aFormat
+
     def setUnitSize(self, unitSize):
         self.unitSize = unitSize
+
     def setSign(self, sign):
         self.sign = sign
+
     def setEndianess(self, endianess):
         self.endianess = endianess
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Static methods
-    #+----------------------------------------------             
+    #+----------------------------------------------
     @staticmethod
     def createDefaultField():
         return Field("Default", 0, "(.{,})")
-    
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             field_name = xmlRoot.get("name")
             field_index = int(xmlRoot.get("index"))
             field_regex = ""
-            if xmlRoot.find("{" + namespace + "}regex") != None :
+            if xmlRoot.find("{" + namespace + "}regex") != None:
                 field_regex = xmlRoot.find("{" + namespace + "}regex").text
-            
+
             field = Field(field_name, field_index, field_regex)
 
-            if xmlRoot.find("{" + namespace + "}encapsulation_level") != None :
+            if xmlRoot.find("{" + namespace + "}encapsulation_level") != None:
                 field_encapsulation_level = xmlRoot.find("{" + namespace + "}encapsulation_level").text
                 field.setEncapsulationLevel(int(field_encapsulation_level))
 
-            if xmlRoot.find("{" + namespace + "}format") != None :
+            if xmlRoot.find("{" + namespace + "}format") != None:
                 field_format = xmlRoot.find("{" + namespace + "}format").text
                 field.setFormat(field_format)
 
-            if xmlRoot.find("{" + namespace + "}unitsize") != None :
+            if xmlRoot.find("{" + namespace + "}unitsize") != None:
                 field_unitsize = xmlRoot.find("{" + namespace + "}unitsize").text
                 field.setUnitSize(field_unitsize)
 
-            if xmlRoot.find("{" + namespace + "}sign") != None :
+            if xmlRoot.find("{" + namespace + "}sign") != None:
                 field_sign = xmlRoot.find("{" + namespace + "}sign").text
                 field.setSign(field_sign)
 
-            if xmlRoot.find("{" + namespace + "}endianess") != None :
+            if xmlRoot.find("{" + namespace + "}endianess") != None:
                 field_endianess = xmlRoot.find("{" + namespace + "}endianess").text
                 field.setEndianess(field_endianess)
 
-            if xmlRoot.find("{" + namespace + "}description") != None :
+            if xmlRoot.find("{" + namespace + "}description") != None:
                 field_description = xmlRoot.find("{" + namespace + "}description").text
                 field.setDescription(field_description)
-            
-            if xmlRoot.find("{" + namespace + "}color") != None :
+
+            if xmlRoot.find("{" + namespace + "}color") != None:
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
-            
-            if xmlRoot.find("{" + namespace + "}variable") != None :
+
+            if xmlRoot.find("{" + namespace + "}variable") != None:
                 var = Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
                 field.setVariable(var)
-                
+
             return field
-            
+
         return None

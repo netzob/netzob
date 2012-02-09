@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -41,11 +41,11 @@ from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
 
 #+---------------------------------------------------------------------------+
-#| VarValue :
+#| VarValue:
 #|     Represents a var value
 #+---------------------------------------------------------------------------+
 class VarValue(AbstractValue):
-    
+
     def __init__(self, variable, resetCondition):
         AbstractValue.__init__(self, "VarValue")
         # create logger with the given configuration
@@ -53,52 +53,48 @@ class VarValue(AbstractValue):
         self.log.debug("VarValue : " + str(variable))
         self.variable = variable
         self.resetCondition = resetCondition
-    
-    
+
     #+---------------------------------------------------------------------------+
-    #| restore :
+    #| restore:
     #|     Simple !! :) Call this method if you want to forget the last learned value
     #+---------------------------------------------------------------------------+
     def restore(self):
         self.variable.restore()
-    
-    def compare(self, val, indice, negative, dictionary):        
+
+    def compare(self, val, indice, negative, dictionary):
         # first we retrieve the value stored in the variable
         self.log.debug("compare and so retrieve value of " + str(self.variable))
-        
+
         (binvalue, strvalue) = self.variable.getValue(negative, dictionary)
-        
+
         if binvalue == None or self.resetCondition == "force":
             # We execute the learning process
-            self.log.debug("Variable " + self.variable.getName() + " will be learnt from input. (" + str(indice) + ")")  
-            
+            self.log.debug("Variable " + self.variable.getName() + " will be learnt from input. (" + str(indice) + ")")
+
             isForced = False
-            if self.resetCondition == "force": 
+            if self.resetCondition == "force":
                 isForced = True
-                          
+
             new_indice = self.variable.learn(val, indice, isForced, dictionary)
-            
+
             return new_indice
-        else :
+        else:
             self.log.debug("Compare " + val[indice:] + " with " + strvalue + "[" + ''.join(binvalue) + "]")
-            if val[indice:].startswith(''.join(binvalue)) :
-                self.log.debug("Compare successful")                
+            if val[indice:].startswith(''.join(binvalue)):
+                self.log.debug("Compare successful")
                 return indice + len(binvalue)
-            else :
+            else:
                 self.log.debug("Compare fail")
         return -1
-    
-    def send(self, negative, dictionary):        
+
+    def send(self, negative, dictionary):
         (val, strval) = self.variable.getValue(negative, dictionary)
         if val == None or self.resetCondition == "force":
             self.variable.generateValue(negative, dictionary)
             (val, strval) = self.variable.getValue(negative, dictionary)
-            
+
         return (val, strval)
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-  
-    
-    

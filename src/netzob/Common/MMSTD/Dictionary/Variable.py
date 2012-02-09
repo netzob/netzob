@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -41,11 +41,11 @@ import logging
 
 
 #+---------------------------------------------------------------------------+
-#| Variable :
+#| Variable:
 #|     Definition of a variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class Variable():
-    
+
     def __init__(self, type, id, name, mutable):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
@@ -53,74 +53,78 @@ class Variable():
         self.name = name
         self.type = type
         self.mutable = mutable
- 
+
     def getValue(self, negative, vocabulary):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")
-    
+
     def send(self, negative, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function send")
         raise NotImplementedError("The current variable doesn't support 'send'.")
-    
+
     def getDescription(self):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
-    
+
     def save(self, root, namespace):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
-    
+
     def compare(self, value, indice, negative, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
-    
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getName(self):
         return self.name
+
     def getType(self):
-        return self.type    
+        return self.type
+
     def isMutable(self):
         return self.mutable
-        
+
     def setID(self, id):
         self.id = id
+
     def setName(self, name):
         self.name = name
+
     def setType(self, type):
         self.type = type
+
     def setMutable(self, mutable):
         self.mutable = mutable
-        
-    
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :            
+        if version == "0.1":
             # Word Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
                 return WordVariable.loadFromXML(xmlRoot, namespace, version)
-            
+
             # Binary Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
                 return BinaryVariable.loadFromXML(xmlRoot, namespace, version)
-            
+
             # Aggregate Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
                 return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
-            
+
             # Alternate Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
                 return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
-            
+
             # Referenced Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable" :
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
                 return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)

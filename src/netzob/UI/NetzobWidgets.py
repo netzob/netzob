@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
 import gtk
@@ -33,8 +33,9 @@ import pango
 import pygtk
 pygtk.require('2.0')
 
+
 #+---------------------------------------------------------------------------+
-#| NetzobLabel :
+#| NetzobLabel:
 #| @param text: the string of the label
 #+---------------------------------------------------------------------------+
 def NetzobLabel(text):
@@ -43,8 +44,9 @@ def NetzobLabel(text):
     label.modify_font(pango.FontDescription("sans 9"))
     return label
 
+
 #+---------------------------------------------------------------------------+
-#| NetzobButton :
+#| NetzobButton:
 #| @param text: the string of the button
 #+---------------------------------------------------------------------------+
 def NetzobButton(text):
@@ -59,8 +61,9 @@ def NetzobButton(text):
         label.modify_font(pango.FontDescription("sans 9"))
     return but
 
-#+---------------------------------------------------------------------------+ 
-#| NetzobFrame :
+
+#+---------------------------------------------------------------------------+
+#| NetzobFrame:
 #| @param text: the string of the frame
 #+---------------------------------------------------------------------------+
 def NetzobFrame(text):
@@ -71,24 +74,26 @@ def NetzobFrame(text):
     label.modify_font(pango.FontDescription("sans 9"))
     return frame
 
+
 #+---------------------------------------------------------------------------+
-#| NetzobComboBoxEntry :
+#| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
 def NetzobComboBoxEntry():
     combo = gtk.combo_box_entry_new_text()
     combo.show()
     combo.set_model(gtk.ListStore(str))
-    cell = combo.get_cells()[0] # Get the cellrenderer
+    cell = combo.get_cells()[0]  # Get the cellrenderer
     cell.set_property("size-points", 9)
     return combo
 
+
 #+---------------------------------------------------------------------------+
-#| NetzobProgressBar :
+#| NetzobProgressBar:
 #+---------------------------------------------------------------------------+
 def NetzobProgressBar(text=None):
-    pb = gtk.ProgressBar(adjustment=None) 
-    if text != None :
+    pb = gtk.ProgressBar(adjustment=None)
+    if text != None:
         pb.set_text(text)
-    
+
     pb.show()
     return pb

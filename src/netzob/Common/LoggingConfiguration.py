@@ -25,39 +25,38 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
 import logging.config
 import os
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
 
 
-
-#+---------------------------------------------- 
-#| LoggingConfiguration :
+#+----------------------------------------------
+#| LoggingConfiguration:
 #|    Configure the logging layer of Netzob
-#+---------------------------------------------- 
+#+----------------------------------------------
 class LoggingConfiguration(object):
-    
+
     @staticmethod
-    #+---------------------------------------------- 
-    #| initializeLogging :
-    #+---------------------------------------------- 
+    #+----------------------------------------------
+    #| initializeLogging:
+    #+----------------------------------------------
     def initializeLogging(workspace):
         # First we extract the normal logging config file
         loggingFilePath = workspace.getPathOfLogging()
-        if (loggingFilePath != "" and os.path.isfile(loggingFilePath)) :
+        if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):
             logging.debug("Logging config file : " + loggingFilePath)
             logging.config.fileConfig(loggingFilePath)
-        else :
+        else:
             logging.info("No logging config file found, create a default one.")
             # Make a global logging object.
             logger = logging.getLogger("")
@@ -66,5 +65,3 @@ class LoggingConfiguration(object):
             f = logging.Formatter("[%(threadName)s]%(asctime)s - %(module)s - %(levelname)s - %(message)s")
             h.setFormatter(f)
             logger.addHandler(h)
-
-        

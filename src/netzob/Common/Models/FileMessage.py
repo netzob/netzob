@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -41,8 +41,9 @@ from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.Type.Format import Format
 
+
 #+---------------------------------------------------------------------------+
-#| FileMessage :
+#| FileMessage:
 #|     Definition of a file message
 #+---------------------------------------------------------------------------+
 class FileMessage(AbstractMessage):
@@ -54,24 +55,24 @@ class FileMessage(AbstractMessage):
         self.owner = owner
         self.size = size
         self.lineNumber = lineNumber
-        
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.FileMessage.py')
-    
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return FileMessageFactory
-    
+
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Computes and returns the properties of the current message
     #| @return an array with all the properties [[key,type,val],...]
     #+-----------------------------------------------------------------------+
     def getProperties(self):
-        properties = []        
+        properties = []
         properties.append(['ID', Format.STRING, str(self.getID())])
         properties.append(['Type', Format.STRING, self.getType()])
         properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
@@ -80,44 +81,52 @@ class FileMessage(AbstractMessage):
         properties.append(['Modification Date', Format.STRING, self.getModificationDate()])
         properties.append(['Owner', Format.STRING, self.getOwner()])
         properties.append(['Size', Format.DECIMAL, self.getSize()])
-        properties.append(['Line number', Format.DECIMAL, self.getLineNumber()])        
+        properties.append(['Line number', Format.DECIMAL, self.getLineNumber()])
         properties.append(['Data', Format.STRING, self.getStringData()])
-        
-        return properties 
-        
-    #+---------------------------------------------- 
-    #| GETTERS : 
+
+        return properties
+
+    #+----------------------------------------------
+    #| GETTERS:
     #+----------------------------------------------
     def getLineNumber(self):
         return self.lineNumber
+
     def getFilename(self):
         return self.filename
+
     def getCreationDate(self):
         return self.creationDate
+
     def getModificationDate(self):
         return self.modificationDate
+
     def getOwner(self):
         return self.owner
+
     def getSize(self):
         return self.size
-       
-    #+---------------------------------------------- 
-    #| SETTERS : 
+
+    #+----------------------------------------------
+    #| SETTERS:
     #+----------------------------------------------
     def setLineNumber(self, lineNumber):
-        try :
+        try:
             self.lineNumber = int(lineNumber)
-        except :
+        except:
             self.log.warning("Impossible to set the given line number since its not an int !")
+
     def setFilename(self, filename):
         self.filename = filename
+
     def setCreationDate(self, creationDate):
         self.creationDate = creationDate
+
     def setModificationDate(self, modificationDate):
         self.modificationDate = modificationDate
+
     def setOwner(self, owner):
         self.owner = owner
+
     def setSize(self, size):
         self.size = size
-  
-

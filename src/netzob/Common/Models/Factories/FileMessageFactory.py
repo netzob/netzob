@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
@@ -44,7 +44,7 @@ import datetime
 
 
 #+---------------------------------------------------------------------------+
-#| FileMessageFactory :
+#| FileMessageFactory:
 #|     Factory dedicated to the manipulation of file messages
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #| XML Definition
@@ -54,19 +54,19 @@ import datetime
 #|     <filename></filename>
 #|     <creationDate></creationDate>
 #|     <modificationDate></modificationDate>
-#|     <owner></owner> 
+#|     <owner></owner>
 #|     <size></size>
 #|     <data></data>
 #| </message>
 #+---------------------------------------------------------------------------+
 class FileMessageFactory():
-    
+
     @staticmethod
     #+-----------------------------------------------------------------------+
     #| saveInXML
     #|     Generate the XML representation of a file message
     #| @return a string which include the xml definition of the file msg
-    #+-----------------------------------------------------------------------+    
+    #+-----------------------------------------------------------------------+
     def save(message, xmlMessages, namespace_project, namespace_common):
         root = etree.SubElement(xmlMessages, "{" + namespace_common + "}message")
         root.set("id", str(message.getID()))
@@ -87,71 +87,67 @@ class FileMessageFactory():
         # creationDate
         subModificationDate = etree.SubElement(root, "{" + namespace_common + "}modificationDate")
         subModificationDate.text = TypeConvertor.pythonDatetime2XSDDatetime(message.getModificationDate())
-        
+
         # owner
         subOwner = etree.SubElement(root, "{" + namespace_common + "}owner")
         subOwner.text = message.getOwner()
         # size
         subSize = etree.SubElement(root, "{" + namespace_common + "}size")
         subSize.text = str(message.getSize())
-        
-        
-    
+
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| loadFromXML :
+    #| loadFromXML:
     #|     Function which parses an XML and extract from it
-    #[     the definition of a file message
-    #| @param rootElement: XML root of the file message 
+    #[    the definition of a file message
+    #| @param rootElement: XML root of the file message
     #| @return an instance of a FipSource (default 0.0.0.0)ileMessage
     #| @throw NameError if XML invalid
     #+---------------------------------------------------------------------------+
-    def loadFromXML(rootElement, namespace, version):        
-        
+    def loadFromXML(rootElement, namespace, version):
+
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage" :
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:FileMessage":
             raise NameError("The parsed xml doesn't represent a File message.")
-        
+
         # Verifies the data field
         if rootElement.find("{" + namespace + "}data") == None or len(rootElement.find("{" + namespace + "}data").text) == 0:
             raise NameError("The parsed message has no data specified")
-        
+
         # Parse the data field and transform it into a byte array
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)
-        
+
         # Retrieve the id
         msg_id = rootElement.get("id")
-        
+
         # Retrieve the timestamp
         msg_timestamp = int(rootElement.get("timestamp"))
-        
+
         # Retrieves the lineNumber (default -1)
         msg_lineNumber = int(rootElement.find("{" + namespace + "}lineNumber").text)
-            
+
         # Retrieves the filename
         msg_filename = rootElement.find("{" + namespace + "}filename").text
-        
+
         # Retrieves the creation date
         msg_creationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}creationDate").text)
-            
+
         # Retrieves the modification date
-        if rootElement.find("{" + namespace + "}modificationDate").text != None :
+        if rootElement.find("{" + namespace + "}modificationDate").text != None:
             msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
-        else :
+        else:
             msg_modificationDate = msg_creationDate
-        
+
         # Retrieves the owner
         msg_owner = rootElement.find("{" + namespace + "}owner").text
-            
+
         # Retrieves the size
         msg_size = int(rootElement.find("{" + namespace + "}size").text)
-      
-        
-        # TODO : verify this ! Circular imports in python !      
-        # WARNING : verify this ! Circular imports in python !  
+
+        # TODO : verify this ! Circular imports in python !
+        # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.FileMessage import FileMessage
-        
+
         result = FileMessage(msg_id, msg_timestamp, msg_data, msg_filename, msg_creationDate, msg_modificationDate, msg_owner, msg_size, msg_lineNumber)
-        
+
         return result
- 

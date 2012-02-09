@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import gtk
@@ -33,18 +33,19 @@ import pygtk
 import logging
 pygtk.require('2.0')
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 
-#+---------------------------------------------- 
-#| RawExport :
+
+#+----------------------------------------------
+#| RawExport:
 #|     GUI for exporting results in raw mode
-#+---------------------------------------------- 
+#+----------------------------------------------
 class RawExport:
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
@@ -52,42 +53,42 @@ class RawExport:
 
     def update(self):
         self.treeSymbolGenerator.update()
-    
+
     def clear(self):
         pass
 
     def kill(self):
         pass
-    
-    #+---------------------------------------------- 
-    #| Constructor :
+
+    #+----------------------------------------------
+    #| Constructor:
     #| @param netzob: the main netzob object
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.Export.RawExport.py')
-        
+
         self.initPanel()
-        
+
         self.dialog = gtk.Dialog(title="Export project as raw XML", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(600, 400)
         self.update()
-        
+
     def initPanel(self):
         self.selectedSymbol = None
-        
+
         # First we create an VPaned which hosts the two main children
-        self.panel = gtk.HBox()        
+        self.panel = gtk.HBox()
         self.panel.show()
-        
+
         # Create the symbol selection treeview
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
         self.panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
-        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected) 
-        
+        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
+
         # Create the hbox content in order to display dissector data
         bottomFrame = gtk.Frame()
         bottomFrame.show()
@@ -112,23 +113,23 @@ class RawExport:
                 self.updateTextArea()
 
     def updateTextArea(self):
-        if self.selectedSymbol == None :
+        if self.selectedSymbol == None:
             self.log.debug("No selected symbol")
             self.textarea.get_buffer().set_text("Select a symbol to see its XML definition")
-        else :
+        else:
             found = False
             project = self.netzob.getCurrentProject()
             vocabulary = project.getVocabulary()
             symbols = vocabulary.getSymbols()
-            for symbol in symbols :
-                if str(symbol.getID()) == self.selectedSymbol :
+            for symbol in symbols:
+                if str(symbol.getID()) == self.selectedSymbol:
                     self.textarea.get_buffer().set_text("")
                     self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getXMLDefinition(), "normalTag")
                     found = True
-            if found == False :
+            if found == False:
                 self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):

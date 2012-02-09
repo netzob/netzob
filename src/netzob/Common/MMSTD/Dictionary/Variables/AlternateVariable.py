@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -45,59 +45,58 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
-#| AlternateVariable :
+#| AlternateVariable:
 #|     Definition of an alternative of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AlternateVariable(Variable):
-    
+
     def __init__(self, id, name, vars):
         Variable.__init__(self, "Alternate", id, name, True)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.vars = []
-        if vars != None :
+        if vars != None:
             self.vars.extend(vars)
-            
+
     def addChild(self, variable):
         self.vars.append(variable)
-    
+
     def compare(self, value, indice, negative, memory):
         saved = indice
-        for var in self.vars :
+        for var in self.vars:
             self.log.info("Indice = " + str(saved) + " : " + var.getDescription())
             result = var.compare(value, saved, negative, memory)
-            if result != -1 and result != None :
+            if result != -1 and result != None:
                 self.log.info("Compare successfull")
                 return result
         return -1
-    
+
     def send(self, negative, memory):
         self.log.info("send")
-        
+
         idRandom = random.randint(0, len(self.vars) - 1)
-        
-        if self.isMutable() :
+
+        if self.isMutable():
             # try to load the old choice
             # if it exists we use it,
             # if not we take a choice and we save it
-            if memory.hasMemorized(self) :
+            if memory.hasMemorized(self):
                 self.log.info("We remember an old choice !")
                 idRandom = memory.recall(self)
-            else :
+            else:
                 self.log.info("We'll remember this choice")
                 memory.memorize(self, idRandom)
-        
-        
+
         picked = self.vars[idRandom]
-        
+
         return picked.send(negative, memory)
-        
+
     def getDescription(self):
         values = []
-        for var in self.vars :
+        for var in self.vars:
             values.append(var.getDescription())
-            
+
         return "AlternateVariable [" + " OR ".join(values) + "]"
-    
+
     def save(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
@@ -105,53 +104,52 @@ class AlternateVariable(Variable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
-        
+
         # Definition of the variables
-        for var in self.vars :
+        for var in self.vars:
             var.save(xmlVariable, namespace)
-        
-        
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-            
+
             children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            
+
             return AlternateVariable(varId, varName, children)
-            
+
         return None
-    
-    
-    
+
+
+
 #    def getValue(self, negative, dictionary):
 #        binResult = []
-#        strResult = []        
-#        for idVar in self.vars :
+#        strResult = []
+#        for idVar in self.vars:
 #            var = dictionary.getVariableByID(int(idVar))
 #            (binVal, strVal) = var.getValue(negative, dictionary)
-#            if binVal == None :
+#            if binVal == None:
 #                return (None, None)
-#            else :
+#            else:
 #                binResult.append(binVal)
 #                strResult.append(strVal)
-#        return ("".join(binResult), "".join(strResult))       
-#    
+#        return ("".join(binResult), "".join(strResult))
+#
 #    def generateValue(self, negative, dictionary):
-#        for idVar in self.vars :
+#        for idVar in self.vars:
 #            var = dictionary.getVariableByID(int(idVar))
 #            var.generateValue(negative, dictionary)
-#            
+#
 #    def learn(self, val, indice, isForced, dictionary):
 #        new_indice = indice
-#        for idVar in self.vars :
+#        for idVar in self.vars:
 #            var = dictionary.getVariableByID(int(idVar))
 #            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
-#            if tmp_indice != -1 :
+#            if tmp_indice != -1:
 #                new_indice = tmp_indice
 #        return new_indice

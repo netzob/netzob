@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -40,70 +40,72 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
+
 #+---------------------------------------------------------------------------+
-#| Aggregate :
+#| Aggregate:
 #|     Definition of an aggregation
 #+---------------------------------------------------------------------------+
 class Aggregate(AbstractValue):
-    
+
     def __init__(self):
         AbstractValue.__init__(self, "Aggregate")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.Aggregate.py')
-        
+
         self.values = []
-        
+
     def registerValue(self, value):
         self.values.append(value)
-    
+
     def send(self, negative, dictionary):
         binResult = bitarray(endian='big')
         strResult = []
-        for value in self.values :
+        for value in self.values:
             (binVal, strVal) = value.send(negative, dictionary)
             self.log.debug("Aggregate : " + str(binVal) + " [" + str(strVal) + "]")
             binResult.extend(binVal)
             strResult.append(strVal)
-            
-        return (binResult, "".join(strResult))         
-    
+
+        return (binResult, "".join(strResult))
+
     def compare(self, val, indice, negative, dictionary):
         result = indice
-        self.log.debug("Will compare with :")        
-        for value in self.values :
+        self.log.debug("Will compare with :")
+        for value in self.values:
             self.log.debug(str(value.getType()))
-        
-        for value in self.values :
+
+        for value in self.values:
             self.log.debug("Indice = " + str(result) + " : " + value.getType())
             result = value.compare(val, result, negative, dictionary)
-            if result == -1 or result == None :
+            if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 return -1
-            else :
+            else:
                 self.log.debug("Compare successfull")
-        
+
         return result
-    
+
     def restore(self):
-        for value in self.values :
+        for value in self.values:
             value.restore()
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getName(self):
         return self.name
+
     def getType(self):
         return self.type
 
-        
     def setID(self, id):
         self.id = id
+
     def setName(self, name):
         self.name = name
+
     def setType(self, type):
         self.type = type
-    
-    
