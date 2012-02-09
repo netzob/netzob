@@ -55,27 +55,50 @@ class AggregateVariable(Variable):
 
     def addChild(self, variable):
         self.vars.append(variable)
-
+        
+        
+    #+-----------------------------------------------------------------------+
+    #| getValue :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     else its NONE
+    #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
-        raise NotImplementedError("The current variable doesn't support 'getValue'.")
-    
-    def send(self, negative, vocabulary, memory):
+        raise NotImplementedError("The current variable doesn't support 'getValue'.")    
+    #+-----------------------------------------------------------------------+
+    #| getValueToSend :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     or it generates one and save its value in memory
+    #+-----------------------------------------------------------------------+
+    def getValueToSend(self, negative, vocabulary, memory):
         binResult = bitarray()
         strResult = ""
         for var in self.vars:
             (b, s) = var.send(negative, vocabulary, memory)
-            self.log.debug("send : " + str(b))
+            self.log.debug("getValueToSend : " + str(b))
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
-    
+    #+-----------------------------------------------------------------------+
+    #| getDescription :
+    #|     Returns the full description of the variable
+    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
         values = []
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
         return "AggregateVariable [" + " AND ".join(values) + "]"
-
+    #+-----------------------------------------------------------------------+
+    #| compare :
+    #|     Returns the number of letters which match the variable
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         result = indice
         for var in self.vars:
@@ -87,8 +110,11 @@ class AggregateVariable(Variable):
             else:
                 self.log.debug("Compare successful")
         return result
-
-    def save(self, root, namespace):
+    #+-----------------------------------------------------------------------+
+    #| toXML
+    #|     Returns the XML description of the variable 
+    #+-----------------------------------------------------------------------+
+    def toXML(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
@@ -96,7 +122,7 @@ class AggregateVariable(Variable):
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
         # Definition of the variables
         for var in self.vars:
-            var.save(xmlVariable, namespace)
+            var.toXML(xmlVariable, namespace)
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
