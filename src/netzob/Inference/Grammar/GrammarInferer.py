@@ -70,7 +70,7 @@ class GrammarInferer(threading.Thread):
         self.log.info("Starting the Grammar inferring process")
         self.active = True
         self.infer()
-        self.active = False0
+        self.active = False
         self.log.info("Ending the Grammar inferring process")
 
     def hasFinish(self):
