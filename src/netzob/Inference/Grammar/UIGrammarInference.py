@@ -78,7 +78,6 @@ class UIGrammarInference:
     def save(self, file):
         pass
 
-
     #+----------------------------------------------
     #| Constructor:
     #| @param netzob: the netzob main class
@@ -99,8 +98,6 @@ class UIGrammarInference:
         self.panel = gtk.HBox(False, spacing=0)
         self.panel.show()
 
-
-
         # ----------------------------------------
         # Left Panel
         # ----------------------------------------
@@ -109,7 +106,6 @@ class UIGrammarInference:
 
         # First we add a table
         leftFormTable = gtk.Table(rows=6, columns=2, homogeneous=False)
-
 
         # We add the button for the automatic inference process
         self.grammarAutomaticInferenceButton = gtk.Button("Open wizard for automatic inference")
@@ -203,7 +199,6 @@ class UIGrammarInference:
         self.rightPanel = gtk.HPaned()
         self.rightPanel.show()
         self.panel.pack_start(self.rightPanel, True, True, 0)
-
 
         self.xdotWidget = XDotWidget()
         self.xdotWidget.show_all()
@@ -316,12 +311,10 @@ class UIGrammarInference:
         else:
             self.log.warn("Impossible to create the requested transition since the type is unknown")
 
-
         if createdTransition != None:
             self.getGrammar().addTransition(createdTransition)
             self.updateListTransitions()
             self.updateXDot()
-
 
     def createOpenChannelTransition(self, transitionID, transitionName, startState, stopState):
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
@@ -383,9 +376,6 @@ class UIGrammarInference:
         dialog.destroy()
         return transition
 
-
-
-
     def createSemiStochasticTransition(self, transitionID, transitionName, startState, stopState):
         symbols = self.getVocabulary().getSymbols()
 
@@ -413,7 +403,6 @@ class UIGrammarInference:
 
         mainTable.attach(inputSymbolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(inputSymbolCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
 
         outputSymbolTitle = gtk.Label("Define output symbols")
         outputSymbolTitle.show()
@@ -453,7 +442,6 @@ class UIGrammarInference:
 #       removeOutputSymbolButton.connect("clicked", None)
         removeOutputSymbolButton.show()
         removeOutputSymbolButton.set_sensitive(False)
-
 
         outputSymbolsTreeStore = gtk.TreeStore(str, str, str, str)  # id, name, time, proba
 
@@ -501,7 +489,6 @@ class UIGrammarInference:
         if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return None
-
 
         # retrieve the input symbols
         inputEntryID = inputSymbolCombo.get_model()[inputSymbolCombo.get_active()][1]
@@ -556,7 +543,6 @@ class UIGrammarInference:
             return
 
         outputSymbolsTreeStore.append(None, [selectedEntry.getID(), selectedEntry.getName(), entryTime, entryProba])
-
 
     #+-----------------------------------------------------------------------+
     #| createState:
@@ -634,7 +620,6 @@ class UIGrammarInference:
         for state in self.getGrammar().getStates():
             self.treestore_listStates.append(None, [str(state.getID()), state.getName(), state.getType()])
 
-
     def updateListTransitions(self):
         self.treestore_listTransitions.clear()
         if self.getGrammar() == None:
@@ -643,7 +628,6 @@ class UIGrammarInference:
             startState = transition.getInputState().getName()
             endState = transition.getOutputState().getName()
             self.treestore_listTransitions.append(None, [str(transition.getID()), transition.getName(), startState, endState, transition.getType()])
-
 
     def updateXDot(self):
         # We retrieve the xdot from the grammar (if it exists)
@@ -682,7 +666,6 @@ class UIGrammarInference:
                 if state.getID() == idState:
                     clickedState = state
 
-
         if clickedState != None and event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_states(event, clickedState)
     #+----------------------------------------------
@@ -701,7 +684,6 @@ class UIGrammarInference:
             for transition in self.getGrammar().getTransitions():
                 if transition.getID() == idTransition:
                     clickedTransition = transition
-
 
         if clickedTransition != None and event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_transitions(event, clickedTransition)
@@ -744,7 +726,6 @@ class UIGrammarInference:
             item.show()
             menu.append(item)
         menu.popup(None, None, None, event.button, event.time)
-
 
     def displayPopupToRemoveTransition(self, event, transition):
         questionMsg = "Click yes to confirm the removal of the transition {0}. ".format(transition.getName())
@@ -808,8 +789,6 @@ class UIGrammarInference:
             self.update()
         else:
             self.log.debug("The user didn't confirm the deletion of the state " + state.getName())
-
-
 
     def getGrammar(self):
         if self.netzob.getCurrentProject() == None:

@@ -162,7 +162,6 @@ class ApiImport:
         self.butRemovePrototype.connect("clicked", self.updateProcessList_cb)
         self.panel.attach(self.butRemovePrototype, 4, 5, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of buttons (start and stop capture)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,7 +174,6 @@ class ApiImport:
         self.stopCapture.show()
         self.stopCapture.connect("clicked", self.stopCaptureFunction)
         self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
 
         # Packet list
         scroll = gtk.ScrolledWindow()
@@ -203,7 +201,6 @@ class ApiImport:
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 6, 7, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-
 
     #+----------------------------------------------
     #| Called when user wants to update the process list
@@ -286,7 +283,6 @@ class ApiImport:
             self.log.warning("You have to select a DLL if you want to capture it")
             return
 
-
         # Updates the list of shared lib
         prototype = self.dllStore.get_active_text()
         self.selectedFunction = None
@@ -332,7 +328,6 @@ class ApiImport:
         poisoner = GOTPoisoner(parasiteGenerator, injectorGenerator)
         poisoner.injectProcess(self.selectedProcess.getPid())
 
-
         self.fifoFile = parasiteGenerator.getFifoFile()
 
         self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
@@ -342,7 +337,6 @@ class ApiImport:
         self.log.info("DLL [{0}]".format(self.selectedDLL.getName()))
         self.log.info("Function [{0}]".format(self.selectedFunction.getPrototype()))
 
-
     def readFromFifo(self):
         self.fifo = open(self.fifoFile, 'r')
         receivedMessage = self.readline(self.fifo)
@@ -351,9 +345,6 @@ class ApiImport:
             self.pktTreestore.append(None, [len(self.packets), "NONE", "NC", receivedMessage, int(time.time())])
             receivedMessage = self.readline(self.fifo)
             self.log.info("FIFO : " + receivedMessage)
-
-
-
 
     def createFifo(self):
         self.log.info("Creating the FIFO file : " + self.fifoFile)
@@ -399,9 +390,6 @@ class ApiImport:
         # Close and remove fifo
         self.fifo.close()
         os.remove(self.fifoFile)
-
-
-
 
     #+----------------------------------------------
     #| GETTERS

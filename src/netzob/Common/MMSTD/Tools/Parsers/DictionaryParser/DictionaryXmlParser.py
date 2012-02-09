@@ -54,9 +54,6 @@ from netzob.Common.MMSTD.Dictionary import MMSTDDictionary
 #from netzob.Common.MMSTD.Dictionary.Variables.DynLenStringVariable import DynLenStringVariable
 
 
-
-
-
 #+----------------------------------------------
 #| DictionaryXmlParser:
 #|    Parser for an XML Dictionary
@@ -111,7 +108,6 @@ class DictionaryXmlParser(object):
                     variable.setMax(max)
                 variable.setReset(reset)
 
-
             elif typeVar == "MD5":
                 initVar = xmlVariable.get("init", "")
                 valVar = int(xmlVariable.get("idVariable", "0"))
@@ -127,7 +123,6 @@ class DictionaryXmlParser(object):
 
             if variable != None:
                 variables.append(variable)
-
 
         # Parse the entries declared in dictionary
         entries = []
@@ -151,10 +146,6 @@ class DictionaryXmlParser(object):
                 else:
                     log.warn("The tag " + xmlValue.tag + " has not been parsed !")
 
-
-
-
-
             entry = DictionaryEntry.DictionaryEntry(idEntry, nameEntry, initialValue)
 
             entries.append(entry)
@@ -162,7 +153,6 @@ class DictionaryXmlParser(object):
         # Create a dictionary based on the variables and the entries
         dictionary = MMSTDDictionary.MMSTDDictionary(variables, entries)
         return dictionary
-
 
     @staticmethod
     def getTextValue(xmlElement):

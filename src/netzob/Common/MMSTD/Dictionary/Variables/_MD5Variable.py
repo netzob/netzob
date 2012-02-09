@@ -60,7 +60,6 @@ class MD5Variable(Variable):
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
 
-
     def generateValue(self, negative, dictionary):
         # Retrieve the value of the data to hash
         var = dictionary.getVariableByID(self.id_var)
@@ -110,7 +109,6 @@ class MD5Variable(Variable):
 
             else:
                 return -1
-
 
         self.log.debug("value = " + str(self.strVal) + ", isForced = " + str(isForced))
         return -1

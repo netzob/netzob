@@ -40,7 +40,6 @@ import logging
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 
-
 #+---------------------------------------------------------------------------+
 #| IPVariable:
 #|     Definition of a n IP variable defined in a dictionary
@@ -73,7 +72,6 @@ class IPVariable(Variable):
         self.strVal = "192.168.0.10"
         self.binVal = self.string2bin(self.strVal)
 
-
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Received : " + str(val))
 
@@ -97,7 +95,5 @@ class IPVariable(Variable):
                 self.binVal = self.string2bin(self.strVal)
 
                 return indice + i
-
-
 
         return -1

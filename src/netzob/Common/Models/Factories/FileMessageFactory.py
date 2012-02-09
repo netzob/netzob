@@ -95,8 +95,6 @@ class FileMessageFactory():
         subSize = etree.SubElement(root, "{" + namespace_common + "}size")
         subSize.text = str(message.getSize())
 
-
-
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
@@ -145,7 +143,6 @@ class FileMessageFactory():
 
         # Retrieves the size
         msg_size = int(rootElement.find("{" + namespace + "}size").text)
-
 
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !

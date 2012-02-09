@@ -55,7 +55,6 @@ class Searcher(object):
         self.log = logging.getLogger('netzob.Inference.Vocabulary.Searcher.py')
         self.project = project
 
-
     #+----------------------------------------------
     #| getSearchedDataForBinary:
     #|   Generates data which can represent the specified Binary
@@ -63,7 +62,6 @@ class Searcher(object):
     #+----------------------------------------------
     def getSearchedDataForBinary(self, value):
         return []
-
 
     #+----------------------------------------------
     #| getSearchedDataForOctal:
@@ -73,7 +71,6 @@ class Searcher(object):
     def getSearchedDataForOctal(self, value):
         return []
 
-
     #+----------------------------------------------
     #| getSearchedDataForDecimal:
     #|   Generates data which can represent the specified Decimal
@@ -81,7 +78,6 @@ class Searcher(object):
     #+----------------------------------------------
     def getSearchedDataForDecimal(self, value):
         return []
-
 
     #+----------------------------------------------
     #| getSearchedDataForHexadecimal:
@@ -111,7 +107,6 @@ class Searcher(object):
     def getSearchedDataForIP(self, value):
         return []
 
-
     #+----------------------------------------------
     #| search:
     #|   Search a set of specified data in the messages
@@ -135,7 +130,6 @@ class Searcher(object):
         results = []
         results.extend(self.naturalSearch(data, message))
         return results
-
 
     def naturalSearch(self, data, message):
         results = []

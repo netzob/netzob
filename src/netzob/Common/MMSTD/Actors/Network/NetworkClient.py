@@ -56,7 +56,6 @@ class NetworkClient(AbstractActor):
         self.inputMessages = []
         self.outputMessages = []
 
-
     def open(self):
         try:
             if (self.protocol == "UDP"):
@@ -106,7 +105,6 @@ class NetworkClient(AbstractActor):
             self.log.debug("Impossible to read from the network socket")
             return None
 
-
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result
@@ -123,7 +121,6 @@ class NetworkClient(AbstractActor):
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")
-
 
     def getInputMessages(self):
         return self.inputMessages

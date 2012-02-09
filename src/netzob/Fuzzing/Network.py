@@ -271,8 +271,6 @@ class Network:
         q.create_queue(0)
         q.set_queue_maxlen(5000)
         try:
-
-
             ## TODO : do it in a dedicated process
 
             q.try_run()

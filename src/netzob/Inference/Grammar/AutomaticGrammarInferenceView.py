@@ -117,7 +117,6 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
 
-
     def createInferringStatusView(self):
         self.dialog = gtk.Dialog(title="Execution of the inferring process", flags=0, buttons=None)
 
@@ -175,7 +174,6 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
 
-
     def do_pulse(self, *args):
         if self.finish == False:
             self.progressbar.pulse()
@@ -215,7 +213,6 @@ class AutomaticGrammarInferenceView(object):
         if hypotheticalAutomaton != None:
             self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
 
-
     def stopInference(self, button):
         self.finish = True
         self.log.info("Stop the inferer")
@@ -230,7 +227,6 @@ class AutomaticGrammarInferenceView(object):
         if self.computedAutomaton != None:
             self.project.setGrammar(self.computedAutomaton.toGrammar())
             self.dialog.destroy()
-
 
     def startInference(self, button):
         # We retrieve the specified value

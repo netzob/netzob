@@ -55,7 +55,6 @@ class NormalState(AbstractState):
         self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.NormalState.py')
         self.transitions = []
 
-
     #+-----------------------------------------------------------------------+
     #| getTransitions
     #|     Return the associated transitions
@@ -110,8 +109,6 @@ class NormalState(AbstractState):
                 newState = transition.executeAsClient(abstractionLayer)
                 return newState
 
-
-
         self.activate()
         # Wait for a message
 
@@ -119,7 +116,6 @@ class NormalState(AbstractState):
         if tupleReception == (None, None):
             self.log.warn("Warning the abstraction layer returns null")
             return None
-
 
         (receivedSymbol, message) = tupleReception
         if not receivedSymbol == None:
@@ -165,7 +161,6 @@ class NormalState(AbstractState):
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NormalState")
 
-
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         idState = xmlRoot.get("id")
@@ -173,7 +168,6 @@ class NormalState(AbstractState):
 
         state = NormalState(idState, nameState)
         return state
-
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

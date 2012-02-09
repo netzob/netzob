@@ -36,7 +36,6 @@ import logging
 #+---------------------------------------------------------------------------+
 
 
-
 #+---------------------------------------------------------------------------+
 #| AbstractActor:
 #|     Definition of an actor
@@ -57,7 +56,6 @@ class AbstractActor():
 
     def stop(self):
         self.Terminated = True
-
 
     def isServer(self):
         return self.is_server

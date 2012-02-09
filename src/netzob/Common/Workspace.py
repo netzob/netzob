@@ -76,7 +76,6 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
         if xmlProjects.get("last", "none") != "none":
             lastProject = xmlProjects.get("last", "none")
 
-
     # Instantiation of the workspace
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
 
@@ -89,7 +88,6 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             trace = ImportedTrace.loadSymbol(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
             if trace != None:
                 workspace.addImportedTrace(trace)
-
 
     # Load the projects
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None:
@@ -130,7 +128,6 @@ class Workspace(object):
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
 
-
     def getProjects(self):
         projects = []
         for project_path in self.getProjectsPath():
@@ -159,7 +156,6 @@ class Workspace(object):
     def removeImportedTrace(self, importedTrace):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
-
 
     #+-----------------------------------------------------------------------+
     #| referenceProject:
@@ -218,7 +214,6 @@ class Workspace(object):
 
         tree = ElementTree(root)
         tree.write(workspaceFile)
-
 
     @staticmethod
     def createWorkspace(name, path):
@@ -289,7 +284,6 @@ class Workspace(object):
                 logging.fatal("The specified Workspace file is not valid according to the XSD.")
 
         return None
-
 
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):

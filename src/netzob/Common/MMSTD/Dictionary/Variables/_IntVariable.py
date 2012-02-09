@@ -49,8 +49,6 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class IntVariable(Variable):
 
-
-
     def __init__(self, id, name, size, value):
         Variable.__init__(self, id, name, "INT")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
@@ -81,7 +79,6 @@ class IntVariable(Variable):
 
     def getValue(self, negative, dictionary):
         return (self.binValue, self.strValue)
-
 
     def generateValue(self, negative, dictionary):
         self.log.debug("Generate value of hex")
@@ -114,7 +111,6 @@ class IntVariable(Variable):
             return indice + self.size
         else:
             return -1
-
 
     def setReset(self, reset):
         self.reset = reset

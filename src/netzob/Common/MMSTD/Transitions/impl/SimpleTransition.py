@@ -69,7 +69,6 @@ class SimpleTransition(AbstractTransition):
     def getTimeBeforeSending(self):
         return self.timeBeforeSending
 
-
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Computes if the received symbol is valid
@@ -77,8 +76,6 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def isValid(self, receivedSymbol):
         return True
-
-
 
     #+-----------------------------------------------------------------------+
     #| executeAsClient
@@ -110,7 +107,6 @@ class SimpleTransition(AbstractTransition):
 
         self.deactivate()
         return self.outputState
-
 
     def getDescription(self):
         outputSymbolId = self.getOutputSymbol().getID()

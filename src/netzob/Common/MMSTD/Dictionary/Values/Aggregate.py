@@ -99,7 +99,6 @@ class Aggregate(AbstractValue):
     def getType(self):
         return self.type
 
-
     def setID(self, id):
         self.id = id
     def setName(self, name):

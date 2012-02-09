@@ -90,7 +90,6 @@ class ResourcesConfiguration(object):
                 return True
         return True
 
-
     @staticmethod
     def askForUserDir():
         workspacePath = None

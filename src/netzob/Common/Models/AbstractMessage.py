@@ -120,7 +120,6 @@ class AbstractMessage():
             if (end - start) % 2 == 1:
                 end = end + 1
 
-
         return "".join(self.getStringData()[start:end])
 
     #+----------------------------------------------

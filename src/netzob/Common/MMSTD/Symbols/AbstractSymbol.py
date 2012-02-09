@@ -46,7 +46,6 @@ class AbstractSymbol():
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.AbstractSymbol.py')
         self.type = type
 
-
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+

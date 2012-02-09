@@ -98,7 +98,6 @@ class AbstractTransition():
         self.log.error("The transition class doesn't support 'getDescription'.")
         raise NotImplementedError("The transition class doesn't support 'getDescription'.")
 
-
     #+-----------------------------------------------------------------------+
     #| toXMLString
     #|     Abstract method to retrieve the XML definition of current transition
@@ -107,7 +106,6 @@ class AbstractTransition():
     def toXMLString(self, idStartState):
         self.log.error("The transition class doesn't support 'toXMLString'.")
         raise NotImplementedError("The transition class doesn't support 'toXMLString'.")
-
 
     #+-----------------------------------------------------------------------+
     #| active

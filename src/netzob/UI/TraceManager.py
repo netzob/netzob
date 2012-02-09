@@ -45,11 +45,9 @@ pygtk.require('2.0')
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
 
 
 #+---------------------------------------------------------------------------+
@@ -58,7 +56,6 @@ pygtk.require('2.0')
 #|     workspace
 #+---------------------------------------------------------------------------+
 class TraceManager():
-
     #+-----------------------------------------------------------------------+
     #| Constructor:
     #| @param workspace : the current workspace
@@ -71,7 +68,6 @@ class TraceManager():
         self.updateContent()
         self.cb_update = cb_update
         self.cb_update()
-
 
     def createDialog(self):
         self.dialog = gtk.Dialog(title="Trace Manager", flags=0, buttons=None)
@@ -116,7 +112,6 @@ class TraceManager():
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         mainTable.attach(scroll, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-
         scroll2 = gtk.ScrolledWindow()
         self.treestoreMessages = gtk.TreeStore(str, str, str)  # id, timestamp, data,
         treeviewMessage = gtk.TreeView(self.treestoreMessages)
@@ -146,10 +141,8 @@ class TraceManager():
         scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         mainTable.attach(scroll2, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
-
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
-
 
     def updateContentMessage(self, trace=None):
         self.treestoreMessages.clear()
@@ -167,7 +160,6 @@ class TraceManager():
             description = str(trace.getDescription())
             nbMessage = len(trace.getMessages())
             self.treestoreTraces.append(None, [id, date, type, projectName, description, nbMessage])
-
 
     #+----------------------------------------------
     #| button_press_on_treeview_symbols:
@@ -230,7 +222,6 @@ class TraceManager():
         label2 = NetzobLabel(trace.getImportID())
         panel.attach(label2, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-
         label3 = NetzobLabel("Select project")
         panel.attach(label3, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         # Delimiter type
@@ -251,7 +242,6 @@ class TraceManager():
 
         importDialog.vbox.pack_start(panel, True, True, 0)
         importDialog.show()
-
 
     def importTraceAction(self, event, trace, projectCombo, dialog):
         selectedProject = None
@@ -274,7 +264,6 @@ class TraceManager():
         dialog.destroy()
         (yield ThreadedTask(self.cb_update))
 
-
     def importTraceInProject(self, trace, project):
         percent = 0.0
         inc = 1.0 / len(trace.getMessages())
@@ -285,14 +274,11 @@ class TraceManager():
             symbol.addMessage(message)
             gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
 
-
         # We create a default field for the symbol
         symbol.addField(Field.createDefaultField())
         # and register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
         project.saveConfigFile(self.workspace)
-
-
 
     def deleteTrace(self, event, trace):
         questionMsg = "Click yes to remove selected trace {0} from the Trace Manager".format(trace.getImportID())

@@ -49,7 +49,6 @@ pygtk.require('2.0')
 #+----------------------------------------------
 class VariableView(object):
 
-
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
@@ -105,7 +104,6 @@ class VariableView(object):
         self.panel.attach(createButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         self.treestore.append(None, [str(self.rootVariable.getID()), "Root"])
-
 
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
         self.dialog.show()
@@ -416,7 +414,6 @@ class VariableView(object):
 
         self.datas[str(referencedVariable.getID())] = referencedVariable
         self.treestore.append(rootEntry, [str(referencedVariable.getID()), referencedVariable.getDescription()])
-
 
         # We close the current dialog
         dialog.destroy()

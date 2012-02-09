@@ -107,13 +107,11 @@ class MembershipQuery(object):
             result.append(self.getMQSuffixedWithMQ(mq))
         return result
 
-
     def getNotEmptyPrefixes(self):
         result = []
         for i in range(0, len(self.getSymbolsWhichAreNotEmpty())):
             result.append(MembershipQuery(self.getSymbolsWhichAreNotEmpty()[:i + 1]))
         return result
-
 
     def getMQSuffixedWithMQ(self, mq):
         result = MembershipQuery([])
@@ -138,11 +136,6 @@ class MembershipQuery(object):
         else:
             return False
 
-
-
-
-
-
     def __cmp__(self, other):
         if other == None:
             return -1
@@ -152,7 +145,6 @@ class MembershipQuery(object):
             return 1
         else:
             return -1
-
 
     def __str__(self, *args, **kwargs):
 

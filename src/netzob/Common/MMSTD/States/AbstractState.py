@@ -49,10 +49,6 @@ class AbstractState():
         self.type = type
         self.active = False
 
-
-
-
-
     #+-----------------------------------------------------------------------+
     #| getTransitions
     #|     Abstract method to retrieve the associated transitions
@@ -131,7 +127,6 @@ class AbstractState():
         self.id = id
     def setName(self, name):
         self.name = name
-
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):

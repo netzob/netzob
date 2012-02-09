@@ -60,7 +60,6 @@ class ImportedTrace(object):
         self.projectName = projectName
         self.messages = []
 
-
     def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
         xmlSymbol = etree.SubElement(root, "{" + namespace_workspace + "}trace")
         xmlSymbol.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
@@ -100,9 +99,6 @@ class ImportedTrace(object):
         gzipFile.write(contentOfFile)
         gzipFile.close()
 
-
-
-
     def addMessage(self, message):
         self.messages.append(message)
 
@@ -129,8 +125,6 @@ class ImportedTrace(object):
         self.description = description
     def setProjectName(self, projectName):
         self.projectName = projectName
-
-
 
     #+----------------------------------------------
     #| Static methods

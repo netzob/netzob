@@ -114,12 +114,8 @@ class DictionaryEntry():
         self.log.debug("Learn (val=" + val + ", i=" + str(indice) + "...")
         return self.value.learn(val, indice)
 
-
     def restore(self):
         self.value.restore()
-
-
-
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

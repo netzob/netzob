@@ -61,15 +61,10 @@ class MMSTDVisitor(threading.Thread):
             self.runAsClient()
         self.log.debug("End of execution for the MMSTDVisitor")
 
-
-
     def stop(self):
         self.log.debug("Stops the MMSTDVisitor")
         self.abstractionLayer.disconnect()
         self.active = False
-
-
-
 
     def runAsMaster(self):
         self.log.debug("The MMSTD Visitor is running as a master")
@@ -79,7 +74,6 @@ class MMSTDVisitor(threading.Thread):
             if currentState == None:
                 self.active = False
         self.log.debug("The MASTER stops !")
-
 
     def runAsClient(self):
         self.log.debug("The MMSTD Visitor is running as a client")

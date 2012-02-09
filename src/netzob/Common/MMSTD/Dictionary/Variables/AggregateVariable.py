@@ -82,7 +82,6 @@ class AggregateVariable(Variable):
             strResult = strResult + s
         return (binResult, strResult)
 
-
     def getDescription(self):
         values = []
         for var in self.vars:
@@ -100,7 +99,6 @@ class AggregateVariable(Variable):
         # Definition of the variables
         for var in self.vars:
             var.save(xmlVariable, namespace)
-
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):

@@ -76,7 +76,6 @@ class ScapyExport:
         self.dialog.set_size_request(800, 700)
         self.update()
 
-
     def init(self):
 
         self.selectedSymbol = None

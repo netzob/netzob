@@ -84,7 +84,6 @@ class IPCMessageFactory():
         subDirection = etree.SubElement(root, "{" + namespace + "}direction")
         subDirection.text = str(message.getDirection())
 
-
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
@@ -123,8 +122,6 @@ class IPCMessageFactory():
 
         # Retrieves the direction
         msg_direction = rootElement.find("{" + namespace + "}direction").text
-
-
 
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !

@@ -168,7 +168,6 @@ class Project(object):
         # Saving the workspace configuration file
 #        workspace.saveConfigFile()
 
-
     def hasPendingModifications(self, workspace):
         result = True
 
@@ -186,9 +185,7 @@ class Project(object):
         except:
             pass
 
-
         return result
-
 
     @staticmethod
     def createProject(workspace, name):
@@ -203,7 +200,6 @@ class Project(object):
         workspace.saveConfigFile()
 
         return project
-
 
     @staticmethod
     def loadProject(workspace, projectDirectory):
@@ -234,7 +230,6 @@ class Project(object):
             else:
                 logging.warn("The project declared in file (" + projectFile + ") is not valid")
         return None
-
 
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
@@ -280,8 +275,6 @@ class Project(object):
         except etree.XMLSyntaxError, e:
             log = e.error_log.filter_from_level(etree.ErrorLevels.FATAL)
             logging.debug(log)
-
-
 
         return False
 

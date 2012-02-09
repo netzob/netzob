@@ -54,7 +54,6 @@ class VarValue(AbstractValue):
         self.variable = variable
         self.resetCondition = resetCondition
 
-
     #+---------------------------------------------------------------------------+
     #| restore:
     #|     Simple !! :) Call this method if you want to forget the last learned value

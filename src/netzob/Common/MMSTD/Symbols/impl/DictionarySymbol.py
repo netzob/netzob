@@ -48,7 +48,6 @@ class DictionarySymbol(AbstractSymbol):
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
         self.entry = dictionaryEntry
 
-
     def isEquivalent(self, symbol):
         if self.entry.getID() == symbol.getID():
             self.log.debug("The symbols are equivalents")
@@ -70,7 +69,6 @@ class DictionarySymbol(AbstractSymbol):
         return self.entry
     def getName(self):
         return self.entry.getName()
-
 
     def setID(self, id):
         self.id = id

@@ -86,12 +86,10 @@ class IpcImport(AbstractImporter):
         self.packets = []
         self.init()
 
-
         self.dialog = gtk.Dialog(title="Capture IPC flow", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
-
 
     def init(self):
         self.pid = None
@@ -333,7 +331,6 @@ class IpcImport(AbstractImporter):
                 #Compute the messages
                 message = IPCMessage(msg_fd, msg_timestamp, msg_rawPayload.replace("\\x", ""), "none", msg_fd, msg_direction)
                 messages.append(message)
-
 
         # We ask the confirmation
         md = gtk.MessageDialog(None,

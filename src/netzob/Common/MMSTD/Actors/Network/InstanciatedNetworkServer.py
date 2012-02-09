@@ -40,7 +40,6 @@ from bitarray import bitarray
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 
 
-
 #+---------------------------------------------------------------------------+
 #| InstanciatedNetworkServer:
 #|     Definition of an instanciated network server
@@ -54,7 +53,6 @@ class InstanciatedNetworkServer(AbstractActor):
         self.socket = socket
         self.inputMessages = []
         self.outputMessages = []
-
 
     def createNewServer(self):
         host = "localhost"
@@ -81,7 +79,6 @@ class InstanciatedNetworkServer(AbstractActor):
         self.log.debug("Reading from the socket some data")
         result = bitarray(endian='big')
 
-
         chars = []
         try:
             if timeout > 0:
@@ -96,8 +93,6 @@ class InstanciatedNetworkServer(AbstractActor):
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-
-
 
         if (len(chars) == 0):
             return result

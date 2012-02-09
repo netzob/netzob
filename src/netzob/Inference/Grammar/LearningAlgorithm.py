@@ -63,7 +63,6 @@ class LearningAlgorithm(object):
 
         self.callbackFunction = callbackFunction
 
-
     def attachStatusCallBack(self, callbackFunction):
         self.callbackFunction = callbackFunction
 
@@ -74,10 +73,8 @@ class LearningAlgorithm(object):
     def getSubmitedQueries(self):
         return self.submitedQueries
 
-
     def submitQuery(self, query):
         self.log.info("Submit the following query : " + str(query))
-
 
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary)

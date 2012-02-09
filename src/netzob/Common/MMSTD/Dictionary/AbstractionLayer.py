@@ -121,7 +121,6 @@ class AbstractionLayer():
         else:
             self.log.debug("Impossible to disconnect : not connected")
 
-
     #+-----------------------------------------------------------------------+
     #| receiveSymbol
     #|     Manage the reception of a message and its transformation in a symbol
@@ -130,7 +129,6 @@ class AbstractionLayer():
     def receiveSymbol(self):
         self.log.debug("Waiting for the reception of a message")
         return self.receiveSymbolWithTimeout(-1)
-
 
     def receiveSymbolWithTimeout(self, timeout):
         # First we read from the input the message
@@ -160,14 +158,9 @@ class AbstractionLayer():
                     self.log.warn("Consider client has disconnected since no valid symbol received for the second time")
                     return (None, None)
 
-
-
-
             symbol = EmptySymbol()
             self.manipulatedSymbols.append(symbol)
             return (symbol, None)
-
-
 
     def writeSymbol(self, symbol):
         self.log.info("Sending symbol '" + symbol.getName() + "' over the communication channel")
@@ -203,7 +196,6 @@ class AbstractionLayer():
                 # we first restore possibly learnt value
                 self.log.debug("Restore possibly learnt value")
 #                entry.restore()
-
 
         return EmptySymbol()
 

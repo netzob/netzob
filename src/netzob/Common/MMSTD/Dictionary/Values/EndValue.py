@@ -52,7 +52,6 @@ class EndValue(AbstractValue):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.EndValue.py')
 
-
     def send(self, negative, dictionary):
         return (bitarray(endian='big'), "")
 

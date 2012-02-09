@@ -277,7 +277,6 @@ class NetworkImport(AbstractImporter):
         # We update the gui
         self.zob.update()
 
-
     #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------

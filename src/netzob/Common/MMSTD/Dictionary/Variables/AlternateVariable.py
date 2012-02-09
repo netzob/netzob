@@ -86,7 +86,6 @@ class AlternateVariable(Variable):
                 self.log.info("We'll remember this choice")
                 memory.memorize(self, idRandom)
 
-
         picked = self.vars[idRandom]
 
         return picked.send(negative, memory)
@@ -109,7 +108,6 @@ class AlternateVariable(Variable):
         # Definition of the variables
         for var in self.vars:
             var.save(xmlVariable, namespace)
-
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):

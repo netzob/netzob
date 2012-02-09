@@ -40,7 +40,6 @@ import os
 #+----------------------------------------------
 
 
-
 #+----------------------------------------------
 #| LoggingConfiguration:
 #|    Configure the logging layer of Netzob

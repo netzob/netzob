@@ -56,7 +56,6 @@ class NetworkOracle(threading.Thread):
         self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')
         self.communicationChannel = communicationChannel
 
-
     def setMMSTD(self, mmstd):
         self.mmstd = mmstd
 
@@ -74,8 +73,6 @@ class NetworkOracle(threading.Thread):
             time.sleep(0.01)
 
         self.log.warn("The network ORACLE has finished")
-
-
 
     def stop(self):
         self.log.info("Stop the network oracle")

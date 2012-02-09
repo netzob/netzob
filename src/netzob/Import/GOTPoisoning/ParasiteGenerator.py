@@ -114,10 +114,6 @@ class ParasiteGenerator():
             signatures.append(signature)
         return signatures
 
-
-
-
-
     def getSourceCodeOfWriteFunction(self):
         function = '''
 static int _open(char * filename) {
@@ -247,6 +243,5 @@ static void _saveStringWithSize(char * param0, int size) {
         for function in self.hijackedFunctions:
             header += "// " + function.getPrototype() + "\n"
             header += function.getParasitePrototype() + ";\n"
-
 
         return header

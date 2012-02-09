@@ -179,7 +179,6 @@ class FileImport(AbstractImporter):
             iter = treeview.get_model().get_iter(path)
             idMessage = str(treeview.get_model().get_value(iter, 0))
 
-
         if idMessage == None:
             return
 
@@ -194,7 +193,6 @@ class FileImport(AbstractImporter):
             return
 
         self.displayMessage(selectedMessage)
-
 
     #+----------------------------------------------
     #| Called when user select a list of packet
@@ -216,9 +214,6 @@ class FileImport(AbstractImporter):
 
         # We update the gui
         self.zob.update()
-
-
-
 
     #+----------------------------------------------
     #| Called when user import a file
@@ -278,7 +273,6 @@ class FileImport(AbstractImporter):
         file.close()
         return TypeConvertor.stringToNetzobRaw(content)
 
-
     def entry_separator_callback(self, widget, entry):
         entry_text = widget.get_text()
         self.lineSeparator = entry_text
@@ -317,8 +311,6 @@ class FileImport(AbstractImporter):
         hexContent = TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getData()))
         # Update the hexdump
         self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), hexContent, "normalTag")
-
-
 
     #+----------------------------------------------
     #| GETTERS

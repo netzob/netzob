@@ -48,7 +48,6 @@ class EmptySymbol(AbstractSymbol):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.EmptySymbol.py')
 
-
     def isEquivalent(self, symbol):
 
         if symbol.__class__.__name__ == EmptySymbol.__name__:

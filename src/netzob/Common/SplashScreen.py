@@ -56,12 +56,9 @@ class SplashScreen(object):
         self.window.set_default_size(268, 501)
         self.window.set_events(gtk.gdk.ALL_EVENTS_MASK)
 
-
-
         # Retrieve static resources
         staticPath = ResourcesConfiguration.getStaticResources()
         logoPath = os.path.abspath(os.path.join(staticPath, "logo.png"))
-
 
         hbox = gtk.HBox()
         hbox.show()
@@ -75,15 +72,12 @@ class SplashScreen(object):
 
 #        main_vbox.pack_start(self.image, True, True)
 
-
-
         workspace = ResourcesConfiguration.getWorkspace()
         if workspace != None:
             self.lbl = gtk.Label("Current workspace : " + workspace)
         else:
             self.lbl = gtk.Label("Current workspace : NO WORKSPACE COMPUTED !")
         self.lbl.set_alignment(0, 0.5)
-
 
         main_vbox.pack_start(self.image, True, True, 2)
 

@@ -128,7 +128,6 @@ class CloseChannelTransition(AbstractTransition):
         xmlDisconnectionTime = etree.SubElement(xmlState, "{" + namespace + "}disconnectionTime")
         xmlDisconnectionTime.text = str(self.getDisconnectionTime())
 
-
     #+-----------------------------------------------------------------------+
     #| parse
     #|     Extract from an XML declaration the definition of the transition

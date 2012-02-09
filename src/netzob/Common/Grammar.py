@@ -75,7 +75,6 @@ class Grammar(object):
         for transition in state.getTransitions():
             transitionsToRemove.append(transition)
 
-
         for transition in transitionsToRemove:
             self.removeTransition(transition)
 

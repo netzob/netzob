@@ -54,7 +54,6 @@ class StartState(AbstractState):
         self.log = logging.getLogger('netzob.Common.MMSTD.States.impl.StartState.py')
         self.transitions = []
 
-
     #+-----------------------------------------------------------------------+
     #| getTransitions
     #|     Return the associated transitions
@@ -88,7 +87,6 @@ class StartState(AbstractState):
 
         # We open the connection
         abstractionLayer.connect()
-
 
         # Wait for a message
         (receivedSymbol, message) = abstractionLayer.receiveSymbol()
@@ -132,7 +130,6 @@ class StartState(AbstractState):
         self.deactivate()
         return newState
 
-
     def save(self, root, namespace):
         xmlState = etree.SubElement(root, "{" + namespace + "}state")
         xmlState.set("id", str(self.getID()))
@@ -146,8 +143,6 @@ class StartState(AbstractState):
 
         state = StartState(idState, nameState)
         return state
-
-
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

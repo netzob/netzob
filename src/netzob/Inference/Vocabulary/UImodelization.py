@@ -658,7 +658,6 @@ class UImodelization:
                 if treeview.get_model().iter_is_valid(aIter):
                     message_id = treeview.get_model().get_value(aIter, 0)
 
-
             # Retrieve the selected column number
             iField = 0
             for col in treeview.get_columns():
@@ -910,7 +909,6 @@ class UImodelization:
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
             (iField,) = path
-
 
             selectedField = None
             for field in self.treeMessageGenerator.getSymbol().getFields():
@@ -1842,7 +1840,6 @@ class UImodelization:
             scroll = symbol.dataCarving()
             if scroll != None:
                 notebook.append_page(scroll, NetzobLabel(symbol.getName()))
-
 
         dialog.vbox.pack_start(notebook, True, True, 0)
         dialog.show()

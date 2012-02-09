@@ -73,12 +73,9 @@ class Process(object):
             if found == False:
                 (libName, libVersion) = SharedLib.findNameAndVersion(path)
 
-
-
                 lib = SharedLib(libName, libVersion, path)
                 libs.append(lib)
         return libs
-
 
     def setPid(self, pid):
         self.pid = int(pid)

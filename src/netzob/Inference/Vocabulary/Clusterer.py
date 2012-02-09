@@ -118,7 +118,6 @@ class Clusterer(object):
 
         # Execute the Clustering part in C :) (thx fgy)
 
-
         (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(self.symbols), format, serialSymbols)
         return (i_max, j_max, maxScore)
 
@@ -157,7 +156,6 @@ class Clusterer(object):
                     else:
                         pass
             """
-
 
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")
@@ -231,7 +229,6 @@ class Clusterer(object):
                 self.mergeEffectiveSymbols()
                 currentReductionIsLeft = True
 
-
             for orphan in self.symbols:
                 tmp_symbols.append(orphan)
             self.symbols = tmp_symbols
@@ -271,7 +268,6 @@ class Clusterer(object):
 
     def mergeRowCol(self, i_maximum, j_maximum):
         self.mergeEffectiveRowCol(i_maximum, j_maximum)
-
 
     #+----------------------------------------------
     #| doProgressBarStep:

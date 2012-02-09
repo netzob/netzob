@@ -67,7 +67,6 @@ class AbstractMessageFactory():
             raise NameError('''There is no factory which would support
             the generation of an xml representation of the message : ''' + str(message))
 
-
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML:

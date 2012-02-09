@@ -45,7 +45,6 @@ from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 
 
-
 #+----------------------------------------------
 #| WMethodNetworkEquivalenceOracle:
 #+----------------------------------------------
@@ -70,12 +69,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             self.log.info("YES, its distinguished strings")
             return True
 
-
-
     def findCounterExample(self, mmstd):
         self.log.info("Find a counterexample which invalids the given MMSTD")
-
-
 
         inputDictionary = []
         for entry in mmstd.dictionary.getSymbols()[:2]:
@@ -131,7 +126,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 mq = mqToTest.popleft()
                 if i > self.m * self.m:
                     break
-
 
                 self.log.info("Can we distinguish with MQ = " + str(mq))
                 if not self.canWeDistinguishStates(mmstd, mq, state1, state2):
@@ -189,7 +183,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         if v < 0:
             v = 0
 
-
         mqInputs = []
         for input in inputDictionary:
             mqInputs.append(MembershipQuery([input]))
@@ -212,7 +205,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         for z in Z:
             self.log.info("z = " + str(z))
 
-
         # STEP 5 : We have the list of so desired test cases T = P.Z
         T = []
         for p in P:
@@ -221,7 +213,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         self.log.info("Tests cases are : ")
         for t in T:
             self.log.info("=> " + str(t))
-
 
         testsResults = dict()
         # We compute the response to the different tests over our learning model and compare them with the real one
@@ -246,6 +237,5 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 self.log.info("OUR : " + str(mqOur))
                 self.log.info("THEIR : " + str(mqTheir))
                 return test
-
 
         return None

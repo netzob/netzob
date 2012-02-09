@@ -146,7 +146,6 @@ class SearchView(object):
 
         treestore = gtk.TreeStore(str)
 
-
         for task in tasks:
             for result in task.getResults():
                 # retrieve the symbol associated with the message

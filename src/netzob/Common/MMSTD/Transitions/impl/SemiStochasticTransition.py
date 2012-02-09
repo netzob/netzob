@@ -88,7 +88,6 @@ class SemiStochasticTransition(AbstractTransition):
     def addOutputSymbol(self, outputSymbol, probability, time):
         self.outputSymbols.append([outputSymbol, probability, time])
 
-
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Computes if the received symbol is valid
@@ -162,7 +161,6 @@ class SemiStochasticTransition(AbstractTransition):
         self.deactivate()
         return self.outputState
 
-
     def getDescription(self):
         inputSymbolName = self.getInputSymbol().getName()
 
@@ -170,10 +168,7 @@ class SemiStochasticTransition(AbstractTransition):
         for outSymbolDesc in self.getOutputSymbols():
             desc.append("(" + str(outSymbolDesc[0].getName()) + ", " + str(outSymbolDesc[1]) + "%, " + str(outSymbolDesc[2]) + "ms)")
 
-
         return "(" + str(inputSymbolName) + ";{" + ",".join(desc) + "})"
-
-
 
     def save(self, root, namespace):
         xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")
@@ -197,7 +192,6 @@ class SemiStochasticTransition(AbstractTransition):
             xmlOutput.set("time", str(time))
             xmlOutput.set("probability", str(proba))
             xmlOutput.set("symbol", str(symbol.getID()))
-
 
     #+-----------------------------------------------------------------------+
     #| parse
@@ -230,8 +224,6 @@ class SemiStochasticTransition(AbstractTransition):
         if inputSymbol == None:
             logging.warn("The vocabulary doesn't reference a symbol which ID is " + inputSymbolID)
             return None
-
-
 
         transition = SemiStochasticTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, inputSymbol)
 

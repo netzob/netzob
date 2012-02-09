@@ -120,7 +120,6 @@ class MMSTD(object):
 
         return result
 
-
     #+---------------------------------------------------------------------------+
     #| getDotCode:
     #|     Generates the dot code representing the automata
@@ -143,7 +142,6 @@ class MMSTD(object):
 
         dotCode = dotCode + "}"
         return dotCode
-
 
     #+---------------------------------------------------------------------------+
     #| getAllStates:

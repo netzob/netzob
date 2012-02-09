@@ -74,7 +74,6 @@ class Variable():
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
 
-
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
@@ -95,7 +94,6 @@ class Variable():
         self.type = type
     def setMutable(self, mutable):
         self.mutable = mutable
-
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):

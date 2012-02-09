@@ -56,10 +56,8 @@ class HijackedFunction():
         self.parameters = parameters
         self.source = source
 
-
     def getSource(self):
         return self.source
-
 
     def getEndOfFunction(self):
         source = ""
@@ -82,7 +80,6 @@ class HijackedFunction():
                 paramNames += ", "
             i = i + 1
 
-
 #        source += "\tchar new_string[5];\n"
 #        source += "\tnew_string[0] = 'e';\n"
 #        source += "\tnew_string[1] = '.';\n"
@@ -92,7 +89,6 @@ class HijackedFunction():
         source += "\torigfunc(" + paramNames + ");\n"
 
         return source
-
 
     #+-----------------------------------------------------------------------+
     #| getPrototype
@@ -165,7 +161,6 @@ class HijackedFunction():
             pType = xmlParam.get("type", "none")
             p = [pType, pName]
             funcParams.append(p)
-
 
         source = rootElement.find("source").text
 #        source = "\tint fd = _open(\"/tmp/content2.log\");\n"

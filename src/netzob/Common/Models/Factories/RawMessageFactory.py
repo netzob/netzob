@@ -66,7 +66,6 @@ class RawMessageFactory():
         subData = etree.SubElement(root, "data")
         subData.text = str(message.getData())
 
-
     @staticmethod
     #+---------------------------------------------------------------------------+
     #| loadFromXML:
@@ -96,6 +95,5 @@ class RawMessageFactory():
 
         from netzob.Common.Models.RawMessage import RawMessage
         result = RawMessage(msg_id, msg_timestamp, msg_data)
-
 
         return result

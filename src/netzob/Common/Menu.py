@@ -264,7 +264,6 @@ class Menu(object):
     def manageTracesAction(self, widget):
         TraceManager(self.netzob.getCurrentWorkspace(), self.netzob.update)
 
-
     def switchProjectAction(self, widget, newProject):
         self.netzob.switchCurrentProject(newProject)
         self.update()
@@ -292,7 +291,6 @@ class Menu(object):
     #+----------------------------------------------
     def importFileAction(self, widget):
         fileImportPanel = FileImport(self.netzob)
-
 
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector
@@ -356,14 +354,12 @@ class Menu(object):
         about.run()
         about.destroy()
 
-
     #+----------------------------------------------
     #| Called when user save the current project
     #+----------------------------------------------
     def saveProjectAction(self, widget):
         logging.info("Starting the saving of the current project : " + str(self.netzob.getCurrentProject().getName()))
         self.netzob.getCurrentProject().saveConfigFile(self.netzob.getCurrentWorkspace())
-
 
     def createProjectAction(self, widget):
         dialog = gtk.Dialog(title="Create a new project", flags=0, buttons=None)

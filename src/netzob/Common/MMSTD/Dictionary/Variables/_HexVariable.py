@@ -48,8 +48,6 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 class HexVariable(Variable):
 
-
-
     def __init__(self, id, name, value):
         Variable.__init__(self, id, name, "HEX")
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')
@@ -71,7 +69,6 @@ class HexVariable(Variable):
     def getValue(self, negative, dictionary):
         self.log.debug("Getvalue of hex")
         return (self.binValue, self.strValue)
-
 
     def generateValue(self, negative, dictionary):
         self.log.debug("Generate value of hex")

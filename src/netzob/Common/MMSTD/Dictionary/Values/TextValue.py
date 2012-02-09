@@ -70,10 +70,8 @@ class TextValue(AbstractValue):
             self.log.debug("Compare fail")
             return -1
 
-
     def restore(self):
         return
-
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

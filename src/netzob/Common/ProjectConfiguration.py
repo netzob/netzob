@@ -66,7 +66,6 @@ class ProjectConfiguration(object):
     SIMULATION_ACTORS = "actors"
     SIMULATION_ACTOR = "actor"
 
-
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -92,9 +91,6 @@ class ProjectConfiguration(object):
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES, [])
 
         # Grammar
-
-
-
     def setVocabularyInferenceParameter(self, name, value):
         self.vocabularyInference[name] = value
 
@@ -155,8 +151,6 @@ class ProjectConfiguration(object):
         if envDependencies != None:
             for envDependency in envDependencies:
                 envDependency.save(xmlVocabularyInferenceEnvDependencies, namespace)
-
-
 
     #+-----------------------------------------------------------------------+
     #| Static methods

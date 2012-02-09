@@ -73,11 +73,9 @@ class SimpleCommunicationLayer(AbstractActor):
             self.log.debug("No more inputs to simulate, nothing was read ")
             return None
 
-
     def write(self, message):
         self.log.debug("Write down !")
         self.outputMessages.append(message)
-
 
     def getInputMessages(self):
         return self.inputMessages

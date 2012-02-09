@@ -66,7 +66,6 @@ class GrammarInferer(threading.Thread):
         self.hypotheticalAutomaton = None
         self.learner = None
 
-
     def run(self):
         self.log.info("Starting the Grammar inferring process")
         self.active = True

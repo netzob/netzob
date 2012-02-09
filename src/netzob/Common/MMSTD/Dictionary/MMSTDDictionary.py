@@ -51,9 +51,6 @@ class MMSTDDictionary():
         self.variables = variables
         self.entries = entries
 
-
-
-
     def getEntry(self, id):
         for entry in self.entries:
             if entry.getID() == id:
@@ -61,14 +58,11 @@ class MMSTDDictionary():
 
         return None
 
-
     def getVariableByID(self, id):
         for variable in self.variables:
             if variable.getID() == id:
                 return variable
         return None
-
-
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

@@ -87,7 +87,6 @@ class WordVariable(Variable):
             mut = "[!M]"
         return "WordVariable " + mut + " (" + self.strVal + ")"
 
-
 #
 #
 #    def generateValue(self, negative, dictionary):

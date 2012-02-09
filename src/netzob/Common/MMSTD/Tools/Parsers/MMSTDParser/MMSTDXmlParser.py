@@ -72,7 +72,6 @@ class MMSTDXmlParser(object):
         if rootElement.get("dictionary", "none") == "none":
             raise NameError("The MMSTD doesn't have any dictionary declared")
 
-
         automatonDir = ConfigurationParser().get("automata", "path")
         dictionaryFile = os.path.join(automatonDir, rootElement.get("dictionary", "none"))
         # Parsing dictionary file
@@ -104,7 +103,6 @@ class MMSTDXmlParser(object):
                 transition = OpenChannelTransition.OpenChannelTransition.parse(xmlTransition, states)
             elif classTransition == "CloseChannelTransition":
                 transition = CloseChannelTransition.CloseChannelTransition.parse(xmlTransition, states)
-
 
         # create an MMSTD
         automata = MMSTD.MMSTD(initialState, dictionary)

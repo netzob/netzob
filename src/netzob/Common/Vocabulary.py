@@ -101,7 +101,6 @@ class Vocabulary(object):
         # align and cluster the groups together
         # orphan reduction
 
-
         if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION):
             reductionStep = 1
         else:
@@ -149,7 +148,6 @@ class Vocabulary(object):
             clusterer.mergeOrphanSymbols()
             fraction = fraction + step
             percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-
 
         logging.info("Time of parsing : " + str(time.time() - t1))
 

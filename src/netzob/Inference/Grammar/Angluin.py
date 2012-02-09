@@ -65,8 +65,6 @@ class Angluin(LearningAlgorithm):
         self.observationTable = dict()
         self.initializeObservationTable()
 
-
-
     def initializeObservationTable(self):
 
         self.log.info("Initialization of the observation table")
@@ -85,15 +83,9 @@ class Angluin(LearningAlgorithm):
 #            self.D.append(letter)
 #            self.suffixes.append(letter)
 
-
-
-
         # Initialize the observation table
         emptyMQ = MembershipQuery([EmptySymbol()])
         self.addWordInS(emptyMQ)
-
-
-
 
     def addWordInD(self, words):
         if words in self.D:
@@ -151,7 +143,6 @@ class Angluin(LearningAlgorithm):
             self.log.info("The word " + str(word) + " already exists in S (addWordInSA)")
             return
 
-
         self.log.info("Adding word " + str(word) + " to SA")
         self.SA.append(word)
 
@@ -163,7 +154,6 @@ class Angluin(LearningAlgorithm):
                 cel = dict()
             cel[word] = self.submitQuery(mq)
             self.observationTable[letter] = cel
-
 
     def learn(self):
         self.log.info("Learn...")
@@ -188,7 +178,6 @@ class Angluin(LearningAlgorithm):
                 self.displayObservationTable()
             else:
                 self.log.info("Table is consistent !")
-
 
             self.log.info("Another turn")
             self.displayObservationTable()
@@ -266,12 +255,6 @@ class Angluin(LearningAlgorithm):
                 self.log.info("Searching for word " + str(w1a))
                 self.log.info("Searching for word " + str(w2a))
 
-
-
-
-
-
-
                 row_w1a = self.getRowOfObservationTable(w1a)
                 row_w2a = self.getRowOfObservationTable(w2a)
                 if not self.rowsEquals(row_w1a, row_w2a):
@@ -312,21 +295,9 @@ class Angluin(LearningAlgorithm):
                     self.log.info("So we add (a.e) to E (=D) a.e=[" + str(newCol) + "]")
                     self.addWordInD(newCol)
 
-
-
-
-
-
-
                     self.log.info("The table is not consistent because the rows from w1=" + str(w1a) + ";w2=" + str(w2a) + " are NOT equals")
                     return False
         return True
-
-
-
-
-
-
 
     def rowsEquals(self, r1, r2):
         if (len(r1) != len(r2)):
@@ -337,14 +308,12 @@ class Angluin(LearningAlgorithm):
                 return False
         return True
 
-
     def moveWordFromSAtoS(self, wordSA):
         if not wordSA in self.SA:
             self.log.warn("Impossible to move the word from SA since it doesn't exist")
             return
         self.SA.remove(wordSA)
         self.addWordInS(wordSA)
-
 
     def getRowOfObservationTable(self, rowName):
         cols = []
@@ -430,7 +399,6 @@ class Angluin(LearningAlgorithm):
                             idTransition = idTransition + 1
                             self.log.info("We create a transition from " + str(state.getName()) + " input : " + str(symbol) + " output : " + str(value) + " outputstate " + str(outputState))
 
-
         if startState != None:
             self.log.info("An infered automata has been computed.")
             self.inferedAutomata = MMSTD(startState, self.dictionary)
@@ -447,7 +415,6 @@ class Angluin(LearningAlgorithm):
                 self.displayObservationTable()
                 self.addWordInS(prefix)
                 self.displayObservationTable()
-
 
     def appendValuesInRow(self, row):
         result = []
@@ -484,8 +451,5 @@ class Angluin(LearningAlgorithm):
                 line.append(str(tmp[mqSA]))
             self.log.info("\t|".join(line))
             self.log.info(horizontal)
-
-
-
 
 #        self.addWordInS(MembershipQuery([]))

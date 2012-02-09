@@ -58,8 +58,6 @@ class InjectorGenerator():
         self.libPath = self.tmp_folder + os.sep + self.libName
         self.shellcode = self.produceShellCode()
 
-
-
     def writeInjectorToFile(self):
         source = self.getSourceCode()
         print source
@@ -68,7 +66,6 @@ class InjectorGenerator():
         file.close()
 
     def compileInjector(self):
-
 
         f = os.popen("gcc " + self.tmp_folder + "/netzob_injector.c" + " -o " + self.tmp_folder + "/netzob_injector")
         for i in f.readlines():
@@ -984,9 +981,6 @@ int main(int argc, char **argv)
 }
 '''
         return source
-
-
-
 
     def getLibName(self):
         return self.libName

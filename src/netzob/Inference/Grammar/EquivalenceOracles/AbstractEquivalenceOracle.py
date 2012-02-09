@@ -49,7 +49,6 @@ class AbstractEquivalenceOracle(object):
         self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.AbstractEquivalenceOracle.py')
         self.type = type
 
-
     def findCounterExample(self, mmstd):
         self.log.error("The oracle doesn't support 'findCounterExample'.")
         raise NotImplementedError("The oracle doesn't support 'findCounterExample'.")

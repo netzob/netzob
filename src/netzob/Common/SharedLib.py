@@ -58,9 +58,6 @@ class SharedLib(object):
         self.path = path
         self.functions = []
 
-
-
-
     @staticmethod
     def loadFromXML(rootElement):
         # First we verify rootElement is a message
@@ -74,20 +71,16 @@ class SharedLib(object):
         libName = rootElement.get("name", "none")
         libVersion = rootElement.get("version", "0.0")
 
-
         functions = []
         # parse the declared functions
         for xmlFunc in rootElement.findall("functions//function"):
             function = HijackedFunction.HijackedFunction.loadFromXML(xmlFunc)
             functions.append(function)
 
-
         lib = SharedLib(libName, libVersion, "")
         lib.setFunctions(functions)
 
         return lib
-
-
 
     @staticmethod
     def findNameAndVersion(path):
@@ -109,10 +102,7 @@ class SharedLib(object):
         except:
             pass
 
-
         return (libName, libVersion)
-
-
 
     def setName(self, name):
         self.name = name

@@ -44,9 +44,8 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-
 #+---------------------------------------------------------------------------+
-#| BinaryVarible:
+#| BinaryVariable:
 #|     Definition of a binary variable
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
@@ -99,7 +98,6 @@ class BinaryVariable(Variable):
         # Definition of a binary variable
         xmlWordVariableValue = etree.SubElement(xmlVariable, "{" + namespace + "}value")
         xmlWordVariableValue.text = TypeConvertor.bitarray2StrBitarray(self.binVal)
-
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):

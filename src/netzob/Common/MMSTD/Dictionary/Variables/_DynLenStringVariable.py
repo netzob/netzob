@@ -60,7 +60,6 @@ class DynLenStringVariable(Variable):
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
 
-
     def generateValue(self, negative, dictionary):
 
         variable = dictionary.getVariableByID(self.idVar)
@@ -72,9 +71,6 @@ class DynLenStringVariable(Variable):
         self.binVal = TypeConvertor.string2bin(self.strVal, 'big')
         self.log.debug("Generated value = " + self.strVal)
         self.log.debug("Generated value = " + str(self.binVal))
-
-
-
 
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("LEARN")
@@ -89,6 +85,5 @@ class DynLenStringVariable(Variable):
             self.strVal = TypeConvertor.bin2string(self.binVal)
             self.log.debug("Value learnt : " + self.strVal)
             return indice + nb_letter
-
 
         return -1

@@ -59,7 +59,6 @@ from netzob.Simulator.XDotWidget import XDotWidget
 #+----------------------------------------------
 class UISimulator:
 
-
     #+----------------------------------------------
     #| Called when user select a new trace
     #+----------------------------------------------
@@ -79,7 +78,6 @@ class UISimulator:
     def save(self, file):
         self.log = logging.getLogger('netzob.Simuator.UISimulator.py')
         self.log.warn("The simulation process cannot be saved for the moment")
-
 
     #+----------------------------------------------
     #| Constructor:
@@ -103,7 +101,6 @@ class UISimulator:
         self.panel = gtk.Table(rows=5, columns=2, homogeneous=False)
         self.panel.show()
 
-
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Table hosting the form for a new actor
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,8 +119,6 @@ class UISimulator:
         self.entry_actorName.show()
         self.tableFormNewActor.attach(label_actorName, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         self.tableFormNewActor.attach(self.entry_actorName, 1, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-
-
 
         # Type of actor
         label_typeOfActor = gtk.Label("Type of actor : ")
@@ -193,7 +188,6 @@ class UISimulator:
         label_Port = gtk.Label("Port : ")
         label_Port.show()
         self.entry_Port = gtk.Entry()
-
 
         if (config.getInt("simulating", "port") != None):
             self.entry_Port.set_text(str(config.getInt("simulating", "port")))
@@ -279,7 +273,6 @@ class UISimulator:
         scroll_inputs.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_inputs.show()
         self.panel.attach(scroll_inputs, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Outputs
@@ -396,7 +389,6 @@ class UISimulator:
         # Update the GUI
         self.refreshGUI(1)
 
-
     #+----------------------------------------------
     #| startSelectedActor:
     #| Starts the selected actor
@@ -435,7 +427,6 @@ class UISimulator:
         self.actors.remove(self.selectedActor)
         self.treestore_listActiveActors.clear()
         self.selectedActor = None
-
 
     #+----------------------------------------------
     #| addActor:
@@ -545,8 +536,6 @@ class UISimulator:
 
         # Now we update the GUI based on the actor
         self.updateGUIForActor()
-
-
 
     def updateGUIForActor(self):
         if self.selectedActor == None:

@@ -81,13 +81,9 @@ class TreeProcessesGenerator():
         for process in self.processes:
             iter = self.treestore.append(None, [process.getName(), process.getPid(), '#000000', '#FFFFFF'])
 
-
     def updateProcessesList(self):
         self.log.debug("Updating the list of executing processes.")
         self.processes = ExecutionContext.getCurrentProcesses()
-
-
-
 
     #+----------------------------------------------
     #| GETTERS:

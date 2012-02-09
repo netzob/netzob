@@ -55,7 +55,6 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         SocketServer.TCPServer.__init__(self, connectionInfos, UDPConnectionHandler)
         self.instances = []
 
-
     def getVocabulary(self):
         return self.vocabulary
     def getInitialState(self):
@@ -143,10 +142,6 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
 #        self.subVisitor.stop()
 
 
-
-
-
-
 class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
     def handle(self):
@@ -187,8 +182,6 @@ class NetworkServer(AbstractActor):
         else:
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
-
-
 
         self.server.setVocabulary(vocabulary)
         self.server.setInitialState(initialState)

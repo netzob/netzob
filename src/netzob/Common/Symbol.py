@@ -371,9 +371,6 @@ class Symbol(object):
                 # TODO: handle complex regex
                 continue
 
-
-
-
     #+----------------------------------------------
     #| getMessageByID:
     #|  Return the message which ID is provided
@@ -623,7 +620,6 @@ class Symbol(object):
             'email': re.compile("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}"),
             'ip': re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
             }
-
 
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
@@ -1313,7 +1309,6 @@ class Symbol(object):
 
     """
 
-
     def getValueToSend(self, inverse, memory):
         result = self.getRoot().send(inverse, memory)
         return result
@@ -1329,8 +1324,6 @@ class Symbol(object):
 
             rootSymbol.addChild(variable)
         return rootSymbol
-
-
 
     #+----------------------------------------------
     #| GETTERS

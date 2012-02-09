@@ -89,9 +89,7 @@ class PcapImport(AbstractImporter):
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
 
-
     def init(self):
-
 
         # Network Capturing Panel
         self.panel = gtk.Table(rows=5, columns=4, homogeneous=False)
@@ -205,7 +203,6 @@ class PcapImport(AbstractImporter):
                 Dport = None
                 Data = None
 
-
                 ethernet = eth_decoder.decode(packetPayload)
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
@@ -226,7 +223,6 @@ class PcapImport(AbstractImporter):
                 # Compute the messages
                 message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)
                 messages.append(message)
-
 
         # We ask the confirmation
         md = gtk.MessageDialog(None,
@@ -295,19 +291,14 @@ class PcapImport(AbstractImporter):
 
             return
 
-
             raise
-
-
 
         button.set_sensitive(False)
         self.packets = []
         self.treestore.clear()
 
-
         # read it with pcapy
         reader = pcapy.open_offline(pcapFile)
-
 
         filter = aFilter.get_text()
 #        reader.setfilter(r'ip proto \tcp or \udp')
@@ -329,7 +320,6 @@ class PcapImport(AbstractImporter):
         udp_decoder = Decoders.UDPDecoder()
         tcp_decoder = Decoders.TCPDecoder()
 
-
         ethernet = eth_decoder.decode(payload)
         if ethernet.get_ether_type() == Packets.IP.ethertype:
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
@@ -342,10 +332,6 @@ class PcapImport(AbstractImporter):
                 tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
                 self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
                 self.packets.append(payload)
-
-
-
-
 
     #+----------------------------------------------
     #| GETTERS

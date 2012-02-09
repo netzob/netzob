@@ -54,8 +54,6 @@ class GOTPoisoner():
     def injectProcess(self, pid):
         self.logger.info("Inject into process " + str(pid))
 
-
-
         functionNames = []
         for func in self.parasite.getFunctions():
             functionNames.append(func.getName())
