@@ -112,35 +112,36 @@ class TreeSymbolGenerator():
             for symbol in symbols:
                 iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
-    #+----------------------------------------------
-    #| messageSelected:
-    #|         Update the treestore when a message
-    #|         is a selected
-    #| @param selectedMessage the selected message
-    #+----------------------------------------------
-    def messageSelected(self, selectedMessage):
-        self.log.debug("Updating the treestore of the symbol with a selected message")
-        self.treestore.clear()
-        project = self.netzob.getCurrentProject()
-        if project == None:
-            return
-        for symbol in project.getVocabulary().getSymbols():
-            tmp_sequences = []
-            if (len(symbol.getRegex()) > 0):
-                    tmp_sequences.append(symbol.getRegex())
-
-            tmp_sequences.append(self.selectedMessage.getStringData())
-            tmp_alignator = NeedlemanWunsch()
-
-            tmp_score = symbol.getScore()
-            if (len(tmp_sequences) >= 2):
-                tmp_regex = tmp_alignator.getRegex(tmp_sequences)
-                tmp_score = tmp_alignator.computeScore(tmp_regex)
-            if (tmp_score >= symbol.getScore()):
-                color = '#66FF00'
-            else:
-                color = '#FF0000'
-                iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0}".format(symbol.getName()), "{0}".format(symbol.getScore()), '#000000', color])
+# GBT : To be deleted after more checks
+#    #+----------------------------------------------
+#    #| messageSelected:
+#    #|         Update the treestore when a message
+#    #|         is a selected
+#    #| @param selectedMessage the selected message
+#    #+----------------------------------------------
+#    def messageSelected(self, selectedMessage):
+#        self.log.debug("Updating the treestore of the symbol with a selected message")
+#        self.treestore.clear()
+#        project = self.netzob.getCurrentProject()
+#        if project == None:
+#            return
+#        for symbol in project.getVocabulary().getSymbols():
+#            tmp_sequences = []
+#            if (len(symbol.getRegex()) > 0):
+#                    tmp_sequences.append(symbol.getRegex())
+#
+#            tmp_sequences.append(self.selectedMessage.getStringData())
+#            tmp_alignator = NeedlemanWunsch()
+#
+#            tmp_score = symbol.getScore()
+#            if (len(tmp_sequences) >= 2):
+#                tmp_regex = tmp_alignator.getRegex(tmp_sequences)
+#                tmp_score = tmp_alignator.computeScore(tmp_regex)
+#            if (tmp_score >= symbol.getScore()):
+#                color = '#66FF00'
+#            else:
+#                color = '#FF0000'
+#                iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0}".format(symbol.getName()), "{0}".format(symbol.getScore()), '#000000', color])
 
     #+----------------------------------------------
     #| getSymbolAtPosition:
