@@ -120,7 +120,6 @@ class VariableView(object):
             page.update()
 
     def showMenu(self, treeview, event):
-        target = treeview.get_path_at_pos(int(event.x), int(event.y))
         rootVariable = None
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             x = int(event.x)

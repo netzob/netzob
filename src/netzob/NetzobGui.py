@@ -32,23 +32,19 @@ import gtk
 import pygtk
 pygtk.require('2.0')
 import gobject
-import os
 import threading
 import sys
 import logging
-from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Project import Project
 from netzob.Common.Menu import Menu
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
 from netzob.Fuzzing.UIfuzzing import UIfuzzing
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
 from netzob.Common.Workspace import Workspace
