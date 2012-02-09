@@ -53,26 +53,49 @@ class Variable():
         self.id = idVar
         self.name = name
         self.typeVariable = typeVariable
-
+    
+    #+-----------------------------------------------------------------------+
+    #| getValue :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     else its NONE
+    #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")    
-    # Returns (b, s)
-    # b = bitarray
-    # s = strvalue
-    def send(self, negative, vocabulary, memory):
+    #+-----------------------------------------------------------------------+
+    #| getValueToSend :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     or it generates one and save its value in memory
+    #+-----------------------------------------------------------------------+
+    def getValueToSend(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function send")
         raise NotImplementedError("The current variable doesn't support 'send'.")
-    
+    #+-----------------------------------------------------------------------+
+    #| getDescription :
+    #|     Returns the full description of the variable
+    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
-
+    #+-----------------------------------------------------------------------+
+    #| compare :
+    #|     Returns the number of letters which match the variable
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
-
-    def save(self, root, namespace):
+    #+-----------------------------------------------------------------------+
+    #| toXML
+    #|     Returns the XML description of the variable 
+    #+-----------------------------------------------------------------------+
+    def toXML(self, root, namespace):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
 
