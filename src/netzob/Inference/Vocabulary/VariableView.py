@@ -186,6 +186,7 @@ class VariableView(object):
 
     def addBinary(self, event, rootVariable, rootEntry):
         pass
+
     def addAlternate(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
@@ -242,6 +243,7 @@ class VariableView(object):
 
         # We close the current dialog
         dialog.destroy()
+
     def addAggregate(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)

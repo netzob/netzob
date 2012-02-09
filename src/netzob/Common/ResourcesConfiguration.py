@@ -168,9 +168,11 @@ class ResourcesConfiguration(object):
             localFile.close()
             return workspacePath
         return workspacePath
+
     @staticmethod
     def getStaticResources():
         return NetzobResources.STATIC_DIR
+
     @staticmethod
     def getWorkspaceFile():
         if NetzobResources.WORKSPACE_DIR == None:

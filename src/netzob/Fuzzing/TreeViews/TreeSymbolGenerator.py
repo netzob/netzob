@@ -107,5 +107,6 @@ class TreeSymbolGenerator():
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
+
     def getScrollLib(self):
         return self.scroll

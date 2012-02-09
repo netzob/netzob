@@ -89,10 +89,13 @@ class MMSTDVisitor(threading.Thread):
 
     def getInputMessages(self):
         return self.abstractionLayer.getInputMessages()
+
     def getOutputMessages(self):
         return self.abstractionLayer.getOutputMessages()
+
     def getMemory(self):
         return self.abstractionLayer.getMemory()
+
     def getAbstractionLayer(self):
         return self.abstractionLayer
 
@@ -101,14 +104,18 @@ class MMSTDVisitor(threading.Thread):
     #+-----------------------------------------------------------------------+
     def getName(self):
         return self.name
+
     def getModel(self):
         return self.model
+
     def isMaster(self):
         return self.isMaster
+
     def isActive(self):
         return self.active
 
     def setModel(self, model):
         self.model = model
+
     def setName(self, name):
         self.name = name

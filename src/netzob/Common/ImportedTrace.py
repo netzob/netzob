@@ -104,25 +104,34 @@ class ImportedTrace(object):
 
     def getImportID(self):
         return self.importID
+
     def getDate(self):
         return self.date
+
     def getDataType(self):
         return self.dataType
+
     def getDescription(self):
         return self.description
+
     def getProjectName(self):
         return self.projectName
+
     def getMessages(self):
         return self.messages
 
     def setImportID(self, importID):
         self.importID = importID
+
     def setDate(self, date):
         self.date = date
+
     def setDataType(self, dataType):
         self.dataType = dataType
+
     def setDescription(self, description):
         self.description = description
+
     def setProjectName(self, projectName):
         self.projectName = projectName
 

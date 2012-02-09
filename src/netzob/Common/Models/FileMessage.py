@@ -91,14 +91,19 @@ class FileMessage(AbstractMessage):
     #+----------------------------------------------
     def getLineNumber(self):
         return self.lineNumber
+
     def getFilename(self):
         return self.filename
+
     def getCreationDate(self):
         return self.creationDate
+
     def getModificationDate(self):
         return self.modificationDate
+
     def getOwner(self):
         return self.owner
+
     def getSize(self):
         return self.size
 
@@ -110,13 +115,18 @@ class FileMessage(AbstractMessage):
             self.lineNumber = int(lineNumber)
         except:
             self.log.warning("Impossible to set the given line number since its not an int !")
+
     def setFilename(self, filename):
         self.filename = filename
+
     def setCreationDate(self, creationDate):
         self.creationDate = creationDate
+
     def setModificationDate(self, modificationDate):
         self.modificationDate = modificationDate
+
     def setOwner(self, owner):
         self.owner = owner
+
     def setSize(self, size):
         self.size = size

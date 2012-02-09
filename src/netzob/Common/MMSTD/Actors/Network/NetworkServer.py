@@ -57,20 +57,25 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
     def getVocabulary(self):
         return self.vocabulary
+
     def getInitialState(self):
         return self.initialState
+
     def isMaster(self):
         return self.master
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
+
     def setInitialState(self, initialState):
         self.initialState = initialState
+
     def setMaster(self, master):
         self.master = master
 
     def addGeneratedInstance(self, instance):
         self.instances.append(instance)
+
     def removeGeneratedInstance(self, instance):
         self.instances.remove(instance)
 
@@ -86,15 +91,19 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
     def getVocabulary(self):
         return self.vocabulary
+
     def getInitialState(self):
         return self.initialState
+
     def isMaster(self):
         return self.master
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
+
     def setInitialState(self, initialState):
         self.initialState = initialState
+
     def setMaster(self, master):
         self.master = master
 
@@ -197,10 +206,13 @@ class NetworkServer(AbstractActor):
 
     def getInputMessages(self):
         return []
+
     def getOutputMessages(self):
         return []
+
     def getMemory(self):
         return []
+
     def getGeneratedInstances(self):
         if self.server == None:
             return []

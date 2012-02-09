@@ -668,6 +668,7 @@ class UIGrammarInference:
 
         if clickedState != None and event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_states(event, clickedState)
+
     #+----------------------------------------------
     #| button_press_on_transitions:
     #|   Contextual menu when clicking on a transition

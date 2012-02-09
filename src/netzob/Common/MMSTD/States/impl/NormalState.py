@@ -174,10 +174,12 @@ class NormalState(AbstractState):
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getName(self):
         return self.name
 
     def setID(self, id):
         self.id = id
+
     def setName(self, name):
         self.name = name

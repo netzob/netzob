@@ -452,11 +452,11 @@ class UImodelization:
             gobject.idle_add(self.progressbarAlignment.set_text, "")
         else:
             gobject.idle_add(self.progressbarAlignment.set_text, message)
-#
-#    #+----------------------------------------------
-#    #| do_pulse_for_discoverAlignement:
-#    #|   Computes if the progress bar must be updated or not
-#    #+----------------------------------------------
+
+    #+----------------------------------------------
+    #| do_pulse_for_discoverAlignement:
+    #|   Computes if the progress bar must be updated or not
+    #+----------------------------------------------
     def do_pulse_for_discoverAlignement(self):
         if self.currentExecutionOfAlignmentHasFinished == False:
             self.progressbarAlignment.pulse()

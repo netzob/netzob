@@ -155,28 +155,38 @@ class Field(object):
     #+----------------------------------------------
     def getName(self):
         return self.name
+
     def getEncapsulationLevel(self):
         return self.encapsulation_level
+
     def getRegex(self):
         return self.regex
+
     def getDescription(self):
         return self.description
+
     def getColor(self):
         if not self.isRegexStatic():
             return "blue"
         return self.color
+
     def getIndex(self):
         return self.index
+
     def getBackgroundColor(self):
         if self.getVariable() == None:
             return "yellow"
         return None
+
     def getFormat(self):
         return self.format
+
     def getUnitSize(self):
         return self.unitSize
+
     def getSign(self):
         return self.sign
+
     def getEndianess(self):
         return self.endianess
 
@@ -185,22 +195,31 @@ class Field(object):
     #+----------------------------------------------
     def setName(self, name):
         self.name = name
+
     def setEncapsulationLevel(self, level):
         self.encapsulation_level = level
+
     def setRegex(self, regex):
         self.regex = regex
+
     def setDescription(self, description):
         self.description = description
+
     def setColor(self, color):
         self.color = color
+
     def setIndex(self, index):
         self.index = index
+
     def setFormat(self, aFormat):
         self.format = aFormat
+
     def setUnitSize(self, unitSize):
         self.unitSize = unitSize
+
     def setSign(self, sign):
         self.sign = sign
+
     def setEndianess(self, endianess):
         self.endianess = endianess
 

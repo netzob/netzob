@@ -189,16 +189,21 @@ class HijackedFunction():
     #+------------------------------------------------------------------------
     def getName(self):
         return self.name
+
     def getReturnType(self):
         return self.returnType
+
     def getParameters(self):
         return self.parameters
 
     def setName(self, name):
         self.name = name
+
     def setReturnType(self, returnType):
         self.returnType = returnType
+
     def setParameters(self, parameters):
         self.parameters = parameters
+
     def setSource(self, source):
         self.source = source

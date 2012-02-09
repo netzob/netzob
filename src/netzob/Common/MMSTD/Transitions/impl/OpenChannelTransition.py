@@ -141,8 +141,10 @@ class OpenChannelTransition(AbstractTransition):
 
     def getDescription(self):
         return "OpenChannelTransition"
+
     def getConnectionTime(self):
         return self.connectionTime
+
     def getMaxNumberOfAttempt(self):
         return self.maxNumberOfAttempt
 

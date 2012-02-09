@@ -106,9 +106,12 @@ class HexVariable(Variable):
 
     def setReset(self, reset):
         self.reset = reset
+
     def setSize(self, size):
         self.size = size
+
     def setMin(self, min):
         self.min = int(min)
+
     def setMax(self, max):
         self.max = int(max)

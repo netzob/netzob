@@ -188,8 +188,10 @@ class Angluin(LearningAlgorithm):
 
     def add_column(self):
         pass
+
     def move_row(self):
         pass
+
     def isEquivalent(self):
         return True
 

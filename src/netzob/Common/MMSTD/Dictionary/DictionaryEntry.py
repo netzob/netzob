@@ -122,15 +122,19 @@ class DictionaryEntry():
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getName(self):
         return self.name
+
     def isActive(self):
         return self.active
+
     def getValue(self):
         return self.value
 
     def setID(self, id):
         self.id = id
+
     def setName(self, name):
         self.name = name
 

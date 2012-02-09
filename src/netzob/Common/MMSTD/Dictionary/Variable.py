@@ -79,19 +79,25 @@ class Variable():
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getName(self):
         return self.name
+
     def getType(self):
         return self.type
+
     def isMutable(self):
         return self.mutable
 
     def setID(self, id):
         self.id = id
+
     def setName(self, name):
         self.name = name
+
     def setType(self, type):
         self.type = type
+
     def setMutable(self, mutable):
         self.mutable = mutable
 

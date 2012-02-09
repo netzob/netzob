@@ -257,30 +257,41 @@ class AbstractMessage():
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getType(self):
         return self.type
+
     def getData(self):
         return self.data.strip()
+
     def getSymbol(self):
         return self.symbol
+
     def getRightReductionFactor(self):
         return self.rightReductionFactor
+
     def getLeftReductionFactor(self):
         return self.leftReductionFactor
+
     def getTimestamp(self):
         return self.timestamp
 
     def setID(self, id):
         self.id = id
+
     def setType(self, type):
         self.type = type
+
     def setData(self, data):
         self.data = data
+
     def setSymbol(self, symbol):
         self.symbol = symbol
+
     def setRightReductionFactor(self, factor):
         self.rightReductionFactor = factor
         self.leftReductionFactor = 0
+
     def setLeftReductionFactor(self, factor):
         self.leftReductionFactor = factor
         self.rightReductionFactor = 0

@@ -88,14 +88,19 @@ class NetworkMessage(AbstractMessage):
     #+----------------------------------------------
     def getProtocol(self):
         return self.protocol
+
     def getIPSource(self):
         return self.ip_source
+
     def getIPDestination(self):
         return self.ip_destination
+
     def getL4SourcePort(self):
         return self.l4_source_port
+
     def getL4DestinationPort(self):
         return self.l4_destination_port
+
     def getTimestamp(self):
         return self.timestamp
 
@@ -104,10 +109,13 @@ class NetworkMessage(AbstractMessage):
     #+----------------------------------------------
     def setProtocol(self, protocol):
         self.protocol = protocol
+
     def setIPSource(self, ipSource):
         self.ip_source = ipSource
+
     def setIPDestination(self, ipDestination):
         self.ip_destination = ipDestination
+
     def setL4SourcePort(self, l4sourcePort):
         try:
             self.l4_source_port = int(l4sourcePort)

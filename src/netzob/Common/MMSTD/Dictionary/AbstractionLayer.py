@@ -213,6 +213,7 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+
     def getGeneratedInputAndOutputsSymbols(self):
         return self.manipulatedSymbols
+
     def getGeneratedOutputSymbols(self):
         return self.outputSymbols
 
@@ -221,9 +222,12 @@ class AbstractionLayer():
     #+-----------------------------------------------------------------------+
     def getInputMessages(self):
         return self.inputMessages
+
     def getOutputMessages(self):
         return self.outputMessages
+
     def getVocabulary(self):
         return self.vocabulary
+
     def getCommunicationChannel(self):
         return self.communicationChannel

@@ -113,6 +113,7 @@ class AbstractTransition():
     #+-----------------------------------------------------------------------+
     def activate(self):
         self.active = True
+
     #+-----------------------------------------------------------------------+
     #| deactivate
     #|    deactivate the current state
@@ -125,23 +126,31 @@ class AbstractTransition():
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getName(self):
         return self.name
+
     def getOutputState(self):
         return self.outputState
+
     def getInputState(self):
         return self.inputState
+
     def isActive(self):
         return self.active
+
     def getType(self):
         return self.type
 
     def setID(self, id):
         self.id = id
+
     def setName(self, name):
         self.name = name
+
     def setOutputState(self, outputState):
         self.outputState = outputState
+
     def setInputState(self, inputState):
         self.inputState = inputState
 

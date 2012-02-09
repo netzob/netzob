@@ -106,17 +106,24 @@ class SharedLib(object):
 
     def setName(self, name):
         self.name = name
+
     def getName(self):
         return self.name
+
     def getVersion(self):
         return self.version
+
     def setVersion(self, version):
         self.version = version
+
     def getPath(self):
         return self.path
+
     def setPath(self, path):
         self.path = path
+
     def setFunctions(self, functions):
         self.functions = functions
+
     def getFunctions(self):
         return self.functions

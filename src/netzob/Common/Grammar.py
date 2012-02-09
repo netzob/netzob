@@ -178,9 +178,12 @@ class Grammar(object):
     #+----------------------------------------------
     def getType(self):
         return self.type
+
     def getInitialState(self):
         return self.initialState
+
     def getStates(self):
         return self.states
+
     def getTransitions(self):
         return self.transitions

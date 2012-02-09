@@ -150,9 +150,11 @@ class Workspace(object):
 
     def getImportedTraces(self):
         return self.importedTraces
+
     def addImportedTrace(self, importedTrace):
         self.importedTraces.append(importedTrace)
 #        self.saveConfigFile()
+
     def removeImportedTrace(self, importedTrace):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
@@ -331,15 +333,21 @@ class Workspace(object):
 
     def getName(self):
         return self.name
+
     def getCreationDate(self):
         return self.creationDate
+
     def getPath(self):
         return self.path
+
     def getProjectsPath(self):
         return self.projects_path
+
     def getPathOfTraces(self):
         return self.pathOfTraces
+
     def getPathOfLogging(self):
         return self.pathOfLogging
+
     def getPathOfPrototypes(self):
         return self.pathOfPrototypes

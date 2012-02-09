@@ -114,9 +114,11 @@ class TypeConvertor():
     @staticmethod
     def bin2int(bin):
         return int(bin.to01(), 2)
+
     @staticmethod
     def string2int(aStr):
         return int(aStr)
+
     @staticmethod
     def int2string(int):
         return str(int)
@@ -357,6 +359,7 @@ class TypeConvertor():
     def hexdump(buf, start=0):
         length = len(buf)
         res = StringIO.StringIO()
+
         def GetPrintableChar(str):
             if str.isalnum():
                 return str

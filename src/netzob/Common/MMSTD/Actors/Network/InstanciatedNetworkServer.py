@@ -112,6 +112,7 @@ class InstanciatedNetworkServer(AbstractActor):
 
     def getInputMessages(self):
         return self.inputMessages
+
     def getOutputMessages(self):
         return self.outputMessages
 

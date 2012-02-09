@@ -85,10 +85,13 @@ class IPCMessage(AbstractMessage):
     #+----------------------------------------------
     def getCategory(self):
         return self.category
+
     def getKey(self):
         return self.key
+
     def getType(self):
         return self.type
+
     def getDirection(self):
         return self.direction
 
@@ -97,9 +100,12 @@ class IPCMessage(AbstractMessage):
     #+----------------------------------------------
     def setCategory(self, category):
         self.category = category
+
     def setKey(self, key):
         self.key = key
+
     def setType(self, type):
         self.type = type
+
     def setDirection(self, direction):
         self.direction = direction

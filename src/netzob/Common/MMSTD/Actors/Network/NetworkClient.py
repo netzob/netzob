@@ -124,8 +124,10 @@ class NetworkClient(AbstractActor):
 
     def getInputMessages(self):
         return self.inputMessages
+
     def getOutputMessages(self):
         return self.outputMessages
+
     def getGeneratedInstances(self):
         return []
 

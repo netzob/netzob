@@ -150,8 +150,10 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
+
     def getScrollLib(self):
         return self.scroll
+
     def getSymbol(self):
         return self.symbol
 
@@ -160,7 +162,9 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def setTreeview(self, treeview):
         self.treeview = treeview
+
     def setScrollLib(self, scroll):
         self.scroll = scroll
+
     def setSymbol(self, symbol):
         self.symbol = symbol

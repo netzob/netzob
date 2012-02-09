@@ -132,10 +132,13 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
+
     def getScrollLib(self):
         return self.scroll
+
     def getSymbol(self):
         return self.symbol
+
     def getMessage(self):
         return self.message
 
@@ -144,11 +147,15 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def setTreeview(self, treeview):
         self.treeview = treeview
+
     def setScrollLib(self, scroll):
         self.scroll = scroll
+
     def setSymbol(self, symbol):
         self.symbol = symbol
+
     def setMessage(self, message):
         self.message = message
+
     def setMessageByID(self, message_id):
         self.message = self.symbol.getMessageByID(message_id)

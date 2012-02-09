@@ -90,8 +90,10 @@ class TreeProcessesGenerator():
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
+
     def getScrollLib(self):
         return self.scroll
+
     def getProcesses(self):
         return self.processes
 

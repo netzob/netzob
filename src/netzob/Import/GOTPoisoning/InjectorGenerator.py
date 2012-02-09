@@ -984,11 +984,15 @@ int main(int argc, char **argv)
 
     def getLibName(self):
         return self.libName
+
     def getLibPath(self):
         return self.libPath
+
     def getShellCode(self):
         return "\\x" + "\\x".join(self.shellcode)
+
     def getParasiteSignature(self):
         return "\\x" + "\\x".join(self.parasite.getParasitesSignature()[0])
+
     def getFolder(self):
         return self.tmp_folder

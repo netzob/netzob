@@ -1330,21 +1330,29 @@ class Symbol(object):
     #+----------------------------------------------
     def getID(self):
         return self.id
+
     def getMessages(self):
         return self.messages
+
     def getScore(self):
         return self.score
+
     def getName(self):
         return self.name
+
     def getFields(self):
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
         return self.fields
+
     def getAlignment(self):
         return self.alignment.strip()
+
     def getAlignmentType(self):
         return self.alignmentType
+
     def getRawDelimiter(self):
         return self.rawDelimiter
+
     def getProject(self):
         return self.project
 
@@ -1353,14 +1361,19 @@ class Symbol(object):
     #+----------------------------------------------
     def setFields(self, fields):
         self.fields = fields
+
     def setAlignment(self, alignment):
         self.alignment = alignment
+
     def setScore(self, score):
         self.score = score
+
     def setName(self, name):
         self.name = name
+
     def setAlignmentType(self, aType):
         self.alignmentType = aType
+
     def setRawDelimiter(self, rawDelimiter):
         self.rawDelimiter = rawDelimiter
 

@@ -79,13 +79,18 @@ class Process(object):
 
     def setPid(self, pid):
         self.pid = int(pid)
+
     def setName(self, name):
         self.name = name
+
     def setUser(self, user):
         self.user = user
+
     def getPid(self):
         return self.pid
+
     def getName(self):
         return self.name
+
     def getUser(self):
         return self.user

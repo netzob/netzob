@@ -65,13 +65,16 @@ class DictionarySymbol(AbstractSymbol):
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.entry.getID()
+
     def getEntry(self):
         return self.entry
+
     def getName(self):
         return self.entry.getName()
 
     def setID(self, id):
         self.id = id
+
     def setEntry(self, entry):
         self.entry = entry
 

@@ -57,8 +57,10 @@ class EnvironmentalDependency(object):
     #+-----------------------------------------------------------------------+
     def getName(self):
         return self.name
+
     def getType(self):
         return self.type
+
     def getValue(self):
         return self.value
 
@@ -67,7 +69,9 @@ class EnvironmentalDependency(object):
     #+-----------------------------------------------------------------------+
     def setName(self, name):
         self.name = name
+
     def setType(self, type):
         self.type = type
+
     def setValue(self, value):
         self.value = value
