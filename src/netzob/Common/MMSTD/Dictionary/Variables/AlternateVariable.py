@@ -56,24 +56,52 @@ class AlternateVariable(Variable):
     def addChild(self, variable):
         self.vars.append(variable)
 
+    #+-----------------------------------------------------------------------+
+    #| getValue :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     else its NONE
+    #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
-        raise NotImplementedError("The current variable doesn't support 'getValue'.")    
-    # Returns (b, s)
-    # b = bitarray
-    # s = strvalue
-    def send(self, negative, vocabulary, memory):
-        self.log.info("send")
+        self.log.info("getValue")
+        validVars = []
+        for var in self.vars :
+            if var.getvalue() != None :
+                validVars.append(var)
+        self.log.debug("Valid vars = " + str(validVars))
+        idRandom = random.randint(0, len(validVars) - 1)
+        picked = validVars[idRandom]
+        self.log.debug("Get value will return : " + str(picked))
+        return picked.getValue(negative, vocabulary, memory)
+    #+-----------------------------------------------------------------------+
+    #| getValueToSend :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     or it generates one and save its value in memory
+    #+-----------------------------------------------------------------------+
+    def getValueToSend(self, negative, vocabulary, memory):
+        self.log.info("getValueToSend")
         idRandom = random.randint(0, len(self.vars) - 1)
         picked = self.vars[idRandom]
-        return picked.send(negative, vocabulary, memory)
-    
+        return picked.getValueToSend(negative, vocabulary, memory)
+    #+-----------------------------------------------------------------------+
+    #| getDescription :
+    #|     Returns the full description of the variable
+    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
         values = []
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
         return "AlternateVariable [" + " OR ".join(values) + "]"
-
+    #+-----------------------------------------------------------------------+
+    #| compare :
+    #|     Returns the number of letters which match the variable
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         saved = indice
         for var in self.vars:
@@ -83,8 +111,11 @@ class AlternateVariable(Variable):
                 self.log.info("Compare successful")
                 return result
         return -1
-
-    def save(self, root, namespace):
+    #+-----------------------------------------------------------------------+
+    #| toXML
+    #|     Returns the XML description of the variable 
+    #+-----------------------------------------------------------------------+
+    def toXML(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
@@ -93,7 +124,7 @@ class AlternateVariable(Variable):
 
         # Definition of the variables
         for var in self.vars:
-            var.save(xmlVariable, namespace)
+            var.toXML(xmlVariable, namespace)
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
