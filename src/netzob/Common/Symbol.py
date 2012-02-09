@@ -1089,7 +1089,6 @@ class Symbol(object):
         root = etree.Element("{" + NAMESPACE + "}netzob")
         root.set("project", str(self.getProject().getName()))
 
-        self.save(root, NAMESPACE)
         tree = ElementTree(root)
         result = etree.tostring(tree, pretty_print=True)
         return result

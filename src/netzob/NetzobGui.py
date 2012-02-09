@@ -65,6 +65,7 @@ class NetzobGui(gtk.Window):
     #+----------------------------------------------
     def __init__(self):
 
+        self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")
@@ -134,7 +135,7 @@ class NetzobGui(gtk.Window):
         self.pageList.append(["Simulator", self.simulator])
 
         for page in self.pageList:
-                self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
+            self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
 
         # Initialize a clipboard object
         self.clipboard = (gtk.Clipboard(gtk.gdk.display_get_default(),
@@ -187,12 +188,12 @@ class NetzobGui(gtk.Window):
 
     def startGui(self):
         # UI thread launching
-        self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
+        #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         self.uiThread.start()
 
     def evnmtDelete(self, widget, event, data=None):
         return False
-
+    
     def destroy(self, widget, data=None):
         # Before exiting, we compute if its necessary to save
         # it means we simulate a save and compare the XML with the current one
