@@ -600,6 +600,19 @@
 		</complexContent>
 	</complexType>
 	
+	<complexType name="IPv4Variable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="originalValue" type="string" minOccurs="0"></element>
+					<element name="startValue" type="string" minOccurs="1"></element>
+					<element name="endValue" type="string" maxOccurs="1"></element>
+					<element name="format" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
 	<complexType name="ReferencedVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">

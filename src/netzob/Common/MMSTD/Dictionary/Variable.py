@@ -46,23 +46,23 @@ import logging
 #+---------------------------------------------------------------------------+
 class Variable():
 
-    def __init__(self, type, id, name, mutable):
+    
+    def __init__(self, type, id, name):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
         self.id = id
         self.name = name
         self.type = type
-        self.mutable = mutable
-
-    def getValue(self, negative, vocabulary):
+ 
+    def getValue(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getValue")
         raise NotImplementedError("The current variable doesn't support 'getValue'.")
-
-    def send(self, negative, memory):
+    
+    def send(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function send")
         raise NotImplementedError("The current variable doesn't support 'send'.")
-
-    def getDescription(self):
+    
+    def getDescription(self, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
 
@@ -70,7 +70,7 @@ class Variable():
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function save")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function save")
 
-    def compare(self, value, indice, negative, memory):
+    def compare(self, value, indice, negative, vocabulary, memory):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
 
@@ -84,10 +84,8 @@ class Variable():
         return self.name
 
     def getType(self):
-        return self.type
-
-    def isMutable(self):
-        return self.mutable
+        return self.type    
+        
 
     def setID(self, id):
         self.id = id
@@ -97,13 +95,15 @@ class Variable():
 
     def setType(self, type):
         self.type = type
-
-    def setMutable(self, mutable):
-        self.mutable = mutable
-
+    
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1":
+        if version == "0.1" :            
+            # IPv4 Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:IPv4Variable" :
+                from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
+                return IPv4Variable.loadFromXML(xmlRoot, namespace, version)
+
             # Word Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable

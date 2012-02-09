@@ -118,7 +118,7 @@ class FileImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Separator
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_separator = gtk.Label("HEX line-separator (ex: 0A22) :")
+        label_separator = gtk.Label("HEX line-separator (ex: 0a) :")
         label_separator.show()
         entry_separator = gtk.Entry()
 #        entry_separator.set_width_chars(50)

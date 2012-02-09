@@ -310,7 +310,7 @@ class Symbol(object):
         nbElements = 1
         iField = -1
         for it in range(1, len(resultMask)):
-            if resultMask[it] == "1":  # The current column is dynamic
+            if resultMask[it] == "1": # The current column is dynamic
                 if isLastDyn:
                     nbElements += 1
                 else:

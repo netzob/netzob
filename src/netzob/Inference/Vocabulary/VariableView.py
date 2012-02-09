@@ -36,6 +36,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import Aggregate
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
+from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
 pygtk.require('2.0')
 
 #+----------------------------------------------
@@ -152,7 +153,13 @@ class VariableView(object):
         itemWord.show()
         itemWord.connect("activate", self.addWord, rootVariable, aIter)
         subElementMenu.append(itemWord)
-
+       
+        # IPv4 Variable
+        itemIPv4 = gtk.MenuItem("IPv4")
+        itemIPv4.show()
+        itemIPv4.connect("activate", self.addIPv4, rootVariable, aIter)
+        subElementMenu.append(itemIPv4)
+        
         # Binary Variable
         itemBinary = gtk.MenuItem("Binary")
         itemBinary.show()
@@ -357,6 +364,118 @@ class VariableView(object):
 
         # We close the current dialog
         dialog.destroy()
+       
+        
+    def addIPv4(self, event, rootVariable, rootEntry):
+        # Display the form for the creation of an IPv4 variable
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the IPv4 Variable')
+        
+        # Create the ID of the new variable
+        variableID = str(uuid.uuid4())
+        
+        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        # parent id of the variable
+        variablePIDLabel = gtk.Label("Parent ID :")
+        variablePIDLabel.show()
+        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel.set_sensitive(False)
+        variablePIDValueLabel.show()
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Original Value
+        originalValueLabel = gtk.Label("Original value : ")
+        originalValueLabel.show()
+        originalValueEntry = gtk.Entry()
+        originalValueEntry.show()
+        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Constraints label
+        constraintsLabel = gtk.Label("Constraints when parsing / generating")
+        constraintsLabel.show()
+        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # start Value
+        startValueLabel = gtk.Label("Start : ")
+        startValueLabel.show()
+        startValueEntry = gtk.Entry()
+        startValueEntry.show()
+        mainTable.attach(startValueLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(startValueEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # end Value
+        endValueLabel = gtk.Label("End : ")
+        endValueLabel.show()
+        endValueEntry = gtk.Entry()
+        endValueEntry.show()
+        mainTable.attach(endValueLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(endValueEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Format label
+        hdrFormatLabel = gtk.Label("Representation")
+        hdrFormatLabel.show()
+        mainTable.attach(hdrFormatLabel, 0, 2, 7, 8, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Format Value
+        formatValueLabel = gtk.Label("Format : ")
+        formatValueLabel.show()
+        formatValueCombo = gtk.combo_box_entry_new_text()
+        formatValueCombo.show()
+        formatValueComboStore = gtk.ListStore(str) # format name
+        formatValueCombo.set_model(formatValueComboStore)
+        # We retrieve all the existing variables in the project
+        formatValueCombo.get_model().append(["Hex"])
+        formatValueCombo.get_model().append(["Ascii"])
+        mainTable.attach(formatValueLabel, 0, 1, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(formatValueCombo, 1, 2, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+       
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        
+        if result != gtk.RESPONSE_OK :
+            dialog.destroy()
+            return 
+        
+        # Creation of the variable (ipv4)
+        
+        # original value :
+        originalValue = originalValueEntry.get_text()
+        if len(originalValue) == 0 :
+            originalValue = None
+        
+        # constraints  
+        startValue = startValueEntry.get_text()
+        if len(startValue) == 0 :
+            startValue = None
+        endValue = endValueEntry.get_text()
+        if len(endValue) == 0 :
+            endValue = None
+        
+        # format
+        format = formatValueCombo.get_model().get_value(formatValueCombo.get_active_iter(), 0)
+        
+        ipVariable = IPv4Variable(id, "ipv4", False, originalValue, startValue, endValue, format)
+        rootVariable.addChild(ipVariable)
+        
+        self.datas[str(ipVariable.getID())] = ipVariable
+        
+        self.treestore.append(rootEntry, [str(ipVariable.getID()), ipVariable.getDescription()])
+        
+        # We close the current dialog
+        dialog.destroy()
+        
 
     def addReferencedVariable(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
