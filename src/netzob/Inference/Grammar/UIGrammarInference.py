@@ -633,7 +633,6 @@ class UIGrammarInference:
         # We retrieve the xdot from the grammar (if it exists)
         if self.getGrammar() == None:
             return
-        print self.getGrammar().getDotCode()
         self.xdotWidget.drawAutomata(self.getGrammar())
 
     def updateInterface(self):
