@@ -144,8 +144,8 @@ class SemiStochasticTransition(AbstractTransition):
 
             if receivedSymbol == None:
                 finish = True
-
-            self.log.info("The MASTER received " + str(receivedSymbol.getName()))
+            else :
+                self.log.info("The MASTER received " + str(receivedSymbol.getName()))
             if (not (isinstance(receivedSymbol, EmptySymbol))):
                 self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
                 if (len(self.outputSymbols) == 0):

@@ -37,6 +37,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
 from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
+from netzob.Common.Type.Format import Format
 pygtk.require('2.0')
 
 #+----------------------------------------------
@@ -435,8 +436,8 @@ class VariableView(object):
         formatValueComboStore = gtk.ListStore(str) # format name
         formatValueCombo.set_model(formatValueComboStore)
         # We retrieve all the existing variables in the project
-        formatValueCombo.get_model().append(["Hex"])
-        formatValueCombo.get_model().append(["Ascii"])
+        formatValueCombo.get_model().append([Format.HEX])
+        formatValueCombo.get_model().append([Format.ASCII])
         mainTable.attach(formatValueLabel, 0, 1, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(formatValueCombo, 1, 2, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
        
@@ -465,13 +466,12 @@ class VariableView(object):
         
         # format
         format = formatValueCombo.get_model().get_value(formatValueCombo.get_active_iter(), 0)
-        
-        ipVariable = IPv4Variable(id, "ipv4", False, originalValue, startValue, endValue, format)
+        ipVariable = IPv4Variable(id, "ipv4", originalValue, startValue, endValue, format)
         rootVariable.addChild(ipVariable)
         
         self.datas[str(ipVariable.getID())] = ipVariable
         
-        self.treestore.append(rootEntry, [str(ipVariable.getID()), ipVariable.getDescription()])
+        self.treestore.append(rootEntry, [str(ipVariable.getID()), ipVariable.getUncontextualizedDescription()])
         
         # We close the current dialog
         dialog.destroy()

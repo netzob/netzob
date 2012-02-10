@@ -62,14 +62,25 @@ class BinaryVariable(Variable):
         
         # Set the current value
         self.computeCurrentValue(self.originalValue)
-    
-    def computeCurrentValue(self, strValue):
-        if strValue != None :
-            strCurrentValue = str(strValue)
-            binCurrentValue = TypeConvertor.strBitarray2Bitarray(strValue)
+    #+-----------------------------------------------------------------------+
+    #| computeCurrentValue :
+    #|     Transform and save the provided bitarray as current value
+    #+-----------------------------------------------------------------------+
+    def computeCurrentValue(self, binValue):
+        if binValue != None :
+            strCurrentValue = TypeConvertor.bitarray2StrBitarray(binValue)
+            binCurrentValue = binValue
             self.currentValue = (binCurrentValue, strCurrentValue)
         else :
             self.currentValue = None
+            
+    #+-----------------------------------------------------------------------+
+    #| generateValue :
+    #|     Generate a valid value for the variable
+    #+-----------------------------------------------------------------------+        
+    def generateValue(self):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function generateValue")
+        raise NotImplementedError("The current variable doesn't support 'generateValue'.")
     
     #+-----------------------------------------------------------------------+
     #| getValue :

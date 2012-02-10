@@ -45,6 +45,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| IPv4Variable :
@@ -52,6 +53,10 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class IPv4Variable(Variable):
     
+    # OriginalValue : must be a "real" ip address declared in ASCII like : "192.168.0.10"
+    # startValue :  must be a "real" ip address declared in ASCII like : "192.168.0.10"
+    # endValue :  must be a "real" ip address declared in ASCII like : "192.168.0.11"
+    # format : must be a string value of a format (hex or ascii)
     def __init__(self, id, name, originalValue, startValue, endValue, format):
         Variable.__init__(self, "IPv4Variable", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.IP4Variable.py')
@@ -62,88 +67,186 @@ class IPv4Variable(Variable):
         self.endValue = endValue
         self.originalValue = originalValue
         
+        # Set the current value
+        self.computeCurrentValue(self.originalValue)
+    
+    #+-----------------------------------------------------------------------+
+    #| computeCurrentValue :
+    #|     Transform and save the provided "192.168.0.10" as current value
+    #+-----------------------------------------------------------------------+
+    def computeCurrentValue(self, strValue):
+        if strValue != None :            
+            if self.format == Format.ASCII :
+                strCurrentValue = str(strValue)
+                binCurrentValue = TypeConvertor.string2bin(strValue, 'big')
+            elif self.format == Format.HEX :
+                hexVal = TypeConvertor.ipToNetzobRaw(strValue)
+                if hexVal != None :
+                    strCurrentValue = str(strValue)
+                    binCurrentValue = TypeConvertor.netzobRawToBitArray(hexVal)
+                else :
+                    strCurrentValue = str("None:Error")
+                    binCurrentValue = None
+            self.currentValue = (binCurrentValue, strCurrentValue)
+        else :
+            self.currentValue = None    
+            
+            
+            
+    #+-----------------------------------------------------------------------+
+    #| generateValue :
+    #|     Generate a valid value for the variable
+    #+-----------------------------------------------------------------------+        
+    def generateValue(self):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function generateValue")
+        raise NotImplementedError("The current variable doesn't support 'generateValue'.")
+            
+    
+    #+-----------------------------------------------------------------------+
+    #| getValue :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     else its NONE
+    #+-----------------------------------------------------------------------+
+    def getValue(self, negative, vocabulary, memory):
+        if self.getCurrentValue() != None :
+            return self.getCurrentValue()
         
+        if memory.hasMemorized(self) :
+            return memory.recall(self)
         
+        return None     
+            
+            
+    #+-----------------------------------------------------------------------+
+    #| getValueToSend :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     or it generates one and save its value in memory
+    #+-----------------------------------------------------------------------+
+    def getValueToSend(self, negative, vocabulary, memory):
+        if self.getCurrentValue() != None :
+            return self.getCurrentValue()
         
-    def compare(self, value, indice, negative, memory):
-        self.log.debug("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
+        if memory.hasMemorized(self) :
+            return memory.recall(self)
+        
+        # We generate a new value
+        self.computeCurrentValue(self.generateValue())
+        
+        # We save in memory the current value
+        memory.memorize(self, self.getCurrentValue())
+        
+        # We return the newly generated and memorized value
+        return self.getCurrentValue()
+            
+            
+            
+    #+-----------------------------------------------------------------------+
+    #| getUncontextualizedDescription :
+    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
+    #+-----------------------------------------------------------------------+   
+    def getUncontextualizedDescription(self):
+        return "IPv4Variable [originalValue = " + str(self.getOriginalValue()) + "]"
+    
+    #+-----------------------------------------------------------------------+
+    #| getDescription :
+    #|     Returns the full description of the variable
+    #+-----------------------------------------------------------------------+
+    def getDescription(self, negative, vocabulary, memory):
+        return "IPv4Variable [getValue = " + str(self.getValue(negative, vocabulary, memory)) + "]"
+            
+    
+    #+-----------------------------------------------------------------------+
+    #| compare :
+    #|     Returns the number of letters which match the variable
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def compare(self, value, indice, negative, vocabulary, memory):
+        
+        (binVal, strVal) = self.getValue(negative, vocabulary, memory)
+        
+        self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
         tmp = value[indice:]
-        if len(tmp) >= len(self.binVal) :
-            if tmp[:len(self.binVal)] == self.binVal :
-                self.log.debug("Compare successful")
-                return indice + len(self.binVal)              
-            else :
-                self.log.info("error in the comparison : " + str(tmp[:len(self.binVal)]) + " != " + str(self.binVal))
-                return -1                  
-        else :
-            self.log.debug("Compare fail")
+               
+        if len(tmp) >= len(binVal):
+            if tmp[:len(binVal)] == binVal:
+                self.log.info("Compare successful")
+                return indice + len(binVal)
+            else:
+                self.log.info("error in the comparison")
+                return -1
+        else:
+            self.log.info("Compare fail")
             return -1
+        
+    def getCurrentValue(self) :
+        return self.currentValue
     
-    def send(self, negative, memory):
-        return (self.binVal, self.strVal)
-            
-    def getValue(self, negative, dictionary):
-        return (self.binVal, self.strVal)
+    def getOriginalValue(self):
+        return self.originalValue
     
-    def getDescription(self):
-        if self.isMutable() :
-            mut = "[M]"
-        else :
-            mut = "[!M]"
-            
-        if self.originalValue != None :
-            return "IPV4Variable " + mut + " (" + self.getOriginalValue() + ")"
-        else :
-            return "IPV4Variable " + mut + " (no value : " + +")"
+    def getStartValue(self):
+        return self.startValue
     
-    def save(self, root, namespace):
+    def getEndValue(self):
+        return self.endValue
+    
+    def getFormat(self):
+        return self.format    
+ 
+    def toXML(self, root, namespace):
         xmlIPv4Variable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlIPv4Variable.set("id", str(self.getID()))
         xmlIPv4Variable.set("name", str(self.getName()))
-        xmlIPv4Variable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         
         xmlIPv4Variable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:IPv4Variable")
         
-        # Definition of the content of this variable in XML
-        xmlIPv4VariableOriginalValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}originalValue")
-        # optional original value
+        # Original Value
         if self.getOriginalValue() != None :
-            xmlIPv4VariableOriginalValue.text = self.getOriginalValue()
+            xmlIPVariableOriginalValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}originalValue")
+            xmlIPVariableOriginalValue.text = TypeConvertor.bitarray2StrBitarray(self.getOriginalValue())
         
-        # mandatory starting value
-        xmlIPv4VariableStartValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}startValue")
-        xmlIPv4VariableStartValue.text = self.getStartValue()
+        # Starting Value
+        xmlIPVariableStartValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}startValue")
+        xmlIPVariableStartValue.text = TypeConvertor.bitarray2StrBitarray(self.getStartValue())
         
-        # mandatory ending value
-        xmlIPv4VariableEndValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}endValue")
-        xmlIPv4VariableEndValue.text = self.getEndValue()
+        # Ending Value
+        xmlIPVariableEndValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}endValue")
+        xmlIPVariableEndValue.text = TypeConvertor.bitarray2StrBitarray(self.getEndValue())
         
-        # mandatory formating value
-        xmlIPv4VariableEndValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}endValue")
-        xmlIPv4VariableEndValue.text = self.getEndValue()
+        # Format 
+        xmlIPVariableFormatValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}format")
+        xmlIPVariableFormatValue.text = str(self.getFormat())
         
         return xmlIPv4Variable
-     
-    def getOriginalValue(self):
-        return self.originalValue
-    def getStartValue(self):
-        return self.startValue
-    def getEndValue(self):
-        return self.endValue
-    def getFormat(self):
-        return self.format
-                       
-     
-       
+ 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1" :
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
             
-            varValue = xmlRoot.find("{" + namespace + "}value").text
-            return IPv4Variable(varId, varName, varIsMutable, varValue)
+            xmlIPVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
+            if xmlIPVariableOriginalValue != None :
+                originalValue = TypeConvertor.strBitarray2Bitarray(xmlIPVariableOriginalValue.text)
+            else :
+                originalValue = None
+            
+            xmlIPVariableStartValue = xmlRoot.find("{" + namespace + "}startValue")
+            startValue = TypeConvertor.strBitarray2Bitarray(xmlIPVariableStartValue.text)
+            
+            xmlIPVariableEndValue = xmlRoot.find("{" + namespace + "}endValue")
+            endValue = TypeConvertor.strBitarray2Bitarray(xmlIPVariableEndValue.text)
+            
+            xmlIPVariablePaddingValue = xmlRoot.find("{" + namespace + "}format")
+            format = str(xmlIPVariablePaddingValue.text)
+            
+            return IPv4Variable(varId, varName, originalValue, startValue, endValue, format)
             
         return None    
     
