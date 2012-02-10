@@ -1073,7 +1073,6 @@ class Symbol(AbstractSymbol):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-
         # Register the namespace (2 way depending of the version)
         try:
             etree.register_namespace('netzob', PROJECT_NAMESPACE)
