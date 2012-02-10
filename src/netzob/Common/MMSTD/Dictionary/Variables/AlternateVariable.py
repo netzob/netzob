@@ -114,7 +114,7 @@ class AlternateVariable(Variable):
     def compare(self, value, indice, negative, vocabulary, memory):
         saved = indice
         for var in self.vars:
-            self.log.info("Indice = " + str(saved) + " : " + var.getDescription())
+            self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.compare(value, saved, negative, vocabulary, memory)
             if result != -1 and result != None:
                 self.log.info("Compare successful")
