@@ -46,6 +46,7 @@ from lxml import etree
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.Format import Format
+import re
 
 #+---------------------------------------------------------------------------+
 #| IPv4Variable :
@@ -97,8 +98,19 @@ class IPv4Variable(Variable):
     #|     Generate a valid value for the variable
     #+-----------------------------------------------------------------------+        
     def generateValue(self):
-        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function generateValue")
-        raise NotImplementedError("The current variable doesn't support 'generateValue'.")
+        if self.format == Format.ASCII :
+            
+            ip1 = random.randint(0, 255)
+            ip2 = random.randint(0, 255)
+            ip3 = random.randint(0, 255)
+            ip4 = random.randint(0, 255)
+            
+            generatedIP = str(ip1) + "." + str(ip2) + "." + str(ip3) + "." + str(ip4)
+            return generatedIP
+            
+        else :
+            self.log.error("Error, the current variable (IPv4Variable) doesn't support function generateValue when its an HEX")
+            raise NotImplementedError("The current variable doesn't support 'generateValue' when its an HEX.")
             
     
     #+-----------------------------------------------------------------------+
@@ -165,23 +177,56 @@ class IPv4Variable(Variable):
     #|     -1     : doesn't match
     #|     >=0    : it matchs and the following number of bits were eaten 
     #+-----------------------------------------------------------------------+
-    def compare(self, value, indice, negative, vocabulary, memory):
-        
-        (binVal, strVal) = self.getValue(negative, vocabulary, memory)
-        
-        self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
-        tmp = value[indice:]
-               
-        if len(tmp) >= len(binVal):
-            if tmp[:len(binVal)] == binVal:
-                self.log.info("Compare successful")
-                return indice + len(binVal)
+    def compare(self, value, indice, negative, vocabulary, memory):        
+        localValue = self.getValue(negative, vocabulary, memory)        
+        # In case we can't compare with a known value, we compare only the possibility to learn it afterward
+        if localValue == None :
+            return self.compareFormat(value, indice, negative, vocabulary, memory)
+        else :
+            (binVal, strVal) = localValue
+            self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")            
+            tmp = value[indice:]
+            if len(tmp) >= len(binVal):
+                if tmp[:len(binVal)] == binVal:
+                    self.log.info("Compare successful")
+                    return indice + len(binVal)
+                else:
+                    self.log.info("error in the comparison")
+                    return -1
             else:
-                self.log.info("error in the comparison")
+                self.log.info("Compare fail")
                 return -1
-        else:
-            self.log.info("Compare fail")
-            return -1
+            
+    def compareFormat(self, value, indice, negative, vocabulary, memory):
+        if self.format == Format.ASCII :            
+            currentContent = TypeConvertor.bin2string(value[indice:])
+            IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")            
+            hasMatched = False
+            for t in range(min(len(currentContent), 15), 7, -1) :
+                currentPossibleIP = currentContent[:t]                
+                result = IPRegex.match(currentPossibleIP)
+                if result != None :
+                    hasMatched = True
+                elif hasMatched :
+                    break
+            
+            if hasMatched :
+                result = currentContent[:t + 2]
+                self.log.debug("Compare on format was successfull : " + str(result))
+                return len(TypeConvertor.string2bin(result, 'big'))
+            else :
+                self.log.debug("Compare on format was not successfull")
+                return -1
+        else :
+            raise NotImplementedError("Error, the current variable (IPv4Variable) doesn't support function compareFormat in this case")
+            
+             
+            
+            
+        
+        
+        
+        
         
     def getCurrentValue(self) :
         return self.currentValue
