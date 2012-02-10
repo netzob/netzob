@@ -8,3 +8,6 @@ Contributors
 ------------
 
   * Olivier Tétard (Debian package maintainer)
+  * Goulven Guiheux (Windows package developer and maintainer)
+  * Maxime Olivier (Quality enforcer)
+  * Alexandre Pigné (Gentoo package maintainer)
