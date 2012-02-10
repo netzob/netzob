@@ -148,7 +148,7 @@ class Field(object):
         xmlFieldColor.text = str(self.getColor())
 
         if self.getVariable() != None:
-            self.getVariable().save(xmlField, namespace)
+            self.getVariable().toXML(xmlField, namespace)
 
     #+----------------------------------------------
     #| GETTERS
