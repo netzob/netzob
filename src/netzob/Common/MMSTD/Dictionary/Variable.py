@@ -82,6 +82,13 @@ class Variable():
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
     #+-----------------------------------------------------------------------+
+    #| getUncontextualizedDescription :
+    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
+    #+-----------------------------------------------------------------------+
+    def getUncontextualizedDescription(self, negative):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
+        raise NotImplementedError("The current variable doesn't support 'getDescription'.")
+    #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
     #|     it can return the followings :

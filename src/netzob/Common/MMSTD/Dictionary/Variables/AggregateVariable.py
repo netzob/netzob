@@ -91,6 +91,15 @@ class AggregateVariable(Variable):
             strResult = strResult + s
         return (binResult, strResult)
     #+-----------------------------------------------------------------------+
+    #| getUncontextualizedDescription :
+    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
+    #+-----------------------------------------------------------------------+   
+    def getUncontextualizedDescription(self):
+        values = []
+        for var in self.vars:
+            values.append(var.getUncontextualizedDescription())
+        return "AggregateVariable [" + " AND ".join(values) + "]"
+    #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+

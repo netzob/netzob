@@ -87,6 +87,15 @@ class AlternateVariable(Variable):
         picked = self.vars[idRandom]
         return picked.getValueToSend(negative, vocabulary, memory)
     #+-----------------------------------------------------------------------+
+    #| getUncontextualizedDescription :
+    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
+    #+-----------------------------------------------------------------------+   
+    def getUncontextualizedDescription(self):
+        values = []
+        for var in self.vars:
+            values.append(var.getUncontextualizedDescription())
+        return "AlternateVariable [" + " OR ".join(values) + "]"
+    #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+

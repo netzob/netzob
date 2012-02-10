@@ -109,14 +109,20 @@ class BinaryVariable(Variable):
         
         # We return the newly generated and memorized value
         return self.getCurrentValue()
-        
-        
+    
+    #+-----------------------------------------------------------------------+
+    #| getUncontextualizedDescription :
+    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
+    #+-----------------------------------------------------------------------+   
+    def getUncontextualizedDescription(self):
+        return "BinaryVariable [originalValue = " + str(self.getOriginalValue()) + "]"
+    
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
-        return "BinaryVariable [getValue = " + str(self.getValue()) + "]"
+        return "BinaryVariable [getValue = " + str(self.getValue(negative, vocabulary, memory)) + "]"
     
     #+-----------------------------------------------------------------------+
     #| compare :
