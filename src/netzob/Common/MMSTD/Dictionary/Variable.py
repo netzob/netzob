@@ -99,6 +99,23 @@ class Variable():
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
         raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function compare")
     #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function learn")
+        raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function learn")
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function restore")
+        raise NotImplementedError("Error, the current variable (declared as " + self.type + ") doesn't support function restore")
+    #+-----------------------------------------------------------------------+
     #| toXML
     #|     Returns the XML description of the variable 
     #+-----------------------------------------------------------------------+
