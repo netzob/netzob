@@ -51,12 +51,13 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.Type.Format import Format
+from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 #+----------------------------------------------
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
+
 
 
 NAMESPACE = "http://www.netzob.org/"
@@ -70,12 +71,13 @@ COMMON_NAMESPACE = "http://www.netzob.org/common"
 #| Symbol:
 #|     Class definition of a symbol
 #+---------------------------------------------------------------------------+
-class Symbol(object):
+class Symbol(AbstractSymbol):
 
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
     def __init__(self, id, name, project):
+        AbstractSymbol.__init__(self, "Symbol")
         self.id = id
         self.name = name
         self.alignment = ""
