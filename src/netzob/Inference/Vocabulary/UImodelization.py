@@ -1405,14 +1405,6 @@ class UImodelization:
         mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        # is a mutable variable
-        isMutableVariableLabel = NetzobLabel("Mutable : ")
-        isMutableVariableButton = gtk.CheckButton("")
-        isMutableVariableButton.show()
-
-        mainTable.attach(isMutableVariableLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(isMutableVariableButton, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
@@ -1423,13 +1415,12 @@ class UImodelization:
 
         # We retrieve the value of the variable
         varName = variableNameEntry.get_text()
-        varMutable = isMutableVariableButton.get_active()
 
         # We close the current dialog
         dialog.destroy()
 
         # Dedicated view for the creation of a variable
-        creationPanel = VariableView(self.netzob, field, variableID, varName, varMutable)
+        creationPanel = VariableView(self.netzob, field, variableID, varName)
         creationPanel.display()
 
     def rightClickRemoveVariable(self, widget, field):
