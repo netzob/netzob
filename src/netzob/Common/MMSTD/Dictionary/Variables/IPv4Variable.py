@@ -92,7 +92,6 @@ class IPv4Variable(Variable):
             self.currentValue = None    
             
             
-            
     #+-----------------------------------------------------------------------+
     #| generateValue :
     #|     Generate a valid value for the variable
@@ -209,15 +208,15 @@ class IPv4Variable(Variable):
         # Original Value
         if self.getOriginalValue() != None :
             xmlIPVariableOriginalValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}originalValue")
-            xmlIPVariableOriginalValue.text = TypeConvertor.bitarray2StrBitarray(self.getOriginalValue())
+            xmlIPVariableOriginalValue.text = str(self.getOriginalValue())
         
         # Starting Value
         xmlIPVariableStartValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}startValue")
-        xmlIPVariableStartValue.text = TypeConvertor.bitarray2StrBitarray(self.getStartValue())
+        xmlIPVariableStartValue.text = str(self.getStartValue())
         
         # Ending Value
         xmlIPVariableEndValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}endValue")
-        xmlIPVariableEndValue.text = TypeConvertor.bitarray2StrBitarray(self.getEndValue())
+        xmlIPVariableEndValue.text = str(self.getEndValue())
         
         # Format 
         xmlIPVariableFormatValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}format")
@@ -233,15 +232,15 @@ class IPv4Variable(Variable):
             
             xmlIPVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
             if xmlIPVariableOriginalValue != None :
-                originalValue = TypeConvertor.strBitarray2Bitarray(xmlIPVariableOriginalValue.text)
+                originalValue = xmlIPVariableOriginalValue.text
             else :
                 originalValue = None
             
             xmlIPVariableStartValue = xmlRoot.find("{" + namespace + "}startValue")
-            startValue = TypeConvertor.strBitarray2Bitarray(xmlIPVariableStartValue.text)
+            startValue = xmlIPVariableStartValue.text
             
             xmlIPVariableEndValue = xmlRoot.find("{" + namespace + "}endValue")
-            endValue = TypeConvertor.strBitarray2Bitarray(xmlIPVariableEndValue.text)
+            endValue = xmlIPVariableEndValue.text
             
             xmlIPVariablePaddingValue = xmlRoot.find("{" + namespace + "}format")
             format = str(xmlIPVariablePaddingValue.text)
