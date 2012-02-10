@@ -220,12 +220,50 @@ class IPv4Variable(Variable):
         else :
             raise NotImplementedError("Error, the current variable (IPv4Variable) doesn't support function compareFormat in this case")
             
-             
+    #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        if self.format == Format.ASCII :            
+            currentContent = TypeConvertor.bin2string(value[indice:])
+            IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")            
+            hasMatched = False
+            for t in range(min(len(currentContent), 15), 7, -1) :
+                currentPossibleIP = currentContent[:t]                
+                result = IPRegex.match(currentPossibleIP)
+                if result != None :
+                    hasMatched = True
+                elif hasMatched :
+                    break
             
+            if hasMatched :
+                result = currentContent[:t + 2]
+                self.log.debug("Compare on format was successfull : " + str(result))
+                
+                strCurrentValue = str(result)
+                binCurrentValue = TypeConvertor.string2bin(result, 'big')
+                self.memory.memorize(self, (strCurrentValue, binCurrentValue))
+                
+                return len(TypeConvertor.string2bin(result, 'big'))
+            else :
+                self.log.debug("Compare on format was not successfull")
+                return -1
+        else :
+            raise NotImplementedError("Error, the current variable (IPv4Variable) doesn't support function compareFormat in this case")
             
         
-        
-        
+    
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.debug("Restore learnt values")
+        memory.restore(self)     
         
         
     def getCurrentValue(self) :
