@@ -1086,6 +1086,8 @@ class Symbol(AbstractSymbol):
         root = etree.Element("{" + NAMESPACE + "}netzob")
         root.set("project", str(self.getProject().getName()))
 
+        self.save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
+
         tree = ElementTree(root)
         result = etree.tostring(tree, pretty_print=True)
         return result
