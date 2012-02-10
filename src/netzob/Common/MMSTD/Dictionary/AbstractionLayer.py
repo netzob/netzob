@@ -187,7 +187,7 @@ class AbstractionLayer():
         for symbol in self.vocabulary.getSymbols():
             print message
             print TypeConvertor.strBitarray2Bitarray(message)
-            if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.memory) != -1:
+            if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory) != -1:
                 self.log.debug("Entry in the vocabulary found")
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
                 return symbol
