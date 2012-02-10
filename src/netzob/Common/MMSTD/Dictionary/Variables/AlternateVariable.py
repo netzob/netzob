@@ -46,8 +46,8 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 class AlternateVariable(Variable):
 
-    def __init__(self, id, name, vars):
-        Variable.__init__(self, "Alternate", id, name)
+    def __init__(self, idVar, name, vars):
+        Variable.__init__(self, "Alternate", idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.vars = []
         if vars != None:

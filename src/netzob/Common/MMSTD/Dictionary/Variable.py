@@ -50,7 +50,7 @@ class Variable():
     def __init__(self, typeVariable, idVar, name):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.py')
-        self.id = idVar
+        self.idVar = idVar
         self.name = name
         self.typeVariable = typeVariable
     
@@ -85,7 +85,7 @@ class Variable():
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
     #+-----------------------------------------------------------------------+
-    def getUncontextualizedDescription(self, negative):
+    def getUncontextualizedDescription(self):
         self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function getDescription")
         raise NotImplementedError("The current variable doesn't support 'getDescription'.")
     #+-----------------------------------------------------------------------+
@@ -110,7 +110,7 @@ class Variable():
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
-        return self.id
+        return self.idVar
 
     def getName(self):
         return self.name
@@ -119,7 +119,7 @@ class Variable():
         return self.typeVariable            
 
     def setID(self, idVar):
-        self.id = idVar
+        self.idVar = idVar
 
     def setName(self, name):
         self.name = name

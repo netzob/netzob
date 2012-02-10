@@ -54,18 +54,19 @@ class VariableView(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, netzob, field, variableId, variableName, variableIsMutable):
+    def __init__(self, netzob, field, variableId, variableName):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.VariableView.py')
         self.netzob = netzob
         self.project = self.netzob.getCurrentProject()
         self.varId = variableId
         self.varName = variableName
-        self.varIsMutable = variableIsMutable
         self.field = field
 
         # Add the initial Aggregate
-        self.rootVariable = AggregateVariable(self.varId, self.varName, None)
+        print "-->" + str(variableId)
+        self.rootVariable = AggregateVariable(variableId, self.varName, None)
+        print "-->" + str(self.rootVariable.getID())
         self.datas = dict()
         self.datas[str(self.rootVariable.getID())] = self.rootVariable
 
@@ -373,7 +374,8 @@ class VariableView(object):
         dialog.set_markup('Definition of the IPv4 Variable')
         
         # Create the ID of the new variable
-        variableID = str(uuid.uuid4())
+        varID = uuid.uuid4()
+        variableID = str(varID)
         
         mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
@@ -466,7 +468,8 @@ class VariableView(object):
         
         # format
         format = formatValueCombo.get_model().get_value(formatValueCombo.get_active_iter(), 0)
-        ipVariable = IPv4Variable(id, "ipv4", originalValue, startValue, endValue, format)
+        print "var id = " + str(varID)
+        ipVariable = IPv4Variable(varID, "ipv4", originalValue, startValue, endValue, format)
         rootVariable.addChild(ipVariable)
         
         self.datas[str(ipVariable.getID())] = ipVariable
@@ -515,7 +518,8 @@ class VariableView(object):
         # We retrieve all the existing variables in the project
         existingVariables = self.project.getVocabulary().getVariables()
         for existingVariable in existingVariables:
-            self.varCombo.get_model().append([existingVariable.getDescription(), existingVariable.getID()])
+            print existingVariable.getID()
+            self.varCombo.get_model().append([existingVariable.getUncontextualizedDescription(), existingVariable.getID()])
 
         mainTable.attach(varLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(self.varCombo, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -529,12 +533,12 @@ class VariableView(object):
             return
 
         idReferencedVariable = self.varCombo.get_model().get_value(self.varCombo.get_active_iter(), 1)
-
-        referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", True, idReferencedVariable)
+        print "id ref var = " + str(idReferencedVariable)
+        referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", idReferencedVariable)
         rootVariable.addChild(referencedVariable)
 
         self.datas[str(referencedVariable.getID())] = referencedVariable
-        self.treestore.append(rootEntry, [str(referencedVariable.getID()), referencedVariable.getDescription()])
+        self.treestore.append(rootEntry, [str(referencedVariable.getID()), referencedVariable.getUncontextualizedDescription()])
 
         # We close the current dialog
         dialog.destroy()

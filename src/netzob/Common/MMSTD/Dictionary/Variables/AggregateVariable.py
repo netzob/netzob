@@ -47,7 +47,7 @@ from bitarray import bitarray
 class AggregateVariable(Variable):
 
     def __init__(self, idVar, name, vars=None):
-        Variable.__init__(self, "Aggregate", id, name)
+        Variable.__init__(self, "Aggregate", idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
         if vars != None:

@@ -63,8 +63,4 @@ class Memory():
     def recallAll(self):
         return self.memory
 
-    def getVariableByID(self, id):
-        for var in self.variables:
-            if str(var.getID()) == id:
-                return var
-        return None
+    

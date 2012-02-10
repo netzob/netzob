@@ -1389,15 +1389,16 @@ class UImodelization:
         dialog.set_markup('Definition of the new variable')
 
         # Create the ID of the new variable
-        variableID = str(uuid.uuid4())
+        variableID = uuid.uuid4()
 
         mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
         # id of the variable
         variableIDLabel = NetzobLabel("ID :")
-        variableIDValueLabel = NetzobLabel(variableID)
+        variableIDValueLabel = NetzobLabel(str(variableID))
         variableIDValueLabel.set_sensitive(False)
         mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
         # name of the variable
         variableNameLabel = NetzobLabel("Name : ")
         variableNameEntry = gtk.Entry()

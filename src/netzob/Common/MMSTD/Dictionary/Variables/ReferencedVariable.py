@@ -94,7 +94,7 @@ class ReferencedVariable(Variable):
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
     #+-----------------------------------------------------------------------+
-    def getUncontextualizedDescription(self, negative):
+    def getUncontextualizedDescription(self):
         return "ReferencedVariable (" + self.varID + ")"
     #+-----------------------------------------------------------------------+
     #| compare :
