@@ -1318,7 +1318,6 @@ class Symbol(AbstractSymbol):
                 variable = field.getDefaultVariable(self)
             else:
                 variable = field.getVariable()
-
             rootSymbol.addChild(variable)
         return rootSymbol
 

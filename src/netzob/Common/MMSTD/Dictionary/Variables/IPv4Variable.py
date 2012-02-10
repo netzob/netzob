@@ -139,17 +139,25 @@ class IPv4Variable(Variable):
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
         if self.getCurrentValue() != None :
+            self.log.debug("getValueToSend (getCurrentValue): " + str(self.getCurrentValue()))
             return self.getCurrentValue()
         
         if memory.hasMemorized(self) :
-            return memory.recall(self)
+            val = memory.recall(self)
+            self.log.debug("getValueToSend (from memory) :" + str(val))
+            self.currentValue = val
+            return val
         
         # We generate a new value
-        self.computeCurrentValue(self.generateValue())
+        generatedValue = self.generateValue()
+        self.log.debug("getValueToSend (generation of a value) : " + str(generatedValue))
+        self.computeCurrentValue(generatedValue)
         
         # We save in memory the current value
+        self.log.debug("getValueToSend (memorize)")
         memory.memorize(self, self.getCurrentValue())
         
+        self.log.debug("getValueToSend : " + str(self.getCurrentValue()))
         # We return the newly generated and memorized value
         return self.getCurrentValue()
             
@@ -242,11 +250,11 @@ class IPv4Variable(Variable):
             
             if hasMatched :
                 result = currentContent[:t + 2]
-                self.log.debug("Compare on format was successfull : " + str(result))
+                self.log.debug("Learn from received message : " + str(result))
                 
                 strCurrentValue = str(result)
                 binCurrentValue = TypeConvertor.string2bin(result, 'big')
-                self.memory.memorize(self, (strCurrentValue, binCurrentValue))
+                memory.memorize(self, (binCurrentValue, strCurrentValue))
                 
                 return len(TypeConvertor.string2bin(result, 'big'))
             else :

@@ -121,6 +121,34 @@ class AlternateVariable(Variable):
                 return result
         return -1
     #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        saved = indice
+        for var in self.vars:
+            self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
+            result = var.learn(value, saved, negative, vocabulary, memory)
+            if result != -1 and result != None:
+                self.log.info("Compare successful")
+                return result
+            else :
+                var.restore(vocabulary, memory)
+            
+        return -1
+    
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.debug("Restore learnt values")
+        for var in self.vars :
+            var.restore(vocabulary, memory)
+    #+-----------------------------------------------------------------------+
     #| toXML
     #|     Returns the XML description of the variable 
     #+-----------------------------------------------------------------------+

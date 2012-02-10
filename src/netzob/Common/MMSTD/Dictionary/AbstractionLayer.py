@@ -183,19 +183,21 @@ class AbstractionLayer():
     #| @return a possible symbol or None if none exist in the vocabulary
     #+-----------------------------------------------------------------------+
     def abstract(self, message):
+        self.log.debug("We abstract the received message : " + str(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
-            print message
-            print TypeConvertor.strBitarray2Bitarray(message)
             if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory) != -1:
-                self.log.debug("Entry in the vocabulary found")
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
+                # It matchs so we learn from it if it's possible
+                self.memory.createMemory()
+                symbol.getRoot().learn(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory)
+                self.memory.persistMemory()
                 return symbol
             else:
                 self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
                 # we first restore possibly learnt value
                 self.log.debug("Restore possibly learnt value")
-#                entry.restore()
+                symbol.getRoot().restore(self.vocabulary, self.memory)
 
         return EmptySymbol()
 
