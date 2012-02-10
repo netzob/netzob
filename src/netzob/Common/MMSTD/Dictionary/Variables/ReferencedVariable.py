@@ -110,6 +110,35 @@ class ReferencedVariable(Variable):
             return None
         self.log.info("Compare with a referenced variable")
         return var.compare(value, indice, negative, vocabulary, memory)
+    
+    #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        var = vocabulary.getVariableByID(self.varID)
+        if var == None :
+            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
+            return None
+        self.log.info("Compare with a referenced variable")
+        return var.learn(value, indice, negative, vocabulary, memory)
+    
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.debug("Restore learnt values")
+        var = vocabulary.getVariableByID(self.varID)
+        if var == None :
+            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
+            return None
+        self.log.info("Compare with a referenced variable")
+        return var.restore(vocabulary, memory)
+    
     #+-----------------------------------------------------------------------+
     #| toXML
     #|     Returns the XML description of the variable 
