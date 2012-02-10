@@ -315,6 +315,19 @@ class TypeConvertor():
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res.to01()
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| Return the string parameter in a bitarray
+    #+----------------------------------------------
+    def netzobRawToBitArray(raw):
+        res = bitarray()
+        for c in raw:
+            tmp = bitarray()
+            tmp.fromstring(chr(int(c, 16)))
+            tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
+            res.extend(tmp)
+        return res
 
     @staticmethod
     #+----------------------------------------------
