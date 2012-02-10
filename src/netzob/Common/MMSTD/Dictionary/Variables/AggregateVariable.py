@@ -127,6 +127,44 @@ class AggregateVariable(Variable):
                 self.log.debug("Compare successful")
         return result
     #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        status = True
+        toBeRestored = []
+        result = indice
+        
+        for var in self.vars:
+            self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
+            result = var.learn(value, result, negative, vocabulary, memory)
+            toBeRestored.append(var)
+            if result == -1 or result == None:
+                self.log.debug("Compare fail")
+                status = False
+                break
+            else:
+                self.log.debug("Compare successful")
+                
+        # If it has failed we restore every executed vars
+        if not status :
+            for var in toBeRestored :
+                var.restore()                
+        return result
+    
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.debug("Restore learnt values")
+        for var in self.vars :
+            var.restore(vocabulary, memory)
+    
+    #+-----------------------------------------------------------------------+
     #| toXML
     #|     Returns the XML description of the variable 
     #+-----------------------------------------------------------------------+
