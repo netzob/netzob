@@ -47,7 +47,11 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #|     Definition of a binary variable
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
-
+    
+    # OriginalValue : must be a "real" bitarray (a binary one)
+    # startValue : must be a "real" bitarray
+    # endValue : must be a "real" bitarray
+    # padding : the number of padding if activated must be an int > 0 (can be None)
     def __init__(self, id, name, originalValue, startValue, endValue, padding):
         Variable.__init__(self, "Binary", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')        
@@ -63,11 +67,10 @@ class BinaryVariable(Variable):
         if strValue != None :
             strCurrentValue = str(strValue)
             binCurrentValue = TypeConvertor.strBitarray2Bitarray(strValue)
-            self.currentValue = (strCurrentValue, binCurrentValue)
+            self.currentValue = (binCurrentValue, strCurrentValue)
         else :
             self.currentValue = None
-                
-            
+    
     #+-----------------------------------------------------------------------+
     #| getValue :
     #|     Returns the current value of the variable
@@ -76,8 +79,8 @@ class BinaryVariable(Variable):
     #|     else its NONE
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        if self.currentValue != None :
-            return self.currentValue
+        if self.getCurrentValue() != None :
+            return self.getCurrentValue()
         
         if memory.hasMemorized(self) :
             return memory.recall(self)
@@ -92,8 +95,8 @@ class BinaryVariable(Variable):
     #|     or it generates one and save its value in memory
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
-        if self.currentValue != None :
-            return self.currentValue
+        if self.getCurrentValue() != None :
+            return self.getCurrentValue()
         
         if memory.hasMemorized(self) :
             return memory.recall(self)
@@ -102,10 +105,10 @@ class BinaryVariable(Variable):
         self.computeCurrentValue(self.generateValue())
         
         # We save in memory the current value
-        memory.memorize(self, self.currentValue)
+        memory.memorize(self, self.getCurrentValue())
         
         # We return the newly generated and memorized value
-        return self.currentValue
+        return self.getCurrentValue()
         
         
     #+-----------------------------------------------------------------------+
@@ -113,7 +116,7 @@ class BinaryVariable(Variable):
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
-        return "BinaryVariable " + str(self.getValue()) + ")"
+        return "BinaryVariable [getValue = " + str(self.getValue()) + "]"
     
     #+-----------------------------------------------------------------------+
     #| compare :
@@ -123,11 +126,12 @@ class BinaryVariable(Variable):
     #|     >=0    : it matchs and the following number of bits were eaten 
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
-        self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
+        
+        (binVal, strVal) = self.getValue(negative, vocabulary, memory)
+        
+        self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
         tmp = value[indice:]
-        
-        (binVal, strVal) = self.currentValue
-        
+               
         if len(tmp) >= len(binVal):
             if tmp[:len(binVal)] == binVal:
                 self.log.info("Compare successful")
@@ -139,10 +143,23 @@ class BinaryVariable(Variable):
             self.log.info("Compare fail")
             return -1
         
-#    TODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODOTODO TODO >>> 
-        
+    def getCurrentValue(self) :
+        return self.currentValue
+    
+    def getOriginalValue(self):
+        return self.originalValue
+    
+    def getStartValue(self):
+        return self.startValue
+    
+    def getEndValue(self):
+        return self.endValue
+    
+    def getPadding(self):
+        return self.padding
+               
     #+-----------------------------------------------------------------------+
-    #| toXML : TODO TODO
+    #| toXML :
     #|     Returns the XML description of the variable 
     #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
@@ -151,17 +168,49 @@ class BinaryVariable(Variable):
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:BinaryVariable")
-
-        # Definition of a binary variable
-        xmlWordVariableValue = etree.SubElement(xmlVariable, "{" + namespace + "}value")
-        xmlWordVariableValue.text = TypeConvertor.bitarray2StrBitarray(self.binVal)
+        
+        # Original Value
+        if self.getOriginalValue() != None :
+            xmlBinaryVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
+            xmlBinaryVariableOriginalValue.text = TypeConvertor.bitarray2StrBitarray(self.getOriginalValue())
+        
+        # Starting Value
+        xmlBinaryVariableStartValue = etree.SubElement(xmlVariable, "{" + namespace + "}startValue")
+        xmlBinaryVariableStartValue.text = TypeConvertor.bitarray2StrBitarray(self.getStartValue())
+        
+        # Ending Value
+        xmlBinaryVariableEndValue = etree.SubElement(xmlVariable, "{" + namespace + "}endValue")
+        xmlBinaryVariableEndValue.text = TypeConvertor.bitarray2StrBitarray(self.getEndValue())
+        
+        # Padding
+        if self.getPadding() != None or self.getPadding() > 0 : 
+            xmlBinaryVariablePaddingValue = etree.SubElement(xmlVariable, "{" + namespace + "}padding")
+            xmlBinaryVariablePaddingValue.text = TypeConvertor.int2string(self.getPadding())
+        
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            varValue = TypeConvertor.strBitarray2Bitarray(xmlRoot.find("{" + namespace + "}value").text)
-            return BinaryVariable(varId, varName, varIsMutable, varValue)
+            
+            xmlBinaryVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
+            if xmlBinaryVariableOriginalValue != None :
+                originalValue = TypeConvertor.strBitarray2Bitarray(xmlBinaryVariableOriginalValue.text)
+            else :
+                originalValue = None
+            
+            xmlBinaryVariableStartValue = xmlRoot.find("{" + namespace + "}startValue")
+            startValue = TypeConvertor.strBitarray2Bitarray(xmlBinaryVariableStartValue.text)
+            
+            xmlBinaryVariableEndValue = xmlRoot.find("{" + namespace + "}endValue")
+            endValue = TypeConvertor.strBitarray2Bitarray(xmlBinaryVariableEndValue.text)
+            
+            xmlBinaryVariablePaddingValue = xmlRoot.find("{" + namespace + "}padding")
+            if xmlBinaryVariablePaddingValue != None :
+                padding = TypeConvertor.string2int(xmlBinaryVariablePaddingValue.text)
+            else :
+                padding = None
 
+            return BinaryVariable(varId, varName, originalValue, startValue, endValue, padding)
         return None
