@@ -112,6 +112,7 @@ class Grammar(object):
                 dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
 
         dotCode = dotCode + "}"
+        print dotCode
         return dotCode
 
     def save(self, root, namespace):

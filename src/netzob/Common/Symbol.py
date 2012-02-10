@@ -1306,8 +1306,8 @@ class Symbol(object):
 
     """
 
-    def getValueToSend(self, inverse, memory):
-        result = self.getRoot().send(inverse, memory)
+    def getValueToSend(self, inverse, vocabulary, memory):
+        result = self.getRoot().getValueToSend(inverse, vocabulary, memory)
         return result
 
     def getRoot(self):
