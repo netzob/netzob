@@ -1014,13 +1014,7 @@ class Symbol(object):
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
                     treeviewTarget.get_model().append([cell])
 
-    #+----------------------------------------------
-    #| applyDependency_cb:
-    #|  Called when user wants to apply a dependency to a field
-    #+----------------------------------------------
-    def applyDependency_cb(self, button, field, envName):
-        field.setDescription(envName)
-        pass
+    
 
     #+----------------------------------------------
     #| getVariables:
