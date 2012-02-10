@@ -143,7 +143,6 @@ class BinaryVariable(Variable):
     #|     >=0    : it matchs and the following number of bits were eaten 
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
-        
         (binVal, strVal) = self.getValue(negative, vocabulary, memory)
         
         self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
@@ -159,7 +158,25 @@ class BinaryVariable(Variable):
         else:
             self.log.info("Compare fail")
             return -1
-        
+    
+    #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        return self.compare(value, indice, negative, vocabulary, memory)
+    
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.debug("Restore learnt values")
+        memory.restore(self)
+    
     def getCurrentValue(self) :
         return self.currentValue
     
