@@ -62,7 +62,7 @@ class ForgetMemOpex(MemOpex):
         xmlForgetMemOpexVariable = etree.SubElement(xmlForgetMemOpex, "{" + namespace + "}variableId")
         xmlForgetMemOpexVariable.text = str(self.getVariableID())
         
-        xmlForgetMemOpex.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NormalState")
+        xmlForgetMemOpex.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ForgetMemOpex")
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
