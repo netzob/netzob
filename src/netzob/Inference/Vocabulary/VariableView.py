@@ -64,9 +64,7 @@ class VariableView(object):
         self.field = field
 
         # Add the initial Aggregate
-        print "-->" + str(variableId)
         self.rootVariable = AggregateVariable(variableId, self.varName, None)
-        print "-->" + str(self.rootVariable.getID())
         self.datas = dict()
         self.datas[str(self.rootVariable.getID())] = self.rootVariable
 
