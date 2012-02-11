@@ -30,14 +30,13 @@
 #+---------------------------------------------------------------------------+
 import logging
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
 #| MemOpex:
-#|     Definition of a Memory Operation (must be subclassed to be usefull)
+#|     Definition of a Memory Operation (must be subclassed to be useful)
 #+---------------------------------------------------------------------------+
 class MemOpex():
 
@@ -65,6 +64,15 @@ class MemOpex():
         
     def setTransitionID(self, transitionID):
         self.transitionId = transitionID
+    
+    #+-----------------------------------------------------------------------+
+    #| save
+    #|     Abstract method to retrieve the XML definition of current MemOpex
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def save(self, root, namespace):
+        self.log.error("The MemOpex class doesn't support 'save'.")
+        raise NotImplementedError("The state MemOpex doesn't support 'save'.")
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
