@@ -41,6 +41,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 
 
 #+---------------------------------------------------------------------------+
@@ -76,6 +77,10 @@ class Vocabulary(object):
         for symbol in self.symbols:
             if symbol.getID() == symbolID:
                 return symbol
+        # Exceptions : if ID = 0, we return an EmptySymbol
+        if symbolID == str(0) :
+            return EmptySymbol()    
+        
         return None
 
     def addSymbol(self, symbol):
