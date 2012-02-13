@@ -31,13 +31,11 @@
 import logging
 import gtk
 import pygtk
-import uuid
 from netzob.Inference.Grammar.GrammarInferer import GrammarInferer
 from netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle import WMethodNetworkEquivalenceOracle
 from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
 from netzob.Simulator.XDotWidget import XDotWidget
 import gobject
-import time
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 from netzob.Common.Threads.Job import Job
 

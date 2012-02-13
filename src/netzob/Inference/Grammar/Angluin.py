@@ -29,15 +29,12 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
-import time
-
 
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.LearningAlgorithm import LearningAlgorithm
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
-from numpy.core.numeric import zeros
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition

@@ -34,11 +34,8 @@ import pygtk
 import gobject
 pygtk.require('2.0')
 import logging
-import threading
 import copy
 import os
-import time
-import random
 import uuid
 
 #+----------------------------------------------
@@ -641,7 +638,8 @@ class UImodelization:
                 if aIter:
                     if treeview.get_model().iter_is_valid(aIter):
                         message_id = treeview.get_model().get_value(aIter, 0)
-                        symbol = self.treeMessageGenerator.getSymbol()
+                        # Following line commented because of unused variable symbol
+                        #symbol = self.treeMessageGenerator.getSymbol()
                         # Do nothing for now
 
         # Popup a menu
@@ -1063,22 +1061,20 @@ class UImodelization:
         logging.warn("Not yet implemented")
         return
 
-    """
-        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
-        existingTraceDir = projectsDirectoryPath + os.sep + entry.get_active_text()
-        # Create the new XML structure
-        res = "<datas>\n"
-        for message in messages:
-            res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
-            res += message + "\n"
-            res += "</data>\n"
-        res += "</datas>\n"
-        # Dump into a random XML file
-        fd = open(existingTraceDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
-        fd.close()
-        dialog.destroy()
-    """
+        # projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
+        # existingTraceDir = projectsDirectoryPath + os.sep + entry.get_active_text()
+        # # Create the new XML structure
+        # res = "<datas>\n"
+        # for message in messages:
+        #     res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
+        #     res += message + "\n"
+        #     res += "</data>\n"
+        # res += "</datas>\n"
+        # # Dump into a random XML file
+        # fd = open(existingTraceDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        # fd.write(res)
+        # fd.close()
+        # dialog.destroy()
 
     #+----------------------------------------------
     #| Creation of a new trace from a selection of packets
@@ -1087,34 +1083,32 @@ class UImodelization:
         logging.warn("Not yet implemented")
         return
 
-    """
-        projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
-        for tmpDir in os.listdir(projectsDirectoryPath):
-            if tmpDir == '.svn':
-                continue
-            if entry.get_text() == tmpDir:
-                dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
-                dialogBis.set_size_request(250, 50)
-                dialogBis.show()
-                return
+        # projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
+        # for tmpDir in os.listdir(projectsDirectoryPath):
+        #     if tmpDir == '.svn':
+        #         continue
+        #     if entry.get_text() == tmpDir:
+        #         dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
+        #         dialogBis.set_size_request(250, 50)
+        #         dialogBis.show()
+        #         return
 
-        # Create the dest Dir
-        newTraceDir = projectsDirectoryPath + os.sep + entry.get_text()
-        os.mkdir(newTraceDir)
-        # Create the new XML structure
-        res = "<datas>\n"
-        for message in messages.values():
-            res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
-            res += message + "\n"
-            res += "</data>\n"
-        res += "</datas>\n"
-        # Dump into a random XML file
-        fd = open(newTraceDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
-        fd.write(res)
-        fd.close()
-        dialog.destroy()
-        self.netzob.updateListOfAvailableProjects()
-    """
+        # # Create the dest Dir
+        # newTraceDir = projectsDirectoryPath + os.sep + entry.get_text()
+        # os.mkdir(newTraceDir)
+        # # Create the new XML structure
+        # res = "<datas>\n"
+        # for message in messages.values():
+        #     res += "<data proto=\"ipc\" sourceIp=\"local\" sourcePort=\"local\" targetIp=\"local\" targetPort=\"local\" timestamp=\"" + str(time.time()) + "\">\n"
+        #     res += message + "\n"
+        #     res += "</data>\n"
+        # res += "</datas>\n"
+        # # Dump into a random XML file
+        # fd = open(newTraceDir + os.sep + str(random.randint(100000, 9000000)) + ".xml"  , "w")
+        # fd.write(res)
+        # fd.close()
+        # dialog.destroy()
+        # self.netzob.updateListOfAvailableProjects()
 
     #+----------------------------------------------
     #| rightClickDomainOfDefinition:
@@ -1445,8 +1439,8 @@ class UImodelization:
 
     def rightClickEditVariable(self, widget, field):
         logging.error("Not yet implemented")
-        # TODO
-        pass
+        # TODO : delete pass statement because useless
+        # pass
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 2:
@@ -1670,6 +1664,7 @@ class UImodelization:
 
             # Now we search for the new symbol of the message
             if info_depot:
+                # TODO : check need to position variable
                 chemin, position = info_depot
                 iter = modele.get_iter(chemin)
                 new_symbol_id = str(modele.get_value(iter, 0))

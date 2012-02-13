@@ -127,7 +127,7 @@ class TreeSymbolGenerator():
         for symbol in project.getVocabulary().getSymbols():
             tmp_sequences = []
             if (len(symbol.getRegex()) > 0):
-                    tmp_sequences.append(symbol.getRegex())
+                tmp_sequences.append(symbol.getRegex())
 
             tmp_sequences.append(self.selectedMessage.getStringData())
             tmp_alignator = NeedlemanWunsch()

@@ -38,7 +38,6 @@ import uuid
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 
 #+----------------------------------------------
 #| C Imports
@@ -140,22 +139,20 @@ class Clusterer(object):
             # Create the score matrix for each symbol
             (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ()
 
-            """
-            ## Just for debug purpose
-            for symbol in self.symbols:
-                symbol.buildRegexAndAlignment()
-                compiledRegex = re.compile("".join(symbol.getRegex()))
-                for message in symbol.getMessages():
-#                    print message.getStringData()
-                    data = message.getStringData()
-                    m = compiledRegex.match(data)
-                    if m == None:
-                        print "".join(symbol.getRegex())
-                        print message.getStringData()
-                        print "PAN"
-                    else:
-                        pass
-            """
+            # ## Just for debug purpose
+            # for symbol in self.symbols:
+            #     symbol.buildRegexAndAlignment()
+            #     compiledRegex = re.compile("".join(symbol.getRegex()))
+            #     for message in symbol.getMessages():
+            #         print message.getStringData()
+            #         data = message.getStringData()
+            #         m = compiledRegex.match(data)
+            #         if m == None:
+            #             print "".join(symbol.getRegex())
+            #             print message.getStringData()
+            #             print "PAN"
+            #         else:
+            #            pass
 
             gobject.idle_add(self.doProgressBarStep, progressionStep)
             self.log.debug("Searching for the maximum of equivalence.")

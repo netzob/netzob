@@ -49,8 +49,7 @@ load-plugins=
 #enable-msg=
 
 # Disable the message(s) with the given id(s).
-disable-msg=C0323,W0142,C0301,C0103,C0111,E0213,C0302,C0203,W0703,R0201
-
+disable-msg=C,R,W0142,E0213,W0703,W0613,W0622,W0201,W0612,W0511,W0212
 
 [REPORTS]
 
@@ -74,7 +73,7 @@ reports=yes
 # respectivly contain the number of errors / warnings messages and the total
 # number of statements analyzed. This is used by the global evaluation report
 # (R0004).
-evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+#evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
 
 # Add a comment according to your evaluation note. This is used by the global
 # evaluation report (R0004).

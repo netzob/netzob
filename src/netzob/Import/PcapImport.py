@@ -31,15 +31,11 @@
 import gtk
 import pygtk
 import uuid
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Field import Field
 import errno
 from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
-import os
 import time
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -52,7 +48,6 @@ import impacket.ImpactPacket as Packets
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Models.NetworkMessage import NetworkMessage
-from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 
 
 #+----------------------------------------------
@@ -290,8 +285,6 @@ class PcapImport(AbstractImporter):
             md.destroy()
 
             return
-
-            raise
 
         button.set_sensitive(False)
         self.packets = []

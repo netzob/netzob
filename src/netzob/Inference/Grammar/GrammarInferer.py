@@ -29,7 +29,6 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
-import os
 
 #+----------------------------------------------
 #| Related third party imports
@@ -38,9 +37,8 @@ import os
 #+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
-from Angluin import Angluin
-from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
-from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
+from netzob.Inference.Grammar.Angluin import Angluin
+# Replace by previous import statement : from Angluin import Angluin
 import threading
 import gobject
 

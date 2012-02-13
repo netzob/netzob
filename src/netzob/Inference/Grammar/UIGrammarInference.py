@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import time
 import gtk
 import uuid
 
