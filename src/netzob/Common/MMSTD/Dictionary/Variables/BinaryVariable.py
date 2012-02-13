@@ -49,16 +49,14 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 class BinaryVariable(Variable):
     
     # OriginalValue : must be a "real" bitarray (a binary one)
-    # startValue : must be a "real" bitarray
-    # endValue : must be a "real" bitarray
-    # padding : the number of padding if activated must be an int > 0 (can be None)
-    def __init__(self, id, name, originalValue, startValue, endValue, padding):
+    # min : nb of bits minimum
+    # max : nb of bits maximum
+    def __init__(self, id, name, originalValue, minBits, maxBits):
         Variable.__init__(self, "Binary", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')        
         self.originalValue = originalValue
-        self.startValue = startValue
-        self.endValue = endValue
-        self.padding = padding
+        self.minBits = minBits
+        self.maxBits = maxBits
         
         # Set the current value
         self.computeCurrentValue(self.originalValue)
@@ -183,14 +181,12 @@ class BinaryVariable(Variable):
     def getOriginalValue(self):
         return self.originalValue
     
-    def getStartValue(self):
-        return self.startValue
+    def getMinBits(self):
+        return self.minBits
     
-    def getEndValue(self):
-        return self.endValue
-    
-    def getPadding(self):
-        return self.padding
+    def getMaxBits(self):
+        return self.maxBits
+
                
     #+-----------------------------------------------------------------------+
     #| toXML :
@@ -208,18 +204,14 @@ class BinaryVariable(Variable):
             xmlBinaryVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             xmlBinaryVariableOriginalValue.text = TypeConvertor.bitarray2StrBitarray(self.getOriginalValue())
         
-        # Starting Value
-        xmlBinaryVariableStartValue = etree.SubElement(xmlVariable, "{" + namespace + "}startValue")
-        xmlBinaryVariableStartValue.text = TypeConvertor.bitarray2StrBitarray(self.getStartValue())
+        # Minimum bits
+        xmlBinaryVariableStartValue = etree.SubElement(xmlVariable, "{" + namespace + "}minBits")
+        xmlBinaryVariableStartValue.text = str(self.getMinBits())
         
-        # Ending Value
-        xmlBinaryVariableEndValue = etree.SubElement(xmlVariable, "{" + namespace + "}endValue")
-        xmlBinaryVariableEndValue.text = TypeConvertor.bitarray2StrBitarray(self.getEndValue())
+        # Maximum bits
+        xmlBinaryVariableEndValue = etree.SubElement(xmlVariable, "{" + namespace + "}maxBits")
+        xmlBinaryVariableEndValue.text = str(self.getMaxBits())
         
-        # Padding
-        if self.getPadding() != None or self.getPadding() > 0 : 
-            xmlBinaryVariablePaddingValue = etree.SubElement(xmlVariable, "{" + namespace + "}padding")
-            xmlBinaryVariablePaddingValue.text = TypeConvertor.int2string(self.getPadding())
         
 
     @staticmethod
@@ -234,17 +226,11 @@ class BinaryVariable(Variable):
             else :
                 originalValue = None
             
-            xmlBinaryVariableStartValue = xmlRoot.find("{" + namespace + "}startValue")
-            startValue = TypeConvertor.strBitarray2Bitarray(xmlBinaryVariableStartValue.text)
+            xmlBinaryVariableStartValue = xmlRoot.find("{" + namespace + "}minBits")
+            minBits = int(xmlBinaryVariableStartValue.text)
             
-            xmlBinaryVariableEndValue = xmlRoot.find("{" + namespace + "}endValue")
-            endValue = TypeConvertor.strBitarray2Bitarray(xmlBinaryVariableEndValue.text)
+            xmlBinaryVariableEndValue = xmlRoot.find("{" + namespace + "}maxBits")
+            maxBits = int(xmlBinaryVariableEndValue.text)
             
-            xmlBinaryVariablePaddingValue = xmlRoot.find("{" + namespace + "}padding")
-            if xmlBinaryVariablePaddingValue != None :
-                padding = TypeConvertor.string2int(xmlBinaryVariablePaddingValue.text)
-            else :
-                padding = None
-
-            return BinaryVariable(varId, varName, originalValue, startValue, endValue, padding)
+            return BinaryVariable(varId, varName, originalValue, minBits, maxBits)
         return None

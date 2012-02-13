@@ -94,7 +94,7 @@ class Field(object):
     def getVariable(self):
         if self.isRegexStatic():
             value = TypeConvertor.netzobRawToBitArray(self.getRegex())
-            variable = BinaryVariable(uuid.uuid4(), self.getName(), value, value, value, None)
+            variable = BinaryVariable(uuid.uuid4(), self.getName(), value, len(value), len(value))
             return variable
         return self.variable
 
@@ -109,7 +109,7 @@ class Field(object):
         variable = AggregateVariable(uuid.uuid4(), "Aggregate", None)
         alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", None)
         for d in domain:
-            binaryVariable = BinaryVariable(uuid.uuid4(), "defaultVariable", d, d, d, None)
+            binaryVariable = BinaryVariable(uuid.uuid4(), "defaultVariable", d, len(d), len(d))
             alternateVar.addChild(binaryVariable)
         variable.addChild(alternateVar)
 

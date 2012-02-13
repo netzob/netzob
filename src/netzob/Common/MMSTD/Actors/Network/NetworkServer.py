@@ -173,11 +173,12 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 #+---------------------------------------------------------------------------+
 class NetworkServer(AbstractActor):
 
-    def __init__(self, host, protocol, port):
+    def __init__(self, host, protocol, port, sourcePort):
         AbstractActor.__init__(self, True, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer.py')
         self.port = port
+        self.sourcePort = sourcePort
         self.host = host
         self.protocol = protocol
         self.server = None
