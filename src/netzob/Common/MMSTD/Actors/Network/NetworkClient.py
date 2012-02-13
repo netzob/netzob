@@ -45,11 +45,12 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 #+---------------------------------------------------------------------------+
 class NetworkClient(AbstractActor):
 
-    def __init__(self, host, protocol, port):
+    def __init__(self, host, protocol, port, sport):
         AbstractActor.__init__(self, False, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
         self.port = port
+        self.sport = sport
         self.host = host
         self.protocol = protocol
         self.socket = None
@@ -62,9 +63,11 @@ class NetworkClient(AbstractActor):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             else:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.bind(('', self.sport))
             self.socket.connect((self.host, self.port))
             self.socket.setblocking(0)
-        except:
+        except socket.error, msg:
+            self.log.warn("Opening the network connection has failed : " + str(msg))
             self.socket = None
 
         if self.socket == None:
