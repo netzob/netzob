@@ -152,6 +152,13 @@ class NormalState(AbstractState):
         self.log.info("Randomly picked the transition " + pickedTransition.getName())
 
         newState = pickedTransition.executeAsMaster(abstractionLayer)
+        
+        # in case an error occured while executing the transition
+        if newState == None :
+            self.log.debug("The state has detected an error while executing the transition and consider it !")
+            self.deactivate()
+            return None
+        
         self.deactivate()
         return newState
 

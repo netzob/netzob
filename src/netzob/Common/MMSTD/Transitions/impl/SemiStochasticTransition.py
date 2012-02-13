@@ -137,42 +137,52 @@ class SemiStochasticTransition(AbstractTransition):
         # write the input symbol on the output channel
         abstractionLayer.writeSymbol(self.inputSymbol)
         
-        # Exception on EmptyMessage, 
-        # if the only output symbol associated with 
-        # current transition is an EmptyMessage, we do not wait 
-        # for it, we just sleep the receiving time
-        if len(self.outputSymbols) == 1 and self.outputSymbols[0][0].getType() == EmptySymbol.TYPE :
-            self.log.info("We do not wait for a symbol since its declared as an EmptySymbol.")
-            # before returning we simulate the reaction time
-            time.sleep(int(self.outputSymbols[0][2]) / 1000)
-            
-            self.deactivate()
-            return self.outputState
-        
-        
+#        # Exception on EmptyMessage, 
+#        # if the only output symbol associated with 
+#        # current transition is an EmptyMessage, we do not wait 
+#        # for it, we just sleep the receiving time
+#        if len(self.outputSymbols) == 1 and self.outputSymbols[0][0].getType() == EmptySymbol.TYPE :
+#            self.log.info("We do not wait for a symbol since its declared as an EmptySymbol.")
+#            # before returning we simulate the reaction time
+#            time.sleep(int(self.outputSymbols[0][2]) / 1000)
+#            
+#            self.deactivate()
+#            return self.outputState
+#        
+#        
         finish = False
+        errors = False
         while (not finish):
             # Wait for a message
             self.log.debug("Start waiting for something")
-            (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-            
+            (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(3)
+            self.log.debug("Message received !")
             if receivedSymbol == None:
                 finish = True
+                errors = True
             else :
                 self.log.info("The MASTER received " + str(receivedSymbol.getName()))
-            if (not (isinstance(receivedSymbol, EmptySymbol))):
-                self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
+                
                 if (len(self.outputSymbols) == 0):
                     self.log.debug("Nothing is considered since the server didn't expect anything.")
                     finish = True
-
+                
                 for arSymbol in self.outputSymbols:
                     [symbol, proba, rtime] = arSymbol
                     if symbol.getID() == receivedSymbol.getID():
                         self.log.debug("Received symbol is understood !!")
                         finish = True
-
+                    elif symbol.getType() == receivedSymbol.getType() and symbol.getType() == EmptySymbol.TYPE :
+                        self.log.debug("We consider the reception of an EmptySymbol and validate the transition")
+                        finish = True                
         self.deactivate()
+        
+        if errors :
+            self.log.warn("The execution of transition " + str(self.getName()) + " as a Master, failed.")
+            return None
+        else :
+            self.log.debug("The execution of transition " + str(self.getName()) + " as a Master was successful.")
+        
         return self.outputState
 
     def getDescription(self):

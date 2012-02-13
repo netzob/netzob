@@ -131,6 +131,8 @@ class AbstractionLayer():
         return self.receiveSymbolWithTimeout(-1)
 
     def receiveSymbolWithTimeout(self, timeout):
+        nbMaxAttempts = 5
+        
         # First we read from the input the message
         receivedData = self.communicationChannel.read(timeout)
 
@@ -153,9 +155,9 @@ class AbstractionLayer():
             self.outputSymbols.append(symbol)
             return (symbol, receivedData)
         else:
-            if len(self.manipulatedSymbols) > 5:
+            if len(self.manipulatedSymbols) > nbMaxAttempts:
                 if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == "EmptySymbol":
-                    self.log.warn("Consider client has disconnected since no valid symbol received for the second time")
+                    self.log.warn("Consider client has disconnected since no valid symbol received after " + str(nbMaxAttempts) + " attempts")
                     return (None, None)
 
             symbol = EmptySymbol()

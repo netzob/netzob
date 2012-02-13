@@ -93,6 +93,7 @@ class AggregateVariable(Variable):
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
+    
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)

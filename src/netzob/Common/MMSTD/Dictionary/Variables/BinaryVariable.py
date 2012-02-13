@@ -79,7 +79,14 @@ class BinaryVariable(Variable):
     #+-----------------------------------------------------------------------+        
     def generateValue(self):
         nbBits = random.randint(self.minBits, self.maxBits)
-        return bitarray(nbBits)
+        creationArray = []
+        for i in range(0, nbBits) :
+            if random.randint(0, 10) >= 6 :
+                creationArray.append(True)
+            else :
+                creationArray.append(False)
+        
+        return bitarray(creationArray)
     
     #+-----------------------------------------------------------------------+
     #| getValue :
