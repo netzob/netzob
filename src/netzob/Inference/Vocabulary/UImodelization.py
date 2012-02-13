@@ -32,6 +32,7 @@ import gtk
 import pango
 import pygtk
 import gobject
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 pygtk.require('2.0')
 import logging
 import threading
@@ -723,7 +724,7 @@ class UImodelization:
                 typeMenuVariable = gtk.Menu()
                 itemVariable = gtk.MenuItem("Create a variable")
                 itemVariable.show()
-                itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)
+                itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
                 typeMenuVariable = gtk.Menu()
@@ -965,7 +966,7 @@ class UImodelization:
                 typeMenuVariable = gtk.Menu()
                 itemVariable = gtk.MenuItem("Create a variable")
                 itemVariable.show()
-                itemVariable.connect("activate", self.rightClickCreateVariable, selectedField)
+                itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
                 typeMenuVariable = gtk.Menu()
@@ -1383,7 +1384,7 @@ class UImodelization:
         dialog.vbox.pack_start(frame, True, True, 0)
         dialog.show()
 
-    def rightClickCreateVariable(self, widget, field):
+    def rightClickCreateVariable(self, widget, symbol, field):
         self.log.debug("Opening the dialog for the creation of a variable")
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
         dialog.set_markup('Definition of the new variable')
@@ -1406,6 +1407,17 @@ class UImodelization:
         mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Include current binary values
+        variableWithCurrentBinariesLabel = NetzobLabel("Add current binaries : ")
+        
+        variableWithCurrentBinariesButton = gtk.CheckButton("Disjunctive inclusion")
+        variableWithCurrentBinariesButton.set_active(False)
+        variableWithCurrentBinariesButton.show()        
+        
+        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
@@ -1416,12 +1428,21 @@ class UImodelization:
 
         # We retrieve the value of the variable
         varName = variableNameEntry.get_text()
+        
+        # Disjonctive inclusion ?
+        disjunctive = variableWithCurrentBinariesButton.get_active()            
+
+        if disjunctive :
+            # Create a default value
+            defaultValue = field.getDefaultVariable(symbol)
+        else :
+            defaultValue = None
 
         # We close the current dialog
         dialog.destroy()
 
         # Dedicated view for the creation of a variable
-        creationPanel = VariableView(self.netzob, field, variableID, varName)
+        creationPanel = VariableView(self.netzob, field, variableID, varName, defaultValue)
         creationPanel.display()
 
     def rightClickRemoveVariable(self, widget, field):

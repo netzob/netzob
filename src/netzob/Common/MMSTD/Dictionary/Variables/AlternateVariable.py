@@ -46,8 +46,10 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 #+---------------------------------------------------------------------------+
 class AlternateVariable(Variable):
 
+    TYPE = "Alternate"
+
     def __init__(self, idVar, name, vars):
-        Variable.__init__(self, "Alternate", idVar, name)
+        Variable.__init__(self, AlternateVariable.TYPE, idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
         self.vars = []
         if vars != None:
@@ -55,6 +57,8 @@ class AlternateVariable(Variable):
 
     def addChild(self, variable):
         self.vars.append(variable)
+    def getChildren(self):
+        return self.vars
 
     #+-----------------------------------------------------------------------+
     #| getValue :
@@ -67,13 +71,14 @@ class AlternateVariable(Variable):
         self.log.info("getValue")
         validVars = []
         for var in self.vars :
-            if var.getvalue() != None :
-                validVars.append(var)
-        self.log.debug("Valid vars = " + str(validVars))
-        idRandom = random.randint(0, len(validVars) - 1)
-        picked = validVars[idRandom]
-        self.log.debug("Get value will return : " + str(picked))
-        return picked.getValue(negative, vocabulary, memory)
+            if var.getValue(negative, vocabulary, memory) != None :
+                return var.getValue(negative, vocabulary, memory)
+        return None
+#        self.log.debug("Valid vars = " + str(validVars))
+#        idRandom = random.randint(0, len(validVars) - 1)
+#        picked = validVars[idRandom]
+#        self.log.debug("Get value will return : " + str(picked))
+#        return picked.getValue(negative, vocabulary, memory)
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -83,9 +88,15 @@ class AlternateVariable(Variable):
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
         self.log.info("getValueToSend")
-        idRandom = random.randint(0, len(self.vars) - 1)
-        picked = self.vars[idRandom]
-        return picked.getValueToSend(negative, vocabulary, memory)
+        
+        for var in self.vars :
+            if var.getValue(negative, vocabulary, memory) != None :
+                return var.getValueToSend(negative, vocabulary, memory)
+        return None
+#        
+#        idRandom = random.randint(0, len(self.vars) - 1)
+#        picked = self.vars[idRandom]
+#        return picked.getValueToSend(negative, vocabulary, memory)
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)

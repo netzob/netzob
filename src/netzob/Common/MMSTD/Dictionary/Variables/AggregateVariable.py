@@ -45,9 +45,11 @@ from bitarray import bitarray
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
+    
+    TYPE = "Aggregate"
 
     def __init__(self, idVar, name, vars=None):
-        Variable.__init__(self, "Aggregate", idVar, name)
+        Variable.__init__(self, AggregateVariable.TYPE, idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
         if vars != None:
@@ -55,7 +57,8 @@ class AggregateVariable(Variable):
 
     def addChild(self, variable):
         self.vars.append(variable)
-        
+    def getChildren(self):
+        return self.vars
         
     #+-----------------------------------------------------------------------+
     #| getValue :

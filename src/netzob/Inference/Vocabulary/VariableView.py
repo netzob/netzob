@@ -55,7 +55,7 @@ class VariableView(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, netzob, field, variableId, variableName):
+    def __init__(self, netzob, field, variableId, variableName, defaultValue=None):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.VariableView.py')
         self.netzob = netzob
@@ -63,11 +63,15 @@ class VariableView(object):
         self.varId = variableId
         self.varName = variableName
         self.field = field
-
+        self.defaultValue = defaultValue
+        self.datas = dict()
+        
         # Add the initial Aggregate
         self.rootVariable = AggregateVariable(variableId, self.varName, None)
-        self.datas = dict()
-        self.datas[str(self.rootVariable.getID())] = self.rootVariable
+        if self.defaultValue != None :
+            self.rootVariable.addChild(self.defaultValue)
+        
+        
 
     def display(self):
         # We display the dedicated dialog for the creation of a variable
@@ -105,7 +109,17 @@ class VariableView(object):
 
         self.panel.attach(createButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.treestore.append(None, [str(self.rootVariable.getID()), "Root"])
+        # We register the default values
+        self.registerVariable(None, self.rootVariable, "Root")
+        
+    def registerVariable(self, rootEntry, variable, name):
+        self.log.debug("Register : " + str(name))
+        self.datas[str(variable.getID())] = variable
+        newEntry = self.treestore.append(rootEntry, [str(variable.getID()), name])
+        if variable.getTypeVariable() == AggregateVariable.TYPE or variable.getTypeVariable() == AlternateVariable.TYPE :
+            for child in variable.getChildren() :
+                self.registerVariable(newEntry, child, child.getName())
+        
 
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
         self.dialog.show()
@@ -616,7 +630,6 @@ class VariableView(object):
             return
 
         idReferencedVariable = self.varCombo.get_model().get_value(self.varCombo.get_active_iter(), 1)
-        print "id ref var = " + str(idReferencedVariable)
         referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", idReferencedVariable)
         rootVariable.addChild(referencedVariable)
 
