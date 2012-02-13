@@ -94,6 +94,14 @@ class Vocabulary(object):
                 if not variable in variables:
                     variables.append(variable)
         return variables
+    
+    def getVariableByID(self, idVar):
+        for symbol in self.symbols:
+            for variable in symbol.getVariables():
+                    if str(variable.getID()) == idVar:
+                        return variable
+        return None
+
 
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
         # The alignment is proceeded as follows:

@@ -65,6 +65,20 @@ class Grammar(object):
             self.states.append(state)
         else:
             logging.warn("The state cannot be added one more time in the grammar.")
+    
+    #+---------------------------------------------------------------------------+
+    #| getTransitionsLeadingToState:
+    #|     retrieve all the transitions which ends on the provide state
+    #| @return a list of transition
+    #+---------------------------------------------------------------------------+
+    def getTransitionsLeadingToState(self, state):
+        transitions = []
+        for transition in self.getTransitions() :
+            if transition.getOutputState().getID() == state.getID() :
+                transitions.append(transition)
+        
+        return transitions        
+    
 
     def removeState(self, state):
         # First we remove the transitions
@@ -84,7 +98,6 @@ class Grammar(object):
         if transition in self.transitions:
             for state in self.states:
                 state.unregisterTransition(transition)
-
             self.transitions.remove(transition)
 
     def addTransition(self, transition):

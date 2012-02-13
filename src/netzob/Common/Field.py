@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import re
-from lxml.etree import ElementTree
 from lxml import etree
 import uuid
 
@@ -94,7 +93,8 @@ class Field(object):
 
     def getVariable(self):
         if self.isRegexStatic():
-            variable = BinaryVariable(uuid.uuid4(), self.getName(), False, TypeConvertor.netzobRawToBinary(self.getRegex()))
+            value = TypeConvertor.netzobRawToBitArray(self.getRegex())
+            variable = BinaryVariable(uuid.uuid4(), self.getName(), value, value, value, None)
             return variable
         return self.variable
 
@@ -103,13 +103,13 @@ class Field(object):
         cells = symbol.getUniqValuesByField(self)
         tmpDomain = set()
         for cell in cells:
-            tmpDomain.add(TypeConvertor.netzobRawToBinary(cell))
+            tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
         domain = sorted(tmpDomain)
 
         variable = AggregateVariable(uuid.uuid4(), "Aggregate", None)
         alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", None)
         for d in domain:
-            binaryVariable = BinaryVariable(uuid.uuid4(), "Val", False, d)
+            binaryVariable = BinaryVariable(uuid.uuid4(), "defaultVariable", d, d, d, None)
             alternateVar.addChild(binaryVariable)
         variable.addChild(alternateVar)
 
@@ -148,7 +148,7 @@ class Field(object):
         xmlFieldColor.text = str(self.getColor())
 
         if self.getVariable() != None:
-            self.getVariable().save(xmlField, namespace)
+            self.getVariable().toXML(xmlField, namespace)
 
     #+----------------------------------------------
     #| GETTERS

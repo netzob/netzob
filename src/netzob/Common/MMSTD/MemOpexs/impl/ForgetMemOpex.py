@@ -33,53 +33,53 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.MemOpexs.MemOpex import MemOpex
 
 
 #+---------------------------------------------------------------------------+
-#| Memory:
-#|     Definition of an memory
+#| ForgetMemOpex:
+#|     Definition of a forget memory operation (reset the value if memory)
 #+---------------------------------------------------------------------------+
-class Memory():
+class ForgetMemOpex(MemOpex):
 
-    def __init__(self, variables):
+    def __init__(self, id, transitionId, variableId) :
+        MemOpex.__init__(self, "ForgetMemOpex", id, transitionId)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
-        self.memory = dict()
-        self.temporaryMemory = dict()
-        self.variables = variables
+        self.log = logging.getLogger('netzob.Common.MMSTD.MemOpex.impl.ForgetMemOpex.py')
+        self.variableId = variableId
+
+    def save(self, root, namespace):
+        xmlForgetMemOpex = etree.SubElement(root, "{" + namespace + "}memopex")
+        xmlForgetMemOpex.set("id", str(self.getID()))
+        xmlForgetMemOpex.set("transitionId", str(self.getTransitionID()))
         
-    def createMemory(self):
-        # We create a temporary memory
-        self.temporaryMemory = dict()
-        for key in self.memory.keys() :
-            self.temporaryMemory[key] = self.memory[key]
-            
-    def persistMemory(self):
-        self.memory = dict()
-        for key in self.temporaryMemory.keys() :
-            self.memory[key] = self.temporaryMemory[key]
+        # variableID 
+        xmlForgetMemOpexVariable = etree.SubElement(xmlForgetMemOpex, "{" + namespace + "}variableId")
+        xmlForgetMemOpexVariable.text = str(self.getVariableID())
         
-    def hasMemorized(self, variable):
-        return variable.getID() in self.temporaryMemory.keys()
+        xmlForgetMemOpex.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ForgetMemOpex")
 
-    def memorize(self, variable, binValue):
-        self.temporaryMemory[variable.getID()] = binValue
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        idMemOpex = xmlRoot.get("id")
+        idTransition = xmlRoot.get("transitionId")
+        
+        xmlForgetVariable = xmlRoot.find("{" + namespace + "}variableId")
+        variableID = xmlForgetVariable.text
 
-    def recall(self, variable):
-        return self.temporaryMemory[variable.getID()]
+        memOpex = ForgetMemOpex(idMemOpex, idTransition, variableID)
+        return memOpex
 
-    def recallAll(self):
-        return self.temporaryMemory
+    #+-----------------------------------------------------------------------+
+    #| GETTERS AND SETTERS
+    #+-----------------------------------------------------------------------+
+    def getVariableID(self):
+        return self.variableId
     
-    def restore(self, variable):
-        if variable.getID() in self.memory.keys() :
-            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
-        
-    
-        
-
-    
+    def setVariableID(self, variableID):
+        self.variableId = variableID

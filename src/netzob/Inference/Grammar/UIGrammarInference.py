@@ -41,13 +41,13 @@ import uuid
 #+---------------------------------------------------------------------------+
 from netzob.Simulator.XDotWidget import XDotWidget
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
-from netzob.Common.MMSTD.MMSTD import MMSTD
 from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
 from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
 from netzob.Common.Grammar import Grammar
 from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol 
 
 
 #+---------------------------------------------------------------------------+
@@ -411,13 +411,15 @@ class UIGrammarInference:
         outputSymbolLabel.show()
 
         outputSymbolCombo = gtk.ComboBox()
-        outputSymbolCombo.set_model(gtk.ListStore(str, str))  # entry name, entry id
+        outputSymbolCombo.set_model(gtk.ListStore(str, str, str))  # symbol type, entry name, entry id
         outputSymbolComboCell = gtk.CellRendererText()
         outputSymbolCombo.pack_start(outputSymbolComboCell, True)
-        outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 0)
-
+        outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 1)
+        
+        
+        outputSymbolCombo.get_model().append(["EmptySymbol", "EmptySymbol", ""])
         for symbol in symbols:
-            outputSymbolCombo.get_model().append([symbol.getName(), str(symbol.getID())])
+            outputSymbolCombo.get_model().append([symbol.getType(), symbol.getName(), str(symbol.getID())])
         outputSymbolCombo.show()
 
         mainTable.attach(outputSymbolLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -442,7 +444,7 @@ class UIGrammarInference:
         removeOutputSymbolButton.show()
         removeOutputSymbolButton.set_sensitive(False)
 
-        outputSymbolsTreeStore = gtk.TreeStore(str, str, str, str)  # id, name, time, proba
+        outputSymbolsTreeStore = gtk.TreeStore(str, str, str, str, str)  # type, id, name, time, proba
 
         addOutputSymbolButton = gtk.Button("Add")
         addOutputSymbolButton.connect("clicked", self.addSymbolToTheList, symbols, outputSymbolsTreeStore, outputSymbolCombo, outputTimeEntry, outputProbabilityEntry)
@@ -462,17 +464,17 @@ class UIGrammarInference:
         # col : name of the symbol
         outputSymbolsTreeViewCol_name = gtk.TreeViewColumn('Symbol name')
         outputSymbolsTreeViewCol_name.pack_start(outputSymbolsTreeViewCell, True)
-        outputSymbolsTreeViewCol_name.set_attributes(outputSymbolsTreeViewCell, text=1)
+        outputSymbolsTreeViewCol_name.set_attributes(outputSymbolsTreeViewCell, text=2)
         outputSymbolsTreeView.append_column(outputSymbolsTreeViewCol_name)
         # col : time of the symbol
         outputSymbolsTreeViewCol_time = gtk.TreeViewColumn('time')
         outputSymbolsTreeViewCol_time.pack_start(outputSymbolsTreeViewCell, True)
-        outputSymbolsTreeViewCol_time.set_attributes(outputSymbolsTreeViewCell, text=2)
+        outputSymbolsTreeViewCol_time.set_attributes(outputSymbolsTreeViewCell, text=3)
         outputSymbolsTreeView.append_column(outputSymbolsTreeViewCol_time)
         # col : proba of the symbo2
         outputSymbolsTreeViewCol_proba = gtk.TreeViewColumn('proba')
         outputSymbolsTreeViewCol_proba.pack_start(outputSymbolsTreeViewCell, True)
-        outputSymbolsTreeViewCol_proba.set_attributes(outputSymbolsTreeViewCell, text=3)
+        outputSymbolsTreeViewCol_proba.set_attributes(outputSymbolsTreeViewCell, text=4)
         outputSymbolsTreeView.append_column(outputSymbolsTreeViewCol_proba)
         outputSymbolsTreeView.show()
         outputSymbolsScroll.add(outputSymbolsTreeView)
@@ -488,8 +490,7 @@ class UIGrammarInference:
         if result != gtk.RESPONSE_OK:
             dialog.destroy()
             return None
-
-        # retrieve the input symbols
+        
         inputEntryID = inputSymbolCombo.get_model()[inputSymbolCombo.get_active()][1]
         inputEntry = None
         for symbol in symbols:
@@ -505,21 +506,29 @@ class UIGrammarInference:
         # retrieve the output symbols
         outputSymbols = []  # [[symbol, proba, time], ...]
         for outputData in outputSymbolsTreeStore:
-            outputSymbolID = outputData[0]
-            outputSymbolName = outputData[1]
-            outputSymbolTime = outputData[2]
-            outputSymbolProba = outputData[3]
-
-            outputEntry = None
-            for symbol in symbols:
-                if str(symbol.getID()) == outputSymbolID:
-                    outputEntry = symbol
-
-            if outputEntry == None:
-                self.log.warn("Impossible to retrieve the selected output dictionary entry")
-                dialog.destroy()
-                return
-            outputSymbols.append([DictionarySymbol(outputEntry), int(outputSymbolProba), int(outputSymbolTime)])
+            outputSymbolType = outputData[0]
+            print outputSymbolType
+        
+            if outputSymbolType == EmptySymbol.TYPE : 
+                outputSymbolTime = outputData[3]
+                outputSymbolProba = outputData[4]
+                outputSymbols.append([EmptySymbol(), int(outputSymbolProba), int(outputSymbolTime)])
+            else :
+                outputSymbolID = outputData[1]
+                outputSymbolName = outputData[2]
+                outputSymbolTime = outputData[3]
+                outputSymbolProba = outputData[4]
+    
+                outputEntry = None
+                for symbol in symbols:
+                    if str(symbol.getID()) == outputSymbolID:
+                        outputEntry = symbol
+    
+                if outputEntry == None:
+                    self.log.warn("Impossible to retrieve the selected output dictionary entry")
+                    dialog.destroy()
+                    return
+                outputSymbols.append([DictionarySymbol(outputEntry), int(outputSymbolProba), int(outputSymbolTime)])
 
         # Now we create the transition
         transition = SemiStochasticTransition(transitionID, transitionName, startState, stopState, inputSymbol)
@@ -530,18 +539,24 @@ class UIGrammarInference:
         return transition
 
     def addSymbolToTheList(self, widget, entries, outputSymbolsTreeStore, outputSymbolCombo, outputTimeEntry, outputProbabilityEntry):
-        entryID = outputSymbolCombo.get_model()[outputSymbolCombo.get_active()][1]
-        entryTime = outputTimeEntry.get_text()
-        entryProba = outputProbabilityEntry.get_text()
-        selectedEntry = None
-        for entry in entries:
-            if str(entry.getID()) == entryID:
-                selectedEntry = entry
-        if selectedEntry == None:
-            self.log.warn("Impossible to retrieve the selected dictionary entry")
-            return
-
-        outputSymbolsTreeStore.append(None, [selectedEntry.getID(), selectedEntry.getName(), entryTime, entryProba])
+        entryType = outputSymbolCombo.get_model()[outputSymbolCombo.get_active()][0]
+        if entryType == EmptySymbol.TYPE :
+            entryTime = outputTimeEntry.get_text()
+            entryProba = outputProbabilityEntry.get_text()            
+            outputSymbolsTreeStore.append(None, [EmptySymbol.TYPE, "none", "EmptySymbol", entryTime, entryProba])
+        else :            
+            entryID = outputSymbolCombo.get_model()[outputSymbolCombo.get_active()][2]
+            entryTime = outputTimeEntry.get_text()
+            entryProba = outputProbabilityEntry.get_text()
+            selectedEntry = None
+            for entry in entries:
+                if str(entry.getID()) == entryID:
+                    selectedEntry = entry
+            if selectedEntry == None:
+                self.log.warn("Impossible to retrieve the selected dictionary entry")
+                return
+    
+            outputSymbolsTreeStore.append(None, [selectedEntry.getType(), selectedEntry.getID(), selectedEntry.getName(), entryTime, entryProba])
 
     #+-----------------------------------------------------------------------+
     #| createState:
@@ -632,7 +647,7 @@ class UIGrammarInference:
         # We retrieve the xdot from the grammar (if it exists)
         if self.getGrammar() == None:
             return
-        self.xdotWidget.set_dotcode(self.getGrammar().getDotCode())
+        self.xdotWidget.drawAutomata(self.getGrammar())
 
     def updateInterface(self):
         if self.netzob.getCurrentProject() == None:
@@ -743,28 +758,189 @@ class UIGrammarInference:
     #|   Display a popup for the edition of a state
     #+----------------------------------------------
     def displayPopupToEditState(self, event, state):
-        dialog = gtk.MessageDialog(
-        None,
-        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-        gtk.MESSAGE_QUESTION,
-        gtk.BUTTONS_OK,
-        None)
-        dialog.set_markup("Enter the name of the state")
-        #create the text input field
-        entry = gtk.Entry()
-        entry.set_text(state.getName())
-        #allow the user to press enter to do ok
-        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
-        #create a horizontal box to pack the entry and a label
-        hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label("Name : "), False, 5, 5)
-        hbox.pack_end(entry)
-        dialog.vbox.pack_end(hbox, True, True, 0)
+        self.log.debug("Opening the dialog for the edition of a state")
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Edition of a state')
+
+        # Create the ID of the new state
+        stateID = str(state.getID())
+
+        mainTable = gtk.Table(rows=5, columns=2, homogeneous=False)
+        
+        # ID of the state
+        stateIDLabel = gtk.Label("ID :")
+        stateIDLabel.show()
+        stateIDValueLabel = gtk.Label(stateID)
+        stateIDValueLabel.show()
+        mainTable.attach(stateIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(stateIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Name of the state
+        stateNameLabel = gtk.Label("Name :")
+        stateNameLabel.show()
+        stateNameEntry = gtk.Entry()
+        stateNameEntry.set_text(str(state.getName()))
+        stateNameEntry.show()
+        mainTable.attach(stateNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(stateNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Memopex labels
+        memOpexButton = gtk.Button("Add a MemOpex")
+        memOpexButton.connect("clicked", self.showCreationOfMemOpex, state)
+        memOpexButton.show()
+        memOpexButton.set_sensitive(True)
+        mainTable.attach(memOpexButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # List of memopex        
+        scroll_listOfMemOpex = gtk.ScrolledWindow()
+        treestore_listOfMemOpex = gtk.TreeStore(str, str, str)  # id, transition id, type
+        treeview_listOfMemOpex = gtk.TreeView(treestore_listOfMemOpex)
+        treeview_listOfMemOpex.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        treeview_listOfMemOpex.set_size_request(-1, 250)
+        cell = gtk.CellRendererText()
+        # main col
+        column_listOfMemOpex_transition = gtk.TreeViewColumn('Transition ID')
+        column_listOfMemOpex_transition.pack_start(cell, True)
+        column_listOfMemOpex_transition.set_attributes(cell, text=1)
+        treeview_listOfMemOpex.append_column(column_listOfMemOpex_transition)
+        # Type col
+        column_listOfMemOpex_type = gtk.TreeViewColumn('Type')
+        column_listOfMemOpex_type.pack_start(cell, True)
+        column_listOfMemOpex_type.set_attributes(cell, text=2)
+        treeview_listOfMemOpex.append_column(column_listOfMemOpex_type)
+        treeview_listOfMemOpex.show()
+        
+        # Register all the memopex of the current state
+        for memOpex in state.getMemOpexs() :
+            treestore_listOfMemOpex.append(None, [str(memOpex.getID()), str(memOpex.getTransitionID()), memOpex.getType()])
+        
+        scroll_listOfMemOpex.add(treeview_listOfMemOpex)
+        scroll_listOfMemOpex.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll_listOfMemOpex.show()
+        mainTable.attach(scroll_listOfMemOpex, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
-        #go go go
         result = dialog.run()
-        if result == gtk.RESPONSE_APPLY:
-            text = entry.get_text()
+
+        if result == gtk.RESPONSE_OK:
+            text = stateNameEntry.get_text()
+            if (len(text) > 0):
+                state.setName(text)
+        dialog.destroy()
+
+        self.update()
+        
+    def showCreationOfMemOpex(self, event, state):
+        self.log.debug("Opening the dialog for the creation of MemOpex of a state")
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Creation of a MemOpex')
+
+        # MemOpex id 
+        memOpexId = uuid.uuid4()
+
+        mainTable = gtk.Table(rows=5, columns=2, homogeneous=False)
+        
+        # ID of the memopex
+        memopexIDLabel = gtk.Label("ID :")
+        memopexIDLabel.show()
+        memopexIDValueLabel = gtk.Label(str(memOpexId))
+        memopexIDValueLabel.show()
+        mainTable.attach(memopexIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(memopexIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Transition
+        memopexTransitionLabel = gtk.Label("Transition :")
+        memopexTransitionLabel.show()
+        
+        transitionTypeCombo = gtk.ComboBox()
+        transitionTypeCombo.set_model(gtk.ListStore(str, str)) # id, transition name
+        transitionTypeComboCell = gtk.CellRendererText()
+        transitionTypeCombo.pack_start(transitionTypeComboCell, True)
+        transitionTypeCombo.add_attribute(transitionTypeComboCell, 'text', 1)
+        
+        for possibleTransition in self.getGrammar().getTransitionsLeadingToState(state) :
+            transitionTypeCombo.get_model().append([str(possibleTransition.getID()), possibleTransition.getName()])
+        transitionTypeCombo.show()
+        mainTable.attach(memopexTransitionLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(transitionTypeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Operations
+        memopexOperationLabel = gtk.Label("Operation :")
+        memopexOperationLabel.show()
+        
+        operationCombo = gtk.ComboBox()
+        operationCombo.set_model(gtk.ListStore(str)) # type
+        operationComboCell = gtk.CellRendererText()
+        operationCombo.pack_start(operationComboCell, True)
+        operationCombo.add_attribute(operationComboCell, 'text', 0)
+        
+        operationCombo.get_model().append(["FORGET"])
+        operationCombo.show()
+        mainTable.attach(memopexOperationLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(operationCombo, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Variable
+        variableLabel = gtk.Label("Variable :")
+        variableLabel.show()
+        
+        variableCombo = gtk.ComboBox()
+        variableCombo.set_model(gtk.ListStore(str, str)) # id, name
+        variableComboCell = gtk.CellRendererText()
+        variableCombo.pack_start(variableComboCell, True)
+        variableCombo.add_attribute(operationComboCell, 'text', 1)
+        
+        for variable in self.getVocabulary().getVariables() :
+            variableCombo.get_model().append([str(variable.getID()), variable.getUncontextualizedDescription()])
+            
+        
+        
+        variableCombo.show()
+        mainTable.attach(variableLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableCombo, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        
+#        # Memopex labels
+#        memOpexButton = gtk.Button("Add a MemOpex")
+#        memOpexButton.connect("clicked", self.showCreationOfMemOpex, state)
+#        memOpexButton.show()
+#        memOpexButton.set_sensitive(True)
+#        mainTable.attach(memOpexButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+#        
+#        # List of memopex        
+#        scroll_listOfMemOpex = gtk.ScrolledWindow()
+#        treestore_listOfMemOpex = gtk.TreeStore(str, str, str)  # id, transition id, type
+#        treeview_listOfMemOpex = gtk.TreeView(treestore_listOfMemOpex)
+#        treeview_listOfMemOpex.get_selection().set_mode(gtk.SELECTION_SINGLE)
+#        treeview_listOfMemOpex.set_size_request(-1, 250)
+#        cell = gtk.CellRendererText()
+#        # main col
+#        column_listOfMemOpex_transition = gtk.TreeViewColumn('Transition ID')
+#        column_listOfMemOpex_transition.pack_start(cell, True)
+#        column_listOfMemOpex_transition.set_attributes(cell, text=1)
+#        treeview_listOfMemOpex.append_column(column_listOfMemOpex_transition)
+#        # Type col
+#        column_listOfMemOpex_type = gtk.TreeViewColumn('Type')
+#        column_listOfMemOpex_type.pack_start(cell, True)
+#        column_listOfMemOpex_type.set_attributes(cell, text=2)
+#        treeview_listOfMemOpex.append_column(column_listOfMemOpex_type)
+#        treeview_listOfMemOpex.show()
+#        
+#        # Register all the memopex of the current state
+#        for memOpex in state.getMemOpexs() :
+#            treestore_listOfMemOpex.append(None, [str(memOpex.getID()), str(memOpex.getTransitionID()), memOpex.getType()])
+#        
+#        scroll_listOfMemOpex.add(treeview_listOfMemOpex)
+#        scroll_listOfMemOpex.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+#        scroll_listOfMemOpex.show()
+#        mainTable.attach(scroll_listOfMemOpex, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+#        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+
+        if result == gtk.RESPONSE_OK:
+            text = stateNameEntry.get_text()
             if (len(text) > 0):
                 state.setName(text)
         dialog.destroy()

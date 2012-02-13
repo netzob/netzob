@@ -42,7 +42,7 @@ from AbstractActor import AbstractActor
 #+---------------------------------------------------------------------------+
 class SimpleCommunicationLayer(AbstractActor):
 
-    def __init__(self, inputs, outputs, dictionary, memory):
+    def __init__(self, inputs, outputs, vocabulary, memory):
         AbstractActor.__init__(self, False, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.SimpleCommunicationLayer.py')
@@ -50,7 +50,7 @@ class SimpleCommunicationLayer(AbstractActor):
         self.predefinedOutputs = deque(outputs)
         self.inputMessages = []
         self.outputMessages = []
-        self.dictionary = dictionary
+        self.vocabulary = vocabulary
         self.memory = memory
 
     def open(self):
@@ -66,7 +66,7 @@ class SimpleCommunicationLayer(AbstractActor):
         if (len(self.predefinedInputs) > 0):
             symbol = self.predefinedInputs.popleft()
             self.log.debug("We simulate the reception of symbol " + str(symbol))
-            (value, strvalue) = symbol.getValueToSend(False, self.memory)
+            (value, strvalue) = symbol.getValueToSend(False, self.vocabulary, self.memory)
             self.inputMessages.append(value)
             return value
         else:

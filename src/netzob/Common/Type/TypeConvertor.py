@@ -296,12 +296,23 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
-    #| Return the IP parameter in hex string
+    #| Return the IP parameter provide in string in hex string
+    #| "192.168.0.10" -> "ab3e10ea"
     #+----------------------------------------------
     def ipToNetzobRaw(raw):
-        logging.error("Not yet implemented")
-        # TODO
-        return raw
+        dec_octets = str.split(raw, '.')
+        hex_octets = []
+        for dec_octet in dec_octets:
+            if int(dec_octet) > 255:
+                logging.error("The provided IP is not valid ! " + str(raw))
+                return None
+            if int(dec_octet) < 16:
+                hex_octets.append('0' + hex(int(dec_octet))[2:])
+            else:
+                hex_octets.append(hex(int(dec_octet))[2:])
+                
+        hex_ip = ''.join(hex_octets)
+        return hex_ip
 
     @staticmethod
     #+----------------------------------------------
@@ -315,6 +326,19 @@ class TypeConvertor():
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res.to01()
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| Return the string parameter in a bitarray
+    #+----------------------------------------------
+    def netzobRawToBitArray(raw):
+        res = bitarray()
+        for c in raw:
+            tmp = bitarray()
+            tmp.fromstring(chr(int(c, 16)))
+            tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
+            res.extend(tmp)
+        return res
 
     @staticmethod
     #+----------------------------------------------

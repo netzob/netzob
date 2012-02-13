@@ -160,6 +160,12 @@ class NormalState(AbstractState):
         xmlState.set("id", str(self.getID()))
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NormalState")
+        
+        # Save MemOpex
+        if len(self.getMemOpexs()) > 0 :
+            xmlMemOpexs = etree.SubElement(xmlState, "{" + namespace + "}memopexs")
+            for memOpex in self.getMemOpexs() :
+                memOpex.save(xmlMemOpexs, namespace)
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):

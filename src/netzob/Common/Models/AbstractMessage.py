@@ -180,8 +180,8 @@ class AbstractMessage():
                 if field.getVariable() != None:
                     # Creation of a temporary memory just for the current
                     tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
-
-                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, tmpMemory) == -1:
+                    
+                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
                         backgroundColor = 'background="red"'
                     else:
                         backgroundColor = 'background="green"'

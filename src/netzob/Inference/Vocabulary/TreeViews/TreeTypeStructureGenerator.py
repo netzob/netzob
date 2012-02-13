@@ -138,9 +138,9 @@ class TreeTypeStructureGenerator():
             # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
             if field.getVariable() != None:
-                variableDescription = field.getVariable().getDescription()
+                variableDescription = field.getVariable().getUncontextualizedDescription()
             elif field.getDefaultVariable(self.getSymbol()) != None:
-                variableDescription = field.getDefaultVariable(self.getSymbol()).getDescription()
+                variableDescription = field.getDefaultVariable(self.getSymbol()).getUncontextualizedDescription()
 
             self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
 

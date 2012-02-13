@@ -48,6 +48,7 @@ class AbstractState():
         self.name = name
         self.type = type
         self.active = False
+        self.memOpexs = []
 
     #+-----------------------------------------------------------------------+
     #| getTransitions
@@ -111,6 +112,25 @@ class AbstractState():
     #+-----------------------------------------------------------------------+
     def deactivate(self):
         self.active = False
+    
+    #+-----------------------------------------------------------------------+
+    #| getMemOpexs
+    #|    returns the memory operations associated with current state
+    #+-----------------------------------------------------------------------+
+    def getMemOpexs(self):
+        return self.memOpexs
+    #+-----------------------------------------------------------------------+
+    #| addMemOpex
+    #|    register a memory operation on current state
+    #+-----------------------------------------------------------------------+
+    def addMemOpex(self, memOpex):
+        self.memOpexs.append(memOpex)
+    #+-----------------------------------------------------------------------+
+    #| removeMemOpex
+    #|    unregister the provided memory operation from current state
+    #+-----------------------------------------------------------------------+    
+    def removeMemOpex(self, memOpex):
+        self.memOpexs.remove(memOpex)
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS

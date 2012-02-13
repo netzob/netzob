@@ -51,18 +51,16 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.Type.Format import Format
+from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 #+----------------------------------------------
 #| C Imports
 #+----------------------------------------------
 import libNeedleman
 
-
 NAMESPACE = "http://www.netzob.org/"
 
 # Note: this is probably useless, as it is already specified in Project.py
-# Please FGY : do not delete ! ;)
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
@@ -70,12 +68,13 @@ COMMON_NAMESPACE = "http://www.netzob.org/common"
 #| Symbol:
 #|     Class definition of a symbol
 #+---------------------------------------------------------------------------+
-class Symbol(object):
+class Symbol(AbstractSymbol):
 
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
     def __init__(self, id, name, project):
+        AbstractSymbol.__init__(self, "Symbol")
         self.id = id
         self.name = name
         self.alignment = ""
@@ -310,7 +309,7 @@ class Symbol(object):
         nbElements = 1
         iField = -1
         for it in range(1, len(resultMask)):
-            if resultMask[it] == "1":  # The current column is dynamic
+            if resultMask[it] == "1": # The current column is dynamic
                 if isLastDyn:
                     nbElements += 1
                 else:
@@ -1072,7 +1071,6 @@ class Symbol(object):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-
         # Register the namespace (2 way depending of the version)
         try:
             etree.register_namespace('netzob', PROJECT_NAMESPACE)
@@ -1084,6 +1082,8 @@ class Symbol(object):
         # create the file
         root = etree.Element("{" + NAMESPACE + "}netzob")
         root.set("project", str(self.getProject().getName()))
+
+        self.save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
 
         tree = ElementTree(root)
         result = etree.tostring(tree, pretty_print=True)
@@ -1304,8 +1304,8 @@ class Symbol(object):
 
     """
 
-    def getValueToSend(self, inverse, memory):
-        result = self.getRoot().send(inverse, memory)
+    def getValueToSend(self, inverse, vocabulary, memory):
+        result = self.getRoot().getValueToSend(inverse, vocabulary, memory)
         return result
 
     def getRoot(self):
@@ -1316,7 +1316,6 @@ class Symbol(object):
                 variable = field.getDefaultVariable(self)
             else:
                 variable = field.getVariable()
-
             rootSymbol.addChild(variable)
         return rootSymbol
 

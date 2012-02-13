@@ -31,55 +31,54 @@
 import logging
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
-#| Memory:
-#|     Definition of an memory
+#| MemOpex:
+#|     Definition of a Memory Operation (must be subclassed to be useful)
 #+---------------------------------------------------------------------------+
-class Memory():
+class MemOpex():
 
-    def __init__(self, variables):
+    def __init__(self, type, id, transitionId):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
-        self.memory = dict()
-        self.temporaryMemory = dict()
-        self.variables = variables
-        
-    def createMemory(self):
-        # We create a temporary memory
-        self.temporaryMemory = dict()
-        for key in self.memory.keys() :
-            self.temporaryMemory[key] = self.memory[key]
-            
-    def persistMemory(self):
-        self.memory = dict()
-        for key in self.temporaryMemory.keys() :
-            self.memory[key] = self.temporaryMemory[key]
-        
-    def hasMemorized(self, variable):
-        return variable.getID() in self.temporaryMemory.keys()
+        self.log = logging.getLogger('netzob.Common.MMSTD.MemOpexs.MemOpex.py')
+        self.id = id
+        self.transitionId = transitionId
+        self.type = type
 
-    def memorize(self, variable, binValue):
-        self.temporaryMemory[variable.getID()] = binValue
-
-    def recall(self, variable):
-        return self.temporaryMemory[variable.getID()]
-
-    def recallAll(self):
-        return self.temporaryMemory
+    #+-----------------------------------------------------------------------+
+    #| GETTERS AND SETTERS
+    #+-----------------------------------------------------------------------+
+    def getID(self):
+        return self.id
     
-    def restore(self, variable):
-        if variable.getID() in self.memory.keys() :
-            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
-        
-    
-        
+    def getTransitionID(self):
+        return self.transitionId
 
+    def getType(self):
+        return self.type
+
+    def setID(self, id):
+        self.id = id
+        
+    def setTransitionID(self, transitionID):
+        self.transitionId = transitionID
     
+    #+-----------------------------------------------------------------------+
+    #| save
+    #|     Abstract method to retrieve the XML definition of current MemOpex
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def save(self, root, namespace):
+        self.log.error("The MemOpex class doesn't support 'save'.")
+        raise NotImplementedError("The state MemOpex doesn't support 'save'.")
+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ForgetMemOpex":
+            from netzob.Common.MMSTD.MemOpexs.impl.ForgetMemOpex import ForgetMemOpex
+            return ForgetMemOpex.loadFromXML(xmlRoot, namespace, version)
+        else:
+            raise NameError("The parsed xml doesn't represent a valid type of MemOpex.")
+            return None
