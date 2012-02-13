@@ -136,12 +136,26 @@ class SemiStochasticTransition(AbstractTransition):
         self.log.debug("Executing transition " + self.name)
         # write the input symbol on the output channel
         abstractionLayer.writeSymbol(self.inputSymbol)
+        
+        # Exception on EmptyMessage, 
+        # if the only output symbol associated with 
+        # current transition is an EmptyMessage, we do not wait 
+        # for it, we just sleep the receiving time
+        if len(self.outputSymbols) == 1 and self.outputSymbols[0][0].getType() == EmptySymbol.TYPE :
+            self.log.info("We do not wait for a symbol since its declared as an EmptySymbol.")
+            # before returning we simulate the reaction time
+            time.sleep(int(self.outputSymbols[0][2]) / 1000)
+            
+            self.deactivate()
+            return self.outputState
+        
+        
         finish = False
         while (not finish):
             # Wait for a message
             self.log.debug("Start waiting for something")
             (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-
+            
             if receivedSymbol == None:
                 finish = True
             else :
@@ -153,7 +167,7 @@ class SemiStochasticTransition(AbstractTransition):
                     finish = True
 
                 for arSymbol in self.outputSymbols:
-                    [symbol, proba, time] = arSymbol
+                    [symbol, proba, rtime] = arSymbol
                     if symbol.getID() == receivedSymbol.getID():
                         self.log.debug("Received symbol is understood !!")
                         finish = True
@@ -188,6 +202,8 @@ class SemiStochasticTransition(AbstractTransition):
         xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols:
             [symbol, proba, time] = arSymbol
+            print "->" + str(symbol)
+            print "->" + str(symbol.getID())
             xmlOutput = etree.SubElement(xmlOutputs, "{" + namespace + "}output")
             xmlOutput.set("time", str(time))
             xmlOutput.set("probability", str(proba))
