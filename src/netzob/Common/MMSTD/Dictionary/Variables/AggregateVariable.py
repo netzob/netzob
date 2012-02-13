@@ -101,7 +101,7 @@ class AggregateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getUncontextualizedDescription())
-        return "AggregateVariable [" + " AND ".join(values) + "]"
+        return "[AGG]" + str(self.getName()) + "=" + " AND ".join(values) + "]"
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
@@ -110,7 +110,7 @@ class AggregateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
-        return "AggregateVariable [" + " AND ".join(values) + "]"
+        return "[AGG]" + str(self.getName()) + "=" + " AND ".join(values) + "]"
     #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
