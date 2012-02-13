@@ -105,7 +105,7 @@ class AlternateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getUncontextualizedDescription())
-        return "AlternateVariable [" + " OR ".join(values) + "]"
+        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
@@ -114,7 +114,7 @@ class AlternateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
-        return "AlternateVariable [" + " OR ".join(values) + "]"
+        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"    
     #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
