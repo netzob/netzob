@@ -125,14 +125,14 @@ class BinaryVariable(Variable):
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
     #+-----------------------------------------------------------------------+   
     def getUncontextualizedDescription(self):
-        return "BinaryVariable [originalValue = " + str(self.getOriginalValue()) + "]"
+        return "[BIN]" + str(self.getName()) + "= (orig=" + str(self.getOriginalValue()) + ")"
     
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
-        return "BinaryVariable [getValue = " + str(self.getValue(negative, vocabulary, memory)) + "]"
+        return "[BIN]" + str(self.getName()) + "= (getVlue=" + str(self.getValue(negative, vocabulary, memory)) + ")"
     
     #+-----------------------------------------------------------------------+
     #| compare :
