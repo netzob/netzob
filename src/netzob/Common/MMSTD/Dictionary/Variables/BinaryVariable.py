@@ -30,7 +30,8 @@
 #+---------------------------------------------------------------------------+
 import logging
 from lxml import etree
-
+import random
+from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -77,8 +78,8 @@ class BinaryVariable(Variable):
     #|     Generate a valid value for the variable
     #+-----------------------------------------------------------------------+        
     def generateValue(self):
-        self.log.error("Error, the current variable (declared as " + self.type + ") doesn't support function generateValue")
-        raise NotImplementedError("The current variable doesn't support 'generateValue'.")
+        nbBits = random.randint(self.minBits, self.maxBits)
+        return bitarray(nbBits)
     
     #+-----------------------------------------------------------------------+
     #| getValue :
@@ -141,20 +142,32 @@ class BinaryVariable(Variable):
     #|     >=0    : it matchs and the following number of bits were eaten 
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
-        (binVal, strVal) = self.getValue(negative, vocabulary, memory)
-        
-        self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
-        tmp = value[indice:]
-               
-        if len(tmp) >= len(binVal):
-            if tmp[:len(binVal)] == binVal:
-                self.log.info("Compare successful")
-                return indice + len(binVal)
+        localValue = self.getValue(negative, vocabulary, memory)        
+        # In case we can't compare with a known value, we compare only the possibility to learn it afterward
+        if localValue == None :
+            self.log.debug("We compare the format (will we be able to learn it afterwards ?")
+            return self.compareFormat(value, indice, negative, vocabulary, memory)
+        else :
+            (binVal, strVal) = localValue
+            self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")            
+            tmp = value[indice:]
+            if len(tmp) >= len(binVal):
+                if tmp[:len(binVal)] == binVal:
+                    self.log.info("Compare successful")
+                    return indice + len(binVal)
+                else:
+                    self.log.info("error in the comparison")
+                    return -1
             else:
-                self.log.info("error in the comparison")
+                self.log.info("Compare fail")
                 return -1
-        else:
-            self.log.info("Compare fail")
+            
+    def compareFormat(self, value, indice, negative, vocabulary, memory):
+        tmp = value[indice:]
+        self.log.debug("Compare format is " + str(len(value)) + " >= " + str(self.minBits))
+        if len(tmp) >= self.minBits :
+            return min(len(value), self.maxBits)
+        else :
             return -1
     
     #+-----------------------------------------------------------------------+
