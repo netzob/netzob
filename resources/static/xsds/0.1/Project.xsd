@@ -634,6 +634,21 @@
 			</extension>
 		</complexContent>
 	</complexType>
+	
+	<complexType name="HexVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="originalValue" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="minHexs" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+					<element name="maxHexs" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 
 	<complexType name="WordVariable">
 		<complexContent>
