@@ -84,7 +84,11 @@ class DictionarySymbol(AbstractSymbol):
     def __cmp__(self, other):
         if other == None:
             return 0
-        if self.getID() == other.getID():
-            return 0
-        else:
+        try :
+            if self.getID() == other.getID():
+                return 0
+            else:
+                return 1
+        except :
+            self.log.warn("Tried to compare a DictionarySymbol with " + str(other))
             return 1

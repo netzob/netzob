@@ -63,6 +63,7 @@ class NetworkClient(AbstractActor):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             else:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.socket.bind(('', self.sport))
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             self.socket.connect((self.host, self.port))
@@ -82,22 +83,31 @@ class NetworkClient(AbstractActor):
     def close(self):
         self.log.debug("Closing the network client")
         self.stop()
-        try:
-            self.socket.shutdown(socket.SHUT_RDWR)
+#        try:
+#            self.socket.shutdown()
+#        except socket.error, msg:
+#            self.log.debug("Error appeared while shuting down the socket." + str(msg))
+        
+        try:    
             self.socket.close()
-        except:
-            self.log.debug("No need to close the socket since it's not even open")
-            return True
+#            self.socket.shutdown(socket.SHUT_RDWR)
+        except socket.error, msg:
+            self.log.debug("Error appeared while closing down the socket." + str(msg))  
+            
+            
+            
+        
+        
         return True
 
     def read(self, timeout):
         chars = []
         try:
-#            if timeout > 0:
-#                ready = select.select([self.socket], [], [], timeout)
-#                if ready[0]:
-#                    chars = self.socket.recv(4096)
-#            else:
+            if timeout > 0:
+                ready = select.select([self.socket], [], [], timeout)
+                if ready[0]:
+                    chars = self.socket.recv(4096)
+            else:
                 ready = select.select([self.socket], [], [])
                 if ready[0]:
                     chars = self.socket.recv(4096)

@@ -61,7 +61,7 @@ class EmptySymbol(AbstractSymbol):
             self.log.debug("The symbols are not equivalents")
             return False
 
-    def getValueToSend(self, inverse, memory):
+    def getValueToSend(self, inverse, vocabulary, memory):
         return (bitarray(endian='big'), "")
 
     #+-----------------------------------------------------------------------+

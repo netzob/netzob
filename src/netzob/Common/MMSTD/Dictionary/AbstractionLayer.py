@@ -165,7 +165,8 @@ class AbstractionLayer():
             return (symbol, None)
 
     def writeSymbol(self, symbol):
-        self.log.info("Sending symbol '" + symbol.getName() + "' over the communication channel")
+        
+        self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
         self.log.info("- str = '" + strMessage + "'")

@@ -30,7 +30,8 @@
 #+----------------------------------------------
 import logging
 import time
-
+import gobject
+import os
 
 #+----------------------------------------------
 #| Related third party imports
@@ -43,7 +44,7 @@ from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
-import gobject
+
 
 
 #+----------------------------------------------
@@ -53,12 +54,13 @@ import gobject
 #+----------------------------------------------
 class LearningAlgorithm(object):
 
-    def __init__(self, dictionary, communicationChannel, callbackFunction):
+    def __init__(self, dictionary, communicationChannel, resetScript, callbackFunction):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
         self.communicationChannel = communicationChannel
         self.inferedAutomata = None
+        self.resetScript = resetScript
         self.submitedQueries = []
 
         self.callbackFunction = callbackFunction
@@ -74,6 +76,12 @@ class LearningAlgorithm(object):
         return self.submitedQueries
 
     def submitQuery(self, query):
+        self.log.info("Reseting the oracle by executing script : " + self.resetScript)
+        # TODO : must be UPGRADED
+        # WARNING
+        os.system("sh " + self.resetScript)
+        
+        
         self.log.info("Submit the following query : " + str(query))
 
         # transform the query into a MMSTD
