@@ -131,10 +131,10 @@ class AbstractionLayer():
         return self.receiveSymbolWithTimeout(-1)
 
     def receiveSymbolWithTimeout(self, timeout):
-        nbMaxAttempts = 5
-        
         # First we read from the input the message
         receivedData = self.communicationChannel.read(timeout)
+
+        nbMaxAttempts = 5
 
         if receivedData == None:
             self.log.warn("The communication channel seems to be closed !")
@@ -174,10 +174,12 @@ class AbstractionLayer():
         # now we send it
         now = datetime.datetime.now()
         sendingTime = now.strftime("%H:%M:%S")
-        self.communicationChannel.write(binMessage)
-
         self.outputMessages.append([sendingTime, strMessage, symbol])
         self.manipulatedSymbols.append(symbol)
+        
+        self.communicationChannel.write(binMessage)
+
+        
 
     #+-----------------------------------------------------------------------+
     #| abstract

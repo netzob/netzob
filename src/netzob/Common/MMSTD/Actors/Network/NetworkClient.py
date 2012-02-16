@@ -64,8 +64,9 @@ class NetworkClient(AbstractActor):
             else:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.bind(('', self.sport))
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             self.socket.connect((self.host, self.port))
-            self.socket.setblocking(0)
+            self.socket.setblocking(True)
         except socket.error, msg:
             self.log.warn("Opening the network connection has failed : " + str(msg))
             self.socket = None
@@ -90,27 +91,20 @@ class NetworkClient(AbstractActor):
         return True
 
     def read(self, timeout):
-        self.log.debug("Read from the socket")
-        result = bitarray(endian='big')
-
         chars = []
         try:
-            if timeout > 0:
-                self.log.info("Using a timeout (" + str(timeout) + " for reading from the socket")
-                ready = select.select([self.socket], [], [], timeout)
-                self.log.info("ready")
-                if ready[0]:
-                    chars = self.socket.recv(4096)
-                self.log.info("ready = " + str(ready))
-            else:
+#            if timeout > 0:
+#                ready = select.select([self.socket], [], [], timeout)
+#                if ready[0]:
+#                    chars = self.socket.recv(4096)
+#            else:
                 ready = select.select([self.socket], [], [])
-                self.log.debug("ready = " + str(ready[0]))
                 if ready[0]:
                     chars = self.socket.recv(4096)
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-
+        result = bitarray(endian='big')
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result

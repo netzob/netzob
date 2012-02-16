@@ -200,10 +200,10 @@ class HexVariable(Variable):
         return self.originalValue
     
     def getMinHexs(self):
-        return self.minBits
+        return self.minHex
     
     def getMaxHexs(self):
-        return self.maxBits
+        return self.maxHex
 
                
     #+-----------------------------------------------------------------------+

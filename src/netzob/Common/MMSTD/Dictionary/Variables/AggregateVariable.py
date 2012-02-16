@@ -156,7 +156,7 @@ class AggregateVariable(Variable):
         # If it has failed we restore every executed vars
         if not status :
             for var in toBeRestored :
-                var.restore()                
+                var.restore(vocabulary, memory)                
         return result
     
     #+-----------------------------------------------------------------------+
