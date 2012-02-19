@@ -29,7 +29,11 @@
 #+----------------------------------------------------------------------------
 #| Global Imports
 #+----------------------------------------------------------------------------
+import sys
+import os
+sys.path.insert(0, 'src/')
 from distutils.core import setup, Extension
+from netzob import release
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -52,7 +56,6 @@ def find_packages(directory, base):
         if path.startswith('.'):
             continue
         full_path = os.path.join(base, path)
-        print full_path
         if os.path.isdir(os.path.join(directory, full_path)):
             ret += find_packages(directory, full_path)
             
@@ -69,7 +72,7 @@ def find_packages(directory, base):
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
-    name="Netzob",
+    name=release.name,
     packages=find_packages('src/', 'netzob'),
     package_dir={"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
@@ -85,15 +88,15 @@ setup(
                                     "resources/static/xsds/0.1/common.xsd"]),
         ],
     scripts=["netzob"],
-    version="0.3.1",
-    license="GPLv3",
-    description="Inferring communication protocols",
-    platforms="Linux_x86, Linux_x64",
-    author="Georges Bossert, Frédéric Guihéry",
-    author_email="contact@netzob.org",
-    url="http://www.netzob.org",
-    download_url="https://dev.netzob.org",
-    keywords=["Protocol", "Inference", "Networking", "Reverse Engineering", "Driver", "Security"],
+    version=release.version,
+    license=release.licenseName,
+    description=release.description,
+    platforms=release.platforms,
+    author=release.author,
+    author_email=release.author_email,
+    url=release.url,
+    download_url=release.download_url,
+    keywords=release.keywords,
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
@@ -108,17 +111,5 @@ setup(
         "Topic :: Security",
         "Topic :: System :: Networking",
         ],
-    long_description="""\
-Inferring communication protocols
--------------------------------------
-
-Netzob simplifies the work for security auditors by providing a complete framework
-for the reverse engineering of communication protocols.
-
-It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP)
-and variable fields protocols (like ASN.1 based formats).
-Netzob is therefore suitable for reversing network protocols, structured files and system and process
-flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in
-multiple contexts (network, file, process and kernel data acquisition).
-"""
+    long_description=release.long_description
     )
