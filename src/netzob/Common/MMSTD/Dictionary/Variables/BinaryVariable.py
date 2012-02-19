@@ -113,19 +113,24 @@ class BinaryVariable(Variable):
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
         if self.getCurrentValue() != None :
+            self.log.debug("BINARY : HAS CURRENT VALUE")
             return self.getCurrentValue()
         
         if memory.hasMemorized(self) :
+            self.log.debug("BINARY : HAS NO CURRENT VALUE BUT HAS MEMORY")
             return memory.recall(self)
         
         # We generate a new value
-        self.computeCurrentValue(self.generateValue())
+        binNewValue = self.generateValue()
+        strNewValue = TypeConvertor.bitarray2StrBitarray(self.generateValue())
+        newValue = (binNewValue, strNewValue)
+        
         
         # We save in memory the current value
-        memory.memorize(self, self.getCurrentValue())
+        memory.memorize(self, newValue)
         
         # We return the newly generated and memorized value
-        return self.getCurrentValue()
+        return newValue
     
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :

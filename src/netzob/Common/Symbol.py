@@ -1373,6 +1373,29 @@ class Symbol(AbstractSymbol):
 
     def setRawDelimiter(self, rawDelimiter):
         self.rawDelimiter = rawDelimiter
+        
+    def __str__(self):
+        return str(self.getName())
+
+    def __repr__(self):
+        return str(self.getName())
+    
+    def __cmp__(self, other):
+        if other == None:
+            self.log.warn("oups")
+            return 1
+        try :
+            if self.getID() == other.getID():
+                self.log.info("okf")
+                return 0
+            else:
+                self.log.warn("not equals")
+                return 1
+        except  :
+            self.log.warn("Tried to compare a Symbol with " + str(other))
+            return 1
+        self.log.info("ds??")
+
 
     #+----------------------------------------------
     #| Static methods
@@ -1410,5 +1433,8 @@ class Symbol(AbstractSymbol):
                     field = Field.loadFromXML(xmlField, namespace, version)
                     if field != None:
                         symbol.addField(field)
+            
+            
+                
             return symbol
         return None

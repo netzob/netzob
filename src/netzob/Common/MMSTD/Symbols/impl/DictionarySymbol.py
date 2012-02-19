@@ -80,12 +80,15 @@ class DictionarySymbol(AbstractSymbol):
 
     def __str__(self):
         return str(self.entry)
+    
+    def __repr__(self):
+        return str(self.entry)
 
     def __cmp__(self, other):
         if other == None:
             return 0
         try :
-            if self.getID() == other.getID():
+            if self.getID() == other.getID() and self.getEntry() == other.getEntry():
                 return 0
             else:
                 return 1

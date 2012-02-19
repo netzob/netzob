@@ -104,10 +104,12 @@ class NetworkClient(AbstractActor):
         chars = []
         try:
             if timeout > 0:
+                self.log.debug("Reading from the socket with a timeout of " + str(timeout))
                 ready = select.select([self.socket], [], [], timeout)
                 if ready[0]:
                     chars = self.socket.recv(4096)
             else:
+                self.log.debug("Reading from the socket without any timeout")
                 ready = select.select([self.socket], [], [])
                 if ready[0]:
                     chars = self.socket.recv(4096)
