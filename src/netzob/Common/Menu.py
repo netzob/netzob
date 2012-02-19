@@ -46,7 +46,7 @@ from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
-
+from netzob import release
 
 #+---------------------------------------------------------------------------+
 #| Menu:
@@ -344,11 +344,11 @@ class Menu(object):
 
     def aboutDialogAction(self, widget):
         about = gtk.AboutDialog()
-        about.set_program_name("Netzob")
-        about.set_version("0.3.1")
-        about.set_copyright("(c) Georges Bossert & Frédéric Guihéry")
-        about.set_comments("Communication protocol modelization by reverse engineering")
-        about.set_website("http://www.netzob.org")
+        about.set_program_name(release.appname)
+        about.set_version(release.version)
+        about.set_copyright(release.copyright)
+        about.set_comments(release.description)
+        about.set_website(release.url)
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
         about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
         about.run()
