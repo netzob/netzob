@@ -869,6 +869,7 @@ class UImodelization:
         hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
         entryName = gtk.Entry()
         entryName.set_text(field.getName())
+
         # Allow the user to press enter to do ok
         entryName.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryName)
