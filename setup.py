@@ -34,6 +34,8 @@ import os
 sys.path.insert(0, 'src/')
 from distutils.core import setup, Extension
 from netzob import release
+from resources.sdist.manpage_command import manpage_command
+
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -43,6 +45,10 @@ moduleLibNeedleman = Extension('libNeedleman',
                                extra_link_args=["-fopenmp"],
                                sources=['lib/libNeedleman/NeedlemanWunsch.c'])
 
+CMD_CLASS = {
+             'build_manpage': manpage_command
+             }
+
 #+---------------------------------------------------------------------------+
 #| find_packages
 #|     Retrieves all the packages (directories) with basename = base and
@@ -51,7 +57,7 @@ moduleLibNeedleman = Extension('libNeedleman',
 def find_packages(directory, base):
     ret = [base]
     start = os.path.join(directory, base)
-    # Retrieves the ist of directories in directory/base/*
+    # Retrieves the list of directories in directory/base/*
     for path in os.listdir(start):
         if path.startswith('.'):
             continue
@@ -111,5 +117,6 @@ setup(
         "Topic :: Security",
         "Topic :: System :: Networking",
         ],
-    long_description=release.long_description
+    long_description=release.long_description,
+    cmdclass=CMD_CLASS
     )

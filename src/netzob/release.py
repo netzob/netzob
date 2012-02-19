@@ -85,11 +85,15 @@ keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Secur
 #+---------------------------------------------------------------------------+
 #| Long description
 #+---------------------------------------------------------------------------+
-long_description = """Inferring communication protocols
--------------------------------------
+long_description = """
+Inferring communication protocols
+
+=================================
+
 
 Netzob simplifies the work for security auditors by providing a complete framework
 for the reverse engineering of communication protocols.
+
 
 It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP)
 and variable fields protocols (like ASN.1 based formats).
