@@ -47,10 +47,7 @@ import subprocess
 #+----------------------------------------------
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
-from netzob.Common.Field import Field
 from netzob.Import.AbstractImporter import AbstractImporter
-from netzob.Common.Symbol import Symbol
-
 
 #+----------------------------------------------
 #| IPpc:

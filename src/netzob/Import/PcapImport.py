@@ -31,8 +31,6 @@
 import gtk
 import pygtk
 import uuid
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Field import Field
 import errno
 from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')

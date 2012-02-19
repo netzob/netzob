@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -352,7 +351,7 @@ class Symbol(AbstractSymbol):
     def refineRegexes(self):
         for field in self.getFields():
             tmpRegex = field.getRegex()
-            if field.isRegexStatic():
+            if field.isStatic():
                 continue
             elif field.isRegexOnlyDynamic():
                 cells = self.getMessagesValuesByField(field)
@@ -671,7 +670,7 @@ class Symbol(AbstractSymbol):
         iField = 0
         # We cover each field for a potential size field
         for field in self.getFields():
-            if field.isRegexStatic():  # Means the element is static, so we assume it's not a good candidate
+            if field.isStatic():  # Means the element is static, so we assume it's not a good candidate
                 iField += 1
                 continue
             cellsSize = self.getMessagesValuesByField(field)
@@ -691,7 +690,7 @@ class Symbol(AbstractSymbol):
                             aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
-                    if self.getFieldByIndex(j).isRegexStatic():
+                    if self.getFieldByIndex(j).isStatic():
                         lenJ = len(self.getFieldByIndex(j).getRegex())
                         stop = 0
                     else:
@@ -701,7 +700,7 @@ class Symbol(AbstractSymbol):
                         for n in [4, 0, 1]:  # loop over different possible encoding of size field
                             res = True
                             for l in range(len(cellsSize)):
-                                if self.getFieldByIndex(j).isRegexStatic():
+                                if self.getFieldByIndex(j).isStatic():
                                     targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[l]
                                 else:
                                     targetData = self.getMessagesValuesByField(self.getFieldByIndex(k))[l] + aggregateCellsData[l]
@@ -723,7 +722,7 @@ class Symbol(AbstractSymbol):
                                     res = False
                                     break
                             if res:
-                                if self.getFieldByIndex(j).isRegexStatic():  # Means the regex j element is static and a sub-part is concerned
+                                if self.getFieldByIndex(j).isStatic():  # Means the regex j element is static and a sub-part is concerned
                                     store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                     logging.info("In symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
                                 else:
@@ -1098,6 +1097,38 @@ class Symbol(AbstractSymbol):
 #        self.endianess = Endianess.BIG
 
     #+----------------------------------------------
+    #| getTextDefinition:
+    #|   Returns the text description of the symbol
+    #|   @return a string containing the text definition
+    #+----------------------------------------------
+    def getTextDefinition(self):
+        result = ""
+        for field in self.getFields():
+            # We exclude separator fields
+            if self.getAlignmentType() == "delimiter":
+                if field.isStatic():
+                    continue
+
+            # Layer depth
+            for i in range( field.getEncapsulationLevel() ):
+                result += "  "
+
+            # Name
+            result += field.getName()
+
+            # Description
+            if field.getDescription() != None and field.getDescription() != "":
+                result += " (" + field.getDescription() + ") "
+            result += " : "
+            result += "\t"
+
+            # Value
+            result += field.getRegex()
+
+            result += "\n"
+        return result
+
+    #+----------------------------------------------
     #| getScapyDissector:
     #|   @return a string containing the scapy dissector of the symbol
     #+----------------------------------------------
@@ -1109,7 +1140,7 @@ class Symbol(AbstractSymbol):
         s += "    fields_desc = [\n"
 
         for field in self.getFields():
-            if self.field.isRegexStatic():
+            if self.field.isStatic():
                 s += "                    StrFixedLenField(\"" + field.getName() + "\", " + field.getEncodedVersionOfTheRegex() + ")\n"
             else:  # Variable field of fixed size
                 s += "                    StrFixedLenField(\"" + field.getName() + "\", None)\n"
@@ -1140,7 +1171,7 @@ class Symbol(AbstractSymbol):
         nbFields = len(self.getFields())
         while i < nbFields - 1:
             aField = self.getFieldByIndex(i)
-            if aField.isRegexStatic():
+            if aField.isStatic():
                 if len(aField.getRegex()) <= 2:  # Means a potential negligeable element that can be merged with its neighbours
                     precField = self.getFieldByIndex(i - 1)
                     if precField.isRegexOnlyDynamic():
@@ -1190,6 +1221,23 @@ class Symbol(AbstractSymbol):
         if res:
             self.slickRegex(project)  # Try to loop until no more merges are done
             logging.debug("The regex has been slicked")
+
+    #+----------------------------------------------
+    #| resetAlignment:
+    #|   Reset the current alignment
+    #+----------------------------------------------
+    def resetAlignment(self, project):
+        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+
+        # Reset values
+        self.alignmentType = "regex"
+        self.rawDelimiter = ""
+        self.fields = []
+
+        # Create a single field
+        field = Field("Field 0", 0, "(.{,})")
+        field.setFormat(aFormat)
+        self.addField(field)
 
     """ TODO
     #+----------------------------------------------

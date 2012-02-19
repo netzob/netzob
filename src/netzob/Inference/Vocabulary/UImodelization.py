@@ -191,7 +191,7 @@ class UImodelization:
         ## Message format inference
         frame = NetzobFrame("1 - Message format inference")
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=3, columns=2, homogeneous=False)
+        table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -219,6 +219,12 @@ class UImodelization:
         but.connect("clicked", self.slickRegex_cb)
         tooltips.set_tip(but, "Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+
+        # Widget button reset alignment
+        but = NetzobButton("Reset alignment")
+        but.connect("clicked", self.resetAlignment_cb)
+        tooltips.set_tip(but, "Reset the current alignment")
+        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
         frame = NetzobFrame("2 - Field type inference")
@@ -561,7 +567,7 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Force alignment")
+        searchButton = NetzobButton("Simple alignment")
         searchButton.connect("clicked", self.simpleAlignment_cb_cb, dialog, typeCombo)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -1909,6 +1915,17 @@ class UImodelization:
 
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             symbol.slickRegex(self.netzob.getCurrentProject())
+        self.update()
+
+    #+----------------------------------------------
+    #| Called when user wants to reset the current alignment
+    #+----------------------------------------------
+    def resetAlignment_cb(self, but):
+        if self.netzob.getCurrentProject() == None:
+            return
+
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.resetAlignment(self.netzob.getCurrentProject())
         self.update()
 
     #+----------------------------------------------

@@ -122,7 +122,7 @@ class TreeTypeStructureGenerator():
             messageElt = splittedMessage[field.getIndex()]
             if field.getName() == "__sep__":
                 continue
-            if not field.isRegexStatic():
+            if not field.isStatic():
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
             else:
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])

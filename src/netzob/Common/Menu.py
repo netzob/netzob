@@ -44,6 +44,7 @@ from netzob.Import.IpcImport import IpcImport
 from netzob.Import.FileImport import FileImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
+from netzob.Export.TextExport import TextExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
 from netzob import release
@@ -141,6 +142,10 @@ class Menu(object):
         exportXMLEntry = gtk.MenuItem("XML")
         exportXMLEntry.connect("activate", self.exportXMLAction)
         self.menuExport.append(exportXMLEntry)
+
+        exportTextEntry = gtk.MenuItem("Text")
+        exportTextEntry.connect("activate", self.exportTextAction)
+        self.menuExport.append(exportTextEntry)
 
         self.menuProject.append(self.exportRootMenu)
 
@@ -307,6 +312,12 @@ class Menu(object):
     #+----------------------------------------------
     def exportXMLAction(self, action):
         rawExportPanel = RawExport(self.netzob)
+
+    #+----------------------------------------------
+    #| Called when user wants to export as text
+    #+----------------------------------------------
+    def exportTextAction(self, action):
+        textExportPanel = TextExport(self.netzob)
 
 #    #+----------------------------------------------
 #    #| Called when user wants to import API flow
