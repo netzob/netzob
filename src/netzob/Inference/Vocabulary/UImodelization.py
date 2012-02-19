@@ -367,9 +367,11 @@ class UImodelization:
     #|   Parse the traces and store the results
     #+----------------------------------------------
     def discoverAlignment_cb(self, widget):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            self.log.info("A project must be loaded to start an analysis")
+            NetzobErrorMessage( "No project selected." )
             return
+
         self.selectedSymbol = None
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
@@ -474,8 +476,9 @@ class UImodelization:
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
     def forceAlignment_cb(self, widget):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            logging.info("A project must be loaded to start an analysis")
+            NetzobErrorMessage( "No project selected." )
             return
 
         self.selectedSymbol = None
@@ -539,8 +542,9 @@ class UImodelization:
     #|   Apply a simple alignement
     #+----------------------------------------------
     def simpleAlignment_cb(self, widget):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            logging.info("A project must be loaded to start an analysis")
+            NetzobErrorMessage( "No project selected." )
             return
 
         self.selectedSymbol = None
@@ -590,14 +594,13 @@ class UImodelization:
     #|   mainly to open a contextual menu
     #+----------------------------------------------
     def button_press_on_treeview_symbols(self, treeview, event):
-        self.log.debug("User requested a contextual menu (treeview symbol)")
-
+        # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            self.log.warn("No current project loaded")
+            NetzobErrorMessage( "No project selected." )
             return
         if project.getVocabulary() == None:
-            self.log.warn("The current project doesn't have any referenced vocabulary")
+            NetzobErrorMessage( "The current project doesn't have any referenced vocabulary." )
             return
 
         x = int(event.x)
@@ -1127,6 +1130,12 @@ class UImodelization:
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def rightClickDomainOfDefinition(self, event, field):
+        # Sanity checks
+        project = self.netzob.getCurrentProject()
+        if project == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+
         cells = self.treeMessageGenerator.getSymbol().getUniqValuesByField(field)
         tmpDomain = set()
         for cell in cells:
@@ -1151,14 +1160,6 @@ class UImodelization:
         column.set_attributes(cell, text=0)
 
         treeview.append_column(column)
-
-        currentProject = self.netzob.getCurrentProject()
-        if currentProject == None:
-            self.log.warn("No current project found")
-            return
-        if currentProject.getVocabulary() == None:
-            self.log.warn("The project has no vocbaulary to work with.")
-            return
 
         for elt in domain:
             treeview.get_model().append([elt])
