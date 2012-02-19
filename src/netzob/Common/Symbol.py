@@ -662,11 +662,11 @@ class Symbol(AbstractSymbol):
 
     #+----------------------------------------------
     #| findSizeFields:
-    #|  try to find the size fields of each regex
+    #|   Try to find the size fields
     #+----------------------------------------------
     def findSizeFields(self, store):
         if len(self.fields) <= 1:
-            return
+            return None
         iField = 0
         # We cover each field for a potential size field
         for field in self.getFields():
@@ -723,11 +723,9 @@ class Symbol(AbstractSymbol):
                                     break
                             if res:
                                 if self.getFieldByIndex(j).isStatic():  # Means the regex j element is static and a sub-part is concerned
-                                    store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
-                                    logging.info("In symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")")
+                                    store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                 else:
-                                    store.append([self.id, iField, n * 2, j, -1, k, -1, "Symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
-                                    logging.info("In symbol " + self.name + " : found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")")
+                                    store.append([self.id, iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
                                 break
                     k += 1
                 j += 1
@@ -901,10 +899,10 @@ class Symbol(AbstractSymbol):
         hbox = gtk.HPaned()
         hbox.show()
         # Treeview containing potential data carving results  ## ListStore format:
-        # int: iField
-        # str: env. dependancy name (ip, os, username, etc.)
-        # str: type
-        # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
+        #   int: iField
+        #   str: env. dependancy name (ip, os, username, etc.)
+        #   str: type
+        #   str: env. dependancy value (127.0.0.1, Linux, john, etc.)
         store = gtk.ListStore(int, str, str, str)
         treeviewRes = gtk.TreeView(store)
         cell = gtk.CellRendererText()
