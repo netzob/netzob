@@ -32,25 +32,19 @@ import gtk
 import pygtk
 pygtk.require('2.0')
 import gobject
-import os
 import threading
 import sys
 import logging
-from lxml.etree import ElementTree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Project import Project
 from netzob.Common.Menu import Menu
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
-from netzob.Fuzzing.UIfuzzing import UIfuzzing
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
-from netzob.Common.ConfigurationParser import ConfigurationParser
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser.MMSTDXmlParser import MMSTDXmlParser
 from netzob.Common.Workspace import Workspace
 
 
@@ -63,7 +57,7 @@ class NetzobGui(gtk.Window):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self):
+    def __init__(self, workspace):
 
         self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
@@ -71,11 +65,13 @@ class NetzobGui(gtk.Window):
             logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
 
+        if workspace == None :
+            workspace = str(ResourcesConfiguration.getWorkspaceFile())
+        
+        logging.debug("The workspace : " + str(workspace))
+        
         # loading the workspace
-        logging.debug(("Loaded Workspace : " +
-                       str(ResourcesConfiguration.getWorkspaceFile())))
-        self.currentWorkspace = (Workspace.loadWorkspace(
-                ResourcesConfiguration.getWorkspaceFile()))
+        self.currentWorkspace = (Workspace.loadWorkspace(workspace))
 
         if self.currentWorkspace == None:
             logging.fatal("Stopping the execution (no workspace computed) !")
@@ -95,7 +91,7 @@ class NetzobGui(gtk.Window):
         self.set_default_size(800, 600)
         self.set_title("Netzob : Inferring communication protocols")
 
-        self.set_icon_from_file(("%s/logo.png" %
+        self.set_icon_from_file(("%s/logo.png" % 
                                  ResourcesConfiguration.getStaticResources()))
         self.connect("delete_event", self.evnmtDelete)
         self.connect("destroy", self.destroy)
@@ -175,7 +171,7 @@ class NetzobGui(gtk.Window):
         self.update()
 
     def offerToSaveCurrentProject(self):
-        questionMsg = ("Do you want to save the current project (" +
+        questionMsg = ("Do you want to save the current project (" + 
                        self.getCurrentProject().getName() + ")")
         md = (gtk.MessageDialog(
                 None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,

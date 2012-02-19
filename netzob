@@ -33,6 +33,7 @@ import sys
 import logging.config
 import gobject
 import os
+import optparse
 
 #+---------------------------------------------------------------------------+
 #| Prepare, load and import the required modules
@@ -50,6 +51,7 @@ except:
     sys.path.append(build_lib_path)
 
 import netzob.NetzobGui as NetzobGui
+from netzob import release
 
 
 #+---------------------------------------------------------------------------+
@@ -60,28 +62,15 @@ def get_parser():
     usage = "usage: %prog [options]"
     parser = optparse.OptionParser(usage, prog=release.appname,
                                    version=release.version)
-    parser.add_option("-c", "--config",
-                      dest="config", default=cf.USER_CONF,
-                      help="configuration file")
-    group = parser.add_option_group('Logging options')
-    group.add_option('-q', '--quiet', action='store_const', const=0,
-                     dest='verbose', help='Print errors only.')
-    group.add_option('-v', '--verbose', action='store_const', const=2,
-                     dest='verbose', default=1,
-                     help='Print info level logs (default).')
-    group.add_option('--noisy', action='store_const', const=3,
-                     dest='verbose', help='Print all logs.')
+    parser.add_option("-w", "--workspace",
+                      dest="workspace", help="Path to the workspace")
     return parser
-
-
-
 
 if __name__ == "__main__":
     gobject.threads_init() # for handling concurrent GUI access from threads
 
-
-
-
-
-    netzob = NetzobGui.NetzobGui()
+    parser = get_parser()
+    opts, args = parser.parse_args()
+        
+    netzob = NetzobGui.NetzobGui(opts.workspace)
     netzob.startGui()
