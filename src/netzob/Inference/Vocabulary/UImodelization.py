@@ -372,7 +372,6 @@ class UImodelization:
             NetzobErrorMessage( "No project selected." )
             return
 
-        self.selectedSymbol = None
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -481,7 +480,6 @@ class UImodelization:
             NetzobErrorMessage( "No project selected." )
             return
 
-        self.selectedSymbol = None
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -547,7 +545,6 @@ class UImodelization:
             NetzobErrorMessage( "No project selected." )
             return
 
-        self.selectedSymbol = None
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -585,8 +582,8 @@ class UImodelization:
         unitSize = unitSize_widget.get_active_text()
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
         vocabulary.simpleAlignment(self.netzob.getCurrentProject().getConfiguration(), unitSize)
-        self.update()
         dialog.destroy()
+        self.update()
 
     #+----------------------------------------------
     #| button_press_on_treeview_symbols:
