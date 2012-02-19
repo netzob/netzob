@@ -39,51 +39,38 @@ moduleLibNeedleman = Extension('libNeedleman',
                                extra_link_args=["-fopenmp"],
                                sources=['lib/libNeedleman/NeedlemanWunsch.c'])
 
+#+---------------------------------------------------------------------------+
+#| find_packages
+#|     Retrieves all the packages (directories) with basename = base and
+#|     hosted in directory.
+#+---------------------------------------------------------------------------+
+def find_packages(directory, base):
+    ret = [base]
+    start = os.path.join(directory, base)
+    # Retrieves the ist of directories in directory/base/*
+    for path in os.listdir(start):
+        if path.startswith('.'):
+            continue
+        full_path = os.path.join(base, path)
+        print full_path
+        if os.path.isdir(os.path.join(directory, full_path)):
+            ret += find_packages(directory, full_path)
+            
+    # transforms directories in packages names ('/' -> '.')
+    result = []
+    for r in ret:
+        result.append(r.replace('/', '.'))
+        
+    return result
+
+
+
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
     name="Netzob",
-    packages=[
-        "netzob",
-        "netzob.Common",
-        "netzob.Common.MMSTD",
-        "netzob.Common.MMSTD.Actors",
-        "netzob.Common.MMSTD.Actors.Network",
-        "netzob.Common.MMSTD.Dictionary",
-        "netzob.Common.MMSTD.Dictionary.Values",
-        "netzob.Common.MMSTD.Dictionary.Variables",
-        "netzob.Common.MMSTD.States",
-        "netzob.Common.MMSTD.States.impl",
-        "netzob.Common.MMSTD.Symbols",
-        "netzob.Common.MMSTD.Symbols.impl",
-        "netzob.Common.MMSTD.Tools",
-        "netzob.Common.MMSTD.Tools.Drawing",
-        "netzob.Common.MMSTD.Tools.Parsers",
-        "netzob.Common.MMSTD.Tools.Parsers.DictionaryParser",
-        "netzob.Common.MMSTD.Tools.Parsers.MMSTDParser",
-        "netzob.Common.MMSTD.Transitions",
-        "netzob.Common.MMSTD.Transitions.impl",
-        "netzob.Common.Models",
-        "netzob.Common.Models.Factories",
-        "netzob.Common.Type",
-        "netzob.Export",
-        "netzob.Export.TreeViews",
-        "netzob.ExternalLibs",
-        "netzob.Fuzzing",
-        "netzob.Fuzzing.TreeViews",
-        "netzob.Import",
-        "netzob.Import.GOTPoisoning",
-        "netzob.Import.TreeViews",
-        "netzob.Inference",
-        "netzob.Inference.Grammar",
-        "netzob.Inference.Grammar.EquivalenceOracles",
-        "netzob.Inference.Grammar.Oracles",
-        "netzob.Inference.Grammar.Queries",
-        "netzob.Inference.Vocabulary",
-        "netzob.Inference.Vocabulary.TreeViews",
-        "netzob.Simulator"
-        ],
+    packages=find_packages('src/', 'netzob'),
     package_dir={"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
     data_files=[
