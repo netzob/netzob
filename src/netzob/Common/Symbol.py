@@ -106,7 +106,6 @@ class Symbol(AbstractSymbol):
 
         # If more messages, we align them
         # Serialize the messages before sending them to the C library
-
         serialMessages = ""
         format = ""
         maxLeftReducedStringData = 0
@@ -1108,7 +1107,7 @@ class Symbol(AbstractSymbol):
                     continue
 
             # Layer depth
-            for i in range( field.getEncapsulationLevel() ):
+            for i in range(field.getEncapsulationLevel()):
                 result += "  "
 
             # Name

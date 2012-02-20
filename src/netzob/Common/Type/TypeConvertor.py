@@ -375,6 +375,39 @@ class TypeConvertor():
         for i in range(0, len(msg), 1):
             res = res + msg[i:i + 1].encode("hex")
         return res
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| serializeMessages :
+    #|     create a serialization view of the messages
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def serializeMessages(messages):
+        serialMessages = ""
+        format = ""
+        for m in messages:
+            format += str(len(m.getReducedStringData()) / 2) + "M"
+            serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
+        return (serialMessages, format)
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| deserializeContent :
+    #|     python deserialization process
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def deserializeContent(serializedContents, format):
+        result = []
+        # first we retrieve the size of all the messages
+        size_messages = format.split("M")
+        total = 0
+        for str_size_message in size_messages[:-1] :
+            size_message = int(str_size_message)
+            result.append(TypeConvertor.pythonRawToNetzobRaw(serializedContents[total:total + size_message]))
+            total += size_message
+        
+        return result
+        
 
     @staticmethod
     #+----------------------------------------------
