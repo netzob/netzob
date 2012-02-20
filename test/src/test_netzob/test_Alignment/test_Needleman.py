@@ -58,6 +58,7 @@ class test_Needleman(NetzobTestCase):
         # Objectives : just test if it executes
         nb_data = 1000
         nb_failed = 0
+        nb_success = 0
         for i_test in range(0, nb_data) :
             
             common_pattern = self.generateRandomString(30, 40)
@@ -81,9 +82,88 @@ class test_Needleman(NetzobTestCase):
                 print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
                 print "Alignment : " + symbol.getAlignment()
                 nb_failed += 1
+            else :
+                nb_success += 1
         if nb_failed > 0 :
             print "A number of " + str(nb_failed) + " alignment failed !"
         self.assertEqual(0, nb_failed)
+        self.assertEqual(nb_success, nb_data)
+        
+    def test_randomAlignmentsWithTwoPrefixedMessages(self):        
+        workspace = self.getWorkspace()
+        currentProject = workspace.getProjects()[0]
+        
+        # We generate 1000 random couples of data and try to align them
+        # Objectives : just test if it executes
+        nb_data = 1000
+        nb_failed = 0
+        nb_success = 0
+        for i_test in range(0, nb_data) :            
+            common_pattern = self.generateRandomString(30, 40)
+            # Generate the content of two messages
+            data1 = TypeConvertor.stringToNetzobRaw(common_pattern + self.generateRandomString(5, 100))
+            data2 = TypeConvertor.stringToNetzobRaw(common_pattern + self.generateRandomString(5, 100))
+            # Create the messages
+            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
+            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            # Create the symbol
+            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), None)
+            symbol.addMessage(message1)
+            symbol.addMessage(message2)
+            
+            # Starts the alignment process
+            symbol.buildRegexAndAlignment(currentProject.getConfiguration())
+            
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+                print "Message 1 : " + str(data1)
+                print "Message 2 : " + str(data2)
+                print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
+                print "Alignment : " + symbol.getAlignment()
+                nb_failed += 1
+            else :
+                nb_success += 1
+        if nb_failed > 0 :
+            print "A number of " + str(nb_failed) + " alignment failed !"
+        self.assertEqual(0, nb_failed)
+        self.assertEqual(nb_success, nb_data)
+        
+    def test_randomAlignmentsWithTwoSuffixedMessages(self):        
+        workspace = self.getWorkspace()
+        currentProject = workspace.getProjects()[0]
+        
+        # We generate 1000 random couples of data and try to align them
+        # Objectives : just test if it executes
+        nb_data = 1000
+        nb_failed = 0
+        nb_success = 0
+        for i_test in range(0, nb_data) :            
+            common_pattern = self.generateRandomString(30, 40)
+            # Generate the content of two messages
+            data1 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern)
+            data2 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern)
+            # Create the messages
+            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
+            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            # Create the symbol
+            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), None)
+            symbol.addMessage(message1)
+            symbol.addMessage(message2)
+            
+            # Starts the alignment process
+            symbol.buildRegexAndAlignment(currentProject.getConfiguration())
+            
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+                print "Message 1 : " + str(data1)
+                print "Message 2 : " + str(data2)
+                print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
+                print "Alignment : " + symbol.getAlignment()
+                nb_failed += 1
+            else :
+                nb_success += 1
+        if nb_failed > 0 :
+            print "A number of " + str(nb_failed) + " alignment failed !"
+        self.assertEqual(0, nb_failed)
+        self.assertEqual(nb_success, nb_data)
           
   
     
