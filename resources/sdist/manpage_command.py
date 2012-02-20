@@ -34,9 +34,9 @@
 #+----------------------------------------------------------------------------
 from distutils.command.build import build
 from distutils.core import Command
+from distutils.errors import DistutilsOptionError
 import optparse
 import datetime
-from distutils.errors import DistutilsOptionError
 
 #+---------------------------------------------------------------------------+
 #| manpage_command:

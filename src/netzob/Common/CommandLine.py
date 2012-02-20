@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -25,6 +26,24 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-[build_manpage]
-output=doc/manpage
-parser=netzob.Common.CommandLine:get_parser
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import optparse
+
+#+---------------------------------------------------------------------------+
+#| Local imports
+#+---------------------------------------------------------------------------+
+from netzob import release
+
+#+---------------------------------------------------------------------------+
+#| get_parser
+#|  Creates and returns the command line parser.
+#+---------------------------------------------------------------------------+
+def get_parser():
+        usage = "usage: %prog [options]"
+        parser = optparse.OptionParser(usage, prog=release.appname,
+                                       version=release.version)
+        parser.add_option("-w", "--workspace",
+                          dest="workspace", help="Path to the workspace")
+        return parser
