@@ -50,15 +50,14 @@ class test_Needleman(NetzobTestCase):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
         
   
-    def test_randomAlignmentsWithTwoCenteredMessages(self):
-        
+    def test_randomAlignmentsWithTwoCenteredMessages(self):        
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
         
-        # We generate 10 random couples of data and try to align them
+        # We generate 1000 random couples of data and try to align them
         # Objectives : just test if it executes
-        nb_data = 10
-        
+        nb_data = 1000
+        nb_failed = 0
         for i_test in range(0, nb_data) :
             
             common_pattern = self.generateRandomString(30, 40)
@@ -76,7 +75,15 @@ class test_Needleman(NetzobTestCase):
             # Starts the alignment process
             symbol.buildRegexAndAlignment(currentProject.getConfiguration())
             
-            self.assertTrue(TypeConvertor.stringToNetzobRaw(common_pattern[2:]) in symbol.getAlignment())
+            if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
+                print "Message 1 : " + str(data1)
+                print "Message 2 : " + str(data2)
+                print "Common pattern : " + TypeConvertor.stringToNetzobRaw(common_pattern)
+                print "Alignment : " + symbol.getAlignment()
+                nb_failed += 1
+        if nb_failed > 0 :
+            print "A number of " + str(nb_failed) + " alignment failed !"
+        self.assertEqual(0, nb_failed)
           
   
     
