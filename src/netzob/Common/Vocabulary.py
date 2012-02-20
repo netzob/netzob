@@ -200,11 +200,3 @@ class Vocabulary(object):
                     print "-->adding it"
                     vocabulary.addSymbol(symbol)
         return vocabulary
-
-    #+----------------------------------------------
-    #| findSizeField:
-    #|  try to find the size field of each symbols
-    #+----------------------------------------------
-    def findSizeFields(self, store):
-        for symbol in self.getSymbols():
-            symbol.findSizeFields(store)
