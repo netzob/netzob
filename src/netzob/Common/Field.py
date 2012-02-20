@@ -166,7 +166,7 @@ class Field(object):
         return self.description
 
     def getColor(self):
-        if not self.isStatic():
+        if not self.isRegexStatic():
             return "blue"
         return self.color
 
