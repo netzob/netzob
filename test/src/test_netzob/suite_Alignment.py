@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -23,42 +24,33 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
-
+#+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import unittest
-import os.path
-import os
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob import NetzobResources
-from netzob.Common.Workspace import Workspace
+from test_netzob.test_Alignment import test_Needleman
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local application imports
 #+---------------------------------------------------------------------------+
 
-class NetzobTestCase(unittest.TestCase):
+
+def getSuite():
+    alignmentSuite = unittest.TestSuite()
     
-    def __init__(self, methodName='runTest'):
-        unittest.TestCase.__init__(self, methodName)
+    modulesOfTests = [test_Needleman]
+    modulesOfSuites = []
     
-    def setUp(self):
-        resourcesPath = "resources/"
-        staticPath = os.path.join("../" + resourcesPath, "static")
-        # We retrieve the full name of the child class (the caller) 
-        for m in self.__class__.__module__.split('.') :
-            resourcesPath = os.path.join(resourcesPath, m)
-        workspacePath = os.path.join(resourcesPath, ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE)
-        # Before setting workspace, we verify it exists
-        if os.path.isdir(workspacePath) :
-            NetzobResources.WORKSPACE_DIR = workspacePath
-            
-        NetzobResources.STATIC_DIR = staticPath
+    # Add individual tests    
+    for module in modulesOfTests :
+        alignmentSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
         
+    # Add suites    
+    for module in modulesOfSuites :
+        alignmentSuite.addTests(module.getSuite())
         
-        
-    def getWorkspace(self):
-        return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)
+    return alignmentSuite
+    
+

@@ -23,42 +23,60 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
-
+#+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import unittest
-import os.path
-import os
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob import NetzobResources
-from netzob.Common.Workspace import Workspace
+import uuid
+import time
+import random
+import string
+
+from common.NetzobTestCase import NetzobTestCase
+from netzob.Common.ExecutionContext import ExecutionContext
+from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.Symbol import Symbol
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 
-class NetzobTestCase(unittest.TestCase):
+
+class test_Needleman(NetzobTestCase):
     
-    def __init__(self, methodName='runTest'):
-        unittest.TestCase.__init__(self, methodName)
-    
-    def setUp(self):
-        resourcesPath = "resources/"
-        staticPath = os.path.join("../" + resourcesPath, "static")
-        # We retrieve the full name of the child class (the caller) 
-        for m in self.__class__.__module__.split('.') :
-            resourcesPath = os.path.join(resourcesPath, m)
-        workspacePath = os.path.join(resourcesPath, ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE)
-        # Before setting workspace, we verify it exists
-        if os.path.isdir(workspacePath) :
-            NetzobResources.WORKSPACE_DIR = workspacePath
+    def generateRandomString(self, min_len, max_len):
+        return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
+        
+  
+    def test_randomAlignmentsWithTwoCenteredMessages(self):
+        
+        workspace = self.getWorkspace()
+        currentProject = workspace.getProjects()[0]
+        
+        # We generate 10 random couples of data and try to align them
+        # Objectives : just test if it executes
+        nb_data = 10
+        
+        for i_test in range(0, nb_data) :
             
-        NetzobResources.STATIC_DIR = staticPath
-        
-        
-        
-    def getWorkspace(self):
-        return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)
+            common_pattern = self.generateRandomString(30, 40)
+            # Generate the content of two messages
+            data1 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern + self.generateRandomString(5, 100))
+            data2 = TypeConvertor.stringToNetzobRaw(self.generateRandomString(5, 100) + common_pattern + self.generateRandomString(5, 100))
+            # Create the messages
+            message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
+            message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
+            # Create the symbol
+            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), None)
+            symbol.addMessage(message1)
+            symbol.addMessage(message2)
+            
+            # Starts the alignment process
+            symbol.buildRegexAndAlignment(currentProject.getConfiguration())
+            
+            self.assertTrue(TypeConvertor.stringToNetzobRaw(common_pattern[2:]) in symbol.getAlignment())
+          
+  
+    

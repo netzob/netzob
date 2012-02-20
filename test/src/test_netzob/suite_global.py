@@ -36,6 +36,7 @@ import sys
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from test_netzob import suite_Common
+from test_netzob import suite_Alignment
 from common.xmlrunner import XMLTestRunner
 from test_netzob import test_NetzobGui
 
@@ -45,7 +46,7 @@ def getSuite():
     globalSuite = unittest.TestSuite()
     
     modulesOfTests = [test_NetzobGui]
-    modulesOfSuites = [suite_Common]
+    modulesOfSuites = [suite_Common, suite_Alignment]
     
     # Add individual tests    
     for module in modulesOfTests :
