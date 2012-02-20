@@ -1019,7 +1019,7 @@ class Symbol(AbstractSymbol):
     def getVariables(self):
         result = []
         for field in self.getFields():
-            if not field.isRegexStatic() :
+            if not field.isStatic() :
                 if field.getVariable() != None:
                     result.append(field.getVariable())
         return result

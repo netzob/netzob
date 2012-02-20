@@ -79,7 +79,7 @@ class Field(object):
         else:  # This is a simple value
             return TypeConvertor.encodeNetzobRawToGivenType(self.regex, self.format)
 
-    def isRegexStatic(self):
+    def isStatic(self):
         if self.regex.find("{") == -1 or self.getName() == "__sep__":
             return True
         else:
@@ -92,7 +92,7 @@ class Field(object):
             return False
 
     def getVariable(self):
-        if self.isRegexStatic():
+        if self.isStatic():
             value = TypeConvertor.netzobRawToBitArray(self.getRegex())
             variable = BinaryVariable(uuid.uuid4(), self.getName(), value, len(value), len(value))
             return variable
@@ -166,7 +166,7 @@ class Field(object):
         return self.description
 
     def getColor(self):
-        if not self.isRegexStatic():
+        if not self.isStatic():
             return "blue"
         return self.color
 
