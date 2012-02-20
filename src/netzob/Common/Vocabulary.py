@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -42,7 +41,6 @@ from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
-
 
 #+---------------------------------------------------------------------------+
 #| Vocabulary:
@@ -202,11 +200,3 @@ class Vocabulary(object):
                     print "-->adding it"
                     vocabulary.addSymbol(symbol)
         return vocabulary
-
-    #+----------------------------------------------
-    #| findSizeField:
-    #|  try to find the size field of each symbols
-    #+----------------------------------------------
-    def findSizeFields(self, store):
-        for symbol in self.getSymbols():
-            symbol.findSizeFields(store)

@@ -46,7 +46,7 @@ import uuid
 #| Local Imports
 #+----------------------------------------------
 from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry, \
-    NetzobProgressBar
+    NetzobProgressBar, NetzobErrorMessage, NetzobInfoMessage
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.TypeConvertor import TypeConvertor
@@ -64,7 +64,6 @@ from netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator import TreeSymbol
 from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessageGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 from netzob.Inference.Vocabulary.VariableView import VariableView
-
 
 #+----------------------------------------------
 #| UImodelization:
@@ -191,7 +190,7 @@ class UImodelization:
         ## Message format inference
         frame = NetzobFrame("1 - Message format inference")
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=3, columns=2, homogeneous=False)
+        table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -219,6 +218,12 @@ class UImodelization:
         but.connect("clicked", self.slickRegex_cb)
         tooltips.set_tip(but, "Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+
+        # Widget button reset alignment
+        but = NetzobButton("Reset alignment")
+        but.connect("clicked", self.resetAlignment_cb)
+        tooltips.set_tip(but, "Reset the current alignment")
+        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
         frame = NetzobFrame("2 - Field type inference")
@@ -362,10 +367,11 @@ class UImodelization:
     #|   Parse the traces and store the results
     #+----------------------------------------------
     def discoverAlignment_cb(self, widget):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            self.log.info("A project must be loaded to start an analysis")
+            NetzobErrorMessage( "No project selected." )
             return
-        self.selectedSymbol = None
+
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -469,11 +475,11 @@ class UImodelization:
     #|   Force the delimiter for sequence alignment
     #+----------------------------------------------
     def forceAlignment_cb(self, widget):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            logging.info("A project must be loaded to start an analysis")
+            NetzobErrorMessage( "No project selected." )
             return
 
-        self.selectedSymbol = None
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -534,11 +540,11 @@ class UImodelization:
     #|   Apply a simple alignement
     #+----------------------------------------------
     def simpleAlignment_cb(self, widget):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            logging.info("A project must be loaded to start an analysis")
+            NetzobErrorMessage( "No project selected." )
             return
 
-        self.selectedSymbol = None
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -561,7 +567,7 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Force alignment")
+        searchButton = NetzobButton("Simple alignment")
         searchButton.connect("clicked", self.simpleAlignment_cb_cb, dialog, typeCombo)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -576,8 +582,8 @@ class UImodelization:
         unitSize = unitSize_widget.get_active_text()
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
         vocabulary.simpleAlignment(self.netzob.getCurrentProject().getConfiguration(), unitSize)
-        self.update()
         dialog.destroy()
+        self.update()
 
     #+----------------------------------------------
     #| button_press_on_treeview_symbols:
@@ -585,14 +591,13 @@ class UImodelization:
     #|   mainly to open a contextual menu
     #+----------------------------------------------
     def button_press_on_treeview_symbols(self, treeview, event):
-        self.log.debug("User requested a contextual menu (treeview symbol)")
-
+        # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            self.log.warn("No current project loaded")
+            NetzobErrorMessage( "No project selected." )
             return
         if project.getVocabulary() == None:
-            self.log.warn("The current project doesn't have any referenced vocabulary")
+            NetzobErrorMessage( "The current project doesn't have any referenced vocabulary." )
             return
 
         x = int(event.x)
@@ -864,6 +869,7 @@ class UImodelization:
         hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
         entryName = gtk.Entry()
         entryName.set_text(field.getName())
+
         # Allow the user to press enter to do ok
         entryName.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryName)
@@ -1122,6 +1128,12 @@ class UImodelization:
     #|   Retrieve the domain of definition of the selected column
     #+----------------------------------------------
     def rightClickDomainOfDefinition(self, event, field):
+        # Sanity checks
+        project = self.netzob.getCurrentProject()
+        if project == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+
         cells = self.treeMessageGenerator.getSymbol().getUniqValuesByField(field)
         tmpDomain = set()
         for cell in cells:
@@ -1146,14 +1158,6 @@ class UImodelization:
         column.set_attributes(cell, text=0)
 
         treeview.append_column(column)
-
-        currentProject = self.netzob.getCurrentProject()
-        if currentProject == None:
-            self.log.warn("No current project found")
-            return
-        if currentProject.getVocabulary() == None:
-            self.log.warn("The project has no vocbaulary to work with.")
-            return
 
         for elt in domain:
             treeview.get_model().append([elt])
@@ -1778,163 +1782,243 @@ class UImodelization:
     #| Called when user wants to modify the format displayed
     #+----------------------------------------------
     def updateDisplayFormat(self, combo):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
             return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
+        # Set the format choice as default
         aFormat = combo.get_active_text()
-        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, aFormat)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            for field in symbol.getFields():
-                field.setFormat(aFormat)
+        configuration = self.netzob.getCurrentProject().getConfiguration()
+        configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, aFormat)
+
+        # Apply choice on selected symbol
+        for field in self.selectedSymbol.getFields():
+            field.setFormat(aFormat)
         self.update()
 
     #+----------------------------------------------
     #| Called when user wants to modify the unit size displayed
     #+----------------------------------------------
     def updateDisplayUnitSize(self, combo):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
             return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
+        # Set the unitSize choice as default
         unitSize = combo.get_active_text()
-        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            for field in symbol.getFields():
-                field.setUnitSize(unitSize)
+        configuration = self.netzob.getCurrentProject().getConfiguration()
+        configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
+
+        # Apply choice on selected symbol
+        for field in self.selectedSymbol.getFields():
+            field.setUnitSize(unitSize)
         self.update()
 
     #+----------------------------------------------
     #| Called when user wants to modify the sign displayed
     #+----------------------------------------------
     def updateDisplaySign(self, combo):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
             return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
+        # Set the sign choice as default
         sign = combo.get_active_text()
-        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            for field in symbol.getFields():
-                field.setSign(sign)
+        configuration = self.netzob.getCurrentProject().getConfiguration()
+        configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
+
+        # Apply choice on selected symbol
+        for field in self.selectedSymbol.getFields():
+            field.setSign(sign)
         self.update()
 
     #+----------------------------------------------
     #| Called when user wants to modify the endianess displayed
     #+----------------------------------------------
     def updateDisplayEndianess(self, combo):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
             return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
+        # Set the endianess choice as default
         endianess = combo.get_active_text()
-        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            for field in symbol.getFields():
-                field.setEndianess(endianess)
+        configuration = self.netzob.getCurrentProject().getConfiguration()
+        configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
+
+        # Apply choice on selected symbol
+        for field in self.selectedSymbol.getFields():
+            field.setEndianess( endianess )
         self.update()
 
     #+----------------------------------------------
     #| Called when user wants to refine regexes
     #+----------------------------------------------
     def refineRegexes_cb(self, button):
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            symbol.refineRegexes()
-        dialog = gtk.Dialog(title="Refinement done", flags=0, buttons=None)
-        dialog.set_size_request(250, 50)
-        dialog.show()
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
+        self.selectedSymbol.refineRegexes()
         self.update()
+        NetzobInfoMessage( "Refinement done." )
+
 
     #+----------------------------------------------
     #| Called when user wants to execute data carving
     #+----------------------------------------------
     def dataCarving_cb(self, button):
-        dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
-
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
             return
 
-        notebook = gtk.Notebook()
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            scroll = symbol.dataCarving()
-            if scroll != None:
-                notebook.append_page(scroll, NetzobLabel(symbol.getName()))
+        box = self.selectedSymbol.dataCarving()
+        if box != None:
+            NetzobErrorMessage( "No data found in messages and fields." )
+        else:
+            dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
+            dialog.vbox.pack_start(box, True, True, 0)
+            dialog.show()
 
-        dialog.vbox.pack_start(notebook, True, True, 0)
-        dialog.show()
 
     #+----------------------------------------------
     #| Called when user wants to search data in messages
     #+----------------------------------------------
     def search_cb(self, button):
-        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
-
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
             return
 
+        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
         searchPanel = SearchView(self.netzob.getCurrentProject())
         dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
         dialog.show()
+
 
     #+----------------------------------------------
     #| Called when user wants to identifies environment dependencies
     #+----------------------------------------------
     def env_dependencies_cb(self, button):
-        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
-
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
             return
 
-        notebook = gtk.Notebook()
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            scroll = symbol.envDependencies(self.netzob.getCurrentProject())
-            if scroll != None:
-                notebook.append_page(scroll, NetzobLabel(symbol.getName()))
+        box = self.selectedSymbol.envDependencies(self.netzob.getCurrentProject())
+        if box == None:
+            NetzobErrorMessage( "No environmental dependency found." )
+        else:
+            dialog = gtk.Dialog(title="Environmental dependencies found", flags=0, buttons=None)
+            dialog.vbox.pack_start(box, True, True, 0)
+            dialog.show()
 
-        dialog.vbox.pack_start(notebook, True, True, 0)
-        dialog.show()
 
     #+----------------------------------------------
     #| Called when user wants to see the distribution of a symbol of messages
     #+----------------------------------------------
     def messagesDistribution_cb(self, but):
-        if self.selectedSymbol == None:
-            self.log.info("No symbol selected")
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
             return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
         entropy = Entropy(self.selectedSymbol)
         entropy.buildDistributionView()
+
 
     #+----------------------------------------------
     #| Called when user wants to slick the current regexes
     #+----------------------------------------------
     def slickRegex_cb(self, but):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
             return
 
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            symbol.slickRegex(self.netzob.getCurrentProject())
+        self.selectedSymbol.slickRegex(self.netzob.getCurrentProject())
         self.update()
+
+
+    #+----------------------------------------------
+    #| Called when user wants to reset the current alignment
+    #+----------------------------------------------
+    def resetAlignment_cb(self, but):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
+            return
+
+        self.selectedSymbol.resetAlignment(self.netzob.getCurrentProject())
+        self.update()
+
 
     #+----------------------------------------------
     #| Called when user wants to find ASN.1 fields
     #+----------------------------------------------
     def findASN1Fields_cb(self, button):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
             return
 
-        dialog = gtk.Dialog(title="Find ASN.1 fields", flags=0, buttons=None)
-        notebook = gtk.Notebook()
-        notebook.show()
-        notebook.set_tab_pos(gtk.POS_TOP)
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            scroll = symbol.findASN1Fields(self.netzob.getCurrentProject())
-            if scroll != None:
-                notebook.append_page(scroll, NetzobLabel(symbol.getName()))
+        box = self.selectedSymbol.findASN1Fields(self.netzob.getCurrentProject())
+        if box == None:
+            NetzobErrorMessage( "No ASN.1 field found." )
+        else: # Show the results
+            dialog = gtk.Dialog(title="Find ASN.1 fields", flags=0, buttons=None)
+            dialog.vbox.pack_start(box, True, True, 0)
+            dialog.show()
 
-        dialog.vbox.pack_start(notebook, True, True, 0)
-        dialog.show()
 
     #+----------------------------------------------
     #| Called when user wants to find the potential size fields
     #+----------------------------------------------
     def findSizeFields(self, button):
+        # Sanity checks
         if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage( "No project selected." )
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage( "No symbol selected." )
             return
 
         # Create a temporary symbol for testing size fields
@@ -1966,15 +2050,17 @@ class UImodelization:
         # Text view containing potential size fields
         treeview.set_size_request(800, 300)
 
-        self.netzob.getCurrentProject().getVocabulary().findSizeFields(treeview.get_model())
+        if None == self.selectedSymbol.findSizeFields(treeview.get_model()):
+            NetzobErrorMessage( "No size field found." )
+        else:
+            treeview.show()
+            scroll = gtk.ScrolledWindow()
+            scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            scroll.show()
+            scroll.add(treeview)
+            dialog.vbox.pack_start(scroll, True, True, 0)
+            dialog.show()
 
-        treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-        dialog.vbox.pack_start(scroll, True, True, 0)
-        dialog.show()
 
     #+----------------------------------------------
     #| Called when user wants to try to apply a size field on a symbol
@@ -2043,6 +2129,7 @@ class UImodelization:
 
                 # View the proposed protocol structuration
                 self.update()
+
 
     #+----------------------------------------------
     #| Called when user wants to apply a size field on a symbol

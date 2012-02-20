@@ -53,9 +53,6 @@ from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Field import Field
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
