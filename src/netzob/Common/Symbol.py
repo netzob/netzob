@@ -106,14 +106,12 @@ class Symbol(AbstractSymbol):
 
         # If more messages, we align them
         # Serialize the messages before sending them to the C library
-        serialMessages = ""
-        format = ""
+        (serialMessages, format) = TypeConvertor.serializeMessages(self.getMessages())
+        
         maxLeftReducedStringData = 0
         maxRightReducedStringData = 0
         maxReducedSize = 0
         for m in self.getMessages():
-            format += str(len(m.getReducedStringData()) / 2) + "M"
-            serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
             if m.getLeftReductionFactor() > maxLeftReducedStringData:
                 maxLeftReducedStringData = m.getLeftReductionFactor()
             if m.getRightReductionFactor() > maxRightReducedStringData:
