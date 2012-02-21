@@ -73,10 +73,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         self.log.info("Find a counterexample which invalids the given MMSTD")
 
         inputDictionary = []
-        for entry in mmstd.dictionary.getSymbols()[:2]:
+        for entry in mmstd.dictionary.getSymbols():
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
-            self.log.info("INPUT : " + str(letter))
+            self.log.info("The vocabulary contains : " + str(letter))
 
         # -----------------------------------------------------------------------
         # FIRST WE COMPUTE WHICH WILL WE MAKE !
@@ -99,6 +99,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         states = mmstd.getAllStates()
         W = []
         self.log.info("The MMSTD has " + str(len(states)) + " states")
+        self.log.info("A number of " + str(self.m) + " states is estimated.")
+        
         for state in states:
             for state2 in states:
                 if state != state2:
@@ -107,7 +109,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                         if not ((s1 == state) and (s2 == state2) or ((s1 == state2) and (s2 == state))):
                             found = True
                     if not found:
-                        couples.append((state, state))
+                        couples.append((state, state2))
+                        
         self.log.info("A number of " + str(len(couples)) + " couples was found")
 
         for (state1, state2) in couples:
@@ -215,6 +218,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             self.log.info("=> " + str(t))
 
         testsResults = dict()
+        self.log.info("----> Compute the responses to the the tests over our model and compare them with the real one")
         # We compute the response to the different tests over our learning model and compare them with the real one
         for test in T:
             # Compute our results

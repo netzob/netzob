@@ -29,8 +29,9 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import random
 from lxml import etree
+import random
+from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -39,27 +40,52 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+
 
 #+---------------------------------------------------------------------------+
-#| AlternateVariable:
-#|     Definition of an alternative of variables defined in a dictionary
+#| HexVariable:
+#|     Definition of an hex variable
 #+---------------------------------------------------------------------------+
-class AlternateVariable(Variable):
-
-    TYPE = "Alternate"
-
-    def __init__(self, idVar, name, vars):
-        Variable.__init__(self, AlternateVariable.TYPE, idVar, name)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
-        self.vars = []
-        if vars != None:
-            self.vars.extend(vars)
-
-    def addChild(self, variable):
-        self.vars.append(variable)
-    def getChildren(self):
-        return self.vars
-
+class HexVariable(Variable):
+    
+    # OriginalValue : must be a "string" which describes the hexadecimal (e5f026..)
+    # min : nb of hex minimum
+    # max : nb of hex maximum
+    def __init__(self, id, name, originalValue, minHex, maxHex):
+        Variable.__init__(self, "Hexadecimal", id, name)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.HexVariable.py')        
+        self.originalValue = originalValue
+        self.minHex = minHex
+        self.maxHex = maxHex
+        
+        # Set the current value
+        self.computeCurrentValue(self.originalValue)
+    #+-----------------------------------------------------------------------+
+    #| computeCurrentValue :
+    #|     Transform and save the provided (ef56d2...) as current value
+    #+-----------------------------------------------------------------------+
+    def computeCurrentValue(self, strValue):
+        if strValue != None :
+            strCurrentValue = strValue
+            binCurrentValue = TypeConvertor.netzobRawToBitArray(strValue)
+            self.currentValue = (binCurrentValue, strCurrentValue)
+        else :
+            self.currentValue = None
+            
+    #+-----------------------------------------------------------------------+
+    #| generateValue :
+    #|     Generate a valid value for the variable (ef56d2...)
+    #+-----------------------------------------------------------------------+        
+    def generateValue(self):
+        nbHex = random.randint(self.minHex, self.maxHex)
+        creationArray = []
+        for i in range(0, nbHex) :
+            valInt = random.randint(0, 15)
+            creationArray.append(str(hex(valInt))[2:])
+                    
+        return ''.join(creationArray)
+    
     #+-----------------------------------------------------------------------+
     #| getValue :
     #|     Returns the current value of the variable
@@ -68,17 +94,14 @@ class AlternateVariable(Variable):
     #|     else its NONE
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        self.log.info("getValue")
-        validVars = []
-        for var in self.vars :
-            if var.getValue(negative, vocabulary, memory) != None :
-                return var.getValue(negative, vocabulary, memory)
+        if self.getCurrentValue() != None :
+            return self.getCurrentValue()
+        
+        if memory.hasMemorized(self) :
+            return memory.recall(self)
+        
         return None
-#        self.log.debug("Valid vars = " + str(validVars))
-#        idRandom = random.randint(0, len(validVars) - 1)
-#        picked = validVars[idRandom]
-#        self.log.debug("Get value will return : " + str(picked))
-#        return picked.getValue(negative, vocabulary, memory)
+           
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -87,34 +110,35 @@ class AlternateVariable(Variable):
     #|     or it generates one and save its value in memory
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
-        self.log.info("getValueToSend")
+        if self.getCurrentValue() != None :
+            return self.getCurrentValue()
         
-        for var in self.vars :
-            if var.getValue(negative, vocabulary, memory) != None :
-                return var.getValueToSend(negative, vocabulary, memory)
-        return None
-#        
-#        idRandom = random.randint(0, len(self.vars) - 1)
-#        picked = self.vars[idRandom]
-#        return picked.getValueToSend(negative, vocabulary, memory)
+        if memory.hasMemorized(self) :
+            return memory.recall(self)
+        
+        # We generate a new value
+        self.computeCurrentValue(self.generateValue())
+        
+        # We save in memory the current value
+        memory.memorize(self, self.getCurrentValue())
+        
+        # We return the newly generated and memorized value
+        return self.getCurrentValue()
+    
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
     #+-----------------------------------------------------------------------+   
     def getUncontextualizedDescription(self):
-        values = []
-        for var in self.vars:
-            values.append(var.getUncontextualizedDescription())
-        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+        return "[HEX]" + str(self.getName()) + "= (orig=" + str(self.getOriginalValue()) + ")"
+    
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
-        values = []
-        for var in self.vars:
-            values.append(var.getDescription(negative, vocabulary, memory))
-        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"    
+        return "[HEX]" + str(self.getName()) + "= (getVlue=" + str(self.getValue(negative, vocabulary, memory)) + ")"
+    
     #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
@@ -123,14 +147,34 @@ class AlternateVariable(Variable):
     #|     >=0    : it matchs and the following number of bits were eaten 
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
-        saved = indice
-        for var in self.vars:
-            self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
-            result = var.compare(value, saved, negative, vocabulary, memory)
-            if result != -1 and result != None:
-                self.log.info("Compare successful")
-                return result
-        return -1
+        localValue = self.getValue(negative, vocabulary, memory)        
+        # In case we can't compare with a known value, we compare only the possibility to learn it afterward
+        if localValue == None :
+            self.log.debug("We compare the format (will we be able to learn it afterwards ?")
+            return self.compareFormat(value, indice, negative, vocabulary, memory)
+        else :
+            (binVal, strVal) = localValue
+            self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")            
+            tmp = value[indice:]
+            if len(tmp) >= len(binVal):
+                if tmp[:len(binVal)] == binVal:
+                    self.log.info("Compare successful")
+                    return indice + len(binVal)
+                else:
+                    self.log.info("error in the comparison")
+                    return -1
+            else:
+                self.log.info("Compare fail")
+                return -1
+            
+    def compareFormat(self, value, indice, negative, vocabulary, memory):
+        tmp = value[indice:]
+        self.log.debug("Compare format is " + str(len(value)) + " >= " + str(self.minBits))
+        if len(tmp) >= self.minBits :
+            return min(len(value), self.maxBits)
+        else :
+            return -1
+    
     #+-----------------------------------------------------------------------+
     #| learn :
     #|     Exactly like "compare" but it stores learns from the provided message
@@ -139,17 +183,7 @@ class AlternateVariable(Variable):
     #|     >=0    : it matchs and the following number of bits were eaten 
     #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
-        saved = indice
-        for var in self.vars:
-            self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
-            result = var.learn(value, saved, negative, vocabulary, memory)
-            if result != -1 and result != None:
-                self.log.info("Compare successful")
-                return result
-            else :
-                var.restore(vocabulary, memory)
-            
-        return -1
+        return self.compare(value, indice, negative, vocabulary, memory)
     
     #+-----------------------------------------------------------------------+
     #| restore :
@@ -157,10 +191,23 @@ class AlternateVariable(Variable):
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
         self.log.debug("Restore learnt values")
-        for var in self.vars :
-            var.restore(vocabulary, memory)
+        memory.restore(self)
+    
+    def getCurrentValue(self) :
+        return self.currentValue
+    
+    def getOriginalValue(self):
+        return self.originalValue
+    
+    def getMinHexs(self):
+        return self.minHex
+    
+    def getMaxHexs(self):
+        return self.maxHex
+
+               
     #+-----------------------------------------------------------------------+
-    #| toXML
+    #| toXML :
     #|     Returns the XML description of the variable 
     #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
@@ -168,21 +215,40 @@ class AlternateVariable(Variable):
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
-
-        # Definition of the variables
-        for var in self.vars:
-            var.toXML(xmlVariable, namespace)
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:HexVariable")
+        
+        # Original Value
+        if self.getOriginalValue() != None :
+            xmlHexVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
+            xmlHexVariableOriginalValue.text = self.getOriginalValue()
+        
+        # Minimum hex
+        xmlHexVariableStartValue = etree.SubElement(xmlVariable, "{" + namespace + "}minHexs")
+        xmlHexVariableStartValue.text = str(self.getMinHexs())
+        
+        # Maximum hex
+        xmlHexVariableEndValue = etree.SubElement(xmlVariable, "{" + namespace + "}maxHexs")
+        xmlHexVariableEndValue.text = str(self.getMaxHexs())
+        
+        
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
-                child = Variable.loadFromXML(xmlChildren, namespace, version)
-                children.append(child)
-
-            return AlternateVariable(varId, varName, children)
+            
+            xmlHexVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
+            if xmlHexVariableOriginalValue != None :
+                originalValue = xmlHexVariableOriginalValue.text
+            else :
+                originalValue = None
+            
+            xmlHexVariableStartValue = xmlRoot.find("{" + namespace + "}minHexs")
+            minHexs = int(xmlHexVariableStartValue.text)
+            
+            xmlHexVariableEndValue = xmlRoot.find("{" + namespace + "}maxHexs")
+            maxHexs = int(xmlHexVariableEndValue.text)
+            
+            return HexVariable(varId, varName, originalValue, minHexs, maxHexs)
         return None

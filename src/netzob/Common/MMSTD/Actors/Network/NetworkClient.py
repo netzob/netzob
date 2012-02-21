@@ -45,11 +45,12 @@ from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 #+---------------------------------------------------------------------------+
 class NetworkClient(AbstractActor):
 
-    def __init__(self, host, protocol, port):
+    def __init__(self, host, protocol, port, sport):
         AbstractActor.__init__(self, False, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
         self.port = port
+        self.sport = sport
         self.host = host
         self.protocol = protocol
         self.socket = None
@@ -62,9 +63,13 @@ class NetworkClient(AbstractActor):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             else:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.socket.bind(('', self.sport))
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             self.socket.connect((self.host, self.port))
-            self.socket.setblocking(0)
-        except:
+            self.socket.setblocking(True)
+        except socket.error, msg:
+            self.log.warn("Opening the network connection has failed : " + str(msg))
             self.socket = None
 
         if self.socket == None:
@@ -78,36 +83,40 @@ class NetworkClient(AbstractActor):
     def close(self):
         self.log.debug("Closing the network client")
         self.stop()
-        try:
-            self.socket.shutdown(socket.SHUT_RDWR)
+#        try:
+#            self.socket.shutdown()
+#        except socket.error, msg:
+#            self.log.debug("Error appeared while shuting down the socket." + str(msg))
+        
+        try:    
             self.socket.close()
-        except:
-            self.log.debug("No need to close the socket since it's not even open")
-            return True
+#            self.socket.shutdown(socket.SHUT_RDWR)
+        except socket.error, msg:
+            self.log.debug("Error appeared while closing down the socket." + str(msg))  
+            
+            
+            
+        
+        
         return True
 
     def read(self, timeout):
-        self.log.debug("Read from the socket")
-        result = bitarray(endian='big')
-
         chars = []
         try:
             if timeout > 0:
-                self.log.info("Using a timeout (" + str(timeout) + " for reading from the socket")
+                self.log.debug("Reading from the socket with a timeout of " + str(timeout))
                 ready = select.select([self.socket], [], [], timeout)
-                self.log.info("ready")
                 if ready[0]:
                     chars = self.socket.recv(4096)
-                self.log.info("ready = " + str(ready))
             else:
+                self.log.debug("Reading from the socket without any timeout")
                 ready = select.select([self.socket], [], [])
-                self.log.debug("ready = " + str(ready[0]))
                 if ready[0]:
                     chars = self.socket.recv(4096)
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-
+        result = bitarray(endian='big')
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -28,70 +29,21 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
+import optparse
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
-
+from netzob import release
 
 #+---------------------------------------------------------------------------+
-#| DictionarySymbol:
-#|     Definition of a symbol based on a dictionary
+#| get_parser
+#|  Creates and returns the command line parser.
 #+---------------------------------------------------------------------------+
-class DictionarySymbol(AbstractSymbol):
-
-    def __init__(self, dictionaryEntry):
-        AbstractSymbol.__init__(self, "DictionarySymbol")
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
-        self.entry = dictionaryEntry
-
-    def isEquivalent(self, symbol):
-        if self.entry.getID() == symbol.getID():
-            self.log.debug("The symbols are equivalents")
-            return True
-        else:
-            self.log.debug("The symbols are not equivalents")
-            return False
-
-    def getValueToSend(self, inverse, vocabulary, memory):
-        result = self.entry.getValueToSend(inverse, vocabulary, memory)
-        return result
-
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.entry.getID()
-
-    def getEntry(self):
-        return self.entry
-
-    def getName(self):
-        return self.entry.getName()
-
-    def setID(self, id):
-        self.id = id
-
-    def setEntry(self, entry):
-        self.entry = entry
-
-    def __str__(self):
-        return str(self.entry)
-    
-    def __repr__(self):
-        return str(self.entry)
-
-    def __cmp__(self, other):
-        if other == None:
-            return 0
-        try :
-            if self.getID() == other.getID() and self.getEntry() == other.getEntry():
-                return 0
-            else:
-                return 1
-        except :
-            self.log.warn("Tried to compare a DictionarySymbol with " + str(other))
-            return 1
+def get_parser():
+        usage = "usage: %prog [options]"
+        parser = optparse.OptionParser(usage, prog=release.appname,
+                                       version=release.version)
+        parser.add_option("-w", "--workspace",
+                          dest="workspace", help="Path to the workspace")
+        return parser

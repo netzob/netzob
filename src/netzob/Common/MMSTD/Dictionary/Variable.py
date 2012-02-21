@@ -162,6 +162,11 @@ class Variable():
                 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
                 return BinaryVariable.loadFromXML(xmlRoot, namespace, version)
 
+            # Hex Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:HexVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
+                return HexVariable.loadFromXML(xmlRoot, namespace, version)
+
             # Aggregate Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable

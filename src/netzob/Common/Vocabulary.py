@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -41,7 +40,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
-
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 
 #+---------------------------------------------------------------------------+
 #| Vocabulary:
@@ -76,6 +75,10 @@ class Vocabulary(object):
         for symbol in self.symbols:
             if symbol.getID() == symbolID:
                 return symbol
+        # Exceptions : if ID = 0, we return an EmptySymbol
+        if symbolID == str(0) :
+            return EmptySymbol()    
+        
         return None
 
     def addSymbol(self, symbol):
@@ -192,14 +195,8 @@ class Vocabulary(object):
             # parse all the symbols which are declared in the vocabulary
             for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project)
+                print "load voca : = " + str(symbol)
                 if symbol != None:
+                    print "-->adding it"
                     vocabulary.addSymbol(symbol)
         return vocabulary
-
-    #+----------------------------------------------
-    #| findSizeField:
-    #|  try to find the size field of each symbols
-    #+----------------------------------------------
-    def findSizeFields(self, store):
-        for symbol in self.getSymbols():
-            symbol.findSizeFields(store)

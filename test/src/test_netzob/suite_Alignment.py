@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,73 +26,31 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
+import unittest
+from test_netzob.test_Alignment import test_Needleman
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 
-#+---------------------------------------------------------------------------+
-#| DictionarySymbol:
-#|     Definition of a symbol based on a dictionary
-#+---------------------------------------------------------------------------+
-class DictionarySymbol(AbstractSymbol):
-
-    def __init__(self, dictionaryEntry):
-        AbstractSymbol.__init__(self, "DictionarySymbol")
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
-        self.entry = dictionaryEntry
-
-    def isEquivalent(self, symbol):
-        if self.entry.getID() == symbol.getID():
-            self.log.debug("The symbols are equivalents")
-            return True
-        else:
-            self.log.debug("The symbols are not equivalents")
-            return False
-
-    def getValueToSend(self, inverse, vocabulary, memory):
-        result = self.entry.getValueToSend(inverse, vocabulary, memory)
-        return result
-
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.entry.getID()
-
-    def getEntry(self):
-        return self.entry
-
-    def getName(self):
-        return self.entry.getName()
-
-    def setID(self, id):
-        self.id = id
-
-    def setEntry(self, entry):
-        self.entry = entry
-
-    def __str__(self):
-        return str(self.entry)
+def getSuite():
+    alignmentSuite = unittest.TestSuite()
     
-    def __repr__(self):
-        return str(self.entry)
+    modulesOfTests = [test_Needleman]
+    modulesOfSuites = []
+    
+    # Add individual tests    
+    for module in modulesOfTests :
+        alignmentSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
+        
+    # Add suites    
+    for module in modulesOfSuites :
+        alignmentSuite.addTests(module.getSuite())
+        
+    return alignmentSuite
+    
 
-    def __cmp__(self, other):
-        if other == None:
-            return 0
-        try :
-            if self.getID() == other.getID() and self.getEntry() == other.getEntry():
-                return 0
-            else:
-                return 1
-        except :
-            self.log.warn("Tried to compare a DictionarySymbol with " + str(other))
-            return 1

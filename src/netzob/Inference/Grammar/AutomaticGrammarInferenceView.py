@@ -67,7 +67,7 @@ class AutomaticGrammarInferenceView(object):
         # Display the form for the creation of a word variable
         self.dialog = gtk.Dialog(title="Configuration of the automatic inference", flags=0, buttons=None)
 
-        mainTable = gtk.Table(rows=6, columns=2, homogeneous=False)
+        mainTable = gtk.Table(rows=8, columns=2, homogeneous=False)
 
         # IP of the server
         IPLabel = gtk.Label("IP of the server :")
@@ -90,27 +90,43 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(ProtocolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(self.combo_protocolOfNetworkActor, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Source port 
+        SourcePortLabel = gtk.Label("Source port :")
+        SourcePortLabel.show()
+        self.SourcePortEntry = gtk.Entry()
+        self.SourcePortEntry.show()
+        mainTable.attach(SourcePortLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.SourcePortEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
         # Port of the server
         PortLabel = gtk.Label("Port :")
         PortLabel.show()
         self.PortEntry = gtk.Entry()
         self.PortEntry.show()
-        mainTable.attach(PortLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.PortEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(PortLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.PortEntry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Estimated number of states
         MaxStatesLabel = gtk.Label("Maximum number of states :")
         MaxStatesLabel.show()
         self.MaxStatesEntry = gtk.Entry()
         self.MaxStatesEntry.show()
-        mainTable.attach(MaxStatesLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.MaxStatesEntry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(MaxStatesLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.MaxStatesEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Script to execute to reset the implementation
+        scriptLabel = gtk.Label("Reseting script :")
+        scriptLabel.show()
+        self.scriptEntry = gtk.Entry()
+        self.scriptEntry.show()
+        mainTable.attach(scriptLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.scriptEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Create button
         startButton = gtk.Button("Start inference")
         startButton.show()
         startButton.connect("clicked", self.startInference)
-        mainTable.attach(startButton, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(startButton, 1, 2, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
@@ -230,19 +246,21 @@ class AutomaticGrammarInferenceView(object):
         # We retrieve the specified value
         actorIP = self.IPEntry.get_text()
         actorNetworkProtocol = self.combo_protocolOfNetworkActor.get_active_text()
+        sourceActorPort = int(self.SourcePortEntry.get_text())
         actorPort = int(self.PortEntry.get_text())
+        scriptFilename = self.scriptEntry.get_text()
         maxNumberOfState = int(self.MaxStatesEntry.get_text())
 
         # Close the current dialog
         self.dialog.destroy()
 
         # Lets create a simple network oracle
-        oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort)
+        oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, actorPort, sourceActorPort)
         # Lets create an equivalence oracle
         equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState)
 
         # Lets create the automatic inferer
-        self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, self.callback_submitedQuery, self.callback_hypotheticalAutomaton)
+        self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, scriptFilename, self.callback_submitedQuery, self.callback_hypotheticalAutomaton)
 
         # Open the new dialog which shows the status of the inferring process
         self.createInferringStatusView()

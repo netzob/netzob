@@ -134,6 +134,8 @@ class AbstractionLayer():
         # First we read from the input the message
         receivedData = self.communicationChannel.read(timeout)
 
+        nbMaxAttempts = 5
+
         if receivedData == None:
             self.log.warn("The communication channel seems to be closed !")
 #            return (EmptySymbol(), None)
@@ -153,9 +155,9 @@ class AbstractionLayer():
             self.outputSymbols.append(symbol)
             return (symbol, receivedData)
         else:
-            if len(self.manipulatedSymbols) > 5:
+            if len(self.manipulatedSymbols) > nbMaxAttempts:
                 if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == "EmptySymbol":
-                    self.log.warn("Consider client has disconnected since no valid symbol received for the second time")
+                    self.log.warn("Consider client has disconnected since no valid symbol received after " + str(nbMaxAttempts) + " attempts")
                     return (None, None)
 
             symbol = EmptySymbol()
@@ -163,7 +165,8 @@ class AbstractionLayer():
             return (symbol, None)
 
     def writeSymbol(self, symbol):
-        self.log.info("Sending symbol '" + symbol.getName() + "' over the communication channel")
+        
+        self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
         self.log.info("- str = '" + strMessage + "'")
@@ -172,10 +175,12 @@ class AbstractionLayer():
         # now we send it
         now = datetime.datetime.now()
         sendingTime = now.strftime("%H:%M:%S")
-        self.communicationChannel.write(binMessage)
-
         self.outputMessages.append([sendingTime, strMessage, symbol])
         self.manipulatedSymbols.append(symbol)
+        
+        self.communicationChannel.write(binMessage)
+
+        
 
     #+-----------------------------------------------------------------------+
     #| abstract

@@ -38,6 +38,8 @@ from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import Alternate
 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
 from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
 from netzob.Common.Type.Format import Format
+from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
+from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
 pygtk.require('2.0')
 
 #+----------------------------------------------
@@ -54,7 +56,7 @@ class VariableView(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, netzob, field, variableId, variableName):
+    def __init__(self, netzob, field, variableId, variableName, defaultValue=None):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.VariableView.py')
         self.netzob = netzob
@@ -62,11 +64,15 @@ class VariableView(object):
         self.varId = variableId
         self.varName = variableName
         self.field = field
-
+        self.defaultValue = defaultValue
+        self.datas = dict()
+        
         # Add the initial Aggregate
         self.rootVariable = AggregateVariable(variableId, self.varName, None)
-        self.datas = dict()
-        self.datas[str(self.rootVariable.getID())] = self.rootVariable
+        if self.defaultValue != None :
+            self.rootVariable.addChild(self.defaultValue)
+        
+        
 
     def display(self):
         # We display the dedicated dialog for the creation of a variable
@@ -104,7 +110,17 @@ class VariableView(object):
 
         self.panel.attach(createButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.treestore.append(None, [str(self.rootVariable.getID()), "Root"])
+        # We register the default values
+        self.registerVariable(None, self.rootVariable, "Root")
+        
+    def registerVariable(self, rootEntry, variable, name):
+        self.log.debug("Register : " + str(name))
+        self.datas[str(variable.getID())] = variable
+        newEntry = self.treestore.append(rootEntry, [str(variable.getID()), name])
+        if variable.getTypeVariable() == AggregateVariable.TYPE or variable.getTypeVariable() == AlternateVariable.TYPE :
+            for child in variable.getChildren() :
+                self.registerVariable(newEntry, child, child.getName())
+        
 
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
         self.dialog.show()
@@ -165,6 +181,13 @@ class VariableView(object):
         itemBinary.connect("activate", self.addBinary, rootVariable, aIter)
         subElementMenu.append(itemBinary)
 
+        # Hexadecimal Variable
+        itemBinary = gtk.MenuItem("Hexadecimal")
+        itemBinary.show()
+        itemBinary.connect("activate", self.addHexadecimal, rootVariable, aIter)
+        subElementMenu.append(itemBinary)
+
+
         # Aggregate Variable
         itemAggregate = gtk.MenuItem("Aggregate")
         itemAggregate.show()
@@ -191,7 +214,178 @@ class VariableView(object):
         menu.popup(None, None, None, event.button, event.time)
 
     def addBinary(self, event, rootVariable, rootEntry):
-        pass
+        # Display the form for the creation of a Binary variable
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the Binary Variable')
+        
+        # Create the ID of the new variable
+        varID = uuid.uuid4()
+        variableID = str(varID)
+        
+        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        # parent id of the variable
+        variablePIDLabel = gtk.Label("Parent ID :")
+        variablePIDLabel.show()
+        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel.set_sensitive(False)
+        variablePIDValueLabel.show()
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Original Value
+        originalValueLabel = gtk.Label("Original value : ")
+        originalValueLabel.show()
+        originalValueEntry = gtk.Entry()
+        originalValueEntry.show()
+        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Constraints label
+        constraintsLabel = gtk.Label("Constraints when parsing / generating")
+        constraintsLabel.show()
+        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # start Value
+        minBitsLabel = gtk.Label("Minimum number of bits : ")
+        minBitsLabel.show()
+        minBitsEntry = gtk.Entry()
+        minBitsEntry.show()
+        mainTable.attach(minBitsLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(minBitsEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # end Value
+        maxBitsLabel = gtk.Label("Maximum number of bits : ")
+        maxBitsLabel.show()
+        maxBitsEntry = gtk.Entry()
+        maxBitsEntry.show()
+        mainTable.attach(maxBitsLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(maxBitsEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        
+        if result != gtk.RESPONSE_OK :
+            dialog.destroy()
+            return 
+        
+        # Creation of the variable (binary)
+        
+        # original value :
+        originalValue = originalValueEntry.get_text()
+        if len(originalValue) == 0 :
+            originalValue = None
+        
+        # constraints  
+        minSize = int(minBitsEntry.get_text())
+        maxSize = int(maxBitsEntry.get_text())
+        
+        
+        binVariable = BinaryVariable(varID, "binary", originalValue, minSize, maxSize)
+        rootVariable.addChild(binVariable)
+        
+        self.datas[str(binVariable.getID())] = binVariable
+        
+        self.treestore.append(rootEntry, [str(binVariable.getID()), binVariable.getUncontextualizedDescription()])
+        
+        # We close the current dialog
+        dialog.destroy()
+        
+    def addHexadecimal(self, event, rootVariable, rootEntry):
+        # Display the form for the creation of an Hexadecimal variable
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the Hexadecimal Variable')
+        
+        # Create the ID of the new variable
+        varID = uuid.uuid4()
+        variableID = str(varID)
+        
+        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        # parent id of the variable
+        variablePIDLabel = gtk.Label("Parent ID :")
+        variablePIDLabel.show()
+        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel.set_sensitive(False)
+        variablePIDValueLabel.show()
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Original Value
+        originalValueLabel = gtk.Label("Original value : ")
+        originalValueLabel.show()
+        originalValueEntry = gtk.Entry()
+        originalValueEntry.show()
+        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # Constraints label
+        constraintsLabel = gtk.Label("Constraints when parsing / generating")
+        constraintsLabel.show()
+        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # start Value
+        minBitsLabel = gtk.Label("Minimum number of hex (0xf=1) : ")
+        minBitsLabel.show()
+        minBitsEntry = gtk.Entry()
+        minBitsEntry.show()
+        mainTable.attach(minBitsLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(minBitsEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        # end Value
+        maxBitsLabel = gtk.Label("Maximum number of hex : ")
+        maxBitsLabel.show()
+        maxBitsEntry = gtk.Entry()
+        maxBitsEntry.show()
+        mainTable.attach(maxBitsLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(maxBitsEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+        
+        if result != gtk.RESPONSE_OK :
+            dialog.destroy()
+            return 
+        
+        # Creation of the variable (binary)
+        
+        # original value :
+        originalValue = originalValueEntry.get_text()
+        if len(originalValue) == 0 :
+            originalValue = None
+        
+        # constraints  
+        minSize = int(minBitsEntry.get_text())
+        maxSize = int(maxBitsEntry.get_text())
+        
+        
+        hexVariable = HexVariable(varID, "hexadecimal", originalValue, minSize, maxSize)
+        rootVariable.addChild(hexVariable)
+        
+        self.datas[str(hexVariable.getID())] = hexVariable
+        
+        self.treestore.append(rootEntry, [str(hexVariable.getID()), hexVariable.getUncontextualizedDescription()])
+        
+        # We close the current dialog
+        dialog.destroy()
 
     def addAlternate(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
@@ -530,7 +724,6 @@ class VariableView(object):
             return
 
         idReferencedVariable = self.varCombo.get_model().get_value(self.varCombo.get_active_iter(), 1)
-        print "id ref var = " + str(idReferencedVariable)
         referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", idReferencedVariable)
         rootVariable.addChild(referencedVariable)
 

@@ -52,7 +52,6 @@ from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageF
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
 
-
 #+---------------------------------------------------------------------------+
 #| Network:
 #|     This class offers the capability to capture traffic from live network

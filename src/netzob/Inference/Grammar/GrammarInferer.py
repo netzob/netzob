@@ -50,13 +50,14 @@ import gobject
 #+----------------------------------------------
 class GrammarInferer(threading.Thread):
 
-    def __init__(self, vocabulary, oracle, equivalenceOracle, cb_submitedQuery, cb_hypotheticalAutomaton):
+    def __init__(self, vocabulary, oracle, equivalenceOracle, resetScript, cb_submitedQuery, cb_hypotheticalAutomaton):
         threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.GrammarInferer.py')
         self.vocabulary = vocabulary
         self.oracle = oracle
         self.equivalenceOracle = equivalenceOracle
+        self.resetScript = resetScript
         self.cb_submitedQuery = cb_submitedQuery
         self.cb_hypotheticalAutomaton = cb_hypotheticalAutomaton
         self.active = False
@@ -92,7 +93,7 @@ class GrammarInferer(threading.Thread):
         self.active = True
         equivalent = False
         # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.oracle, self.cb_submitedQuery)
+        self.learner = Angluin(self.vocabulary, self.oracle, self.resetScript, self.cb_submitedQuery)
         while not equivalent and self.active:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")

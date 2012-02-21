@@ -45,9 +45,11 @@ from bitarray import bitarray
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
+    
+    TYPE = "Aggregate"
 
     def __init__(self, idVar, name, vars=None):
-        Variable.__init__(self, "Aggregate", idVar, name)
+        Variable.__init__(self, AggregateVariable.TYPE, idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
         if vars != None:
@@ -55,7 +57,8 @@ class AggregateVariable(Variable):
 
     def addChild(self, variable):
         self.vars.append(variable)
-        
+    def getChildren(self):
+        return self.vars
         
     #+-----------------------------------------------------------------------+
     #| getValue :
@@ -90,6 +93,7 @@ class AggregateVariable(Variable):
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
+    
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
@@ -98,7 +102,7 @@ class AggregateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getUncontextualizedDescription())
-        return "AggregateVariable [" + " AND ".join(values) + "]"
+        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
@@ -107,7 +111,7 @@ class AggregateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
-        return "AggregateVariable [" + " AND ".join(values) + "]"
+        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
     #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
@@ -152,7 +156,7 @@ class AggregateVariable(Variable):
         # If it has failed we restore every executed vars
         if not status :
             for var in toBeRestored :
-                var.restore()                
+                var.restore(vocabulary, memory)                
         return result
     
     #+-----------------------------------------------------------------------+

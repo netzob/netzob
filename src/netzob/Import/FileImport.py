@@ -30,12 +30,9 @@
 #+----------------------------------------------
 import gtk
 import pygtk
-from netzob.Common.Symbol import Symbol
 import uuid
-from netzob.Common.Field import Field
 import datetime
 from bitarray import bitarray
-from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import os
@@ -49,7 +46,7 @@ from netzob.Common.Models.FileMessage import FileMessage
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
-
+from netzob.Import.AbstractImporter import AbstractImporter
 
 #+----------------------------------------------
 #| FileImport:

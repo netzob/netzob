@@ -97,3 +97,29 @@ def NetzobProgressBar(text=None):
 
     pb.show()
     return pb
+
+
+#+---------------------------------------------------------------------------+
+#| NetzobErrorMessage:
+#+---------------------------------------------------------------------------+
+def NetzobErrorMessage(text):
+    md = gtk.MessageDialog(None,
+                           gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                           gtk.MESSAGE_ERROR,
+                           gtk.BUTTONS_CLOSE,
+                           text)
+    md.run()
+    md.destroy()
+
+
+#+---------------------------------------------------------------------------+
+#| NetzobInfoMessage:
+#+---------------------------------------------------------------------------+
+def NetzobInfoMessage(text):
+    md = gtk.MessageDialog(None,
+                           gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                           gtk.MESSAGE_INFO,
+                           gtk.BUTTONS_CLOSE,
+                           text)
+    md.run()
+    md.destroy()

@@ -131,14 +131,14 @@ class MMSTD(object):
         states = self.getAllStates()
         for state in states:
             if state.isActive():
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = red];\n"
+                dotCode = dotCode + "\"" + str(state.getID()) + "\" [style=filled, fillcolor = red];\n"
             else:
-                dotCode = dotCode + "\"" + state.getName() + "\" [style=filled, fillcolor = white];\n"
+                dotCode = dotCode + "\"" + str(state.getID()) + "\" [style=filled, fillcolor = white];\n"
 
         for inputState in states:
             for transition in inputState.getTransitions():
                 outputState = transition.getOutputState()
-                dotCode = dotCode + "\"" + inputState.getName() + "\" -> \"" + outputState.getName() + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
+                dotCode = dotCode + "\"" + str(inputState.getID()) + "\" -> \"" + str(outputState.getID()) + "\" [fontsize=5, label=\"" + transition.getDescription() + "\"]\n"
 
         dotCode = dotCode + "}"
         return dotCode
@@ -161,6 +161,7 @@ class MMSTD(object):
                             found = True
                 if not found:
                     for transition in currentState.getTransitions():
+                        self.log.info("currentState " + str(currentState.getName()) + " has the following transition : " + str(transition))
                         outputState = transition.getOutputState()
                         found = False
                         for tmpState in states:
@@ -172,4 +173,6 @@ class MMSTD(object):
                         if not found:
                             toAnalyze.append(outputState)
                     states.append(currentState)
+            else :
+                self.log.error("state = NONE !!")
         return states

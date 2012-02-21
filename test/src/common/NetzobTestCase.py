@@ -31,8 +31,10 @@
 #+---------------------------------------------------------------------------+
 import unittest
 import os.path
+import os
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob import NetzobResources
+from netzob.Common.Workspace import Workspace
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -40,8 +42,11 @@ from netzob import NetzobResources
 
 class NetzobTestCase(unittest.TestCase):
     
+    def __init__(self, methodName='runTest'):
+        unittest.TestCase.__init__(self, methodName)
+    
     def setUp(self):
-        resourcesPath = "../../resources/"
+        resourcesPath = "resources/"
         staticPath = os.path.join("../" + resourcesPath, "static")
         # We retrieve the full name of the child class (the caller) 
         for m in self.__class__.__module__.split('.') :
@@ -50,6 +55,10 @@ class NetzobTestCase(unittest.TestCase):
         # Before setting workspace, we verify it exists
         if os.path.isdir(workspacePath) :
             NetzobResources.WORKSPACE_DIR = workspacePath
+            
         NetzobResources.STATIC_DIR = staticPath
         
-    
+        
+        
+    def getWorkspace(self):
+        return Workspace.loadWorkspace(NetzobResources.WORKSPACE_DIR)

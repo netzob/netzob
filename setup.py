@@ -29,7 +29,13 @@
 #+----------------------------------------------------------------------------
 #| Global Imports
 #+----------------------------------------------------------------------------
+import sys
+import os
+sys.path.insert(0, 'src/')
 from distutils.core import setup, Extension
+from netzob import release
+from resources.sdist.manpage_command import manpage_command
+
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -39,55 +45,44 @@ moduleLibNeedleman = Extension('libNeedleman',
                                extra_link_args=["-fopenmp"],
                                sources=['lib/libNeedleman/NeedlemanWunsch.c'])
 
+CMD_CLASS = {
+             'build_manpage': manpage_command
+             }
+
+#+---------------------------------------------------------------------------+
+#| find_packages
+#|     Retrieves all the packages (directories) with basename = base and
+#|     hosted in directory.
+#+---------------------------------------------------------------------------+
+def find_packages(directory, base):
+    ret = [base]
+    start = os.path.join(directory, base)
+    # Retrieves the list of directories in directory/base/*
+    for path in os.listdir(start):
+        if path.startswith('.'):
+            continue
+        full_path = os.path.join(base, path)
+        if os.path.isdir(os.path.join(directory, full_path)):
+            ret += find_packages(directory, full_path)
+            
+    # transforms directories in packages names ('/' -> '.')
+    result = []
+    for r in ret:
+        result.append(r.replace('/', '.'))
+        
+    return result
+
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
 setup(
-    name="Netzob",
-    packages=[
-        "netzob",
-        "netzob.Common",
-        "netzob.Common.MMSTD",
-        "netzob.Common.MMSTD.Actors",
-        "netzob.Common.MMSTD.Actors.Network",
-        "netzob.Common.MMSTD.Dictionary",
-        "netzob.Common.MMSTD.Dictionary.Values",
-        "netzob.Common.MMSTD.Dictionary.Variables",
-        "netzob.Common.MMSTD.States",
-        "netzob.Common.MMSTD.States.impl",
-        "netzob.Common.MMSTD.Symbols",
-        "netzob.Common.MMSTD.Symbols.impl",
-        "netzob.Common.MMSTD.Tools",
-        "netzob.Common.MMSTD.Tools.Drawing",
-        "netzob.Common.MMSTD.Tools.Parsers",
-        "netzob.Common.MMSTD.Tools.Parsers.DictionaryParser",
-        "netzob.Common.MMSTD.Tools.Parsers.MMSTDParser",
-        "netzob.Common.MMSTD.Transitions",
-        "netzob.Common.MMSTD.Transitions.impl",
-        "netzob.Common.Models",
-        "netzob.Common.Models.Factories",
-        "netzob.Common.Type",
-        "netzob.Export",
-        "netzob.Export.TreeViews",
-        "netzob.ExternalLibs",
-        "netzob.Fuzzing",
-        "netzob.Fuzzing.TreeViews",
-        "netzob.Import",
-        "netzob.Import.GOTPoisoning",
-        "netzob.Import.TreeViews",
-        "netzob.Inference",
-        "netzob.Inference.Grammar",
-        "netzob.Inference.Grammar.EquivalenceOracles",
-        "netzob.Inference.Grammar.Oracles",
-        "netzob.Inference.Grammar.Queries",
-        "netzob.Inference.Vocabulary",
-        "netzob.Inference.Vocabulary.TreeViews",
-        "netzob.Simulator"
-        ],
+    name=release.name,
+    packages=find_packages('src/', 'netzob'),
     package_dir={"netzob": "src/netzob" },
     ext_modules=[moduleLibNeedleman],
     data_files=[
         ('share/netzob', ['resources/static/logo.png']),
+        ('share/applications/', ['resources/static/netzob.desktop']),
         ('share/icons/hicolor/22x22/apps/', ["resources/static/icons/22x22/netzob.png"]),
         ('share/icons/hicolor/48x48/apps/', ["resources/static/icons/48x48/netzob.png"]),
         ('share/icons/hicolor/64x64/apps/', ["resources/static/icons/64x64/netzob.png"]),
@@ -98,15 +93,15 @@ setup(
                                     "resources/static/xsds/0.1/common.xsd"]),
         ],
     scripts=["netzob"],
-    version="0.3.1",
-    license="GPLv3",
-    description="Inferring communication protocols",
-    platforms="Linux_x86, Linux_x64",
-    author="Georges Bossert, Frédéric Guihéry",
-    author_email="contact@netzob.org",
-    url="http://www.netzob.org",
-    download_url="https://dev.netzob.org",
-    keywords=["Protocol", "Inference", "Networking", "Reverse Engineering", "Driver", "Security"],
+    version=release.version,
+    license=release.licenseName,
+    description=release.description,
+    platforms=release.platforms,
+    author=release.author,
+    author_email=release.author_email,
+    url=release.url,
+    download_url=release.download_url,
+    keywords=release.keywords,
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
@@ -121,17 +116,6 @@ setup(
         "Topic :: Security",
         "Topic :: System :: Networking",
         ],
-    long_description="""\
-Inferring communication protocols
--------------------------------------
-
-Netzob simplifies the work for security auditors by providing a complete framework
-for the reverse engineering of communication protocols.
-
-It handles different types of protocols : text protocols (like HTTP and IRC), fixed fields protocols (like IP and TCP)
-and variable fields protocols (like ASN.1 based formats).
-Netzob is therefore suitable for reversing network protocols, structured files and system and process
-flows (IPC and communication with drivers). Netzob is provided with modules dedicated to capture data in
-multiple contexts (network, file, process and kernel data acquisition).
-"""
+    long_description=release.long_description,
+    cmdclass=CMD_CLASS
     )

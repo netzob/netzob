@@ -54,8 +54,8 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
 
-    def __init__(self, dictionary, communicationChannel, cb_query):
-        LearningAlgorithm.__init__(self, dictionary, communicationChannel, cb_query)
+    def __init__(self, dictionary, communicationChannel, resetScript, cb_query):
+        LearningAlgorithm.__init__(self, dictionary, communicationChannel, resetScript, cb_query)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
 
@@ -72,7 +72,7 @@ class Angluin(LearningAlgorithm):
         self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
-        for entry in self.dictionary.getSymbols()[:2]:
+        for entry in self.dictionary.getSymbols():
             letter = DictionarySymbol(entry)
             mq = MembershipQuery([letter])
             self.addWordInD(mq)
@@ -193,25 +193,27 @@ class Angluin(LearningAlgorithm):
         return True
 
     def isClosed(self):
-
+        self.log.debug("Compute if the table is closed")
         rowSA = []
         rowS = []
-
         for wordSA in self.SA:
             rowSA = self.getRowOfObservationTable(wordSA)
             found = False
+            self.log.info("isclosed ? : We verify with SA member : " + str(rowSA))
             for wordS in self.S:
                 rowS = self.getRowOfObservationTable(wordS)
-
                 if self.rowsEquals(rowS, rowSA):
+                    self.log.debug("     is closed: YES (" + str(rowS) + " is equal !")
                     found = True
-
+                    
             if not found:
                 self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
                 return False
+            
         return True
 
     def closeTable(self):
+        self.log.debug("We close the table")
 
         rowSA = []
         rowS = []
@@ -232,7 +234,7 @@ class Angluin(LearningAlgorithm):
         return True
 
     def isConsistent(self):
-
+        self.log.info("Is consistent ... ?")
         # search for all the rows of S which are equals
         rowS = []
         equalsRows = []
@@ -243,7 +245,7 @@ class Angluin(LearningAlgorithm):
                 if word != word2 and self.rowsEquals(row, row2):
                     equalsRows.append((word, word2))
 
-        self.log.info("Equals Rows in S are from words : ")
+        self.log.info("isConsistent ? Equals Rows in S are from words : ")
         for (w1, w2) in equalsRows:
             self.log.info("w1=" + str(w1) + ";w2=" + str(w2))
 
@@ -378,29 +380,51 @@ class Angluin(LearningAlgorithm):
                 # retrieve the value:
                 dicValue = self.observationTable[symbol]
                 value = dicValue[word]
+                
                 # search for the output state
                 mq = word.getMQSuffixedWithMQ(symbol)
                 for wordSandSA in self.getSandSAWords():
+                    
                     self.log.info("IS " + str(wordSandSA) + " eq " + str(mq))
+                    
                     if wordSandSA == mq:
+                        self.log.info("YES its equal")
                         rowOutputState = self.getRowOfObservationTable(wordSandSA)
                         outputStateName = self.appendValuesInRow(rowOutputState)
+                        
+                        
                         # search for the state having this name:
                         outputState = None
+                        self.log.info("Search for the output state : " + outputStateName)
                         for (w2, s2) in wordAndStates:
                             if s2.getName() == outputStateName:
                                 outputState = s2
+                                self.log.info("  == " + str(s2.getName()))
+                            else :
+                                self.log.info("   != " + str(s2.getName()))
+                                
+                                
+                                
                         if outputState != None:
-                            inputSymbol = symbol.getSymbols()[0]
+                            inputSymbol = symbol.getSymbolsWhichAreNotEmpty()[0]
+                            
+                            self.log.info("We create a transition from " + str(state.getName()) + "=>" + str(outputState.getName()))
+                            self.log.info(" input : " + str(inputSymbol))
+                            self.log.info(" output : " + str(value))
+                            
                             transition = SemiStochasticTransition(idTransition, "Transition " + str(idTransition), state, outputState, inputSymbol)
                             transition.addOutputSymbol(value, 100, 1000)
                             state.registerTransition(transition)
+                            
                             idTransition = idTransition + 1
-                            self.log.info("We create a transition from " + str(state.getName()) + " input : " + str(symbol) + " output : " + str(value) + " outputstate " + str(outputState))
+                            
+                        else :
+                            self.log.error("<!!> Impossible to retrieve the output state named " + str(s2.getName()))
 
         if startState != None:
             self.log.info("An infered automata has been computed.")
             self.inferedAutomata = MMSTD(startState, self.dictionary)
+            self.log.info(self.inferedAutomata.getDotCode())
 
     def addCounterExamples(self, counterExamples):
         self.log.info("Modify the automata in order to consider the " + str(len(counterExamples)) + " counterexamples")

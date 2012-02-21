@@ -44,9 +44,10 @@ from netzob.Import.IpcImport import IpcImport
 from netzob.Import.FileImport import FileImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
+from netzob.Export.TextExport import TextExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
-
+from netzob import release
 
 #+---------------------------------------------------------------------------+
 #| Menu:
@@ -141,6 +142,10 @@ class Menu(object):
         exportXMLEntry = gtk.MenuItem("XML")
         exportXMLEntry.connect("activate", self.exportXMLAction)
         self.menuExport.append(exportXMLEntry)
+
+        exportTextEntry = gtk.MenuItem("Text")
+        exportTextEntry.connect("activate", self.exportTextAction)
+        self.menuExport.append(exportTextEntry)
 
         self.menuProject.append(self.exportRootMenu)
 
@@ -308,6 +313,12 @@ class Menu(object):
     def exportXMLAction(self, action):
         rawExportPanel = RawExport(self.netzob)
 
+    #+----------------------------------------------
+    #| Called when user wants to export as text
+    #+----------------------------------------------
+    def exportTextAction(self, action):
+        textExportPanel = TextExport(self.netzob)
+
 #    #+----------------------------------------------
 #    #| Called when user wants to import API flow
 #    #+----------------------------------------------
@@ -344,11 +355,11 @@ class Menu(object):
 
     def aboutDialogAction(self, widget):
         about = gtk.AboutDialog()
-        about.set_program_name("Netzob")
-        about.set_version("0.3.1")
-        about.set_copyright("(c) Georges Bossert & Frédéric Guihéry")
-        about.set_comments("Communication protocol modelization by reverse engineering")
-        about.set_website("http://www.netzob.org")
+        about.set_program_name(release.appname)
+        about.set_version(release.version)
+        about.set_copyright(release.copyright)
+        about.set_comments(release.description)
+        about.set_website(release.url)
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
         about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
         about.run()

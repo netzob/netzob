@@ -165,8 +165,8 @@ class UISimulator:
             self.combo_protocolOfNetworkActor.set_active(1)
 
         self.combo_protocolOfNetworkActor.show()
-        self.tableFormNewActor.attach(label_protocolOfNetworkActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.tableFormNewActor.attach(self.combo_protocolOfNetworkActor, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(label_protocolOfNetworkActor, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.combo_protocolOfNetworkActor, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # IP
         label_IP = gtk.Label("IP : ")
@@ -178,11 +178,19 @@ class UISimulator:
             self.entry_IP.set_text("")
 
         self.entry_IP.show()
-        self.tableFormNewActor.attach(label_IP, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.tableFormNewActor.attach(self.entry_IP, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(label_IP, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.entry_IP, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        # PORT
-        label_Port = gtk.Label("Port : ")
+        # S-PORT
+        label_SPort = gtk.Label("Source Port : ")
+        label_SPort.show()
+        self.entry_SPort = gtk.Entry()
+        self.entry_SPort.show()
+        self.tableFormNewActor.attach(label_SPort, 2, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.tableFormNewActor.attach(self.entry_SPort, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # D-PORT
+        label_Port = gtk.Label("Destination Port : ")
         label_Port.show()
         self.entry_Port = gtk.Entry()
 
@@ -436,6 +444,7 @@ class UISimulator:
         actorNetworkProtocol = self.combo_protocolOfNetworkActor.get_active_text()
         actorNetworkType = self.combo_typeOfNetworkActor.get_active_text()
         actorIP = self.entry_IP.get_text()
+        actorSPort = self.entry_SPort.get_text()
         actorPort = self.entry_Port.get_text()
 
         # We verify we have everything and the actor's name is unique
@@ -455,9 +464,9 @@ class UISimulator:
 
         # Create the network layer
         if actorNetworkType == "SERVER":
-            communicationChannel = NetworkServer.NetworkServer(actorIP, actorNetworkProtocol, int(actorPort))
+            communicationChannel = NetworkServer.NetworkServer(actorIP, actorNetworkProtocol, int(actorPort), int(actorSPort))
         else:
-            communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort))
+            communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort), int(actorSPort))
 
         # Create the abstraction layer for this connection
         abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))

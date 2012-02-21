@@ -135,30 +135,39 @@ class SemiStochasticTransition(AbstractTransition):
         self.activate()
         self.log.debug("Executing transition " + self.name)
         # write the input symbol on the output channel
-        abstractionLayer.writeSymbol(self.inputSymbol)
         finish = False
+        errors = False
+        
+        abstractionLayer.writeSymbol(self.inputSymbol)
         while (not finish):
-            # Wait for a message
-            self.log.debug("Start waiting for something")
-            (receivedSymbol, message) = abstractionLayer.receiveSymbol()
-
+            (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(-1)
             if receivedSymbol == None:
+                self.log.info("Message received = NONE ")
                 finish = True
+                errors = True
             else :
                 self.log.info("The MASTER received " + str(receivedSymbol.getName()))
-            if (not (isinstance(receivedSymbol, EmptySymbol))):
-                self.log.debug("The server consider the reception of symbol " + str(receivedSymbol))
+                
                 if (len(self.outputSymbols) == 0):
                     self.log.debug("Nothing is considered since the server didn't expect anything.")
                     finish = True
-
+                
                 for arSymbol in self.outputSymbols:
-                    [symbol, proba, time] = arSymbol
+                    [symbol, proba, rtime] = arSymbol
                     if symbol.getID() == receivedSymbol.getID():
                         self.log.debug("Received symbol is understood !!")
                         finish = True
-
+                    elif symbol.getType() == receivedSymbol.getType() and symbol.getType() == EmptySymbol.TYPE :
+                        self.log.debug("We consider the reception of an EmptySymbol and validate the transition")
+                        finish = True                
         self.deactivate()
+        
+        if errors :
+            self.log.warn("The execution of transition " + str(self.getName()) + " as a Master, failed.")
+            return None
+        else :
+            self.log.debug("The execution of transition " + str(self.getName()) + " as a Master was successful.")
+        
         return self.outputState
 
     def getDescription(self):
@@ -188,6 +197,8 @@ class SemiStochasticTransition(AbstractTransition):
         xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols:
             [symbol, proba, time] = arSymbol
+            print "->" + str(symbol)
+            print "->" + str(symbol.getID())
             xmlOutput = etree.SubElement(xmlOutputs, "{" + namespace + "}output")
             xmlOutput.set("time", str(time))
             xmlOutput.set("probability", str(proba))
@@ -220,7 +231,6 @@ class SemiStochasticTransition(AbstractTransition):
         inputSymbolID = xmlInput.get("symbol")
         # We retrieve the symbol associated with it
         inputSymbol = vocabulary.getSymbol(inputSymbolID)
-
         if inputSymbol == None:
             logging.warn("The vocabulary doesn't reference a symbol which ID is " + inputSymbolID)
             return None

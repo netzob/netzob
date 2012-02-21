@@ -82,10 +82,16 @@ class NormalState(AbstractState):
             inputSymbol = transition.getInputSymbol()
             found = False
             for t in self.transitions:
-                if t.getType() == "SemiStochastic" and t.getInputSymbol() == inputSymbol:
+                if t.getType() == "SemiStochastic" and t.getInputSymbol().getID() == inputSymbol.getID():
+                    self.log.warn("Symbol = " + str(inputSymbol) + " == " + str(t.getInputSymbol()))
                     found = True
+                else :
+                    self.log.info("Symbol = " + str(inputSymbol) + " != " + str(t.getInputSymbol()))
             if not found:
+                self.log.info("Transition is REGISTERED")
                 self.transitions.append(transition)
+            else :
+                self.log.warn("OUPS, impossible to register the provided transition")
         else:
             self.transitions.append(transition)
 
@@ -150,8 +156,15 @@ class NormalState(AbstractState):
         idRandom = random.randint(0, len(self.getTransitions()) - 1)
         pickedTransition = self.getTransitions()[idRandom]
         self.log.info("Randomly picked the transition " + pickedTransition.getName())
-
+        
         newState = pickedTransition.executeAsMaster(abstractionLayer)
+        
+        # in case an error occured while executing the transition
+        if newState == None :
+            self.log.debug("The state has detected an error while executing the transition and consider it !")
+            self.deactivate()
+            return None
+        
         self.deactivate()
         return newState
 
