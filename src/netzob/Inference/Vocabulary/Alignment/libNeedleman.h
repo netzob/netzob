@@ -56,6 +56,18 @@ typedef struct {
   t_message *messages; // a list of messages
 } t_group;
 
+// Definition of a group of group (a group of symbol)
+typedef struct {
+  unsigned short int len; // nb of group
+  t_group *groups; // a list of group
+} t_groups;
+
+typedef struct {
+  int i;  // group1 number
+  int j;  // group2 number
+  float score; // score of equivalence between group1 and group2
+} t_equivalentGroup;
+
 //Definition of a aligned set of messages
 typedef struct {
   unsigned short int len; // size of the regex
@@ -82,6 +94,12 @@ static PyObject *python_callback = NULL;
 int callbackStatus(double percent, char* message, ...);
 
 //+---------------------------------------------------------------------------+
+//| py_getHighestEquivalentGroup : Python wrapper for getHighestEquivalentGroup
+//+---------------------------------------------------------------------------+
+static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args);
+void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroup, t_groups* groups, Bool debugMode);
+
+//+---------------------------------------------------------------------------+
 //| py_alignMessages : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
 static PyObject* py_alignMessages(PyObject* self, PyObject* args);
@@ -100,6 +118,12 @@ static PyObject* py_deserializeMessages(PyObject* self, PyObject* args);
 unsigned short int deserializeMessages(t_group *, unsigned char *, int, unsigned char *, int, int, Bool);
 
 //+---------------------------------------------------------------------------+
+//| py_deserializeMGroups : Python wrapper for deserializeGroups
+//+---------------------------------------------------------------------------+
+static PyObject* py_deserializeGroups(PyObject* self, PyObject* args);
+unsigned short int deserializeGroups(t_groups *, unsigned char *, int, unsigned char *, int, int, Bool);
+
+//+---------------------------------------------------------------------------+
 //| initLibNeedleman : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
 void initlibNeedleman(void);
@@ -116,9 +140,11 @@ void dumpRegex(t_regex regex);
 
 
 static PyMethodDef libNeedleman_methods[] = {
+  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
   {"alignMessages", py_alignMessages, METH_VARARGS},
   {"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
   {"deserializeMessages", py_deserializeMessages, METH_VARARGS},
+  {"deserializeGroups", py_deserializeGroups, METH_VARARGS},
   {NULL, NULL}
 };
 

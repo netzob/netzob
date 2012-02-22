@@ -60,7 +60,6 @@ class NeedlemanAndWunsch(object):
         else :
             self.cb_status(donePercent, currentMessage)
     
-    
     #+-----------------------------------------------------------------------+
     #| align
     #|     Default alignment of messages

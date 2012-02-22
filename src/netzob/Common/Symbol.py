@@ -130,8 +130,9 @@ class Symbol(AbstractSymbol):
         logging.debug("len messages : " + str(len(self.getMessages())))
         logging.debug("format = " + format)
         logging.debug("serial = " + serialMessages)
+        
         (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
-
+        
         self.setScore(score)
 
         # Build alignment C library result

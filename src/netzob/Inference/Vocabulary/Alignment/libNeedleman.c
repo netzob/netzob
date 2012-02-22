@@ -70,6 +70,211 @@ int callbackStatus(double percent, char* message, ...) {
   }
   return 0;
 }
+
+
+
+//+---------------------------------------------------------------------------+
+//| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
+//+---------------------------------------------------------------------------+
+static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
+  unsigned short int doInternalSlick;
+  unsigned short int nbGroups;
+  unsigned char * format;
+  int sizeFormat;
+  unsigned char * serialGroups;
+  int sizeSerialGroups;
+  PyObject *temp_cb;
+  unsigned short int debugMode;
+
+  // local variables
+  t_groups groups;
+  int nbDeserializedGroups;
+  t_equivalentGroup result;
+  Bool bool_debugMode;
+  Bool bool_doInternalSlick;
+
+  // Converts the arguments
+  if (!PyArg_ParseTuple(args, "hhs#s#Oh", &doInternalSlick, &nbGroups, &format, &sizeFormat, &serialGroups, &sizeSerialGroups, &temp_cb, &debugMode)) {
+    PyErr_SetString(PyExc_TypeError, "Error while parsing the arguments provided to py_getHighestEquivalentGroup");
+    return NULL;
+  }
+
+  //+------------------------------------------------------------------------+
+  // We verify the callback parameter
+  //+------------------------------------------------------------------------+
+  if (!PyCallable_Check(temp_cb)) {
+    PyErr_SetString(PyExc_TypeError, "The provided 7th parameter should be callback");
+    return NULL;
+  }
+  // Parse the callback
+  Py_XINCREF(temp_cb);          /* Add a reference to new callback */
+  Py_XDECREF(python_callback);  /* Dispose of previous callback */
+  python_callback = temp_cb;    /* Remember new callback */
+
+  groups.len = nbGroups;
+  groups.groups = malloc(nbGroups*sizeof(t_group));
+
+  //+------------------------------------------------------------------------+
+  // Deserializes the provided arguments
+  //+------------------------------------------------------------------------+
+  if (debugMode == 1) {
+    printf(" Deserialization of the arguments (format, serialMessages).\n");
+  }
+
+  nbDeserializedGroups = deserializeGroups(&groups, format, sizeFormat, serialGroups, nbGroups, sizeSerialGroups, debugMode);
+
+  if (nbDeserializedGroups != nbGroups) {
+    printf("Error : impossible to deserialize all the provided groups.\n");
+    return NULL;
+  }
+  if (debugMode == 1) {
+    printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
+  }
+
+  // Convert debugMode parameter in a BOOL
+  if (debugMode) {
+    bool_debugMode = TRUE;
+  } else {
+    bool_debugMode = FALSE;
+  }
+
+  // Concert doInternalSlick parameter in a BOOL
+  if (doInternalSlick) {
+    bool_doInternalSlick = TRUE;
+  } else {
+    bool_doInternalSlick = FALSE;
+  }
+  result.i = -1;
+  result.j= -1;
+  result.score = -1;
+
+  getHighestEquivalentGroup(&result, doInternalSlick, nbGroups, &groups, debugMode);
+
+  if (debugMode) {
+    printf("Group 1 i = %d\n", result.i);
+    printf("Group 2 j = %d\n", result.j);
+    printf("Score : %f\n", result.score);
+  }
+
+  if (result.score == -1) {
+    printf("Impossible to compute the highest equivalent set of groups.");
+    return NULL;
+  }
+
+  return Py_BuildValue("(iif)", result.i, result.j, result.score);
+
+}
+void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroups, t_groups* groups, Bool debugMode) {
+  // Compute the matrix
+  float **matrix;
+  int i, j;
+  float maxScore = -1.0f;
+  short int i_maximum = -1;
+  short int j_maximum = -1;
+
+  // local variable
+  int p = 0;
+
+  // First we fill the matrix with 0s
+  matrix = (float **) malloc( nbGroups * sizeof(float*) );
+  for (i = 0; i < nbGroups; i++) {
+    matrix[i] = (float *) malloc( sizeof(float) * nbGroups );
+    for(j = 0; j < nbGroups; j++) {
+      matrix[i][j] = 0.0;
+    }
+  }
+
+  //  #pragma omp parallel for shared(t_groups, nbGroups, matrix)
+    for (i = 0; i < nbGroups; i++) {
+      p = 0;
+      for (p = 0; p < nbGroups; p++) {
+        if (i < p) {
+          int m, n;
+          t_group p_group;
+          t_regex regex;
+          t_regex regex1;
+          t_regex regex2;
+          p_group.len = groups->groups[i].len + groups->groups[p].len;
+          p_group.messages = malloc(p_group.len * sizeof(t_message));
+          for (m = 0; m < groups->groups[i].len; ++m) {
+            p_group.messages[m] = groups->groups[i].messages[m];
+          }
+          for (m = m, n = 0; n < groups->groups[p].len; ++m, ++n) {
+            p_group.messages[m] = groups->groups[p].messages[n];
+          }
+
+          // Align the messages of the current group
+          regex1.len = p_group.messages[0].len;
+          regex1.regex = p_group.messages[0].message;
+          regex1.mask = p_group.messages[0].mask;
+
+          for (m = 1; m < p_group.len; ++m) {
+            regex2.len = p_group.messages[m].len;
+            regex2.regex = p_group.messages[m].message;
+            regex2.mask = p_group.messages[m].mask;
+
+
+            alignTwoMessages(&regex, doInternalSlick, &regex1, &regex2, debugMode);
+
+            regex1.len = regex.len;
+            regex1.mask = regex.mask;
+            regex1.regex = regex.regex;
+          }
+          //                              omp_set_lock(&my_lock);
+          matrix[i][p] = regex.score;
+          //                              omp_unset_lock(&my_lock);
+	  if (debugMode == TRUE) {
+	    printf("matrix %d,%d = %f\n", i, p, regex.score);
+	  }
+
+          free( regex.regex );
+          free( regex.mask );
+          free( p_group.messages );
+        }
+      }
+    }
+
+    for (i = 0; i < nbGroups; ++i) {
+      for (j = 0; j < nbGroups; ++j) {
+        if (i != j && ((maxScore < matrix[i][j]) || (maxScore == -1))) {
+          maxScore = matrix[i][j];
+          i_maximum = i;
+          j_maximum = j;
+        }
+      }
+    }
+
+    // Room service
+    for (i = 0; i < nbGroups; i++) {
+      free( matrix[i] );
+    }
+    free( matrix );
+
+    for (i = 0; i < nbGroups; ++i) {
+      free( groups->groups[i].messages );
+    }
+    free( groups->groups );
+    
+    result->i = i_maximum;
+    result->j = j_maximum;
+    result->score = maxScore;
+
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 //+---------------------------------------------------------------------------+
 //| py_alignSequences : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
@@ -101,7 +306,7 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   // We verify the callback parameter
   //+------------------------------------------------------------------------+
   if (!PyCallable_Check(temp_cb)) {
-    PyErr_SetString(PyExc_TypeError, "The provided 6th parameter should be callback");
+    PyErr_SetString(PyExc_TypeError, "The provided 7th parameter should be callback");
     return NULL;
   }
   // Parse the callback
@@ -265,7 +470,7 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   // Deserialization of messages
   group.len = 2;
   group.messages = malloc(2*sizeof(t_message));
-  
+
   nbDeserializedMessage = deserializeMessages(&group, format, sizeFormat, serialMessages, 2, sizeSerialMessages, debugMode);
 
   if (nbDeserializedMessage != 2) {
@@ -594,7 +799,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
             regexTmp[i] = 0xf6;
             regexMaskTmp[i] = DIFFERENT;
           }
-	}
+        }
       }
     }
   }
@@ -638,7 +843,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   memcpy(regex->regex, regexTmp + i, regex->len);
   memcpy(regex->mask, regexMaskTmp + i, regex->len);
 
-  
+
   // Room service
   for (i = 0; i < (regex1->len + 1); i++) {
     free( matrix[i] );
@@ -652,6 +857,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   free(regexMaskTmp);
   return 0;
 }
+
 
 
 
@@ -744,10 +950,120 @@ unsigned short int deserializeMessages(t_group * group, unsigned char *format, i
       hexdump(group->messages[i_message].message, group->messages[i_message].len);
     }
   }
-
-
   return nbDeserializedMessages;
 }
+
+
+
+
+
+
+//+---------------------------------------------------------------------------+
+//| py_deserializeGroups : Python wrapper for deserializeGroups
+//+---------------------------------------------------------------------------+
+static PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
+  unsigned short int nbGroups;
+  unsigned char *format;
+  int sizeFormat;
+  unsigned char *serialGroups;
+  int sizeSerialGroups;
+  unsigned short int debugMode;
+  unsigned short int nbDeserializedGroup;
+
+  // Converts the arguments
+  if (!PyArg_ParseTuple(args, "hss#h", &nbGroups, &format, &sizeFormat, &serialGroups, &sizeSerialGroups, &debugMode)) {
+    printf("Error while parsing the arguments provided to py_deserializeGroups\n");
+    return NULL;
+  }
+
+  t_groups groups_result;
+  // Deserializes the provided arguments
+  if (debugMode == 1) {
+    printf("py_deserializeGroups : Deserialization of the arguments (format, serialGroups).\n");
+  }
+
+  groups_result.len = nbGroups;
+  groups_result.groups = malloc(nbGroups*sizeof(t_group));
+
+  nbDeserializedGroup = deserializeGroups(&groups_result, format, sizeFormat, serialGroups, nbGroups, sizeSerialGroups, debugMode);
+
+  if (nbDeserializedGroup != nbGroups) {
+    printf("Error : impossible to deserialize all the provided groups, %d/%d were effectly parsed.\n", nbDeserializedGroup, nbGroups);
+    return NULL;
+  }
+
+  // cleaning a bit
+  free(groups_result.groups);
+
+  if(debugMode == 1) {
+    printf("All the provided groups were deserialized (%d).\n", nbDeserializedGroup);
+  }
+
+  // return the number of deserialized groups
+  return Py_BuildValue("i", nbDeserializedGroup);
+}
+
+unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
+  int i_group = 0;
+  int l = 0;
+  unsigned char * p;
+  unsigned char *q;
+  unsigned short int serial_shift = 0;
+  unsigned short int format_shift = 0;
+  unsigned short int len_size_group = 0;
+  unsigned short int len_size_message = 0;
+  unsigned short int size_group = 0;
+  unsigned short int size_message = 0;
+  unsigned char * size_group_str;
+  unsigned char * size_message_str;
+  int i_message = 0;
+
+
+  for (i_group = 0; i_group <nbGroups; i_group++)  {
+    // retrieve the number of messages in the current group
+    p = strchr(format + format_shift, 'G');
+    len_size_group = (unsigned short int) (p - (format + format_shift));
+    size_group_str = malloc((len_size_group + 1) * sizeof(unsigned char));
+    memcpy(size_group_str, format + format_shift, len_size_group);
+    size_group_str[len_size_group] = '\0';
+    size_group = atoi(size_group_str);
+    format_shift += len_size_group + 1;
+
+    // Allocate pointers to store the messages of current group
+    groups->groups[i_group].len = size_group;
+    groups->groups[i_group].messages = malloc(size_group * sizeof(t_message));
+
+    for (i_message = 0; i_message < size_group; i_message++) {
+      // Retrieve the size of each message
+      q = strchr(format + format_shift, 'M');
+      len_size_message = (unsigned short int) (q - (format + format_shift));
+      size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
+      memcpy(size_message_str, format + format_shift, len_size_message);
+      size_message_str[len_size_message] = '\0';
+      size_message = atoi(size_message_str);
+      format_shift += len_size_message + 1;
+
+      // Retrieve the data of each message
+      groups->groups[i_group].messages[i_message].len = size_message;
+      groups->groups[i_group].messages[i_message].message = serialGroups + l;
+      groups->groups[i_group].messages[i_message].mask = serialGroups + l + size_message;
+
+      l += size_message * 2;
+      free(size_message_str );
+    }
+    free(size_group_str);
+  }
+  return i_group;
+}
+
+
+
+
+
+
+
+
+
 
 
 
