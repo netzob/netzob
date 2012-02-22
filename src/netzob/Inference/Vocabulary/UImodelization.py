@@ -1740,14 +1740,7 @@ class UImodelization:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
-        # If we found it we can update the content of the treestore
-        if self.selectedSymbol != None:
-            self.treeMessageGenerator.default(self.selectedSymbol)
-#            # enable dragging message out of current symbol
-#            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-#            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
-        else:
-            self.treeMessageGenerator.default(None)
+        self.treeMessageGenerator.default(self.selectedSymbol)
 
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
