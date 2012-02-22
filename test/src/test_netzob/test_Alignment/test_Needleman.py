@@ -48,7 +48,7 @@ class test_Needleman(NetzobTestCase):
     
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
-        
+    
   
     def test_randomAlignmentsWithTwoCenteredMessages(self):        
         workspace = self.getWorkspace()

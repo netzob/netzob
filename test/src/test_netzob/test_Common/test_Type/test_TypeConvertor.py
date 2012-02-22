@@ -40,6 +40,7 @@ import time
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.Symbol import Symbol
 
 
 class test_TypeConvertor(unittest.TestCase):
@@ -71,7 +72,37 @@ class test_TypeConvertor(unittest.TestCase):
             for i_message in range(0, len(messages)) :
                 message = messages[i_message]
                 self.assertEqual(message.getData(), deserializedContents[i_message])
-  
+                
+    def test_serializeSymbol(self):
+        # Generate randoms symbols and retrieve their 
+        # serializations
+        nb_test = 100
+        for i_test in range(0, nb_test) :                   
+            symbol = Symbol(uuid.uuid4(), "TestSymbol", None)
+            nb_messages = random.randint(5, 50)
+            size_messages = []
+            for i_message in range(0, nb_messages) :
+                # Generate the content of two messages
+                size = self.generateRandomString(5, 100)
+                size_messages.append(str(len(size)))
+                data = TypeConvertor.stringToNetzobRaw(size)
+                # Create the message
+                message = RawMessage(uuid.uuid4(), str(time.time()), data)
+                # Register the message
+                symbol.addMessage(message)
+            
+            # start the serialization process
+            (serializedSymbol, format) = TypeConvertor.serializeSymbol(symbol)
+            
+            # We verify the format is good :
+            test_format = str(nb_messages) + "G" + ("M".join(size_messages)) + "M"
+            self.assertEqual(format, test_format)
+            
+            # We verify the content is good :
+            # TODO
+            
+            
+            
         
         
         

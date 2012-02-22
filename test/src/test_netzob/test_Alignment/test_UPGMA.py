@@ -53,25 +53,38 @@ class test_UPGMA(unittest.TestCase):
     def test_executingClustering(self):
         
         # We create 6 messages of 2 group
-        originalSymbol = Symbol(uuid.uuid4(), "TestSymbol", None)        
-        # group1 
-        message1 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
-        message2 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
-        message3 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
-        # group2
-        message4 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
-        message5 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
-        message6 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
         
-        originalSymbol.addMessage(message1)
-        originalSymbol.addMessage(message2)
-        originalSymbol.addMessage(message3)
-        originalSymbol.addMessage(message4)
-        originalSymbol.addMessage(message5)
-        originalSymbol.addMessage(message6)
+        # group1 
+        originalSymbol1 = Symbol(uuid.uuid4(), "TestSymbol", None)        
+        message1 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
+        originalSymbol1.addMessage(message1)
+        
+        originalSymbol2 = Symbol(uuid.uuid4(), "TestSymbol2", None)  
+        message2 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
+        originalSymbol2.addMessage(message2)
+        
+        originalSymbol3 = Symbol(uuid.uuid4(), "TestSymbol3", None)  
+        message3 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(20, 30) + " comment vas-tu ?"))
+        originalSymbol3.addMessage(message3)
+        
+        
+        # group2
+        originalSymbol4 = Symbol(uuid.uuid4(), "TestSymbol4", None)  
+        message4 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
+        originalSymbol4.addMessage(message4)
+        
+        originalSymbol5 = Symbol(uuid.uuid4(), "TestSymbol5", None)  
+        message5 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
+        originalSymbol5.addMessage(message5)
+        
+        originalSymbol6 = Symbol(uuid.uuid4(), "TestSymbol6", None)  
+        message6 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut à toi " + self.generateRandomString(10, 15) + " what's up ?"))
+        originalSymbol6.addMessage(message6)
+        
+        symbols = [originalSymbol1, originalSymbol2, originalSymbol3, originalSymbol4, originalSymbol5, originalSymbol6]
         
         # Start the clustering
-        clusteringSolution = UPGMA([originalSymbol], 100, 90, True)
+        clusteringSolution = UPGMA(None, symbols, 100, 90, True)
         clusteringSolution.executeClustering()
         
         
