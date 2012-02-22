@@ -48,7 +48,8 @@ import uuid
 #+---------------------------------------------------------------------------+
 class UPGMA(object):
     
-    def __init__(self, symbols, nbIteration, minEquivalence, doInternalSlick, cb_status=None):
+    def __init__(self, project, symbols, nbIteration, minEquivalence, doInternalSlick, cb_status=None):
+        self.project = project;
         self.symbols = symbols
         self.nbIteration = nbIteration
         self.minEquivalence = minEquivalence
@@ -148,7 +149,7 @@ class UPGMA(object):
     #| @param symbols a list of symbols
     #| @returns number Of Deserialized symbols
     #+-----------------------------------------------------------------------+
-    def deserializeMessages(self, symbols): 
+    def deserializeGroups(self, symbols): 
         # First we serialize the messages
         (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols)
         
