@@ -32,7 +32,6 @@ import gtk
 import pango
 import pygtk
 import gobject
-from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 pygtk.require('2.0')
 import logging
 import threading
@@ -54,6 +53,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign

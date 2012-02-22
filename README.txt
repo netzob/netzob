@@ -30,19 +30,13 @@ Netzob currently supports Linux x86 and x64 platforms.
 
 Dependencies :
 
-* tcpdump
 * python
 * python-ptrace
-* nfqueue-bindings-python
-* python-hachoir
 * python-matplotlib
-* python-dpkt
 * python-pcapy
 * strace
 * lsof
-* iptables
 * python-bitarray
-* python-pyasn1
 * python-lxml
 * python-dev
 * libjs-sphinxdoc
@@ -50,10 +44,9 @@ Dependencies :
 
 or, on Debian-like operating systems :
 
-$ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python \
-  python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables \
-  python-pcapy python-bitarray python-pyasn1 python-dev python-lxml         \
-  libjs-sphinxdoc python-sphinx
+$ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
+  python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
+  python-sphinx
 
 And then, 
 
