@@ -26,7 +26,8 @@ file, process and kernel data acquisition).
 [***********************]       2. Installation      [*************************]
 [******************************************************************************]
 
-Netzob currently supports Linux x86 and x64 platforms.
+Netzob currently supports Linux x86 and x64 platforms. A Windows
+version is expected soon.
 
 Dependencies :
 
@@ -34,15 +35,18 @@ Dependencies :
 * python-ptrace
 * python-matplotlib
 * python-pcapy
-* strace
-* lsof
 * python-bitarray
 * python-lxml
 * python-dev
 * libjs-sphinxdoc
 * python-sphinx
 
-or, on Debian-like operating systems :
+Linux-specific dependencies :
+
+* strace
+* lsof
+
+Or, on Debian-like operating systems :
 
 $ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
   python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
