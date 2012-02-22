@@ -1704,8 +1704,8 @@ class UImodelization:
             #Adding to its new symbol
             new_message_symbol.addMessage(message)
 
-        message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
-        new_message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+#        message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+#        new_message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
         #Update Left and Right
         self.update()
         return
