@@ -124,16 +124,19 @@ class UImodelization:
 
     def update(self):
         print "updating...."
+        self.updateTreeStoreSymbol()
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             if isActive:
                 self.treeTypeStructureGenerator.show()
+                self.updateTreeStoreTypeStructure()
             else:
                 self.treeTypeStructureGenerator.hide()
 
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             if isActive:
                 self.treeMessageGenerator.show()
+                self.updateTreeStoreMessage()
             else:
                 self.treeMessageGenerator.hide()
 
@@ -142,10 +145,6 @@ class UImodelization:
             #    self.consoleGenerator.show()
             #else:
             #    self.consoleGenerator.hide()
-
-        self.updateTreeStoreSymbol()
-        self.updateTreeStoreMessage()
-        self.updateTreeStoreTypeStructure()
 
     def clear(self):
         self.selectedSymbol = None
