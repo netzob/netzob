@@ -32,7 +32,6 @@ import gtk
 import pygtk
 import uuid
 import errno
-from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import os
@@ -51,7 +50,7 @@ import impacket.ImpactPacket as Packets
 #+----------------------------------------------
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
-
+from netzob.Import.AbstractImporter import AbstractImporter
 
 #+----------------------------------------------
 #| Pcap:

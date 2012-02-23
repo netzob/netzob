@@ -37,10 +37,13 @@ appname = name
 
 #+---------------------------------------------------------------------------+
 #| Current OFFICIAL version of the application 
-#|    the version number must be changed during the last commit before tag
-#|    means if current version is 0.3.1, it certainly means 0.3.1 + changes 
+
+#|    the version number must be changed during the last commit before
+#|    the tag release.
+#|    Development version has version number increased and is
+#|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.3.1"
+version = "0.3.2~git"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions

@@ -32,7 +32,6 @@ import gtk
 import pango
 import pygtk
 import gobject
-from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 pygtk.require('2.0')
 import logging
 import threading
@@ -54,6 +53,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Sign import Sign
@@ -123,17 +123,19 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
-        print "updating...."
+        self.updateTreeStoreSymbol()
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             if isActive:
                 self.treeTypeStructureGenerator.show()
+                self.updateTreeStoreTypeStructure()
             else:
                 self.treeTypeStructureGenerator.hide()
 
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             if isActive:
                 self.treeMessageGenerator.show()
+                self.updateTreeStoreMessage()
             else:
                 self.treeMessageGenerator.hide()
 
@@ -142,10 +144,6 @@ class UImodelization:
             #    self.consoleGenerator.show()
             #else:
             #    self.consoleGenerator.hide()
-
-        self.updateTreeStoreSymbol()
-        self.updateTreeStoreMessage()
-        self.updateTreeStoreTypeStructure()
 
     def clear(self):
         self.selectedSymbol = None
@@ -194,35 +192,35 @@ class UImodelization:
         table.show()
         frame.add(table)
 
-        # Widget for discovering the alignment
-        but = NetzobButton("Discover alignment")
+        # Widget for sequence alignment
+        but = NetzobButton("Sequence alignment")
         tooltips.set_tip(but, "Automatically discover the best alignment of messages")
-        but.connect("clicked", self.discoverAlignment_cb)
+        but.connect("clicked", self.sequenceAlignment_cb)
 #        but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
-        # Widget for forcing alignment delimiter
-        but = NetzobButton("Force alignment")
-        but.connect("clicked", self.forceAlignment_cb)
-        tooltips.set_tip(but, "Set a delimiter to force alignment")
+        # Widget for forcing partitioning delimiter
+        but = NetzobButton("Force partitioning")
+        but.connect("clicked", self.forcePartitioning_cb)
+        tooltips.set_tip(but, "Set a delimiter to force partitioning")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
-        # Widget for simple alignment
-        but = NetzobButton("Simple alignment")
-        but.connect("clicked", self.simpleAlignment_cb)
+        # Widget for simple partitioning
+        but = NetzobButton("Simple partitioning")
+        but.connect("clicked", self.simplePartitioning_cb)
         tooltips.set_tip(but, "In order to show the simple differences between messages")
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
-        but = NetzobButton("Smooth alignment")
+        but = NetzobButton("Smooth partitioning")
         but.connect("clicked", self.slickRegex_cb)
         tooltips.set_tip(but, "Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
-        # Widget button reset alignment
-        but = NetzobButton("Reset alignment")
-        but.connect("clicked", self.resetAlignment_cb)
-        tooltips.set_tip(but, "Reset the current alignment")
+        # Widget button reset partitioning
+        but = NetzobButton("Reset partitioning")
+        but.connect("clicked", self.resetPartitioning_cb)
+        tooltips.set_tip(but, "Reset the current partitioning")
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
@@ -233,9 +231,9 @@ class UImodelization:
         frame.add(table)
 
         # Widget button refine regex
-        but = NetzobButton("Refine alignment")
-        but.connect("clicked", self.refineRegexes_cb)
-        tooltips.set_tip(but, "Automatically find the boundaries (min/max of cell's size) for each fields")
+        but = NetzobButton("Freeze partitioning")
+        but.connect("clicked", self.freezePartitioning_cb)
+        tooltips.set_tip(but, "Automatically find and freeze the boundaries (min/max of cell's size) for each fields")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
@@ -363,10 +361,10 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
 
     #+----------------------------------------------
-    #| discoverAlignment:
+    #| sequenceAlignment:
     #|   Parse the traces and store the results
     #+----------------------------------------------
-    def discoverAlignment_cb(self, widget):
+    def sequenceAlignment_cb(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
@@ -377,7 +375,7 @@ class UImodelization:
         self.treeTypeStructureGenerator.clear()
         self.update()
 
-        dialog = gtk.Dialog(title="Discover Alignment", flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Sequence alignment", flags=0, buttons=None)
         panel = gtk.Table(rows=4, columns=3, homogeneous=False)
         panel.show()
 
@@ -424,36 +422,42 @@ class UImodelization:
         panel.attach(self.progressbarAlignment, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Discover alignment")
-        searchButton.connect("clicked", self.discoverAlignment_cb_cb, dialog)
+        searchButton = NetzobButton("Sequence alignment")
+        searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog)
         panel.attach(searchButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
 
     #+----------------------------------------------
-    #| discoverAlignment_cb_cb:
-    #|   Force the delimiter for sequence alignment
+    #| sequenceAlignment_cb_cb:
+    #|   Launch a sequence alignment thread
     #+----------------------------------------------
-    def discoverAlignment_cb_cb(self, widget, dialog):
+    def sequenceAlignment_cb_cb(self, widget, dialog):
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
         self.currentExecutionOfAlignmentHasFinished = False
         # Start the progress bar
-        gobject.timeout_add(200, self.do_pulse_for_discoverAlignement)
+        gobject.timeout_add(200, self.do_pulse_for_sequenceAlignment)
         # Start the alignment JOB
-        Job(self.startDiscoverAlignment(vocabulary, dialog))
+        Job(self.startSequenceAlignment(vocabulary, dialog))
 
     #+----------------------------------------------
-    #| startDiscoverAlignment:
+    #| startSequenceAlignment:
     #|   Execute the Job of the Alignment in a unsynchronized way
     #+----------------------------------------------
-    def startDiscoverAlignment(self, vocabulary, dialog):
+    def startSequenceAlignment(self, vocabulary, dialog):
         self.currentExecutionOfAlignmentHasFinished = False
-        (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.percentOfAlignmentProgessBar, self.update))
+        (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.percentOfAlignmentProgessBar))
         self.currentExecutionOfAlignmentHasFinished = True
         
         dialog.destroy()
 
+        # Show the new symbol in the interface
+        symbols = self.netzob.getCurrentProject().getVocabulary().getSymbols()
+        if len(symbols) > 0:
+            symbol = symbols[0]
+            self.selectedSymbol = symbol
+            self.treeMessageGenerator.default(self.selectedSymbol)
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
@@ -463,20 +467,20 @@ class UImodelization:
             gobject.idle_add(self.progressbarAlignment.set_text, message)
 
     #+----------------------------------------------
-    #| do_pulse_for_discoverAlignement:
+    #| do_pulse_for_sequenceAlignment:
     #|   Computes if the progress bar must be updated or not
     #+----------------------------------------------
-    def do_pulse_for_discoverAlignement(self):
+    def do_pulse_for_sequenceAlignment(self):
         if self.currentExecutionOfAlignmentHasFinished == False:
             self.progressbarAlignment.pulse()
             return True
         return False
 
     #+----------------------------------------------
-    #| forceAlignment_cb:
-    #|   Force the delimiter for sequence alignment
+    #| forcePartitioning_cb:
+    #|   Force the delimiter for partitioning
     #+----------------------------------------------
-    def forceAlignment_cb(self, widget):
+    def forcePartitioning_cb(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
@@ -486,7 +490,7 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title="Force alignment", flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Force partitioning", flags=0, buttons=None)
         panel = gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
@@ -514,34 +518,34 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Force alignment")
-        searchButton.connect("clicked", self.forceAlignment_cb_cb, dialog, typeCombo, entry)
+        searchButton = NetzobButton("Force partitioning")
+        searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
 
     #+----------------------------------------------
-    #| forceAlignment_cb_cb:
-    #|   Force the delimiter for sequence alignment
+    #| forcePartitioning_cb_cb:
+    #|   Force the delimiter for partitioning
     #+----------------------------------------------
-    def forceAlignment_cb_cb(self, widget, dialog, aFormat, delimiter):
+    def forcePartitioning_cb_cb(self, widget, dialog, aFormat, delimiter):
         aFormat = aFormat.get_active_text()
         delimiter = delimiter.get_text()
         delimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, aFormat)
 
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.alignWithDelimiter(self.netzob.getCurrentProject().getConfiguration(),
-                                      aFormat,
-                                      delimiter)
+        vocabulary.forcePartitioning(self.netzob.getCurrentProject().getConfiguration(),
+                                     aFormat,
+                                     delimiter)
         self.update()
         dialog.destroy()
 
     #+----------------------------------------------
-    #| simpleAlignment_cb:
-    #|   Apply a simple alignement
+    #| simplePartitioning_cb:
+    #|   Apply a simple partitioning
     #+----------------------------------------------
-    def simpleAlignment_cb(self, widget):
+    def simplePartitioning_cb(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
@@ -551,17 +555,18 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title="Simple alignment", flags=0, buttons=None)
+        dialog = gtk.Dialog(title="Simple partitioning", flags=0, buttons=None)
         panel = gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
         # Label
-        label = NetzobLabel("Minimum alignment size: ")
+        label = NetzobLabel("Minimum unit size: ")
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         typeCombo = NetzobComboBoxEntry()
+        typeCombo.set_button_sensitivity(gtk.SENSITIVITY_OFF)
         for i in range(len(possible_choices)):
             typeCombo.append_text(possible_choices[i])
             if possible_choices[i] == UnitSize.NONE:
@@ -569,21 +574,21 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Simple alignment")
-        searchButton.connect("clicked", self.simpleAlignment_cb_cb, dialog, typeCombo)
+        searchButton = NetzobButton("Simple partitioning")
+        searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
 
     #+----------------------------------------------
-    #| simpleAlignment_cb_cb:
-    #|   Apply a simple alignement
+    #| simplePartitioning_cb_cb:
+    #|   Apply a simple partitioning
     #+----------------------------------------------
-    def simpleAlignment_cb_cb(self, widget, dialog, unitSize_widget):
+    def simplePartitioning_cb_cb(self, widget, dialog, unitSize_widget):
         unitSize = unitSize_widget.get_active_text()
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.simpleAlignment(self.netzob.getCurrentProject().getConfiguration(), unitSize)
+        vocabulary.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
         dialog.destroy()
         self.update()
 
@@ -757,27 +762,27 @@ class UImodelization:
 
             # Add entries for copy functions
             copyMenu = gtk.Menu()
-            item = gtk.MenuItem("Raw message to clipboard")
+            item = gtk.MenuItem("Raw message")
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, False, False, None)
             copyMenu.append(item)
-            item = gtk.MenuItem("Aligned message to clipboard")
+            item = gtk.MenuItem("Aligned message")
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, None)
             copyMenu.append(item)
-            item = gtk.MenuItem("Aligned formatted message to clipboard")
+            item = gtk.MenuItem("Aligned formatted message")
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, None)
             copyMenu.append(item)
-            item = gtk.MenuItem("Field to clipboard")
+            item = gtk.MenuItem("Field")
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, selectedField)
             copyMenu.append(item)
-            item = gtk.MenuItem("Formatted field to clipboard")
+            item = gtk.MenuItem("Formatted field")
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, selectedField)
             copyMenu.append(item)
-            item = gtk.MenuItem("Copy")
+            item = gtk.MenuItem("Copy to clipboard")
             item.set_submenu(copyMenu)
             item.show()
             menu.append(item)
@@ -1706,8 +1711,8 @@ class UImodelization:
             #Adding to its new symbol
             new_message_symbol.addMessage(message)
 
-        message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
-        new_message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+#        message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+#        new_message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
         #Update Left and Right
         self.update()
         return
@@ -1743,14 +1748,7 @@ class UImodelization:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
-        # If we found it we can update the content of the treestore
-        if self.selectedSymbol != None:
-            self.treeMessageGenerator.default(self.selectedSymbol)
-#            # enable dragging message out of current symbol
-#            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-#            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
-        else:
-            self.treeMessageGenerator.default(None)
+        self.treeMessageGenerator.default(self.selectedSymbol)
 
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
@@ -1869,9 +1867,9 @@ class UImodelization:
         self.update()
 
     #+----------------------------------------------
-    #| Called when user wants to refine regexes
+    #| Called when user wants to freeze partitioning (at the regex level)
     #+----------------------------------------------
-    def refineRegexes_cb(self, button):
+    def freezePartitioning_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
@@ -1880,9 +1878,10 @@ class UImodelization:
             NetzobErrorMessage("No symbol selected.")
             return
 
-        self.selectedSymbol.refineRegexes()
+        self.selectedSymbol.freezePartitioning()
         self.update()
-        NetzobInfoMessage("Refinement done.")
+        NetzobInfoMessage("Freezing done.")
+
 
 
     #+----------------------------------------------
@@ -1975,9 +1974,10 @@ class UImodelization:
 
 
     #+----------------------------------------------
-    #| Called when user wants to reset the current alignment
+    #| resetPartitioning_cb:
+    #|   Called when user wants to reset the current alignment
     #+----------------------------------------------
-    def resetAlignment_cb(self, but):
+    def resetPartitioning_cb(self, but):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
@@ -1986,7 +1986,7 @@ class UImodelization:
             NetzobErrorMessage("No symbol selected.")
             return
 
-        self.selectedSymbol.resetAlignment(self.netzob.getCurrentProject())
+        self.selectedSymbol.resetPartitioning(self.netzob.getCurrentProject())
         self.update()
 
 
@@ -2083,7 +2083,7 @@ class UImodelization:
                 self.selectedSymbol = symbol
                 self.update()
 
-                ## Select the first message for details (after the 3 header rows)
+                ## Select the first message for details (after the 2 header rows)
                 it = self.treeMessageGenerator.treestore.get_iter_first()
                 if it == None:
                     return

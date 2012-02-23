@@ -108,7 +108,6 @@ class Vocabulary(object):
                         return variable
         return None
 
-
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
         # The alignment is proceeded as follows:
         # align and cluster each individual group
@@ -129,7 +128,7 @@ class Vocabulary(object):
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb, callback):
+    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb):
         tmpSymbols = []
         t1 = time.time()
         fraction = 0.0
@@ -162,23 +161,23 @@ class Vocabulary(object):
         self.symbols = clusteringSolution.executeClustering()        
         
         logging.info("Time of parsing : " + str(time.time() - t1))
-        callback()
+
 
     #+----------------------------------------------
     #| alignWithDelimiter:
     #|  Align each message of each symbol with a specific delimiter
     #+----------------------------------------------
-    def alignWithDelimiter(self, configuration, aFormat, delimiter):
+    def forcePartitioning(self, configuration, aFormat, delimiter):
         for symbol in self.symbols:
-            symbol.alignWithDelimiter(configuration, aFormat, delimiter)
+            symbol.forcePartitioning(configuration, aFormat, delimiter)
 
     #+----------------------------------------------
-    #| simpleAlignment:
-    #|  Align each message just to show their differences
+    #| simplePartitioning:
+    #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simpleAlignment(self, configuration, unitSize):
+    def simplePartitioning(self, configuration, unitSize):
         for symbol in self.symbols:
-            symbol.simpleAlignment(configuration, unitSize)
+            symbol.simplePartitioning(configuration, unitSize)
 
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
