@@ -559,6 +559,7 @@ class UImodelization:
         # Delimiter type
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         typeCombo = NetzobComboBoxEntry()
+        typeCombo.set_button_sensitivity(gtk.SENSITIVITY_OFF)
         for i in range(len(possible_choices)):
             typeCombo.append_text(possible_choices[i])
             if possible_choices[i] == UnitSize.NONE:

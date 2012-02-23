@@ -125,10 +125,6 @@ class TreeMessageGenerator():
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
 
         # Verifies we have everything needed for the creation of the treeview
-        if (self.symbol == None):
-            self.log.warn("Error while trying to update the list of messages")
-            return
-
         if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0):
             self.log.debug("It's an empty symbol so nothing to display")
             return
