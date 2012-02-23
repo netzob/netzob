@@ -126,7 +126,7 @@ class Vocabulary(object):
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb, callback):
+    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb):
         tmpSymbols = []
         t1 = time.time()
         fraction = 0.0
@@ -161,9 +161,7 @@ class Vocabulary(object):
             percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
 
         logging.info("Time of parsing : " + str(time.time() - t1))
-
         self.symbols = clusterer.getSymbols()
-        callback()
 
     #+----------------------------------------------
     #| alignWithDelimiter:

@@ -123,7 +123,6 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
-        print "updating...."
         self.updateTreeStoreSymbol()
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
@@ -448,9 +447,16 @@ class UImodelization:
     #+----------------------------------------------
     def startDiscoverAlignment(self, vocabulary, dialog):
         self.currentExecutionOfAlignmentHasFinished = False
-        (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.percentOfAlignmentProgessBar, self.update))
+        (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.percentOfAlignmentProgessBar))
         self.currentExecutionOfAlignmentHasFinished = True
         dialog.destroy()
+
+        # Show the new symbol in the interface
+        symbols = self.netzob.getCurrentProject().getVocabulary().getSymbols()
+        if len(symbols) > 0:
+            symbol = symbols[0]
+            self.selectedSymbol = symbol
+            self.treeMessageGenerator.default(self.selectedSymbol)
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
@@ -2074,7 +2080,7 @@ class UImodelization:
                 self.selectedSymbol = symbol
                 self.update()
 
-                ## Select the first message for details (after the 3 header rows)
+                ## Select the first message for details (after the 2 header rows)
                 it = self.treeMessageGenerator.treestore.get_iter_first()
                 if it == None:
                     return
