@@ -40,7 +40,7 @@ appname = name
 
 #|    the version number must be changed during the last commit before
 #|    the tag release.
-#|    Developpement version has version number increased and is
+#|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
 version = "0.3.2~git"
