@@ -99,19 +99,19 @@ class UPGMA(object):
     def executeClustering(self):    
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
         for iteration in range(0, self.nbIteration):
-            self.log.debug("Iteration {0} started...".format(str(iteration)))
+            self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
             # Create the score matrix for each symbol
             (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ()
 
             self.log.debug("Searching for the maximum of equivalence.")
             if (maximum >= self.minEquivalence):
-                self.log.info("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
+                self.log.debug("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
                 self.mergeEffectiveRowCol(i_maximum, j_maximum)
             else:
-                self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
+                self.log.debug("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
                 break
 
-
+        self.cb_executionStatus(50.0, "Executing last alignment...")
         alignment = NeedlemanAndWunsch(self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
