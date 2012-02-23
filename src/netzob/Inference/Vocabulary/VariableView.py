@@ -660,7 +660,6 @@ class VariableView(object):
         
         # format
         format = formatValueCombo.get_model().get_value(formatValueCombo.get_active_iter(), 0)
-        print "var id = " + str(varID)
         ipVariable = IPv4Variable(varID, "ipv4", originalValue, startValue, endValue, format)
         rootVariable.addChild(ipVariable)
         
@@ -710,7 +709,6 @@ class VariableView(object):
         # We retrieve all the existing variables in the project
         existingVariables = self.project.getVocabulary().getVariables()
         for existingVariable in existingVariables:
-            print existingVariable.getID()
             self.varCombo.get_model().append([existingVariable.getUncontextualizedDescription(), existingVariable.getID()])
 
         mainTable.attach(varLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)

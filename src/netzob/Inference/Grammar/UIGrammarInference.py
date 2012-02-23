@@ -508,7 +508,6 @@ class UIGrammarInference:
         outputSymbols = []  # [[symbol, proba, time], ...]
         for outputData in outputSymbolsTreeStore:
             outputSymbolType = outputData[0]
-            print outputSymbolType
         
             if outputSymbolType == EmptySymbol.TYPE : 
                 outputSymbolTime = outputData[3]

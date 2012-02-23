@@ -173,8 +173,16 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 
   // local variable
   int p = 0;
+  double status = 0.0;
+  int nbStep;
+  double sizeSteps;
+  
 
   // First we fill the matrix with 0s
+  if (callbackStatus(status, "Building the scoring matrix for %d groups", nbGroups) == -1) {
+    printf("Error, error while executing C callback.\n");
+  }
+
   matrix = (float **) malloc( nbGroups * sizeof(float*) );
   for (i = 0; i < nbGroups; i++) {
     matrix[i] = (float *) malloc( sizeof(float) * nbGroups );
@@ -182,11 +190,17 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
       matrix[i][j] = 0.0;
     }
   }
+  
+  status = 2.0;
+
 
   //  #pragma omp parallel for shared(t_groups, nbGroups, matrix)
     for (i = 0; i < nbGroups; i++) {
       p = 0;
+
+
       for (p = 0; p < nbGroups; p++) {
+	status += sizeSteps;
         if (i < p) {
           int m, n;
           t_group p_group;
@@ -254,6 +268,11 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     }
     free( groups->groups );
     
+      // First we fill the matrix with 0s
+    if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
+      printf("Error, error while executing C callback.\n");
+    }
+
     result->i = i_maximum;
     result->j = j_maximum;
     result->score = maxScore;

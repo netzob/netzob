@@ -39,6 +39,7 @@ import optparse
 #| Prepare, load and import the required modules
 #+---------------------------------------------------------------------------+
 sys.path.insert(0, 'src/')
+sys.path.insert(0, 'lib/')
 
 try:
     # Verify that libNeedleman is in the path

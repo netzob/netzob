@@ -193,8 +193,6 @@ class Vocabulary(object):
             # parse all the symbols which are declared in the vocabulary
             for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project)
-                print "load voca : = " + str(symbol)
                 if symbol != None:
-                    print "-->adding it"
                     vocabulary.addSymbol(symbol)
         return vocabulary

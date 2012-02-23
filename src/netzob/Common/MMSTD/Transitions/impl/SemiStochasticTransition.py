@@ -197,8 +197,6 @@ class SemiStochasticTransition(AbstractTransition):
         xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols:
             [symbol, proba, time] = arSymbol
-            print "->" + str(symbol)
-            print "->" + str(symbol.getID())
             xmlOutput = etree.SubElement(xmlOutputs, "{" + namespace + "}output")
             xmlOutput.set("time", str(time))
             xmlOutput.set("probability", str(proba))
