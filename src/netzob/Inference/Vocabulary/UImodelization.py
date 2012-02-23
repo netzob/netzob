@@ -369,7 +369,7 @@ class UImodelization:
     def discoverAlignment_cb(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
 
         self.treeMessageGenerator.clear()
@@ -477,7 +477,7 @@ class UImodelization:
     def forceAlignment_cb(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
 
         self.treeMessageGenerator.clear()
@@ -542,7 +542,7 @@ class UImodelization:
     def simpleAlignment_cb(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
 
         self.treeMessageGenerator.clear()
@@ -594,10 +594,10 @@ class UImodelization:
         # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if project.getVocabulary() == None:
-            NetzobErrorMessage( "The current project doesn't have any referenced vocabulary." )
+            NetzobErrorMessage("The current project doesn't have any referenced vocabulary.")
             return
 
         x = int(event.x)
@@ -1131,7 +1131,7 @@ class UImodelization:
         # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
 
         cells = self.treeMessageGenerator.getSymbol().getUniqValuesByField(field)
@@ -1748,8 +1748,7 @@ class UImodelization:
 #            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
         else:
-            self.treeMessageGenerator.default(None)
-
+            self.treeMessageGenerator.updateDefault()
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
@@ -1784,10 +1783,10 @@ class UImodelization:
     def updateDisplayFormat(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         # Set the format choice as default
@@ -1806,10 +1805,10 @@ class UImodelization:
     def updateDisplayUnitSize(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         # Set the unitSize choice as default
@@ -1828,10 +1827,10 @@ class UImodelization:
     def updateDisplaySign(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         # Set the sign choice as default
@@ -1850,10 +1849,10 @@ class UImodelization:
     def updateDisplayEndianess(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         # Set the endianess choice as default
@@ -1863,7 +1862,7 @@ class UImodelization:
 
         # Apply choice on selected symbol
         for field in self.selectedSymbol.getFields():
-            field.setEndianess( endianess )
+            field.setEndianess(endianess)
         self.update()
 
     #+----------------------------------------------
@@ -1872,15 +1871,15 @@ class UImodelization:
     def refineRegexes_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         self.selectedSymbol.refineRegexes()
         self.update()
-        NetzobInfoMessage( "Refinement done." )
+        NetzobInfoMessage("Refinement done.")
 
 
     #+----------------------------------------------
@@ -1889,15 +1888,15 @@ class UImodelization:
     def dataCarving_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         box = self.selectedSymbol.dataCarving()
         if box != None:
-            NetzobErrorMessage( "No data found in messages and fields." )
+            NetzobErrorMessage("No data found in messages and fields.")
         else:
             dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
             dialog.vbox.pack_start(box, True, True, 0)
@@ -1910,7 +1909,7 @@ class UImodelization:
     def search_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
 
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
@@ -1925,15 +1924,15 @@ class UImodelization:
     def env_dependencies_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         box = self.selectedSymbol.envDependencies(self.netzob.getCurrentProject())
         if box == None:
-            NetzobErrorMessage( "No environmental dependency found." )
+            NetzobErrorMessage("No environmental dependency found.")
         else:
             dialog = gtk.Dialog(title="Environmental dependencies found", flags=0, buttons=None)
             dialog.vbox.pack_start(box, True, True, 0)
@@ -1946,10 +1945,10 @@ class UImodelization:
     def messagesDistribution_cb(self, but):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         entropy = Entropy(self.selectedSymbol)
@@ -1962,10 +1961,10 @@ class UImodelization:
     def slickRegex_cb(self, but):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         self.selectedSymbol.slickRegex(self.netzob.getCurrentProject())
@@ -1978,10 +1977,10 @@ class UImodelization:
     def resetAlignment_cb(self, but):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         self.selectedSymbol.resetAlignment(self.netzob.getCurrentProject())
@@ -1994,15 +1993,15 @@ class UImodelization:
     def findASN1Fields_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         box = self.selectedSymbol.findASN1Fields(self.netzob.getCurrentProject())
         if box == None:
-            NetzobErrorMessage( "No ASN.1 field found." )
+            NetzobErrorMessage("No ASN.1 field found.")
         else: # Show the results
             dialog = gtk.Dialog(title="Find ASN.1 fields", flags=0, buttons=None)
             dialog.vbox.pack_start(box, True, True, 0)
@@ -2015,10 +2014,10 @@ class UImodelization:
     def findSizeFields(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage( "No project selected." )
+            NetzobErrorMessage("No project selected.")
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage( "No symbol selected." )
+            NetzobErrorMessage("No symbol selected.")
             return
 
         # Create a temporary symbol for testing size fields
@@ -2051,7 +2050,7 @@ class UImodelization:
         treeview.set_size_request(800, 300)
 
         if None == self.selectedSymbol.findSizeFields(treeview.get_model()):
-            NetzobErrorMessage( "No size field found." )
+            NetzobErrorMessage("No size field found.")
         else:
             treeview.show()
             scroll = gtk.ScrolledWindow()
