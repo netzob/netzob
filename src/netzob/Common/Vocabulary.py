@@ -159,7 +159,8 @@ class Vocabulary(object):
      
         clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
         
-        self.symbols = clusteringSolution.executeClustering()
+        self.symbols = clusteringSolution.executeClustering()        
+        
         logging.info("Time of parsing : " + str(time.time() - t1))
         callback()
 

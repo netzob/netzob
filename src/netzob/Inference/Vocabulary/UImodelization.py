@@ -451,7 +451,9 @@ class UImodelization:
         self.currentExecutionOfAlignmentHasFinished = False
         (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.percentOfAlignmentProgessBar, self.update))
         self.currentExecutionOfAlignmentHasFinished = True
+        
         dialog.destroy()
+
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
@@ -1748,7 +1750,8 @@ class UImodelization:
 #            self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
 #            self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
         else:
-            self.treeMessageGenerator.updateDefault()
+            self.treeMessageGenerator.default(None)
+
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
     #+----------------------------------------------

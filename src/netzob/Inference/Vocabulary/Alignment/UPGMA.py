@@ -117,6 +117,7 @@ class UPGMA(object):
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
             
+            
         return self.symbols
             
     #+----------------------------------------------

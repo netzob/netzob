@@ -140,6 +140,7 @@ class TreeMessageGenerator():
 
         self.symbol = symbol
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
+        
 
         # Verifies we have everything needed for the creation of the treeview
         if (self.symbol == None):
@@ -149,71 +150,11 @@ class TreeMessageGenerator():
         if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0):
             self.log.debug("It's an empty symbol so nothing to display")
             return
-#        
-#        # Remove all the columns of the current treeview
-#        for col in self.currentColumns:
-#            self.treeview.remove_column(col)
-#            
-#       
-#        
-#        iField = 4
-#        for field in self.symbol.getFields():
-#            # Define cellRenderer object
-#            textCellRenderer = gtk.CellRendererText()
-#            textCellRenderer.set_property("size-points", 8)
-#            textCellRenderer.set_property('background-set', True)
-#
-#            # Column Messages
-#            lvcolumn = gtk.TreeViewColumn(str(uuid.uuid4()))
-#            lvcolumn.set_resizable(True)
-#            lvcolumn.set_sort_column_id(iField)
-#            lvcolumn.set_clickable(True)
-#            lvcolumn.pack_start(textCellRenderer, True)
-#            lvcolumn.set_attributes(textCellRenderer, markup=iField, background=1, weight=2, editable=3)
-#            
-#            self.treeview.append_column(lvcolumn)
-#            self.currentColumns.append(lvcolumn)
-#            iField = iField + 1
+       
         
-        
-
-        # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
-        # str : Name of the row
-        # str : Color of the row
-        # int : pango type (weight bold)
-        # bool : is row editable
-        # [str...str] : value of cols
-        
-        treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for field in self.symbol.getFields():
-            treeStoreTypes.append(str)
-        self.log.debug("Treestore will be composed of followings : " + str(treeStoreTypes))
-        self.treestore = gtk.TreeStore(*treeStoreTypes)
-
-        # Build the regex row
-        regex_row = []
-        regex_row.append("HEADER REGEX")
-        regex_row.append("#c8c8c8")
-        regex_row.append(pango.WEIGHT_BOLD)
-        regex_row.append(True)
-        for field in self.symbol.getFields():
-            regex_row.append(field.getEncodedVersionOfTheRegex())
-        self.log.debug("Regex row : " + str(regex_row))
-        
-        self.treestore.append(None, regex_row)
-        
-        # Build the types row
-        types_line = []
-        types_line.append("HEADER TYPE")
-        types_line.append("#dedede")
-        types_line.append(pango.WEIGHT_BOLD)
-        types_line.append(True)
-        for field in self.symbol.getFields():
-            types_line.append(field.getFormat())
-        self.log.debug("Type row : " + str(types_line))
-        self.treestore.append(None, types_line)
-
         # Build the next rows from messages after applying the regex
+        content_lines = []
+        maxNumberOfCol = 0
         for message in self.symbol.getMessages():
             # For each message we create a line and computes its cols
             try:
@@ -230,8 +171,67 @@ class TreeMessageGenerator():
             line.append(pango.WEIGHT_NORMAL)
             line.append(False)
             line.extend(messageTable)
-            self.treestore.append(None, line)
+            content_lines.append(line)
+            if len(messageTable) > maxNumberOfCol :
+                maxNumberOfCol = len(messageTable)
+            
+        
+        
+
+        # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
+        # str : Name of the row
+        # str : Color of the row
+        # int : pango type (weight bold)
+        # bool : is row editable
+        # [str...str] : value of cols
+        
+        treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
+        for i in range(0, maxNumberOfCol):
+            treeStoreTypes.append(str)
+        self.log.debug("Treestore will be composed of followings : " + str(treeStoreTypes))
+        self.log.debug("len(treestore) =" + str(len(treeStoreTypes)))
+        self.treestore = gtk.TreeStore(*treeStoreTypes)
+
+        # Build the regex row
+        regex_row = []
+        regex_row.append("HEADER REGEX")
+        regex_row.append("#c8c8c8")
+        regex_row.append(pango.WEIGHT_BOLD)
+        regex_row.append(True)
+        for field in self.symbol.getFields():
+            print "field : " + field.getRegex()
+            regex_row.append(field.getEncodedVersionOfTheRegex())
+        
+        
+        
+        
+        # Build the types row
+        types_line = []
+        types_line.append("HEADER TYPE")
+        types_line.append("#dedede")
+        types_line.append(pango.WEIGHT_BOLD)
+        types_line.append(True)
+        for field in self.symbol.getFields():
+            self.log.debug("nb col : " + str(maxNumberOfCol))
+            self.log.debug("nb row : " + str(len(line)))
             self.log.debug("Content row : " + str(line))
+            types_line.append(field.getFormat())
+        
+        
+
+        
+            
+            
+            
+        self.log.debug("len(regex row)" + str(len(regex_row)))
+        self.log.debug("Regex row : " + str(regex_row))
+        self.treestore.append(None, regex_row)
+        self.log.debug("Type row : " + str(types_line))
+        self.treestore.append(None, types_line)
+        for line in content_lines :
+            
+            self.treestore.append(None, line)
+            
 
         
         # activate or deactiave the perfect number of columns = nb Field
