@@ -158,7 +158,6 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
 
   if (result.score == -1) {
     printf("Impossible to compute the highest equivalent set of groups.");
-    return NULL;
   }
 
   return Py_BuildValue("(iif)", result.i, result.j, result.score);

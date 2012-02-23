@@ -41,6 +41,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 import libNeedleman
 from netzob.Common.Symbol import Symbol
 import uuid
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 #+---------------------------------------------------------------------------+
 #| UPGMA:
@@ -48,15 +49,31 @@ import uuid
 #+---------------------------------------------------------------------------+
 class UPGMA(object):
     
-    def __init__(self, project, symbols, nbIteration, minEquivalence, doInternalSlick, cb_status=None):
+    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None):
         self.project = project;
-        self.symbols = symbols
         self.nbIteration = nbIteration
         self.minEquivalence = minEquivalence
         self.doInternalSlick = doInternalSlick
         self.cb_status = cb_status
+        self.defaultFormat = defaultFormat
+        
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
-    
+        
+        if explodeSymbols == False:
+            self.symbols = symbols
+            self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
+        else:
+            # Create a symbol for each message
+            self.symbols = []
+            i_symbol = 1
+            for symbol in symbols:
+                for m in symbol.getMessages():
+                    tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project)
+                    tmpSymbol.addMessage(m)
+                    self.symbols.append(tmpSymbol)
+                    i_symbol += 1
+                    self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
+                    
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
     #|     Callback function called by the C extension to provide info on status
@@ -92,10 +109,13 @@ class UPGMA(object):
                 self.log.info("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
                 break
 
+
+        alignment = NeedlemanAndWunsch()
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
-            symbol.buildRegexAndAlignment(self.configuration)
-
+            alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
+            
+        return self.symbols
             
     #+----------------------------------------------
     #| retrieveMaxIJ:
@@ -155,4 +175,4 @@ class UPGMA(object):
         
         debug = True
         return libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
-        
+      

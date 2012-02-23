@@ -39,6 +39,7 @@ from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
+from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -84,7 +85,13 @@ class test_UPGMA(unittest.TestCase):
         symbols = [originalSymbol1, originalSymbol2, originalSymbol3, originalSymbol4, originalSymbol5, originalSymbol6]
         
         # Start the clustering
-        clusteringSolution = UPGMA(None, symbols, 100, 90, True)
-        clusteringSolution.executeClustering()
+        clusteringSolution = UPGMA(None, symbols, True, 100, 90, True, Format.ASCII)
+        result = clusteringSolution.executeClustering()
+        
+        for symbol in result :
+            print "Symbol : " + str(symbol.getName())
+            for m in symbol.getMessages() :
+                print " + " + str(m.getStringData())
+        
         
         

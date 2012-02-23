@@ -159,59 +159,59 @@ class Symbol(AbstractSymbol):
         # Initialized the self.fields structure based on alignement
         self.buildRegexFromAlignment(align, projectConfiguration)
 
-    def buildRegexFromAlignment(self, align, projectConfiguration):
-        # Build regex from alignment
-        i = 0
-        start = 0
-        regex = []
-        found = False
-        for i in range(len(align)):
-            if (align[i] == "-"):
-                if (found == False):
-                    start = i
-                    found = True
-            else:
-                if (found == True):
-                    found = False
-                    nbTiret = i - start
-                    regex.append("(.{," + str(nbTiret) + "})")
-                    regex.append(align[i])
-                else:
-                    if len(regex) == 0:
-                        regex.append(align[i])
-                    else:
-                        regex[-1] += align[i]
-        if (found == True):
-            nbTiret = i - start
-            regex.append("(.{," + str(nbTiret) + "})")
-
-        # Use the default protocol type for representation
-        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-
-        iField = 0
-        for regexElt in regex:
-            field = Field("Field " + str(iField), iField, regexElt)
-            field.setFormat(aFormat)
-            self.addField(field)
-            iField = iField + 1
-
-        # We look for useless fields
-        doLoop = True
-        # We loop until we don't pop any field
-        while doLoop == True:
-            doLoop = False
-            for field in self.getFields():
-                # We try to see if this field produces only empty values when applied on messages
-                messagesValuesByField = self.getMessagesValuesByField(field)
-                messagesValuesByField = "".join(messagesValuesByField)
-                if messagesValuesByField == "":
-                    self.getFields().pop(field.getIndex())  # We remove this useless field
-                    # Adpat index of the following fields, before breaking
-                    for fieldNext in self.getFields():
-                        if fieldNext.getIndex() > field.getIndex():
-                            fieldNext.setIndex(fieldNext.getIndex() - 1)
-                    doLoop = True
-                    break
+#    def buildRegexFromAlignment(self, align, projectConfiguration):
+#        # Build regex from alignment
+#        i = 0
+#        start = 0
+#        regex = []
+#        found = False
+#        for i in range(len(align)):
+#            if (align[i] == "-"):
+#                if (found == False):
+#                    start = i
+#                    found = True
+#            else:
+#                if (found == True):
+#                    found = False
+#                    nbTiret = i - start
+#                    regex.append("(.{," + str(nbTiret) + "})")
+#                    regex.append(align[i])
+#                else:
+#                    if len(regex) == 0:
+#                        regex.append(align[i])
+#                    else:
+#                        regex[-1] += align[i]
+#        if (found == True):
+#            nbTiret = i - start
+#            regex.append("(.{," + str(nbTiret) + "})")
+#
+#        # Use the default protocol type for representation
+#        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+#
+#        iField = 0
+#        for regexElt in regex:
+#            field = Field("Field " + str(iField), iField, regexElt)
+#            field.setFormat(aFormat)
+#            self.addField(field)
+#            iField = iField + 1
+#
+#        # We look for useless fields
+#        doLoop = True
+#        # We loop until we don't pop any field
+#        while doLoop == True:
+#            doLoop = False
+#            for field in self.getFields():
+#                # We try to see if this field produces only empty values when applied on messages
+#                messagesValuesByField = self.getMessagesValuesByField(field)
+#                messagesValuesByField = "".join(messagesValuesByField)
+#                if messagesValuesByField == "":
+#                    self.getFields().pop(field.getIndex())  # We remove this useless field
+#                    # Adpat index of the following fields, before breaking
+#                    for fieldNext in self.getFields():
+#                        if fieldNext.getIndex() > field.getIndex():
+#                            fieldNext.setIndex(fieldNext.getIndex() - 1)
+#                    doLoop = True
+#                    break
 
     #+----------------------------------------------
     #| alignWithDelimiter:
@@ -1038,6 +1038,10 @@ class Symbol(AbstractSymbol):
 
     def addField(self, field):
         self.fields.append(field)
+        
+    def cleanFields(self):
+        while len(self.fields) != 0 :
+            self.fields.pop()
 
     def popField(self, index=None):
         if index == None:

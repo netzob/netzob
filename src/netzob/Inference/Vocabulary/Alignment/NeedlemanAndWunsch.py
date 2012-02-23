@@ -38,6 +38,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #| C Imports
 #+---------------------------------------------------------------------------+
 import libNeedleman
+from netzob.Common.Field import Field
 
 #+---------------------------------------------------------------------------+
 #| NeedlemanAndWunsch:
@@ -60,6 +61,21 @@ class NeedlemanAndWunsch(object):
         else :
             self.cb_status(donePercent, currentMessage)
     
+    
+    #+-----------------------------------------------------------------------+
+    #| alignSymbol
+    #|     Default alignment of messages declared in a Symbol
+    #| @param the symbol
+    #| @returns (alignment, score) 
+    #+-----------------------------------------------------------------------+
+    def alignSymbol(self, symbol, doInternalSlick, defaultFormat):
+        messages = symbol.getMessages()
+        # We execute the alignment
+        (alignment, score) = self.align(doInternalSlick, messages)
+        
+        # We update the regex based on the results
+        self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
+    
     #+-----------------------------------------------------------------------+
     #| align
     #|     Default alignment of messages
@@ -73,7 +89,7 @@ class NeedlemanAndWunsch(object):
         debug = False
         (score, regex, mask) = libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
         alignment = self.deserializeAlignment(regex, mask)
-        return (score, alignment)
+        return (alignment, score)
    
     #+-----------------------------------------------------------------------+
     #| alignTwoMessages
@@ -127,6 +143,58 @@ class NeedlemanAndWunsch(object):
         return align
         
         
-        
+    def buildRegexFromAlignment(self, symbol, align, defaultFormat):
+               
+        # Build regex from alignment
+        i = 0
+        start = 0
+        regex = []
+        found = False
+        for i in range(len(align)):
+            if (align[i] == "-"):
+                if (found == False):
+                    start = i
+                    found = True
+            else:
+                if (found == True):
+                    found = False
+                    nbTiret = i - start
+                    regex.append("(.{," + str(nbTiret) + "})")
+                    regex.append(align[i])
+                else:
+                    if len(regex) == 0:
+                        regex.append(align[i])
+                    else:
+                        regex[-1] += align[i]
+        if (found == True):
+            nbTiret = i - start
+            regex.append("(.{," + str(nbTiret) + "})")
+            
+        iField = 0
+        symbol.cleanFields()
+        for regexElt in regex:
+            field = Field("Field " + str(iField), iField, regexElt)
+            # Use the default protocol type for representation
+            field.setFormat(defaultFormat)
+            symbol.addField(field)
+            iField = iField + 1
+       
+        # We look for useless fields
+        doLoop = True
+        # We loop until we don't pop any field
+        while doLoop == True:
+            doLoop = False
+            for field in symbol.getFields():
+                # We try to see if this field produces only empty values when applied on messages
+                messagesValuesByField = symbol.getMessagesValuesByField(field)
+                messagesValuesByField = "".join(messagesValuesByField)
+                if messagesValuesByField == "":
+                    symbol.getFields().pop(field.getIndex())  # We remove this useless field
+                    # Adpat index of the following fields, before breaking
+                    for fieldNext in symbol.getFields():
+                        if fieldNext.getIndex() > field.getIndex():
+                            fieldNext.setIndex(fieldNext.getIndex() - 1)
+                    doLoop = True
+                    break
         
         

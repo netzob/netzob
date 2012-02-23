@@ -32,6 +32,7 @@ import logging
 import time
 from lxml.etree import ElementTree
 from lxml import etree
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -41,6 +42,8 @@ from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
+
 
 #+---------------------------------------------------------------------------+
 #| Vocabulary:
@@ -131,13 +134,23 @@ class Vocabulary(object):
         t1 = time.time()
         fraction = 0.0
         step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
-
+        
+        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
+        minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
+            doInternalSlick = 1
+        else:
+            doInternalSlick = 0
+        
+        
+        
         # We try to cluster each symbol
         for symbol in self.symbols:
             percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-            clusterer = Clusterer(project, [symbol], explodeSymbols=True)
-            clusterer.mergeSymbols()
-            tmpSymbols.extend(clusterer.getSymbols())
+            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None)
+            tmpSymbols.extend(clusteringSolution.executeClustering())
             fraction = fraction + step
 
         percentOfAlignmentProgessBar_cb(fraction, None)
@@ -145,24 +158,27 @@ class Vocabulary(object):
         # Now that all the symbols are reorganized separately
         # we should consider merging them
         logging.info("Merging the symbols extracted from the different files")
-        clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
-        clusterer.mergeSymbols()
+        
+        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None)
+        
+#        
+#        clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
+#        clusterer.mergeSymbols()
 
-        fraction = fraction + step
-        percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
+#        fraction = fraction + step
+#        percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
+#
+#        # Now we execute the second part of NETZOB Magical Algorithms :)
+#        # clean the single symbols
+#        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
+#        if mergeOrphanReduction:
+#            logging.info("Merging the orphan symbols")
+#            clusterer.mergeOrphanSymbols()
+#            fraction = fraction + step
+#            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
 
-        # Now we execute the second part of NETZOB Magical Algorithms :)
-        # clean the single symbols
-        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-        if mergeOrphanReduction:
-            logging.info("Merging the orphan symbols")
-            clusterer.mergeOrphanSymbols()
-            fraction = fraction + step
-            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-
+        self.symbols = clusteringSolution.executeClustering()
         logging.info("Time of parsing : " + str(time.time() - t1))
-
-        self.symbols = clusterer.getSymbols()
         callback()
 
     #+----------------------------------------------

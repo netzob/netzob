@@ -75,7 +75,7 @@ class test_UPGMAInC(unittest.TestCase):
             
             
         # Start the clustering
-        clusteringSolution = UPGMA([originalSymbol], 100, 90, True)
+        clusteringSolution = UPGMA(None, [originalSymbol], True, 100, 90, True)
         result = clusteringSolution.deserializeGroups(symbols)
         self.assertEqual(result, len(symbols))
         
