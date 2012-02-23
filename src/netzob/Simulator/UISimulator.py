@@ -571,7 +571,9 @@ class UISimulator:
             self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallAll()[memory_id]])
 
     def refreshGUI(self, tempo=0.5):
-        if not self.finish:
-            threading.Timer(tempo, self.refreshGUI, [tempo]).start()
-            self.updateListOfActors()
-            self.updateGUIForActor()
+#TODO 
+#        if not self.finish:
+#            threading.Timer(tempo, self.refreshGUI, [tempo]).start()
+#            self.updateListOfActors()
+#            self.updateGUIForActor()
+        pass

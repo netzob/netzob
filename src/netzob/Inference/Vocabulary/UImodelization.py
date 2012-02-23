@@ -458,6 +458,7 @@ class UImodelization:
             symbol = symbols[0]
             self.selectedSymbol = symbol
             self.treeMessageGenerator.default(self.selectedSymbol)
+            self.treeSymbolGenerator.default()
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
