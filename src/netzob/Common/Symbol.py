@@ -1035,6 +1035,7 @@ class Symbol(AbstractSymbol):
             if msg.getID() == message.getID():
                 return
         message.setSymbol(self)
+        self.log.info("!!!  message added  to the symboil")
         self.messages.append(message)
 
     def addField(self, field):

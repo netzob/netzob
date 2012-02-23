@@ -74,7 +74,7 @@ class TreeMessageGenerator():
         for i_col in range(4, 204) :
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
-            textCellRenderer.set_property("size-points", 8)
+            textCellRenderer.set_property("size-points", 9)
             textCellRenderer.set_property('background-set', True)
 
             # Column Messages
@@ -143,11 +143,10 @@ class TreeMessageGenerator():
         
 
         # Verifies we have everything needed for the creation of the treeview
-        if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0):
+        if (len(self.symbol.getMessages()) < 1):
             self.log.debug("It's an empty symbol so nothing to display")
             return
-       
-        
+         
         # Build the next rows from messages after applying the regex
         content_lines = []
         maxNumberOfCol = 0
@@ -184,8 +183,6 @@ class TreeMessageGenerator():
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
         for i in range(0, maxNumberOfCol):
             treeStoreTypes.append(str)
-        self.log.debug("Treestore will be composed of followings : " + str(treeStoreTypes))
-        self.log.debug("len(treestore) =" + str(len(treeStoreTypes)))
         self.treestore = gtk.TreeStore(*treeStoreTypes)
 
         # Build the regex row
@@ -195,7 +192,6 @@ class TreeMessageGenerator():
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
         for field in self.symbol.getFields():
-            print "field : " + field.getRegex()
             regex_row.append(field.getEncodedVersionOfTheRegex())
         
         
@@ -208,28 +204,14 @@ class TreeMessageGenerator():
         types_line.append(pango.WEIGHT_BOLD)
         types_line.append(True)
         for field in self.symbol.getFields():
-            self.log.debug("nb col : " + str(maxNumberOfCol))
-            self.log.debug("nb row : " + str(len(line)))
-            self.log.debug("Content row : " + str(line))
             types_line.append(field.getFormat())
         
         
-
-        
-            
-            
-            
-        self.log.debug("len(regex row)" + str(len(regex_row)))
-        self.log.debug("Regex row : " + str(regex_row))
         self.treestore.append(None, regex_row)
-        self.log.debug("Type row : " + str(types_line))
         self.treestore.append(None, types_line)
         for line in content_lines :
-            
             self.treestore.append(None, line)
-            
-
-        
+                    
         # activate or deactiave the perfect number of columns = nb Field
         for i in range(0, min(200, len(self.symbol.getFields()))) :
             self.treeview.append_column(self.currentColumns[i])

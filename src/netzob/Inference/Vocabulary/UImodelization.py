@@ -32,6 +32,7 @@ import gtk
 import pango
 import pygtk
 import gobject
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 pygtk.require('2.0')
 import logging
 import threading
@@ -460,7 +461,7 @@ class UImodelization:
             self.treeMessageGenerator.default(self.selectedSymbol)
             self.treeSymbolGenerator.default()
 
-    def percentOfAlignmentProgessBar(self, percent, message):
+    def percentOfAlignmentProgessBar(self, percent, message):       
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
         if message == None:
             gobject.idle_add(self.progressbarAlignment.set_text, "")
@@ -611,7 +612,8 @@ class UImodelization:
         x = int(event.x)
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
-
+        
+        
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
             self.selectedSymbol = clickedSymbol
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
@@ -1711,9 +1713,18 @@ class UImodelization:
 
             #Adding to its new symbol
             new_message_symbol.addMessage(message)
-
-#        message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
-#        new_message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+            
+            alignmentProcess = NeedlemanAndWunsch()
+            doInternalSlick = False
+            defaultFormat = Format.HEX
+            
+            alignmentProcess.alignSymbol(new_message_symbol, doInternalSlick, defaultFormat)
+            alignmentProcess.alignSymbol(message_symbol, doInternalSlick, defaultFormat)
+            
+#            message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+#            new_message_symbol.buildRegexAndAlignment(self.netzob.getCurrentProject().getConfiguration())
+            
+            
         #Update Left and Right
         self.update()
         return
