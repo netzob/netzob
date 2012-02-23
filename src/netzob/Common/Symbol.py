@@ -216,10 +216,10 @@ class Symbol(AbstractSymbol):
                     break
 
     #+----------------------------------------------
-    #| alignWithDelimiter:
-    #|  Align each messages with a specific delimiter
+    #| forcePartitioning:
+    #|  Specify a delimiter for partitioning
     #+----------------------------------------------
-    def alignWithDelimiter(self, projectConfiguration, aFormat, rawDelimiter):
+    def forcePartitioning(self, projectConfiguration, aFormat, rawDelimiter):
         self.alignmentType = "delimiter"
         self.rawDelimiter = rawDelimiter
         self.setFields([])
@@ -255,10 +255,10 @@ class Symbol(AbstractSymbol):
         self.popField()
 
     #+----------------------------------------------
-    #| simpleAlignment:
-    #|  Align each messages just to show their differences
+    #| simplePartitioning:
+    #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simpleAlignment(self, projectConfiguration, unitSize):
+    def simplePartitioning(self, projectConfiguration, unitSize):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.setFields([])
@@ -346,9 +346,10 @@ class Symbol(AbstractSymbol):
         self.addField(field)
 
     #+----------------------------------------------
-    #| Regex handling
+    #| freezePartitioning:
+    #|   
     #+----------------------------------------------
-    def refineRegexes(self):
+    def freezePartitioning(self):
         for field in self.getFields():
             tmpRegex = field.getRegex()
             if field.isStatic():
@@ -1221,10 +1222,10 @@ class Symbol(AbstractSymbol):
             logging.debug("The regex has been slicked")
 
     #+----------------------------------------------
-    #| resetAlignment:
-    #|   Reset the current alignment
+    #| resetPartitioning:
+    #|   Reset the current partitioning
     #+----------------------------------------------
-    def resetAlignment(self, project):
+    def resetPartitioning(self, project):
         aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
 
         # Reset values
@@ -1236,122 +1237,6 @@ class Symbol(AbstractSymbol):
         field = Field("Field 0", 0, "(.{,})")
         field.setFormat(aFormat)
         self.addField(field)
-
-    """ TODO
-    #+----------------------------------------------
-    #| search_cb:
-    #|  launch the search
-    #+----------------------------------------------
-    def search_cb(self, but, entry, notebook):
-        if entry.get_text() == "":
-            return
-
-        # Clear the notebook
-        for i in range(notebook.get_n_pages()):
-            notebook.remove_page(i)
-
-        # Fill the notebook
-        for group in self.getGroups():
-            vbox = group.search(entry.get_text())
-            if vbox != None:
-                notebook.append_page(vbox, gtk.Label(group.getName()))
-
-    #+----------------------------------------------
-    #| search:
-    #|  search a specific data in messages
-    #+----------------------------------------------
-    def search(self, data):
-        if len(self.columns) == 0:
-            return None
-
-        # Retrieve the raw data ('abcdef0123') from data
-        rawData = data.encode("hex")
-        hbox = gtk.HPaned()
-        hbox.show()
-        # Treeview containing potential data carving results  ## ListStore format:
-        # int: iCol
-        # str: encoding
-        store = gtk.ListStore(int, str)
-        treeviewRes = gtk.TreeView(store)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Column')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
-        treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Encoding')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
-        treeviewRes.append_column(column)
-        treeviewRes.set_size_request(200, 300)
-        treeviewRes.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeviewRes)
-        hbox.add(scroll)
-
-        ## Algo (first step) : for each column, and then for each cell, try to find data
-        iCol = 0
-        for col in self.getColumns():
-            matchASCII = 0
-            matchBinary = 0
-            for cell in self.getCellsByCol(iCol):
-                matchASCII += cell.count(rawData)
-                matchBinary += cell.count(data)
-            if matchASCII > 0:
-                store.append([iCol, "ASCII"])
-            if matchBinary > 0:
-                store.append([iCol, "binary"])
-            iCol += 1
-
-        ## TODO: Algo (second step) : for each message, try to find data
-
-        # Preview of matching fields in a treeview  ## ListStore format:
-        # str: data
-        treeview = gtk.TreeView(gtk.ListStore(str))
-        treeviewRes.connect("cursor-changed", self.searchResultSelected_cb, treeview, data)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Data')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, markup=0)
-        treeview.append_column(column)
-        treeview.set_size_request(700, 300)
-        treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-        hbox.add(scroll)
-        return hbox
-
-    #+----------------------------------------------
-    #| searchResultSelected_cb:
-    #|  Callback when clicking on a search result.
-    #|  It shows a preview of the finding
-    #+----------------------------------------------
-    def searchResultSelected_cb(self, treeview, treeviewTarget, data):
-        typer = TypeIdentifier()
-        treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
-        if(it):
-            if(model.iter_is_valid(it)):
-                iCol = model.get_value(it, 0)
-                encoding = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Column " + str(iCol))
-                for cell in self.getCellsByCol(iCol):
-                    if encoding == "ASCII":
-                        cell = typer.toASCII(cell)
-                        arrayCell = cell.split(data)
-                    elif encoding == "binary":
-                        arrayCell = cell.split(data)
-                    arrayCell = [glib.markup_escape_text(a) for a in arrayCell]
-                    if len(arrayCell) > 1:
-                        styledCell = str("<span foreground=\"red\" font_family=\"monospace\">" + data + "</span>").join(arrayCell)
-                    else:
-                        styledCell = cell
-                    treeviewTarget.get_model().append([styledCell])
-
-    """
 
     def getValueToSend(self, inverse, vocabulary, memory):
         result = self.getRoot().getValueToSend(inverse, vocabulary, memory)

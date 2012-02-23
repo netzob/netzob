@@ -105,7 +105,6 @@ class Vocabulary(object):
                         return variable
         return None
 
-
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
         # The alignment is proceeded as follows:
         # align and cluster each individual group
@@ -167,17 +166,17 @@ class Vocabulary(object):
     #| alignWithDelimiter:
     #|  Align each message of each symbol with a specific delimiter
     #+----------------------------------------------
-    def alignWithDelimiter(self, configuration, aFormat, delimiter):
+    def forcePartitioning(self, configuration, aFormat, delimiter):
         for symbol in self.symbols:
-            symbol.alignWithDelimiter(configuration, aFormat, delimiter)
+            symbol.forcePartitioning(configuration, aFormat, delimiter)
 
     #+----------------------------------------------
-    #| simpleAlignment:
-    #|  Align each message just to show their differences
+    #| simplePartitioning:
+    #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simpleAlignment(self, configuration, unitSize):
+    def simplePartitioning(self, configuration, unitSize):
         for symbol in self.symbols:
-            symbol.simpleAlignment(configuration, unitSize)
+            symbol.simplePartitioning(configuration, unitSize)
 
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
