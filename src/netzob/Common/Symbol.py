@@ -84,80 +84,80 @@ class Symbol(AbstractSymbol):
         self.rawDelimiter = ""
         self.project = project
 
-    #+----------------------------------------------
-    #| buildRegexAndAlignment : compute regex and
-    #| self.alignment from the binary strings computed
-    #| in the C Needleman library
-    #+----------------------------------------------
-    def buildRegexAndAlignment(self, projectConfiguration):
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
-        # Use the default protocol type for representation
-        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-
-        self.fields = []
-
-        # If only one message (easy)
-        if len(self.getMessages()) == 1:
-            field = Field("Field 0", 0, self.getMessages()[0].getStringData())
-            field.setFormat(aFormat)
-            self.addField(field)
-            return
-
-        # If more messages, we align them
-        # Serialize the messages before sending them to the C library
-        (serialMessages, format) = TypeConvertor.serializeMessages(self.getMessages())
-        
-        maxLeftReducedStringData = 0
-        maxRightReducedStringData = 0
-        maxReducedSize = 0
-        for m in self.getMessages():
-            if m.getLeftReductionFactor() > maxLeftReducedStringData:
-                maxLeftReducedStringData = m.getLeftReductionFactor()
-            if m.getRightReductionFactor() > maxRightReducedStringData:
-                maxRightReducedStringData = m.getRightReductionFactor()
-            if m.getReducedSize() > maxReducedSize:
-                maxReducedSize = m.getReducedSize()
-
-        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
-            doInternalSlick = 1
-        else:
-            doInternalSlick = 0
-
-        # Align sequences in C library
-        logging.debug("Alignment with : ")
-        logging.debug("internal slick = " + str(doInternalSlick))
-        logging.debug("len messages : " + str(len(self.getMessages())))
-        logging.debug("format = " + format)
-        logging.debug("serial = " + serialMessages)
-        
-        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
-        
-        self.setScore(score)
-
-        # Build alignment C library result
-        align = ""
-        i = 0
-        for c in aMask:
-            if c != '\x02':
-                if c == '\x01':
-                    align += "--"
-                else:
-                    align += aRegex[i:i + 1].encode("hex")
-            i += 1
-
-        if maxLeftReducedStringData > 0:
-            logging.warning("add on the left part adding a bit of --")
-            for i in range(0, maxReducedSize):
-                align = "--" + align
-        if maxRightReducedStringData > 0:
-            logging.warning("add on the right part adding a bit of --")
-            for i in range(0, maxReducedSize):
-                align = align + "--"
-
-        self.setAlignment(align)
-        # Initialized the self.fields structure based on alignement
-        self.buildRegexFromAlignment(align, projectConfiguration)
+#    #+----------------------------------------------
+#    #| buildRegexAndAlignment : compute regex and
+#    #| self.alignment from the binary strings computed
+#    #| in the C Needleman library
+#    #+----------------------------------------------
+#    def buildRegexAndAlignment(self, projectConfiguration):
+#        self.alignmentType = "regex"
+#        self.rawDelimiter = ""
+#        # Use the default protocol type for representation
+#        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+#
+#        self.fields = []
+#
+#        # If only one message (easy)
+#        if len(self.getMessages()) == 1:
+#            field = Field("Field 0", 0, self.getMessages()[0].getStringData())
+#            field.setFormat(aFormat)
+#            self.addField(field)
+#            return
+#
+#        # If more messages, we align them
+#        # Serialize the messages before sending them to the C library
+#        (serialMessages, format) = TypeConvertor.serializeMessages(self.getMessages())
+#        
+#        maxLeftReducedStringData = 0
+#        maxRightReducedStringData = 0
+#        maxReducedSize = 0
+#        for m in self.getMessages():
+#            if m.getLeftReductionFactor() > maxLeftReducedStringData:
+#                maxLeftReducedStringData = m.getLeftReductionFactor()
+#            if m.getRightReductionFactor() > maxRightReducedStringData:
+#                maxRightReducedStringData = m.getRightReductionFactor()
+#            if m.getReducedSize() > maxReducedSize:
+#                maxReducedSize = m.getReducedSize()
+#
+#        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
+#            doInternalSlick = 1
+#        else:
+#            doInternalSlick = 0
+#
+#        # Align sequences in C library
+#        logging.debug("Alignment with : ")
+#        logging.debug("internal slick = " + str(doInternalSlick))
+#        logging.debug("len messages : " + str(len(self.getMessages())))
+#        logging.debug("format = " + format)
+#        logging.debug("serial = " + serialMessages)
+#        
+#        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
+#        
+#        self.setScore(score)
+#
+#        # Build alignment C library result
+#        align = ""
+#        i = 0
+#        for c in aMask:
+#            if c != '\x02':
+#                if c == '\x01':
+#                    align += "--"
+#                else:
+#                    align += aRegex[i:i + 1].encode("hex")
+#            i += 1
+#
+#        if maxLeftReducedStringData > 0:
+#            logging.warning("add on the left part adding a bit of --")
+#            for i in range(0, maxReducedSize):
+#                align = "--" + align
+#        if maxRightReducedStringData > 0:
+#            logging.warning("add on the right part adding a bit of --")
+#            for i in range(0, maxReducedSize):
+#                align = align + "--"
+#
+#        self.setAlignment(align)
+#        # Initialized the self.fields structure based on alignement
+#        self.buildRegexFromAlignment(align, projectConfiguration)
 
 #    def buildRegexFromAlignment(self, align, projectConfiguration):
 #        # Build regex from alignment
@@ -1430,19 +1430,15 @@ class Symbol(AbstractSymbol):
     
     def __cmp__(self, other):
         if other == None:
-            self.log.warn("oups")
             return 1
         try :
             if self.getID() == other.getID():
-                self.log.info("okf")
                 return 0
             else:
-                self.log.warn("not equals")
                 return 1
         except  :
             self.log.warn("Tried to compare a Symbol with " + str(other))
             return 1
-        self.log.info("ds??")
 
 
     #+----------------------------------------------

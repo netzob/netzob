@@ -145,11 +145,10 @@ class Vocabulary(object):
             doInternalSlick = 0
         
         
-        
         # We try to cluster each symbol
         for symbol in self.symbols:
-            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None)
+#            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
+            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
             tmpSymbols.extend(clusteringSolution.executeClustering())
             fraction = fraction + step
 
@@ -157,26 +156,9 @@ class Vocabulary(object):
 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
-        logging.info("Merging the symbols extracted from the different files")
+     
+        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
         
-        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None)
-        
-#        
-#        clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
-#        clusterer.mergeSymbols()
-
-#        fraction = fraction + step
-#        percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-#
-#        # Now we execute the second part of NETZOB Magical Algorithms :)
-#        # clean the single symbols
-#        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-#        if mergeOrphanReduction:
-#            logging.info("Merging the orphan symbols")
-#            clusterer.mergeOrphanSymbols()
-#            fraction = fraction + step
-#            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-
         self.symbols = clusteringSolution.executeClustering()
         logging.info("Time of parsing : " + str(time.time() - t1))
         callback()

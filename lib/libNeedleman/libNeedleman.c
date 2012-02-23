@@ -728,7 +728,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   }
 
   // For debug only
-  if (debugMode) {
+  if (debugMode == TRUE) {
     printf("Message 1 : ");
     for( i = 0; i < regex1->len + regex2->len; i++) {
       if(maskRegex1[i] == EQUAL ) {

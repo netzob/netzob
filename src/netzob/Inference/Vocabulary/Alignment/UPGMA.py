@@ -61,7 +61,7 @@ class UPGMA(object):
         
         if explodeSymbols == False:
             self.symbols = symbols
-            self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
+            
         else:
             # Create a symbol for each message
             self.symbols = []
@@ -72,8 +72,10 @@ class UPGMA(object):
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
                     i_symbol += 1
-                    self.log.debug("A number of {0} messages will be clustered.".format(tmpSymbol.getID()))
                     
+        self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
+        
+        
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
     #|     Callback function called by the C extension to provide info on status
@@ -110,7 +112,7 @@ class UPGMA(object):
                 break
 
 
-        alignment = NeedlemanAndWunsch()
+        alignment = NeedlemanAndWunsch(self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
@@ -132,7 +134,7 @@ class UPGMA(object):
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols)
         
         # Execute the Clustering part in C :) (thx fgy)
-        debug = True
+        debug = False
         (i_max, j_max, maxScore) = libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
         return (i_max, j_max, maxScore)
     
