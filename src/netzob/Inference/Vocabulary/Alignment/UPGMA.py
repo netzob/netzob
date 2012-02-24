@@ -202,7 +202,7 @@ class UPGMA(object):
                 for orphan in self.symbols:
                     orphan.getMessages()[0].setLeftReductionFactor(leftReductionFactor)
 
-                self.log.warning("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
+                self.log.info("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
                 self.executeClustering()
                 currentReductionIsLeft = False
 
@@ -212,7 +212,7 @@ class UPGMA(object):
                 for orphan in self.symbols:
                     orphan.getMessages()[0].setRightReductionFactor(rightReductionFactor)
 
-                self.log.warning("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
+                self.log.info("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
                 self.executeClustering()
                 currentReductionIsLeft = True
 

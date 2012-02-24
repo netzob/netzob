@@ -145,10 +145,12 @@ class AbstractMessage():
             regex.append(field.getRegex())
         try:
             compiledRegex = re.compile("".join(regex))
-            data = self.getStringData()
+            data = self.getReducedStringData()
             m = compiledRegex.match(data)
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
+
+        
 
         if m == None:
             

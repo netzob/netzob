@@ -108,8 +108,7 @@ class test_UPGMA(unittest.TestCase):
         
         originalSymbol3 = Symbol(uuid.uuid4(), "TestSymbol3", None)  
         message3 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(200, 1000)))
-        originalSymbol3.addMessage(message3)
-        
+        originalSymbol3.addMessage(message3)        
         
         # group2
         originalSymbol4 = Symbol(uuid.uuid4(), "TestSymbol4", None)  

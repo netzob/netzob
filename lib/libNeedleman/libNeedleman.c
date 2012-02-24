@@ -156,7 +156,7 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     printf("Score : %f\n", result.score);
   }
 
-  if (result.score == -1) {
+  if (bool_debugMode == TRUE && result.score == -1) {
     printf("Impossible to compute the highest equivalent set of groups.");
   }
 
@@ -198,7 +198,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     for (i = 0; i < nbGroups; i++) {
       p = 0;
 
-
       for (p = 0; p < nbGroups; p++) {
 	status += sizeSteps;
         if (i < p) {
@@ -225,7 +224,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
             regex2.len = p_group.messages[m].len;
             regex2.regex = p_group.messages[m].message;
             regex2.mask = p_group.messages[m].mask;
-
 
             alignTwoMessages(&regex, doInternalSlick, &regex1, &regex2, debugMode);
 
@@ -584,7 +582,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   for (i = 0; i < (regex1->len + 1); i++) {
     matrix[i] = (short int*) calloc( (regex2->len + 1), sizeof(short int) );
   }
-
+  
   //+------------------------------------------------------------------------+
   // Fullfill the matrix given the two messages
   //+------------------------------------------------------------------------+

@@ -139,24 +139,21 @@ class Vocabulary(object):
         nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
         minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
-         
-        
+        doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
         
         # We try to cluster each symbol
         for symbol in self.symbols:
-#            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
             clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
             tmpSymbols.extend(clusteringSolution.executeClustering())
-#            fraction = fraction + step
-
-#        percentOfAlignmentProgessBar_cb(fraction, None)
 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
-     
-        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
-        
+        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)        
         self.symbols = clusteringSolution.executeClustering()        
+        
+        if doOrphanReduction :
+            logging.info("Execute orphan reduction")
+            clusteringSolution.executeOrphanReduction()
         
         logging.info("Time of parsing : " + str(time.time() - t1))
 
