@@ -92,6 +92,62 @@ class test_UPGMA(unittest.TestCase):
             print "Symbol : " + str(symbol.getName())
             for m in symbol.getMessages() :
                 print " + " + str(m.getStringData())
+                
+    def test_executingClusteringWithOrphanReduction(self):
+        
+        # We create 6 messages of 2 group
+        
+        # group1 
+        originalSymbol1 = Symbol(uuid.uuid4(), "TestSymbol", None)        
+        message1 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(200, 1000)))
+        originalSymbol1.addMessage(message1)
+        
+        originalSymbol2 = Symbol(uuid.uuid4(), "TestSymbol2", None)  
+        message2 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(200, 1000)))
+        originalSymbol2.addMessage(message2)
+        
+        originalSymbol3 = Symbol(uuid.uuid4(), "TestSymbol3", None)  
+        message3 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("bonjour " + self.generateRandomString(200, 1000)))
+        originalSymbol3.addMessage(message3)
+        
+        
+        # group2
+        originalSymbol4 = Symbol(uuid.uuid4(), "TestSymbol4", None)  
+        message4 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut " + self.generateRandomString(200, 1000)))
+        originalSymbol4.addMessage(message4)
+        
+        originalSymbol5 = Symbol(uuid.uuid4(), "TestSymbol5", None)  
+        message5 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut " + self.generateRandomString(200, 1000)))
+        originalSymbol5.addMessage(message5)
+        
+        originalSymbol6 = Symbol(uuid.uuid4(), "TestSymbol6", None)  
+        message6 = RawMessage(uuid.uuid4(), str(time.time()), TypeConvertor.stringToNetzobRaw("salut " + self.generateRandomString(200, 1000)))
+        originalSymbol6.addMessage(message6)
+        
+        symbols = [originalSymbol1, originalSymbol2, originalSymbol3, originalSymbol4, originalSymbol5, originalSymbol6]
+        
+        # Start the clustering
+        clusteringSolution = UPGMA(None, symbols, True, 100, 80, True, Format.ASCII)
+        resultBeforeOrphan = clusteringSolution.executeClustering()
+        resultAfterOrphan = clusteringSolution.executeOrphanReduction()
+        
+        if (len(resultAfterOrphan) < len(resultBeforeOrphan)) :
+            print "Before Orphan Reduction : "
+            for symbol in resultBeforeOrphan :
+                print "Symbol : " + str(symbol.getName())
+                for m in symbol.getMessages() :
+                    print " + " + str(m.getStringData())
+            
+            print "After Orphan Reduction : "
+            for symbol in resultAfterOrphan :
+                print "Symbol : " + str(symbol.getName())
+                for m in symbol.getMessages() :
+                    print " + " + str(m.getStringData())
+        
+        
+        self.assertGreaterEqual(len(resultBeforeOrphan), len(resultAfterOrphan))
+        
+        
         
         
         

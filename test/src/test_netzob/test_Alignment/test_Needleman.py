@@ -139,6 +139,9 @@ class test_Needleman(NetzobTestCase):
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
         
+    
+    
+        
     def test_randomAlignmentsWithTwoSuffixedMessages(self):        
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]

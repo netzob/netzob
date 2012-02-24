@@ -166,6 +166,68 @@ class UPGMA(object):
         self.symbols.append(newSymbol)  
         
         
+    #+----------------------------------------------
+    #| mergeOrphanSymbols:
+    #|   try to merge orphan symbols by progressively
+    #|   reducing the taken into account size of msgs
+    #+----------------------------------------------
+    def executeOrphanReduction(self):
+        leftReductionFactor = 0
+        rightReductionFactor = 0
+        currentReductionIsLeft = False
+        increment = 10
+
+        while leftReductionFactor < 80 and rightReductionFactor < 80:
+
+            # First we retrieve the current orphans
+            orphans = []
+            tmp_symbols = []
+            # extract orphans
+            for symbol in self.symbols:
+                if len(symbol.getMessages()) == 1:
+                    orphans.append(symbol)
+            # create a tmp symbols array where symbols will be added once computed
+            for symbol in self.symbols:
+                if len(symbol.getMessages()) > 1:
+                    tmp_symbols.append(symbol)
+
+            if len(orphans) <= 1:
+                self.log.info("Number of orphan symbols : {0}. The orphan merging op. is finished !".format(len(orphans)))
+                break
+
+            self.symbols = orphans
+            if currentReductionIsLeft:
+                leftReductionFactor = leftReductionFactor + increment
+                # Reduce the size of the messages by 50% from the left
+                for orphan in self.symbols:
+                    orphan.getMessages()[0].setLeftReductionFactor(leftReductionFactor)
+
+                self.log.warning("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
+                self.executeClustering()
+                currentReductionIsLeft = False
+
+            if not currentReductionIsLeft:
+                rightReductionFactor = rightReductionFactor + increment
+                # Reduce the size of the messages from the right
+                for orphan in self.symbols:
+                    orphan.getMessages()[0].setRightReductionFactor(rightReductionFactor)
+
+                self.log.warning("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
+                self.executeClustering()
+                currentReductionIsLeft = True
+
+            for orphan in self.symbols:
+                tmp_symbols.append(orphan)
+            self.symbols = tmp_symbols
+
+        self.cb_executionStatus(50.0, "Executing last alignment...")
+        alignment = NeedlemanAndWunsch(self.cb_status)
+        # Compute the regex/alignment of each symbol
+        for symbol in self.symbols:
+            alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
+        return self.symbols
+        
+        
     #+-----------------------------------------------------------------------+
     #| deserializeGroups
     #|     Useless (functionally) function created for testing purposes
