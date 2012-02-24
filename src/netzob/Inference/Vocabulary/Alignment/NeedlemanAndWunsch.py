@@ -72,6 +72,7 @@ class NeedlemanAndWunsch(object):
         messages = symbol.getMessages()
         # We execute the alignment
         (alignment, score) = self.align(doInternalSlick, messages)
+        symbol.setAlignment(alignment)
         
         # We update the regex based on the results
         self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
