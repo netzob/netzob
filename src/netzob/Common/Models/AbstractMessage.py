@@ -143,15 +143,17 @@ class AbstractMessage():
         data = ""
         for field in self.symbol.getFields():
             regex.append(field.getRegex())
-
         try:
             compiledRegex = re.compile("".join(regex))
-            data = self.getStringData()
+            data = self.getReducedStringData()
             m = compiledRegex.match(data)
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
+        
+
         if m == None:
+            
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")

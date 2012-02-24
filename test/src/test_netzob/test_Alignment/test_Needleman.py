@@ -38,6 +38,8 @@ from netzob.Common.ExecutionContext import ExecutionContext
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -48,11 +50,16 @@ class test_Needleman(NetzobTestCase):
     
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
-        
+    
+    def emptyAlignmentCB(self, status, format):
+        pass
   
     def test_randomAlignmentsWithTwoCenteredMessages(self):        
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
+        
+        doInternalSlick = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        defaultFormat = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         
         # We generate 1000 random couples of data and try to align them
         # Objectives : just test if it executes
@@ -74,7 +81,8 @@ class test_Needleman(NetzobTestCase):
             symbol.addMessage(message2)
             
             # Starts the alignment process
-            symbol.buildRegexAndAlignment(currentProject.getConfiguration())
+            alignmentProcess = NeedlemanAndWunsch(self.emptyAlignmentCB)
+            alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
             
             if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
                 print "Message 1 : " + str(data1)
@@ -85,13 +93,16 @@ class test_Needleman(NetzobTestCase):
             else :
                 nb_success += 1
         if nb_failed > 0 :
-            print "A number of " + str(nb_failed) + " alignment failed !"
+            print "A number of " + str(nb_failed) + "/" + str(nb_data) + " alignment failed !"
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
         
     def test_randomAlignmentsWithTwoPrefixedMessages(self):        
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
+        
+        doInternalSlick = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        defaultFormat = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         
         # We generate 1000 random couples of data and try to align them
         # Objectives : just test if it executes
@@ -112,7 +123,8 @@ class test_Needleman(NetzobTestCase):
             symbol.addMessage(message2)
             
             # Starts the alignment process
-            symbol.buildRegexAndAlignment(currentProject.getConfiguration())
+            alignmentProcess = NeedlemanAndWunsch(self.emptyAlignmentCB)
+            alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
             
             if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
                 print "Message 1 : " + str(data1)
@@ -123,13 +135,19 @@ class test_Needleman(NetzobTestCase):
             else :
                 nb_success += 1
         if nb_failed > 0 :
-            print "A number of " + str(nb_failed) + " alignment failed !"
+            print "A number of " + str(nb_failed) + "/" + str(nb_data) + " alignment failed !"
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
+        
+    
+    
         
     def test_randomAlignmentsWithTwoSuffixedMessages(self):        
         workspace = self.getWorkspace()
         currentProject = workspace.getProjects()[0]
+        
+        doInternalSlick = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        defaultFormat = currentProject.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         
         # We generate 1000 random couples of data and try to align them
         # Objectives : just test if it executes
@@ -150,7 +168,8 @@ class test_Needleman(NetzobTestCase):
             symbol.addMessage(message2)
             
             # Starts the alignment process
-            symbol.buildRegexAndAlignment(currentProject.getConfiguration())
+            alignmentProcess = NeedlemanAndWunsch(self.emptyAlignmentCB)
+            alignmentProcess.alignSymbol(symbol, doInternalSlick, defaultFormat)
             
             if not TypeConvertor.stringToNetzobRaw(common_pattern[:]) in symbol.getAlignment() :
                 print "Message 1 : " + str(data1)
@@ -161,7 +180,7 @@ class test_Needleman(NetzobTestCase):
             else :
                 nb_success += 1
         if nb_failed > 0 :
-            print "A number of " + str(nb_failed) + " alignment failed !"
+            print "A number of " + str(nb_failed) + "/" + str(nb_data) + " alignment failed !"
         self.assertEqual(0, nb_failed)
         self.assertEqual(nb_success, nb_data)
           

@@ -32,7 +32,6 @@ import gtk
 import pygtk
 import uuid
 import errno
-from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import time
@@ -48,7 +47,8 @@ import impacket.ImpactPacket as Packets
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Models.NetworkMessage import NetworkMessage
-
+from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
+from netzob.Import.AbstractImporter import AbstractImporter
 
 #+----------------------------------------------
 #| Pcap:
@@ -187,7 +187,11 @@ class PcapImport(AbstractImporter):
                 timestamp = str(model.get_value(iter, 6))
                 packetPayload = self.packets[packetID]
 
-                eth_decoder = Decoders.EthDecoder()
+                if self.datalink == pcapy.DLT_EN10MB:
+                    layer2_decoder = Decoders.EthDecoder()
+                elif self.datalink == pcapy.DLT_LINUX_SLL:
+                    layer2_decoder = Decoders.LinuxSLLDecoder()
+
                 ip_decoder = Decoders.IPDecoder()
                 udp_decoder = Decoders.UDPDecoder()
                 tcp_decoder = Decoders.TCPDecoder()
@@ -198,7 +202,7 @@ class PcapImport(AbstractImporter):
                 Dport = None
                 Data = None
 
-                ethernet = eth_decoder.decode(packetPayload)
+                ethernet = layer2_decoder.decode(packetPayload)
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
                     IPsrc = ip.get_ip_src()
@@ -303,17 +307,22 @@ class PcapImport(AbstractImporter):
             return
 
         self.log.info("Starting import from " + pcapFile + " (linktype:" + str(reader.datalink()) + ")")
+        self.datalink = reader.datalink()
         reader.loop(0, self.packetHandler)
         button.set_sensitive(True)
 
     def packetHandler(self, header, payload):
         # Definition of the protocol decoders (impacket)
-        eth_decoder = Decoders.EthDecoder()
+        if self.datalink == pcapy.DLT_EN10MB:
+            layer2_decoder = Decoders.EthDecoder()
+        elif self.datalink == pcapy.DLT_LINUX_SLL:
+            layer2_decoder = Decoders.LinuxSLLDecoder()
+
         ip_decoder = Decoders.IPDecoder()
         udp_decoder = Decoders.UDPDecoder()
         tcp_decoder = Decoders.TCPDecoder()
 
-        ethernet = eth_decoder.decode(payload)
+        ethernet = layer2_decoder.decode(payload)
         if ethernet.get_ether_type() == Packets.IP.ethertype:
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
             if ip.get_ip_p() == Packets.UDP.protocol:

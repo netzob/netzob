@@ -170,7 +170,6 @@ class Workspace(object):
             logging.warn("The project declared in " + path + " is already referenced in the workspace.")
 
     def saveConfigFile(self):
-        print "=============================================================="
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)

@@ -32,6 +32,7 @@ import logging
 import time
 from lxml.etree import ElementTree
 from lxml import etree
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -41,6 +42,8 @@ from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
+
 
 #+---------------------------------------------------------------------------+
 #| Vocabulary:
@@ -105,7 +108,6 @@ class Vocabulary(object):
                         return variable
         return None
 
-
     def estimateNeedlemanWunschNumberOfExecutionStep(self, project):
         # The alignment is proceeded as follows:
         # align and cluster each individual group
@@ -126,60 +128,51 @@ class Vocabulary(object):
     #|  Align each messages of each symbol with the
     #|  Needleman Wunsh algorithm
     #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb, callback):
+    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb):
         tmpSymbols = []
         t1 = time.time()
         fraction = 0.0
-        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
-
+#        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
+        
+        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
+        minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
+        
         # We try to cluster each symbol
         for symbol in self.symbols:
-            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-            clusterer = Clusterer(project, [symbol], explodeSymbols=True)
-            clusterer.mergeSymbols()
-            tmpSymbols.extend(clusterer.getSymbols())
-            fraction = fraction + step
-
-        percentOfAlignmentProgessBar_cb(fraction, None)
+            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
+            tmpSymbols.extend(clusteringSolution.executeClustering())
 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
-        logging.info("Merging the symbols extracted from the different files")
-        clusterer = Clusterer(project, tmpSymbols, explodeSymbols=False)
-        clusterer.mergeSymbols()
-
-        fraction = fraction + step
-        percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-
-        # Now we execute the second part of NETZOB Magical Algorithms :)
-        # clean the single symbols
-        mergeOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-        if mergeOrphanReduction:
-            logging.info("Merging the orphan symbols")
-            clusterer.mergeOrphanSymbols()
-            fraction = fraction + step
-            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
-
+        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)        
+        self.symbols = clusteringSolution.executeClustering()        
+        
+        if doOrphanReduction :
+            logging.info("Execute orphan reduction")
+            clusteringSolution.executeOrphanReduction()
+        
         logging.info("Time of parsing : " + str(time.time() - t1))
 
-        self.symbols = clusterer.getSymbols()
-        callback()
 
     #+----------------------------------------------
     #| alignWithDelimiter:
     #|  Align each message of each symbol with a specific delimiter
     #+----------------------------------------------
-    def alignWithDelimiter(self, configuration, aFormat, delimiter):
+    def forcePartitioning(self, configuration, aFormat, delimiter):
         for symbol in self.symbols:
-            symbol.alignWithDelimiter(configuration, aFormat, delimiter)
+            symbol.forcePartitioning(configuration, aFormat, delimiter)
 
     #+----------------------------------------------
-    #| simpleAlignment:
-    #|  Align each message just to show their differences
+    #| simplePartitioning:
+    #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simpleAlignment(self, configuration, unitSize):
+    def simplePartitioning(self, configuration, unitSize):
         for symbol in self.symbols:
-            symbol.simpleAlignment(configuration, unitSize)
+            symbol.simplePartitioning(configuration, unitSize)
 
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
@@ -195,8 +188,6 @@ class Vocabulary(object):
             # parse all the symbols which are declared in the vocabulary
             for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project)
-                print "load voca : = " + str(symbol)
                 if symbol != None:
-                    print "-->adding it"
                     vocabulary.addSymbol(symbol)
         return vocabulary

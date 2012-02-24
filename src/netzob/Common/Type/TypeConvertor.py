@@ -375,6 +375,86 @@ class TypeConvertor():
         for i in range(0, len(msg), 1):
             res = res + msg[i:i + 1].encode("hex")
         return res
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| serializeMessages :
+    #|     create a serialization view of the messages
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def serializeMessages(messages):
+        serialMessages = ""
+        format = ""
+        for m in messages:
+            format += str(len(m.getReducedStringData()) / 2) + "M"
+            serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
+        return (serialMessages, format)
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| serializeSymbol :
+    #|     create a serialization view of a symbol
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def serializeSymbol(symbol):
+        serialSymbol = ""
+        format = ""        
+        if symbol.getAlignment() != None and symbol.getAlignment() != "" :
+            format += "1" + "G"
+            messageTmp = ""
+            alignmentTmp = ""
+            for i in range(0, len(symbol.getAlignment()), 2):
+                if symbol.getAlignment()[i:i + 2] == "--":
+                    messageTmp += "\xff"
+                    alignmentTmp += "\x01"
+                else:
+                    messageTmp += TypeConvertor.netzobRawToPythonRaw(symbol.getAlignment()[i:i + 2])
+                    alignmentTmp += "\x00"
+            format += str(len(symbol.getAlignment()) / 2) + "M"
+            serialSymbol += messageTmp
+            serialSymbol += alignmentTmp
+        else:
+            format += str(len(symbol.getMessages())) + "G"
+            for m in symbol.getMessages():
+                format += str(len(m.getReducedStringData()) / 2) + "M"
+                serialSymbol += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())  # The message
+                serialSymbol += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)])  # The alignement == "\x00" * len(the message), the first time
+        
+        return (serialSymbol, format)
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| serializeSymbols :
+    #|     create a serialization view of symbols
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def serializeSymbols(symbols):
+        serialSymbols = ""
+        formatSymbols = ""        
+        for symbol in symbols :
+            (serialSymbol, formatSymbol) = TypeConvertor.serializeSymbol(symbol)
+            serialSymbols += serialSymbol
+            formatSymbols += formatSymbol
+        return (serialSymbols, formatSymbols)
+    
+    @staticmethod
+    #+----------------------------------------------
+    #| deserializeContent :
+    #|     python deserialization process
+    #| @returns (serialized, format)
+    #+----------------------------------------------
+    def deserializeContent(serializedContents, format):
+        result = []
+        # first we retrieve the size of all the messages
+        size_messages = format.split("M")
+        total = 0
+        for str_size_message in size_messages[:-1] :
+            size_message = int(str_size_message)
+            result.append(TypeConvertor.pythonRawToNetzobRaw(serializedContents[total:total + size_message]))
+            total += size_message
+        
+        return result
+        
 
     @staticmethod
     #+----------------------------------------------

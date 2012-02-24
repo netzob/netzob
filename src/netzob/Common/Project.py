@@ -233,7 +233,6 @@ class Project(object):
 
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
-        print schemaFile
         # is the schema is a file
         if not os.path.isfile(schemaFile):
             logging.warn("The specified schema file (" + str(schemaFile) + ") is not valid : its not a file.")

@@ -84,142 +84,140 @@ class Symbol(AbstractSymbol):
         self.rawDelimiter = ""
         self.project = project
 
-    #+----------------------------------------------
-    #| buildRegexAndAlignment : compute regex and
-    #| self.alignment from the binary strings computed
-    #| in the C Needleman library
-    #+----------------------------------------------
-    def buildRegexAndAlignment(self, projectConfiguration):
-        self.alignmentType = "regex"
-        self.rawDelimiter = ""
-        # Use the default protocol type for representation
-        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+#    #+----------------------------------------------
+#    #| buildRegexAndAlignment : compute regex and
+#    #| self.alignment from the binary strings computed
+#    #| in the C Needleman library
+#    #+----------------------------------------------
+#    def buildRegexAndAlignment(self, projectConfiguration):
+#        self.alignmentType = "regex"
+#        self.rawDelimiter = ""
+#        # Use the default protocol type for representation
+#        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+#
+#        self.fields = []
+#
+#        # If only one message (easy)
+#        if len(self.getMessages()) == 1:
+#            field = Field("Field 0", 0, self.getMessages()[0].getStringData())
+#            field.setFormat(aFormat)
+#            self.addField(field)
+#            return
+#
+#        # If more messages, we align them
+#        # Serialize the messages before sending them to the C library
+#        (serialMessages, format) = TypeConvertor.serializeMessages(self.getMessages())
+#        
+#        maxLeftReducedStringData = 0
+#        maxRightReducedStringData = 0
+#        maxReducedSize = 0
+#        for m in self.getMessages():
+#            if m.getLeftReductionFactor() > maxLeftReducedStringData:
+#                maxLeftReducedStringData = m.getLeftReductionFactor()
+#            if m.getRightReductionFactor() > maxRightReducedStringData:
+#                maxRightReducedStringData = m.getRightReductionFactor()
+#            if m.getReducedSize() > maxReducedSize:
+#                maxReducedSize = m.getReducedSize()
+#
+#        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
+#            doInternalSlick = 1
+#        else:
+#            doInternalSlick = 0
+#
+#        # Align sequences in C library
+#        logging.debug("Alignment with : ")
+#        logging.debug("internal slick = " + str(doInternalSlick))
+#        logging.debug("len messages : " + str(len(self.getMessages())))
+#        logging.debug("format = " + format)
+#        logging.debug("serial = " + serialMessages)
+#        
+#        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
+#        
+#        self.setScore(score)
+#
+#        # Build alignment C library result
+#        align = ""
+#        i = 0
+#        for c in aMask:
+#            if c != '\x02':
+#                if c == '\x01':
+#                    align += "--"
+#                else:
+#                    align += aRegex[i:i + 1].encode("hex")
+#            i += 1
+#
+#        if maxLeftReducedStringData > 0:
+#            logging.warning("add on the left part adding a bit of --")
+#            for i in range(0, maxReducedSize):
+#                align = "--" + align
+#        if maxRightReducedStringData > 0:
+#            logging.warning("add on the right part adding a bit of --")
+#            for i in range(0, maxReducedSize):
+#                align = align + "--"
+#
+#        self.setAlignment(align)
+#        # Initialized the self.fields structure based on alignement
+#        self.buildRegexFromAlignment(align, projectConfiguration)
 
-        self.fields = []
-
-        # If only one message (easy)
-        if len(self.getMessages()) == 1:
-            field = Field("Field 0", 0, self.getMessages()[0].getStringData())
-            field.setFormat(aFormat)
-            self.addField(field)
-            return
-
-        # If more messages, we align them
-        # Serialize the messages before sending them to the C library
-
-        serialMessages = ""
-        format = ""
-        maxLeftReducedStringData = 0
-        maxRightReducedStringData = 0
-        maxReducedSize = 0
-        for m in self.getMessages():
-            format += str(len(m.getReducedStringData()) / 2) + "M"
-            serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
-            if m.getLeftReductionFactor() > maxLeftReducedStringData:
-                maxLeftReducedStringData = m.getLeftReductionFactor()
-            if m.getRightReductionFactor() > maxRightReducedStringData:
-                maxRightReducedStringData = m.getRightReductionFactor()
-            if m.getReducedSize() > maxReducedSize:
-                maxReducedSize = m.getReducedSize()
-
-        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
-            doInternalSlick = 1
-        else:
-            doInternalSlick = 0
-
-        # Align sequences in C library
-        logging.debug("Alignment with : ")
-        logging.debug("internal slick = " + str(doInternalSlick))
-        logging.debug("len messages : " + str(len(self.getMessages())))
-        logging.debug("format = " + format)
-        logging.debug("serial = " + serialMessages)
-        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
-
-        self.setScore(score)
-
-        # Build alignment C library result
-        align = ""
-        i = 0
-        for c in aMask:
-            if c != '\x02':
-                if c == '\x01':
-                    align += "--"
-                else:
-                    align += aRegex[i:i + 1].encode("hex")
-            i += 1
-
-        if maxLeftReducedStringData > 0:
-            logging.warning("add on the left part adding a bit of --")
-            for i in range(0, maxReducedSize):
-                align = "--" + align
-        if maxRightReducedStringData > 0:
-            logging.warning("add on the right part adding a bit of --")
-            for i in range(0, maxReducedSize):
-                align = align + "--"
-
-        self.setAlignment(align)
-        # Initialized the self.fields structure based on alignement
-        self.buildRegexFromAlignment(align, projectConfiguration)
-
-    def buildRegexFromAlignment(self, align, projectConfiguration):
-        # Build regex from alignment
-        i = 0
-        start = 0
-        regex = []
-        found = False
-        for i in range(len(align)):
-            if (align[i] == "-"):
-                if (found == False):
-                    start = i
-                    found = True
-            else:
-                if (found == True):
-                    found = False
-                    nbTiret = i - start
-                    regex.append("(.{," + str(nbTiret) + "})")
-                    regex.append(align[i])
-                else:
-                    if len(regex) == 0:
-                        regex.append(align[i])
-                    else:
-                        regex[-1] += align[i]
-        if (found == True):
-            nbTiret = i - start
-            regex.append("(.{," + str(nbTiret) + "})")
-
-        # Use the default protocol type for representation
-        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-
-        iField = 0
-        for regexElt in regex:
-            field = Field("Field " + str(iField), iField, regexElt)
-            field.setFormat(aFormat)
-            self.addField(field)
-            iField = iField + 1
-
-        # We look for useless fields
-        doLoop = True
-        # We loop until we don't pop any field
-        while doLoop == True:
-            doLoop = False
-            for field in self.getFields():
-                # We try to see if this field produces only empty values when applied on messages
-                messagesValuesByField = self.getMessagesValuesByField(field)
-                messagesValuesByField = "".join(messagesValuesByField)
-                if messagesValuesByField == "":
-                    self.getFields().pop(field.getIndex())  # We remove this useless field
-                    # Adpat index of the following fields, before breaking
-                    for fieldNext in self.getFields():
-                        if fieldNext.getIndex() > field.getIndex():
-                            fieldNext.setIndex(fieldNext.getIndex() - 1)
-                    doLoop = True
-                    break
+#    def buildRegexFromAlignment(self, align, projectConfiguration):
+#        # Build regex from alignment
+#        i = 0
+#        start = 0
+#        regex = []
+#        found = False
+#        for i in range(len(align)):
+#            if (align[i] == "-"):
+#                if (found == False):
+#                    start = i
+#                    found = True
+#            else:
+#                if (found == True):
+#                    found = False
+#                    nbTiret = i - start
+#                    regex.append("(.{," + str(nbTiret) + "})")
+#                    regex.append(align[i])
+#                else:
+#                    if len(regex) == 0:
+#                        regex.append(align[i])
+#                    else:
+#                        regex[-1] += align[i]
+#        if (found == True):
+#            nbTiret = i - start
+#            regex.append("(.{," + str(nbTiret) + "})")
+#
+#        # Use the default protocol type for representation
+#        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+#
+#        iField = 0
+#        for regexElt in regex:
+#            field = Field("Field " + str(iField), iField, regexElt)
+#            field.setFormat(aFormat)
+#            self.addField(field)
+#            iField = iField + 1
+#
+#        # We look for useless fields
+#        doLoop = True
+#        # We loop until we don't pop any field
+#        while doLoop == True:
+#            doLoop = False
+#            for field in self.getFields():
+#                # We try to see if this field produces only empty values when applied on messages
+#                messagesValuesByField = self.getMessagesValuesByField(field)
+#                messagesValuesByField = "".join(messagesValuesByField)
+#                if messagesValuesByField == "":
+#                    self.getFields().pop(field.getIndex())  # We remove this useless field
+#                    # Adpat index of the following fields, before breaking
+#                    for fieldNext in self.getFields():
+#                        if fieldNext.getIndex() > field.getIndex():
+#                            fieldNext.setIndex(fieldNext.getIndex() - 1)
+#                    doLoop = True
+#                    break
 
     #+----------------------------------------------
-    #| alignWithDelimiter:
-    #|  Align each messages with a specific delimiter
+    #| forcePartitioning:
+    #|  Specify a delimiter for partitioning
     #+----------------------------------------------
-    def alignWithDelimiter(self, projectConfiguration, aFormat, rawDelimiter):
+    def forcePartitioning(self, projectConfiguration, aFormat, rawDelimiter):
         self.alignmentType = "delimiter"
         self.rawDelimiter = rawDelimiter
         self.setFields([])
@@ -255,10 +253,10 @@ class Symbol(AbstractSymbol):
         self.popField()
 
     #+----------------------------------------------
-    #| simpleAlignment:
-    #|  Align each messages just to show their differences
+    #| simplePartitioning:
+    #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simpleAlignment(self, projectConfiguration, unitSize):
+    def simplePartitioning(self, projectConfiguration, unitSize):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.setFields([])
@@ -346,9 +344,10 @@ class Symbol(AbstractSymbol):
         self.addField(field)
 
     #+----------------------------------------------
-    #| Regex handling
+    #| freezePartitioning:
+    #|   
     #+----------------------------------------------
-    def refineRegexes(self):
+    def freezePartitioning(self):
         for field in self.getFields():
             tmpRegex = field.getRegex()
             if field.isStatic():
@@ -1038,6 +1037,10 @@ class Symbol(AbstractSymbol):
 
     def addField(self, field):
         self.fields.append(field)
+        
+    def cleanFields(self):
+        while len(self.fields) != 0 :
+            self.fields.pop()
 
     def popField(self, index=None):
         if index == None:
@@ -1106,7 +1109,7 @@ class Symbol(AbstractSymbol):
                     continue
 
             # Layer depth
-            for i in range( field.getEncapsulationLevel() ):
+            for i in range(field.getEncapsulationLevel()):
                 result += "  "
 
             # Name
@@ -1219,10 +1222,10 @@ class Symbol(AbstractSymbol):
             logging.debug("The regex has been slicked")
 
     #+----------------------------------------------
-    #| resetAlignment:
-    #|   Reset the current alignment
+    #| resetPartitioning:
+    #|   Reset the current partitioning
     #+----------------------------------------------
-    def resetAlignment(self, project):
+    def resetPartitioning(self, project):
         aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
 
         # Reset values
@@ -1234,122 +1237,6 @@ class Symbol(AbstractSymbol):
         field = Field("Field 0", 0, "(.{,})")
         field.setFormat(aFormat)
         self.addField(field)
-
-    """ TODO
-    #+----------------------------------------------
-    #| search_cb:
-    #|  launch the search
-    #+----------------------------------------------
-    def search_cb(self, but, entry, notebook):
-        if entry.get_text() == "":
-            return
-
-        # Clear the notebook
-        for i in range(notebook.get_n_pages()):
-            notebook.remove_page(i)
-
-        # Fill the notebook
-        for group in self.getGroups():
-            vbox = group.search(entry.get_text())
-            if vbox != None:
-                notebook.append_page(vbox, gtk.Label(group.getName()))
-
-    #+----------------------------------------------
-    #| search:
-    #|  search a specific data in messages
-    #+----------------------------------------------
-    def search(self, data):
-        if len(self.columns) == 0:
-            return None
-
-        # Retrieve the raw data ('abcdef0123') from data
-        rawData = data.encode("hex")
-        hbox = gtk.HPaned()
-        hbox.show()
-        # Treeview containing potential data carving results  ## ListStore format:
-        # int: iCol
-        # str: encoding
-        store = gtk.ListStore(int, str)
-        treeviewRes = gtk.TreeView(store)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Column')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
-        treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Encoding')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
-        treeviewRes.append_column(column)
-        treeviewRes.set_size_request(200, 300)
-        treeviewRes.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeviewRes)
-        hbox.add(scroll)
-
-        ## Algo (first step) : for each column, and then for each cell, try to find data
-        iCol = 0
-        for col in self.getColumns():
-            matchASCII = 0
-            matchBinary = 0
-            for cell in self.getCellsByCol(iCol):
-                matchASCII += cell.count(rawData)
-                matchBinary += cell.count(data)
-            if matchASCII > 0:
-                store.append([iCol, "ASCII"])
-            if matchBinary > 0:
-                store.append([iCol, "binary"])
-            iCol += 1
-
-        ## TODO: Algo (second step) : for each message, try to find data
-
-        # Preview of matching fields in a treeview  ## ListStore format:
-        # str: data
-        treeview = gtk.TreeView(gtk.ListStore(str))
-        treeviewRes.connect("cursor-changed", self.searchResultSelected_cb, treeview, data)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Data')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, markup=0)
-        treeview.append_column(column)
-        treeview.set_size_request(700, 300)
-        treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-        hbox.add(scroll)
-        return hbox
-
-    #+----------------------------------------------
-    #| searchResultSelected_cb:
-    #|  Callback when clicking on a search result.
-    #|  It shows a preview of the finding
-    #+----------------------------------------------
-    def searchResultSelected_cb(self, treeview, treeviewTarget, data):
-        typer = TypeIdentifier()
-        treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
-        if(it):
-            if(model.iter_is_valid(it)):
-                iCol = model.get_value(it, 0)
-                encoding = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Column " + str(iCol))
-                for cell in self.getCellsByCol(iCol):
-                    if encoding == "ASCII":
-                        cell = typer.toASCII(cell)
-                        arrayCell = cell.split(data)
-                    elif encoding == "binary":
-                        arrayCell = cell.split(data)
-                    arrayCell = [glib.markup_escape_text(a) for a in arrayCell]
-                    if len(arrayCell) > 1:
-                        styledCell = str("<span foreground=\"red\" font_family=\"monospace\">" + data + "</span>").join(arrayCell)
-                    else:
-                        styledCell = cell
-                    treeviewTarget.get_model().append([styledCell])
-
-    """
 
     def getValueToSend(self, inverse, vocabulary, memory):
         result = self.getRoot().getValueToSend(inverse, vocabulary, memory)
@@ -1426,19 +1313,15 @@ class Symbol(AbstractSymbol):
     
     def __cmp__(self, other):
         if other == None:
-            self.log.warn("oups")
             return 1
         try :
             if self.getID() == other.getID():
-                self.log.info("okf")
                 return 0
             else:
-                self.log.warn("not equals")
                 return 1
         except  :
             self.log.warn("Tried to compare a Symbol with " + str(other))
             return 1
-        self.log.info("ds??")
 
 
     #+----------------------------------------------

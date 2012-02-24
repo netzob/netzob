@@ -43,7 +43,7 @@ from resources.sdist.manpage_command import manpage_command
 moduleLibNeedleman = Extension('libNeedleman',
                                extra_compile_args=["-fopenmp"],
                                extra_link_args=["-fopenmp"],
-                               sources=['lib/libNeedleman/NeedlemanWunsch.c'])
+                               sources=['lib/libNeedleman/libNeedleman.c'])
 
 CMD_CLASS = {
              'build_manpage': manpage_command
