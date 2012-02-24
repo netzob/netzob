@@ -132,16 +132,14 @@ class Vocabulary(object):
         tmpSymbols = []
         t1 = time.time()
         fraction = 0.0
-        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
+#        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
         
         # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
         defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
         minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
-        if project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
-            doInternalSlick = 1
-        else:
-            doInternalSlick = 0
+        doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+         
         
         
         # We try to cluster each symbol
@@ -149,9 +147,9 @@ class Vocabulary(object):
 #            percentOfAlignmentProgessBar_cb(fraction, "Aligning symbol " + symbol.getName())
             clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
             tmpSymbols.extend(clusteringSolution.executeClustering())
-            fraction = fraction + step
+#            fraction = fraction + step
 
-        percentOfAlignmentProgessBar_cb(fraction, None)
+#        percentOfAlignmentProgessBar_cb(fraction, None)
 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
