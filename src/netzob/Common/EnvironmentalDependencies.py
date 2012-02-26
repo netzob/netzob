@@ -68,9 +68,12 @@ class EnvironmentalDependencies(object):
         self.envData.append(EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4]))  # result of 'uname -m' under linux
 
         # User specific
-        self.envData.append(EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']))
-        self.envData.append(EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']))
-        self.envData.append(EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']))
+        if 'HOME' in os.environ:
+            self.envData.append(EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']))
+        if 'USERNAME' in os.environ:
+            self.envData.append(EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']))
+        if 'LANG' in os.environ:
+            self.envData.append(EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']))
 
         # System specific
         self.envData.append(EnvironmentalDependency("hostname", Format.STRING, socket.gethostname()))
