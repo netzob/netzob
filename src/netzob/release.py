@@ -43,7 +43,7 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.3.2-rc1"
+version = "0.3.3~git"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
