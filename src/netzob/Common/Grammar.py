@@ -64,7 +64,7 @@ class Grammar(object):
         if not state in self.states:
             self.states.append(state)
         else:
-            logging.warn("The state cannot be added one more time in the grammar.")
+            logging.debug("The state cannot be added one more time in the grammar.")
     
     #+---------------------------------------------------------------------------+
     #| getTransitionsLeadingToState:

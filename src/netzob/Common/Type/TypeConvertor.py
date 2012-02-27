@@ -562,7 +562,8 @@ class TypeConvertor():
             elif aFormat == Format.DECIMAL:
                 tmp = "%d" % tmp
             elif aFormat == Format.HEX:
-                tmp = "%x" % tmp
+                fmt = "%0" + str(size/4) + "x"
+                tmp = fmt % tmp
             elif aFormat == Format.STRING:
                 tmp = TypeConvertor.netzobRawToString(initTmp)
             elif aFormat == Format.FLOAT:

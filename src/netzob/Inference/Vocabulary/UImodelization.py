@@ -122,21 +122,10 @@ class UImodelization:
 
     def update(self):
         self.updateTreeStoreSymbol()
+        self.updateTreeStoreTypeStructure()
+        self.updateTreeStoreMessage()
         if self.netzob.getCurrentProject() != None:
-            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
-            if isActive:
-                self.treeTypeStructureGenerator.show()
-                self.updateTreeStoreTypeStructure()
-            else:
-                self.treeTypeStructureGenerator.hide()
-
-            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
-            if isActive:
-                self.treeMessageGenerator.show()
-                self.updateTreeStoreMessage()
-            else:
-                self.treeMessageGenerator.hide()
-
+            pass
             #isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
             #if isActive:
             #    self.consoleGenerator.show()
@@ -178,7 +167,6 @@ class UImodelization:
         #+----------------------------------------------
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
-        tooltips = gtk.Tooltips()
         topPanel = gtk.HBox(False, spacing=2)
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
@@ -192,7 +180,7 @@ class UImodelization:
 
         # Widget for sequence alignment
         but = NetzobButton("Sequence alignment")
-        tooltips.set_tip(but, "Automatically discover the best alignment of messages")
+        but.set_tooltip_text("Automatically discover the best alignment of messages")
         but.connect("clicked", self.sequenceAlignment_cb)
 #        but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
@@ -200,25 +188,25 @@ class UImodelization:
         # Widget for forcing partitioning delimiter
         but = NetzobButton("Force partitioning")
         but.connect("clicked", self.forcePartitioning_cb)
-        tooltips.set_tip(but, "Set a delimiter to force partitioning")
+        but.set_tooltip_text("Set a delimiter to force partitioning")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for simple partitioning
         but = NetzobButton("Simple partitioning")
         but.connect("clicked", self.simplePartitioning_cb)
-        tooltips.set_tip(but, "In order to show the simple differences between messages")
+        but.set_tooltip_text("In order to show the simple differences between messages")
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
         but = NetzobButton("Smooth partitioning")
         but.connect("clicked", self.slickRegex_cb)
-        tooltips.set_tip(but, "Merge small static fields with its neighbours")
+        but.set_tooltip_text("Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button reset partitioning
         but = NetzobButton("Reset partitioning")
         but.connect("clicked", self.resetPartitioning_cb)
-        tooltips.set_tip(but, "Reset the current partitioning")
+        but.set_tooltip_text("Reset the current partitioning")
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
@@ -231,13 +219,13 @@ class UImodelization:
         # Widget button refine regex
         but = NetzobButton("Freeze partitioning")
         but.connect("clicked", self.freezePartitioning_cb)
-        tooltips.set_tip(but, "Automatically find and freeze the boundaries (min/max of cell's size) for each fields")
+        but.set_tooltip_text("Automatically find and freeze the boundaries (min/max of cell's size) for each fields")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
         but = NetzobButton("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
-        tooltips.set_tip(but, "Open a graph with messages distribution, separated by fields")
+        but.set_tooltip_text("Open a graph with messages distribution, separated by fields")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
@@ -255,13 +243,13 @@ class UImodelization:
         # Widget button find size fields
         but = NetzobButton("Find size fields")
         but.connect("clicked", self.findSizeFields)
-        tooltips.set_tip(but, "Automatically find potential size fields and associated payloads")
+        but.set_tooltip_text("Automatically find potential size fields and associated payloads")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for environment dependencies
         but = NetzobButton("Environment dependencies")
         but.connect("clicked", self.env_dependencies_cb)
-        tooltips.set_tip(but, "Automatically look for environmental dependencies (retrieved during capture) in messages")
+        but.set_tooltip_text("Automatically look for environmental dependencies (retrieved during capture) in messages")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Semantic inference
@@ -274,13 +262,13 @@ class UImodelization:
         # Widget button data carving
         but = NetzobButton("Data carving")
         but.connect("clicked", self.dataCarving_cb)
-        tooltips.set_tip(but, "Automatically look for known patterns of data (URL, IP, email, etc.)")
+        but.set_tooltip_text("Automatically look for known patterns of data (URL, IP, email, etc.)")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for search
         but = NetzobButton("Search")
         but.connect("clicked", self.search_cb)
-        tooltips.set_tip(but, "A search function available in different encoding format")
+        but.set_tooltip_text("A search function available in different encoding format")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Visualization
@@ -610,11 +598,11 @@ class UImodelization:
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
         
-        
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
             self.selectedSymbol = clickedSymbol
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
-            self.update()
+            self.updateTreeStoreTypeStructure()
+            self.updateTreeStoreMessage()
 
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_symbols(event, clickedSymbol)
@@ -1462,12 +1450,10 @@ class UImodelization:
             field.setVariable(None)
             self.update()
         else:
-            self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getID())
+            self.log.debug("The user didn't confirm the deletion of the variable " + str(field.getVariable().getID()))
 
     def rightClickEditVariable(self, widget, field):
-        logging.error("Not yet implemented")
-        # TODO : delete pass statement because useless
-        # pass
+        logging.error("The edition of an existing variable is not yet implemented")
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 2:
@@ -1709,7 +1695,7 @@ class UImodelization:
             #Adding to its new symbol
             new_message_symbol.addMessage(message)
             
-            alignmentProcess = NeedlemanAndWunsch()
+            alignmentProcess = NeedlemanAndWunsch(self.loggingNeedlemanStatus)
             doInternalSlick = False
             defaultFormat = Format.HEX
             
@@ -1723,6 +1709,9 @@ class UImodelization:
         #Update Left and Right
         self.update()
         return
+    
+    def loggingNeedlemanStatus(self, status, message):
+        self.log.debug(status, message)
 
     #+----------------------------------------------
     #| drag_fromDND:
@@ -1755,13 +1744,25 @@ class UImodelization:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
-        self.treeMessageGenerator.default(self.selectedSymbol)
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
+            if isActive:
+                self.treeMessageGenerator.show()
+                self.treeMessageGenerator.default(self.selectedSymbol)
+            else:
+                self.treeMessageGenerator.hide()
 
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreTypeStructure(self):
-        self.treeTypeStructureGenerator.update()
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
+            if isActive:
+                self.treeTypeStructureGenerator.show()
+                self.treeTypeStructureGenerator.update()
+            else:
+                self.treeTypeStructureGenerator.hide()
 
     #+----------------------------------------------
     #| Called when user select a new score limit

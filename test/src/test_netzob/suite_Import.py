@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -24,41 +24,31 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
-
 #+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import sys
-import logging.config
-import gobject
-import os
-import optparse
+import unittest
+from test_netzob.test_Import import suite_Type, test_ExecutionContext # to be modified by maxime
 
 #+---------------------------------------------------------------------------+
-#| Prepare, load and import the required modules
+#| Local application imports
 #+---------------------------------------------------------------------------+
-sys.path.insert(0, 'src/')
-
-try:
-    # Verify that libNeedleman is in the path
-    import libNeedleman
-except:
-    # Else, assume the path is gotten from the 'python setup.py build' command
-    arch = os.uname()[-1]
-    python_version = sys.version[:3]
-    build_lib_path = "build/lib.linux-" + arch + "-" + python_version
-    sys.path.append(build_lib_path)
-
-import netzob.NetzobGui as NetzobGui
-from netzob import release
 
 
+def getSuite():
+    importSuite = unittest.TestSuite()
 
+    modulesOfTests = [test_ExecutionContext]
+    modulesOfSuites = [suite_Type]
 
-if __name__ == "__main__":
-    gobject.threads_init() # for handling concurrent GUI access from threads
+    # Add individual tests    
+    for module in modulesOfTests :
+        importSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
 
-    
-    netzob = NetzobGui.NetzobGui()
-    netzob.startGui()
+    # Add suites    
+    for module in modulesOfSuites :
+        importSuite.addTests(module.getSuite())
+
+    return importSuite

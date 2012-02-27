@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -24,41 +23,21 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
-
 #+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import sys
-import logging.config
-import gobject
-import os
-import optparse
+import unittest
+from netzob.Common.ExecutionContext import ExecutionContext
 
 #+---------------------------------------------------------------------------+
-#| Prepare, load and import the required modules
+#| Local Imports
 #+---------------------------------------------------------------------------+
-sys.path.insert(0, 'src/')
-
-try:
-    # Verify that libNeedleman is in the path
-    import libNeedleman
-except:
-    # Else, assume the path is gotten from the 'python setup.py build' command
-    arch = os.uname()[-1]
-    python_version = sys.version[:3]
-    build_lib_path = "build/lib.linux-" + arch + "-" + python_version
-    sys.path.append(build_lib_path)
-
-import netzob.NetzobGui as NetzobGui
-from netzob import release
 
 
-
-
-if __name__ == "__main__":
-    gobject.threads_init() # for handling concurrent GUI access from threads
-
-    
-    netzob = NetzobGui.NetzobGui()
-    netzob.startGui()
+class test_ExecutionContext(unittest.TestCase):
+  
+    def test_getCurrentProcesses(self):
+        current = ExecutionContext.getCurrentProcesses()
+        self.assertGreater(len(current), 5)

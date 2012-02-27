@@ -222,10 +222,11 @@ class Project(object):
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
             if Project.isSchemaValidateXML(xmlSchemaPath, projectFile):
-                logging.info("The file " + str(projectFile) + " validates the project configuration file.")
+                logging.debug("The file " + str(projectFile) + " validates the project configuration file.")
                 parsingFunc = Project.PROJECT_SCHEMAS[xmlSchemaFile]
                 project = parsingFunc(projectFile)
                 if project != None:
+                    logging.info("Loading project '" + str(project.getName()) + "' from workspace.")
                     return project
             else:
                 logging.warn("The project declared in file (" + projectFile + ") is not valid")

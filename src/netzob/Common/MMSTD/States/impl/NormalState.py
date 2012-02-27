@@ -86,9 +86,8 @@ class NormalState(AbstractState):
                     self.log.warn("Symbol = " + str(inputSymbol) + " == " + str(t.getInputSymbol()))
                     found = True
                 else :
-                    self.log.info("Symbol = " + str(inputSymbol) + " != " + str(t.getInputSymbol()))
+                    self.log.debug("Symbol = " + str(inputSymbol) + " != " + str(t.getInputSymbol()))
             if not found:
-                self.log.info("Transition is REGISTERED")
                 self.transitions.append(transition)
             else :
                 self.log.warn("OUPS, impossible to register the provided transition")
