@@ -1457,10 +1457,10 @@ class UImodelization:
             field.setVariable(None)
             self.update()
         else:
-            self.log.debug("The user didn't confirm the deletion of the variable " + field.getVariable().getID())
+            self.log.debug("The user didn't confirm the deletion of the variable " + str(field.getVariable().getID()))
 
     def rightClickEditVariable(self, widget, field):
-        logging.error("Not yet implemented")
+        logging.error("The edition of an existing variable is not yet implemented")
         # TODO
         pass
 
@@ -1703,7 +1703,7 @@ class UImodelization:
             #Adding to its new symbol
             new_message_symbol.addMessage(message)
             
-            alignmentProcess = NeedlemanAndWunsch()
+            alignmentProcess = NeedlemanAndWunsch(self.loggingNeedlemanStatus)
             doInternalSlick = False
             defaultFormat = Format.HEX
             
@@ -1717,6 +1717,9 @@ class UImodelization:
         #Update Left and Right
         self.update()
         return
+    
+    def loggingNeedlemanStatus(self, status, message):
+        self.log.debug(status, message)
 
     #+----------------------------------------------
     #| drag_fromDND:
