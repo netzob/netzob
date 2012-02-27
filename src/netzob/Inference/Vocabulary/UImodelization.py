@@ -125,21 +125,10 @@ class UImodelization:
 
     def update(self):
         self.updateTreeStoreSymbol()
+        self.updateTreeStoreTypeStructure()
+        self.updateTreeStoreMessage()
         if self.netzob.getCurrentProject() != None:
-            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
-            if isActive:
-                self.treeTypeStructureGenerator.show()
-                self.updateTreeStoreTypeStructure()
-            else:
-                self.treeTypeStructureGenerator.hide()
-
-            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
-            if isActive:
-                self.treeMessageGenerator.show()
-                self.updateTreeStoreMessage()
-            else:
-                self.treeMessageGenerator.hide()
-
+            pass
             #isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
             #if isActive:
             #    self.consoleGenerator.show()
@@ -613,11 +602,11 @@ class UImodelization:
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
         
-        
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
             self.selectedSymbol = clickedSymbol
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
-            self.update()
+            self.updateTreeStoreTypeStructure()
+            self.updateTreeStoreMessage()
 
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_symbols(event, clickedSymbol)
@@ -1763,13 +1752,25 @@ class UImodelization:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
-        self.treeMessageGenerator.default(self.selectedSymbol)
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
+            if isActive:
+                self.treeMessageGenerator.show()
+                self.treeMessageGenerator.default(self.selectedSymbol)
+            else:
+                self.treeMessageGenerator.hide()
 
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreTypeStructure(self):
-        self.treeTypeStructureGenerator.update()
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
+            if isActive:
+                self.treeTypeStructureGenerator.show()
+                self.treeTypeStructureGenerator.update()
+            else:
+                self.treeTypeStructureGenerator.hide()
 
     #+----------------------------------------------
     #| Called when user select a new score limit

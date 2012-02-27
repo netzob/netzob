@@ -213,10 +213,10 @@ class TreeMessageGenerator():
             self.treestore.append(None, line)
                     
         # activate or deactiave the perfect number of columns = nb Field
+        for col in self.treeview.get_columns():
+            self.treeview.remove_column(col)
         for i in range(0, min(200, len(self.symbol.getFields()))) :
             self.treeview.append_column(self.currentColumns[i])
-        for j in range(len(self.symbol.getFields()), 200) :
-            self.treeview.remove_column(self.currentColumns[j])
 
         self.treeview.set_model(self.treestore)
 
