@@ -108,7 +108,6 @@ class ReferencedVariable(Variable):
         if var == None :
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
-        self.log.info("Compare with a referenced variable")
         return var.compare(value, indice, negative, vocabulary, memory)
     
     #+-----------------------------------------------------------------------+
