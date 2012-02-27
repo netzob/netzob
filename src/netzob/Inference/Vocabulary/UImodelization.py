@@ -170,7 +170,6 @@ class UImodelization:
         #+----------------------------------------------
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
-        tooltips = gtk.Tooltips()
         topPanel = gtk.HBox(False, spacing=2)
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
@@ -184,7 +183,7 @@ class UImodelization:
 
         # Widget for sequence alignment
         but = NetzobButton("Sequence alignment")
-        tooltips.set_tip(but, "Automatically discover the best alignment of messages")
+        but.set_tooltip_text("Automatically discover the best alignment of messages")
         but.connect("clicked", self.sequenceAlignment_cb)
 #        but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
@@ -192,25 +191,25 @@ class UImodelization:
         # Widget for forcing partitioning delimiter
         but = NetzobButton("Force partitioning")
         but.connect("clicked", self.forcePartitioning_cb)
-        tooltips.set_tip(but, "Set a delimiter to force partitioning")
+        but.set_tooltip_text("Set a delimiter to force partitioning")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for simple partitioning
         but = NetzobButton("Simple partitioning")
         but.connect("clicked", self.simplePartitioning_cb)
-        tooltips.set_tip(but, "In order to show the simple differences between messages")
+        but.set_tooltip_text("In order to show the simple differences between messages")
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
         but = NetzobButton("Smooth partitioning")
         but.connect("clicked", self.slickRegex_cb)
-        tooltips.set_tip(but, "Merge small static fields with its neighbours")
+        but.set_tooltip_text("Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button reset partitioning
         but = NetzobButton("Reset partitioning")
         but.connect("clicked", self.resetPartitioning_cb)
-        tooltips.set_tip(but, "Reset the current partitioning")
+        but.set_tooltip_text("Reset the current partitioning")
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
@@ -223,13 +222,13 @@ class UImodelization:
         # Widget button refine regex
         but = NetzobButton("Freeze partitioning")
         but.connect("clicked", self.freezePartitioning_cb)
-        tooltips.set_tip(but, "Automatically find and freeze the boundaries (min/max of cell's size) for each fields")
+        but.set_tooltip_text("Automatically find and freeze the boundaries (min/max of cell's size) for each fields")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
         but = NetzobButton("Messages distribution")
         but.connect("clicked", self.messagesDistribution_cb)
-        tooltips.set_tip(but, "Open a graph with messages distribution, separated by fields")
+        but.set_tooltip_text("Open a graph with messages distribution, separated by fields")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
@@ -247,13 +246,13 @@ class UImodelization:
         # Widget button find size fields
         but = NetzobButton("Find size fields")
         but.connect("clicked", self.findSizeFields)
-        tooltips.set_tip(but, "Automatically find potential size fields and associated payloads")
+        but.set_tooltip_text("Automatically find potential size fields and associated payloads")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for environment dependencies
         but = NetzobButton("Environment dependencies")
         but.connect("clicked", self.env_dependencies_cb)
-        tooltips.set_tip(but, "Automatically look for environmental dependencies (retrieved during capture) in messages")
+        but.set_tooltip_text("Automatically look for environmental dependencies (retrieved during capture) in messages")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Semantic inference
@@ -266,13 +265,13 @@ class UImodelization:
         # Widget button data carving
         but = NetzobButton("Data carving")
         but.connect("clicked", self.dataCarving_cb)
-        tooltips.set_tip(but, "Automatically look for known patterns of data (URL, IP, email, etc.)")
+        but.set_tooltip_text("Automatically look for known patterns of data (URL, IP, email, etc.)")
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for search
         but = NetzobButton("Search")
         but.connect("clicked", self.search_cb)
-        tooltips.set_tip(but, "A search function available in different encoding format")
+        but.set_tooltip_text("A search function available in different encoding format")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Visualization
