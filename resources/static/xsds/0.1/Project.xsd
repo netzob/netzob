@@ -217,8 +217,10 @@
 	<complexType name="Grammar">
 		<sequence>
 			<element name="states" type="netzob-project:States"></element>
-			<element name="transitions" type="netzob-project:Transitions"
-				minOccurs="0"></element>
+			<element name="transitions"
+				type="netzob-project:Transitions" minOccurs="0">
+			</element>
+			<element name="sequences" type="netzob-project:Sequences" minOccurs="0"></element>
 		</sequence>
 		<attribute name="type" use="required">
 			<simpleType>
@@ -696,4 +698,35 @@
 	<element name="project" type="netzob-project:Project"></element>
 
 
+
+	<complexType name="Sequences">
+		<sequence>
+			<element name="sequence" type="netzob-project:Sequence" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Sequence">
+		<sequence>
+			<element name="order" type="netzob-project:Order" maxOccurs="unbounded"></element>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="description" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Order">
+		<attribute name="value" type="int" use="required"></attribute>
+	</complexType>
 </schema>
