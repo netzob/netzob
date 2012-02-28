@@ -37,7 +37,6 @@ appname = name
 
 #+---------------------------------------------------------------------------+
 #| Current OFFICIAL version of the application 
-
 #|    the version number must be changed during the last commit before
 #|    the tag release.
 #|    Development version has version number increased and is
