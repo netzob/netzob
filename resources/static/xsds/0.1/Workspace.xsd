@@ -34,6 +34,9 @@
 	</complexType>
 	
 	<complexType name="Trace">
+		<sequence>
+			<element name="sessions" type="netzob-common:Sessions" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
 		<attribute name="date" type="dateTime"></attribute>
 		<attribute name="type" type="string"></attribute>
 		<attribute name="description" type="string"></attribute>
