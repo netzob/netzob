@@ -38,6 +38,7 @@ import os
 #+---------------------------------------------------------------------------+
 from netzob.Common.Project import Project
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
 from netzob.Import.IpcImport import IpcImport
@@ -105,6 +106,10 @@ class Menu(object):
         self.saveProject.connect("activate", self.saveProjectAction)
         self.menuProject.append(self.saveProject)
 
+        self.sessionManager = gtk.MenuItem("Session manager")
+        self.sessionManager.connect("activate", self.sessionManagerAction)
+        self.menuProject.append(self.sessionManager)
+
         self.menuImport = gtk.Menu()
         self.importRootMenu = gtk.MenuItem("Import traces")
         self.importRootMenu.set_submenu(self.menuImport)
@@ -155,12 +160,14 @@ class Menu(object):
         if self.netzob.getCurrentProject() == None:
             # Deactivate almost everything
             self.saveProject.set_sensitive(False)
+            self.sessionManager.set_sensitive(False)
             self.importRootMenu.set_sensitive(False)
             self.exportRootMenu.set_sensitive(False)
             self.helpContent.set_sensitive(False)
         else:
             # Activate everything
             self.saveProject.set_sensitive(True)
+            self.sessionManager.set_sensitive(True)
             self.importRootMenu.set_sensitive(True)
             self.exportRootMenu.set_sensitive(True)
             self.displaySymbolStructure.set_sensitive(True)
@@ -371,6 +378,10 @@ class Menu(object):
     def saveProjectAction(self, widget):
         logging.info("Starting the saving of the current project : " + str(self.netzob.getCurrentProject().getName()))
         self.netzob.getCurrentProject().saveConfigFile(self.netzob.getCurrentWorkspace())
+
+    def sessionManagerAction(self, widget):
+        logging.info("Starting the session manager")
+        sessionManagerPanel = SessionManager(self.netzob)
 
     def createProjectAction(self, widget):
         dialog = gtk.Dialog(title="Create a new project", flags=0, buttons=None)

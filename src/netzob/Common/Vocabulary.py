@@ -38,6 +38,7 @@ import uuid
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Symbol import Symbol
+from netzob.Common.Session import Session
 from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
@@ -56,6 +57,7 @@ class Vocabulary(object):
     #+-----------------------------------------------------------------------+
     def __init__(self):
         self.symbols = []
+        self.sessions = []
 
     def getAllMessages(self):
         messages = []
@@ -74,6 +76,9 @@ class Vocabulary(object):
     def getSymbols(self):
         return self.symbols
 
+    def getSessions(self):
+        return self.sessions
+
     def getSymbol(self, symbolID):
         for symbol in self.symbols:
             if symbol.getID() == symbolID:
@@ -84,14 +89,29 @@ class Vocabulary(object):
         
         return None
 
+    def getSession(self, sessionID):
+        for session in self.sessions:
+            if session.getID() == sessionID:
+                return session
+        return None
+
     def addSymbol(self, symbol):
         if not symbol in self.symbols:
             self.symbols.append(symbol)
         else:
             logging.warn("The symbol cannot be added in the vocabulary since it's already declared in.")
 
+    def addSession(self, session):
+        if not session in self.sessions:
+            self.sessions.append(session)
+        else:
+            logging.warn("The session cannot be added in the vocabulary since it's already declared in.")
+
     def removeSymbol(self, symbol):
         self.symbols.remove(symbol)
+
+    def removeSession(self, session):
+        self.sessions.remove(session)
 
     def getVariables(self):
         variables = []
@@ -176,9 +196,14 @@ class Vocabulary(object):
 
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
+        # Symbols
         xmlSymbols = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}symbols")
         for symbol in self.symbols:
             symbol.save(xmlSymbols, namespace_project, namespace_common)
+        # Sessions
+        xmlSessions = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}sessions")
+        for session in self.sessions:
+            session.save(xmlSessions, namespace_common)
 
     @staticmethod
     def loadVocabulary(xmlRoot, namespace, namespace_common, version, project):
@@ -190,4 +215,9 @@ class Vocabulary(object):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project)
                 if symbol != None:
                     vocabulary.addSymbol(symbol)
+            # parse all the sessions which are declared in the vocabulary
+            for xmlSession in xmlRoot.findall("{" + namespace + "}sessions/{" + namespace + "}session"):
+                session = Session.loadFromXML(xmlSession, namespace_common, version)
+                if session != None:
+                    vocabulary.addSymbol(session)
         return vocabulary

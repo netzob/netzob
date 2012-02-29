@@ -211,6 +211,7 @@
 	<complexType name="Vocabulary">
 		<sequence>
 			<element name="symbols" type="netzob-project:Symbols"></element>
+			<element name="sessions" type="netzob-common:Sessions"></element>
 		</sequence>
 	</complexType>
 

@@ -35,7 +35,7 @@
 	
 	<complexType name="Trace">
 		<sequence>
-			<element name="sessions" type="netzob-common:Sessions" maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="sessions" type="netzob-common:Sessions" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 		<attribute name="date" type="dateTime"></attribute>
 		<attribute name="type" type="string"></attribute>
