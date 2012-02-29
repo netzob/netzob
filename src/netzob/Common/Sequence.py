@@ -74,7 +74,6 @@ class Sequence(object):
     def getSortedOrders(self):
         return sorted(self.orders, key=lambda Order: Order.value)
         
-        
     def save(self, root, namespace):
         xmlSequence = etree.SubElement(root, "{" + namespace + "}sequence")
         xmlSequence.set("id", str(self.getID()))
@@ -85,8 +84,6 @@ class Sequence(object):
         
         for order in self.getSortedOrders() :
             order.save(xmlSequence, namespace)
-            
-        
 
     #+----------------------------------------------
     #| GETTERS
@@ -117,7 +114,6 @@ class Sequence(object):
             for xmlOrder in xmlRoot.findall("{" + namespace + "}order"):
                 order = Order.loadFromXML(xmlOrder, namespace, version, vocabulary)
                 sequence.addOrder(order)
-            
 
             return sequence
 

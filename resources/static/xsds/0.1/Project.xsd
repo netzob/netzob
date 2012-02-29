@@ -213,29 +213,13 @@
 			<element name="symbols" type="netzob-project:Symbols"></element>
 		</sequence>
 	</complexType>
+	
 
 	<complexType name="Grammar">
 		<sequence>
-			<element name="states" type="netzob-project:States"></element>
-			<element name="transitions"
-				type="netzob-project:Transitions" minOccurs="0">
-			</element>
+			<element name="automata" type="netzob-project:MMSTD" minOccurs="0"></element>
 			<element name="sequences" type="netzob-project:Sequences" minOccurs="0"></element>
 		</sequence>
-		<attribute name="type" use="required">
-			<simpleType>
-				<restriction base="string">
-					<enumeration value="MMSTD"></enumeration>
-				</restriction>
-			</simpleType>
-		</attribute>
-		<attribute name="initialState" use="required">
-			<simpleType>
-				<restriction base="string">
-					<minLength value="1"></minLength>
-				</restriction>
-			</simpleType>
-		</attribute>
 	</complexType>
 
 	<complexType name="Symbols">
@@ -739,4 +723,27 @@
 		</sequence>
 		<attribute name="value" type="int" use="required"></attribute>
 	</complexType>
+
+    <complexType name="MMSTD">
+    	<sequence>
+			<element name="states" type="netzob-project:States"></element>
+			<element name="transitions"
+				type="netzob-project:Transitions" minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="MMSTD"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="initialState" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+    </complexType>
 </schema>
