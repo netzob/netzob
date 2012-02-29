@@ -36,6 +36,7 @@ pygtk.require('2.0')
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
+from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame
 
 #+----------------------------------------------
 #| SessionManager:
@@ -71,22 +72,29 @@ class SessionManager:
         self.dialog = gtk.Dialog(title="Session manager", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
-        self.dialog.set_size_request(600, 400)
         self.update()
 
     def initPanel(self):
-        # First we create an VPaned which hosts the two main children
         self.panel = gtk.HBox()
         self.panel.show()
 
+        ## Symbol list box
+        symbolBox = gtk.VBox()
+        symbolBox.show()
+        frame = NetzobFrame("Symbol list")
+        box = gtk.HBox()
+        box.show()
+        symbolBox.pack_start(box)
+        frame.add(symbolBox)
+        self.panel.pack_start(frame)
+
         # Display symbols
         symbols = self.netzob.getCurrentProject().getVocabulary().getSymbols()
-
-        ## ListStore format:
-        # str: symbol.id
-        # str: symbol.name
+        # ListStore format:
+        #   str: symbol.id
+        #   str: symbol.name
         treeview = gtk.TreeView(gtk.ListStore(str, str))
-        treeview.set_size_request(500, 300)
+        treeview.set_size_request(500, 200)
         treeview.show()
 
         cell = gtk.CellRendererText()
@@ -102,39 +110,26 @@ class SessionManager:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
-        self.panel.pack_start(scroll)
+        box.pack_start(scroll)
 
-        # Display sessions
-        sessions = self.netzob.getCurrentProject().getVocabulary().getSessions()
+        propBox = gtk.VBox()
+        propBox.show()
+        label = NetzobLabel("Name: ")
+        propBox.pack_start(label)
+        label = NetzobLabel("Description: ")
+        propBox.pack_start(label)
+        box.pack_start(propBox)
 
-        ## ListStore format:
-        # str: session.id
-        # str: session.name
-        treeview = gtk.TreeView(gtk.ListStore(str, str))
-        treeview.set_size_request(500, 300)
-        treeview.show()
-
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Sessions")
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
-        treeview.append_column(column)
-
-        for session in sessions:
-            treeview.get_model().append([session.getID(), session.getName()])
-
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-        self.panel.pack_start(scroll)
+        ## Symbol content box
+        box = gtk.HBox()
+        box.show()
+        symbolBox.pack_start(box)
 
         # Display messages
         messages = self.netzob.getCurrentProject().getVocabulary().getAllMessages()
-
-        ## ListStore format:
-        # str: message.id
-        # str: message.data
+        # ListStore format:
+        #   str: message.id
+        #   str: message.data
         treeview = gtk.TreeView(gtk.ListStore(str, str))
         treeview.set_size_request(500, 300)
         treeview.show()
@@ -152,11 +147,98 @@ class SessionManager:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
-        self.panel.pack_start(scroll)
-        
+        box.pack_start(scroll)
+
+        ## Session list
+        sessionBox = gtk.VBox()
+        sessionBox.show()
+        frame = NetzobFrame("Session list")
+        box = gtk.HBox()
+        box.show()
+        sessionBox.pack_start(box)
+        frame.add(sessionBox)
+        self.panel.pack_start(frame)
+
+        # Display sessions
+        sessions = self.netzob.getCurrentProject().getVocabulary().getSessions()
+        # ListStore format:
+        #   str: session.id
+        #   str: session.name
+        treeview = gtk.TreeView(gtk.ListStore(str, str))
+        treeview.set_size_request(500, 200)
+        treeview.show()
+
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn("Sessions")
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        treeview.append_column(column)
+
+        for session in sessions:
+            treeview.get_model().append([session.getID(), session.getName()])
+
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        box.pack_start(scroll)
+
+        propBox = gtk.VBox()
+        propBox.show()
+        label = NetzobLabel("Name: ")
+        propBox.pack_start(label)
+        label = NetzobLabel("Description: ")
+        propBox.pack_start(label)
+        box.pack_start(propBox)
+
+        ## Session content box
+        box = gtk.HBox()
+        box.show()
+        sessionBox.pack_start(box)
+
+        # Display messages
+        messages = self.netzob.getCurrentProject().getVocabulary().getAllMessages()
+        # ListStore format:
+        #   str: message.id
+        #   str: message.data
+        treeview = gtk.TreeView(gtk.ListStore(str, str))
+        treeview.set_size_request(500, 300)
+        treeview.show()
+
+        cell = gtk.CellRendererText()
+        column = gtk.TreeViewColumn("Messages")
+        column.pack_start(cell, True)
+        column.set_attributes(cell, text=1)
+        treeview.append_column(column)
+
+#        for message in messages:
+#            treeview.get_model().append([message.getID(), message.getStringData()])
+
+        scroll = gtk.ScrolledWindow()
+        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll.show()
+        scroll.add(treeview)
+        box.pack_start(scroll)        
+
+    #+----------------------------------------------
+    #| CALLBACKS
+    #+----------------------------------------------
+    def importFile_cb(self):
+        pass
+
+    def importNetwork_cb(self):
+        pass
+
+    def importPCAP_cb(self):
+        pass
+
+    def importIPC_cb(self):
+        pass
+
 
     #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):
         return self.panel
+
