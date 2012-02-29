@@ -241,7 +241,7 @@ class AutomaticGrammarInferenceView(object):
 
     def saveGrammar(self, button):
         if self.computedAutomaton != None:
-            self.project.setGrammar(self.computedAutomaton.toGrammar())
+            self.project.getGrammar().setAutomata(self.computedAutomaton)
             self.dialog.destroy()
 
     def startInference(self, button):

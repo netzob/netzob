@@ -49,6 +49,7 @@ from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiSt
 from netzob.Common.Grammar import Grammar
 from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol 
+from netzob.Common.MMSTD.MMSTD import MMSTD
 
 
 #+---------------------------------------------------------------------------+
@@ -90,7 +91,7 @@ class UIGrammarInference:
         if netzob.getCurrentProject() != None:
             self.grammar = netzob.getCurrentProject().getGrammar()
 
-        self.grammar = None
+        
         self.states = []
         self.initialState = None
         self.transitions = []
@@ -256,7 +257,7 @@ class UIGrammarInference:
         transitionStartStateCombo.pack_start(transitionStartStateCell, True)
         transitionStartStateCombo.add_attribute(transitionStartStateCell, 'text', 0)
 
-        for state in self.getGrammar().getStates():
+        for state in self.getAutomata().getStates():
             transitionStartStateCombo.get_model().append([state.getName(), str(state.getID())])
         transitionStartStateCombo.show()
         mainTable.attach(transitionStartStateLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -270,7 +271,7 @@ class UIGrammarInference:
         transitionStopStateCombo.pack_start(transitionStopStateComboCell, True)
         transitionStopStateCombo.add_attribute(transitionStopStateComboCell, 'text', 0)
 
-        for state in self.getGrammar().getStates():
+        for state in self.getAutomata().getStates():
             transitionStopStateCombo.get_model().append([state.getName(), str(state.getID())])
         transitionStopStateCombo.show()
         mainTable.attach(transitionStopStateLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -290,7 +291,7 @@ class UIGrammarInference:
         idStopState = transitionStopStateCombo.get_model()[transitionStopStateCombo.get_active()][1]
         startState = None
         stopState = None
-        for state in self.getGrammar().getStates():
+        for state in self.getAutomata().getStates():
             if str(state.getID()) == idStartState:
                 startState = state
             if str(state.getID()) == idStopState:
@@ -312,7 +313,7 @@ class UIGrammarInference:
             self.log.warn("Impossible to create the requested transition since the type is unknown")
 
         if createdTransition != None:
-            self.getGrammar().addTransition(createdTransition)
+            self.getAutomata().addTransition(createdTransition)
             self.updateListTransitions()
             self.updateXDot()
 
@@ -588,7 +589,7 @@ class UIGrammarInference:
         isItInitialStateLabel = gtk.Label("Is it the initial state : ")
         isItInitialStateLabel.show()
         isItInitialStateButton = gtk.CheckButton("")
-        if self.getGrammar() == None:
+        if self.getAutomata() == None:
             isItInitialStateButton.set_active(True)
             isItInitialStateButton.set_sensitive(False)
         else:
@@ -610,14 +611,14 @@ class UIGrammarInference:
                 self.log.info("Create a state " + stateName + " (" + stateID + ")")
                 state = NormalState(stateID, stateName)
 
-                if self.getGrammar() == None:
-                    grammar = Grammar("MMSTD", state)
-                    self.netzob.getCurrentProject().setGrammar(grammar)
+                if self.getAutomata() == None:
+                    automata = MMSTD(state, self.getVocabulary())
+                    self.netzob.getCurrentProject().getGrammar().setAutomata(automata)
                 else:
                     if isItInitialStateButton.get_active():
-                        self.getGrammar().setInitialState(state)
+                        self.getAutomata().setInitialState(state)
 
-                self.getGrammar().addState(state)
+                self.getAutomata().addState(state)
 
             dialog.destroy()
 
@@ -629,25 +630,25 @@ class UIGrammarInference:
 
     def updateListStates(self):
         self.treestore_listStates.clear()
-        if self.getGrammar() == None:
+        if self.getAutomata() == None:
             return
-        for state in self.getGrammar().getStates():
+        for state in self.getAutomata().getStates():
             self.treestore_listStates.append(None, [str(state.getID()), state.getName(), state.getType()])
 
     def updateListTransitions(self):
         self.treestore_listTransitions.clear()
-        if self.getGrammar() == None:
+        if self.getAutomata() == None:
             return
-        for transition in self.getGrammar().getTransitions():
+        for transition in self.getAutomata().getTransitions():
             startState = transition.getInputState().getName()
             endState = transition.getOutputState().getName()
             self.treestore_listTransitions.append(None, [str(transition.getID()), transition.getName(), startState, endState, transition.getType()])
 
     def updateXDot(self):
         # We retrieve the xdot from the grammar (if it exists)
-        if self.getGrammar() == None:
+        if self.getAutomata() == None:
             return
-        self.xdotWidget.drawAutomata(self.getGrammar())
+        self.xdotWidget.drawAutomata(self.getAutomata())
 
     def updateInterface(self):
         if self.netzob.getCurrentProject() == None:
@@ -676,7 +677,7 @@ class UIGrammarInference:
             path = info[0]
             iter = treeview.get_model().get_iter(path)
             idState = str(treeview.get_model().get_value(iter, 0))
-            for state in self.getGrammar().getStates():
+            for state in self.getAutomata().getStates():
                 if state.getID() == idState:
                     clickedState = state
 
@@ -696,7 +697,7 @@ class UIGrammarInference:
             path = info[0]
             iter = treeview.get_model().get_iter(path)
             idTransition = str(treeview.get_model().get_value(iter, 0))
-            for transition in self.getGrammar().getTransitions():
+            for transition in self.getAutomata().getTransitions():
                 if transition.getID() == idTransition:
                     clickedTransition = transition
 
@@ -748,7 +749,7 @@ class UIGrammarInference:
         result = md.run()
         md.destroy()
         if result == gtk.RESPONSE_YES:
-            self.getGrammar().removeTransition(transition)
+            self.getAutomata().removeTransition(transition)
             self.update()
         else:
             self.log.debug("The user didn't confirm the deletion of the transition " + transition.getName())
@@ -859,7 +860,7 @@ class UIGrammarInference:
         transitionTypeCombo.pack_start(transitionTypeComboCell, True)
         transitionTypeCombo.add_attribute(transitionTypeComboCell, 'text', 1)
         
-        for possibleTransition in self.getGrammar().getTransitionsLeadingToState(state) :
+        for possibleTransition in self.getAutomata().getTransitionsLeadingToState(state) :
             transitionTypeCombo.get_model().append([str(possibleTransition.getID()), possibleTransition.getName()])
         transitionTypeCombo.show()
         mainTable.attach(memopexTransitionLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -961,7 +962,7 @@ class UIGrammarInference:
         result = md.run()
         md.destroy()
         if result == gtk.RESPONSE_YES:
-            self.getGrammar().removeState(state)
+            self.getAutomata().removeState(state)
             self.update()
         else:
             self.log.debug("The user didn't confirm the deletion of the state " + state.getName())
@@ -971,6 +972,12 @@ class UIGrammarInference:
             return None
         else:
             return self.netzob.getCurrentProject().getGrammar()
+
+    def getAutomata(self):
+        grammar = self.getGrammar()
+        if grammar == None :
+            return None
+        return grammar.getAutomata()
 
     def getVocabulary(self):
         if self.netzob.getCurrentProject() == None:
