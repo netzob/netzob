@@ -734,7 +734,7 @@
 		<attribute name="type" use="required">
 			<simpleType>
 				<restriction base="string">
-					<enumeration value="MMSTD"></enumeration>
+					<enumeration value="mmstd"></enumeration>
 				</restriction>
 			</simpleType>
 		</attribute>
