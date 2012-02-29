@@ -103,7 +103,7 @@ class Sequence(object):
         self.description = description
 
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version, vocabulary):
+    def loadFromXML(xmlRoot, vocabulary, namespace, version):
         if version == "0.1":
             sequence_ID = xmlRoot.get("id")
             sequence_name = xmlRoot.get("name")
@@ -112,7 +112,7 @@ class Sequence(object):
             sequence = Sequence(sequence_ID, sequence_name, sequence_description)
             
             for xmlOrder in xmlRoot.findall("{" + namespace + "}order"):
-                order = Order.loadFromXML(xmlOrder, namespace, version, vocabulary)
+                order = Order.loadFromXML(xmlOrder, vocabulary, namespace, version)
                 sequence.addOrder(order)
 
             return sequence

@@ -28,10 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import re
-from lxml import etree
-import uuid
 import logging
+
 
 #+---------------------------------------------------------------------------+
 #| Local imports
@@ -39,67 +37,40 @@ import logging
 
 
 #+---------------------------------------------------------------------------+
-#| Order:
-#|     Class definition of an order in a sequence
+#| Automata:
+#|     Abstract class which describes an automata (of a grammar) like an MMSTD
 #+---------------------------------------------------------------------------+
-class Order(object):
+class Automata(object):
+
+    MMSTD_TYPE = "mmstd"
 
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, value):
-        self.value = value
-        self.messages = []
+    def __init__(self, type):
+        self.type = type
     
-    def addMessage(self, message):
-        if not message in self.messages :
-            self.messages.append(message)
+    #+-----------------------------------------------------------------------+
+    #| Getters & Setters
+    #+-----------------------------------------------------------------------+
+    def getType(self):
+        return self.type
     
-    def removeMessage(self, message):
-        if message in self.messages :
-            self.messages.remove(message)
-        else :
-            logging.warn("Impossible to remove the message : it doesn't exist in order")
-    
-    
-     
+    #+-----------------------------------------------------------------------+
+    #| Save & Load
+    #+-----------------------------------------------------------------------+
     def save(self, root, namespace):
-        xmlOrder = etree.SubElement(root, "{" + namespace + "}order")
-        xmlOrder.set("value", str(self.getValue()))        
-        for message in self.messages :
-            xmlMessage = etree.SubElement(xmlOrder, "{" + namespace + "}msg-ref")
-            xmlMessage.text = str(message.getID())
-            
-    #+----------------------------------------------
-    #| GETTERS & SETTERS
-    #+----------------------------------------------
-    def getValue(self):
-        return self.value
-    def getMessages(self):
-        return self.messages
-    def setValue(self, value):
-        self.value = value
-    def setMesages(self, messages):
-        self.messages = messages
-       
+        self.log.error("Error, the current automata (declared as " + self.type + ") doesn't support function save")
+        raise NotImplementedError("Error, the current automata (declared as " + self.type + ") doesn't support function save")
 
     @staticmethod
     def loadFromXML(xmlRoot, vocabulary, namespace, version):
         if version == "0.1":
-            order_value = int(xmlRoot.get("value"))
-            
-            order = Order(order_value)
-            
-            if xmlRoot.find("{" + namespace + "}msg-ref") != None :
-                for xmlMsg in xmlRoot.findall("{" + namespace + "}msg-ref"):
-                    msgID = str(xmlMsg.text)
-                    msg = vocabulary.getMessageByID(msgID)
-                    if msg == None :
-                        logging.warn("Impossible to retrieve the message with ID " + str(msgID))
-                    else :
-                        order.addMessage(msg)
-            
-
-            return order
-
+            automata_type = xmlRoot.get("type")          
+            from netzob.Common.MMSTD.MMSTD import MMSTD  
+            if automata_type == MMSTD.TYPE :
+                automata = MMSTD.loadFromXML(xmlRoot, vocabulary, namespace, version)
+                return automata
+            else :
+                logging.warn("The provided type of automata (" + automata_type + ") cannot be parsed.")
         return None

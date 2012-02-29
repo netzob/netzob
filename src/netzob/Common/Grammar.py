@@ -38,6 +38,8 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.States.AbstractState import AbstractState
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
+from netzob.Common.Automata import Automata
+from netzob.Common.Sequence import Sequence
 
 
 #+---------------------------------------------------------------------------+
@@ -71,6 +73,36 @@ class Grammar(object):
             xmlSequences = etree.SubElement(xmlGrammar, "{" + namespace + "}sequences")
             for sequence in self.getSequences() :
                 sequence.save(xmlSequences, namespace)    
+    
+    @staticmethod
+    def loadGrammar(xmlRoot, vocabulary, namespace, version):        
+        if version == "0.1" :
+            automata = None
+            sequences = []
+            
+            if xmlRoot.find("{" + namespace + "}automata") != None:
+                xmlAutomata = xmlRoot.find("{" + namespace + "}automata")
+                automata = Automata.loadFromXML(xmlAutomata, vocabulary, namespace, version)
+            
+            if xmlRoot.find("{" + namespace + "}sequences") != None:
+                xmlSequences = xmlRoot.find("{" + namespace + "}sequences")
+                for xmlSequence in xmlSequences.findall("{" + namespace + "}sequence") :
+                    sequence = Sequence.loadFromXML(xmlSequence, vocabulary, namespace, version)
+                    sequences.append(sequence)
+                
+            grammar = None
+            if automata != None or len(sequences) > 0 :
+                grammar = Grammar()
+                if automata != None :
+                    grammar.setAutomata(automata)
+                if len(sequences) > 0 :
+                    grammar.setSequences(sequences)
+            
+            return grammar
+            
+        return None
+                
+    
         
     #+-----------------------------------------------------------------------+
     #| Getters & Setters
