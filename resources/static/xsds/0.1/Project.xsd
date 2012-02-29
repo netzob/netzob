@@ -727,6 +727,16 @@
 	</complexType>
 
 	<complexType name="Order">
+		<sequence>
+			<element name="msg-ref" maxOccurs="unbounded"
+				minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
 		<attribute name="value" type="int" use="required"></attribute>
 	</complexType>
 </schema>
