@@ -203,10 +203,10 @@ class Workspace(object):
         for project in self.getProjects():
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
             xmlProject.set("path", project.getPath())
-#
-#        for projectPath in self.getProjectsPath():
-#            logging.info("--> " + projectPath)
-#
+
+        for projectPath in self.getProjectsPath():
+            logging.info("--> " + projectPath)
+
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
