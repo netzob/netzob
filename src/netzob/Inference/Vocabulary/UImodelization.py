@@ -208,7 +208,7 @@ class UImodelization:
 
         # Widget button reset partitioning
         but = NetzobButton("Reset partitioning")
-        but.connect("clicked", self.resetPartitioning_cb)
+        but.connect("clicked", self.resetPartitioningOnAllSymbols)
         but.set_tooltip_text("Reset the current partitioning")
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
@@ -675,29 +675,39 @@ class UImodelization:
         
         for symbol in symbols :
             symbol.slickRegex(self.netzob.getCurrentProject())
-            
-        self.treeMessageGenerator.clear()
-        self.treeSymbolGenerator.clear()
-        self.treeTypeStructureGenerator.clear()
+
         self.update()
         
+    def resetPartitioningOnAllSymbols(self, widget):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.resetPartitioning(symbols)
         
-
+    def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Execute the process of alignment (show the gui...)
+        self.resetPartitioning(symbols)
 
     #+----------------------------------------------
     #| resetPartitioning_cb:
     #|   Called when user wants to reset the current alignment
     #+----------------------------------------------
-    def resetPartitioning_cb(self, but):
+    def resetPartitioning(self, symbols):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
-
-        self.selectedSymbol.resetPartitioning(self.netzob.getCurrentProject())
+        for symbol in symbols :
+            symbol.resetPartitioning(self.netzob.getCurrentProject())
         self.update()
 
 
@@ -1693,7 +1703,7 @@ class UImodelization:
             # Reset partitioning
             itemResetPartitioning = gtk.MenuItem("Reset Partitioning")
             itemResetPartitioning.show()
-            itemResetPartitioning.connect("activate", self.sequenceAlignment, symbol)
+            itemResetPartitioning.connect("activate", self.resetPartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemResetPartitioning)
             
             itemMenuAlignment = gtk.MenuItem("Align the symbol")
