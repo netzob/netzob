@@ -196,7 +196,7 @@ class UImodelization:
 
         # Widget for simple partitioning
         but = NetzobButton("Simple partitioning")
-        but.connect("clicked", self.simplePartitioning_cb)
+        but.connect("clicked", self.simplePartitioningOnAllSymbols)
         but.set_tooltip_text("In order to show the simple differences between messages")
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
@@ -573,16 +573,34 @@ class UImodelization:
         self.update()
         dialog.destroy()
 
-    #+----------------------------------------------
-    #| simplePartitioning_cb:
-    #|   Apply a simple partitioning
-    #+----------------------------------------------
-    def simplePartitioning_cb(self, widget):
+    def simplePartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.simplePartitioning(symbols)
+        
+    def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        # Execute the process of alignment (show the gui...)
+        self.simplePartitioning(symbols)
 
+
+
+    #+----------------------------------------------
+    #| simplePartitioning:
+    #|   Apply a simple partitioning
+    #+----------------------------------------------
+    def simplePartitioning(self, symbols):
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -607,7 +625,7 @@ class UImodelization:
 
         # Button
         searchButton = NetzobButton("Simple partitioning")
-        searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo)
+        searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo, symbols)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
@@ -617,10 +635,10 @@ class UImodelization:
     #| simplePartitioning_cb_cb:
     #|   Apply a simple partitioning
     #+----------------------------------------------
-    def simplePartitioning_cb_cb(self, widget, dialog, unitSize_widget):
-        unitSize = unitSize_widget.get_active_text()
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
+    def simplePartitioning_cb_cb(self, widget, dialog, unitSize_widget, symbols):
+        unitSize = unitSize_widget.get_active_text()        
+        for symbol in symbols:
+            symbol.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
         dialog.destroy()
         self.update()
 
@@ -1603,7 +1621,7 @@ class UImodelization:
             # Simple partitioning
             itemSimplePartitioning = gtk.MenuItem("Simple Partitioning")
             itemSimplePartitioning.show()
-            itemSimplePartitioning.connect("activate", self.sequenceAlignment, symbol)
+            itemSimplePartitioning.connect("activate", self.simplePartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSimplePartitioning)
             
             # Smooth partitioning
