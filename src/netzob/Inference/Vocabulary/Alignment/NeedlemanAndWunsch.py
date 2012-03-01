@@ -33,12 +33,15 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
+import time
 
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
 import libNeedleman
 from netzob.Common.Field import Field
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+import logging
 
 #+---------------------------------------------------------------------------+
 #| NeedlemanAndWunsch:
@@ -48,6 +51,7 @@ class NeedlemanAndWunsch(object):
     
     def __init__(self, cb_status=None):
         self.cb_status = cb_status
+        self.result = []
     
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
@@ -144,8 +148,7 @@ class NeedlemanAndWunsch(object):
         return align
         
         
-    def buildRegexFromAlignment(self, symbol, align, defaultFormat):
-               
+    def buildRegexFromAlignment(self, symbol, align, defaultFormat):               
         # Build regex from alignment
         i = 0
         start = 0
@@ -197,5 +200,59 @@ class NeedlemanAndWunsch(object):
                             fieldNext.setIndex(fieldNext.getIndex() - 1)
                     doLoop = True
                     break
+    
+    
+    #+----------------------------------------------
+    #| alignWithNeedlemanWunsh:
+    #|  Align each messages of each symbol with the
+    #|  Needleman Wunsh algorithm
+    #+----------------------------------------------
+    def alignSymbols(self, symbols, project):
+        from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
+        
+        self.result = []
         
         
+        preResults = []
+        # First we add in results, the symbols which wont be aligned
+        for symbol in project.getVocabulary().getSymbols() :
+            found = False
+            for s in symbols :
+                if str(symbol.getID()) == str(s.getID()) :
+                    found = True
+            if not found :
+                logging.debug("Symbol " + str(symbol.getName()) + "[" + str(symbol.getID()) + "]] wont be aligned")
+                preResults.append(symbol)
+        
+        tmpSymbols = []
+        t1 = time.time()
+        fraction = 0.0
+#        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
+        
+#        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
+        minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
+        doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
+        doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
+#        
+        # We try to cluster each symbol
+        for symbol in symbols:
+            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.cb_status)
+            tmpSymbols.extend(clusteringSolution.executeClustering())
+
+        # Now that all the symbols are reorganized separately
+        # we should consider merging them
+        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.cb_status)        
+        self.result = clusteringSolution.executeClustering()        
+        
+        if doOrphanReduction :
+            logging.info("Execute orphan reduction")
+            self.result = clusteringSolution.executeOrphanReduction()
+        
+        self.result.extend(preResults)
+        logging.info("Time of parsing : " + str(time.time() - t1))    
+        
+        
+    def getLastResult(self):
+        return self.result
