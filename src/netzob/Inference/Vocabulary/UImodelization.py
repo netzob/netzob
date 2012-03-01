@@ -202,7 +202,7 @@ class UImodelization:
 
         # Widget button slick regex
         but = NetzobButton("Smooth partitioning")
-        but.connect("clicked", self.slickRegex_cb)
+        but.connect("clicked", self.smoothPartitioningOnAllSymbols)
         but.set_tooltip_text("Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
@@ -641,6 +641,66 @@ class UImodelization:
             symbol.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
         dialog.destroy()
         self.update()
+
+
+    def smoothPartitioningOnAllSymbols(self, widget):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.smoothPartitioning(symbols)
+        
+    def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Execute the process of alignment (show the gui...)
+        self.smoothPartitioning(symbols)
+
+
+    #+----------------------------------------------
+    #| Called when user wants to slick the current regexes
+    #+----------------------------------------------
+    def smoothPartitioning(self, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        
+        
+        for symbol in symbols :
+            symbol.slickRegex(self.netzob.getCurrentProject())
+            
+        self.treeMessageGenerator.clear()
+        self.treeSymbolGenerator.clear()
+        self.treeTypeStructureGenerator.clear()
+        self.update()
+        
+        
+
+
+    #+----------------------------------------------
+    #| resetPartitioning_cb:
+    #|   Called when user wants to reset the current alignment
+    #+----------------------------------------------
+    def resetPartitioning_cb(self, but):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        if self.selectedSymbol == None:
+            NetzobErrorMessage("No symbol selected.")
+            return
+
+        self.selectedSymbol.resetPartitioning(self.netzob.getCurrentProject())
+        self.update()
+
+
 
     #+----------------------------------------------
     #| button_press_on_treeview_symbols:
@@ -1627,7 +1687,7 @@ class UImodelization:
             # Smooth partitioning
             itemSmoothPartitioning = gtk.MenuItem("Smooth Partitioning")
             itemSmoothPartitioning.show()
-            itemSmoothPartitioning.connect("activate", self.sequenceAlignment, symbol)
+            itemSmoothPartitioning.connect("activate", self.smoothPartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSmoothPartitioning)
             
             # Reset partitioning
@@ -2125,38 +2185,7 @@ class UImodelization:
         entropy.buildDistributionView()
 
 
-    #+----------------------------------------------
-    #| Called when user wants to slick the current regexes
-    #+----------------------------------------------
-    def slickRegex_cb(self, but):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
-
-        self.selectedSymbol.slickRegex(self.netzob.getCurrentProject())
-        self.update()
-
-
-    #+----------------------------------------------
-    #| resetPartitioning_cb:
-    #|   Called when user wants to reset the current alignment
-    #+----------------------------------------------
-    def resetPartitioning_cb(self, but):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
-
-        self.selectedSymbol.resetPartitioning(self.netzob.getCurrentProject())
-        self.update()
-
+    
 
     #+----------------------------------------------
     #| Called when user wants to find ASN.1 fields
