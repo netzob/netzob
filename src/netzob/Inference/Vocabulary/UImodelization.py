@@ -190,7 +190,7 @@ class UImodelization:
 
         # Widget for forcing partitioning delimiter
         but = NetzobButton("Force partitioning")
-        but.connect("clicked", self.forcePartitioning_cb)
+        but.connect("clicked", self.forcePartitioningOnAllSymbols)
         but.set_tooltip_text("Set a delimiter to force partitioning")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
@@ -490,15 +490,34 @@ class UImodelization:
             return True
         return False
 
-    #+----------------------------------------------
-    #| forcePartitioning_cb:
-    #|   Force the delimiter for partitioning
-    #+----------------------------------------------
-    def forcePartitioning_cb(self, widget):
+    
+    def forcePartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.forcePartitioning(symbols)
+        
+    def forcePartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        # Execute the process of alignment (show the gui...)
+        self.forcePartitioning(symbols)
+
+
+    #+----------------------------------------------
+    #| forcePartitioning_cb:
+    #|   Force the delimiter for partitioning
+    #+----------------------------------------------
+    def forcePartitioning(self, symbols):       
 
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
@@ -533,7 +552,7 @@ class UImodelization:
 
         # Button
         searchButton = NetzobButton("Force partitioning")
-        searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry)
+        searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry, symbols)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
@@ -543,15 +562,14 @@ class UImodelization:
     #| forcePartitioning_cb_cb:
     #|   Force the delimiter for partitioning
     #+----------------------------------------------
-    def forcePartitioning_cb_cb(self, widget, dialog, aFormat, delimiter):
+    def forcePartitioning_cb_cb(self, widget, dialog, aFormat, delimiter, symbols):
         aFormat = aFormat.get_active_text()
         delimiter = delimiter.get_text()
         delimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, aFormat)
 
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.forcePartitioning(self.netzob.getCurrentProject().getConfiguration(),
-                                     aFormat,
-                                     delimiter)
+        for symbol in symbols:
+            symbol.forcePartitioning(self.netzob.getCurrentProject().getConfiguration(), aFormat, delimiter)
+
         self.update()
         dialog.destroy()
 
@@ -1579,7 +1597,7 @@ class UImodelization:
             # Force partitioning
             itemForcePartitioning = gtk.MenuItem("Force Partitioning")
             itemForcePartitioning.show()
-            itemForcePartitioning.connect("activate", self.sequenceAlignment, symbol)
+            itemForcePartitioning.connect("activate", self.forcePartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemForcePartitioning)
             
             # Simple partitioning
