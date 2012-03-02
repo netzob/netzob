@@ -62,6 +62,7 @@ class AbstractMessage():
         self.symbol = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
+        self.highlightSegments = []
 
     #+-----------------------------------------------------------------------+
     #| getFactory
@@ -80,6 +81,12 @@ class AbstractMessage():
     def getProperties(self):
         self.log.error("The message class doesn't have a method 'getProperties' !")
         raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
+
+    def highlightSegment(self, start_segment, end_segment):
+        self.highlightSegments.append((start_segment, end_segment))
+        
+    def getHighlightSegments(self):
+        return self.highlightSegments
 
     #+----------------------------------------------
     #|`getStringData : compute a string representation
@@ -131,7 +138,8 @@ class AbstractMessage():
             return self.applyRegex(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
-
+        
+    
     #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
     #|  and return a table
@@ -150,17 +158,18 @@ class AbstractMessage():
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
-        
-
-        if m == None:
-            
+        if m == None:            
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-#            return [self.getStringData()]
+
+
+
         iCol = 0
         dynamicCol = 1
+        nbLetterInNetzobRaw = 0
+        
         for field in self.symbol.getFields():
             if field.getRegex().find("(") != -1:  # Means this column is not static
                 start = m.start(dynamicCol)

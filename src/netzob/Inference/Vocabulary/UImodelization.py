@@ -2153,7 +2153,7 @@ class UImodelization:
             return
 
         dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
-        searchPanel = SearchView(self.netzob.getCurrentProject())
+        searchPanel = SearchView(self.netzob.getCurrentProject(), self.treeMessageGenerator, self.treeSymbolGenerator)
         dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
         dialog.show()
 

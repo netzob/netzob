@@ -49,10 +49,12 @@ class SearchView(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, project):
+    def __init__(self, project, messageViewGenerator, symbolViewGenerator):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.SearchView.py')
         self.project = project
+        self.messageViewGenerator = messageViewGenerator
+        self.symbolViewGenerator = symbolViewGenerator
 
     def getPanel(self):
         # Create the main panel
@@ -129,10 +131,26 @@ class SearchView(object):
             self.log.info(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
-        searchResults = searcher.search(searchedData)
-        self.log.info("A number of " + str(len(searchResults)) + " results found !")
-
-        self.updateView(searchResults)
+        searchTasks = searcher.search(searchedData)
+        self.log.info("A number of " + str(len(searchTasks)) + " results found !")
+        
+        # Colorize the segments
+        self.colorizeResults(searchTasks)
+        
+        # Display the dedicated view
+        self.updateView(searchTasks)
+        
+    def colorizeResults(self, searchTasks):
+        for task in searchTasks:
+            for result in task.getResults():
+                for (start, end) in result.getSegments() :
+                    message = result.getMessage()
+                    message.highlightSegment(start, end)
+        # We update the different views
+        self.messageViewGenerator.updateDefault()
+        self.symbolViewGenerator.default()
+            
+        
 
     def updateView(self, tasks):
 
@@ -148,8 +166,7 @@ class SearchView(object):
         
         foundSymbols = dict()
         foundMessages = dict()
-        
-
+                
         for task in tasks:
             for result in task.getResults():
                 # retrieve the symbol associated with the message
