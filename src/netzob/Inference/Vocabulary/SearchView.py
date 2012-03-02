@@ -145,27 +145,34 @@ class SearchView(object):
         colResult.add_attribute(cell, "text", 0)
 
         treestore = gtk.TreeStore(str)
+        
+        foundSymbols = dict()
+        foundMessages = dict()
+        
 
         for task in tasks:
             for result in task.getResults():
                 # retrieve the symbol associated with the message
                 symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
-
-                it = treestore.append(None, [symbol.getName()])
-                it2 = treestore.append(it, [result.getMessage().getID()])
-                treestore.append(it2, [str(result.getSegments())])
-
-#        it = treestore.append(None, ["Groupe REQUEST"])
-#        it2 = treestore.append(it, ["Message 1"])
-#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
-#        it2 = treestore.append(it, ["Message 2"])
-#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
-#
-#        it = treestore.append(None, ["Groupe RESPONSE"])
-#        it2 = treestore.append(it, ["Message 1"])
-#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
-#        it2 = treestore.append(it, ["Message 2"])
-#        treestore.append(it2, ["3273787382737277323223782988083987265325436"])
+                
+                # Display the tree item for the symbol
+                treeItemSymbol = None
+                if str(symbol.getID()) in foundSymbols.keys() :
+                    treeItemSymbol = foundSymbols[str(symbol.getID())]
+                else :
+                    treeItemSymbol = treestore.append(None, [symbol.getName()])
+                    foundSymbols[str(symbol.getID())] = treeItemSymbol
+                    
+                # Display the tree item for the message
+                treeItemMessage = None
+                if str(result.getMessage().getID()) in foundMessages.keys() :
+                    treeItemMessage = foundMessages[str(result.getMessage().getID())]
+                else :
+                    treeItemMessage = treestore.append(treeItemSymbol, [result.getMessage().getID()])
+                    foundMessages[str(result.getMessage().getID())] = treeItemMessage
+                
+                # Add the result
+                treestore.append(treeItemMessage, [str(result.getSegments())])
 
         self.tree.append_column(colResult)
         self.tree.set_model(treestore)

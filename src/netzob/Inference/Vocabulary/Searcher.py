@@ -113,7 +113,6 @@ class Searcher(object):
     #| @param tasks the set of "search" task
     #+----------------------------------------------
     def search(self, tasks):
-        results = []
         for task in tasks:
             for symbols in self.project.getVocabulary().getSymbols():
                 for message in symbols.getMessages():
