@@ -47,7 +47,7 @@ import uuid
 #+----------------------------------------------
 from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry, \
     NetzobProgressBar, NetzobErrorMessage, NetzobInfoMessage
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
@@ -184,31 +184,31 @@ class UImodelization:
         # Widget for sequence alignment
         but = NetzobButton("Sequence alignment")
         but.set_tooltip_text("Automatically discover the best alignment of messages")
-        but.connect("clicked", self.sequenceAlignment_cb)
+        but.connect("clicked", self.sequenceAlignmentOnAllSymbols)
 #        but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for forcing partitioning delimiter
         but = NetzobButton("Force partitioning")
-        but.connect("clicked", self.forcePartitioning_cb)
+        but.connect("clicked", self.forcePartitioningOnAllSymbols)
         but.set_tooltip_text("Set a delimiter to force partitioning")
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for simple partitioning
         but = NetzobButton("Simple partitioning")
-        but.connect("clicked", self.simplePartitioning_cb)
+        but.connect("clicked", self.simplePartitioningOnAllSymbols)
         but.set_tooltip_text("In order to show the simple differences between messages")
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
         but = NetzobButton("Smooth partitioning")
-        but.connect("clicked", self.slickRegex_cb)
+        but.connect("clicked", self.smoothPartitioningOnAllSymbols)
         but.set_tooltip_text("Merge small static fields with its neighbours")
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button reset partitioning
         but = NetzobButton("Reset partitioning")
-        but.connect("clicked", self.resetPartitioning_cb)
+        but.connect("clicked", self.resetPartitioningOnAllSymbols)
         but.set_tooltip_text("Reset the current partitioning")
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
@@ -349,16 +349,34 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
 
-    #+----------------------------------------------
-    #| sequenceAlignment:
-    #|   Parse the traces and store the results
-    #+----------------------------------------------
-    def sequenceAlignment_cb(self, widget):
+    def sequenceAlignmentOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.sequenceAlignment(symbols)
+        
+    def sequenceAlignmentOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        # Execute the process of alignment (show the gui...)
+        self.sequenceAlignment(symbols)
 
+
+    #+----------------------------------------------
+    #| sequenceAlignment:
+    #|   Parse the traces and store the results
+    #+----------------------------------------------
+    def sequenceAlignment(self, symbols):
+        
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -412,7 +430,7 @@ class UImodelization:
 
         # Button
         searchButton = NetzobButton("Sequence alignment")
-        searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog)
+        searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog, symbols)
         panel.attach(searchButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
@@ -422,29 +440,35 @@ class UImodelization:
     #| sequenceAlignment_cb_cb:
     #|   Launch a sequence alignment thread
     #+----------------------------------------------
-    def sequenceAlignment_cb_cb(self, widget, dialog):
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+    def sequenceAlignment_cb_cb(self, widget, dialog, symbols):
         self.currentExecutionOfAlignmentHasFinished = False
         # Start the progress bar
         gobject.timeout_add(200, self.do_pulse_for_sequenceAlignment)
         # Start the alignment JOB
-        Job(self.startSequenceAlignment(vocabulary, dialog))
+        Job(self.startSequenceAlignment(symbols, dialog))
 
     #+----------------------------------------------
     #| startSequenceAlignment:
     #|   Execute the Job of the Alignment in a unsynchronized way
     #+----------------------------------------------
-    def startSequenceAlignment(self, vocabulary, dialog):
+    def startSequenceAlignment(self, symbols, dialog):
         self.currentExecutionOfAlignmentHasFinished = False
-        (yield ThreadedTask(vocabulary.alignWithNeedlemanWunsh, self.netzob.getCurrentProject(), self.percentOfAlignmentProgessBar))
+        alignmentSolution = NeedlemanAndWunsch(self.percentOfAlignmentProgessBar)
+        
+        try :
+            (yield ThreadedTask(alignmentSolution.alignSymbols, symbols, self.netzob.getCurrentProject()))
+        except TaskError, e:
+            self.log.error("Error while proceeding to the alignment : " + str(e))
+        
+        new_symbols = alignmentSolution.getLastResult()
         self.currentExecutionOfAlignmentHasFinished = True
         
         dialog.destroy()
 
         # Show the new symbol in the interface
-        symbols = self.netzob.getCurrentProject().getVocabulary().getSymbols()
-        if len(symbols) > 0:
-            symbol = symbols[0]
+        self.netzob.getCurrentProject().getVocabulary().setSymbols(new_symbols)
+        if len(new_symbols) > 0:
+            symbol = new_symbols[0]
             self.selectedSymbol = symbol
             self.treeMessageGenerator.default(self.selectedSymbol)
             self.treeSymbolGenerator.default()
@@ -466,15 +490,34 @@ class UImodelization:
             return True
         return False
 
-    #+----------------------------------------------
-    #| forcePartitioning_cb:
-    #|   Force the delimiter for partitioning
-    #+----------------------------------------------
-    def forcePartitioning_cb(self, widget):
+    
+    def forcePartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.forcePartitioning(symbols)
+        
+    def forcePartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        # Execute the process of alignment (show the gui...)
+        self.forcePartitioning(symbols)
+
+
+    #+----------------------------------------------
+    #| forcePartitioning_cb:
+    #|   Force the delimiter for partitioning
+    #+----------------------------------------------
+    def forcePartitioning(self, symbols):       
 
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
@@ -509,7 +552,7 @@ class UImodelization:
 
         # Button
         searchButton = NetzobButton("Force partitioning")
-        searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry)
+        searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry, symbols)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
@@ -519,28 +562,45 @@ class UImodelization:
     #| forcePartitioning_cb_cb:
     #|   Force the delimiter for partitioning
     #+----------------------------------------------
-    def forcePartitioning_cb_cb(self, widget, dialog, aFormat, delimiter):
+    def forcePartitioning_cb_cb(self, widget, dialog, aFormat, delimiter, symbols):
         aFormat = aFormat.get_active_text()
         delimiter = delimiter.get_text()
         delimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, aFormat)
 
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.forcePartitioning(self.netzob.getCurrentProject().getConfiguration(),
-                                     aFormat,
-                                     delimiter)
+        for symbol in symbols:
+            symbol.forcePartitioning(self.netzob.getCurrentProject().getConfiguration(), aFormat, delimiter)
+
         self.update()
         dialog.destroy()
 
-    #+----------------------------------------------
-    #| simplePartitioning_cb:
-    #|   Apply a simple partitioning
-    #+----------------------------------------------
-    def simplePartitioning_cb(self, widget):
+    def simplePartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.simplePartitioning(symbols)
+        
+    def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        # Execute the process of alignment (show the gui...)
+        self.simplePartitioning(symbols)
 
+
+
+    #+----------------------------------------------
+    #| simplePartitioning:
+    #|   Apply a simple partitioning
+    #+----------------------------------------------
+    def simplePartitioning(self, symbols):
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -565,7 +625,7 @@ class UImodelization:
 
         # Button
         searchButton = NetzobButton("Simple partitioning")
-        searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo)
+        searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo, symbols)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
@@ -575,12 +635,82 @@ class UImodelization:
     #| simplePartitioning_cb_cb:
     #|   Apply a simple partitioning
     #+----------------------------------------------
-    def simplePartitioning_cb_cb(self, widget, dialog, unitSize_widget):
-        unitSize = unitSize_widget.get_active_text()
-        vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        vocabulary.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
+    def simplePartitioning_cb_cb(self, widget, dialog, unitSize_widget, symbols):
+        unitSize = unitSize_widget.get_active_text()        
+        for symbol in symbols:
+            symbol.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
         dialog.destroy()
         self.update()
+
+
+    def smoothPartitioningOnAllSymbols(self, widget):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.smoothPartitioning(symbols)
+        
+    def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Execute the process of alignment (show the gui...)
+        self.smoothPartitioning(symbols)
+
+
+    #+----------------------------------------------
+    #| Called when user wants to slick the current regexes
+    #+----------------------------------------------
+    def smoothPartitioning(self, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        
+        
+        for symbol in symbols :
+            symbol.slickRegex(self.netzob.getCurrentProject())
+
+        self.update()
+        
+    def resetPartitioningOnAllSymbols(self, widget):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        symbols = project.getVocabulary().getSymbols()
+        # Execute the process of alignment (show the gui...)
+        self.resetPartitioning(symbols)
+        
+    def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        # Execute the process of alignment (show the gui...)
+        self.resetPartitioning(symbols)
+
+    #+----------------------------------------------
+    #| resetPartitioning_cb:
+    #|   Called when user wants to reset the current alignment
+    #+----------------------------------------------
+    def resetPartitioning(self, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        for symbol in symbols :
+            symbol.resetPartitioning(self.netzob.getCurrentProject())
+        self.update()
+
+
 
     #+----------------------------------------------
     #| button_press_on_treeview_symbols:
@@ -1537,23 +1667,116 @@ class UImodelization:
     #|   on the treeview symbols
     #+----------------------------------------------
     def build_context_menu_for_symbols(self, event, symbol):
-        # Retrieves the symbol on which the user has clicked on
-
-        entries = [
-                  (gtk.STOCK_EDIT, self.displayPopupToEditSymbol, (symbol != None)),
-                  (gtk.STOCK_ADD, self.displayPopupToCreateSymbol, (symbol == None)),
-                  (gtk.STOCK_REMOVE, self.displayPopupToRemoveSymbol, (symbol != None))
-       ]
-
+        
+        # Build the contextual menu
         menu = gtk.Menu()
-        for stock_id, callback, sensitive in entries:
-            item = gtk.ImageMenuItem(stock_id)
-            item.connect("activate", callback, symbol)
-            item.set_sensitive(sensitive)
-            item.show()
-            menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+        
+        if (symbol != None) :
+            
+            # SubMenu : Alignments
+            subMenuAlignment = gtk.Menu()
+            
+            # Sequence alignment
+            itemSequenceAlignment = gtk.MenuItem("Sequence Alignment")
+            itemSequenceAlignment.show()
+            itemSequenceAlignment.connect("activate", self.sequenceAlignmentOnSpecifiedSymbols, [symbol])
+            subMenuAlignment.append(itemSequenceAlignment)
+            
+            # Force partitioning
+            itemForcePartitioning = gtk.MenuItem("Force Partitioning")
+            itemForcePartitioning.show()
+            itemForcePartitioning.connect("activate", self.forcePartitioningOnSpecifiedSymbols, [symbol])
+            subMenuAlignment.append(itemForcePartitioning)
+            
+            # Simple partitioning
+            itemSimplePartitioning = gtk.MenuItem("Simple Partitioning")
+            itemSimplePartitioning.show()
+            itemSimplePartitioning.connect("activate", self.simplePartitioningOnSpecifiedSymbols, [symbol])
+            subMenuAlignment.append(itemSimplePartitioning)
+            
+            # Smooth partitioning
+            itemSmoothPartitioning = gtk.MenuItem("Smooth Partitioning")
+            itemSmoothPartitioning.show()
+            itemSmoothPartitioning.connect("activate", self.smoothPartitioningOnSpecifiedSymbols, [symbol])
+            subMenuAlignment.append(itemSmoothPartitioning)
+            
+            # Reset partitioning
+            itemResetPartitioning = gtk.MenuItem("Reset Partitioning")
+            itemResetPartitioning.show()
+            itemResetPartitioning.connect("activate", self.resetPartitioningOnSpecifiedSymbols, [symbol])
+            subMenuAlignment.append(itemResetPartitioning)
+            
+            itemMenuAlignment = gtk.MenuItem("Align the symbol")
+            itemMenuAlignment.show()
+            itemMenuAlignment.set_submenu(subMenuAlignment)
+            
+            menu.append(itemMenuAlignment)
+            
+            # Edit the Symbol
+            itemEditSymbol = gtk.MenuItem("Edit symbol")
+            itemEditSymbol.show()
+            itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
+            menu.append(itemEditSymbol)
 
+            # Remove a Symbol
+            itemRemoveSymbol = gtk.MenuItem("Remove symbol")
+            itemRemoveSymbol.show()
+            itemRemoveSymbol.connect("activate", self.displayPopupToRemoveSymbol, symbol)
+            menu.append(itemRemoveSymbol)
+        else :
+            # Create a Symbol
+            itemCreateSymbol = gtk.MenuItem("Create a symbol")
+            itemCreateSymbol.show()
+            itemCreateSymbol.connect("activate", self.displayPopupToCreateSymbol, symbol)
+            menu.append(itemCreateSymbol)
+            
+#        
+#        
+#        
+#         # Add sub-entries to change the type of a specific field
+#         
+#            item = gtk.MenuItem("Field visualization")
+#            item.set_submenu(subMenu)
+#            item.show()
+#            menu.append(item)
+#
+#            # Add entries to concatenate fields
+#            concatMenu = gtk.Menu()
+#            item = gtk.MenuItem("with precedent field")
+#            item.show()
+#            item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
+#        
+#
+#        # Create the submenu of the alignment of the symbol
+#        item = gtk.MenuItem("")
+#        item.show()
+#        item.connect("activate", self.displayPopupToEditField, selectedField)
+#        menu.append(item)
+#        
+#        
+#        
+#        
+#        
+#        
+#        
+#        
+#
+#        entries = [
+#                (gtk.STOCK_BOLD, self.sequenceAlignment, (symbol != None)),
+#                (gtk.STOCK_EDIT, self.displayPopupToEditSymbol, (symbol != None)),
+#                (gtk.STOCK_ADD, self.displayPopupToCreateSymbol, (symbol == None)),
+#                (gtk.STOCK_REMOVE, self.displayPopupToRemoveSymbol, (symbol != None))
+#       ]
+#
+#        menu = gtk.Menu()
+#        for stock_id, callback, sensitive in entries:
+#            item = gtk.ImageMenuItem(stock_id)
+#            item.connect("activate", callback, symbol)
+#            item.set_sensitive(sensitive)
+#            item.show()
+#            menu.append(item)
+        menu.popup(None, None, None, event.button, event.time)
+        
     def displayPopupToEditSymbol(self, event, symbol):
         dialog = gtk.MessageDialog(
         None,
@@ -1718,7 +1941,7 @@ class UImodelization:
         return
     
     def loggingNeedlemanStatus(self, status, message):
-        self.log.debug(status, message)
+        self.log.debug("Status = " + str(status) + " : " + str(message))
 
     #+----------------------------------------------
     #| drag_fromDND:
@@ -1972,38 +2195,7 @@ class UImodelization:
         entropy.buildDistributionView()
 
 
-    #+----------------------------------------------
-    #| Called when user wants to slick the current regexes
-    #+----------------------------------------------
-    def slickRegex_cb(self, but):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
-
-        self.selectedSymbol.slickRegex(self.netzob.getCurrentProject())
-        self.update()
-
-
-    #+----------------------------------------------
-    #| resetPartitioning_cb:
-    #|   Called when user wants to reset the current alignment
-    #+----------------------------------------------
-    def resetPartitioning_cb(self, but):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
-
-        self.selectedSymbol.resetPartitioning(self.netzob.getCurrentProject())
-        self.update()
-
+    
 
     #+----------------------------------------------
     #| Called when user wants to find ASN.1 fields

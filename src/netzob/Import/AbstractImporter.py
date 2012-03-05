@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import uuid
 from datetime import datetime
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -78,3 +79,6 @@ class AbstractImporter:
         for message in messages:
             trace.addMessage(message)
         workspace.addImportedTrace(trace)
+        
+        # Now we save the workspace
+        workspace.saveConfigFile()
