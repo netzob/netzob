@@ -61,12 +61,12 @@ class ImportedTrace(object):
         self.messages = []
 
     def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
-        xmlSymbol = etree.SubElement(root, "{" + namespace_workspace + "}trace")
-        xmlSymbol.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
-        xmlSymbol.set("type", str(self.getDataType()))
-        xmlSymbol.set("description", str(self.getDescription()))
-        xmlSymbol.set("projectName", str(self.getProjectName()))
-        xmlSymbol.set("importID", str(self.getImportID()))
+        xmlTrace = etree.SubElement(root, "{" + namespace_workspace + "}trace")
+        xmlTrace.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
+        xmlTrace.set("type", str(self.getDataType()))
+        xmlTrace.set("description", str(self.getDescription()))
+        xmlTrace.set("projectName", str(self.getProjectName()))
+        xmlTrace.set("importID", str(self.getImportID()))
 
         # Creation of the XML File (in buffer)
         # Compress it using gzip and save the tar.gz
@@ -139,7 +139,7 @@ class ImportedTrace(object):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version, pathOfTraces):
+    def loadTrace(xmlRoot, namespace, namespace_common, version, pathOfTraces):
 
         if version == "0.1":
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
