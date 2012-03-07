@@ -26,59 +26,51 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
-from datetime import datetime
 import logging
 
+
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Symbol import Symbol
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractImporter:
-#|     Mother class which provides common methods too any kind of importers
+#| Automata:
+#|     Abstract class which describes an automata (of a grammar) like an MMSTD
 #+---------------------------------------------------------------------------+
-class AbstractImporter:
+class Automata(object):
 
+    MMSTD_TYPE = "mmstd"
+
+    #+-----------------------------------------------------------------------+
+    #| Constructor
+    #+-----------------------------------------------------------------------+
     def __init__(self, type):
         self.type = type
-
+    
     #+-----------------------------------------------------------------------+
-    #| saveMessagesInProject:
-    #|   Add a selection of messages to an existing project
-    #|   it also saves them in the workspace
+    #| Getters & Setters
     #+-----------------------------------------------------------------------+
-    def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
+    def getType(self):
+        return self.type
+    
+    #+-----------------------------------------------------------------------+
+    #| Save & Load
+    #+-----------------------------------------------------------------------+
+    def save(self, root, namespace):
+        self.log.error("Error, the current automata (declared as " + self.type + ") doesn't support function save")
+        raise NotImplementedError("Error, the current automata (declared as " + self.type + ") doesn't support function save")
 
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), self.type, project)
-        for message in messages:
-            symbol.addMessage(message)
-
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
-        # and register the symbol in the vocabulary of the project
-        project.getVocabulary().addSymbol(symbol)
-        # Add the environmental dependencies to the project
-        if fetchEnv:
-            project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                   self.envDeps.getEnvData())
-        # Computes current date
-        date = datetime.now()
-        description = "No description (yet not implemented)"
-
-        # Now we also save the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
-        for message in messages:
-            trace.addMessage(message)
-        workspace.addImportedTrace(trace)
-        
-        # Now we save the workspace
-        workspace.saveConfigFile()
+    @staticmethod
+    def loadFromXML(xmlRoot, vocabulary, namespace, version):
+        if version == "0.1":
+            automata_type = xmlRoot.get("type")          
+            from netzob.Common.MMSTD.MMSTD import MMSTD  
+            if automata_type == MMSTD.TYPE :
+                automata = MMSTD.loadFromXML(xmlRoot, vocabulary, namespace, version)
+                return automata
+            else :
+                logging.warn("The provided type of automata (" + automata_type + ") cannot be parsed.")
+        return None

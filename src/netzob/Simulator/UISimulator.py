@@ -472,7 +472,7 @@ class UISimulator:
         abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))
 
         # And we create an MMSTD visitor for this
-        visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar, isMaster, abstractionLayer)
+        visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar.getAutomata(), isMaster, abstractionLayer)
 
         # add the actor to the list
         self.actors.append(visitor)

@@ -84,6 +84,10 @@ class Vocabulary(object):
         
         return None
 
+    def setSymbols(self, symbols):
+        self.symbols = symbols
+
+
     def addSymbol(self, symbol):
         if not symbol in self.symbols:
             self.symbols.append(symbol)
@@ -123,39 +127,7 @@ class Vocabulary(object):
         logging.debug("The number of estimated steps for Needleman is " + str(nbSteps))
         return nbSteps
 
-    #+----------------------------------------------
-    #| alignWithNeedlemanWunsh:
-    #|  Align each messages of each symbol with the
-    #|  Needleman Wunsh algorithm
-    #+----------------------------------------------
-    def alignWithNeedlemanWunsh(self, project, percentOfAlignmentProgessBar_cb):
-        tmpSymbols = []
-        t1 = time.time()
-        fraction = 0.0
-#        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
-        
-        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
-        defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-        nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
-        minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
-        doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
-        doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-        
-        # We try to cluster each symbol
-        for symbol in self.symbols:
-            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)
-            tmpSymbols.extend(clusteringSolution.executeClustering())
-
-        # Now that all the symbols are reorganized separately
-        # we should consider merging them
-        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, percentOfAlignmentProgessBar_cb)        
-        self.symbols = clusteringSolution.executeClustering()        
-        
-        if doOrphanReduction :
-            logging.info("Execute orphan reduction")
-            clusteringSolution.executeOrphanReduction()
-        
-        logging.info("Time of parsing : " + str(time.time() - t1))
+    
 
 
     #+----------------------------------------------

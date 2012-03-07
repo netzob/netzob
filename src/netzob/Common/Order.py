@@ -26,59 +26,80 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
+import re
+from lxml import etree
 import uuid
-from datetime import datetime
 import logging
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Symbol import Symbol
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractImporter:
-#|     Mother class which provides common methods too any kind of importers
+#| Order:
+#|     Class definition of an order in a sequence
 #+---------------------------------------------------------------------------+
-class AbstractImporter:
-
-    def __init__(self, type):
-        self.type = type
+class Order(object):
 
     #+-----------------------------------------------------------------------+
-    #| saveMessagesInProject:
-    #|   Add a selection of messages to an existing project
-    #|   it also saves them in the workspace
+    #| Constructor
     #+-----------------------------------------------------------------------+
-    def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
+    def __init__(self, value):
+        self.value = value
+        self.messages = []
+    
+    def addMessage(self, message):
+        if not message in self.messages :
+            self.messages.append(message)
+    
+    def removeMessage(self, message):
+        if message in self.messages :
+            self.messages.remove(message)
+        else :
+            logging.warn("Impossible to remove the message : it doesn't exist in order")
+    
+    
+     
+    def save(self, root, namespace):
+        xmlOrder = etree.SubElement(root, "{" + namespace + "}order")
+        xmlOrder.set("value", str(self.getValue()))        
+        for message in self.messages :
+            xmlMessage = etree.SubElement(xmlOrder, "{" + namespace + "}msg-ref")
+            xmlMessage.text = str(message.getID())
+            
+    #+----------------------------------------------
+    #| GETTERS & SETTERS
+    #+----------------------------------------------
+    def getValue(self):
+        return self.value
+    def getMessages(self):
+        return self.messages
+    def setValue(self, value):
+        self.value = value
+    def setMesages(self, messages):
+        self.messages = messages
+       
 
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), self.type, project)
-        for message in messages:
-            symbol.addMessage(message)
+    @staticmethod
+    def loadFromXML(xmlRoot, vocabulary, namespace, version):
+        if version == "0.1":
+            order_value = int(xmlRoot.get("value"))
+            
+            order = Order(order_value)
+            
+            if xmlRoot.find("{" + namespace + "}msg-ref") != None :
+                for xmlMsg in xmlRoot.findall("{" + namespace + "}msg-ref"):
+                    msgID = str(xmlMsg.text)
+                    msg = vocabulary.getMessageByID(msgID)
+                    if msg == None :
+                        logging.warn("Impossible to retrieve the message with ID " + str(msgID))
+                    else :
+                        order.addMessage(msg)
+            
 
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
-        # and register the symbol in the vocabulary of the project
-        project.getVocabulary().addSymbol(symbol)
-        # Add the environmental dependencies to the project
-        if fetchEnv:
-            project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                   self.envDeps.getEnvData())
-        # Computes current date
-        date = datetime.now()
-        description = "No description (yet not implemented)"
+            return order
 
-        # Now we also save the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
-        for message in messages:
-            trace.addMessage(message)
-        workspace.addImportedTrace(trace)
-        
-        # Now we save the workspace
-        workspace.saveConfigFile()
+        return None
