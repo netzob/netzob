@@ -39,7 +39,7 @@ from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
-
+from netzob.Common.Session import Session
 
 #+---------------------------------------------------------------------------+
 #| AbstractImporter:
@@ -57,27 +57,37 @@ class AbstractImporter:
     #+-----------------------------------------------------------------------+
     def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
 
-        # We create a symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), self.type, project)
+        # We register each message in the vocabulary of the project
         for message in messages:
-            symbol.addMessage(message)
+            project.getVocabulary().addMessage(message)
 
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
-        # and register the symbol in the vocabulary of the project
-        project.getVocabulary().addSymbol(symbol)
+        # We create a session with each message
+        session = Session(uuid.uuid4(), "", "")
+        for message in messages:
+            session.addMessage(message)
+        # We register the session in the vocabulary of the project
+        project.getVocabulary().addSession(session)
+
+#        # We create a symbol dedicated for this
+#        symbol = Symbol(uuid.uuid4(), self.type, project)
+#        for message in messages:
+#            symbol.addMessage(message)
+#        # We create a default field for the symbol
+#        symbol.addField(Field.createDefaultField())
+#        # We register the symbol in the vocabulary of the project
+#        project.getVocabulary().addSymbol(symbol)
+
         # Add the environmental dependencies to the project
         if fetchEnv:
             project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                   self.envDeps.getEnvData())
+                                                                       self.envDeps.getEnvData())
         # Computes current date
         date = datetime.now()
         description = "No description (yet not implemented)"
 
-        # Now we also save the messages in the workspace
+        # We also save the session in the workspace
         trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
-        for message in messages:
-            trace.addMessage(message)
+        trace.addSession(session)
         workspace.addImportedTrace(trace)
         
         # Now we save the workspace

@@ -43,7 +43,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
@@ -59,7 +58,7 @@ import libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 
-# Note: this is probably useless, as it is already specified in Project.py
+# TODO: Note: this is probably useless, as it is already specified in Project.py
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
@@ -1059,10 +1058,11 @@ class Symbol(AbstractSymbol):
         xmlSymbol.set("alignmentType", str(self.getAlignmentType()))
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
 
-        # Save the messages
-        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages")
+        # Save the message references
+        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_common + "}messages-ref")
         for message in self.messages:
-            AbstractMessageFactory.save(message, xmlMessages, namespace_project, namespace_common)
+            xmlMessage = etree.SubElement(xmlMessages, "{" + namespace_common + "}message-ref")
+            xmlMessage.set("id", str(message.getID()))
         # Save the fields
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
         for field in self.getFields():
@@ -1330,7 +1330,7 @@ class Symbol(AbstractSymbol):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version, project):
+    def loadSymbol(xmlRoot, namespace, namespace_common, version, project, poolOfMessages):
 
         if version == "0.1":
             nameSymbol = xmlRoot.get("name")
@@ -1347,10 +1347,11 @@ class Symbol(AbstractSymbol):
             symbol.setRawDelimiter(rawDelimiter)
 
             # we parse the messages
-            if xmlRoot.find("{" + namespace + "}messages") != None:
-                xmlMessages = xmlRoot.find("{" + namespace + "}messages")
-                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
-                    message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
+            if xmlRoot.find("{" + namespace_common + "}messages-ref") != None:
+                xmlMessages = xmlRoot.find("{" + namespace_common + "}messages-ref")
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
+                    id = xmlMessage.get("id")
+                    message = poolOfMessages.getMessageByID( id )
                     if message != None:
                         message.setSymbol(symbol)
                         symbol.addMessage(message)

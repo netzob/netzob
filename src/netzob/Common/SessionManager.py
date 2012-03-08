@@ -126,7 +126,7 @@ class SessionManager:
         symbolBox.pack_start(box)
 
         # Display messages
-        messages = self.netzob.getCurrentProject().getVocabulary().getAllMessages()
+        messages = self.netzob.getCurrentProject().getVocabulary().getMessages()
         # ListStore format:
         #   str: message.id
         #   str: message.data
@@ -197,7 +197,7 @@ class SessionManager:
         sessionBox.pack_start(box)
 
         # Display messages
-        messages = self.netzob.getCurrentProject().getVocabulary().getAllMessages()
+        messages = self.netzob.getCurrentProject().getVocabulary().getMessages()
         # ListStore format:
         #   str: message.id
         #   str: message.data

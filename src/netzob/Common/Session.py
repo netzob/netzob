@@ -85,19 +85,16 @@ class Session(object):
         if self.getDescription() != None:
             xmlSession.set("description", str(self.getDescription()))
 
-        xmlMessagesRef = etree.SubElement(xmlSession, "{" + namespace + "}msgs-ref")
-        for msg in self.getMessages():
-            xmlMessageRef = etree.SubElement(xmlMessagesRef, "{" + namespace + "}msg-ref")
-            xmlMessageRef.text = str( msg.getID() )
+        xmlMessagesRef = etree.SubElement(xmlSession, "{" + namespace + "}messages-ref")
+        for message in self.getMessages():
+            xmlMessage = etree.SubElement(xmlMessagesRef, "{" + namespace + "}message-ref")
+            xmlMessage.set("id", str(message.getID()))
 
     #+----------------------------------------------
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
-
-        print "PAN"
-
+    def loadFromXML(xmlRoot, namespace_common, version, poolOfMessages):
         if version == "0.1":
             id = xmlRoot.get("id")
             name = xmlRoot.get("name")
@@ -105,12 +102,13 @@ class Session(object):
 
             session = Session(id, name, description)
 
-            if xmlRoot.find("{" + namespace + "}msgs-ref") != None:
-                xmlMessagesRef = xmlRoot.find("{" + namespace + "}msgs-ref")
-                for xmlMessageRef in xmlMessagesRef.findall("{" + namespace + "}msg-ref"):
-                    message_uuid = xmlMessageRef.text
-                    message = getMessageByID( message_uuid )
+            if xmlRoot.find("{" + namespace_common + "}messages-ref") != None:
+                xmlMessages = xmlRoot.find("{" + namespace_common + "}messages-ref")
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
+                    id = xmlMessage.get("id")
+                    message = poolOfMessages.getMessageByID( id )
                     if message != None:
-                        session.addMessage(message)
+                        message.setSymbol(symbol)
+                        symbol.addMessage(message)
             return session
         return None

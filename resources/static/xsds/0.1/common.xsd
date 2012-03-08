@@ -25,7 +25,7 @@
 	</complexType>
 
 	<complexType name="Message-ref">
-		<attribute name="ref-id" type="string"></attribute>
+		<attribute name="id" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Messages">

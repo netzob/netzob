@@ -198,12 +198,26 @@ class FileImport(AbstractImporter):
         currentProject = self.netzob.getCurrentProject()
 
         # We ask the confirmation
-        md = gtk.MessageDialog(None,
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
-#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-        resp = md.run()
-        md.destroy()
+        dialog = gtk.MessageDialog(None,
+                               gtk.DIALOG_DESTROY_WITH_PARENT,
+                               gtk.MESSAGE_QUESTION,
+                               gtk.BUTTONS_OK_CANCEL,
+                               "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
+
+        # Checkbox for session
+        vbox = gtk.VBox()
+        vbox.show()
+        hbox = gtk.HBox()
+        hbox.show()
+        vbox.pack_start(hbox)
+        isSession = gtk.CheckButton("Check if this trace is a session")
+        isSession.set_active(False)
+        isSession.show()
+#        hbox.pack_start(isSession)
+
+        dialog.vbox.pack_end(vbox, True, True, 0)
+        resp = dialog.run()
+        dialog.destroy()
 
         if resp == gtk.RESPONSE_OK:
             self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), currentProject, self.messages)
