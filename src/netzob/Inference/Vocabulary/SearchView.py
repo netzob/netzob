@@ -31,6 +31,8 @@
 import logging
 import gtk
 import pygtk
+from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
+import uuid
 pygtk.require('2.0')
 
 #+----------------------------------------------
@@ -144,8 +146,11 @@ class SearchView(object):
         for task in searchTasks:
             for result in task.getResults():
                 for (start, end) in result.getSegments() :
+                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end, "#DD0000")
                     message = result.getMessage()
-                    message.highlightSegment(start, end)
+                    message.addVisualizationFilter(filter)
+                    
+#                    message.highlightSegment(start, end)
         # We update the different views
         self.messageViewGenerator.updateDefault()
         self.symbolViewGenerator.default()

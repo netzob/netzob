@@ -40,6 +40,8 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
+from netzob.Common.Type.UnitSize import UnitSize
 
 
 #+---------------------------------------------------------------------------+
@@ -62,7 +64,7 @@ class AbstractMessage():
         self.symbol = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
-        self.highlightSegments = []
+        self.visualizationFilters = []
 
     #+-----------------------------------------------------------------------+
     #| getFactory
@@ -82,12 +84,20 @@ class AbstractMessage():
         self.log.error("The message class doesn't have a method 'getProperties' !")
         raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
 
-    def highlightSegment(self, start_segment, end_segment):
-        self.highlightSegments.append((start_segment, end_segment))
-        
-    def getHighlightSegments(self):
-        return self.highlightSegments
-
+    #+-----------------------------------------------------------------------+
+    #| addVisualizationFilter
+    #|     Add a visualization filter
+    #+-----------------------------------------------------------------------+
+    def addVisualizationFilter(self, filter):
+        self.visualizationFilters.append(filter)
+    #+-----------------------------------------------------------------------+
+    #| removeVisualizationFilter
+    #|     Remove a visualization filter
+    #+-----------------------------------------------------------------------+    
+    def removeVisualizationFilter(self, filter):
+        self.visualizationFilters.remove(filter)
+    
+    
     #+----------------------------------------------
     #|`getStringData : compute a string representation
     #| of the data
@@ -135,10 +145,97 @@ class AbstractMessage():
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
         if self.getSymbol().getAlignmentType() == "regex":
-            return self.applyRegex(styled, encoded)
+#            print "==>"
+#            print self.getVisualizationData()
+#            print self.getSplittedData()
+#            print self.applyRegex(styled, encoded)
+            
+            return self.getVisualizationData(encoded)
+#            return self.applyRegex(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
+    
+    
+    
+    #+-----------------------------------------------------------------------+
+    #| getSplittedData
+    #|     Split the message using its symbol's regex and return an array of it
+    #+-----------------------------------------------------------------------+
+    def getSplittedData(self, encoded=False):
+        regex = []
+        dynamicDatas = None
+        # First we compute the global regex
+        for field in self.symbol.getFields():
+            regex.append(field.getRegex())
+        # Now we apply the regex over the message
+        try:
+            compiledRegex = re.compile("".join(regex))
+            data = self.getReducedStringData()
+            dynamicDatas = compiledRegex.match(data)
+        except AssertionError:
+            raise NetzobException("This Python version only supports 100 named groups in regex")
+
+        if dynamicDatas == None:            
+            self.log.warning("The regex of the group doesn't match one of its message")
+            self.log.warning("Regex: " + "".join(regex))
+            self.log.warning("Message: " + data[:255] + "...")
+            raise NetzobException("The regex of the group doesn't match one of its message")
         
+        result = []
+        iCol = 1
+        for field in self.symbol.getFields() :
+            if field.isStatic() :
+                if encoded :
+                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
+                else :
+                    result.append(field.getRegex())
+            else :
+                start = dynamicDatas.start(iCol)
+                end = dynamicDatas.end(iCol)
+                if encoded :
+                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
+                else :
+                    result.append(data[start:end])
+                iCol += 1   
+        return result
+        
+        
+    def getStyledData(self, encoded=False):
+        result = []
+        splittedData = self.getSplittedData(encoded)
+        iGlobal = 0
+        iCol = 0
+        for data in splittedData :
+            localResult = ""
+            for iLocal in range(0, len(data)) :
+                currentLetter = data[iLocal]
+                tmp_result = currentLetter
+                
+                # adapt the position (none = 4bits)
+                nameUnitSize = self.symbol.getFieldByIndex(iCol).getUnitSize()  
+                unitSize = 4
+                if nameUnitSize == UnitSize.BITS8 :
+                    unitSize = 8
+                elif nameUnitSize == UnitSize.BITS16 :
+                    unitSize = 16
+                elif nameUnitSize == UnitSize.BITS32 :
+                    unitSize = 32
+                elif nameUnitSize == UnitSize.BITS64 :
+                    unitSize = 64            
+                
+                for filter in self.getVisualizationFilters() :
+                    if filter.isValid(iGlobal + iLocal, tmp_result, unitSize) :
+                        tmp_result = filter.apply(iGlobal + iLocal, tmp_result, unitSize)
+                
+                localResult += tmp_result
+            iGlobal = iGlobal + len(data)    
+            result.append(localResult)
+            iCol += 1
+        return result
+            
+    def getVisualizationData(self, encoded=False):
+        return self.getStyledData(encoded)
+    
     
     #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
@@ -286,6 +383,9 @@ class AbstractMessage():
 
     def getTimestamp(self):
         return self.timestamp
+    
+    def getVisualizationFilters(self):
+        return self.visualizationFilters
 
     def setID(self, id):
         self.id = id
