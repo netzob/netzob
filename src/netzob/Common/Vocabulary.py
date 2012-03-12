@@ -196,7 +196,7 @@ class Vocabulary(object):
             session.save(xmlSessions, namespace_common)
 
     @staticmethod
-    def loadVocabulary(xmlRoot, namespace, namespace_common, version, project):
+    def loadVocabulary(xmlRoot, namespace_project, namespace_common, version, project):
         vocabulary = Vocabulary()
 
         if version == "0.1":
@@ -206,8 +206,8 @@ class Vocabulary(object):
                 if message != None:
                     vocabulary.addMessage(message)
             # Symbols
-            for xmlSymbol in xmlRoot.findall("{" + namespace + "}symbols/{" + namespace + "}symbol"):
-                symbol = Symbol.loadSymbol(xmlSymbol, namespace, namespace_common, version, project, vocabulary)
+            for xmlSymbol in xmlRoot.findall("{" + namespace_project + "}symbols/{" + namespace_project + "}symbol"):
+                symbol = Symbol.loadSymbol(xmlSymbol, namespace_project, namespace_common, version, project, vocabulary)
                 if symbol != None:
                     vocabulary.addSymbol(symbol)
             # Sessions

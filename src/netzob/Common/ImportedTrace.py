@@ -158,7 +158,7 @@ class ImportedTrace(object):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadTrace(xmlRoot, namespace, namespace_common, version, pathOfTraces):
+    def loadTrace(xmlRoot, namespace_workspace, namespace_common, version, pathOfTraces):
 
         if version == "0.1":
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
