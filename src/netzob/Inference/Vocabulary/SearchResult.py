@@ -25,40 +25,36 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import logging
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
-#| SearchResult :
+
+#+----------------------------------------------
+#| SearchResult:
 #|     Definition of the result of a search operation
-#+---------------------------------------------- 
+#+----------------------------------------------
 class SearchResult(object):
-    
-    #+---------------------------------------------- 
-    #| Constructor :
-    #+----------------------------------------------   
+
+    #+----------------------------------------------
+    #| Constructor:
+    #+----------------------------------------------
     def __init__(self, message):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.SearchResult.py')
         self.segments = []
         self.message = message
-        
+
     def getMessage(self):
         return self.message
-        
+
     def addSegment(self, i_start, i_end):
         self.segments.append([i_start, i_end])
-        
+
     def getSegments(self):
         return self.segments
-        
-    
-    
-    
-    

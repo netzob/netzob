@@ -25,11 +25,10 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from lxml.etree import ElementTree
 from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -39,109 +38,158 @@ from lxml import etree
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
-
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from bitarray import bitarray
 
-
 #+---------------------------------------------------------------------------+
-#| AggregrateVariable :
+#| AggregrateVariable:
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
     
-    def __init__(self, id, name, vars):
-        Variable.__init__(self, "Aggregate", id, name, True)
+    TYPE = "Aggregate"
+
+    def __init__(self, idVar, name, vars=None):
+        Variable.__init__(self, AggregateVariable.TYPE, idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
         self.vars = []
-        if vars != None :
+        if vars != None:
             self.vars.extend(vars)
-            
+
     def addChild(self, variable):
         self.vars.append(variable)
+    def getChildren(self):
+        return self.vars
         
-    def compare(self, value, indice, negative, memory):
-        result = indice
-        for var in self.vars :
-            self.log.debug("Indice = " + str(result) + " : " + var.getDescription())
-            result = var.compare(value, result, negative, memory)
-            if result == -1 or result == None :
-                self.log.debug("Compare fail")
-                return result
-            else :
-                self.log.debug("Compare successfull")
-        return result
-        
-    def send(self, negative, memory):
+    #+-----------------------------------------------------------------------+
+    #| getValue :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     else its NONE
+    #+-----------------------------------------------------------------------+
+    def getValue(self, negative, vocabulary, memory):
         binResult = bitarray()
         strResult = ""
-        for var in self.vars :
-            (b, s) = var.send(negative, memory)
-            print "==>" + str(b)
+        for var in self.vars:
+            (b, s) = var.getValue(negative, vocabulary, memory)
+            self.log.debug("getValue : " + str(b))
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
-
+        
+    #+-----------------------------------------------------------------------+
+    #| getValueToSend :
+    #|     Returns the current value of the variable
+    #|     it can be the original value if its set and not forget
+    #|     or the value in memory if it has one
+    #|     or it generates one and save its value in memory
+    #+-----------------------------------------------------------------------+
+    def getValueToSend(self, negative, vocabulary, memory):
+        binResult = bitarray()
+        strResult = ""
+        for var in self.vars:
+            (b, s) = var.getValueToSend(negative, vocabulary, memory)
+            self.log.debug("getValueToSend : " + str(b))
+            binResult += b
+            strResult = strResult + s
+        return (binResult, strResult)
     
-    def getDescription(self):
+    #+-----------------------------------------------------------------------+
+    #| getUncontextualizedDescription :
+    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
+    #+-----------------------------------------------------------------------+   
+    def getUncontextualizedDescription(self):
         values = []
-        for var in self.vars :
-            values.append(var.getDescription())            
-        return "AggregateVariable [" + " AND ".join(values) + "]"
+        for var in self.vars:
+            values.append(var.getUncontextualizedDescription())
+        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+    #+-----------------------------------------------------------------------+
+    #| getDescription :
+    #|     Returns the full description of the variable
+    #+-----------------------------------------------------------------------+
+    def getDescription(self, negative, vocabulary, memory):
+        values = []
+        for var in self.vars:
+            values.append(var.getDescription(negative, vocabulary, memory))
+        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+    #+-----------------------------------------------------------------------+
+    #| compare :
+    #|     Returns the number of letters which match the variable
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def compare(self, value, indice, negative, vocabulary, memory):
+        result = indice
+        for var in self.vars:
+            self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
+            result = var.compare(value, result, negative, vocabulary, memory)
+            if result == -1 or result == None:
+                self.log.debug("Compare fail")
+                return result
+            else:
+                self.log.debug("Compare successful")
+        return result
+    #+-----------------------------------------------------------------------+
+    #| learn :
+    #|     Exactly like "compare" but it stores learns from the provided message
+    #|     it can return the followings :
+    #|     -1     : doesn't match
+    #|     >=0    : it matchs and the following number of bits were eaten 
+    #+-----------------------------------------------------------------------+
+    def learn(self, value, indice, negative, vocabulary, memory):
+        status = True
+        toBeRestored = []
+        result = indice
+        
+        for var in self.vars:
+            self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
+            result = var.learn(value, result, negative, vocabulary, memory)
+            toBeRestored.append(var)
+            if result == -1 or result == None:
+                self.log.debug("Compare fail")
+                status = False
+                break
+            else:
+                self.log.debug("Compare successful")
+                
+        # If it has failed we restore every executed vars
+        if not status :
+            for var in toBeRestored :
+                var.restore(vocabulary, memory)                
+        return result
     
-    def save(self, root, namespace):
+    #+-----------------------------------------------------------------------+
+    #| restore :
+    #|     Restore learnt value from the last execution of the variable
+    #+-----------------------------------------------------------------------+
+    def restore(self, vocabulary, memory):
+        self.log.debug("Restore learnt values")
+        for var in self.vars :
+            var.restore(vocabulary, memory)
+    
+    #+-----------------------------------------------------------------------+
+    #| toXML
+    #|     Returns the XML description of the variable 
+    #+-----------------------------------------------------------------------+
+    def toXML(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
-        
         # Definition of the variables
-        for var in self.vars :
-            var.save(xmlVariable, namespace)
-        
-        
+        for var in self.vars:
+            var.toXML(xmlVariable, namespace)
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
-            
             children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable") :
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = Variable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            
             return AggregateVariable(varId, varName, children)
-            
         return None
-    
-    
-    
-#    def getValue(self, negative, dictionary):
-#        binResult = []
-#        strResult = []        
-#        for idVar in self.vars :
-#            var = dictionary.getVariableByID(int(idVar))
-#            (binVal, strVal) = var.getValue(negative, dictionary)
-#            if binVal == None :
-#                return (None, None)
-#            else :
-#                binResult.append(binVal)
-#                strResult.append(strVal)
-#        return ("".join(binResult), "".join(strResult))       
-#    
-#    def generateValue(self, negative, dictionary):
-#        for idVar in self.vars :
-#            var = dictionary.getVariableByID(int(idVar))
-#            var.generateValue(negative, dictionary)
-#            
-#    def learn(self, val, indice, isForced, dictionary):
-#        new_indice = indice
-#        for idVar in self.vars :
-#            var = dictionary.getVariableByID(int(idVar))
-#            tmp_indice = var.learn(val, new_indice, isForced, dictionary)
-#            if tmp_indice != -1 :
-#                new_indice = tmp_indice
-#        return new_indice

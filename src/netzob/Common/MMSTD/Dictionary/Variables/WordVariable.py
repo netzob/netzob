@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -46,106 +46,105 @@ from lxml import etree
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
-#| WordVariable :
+#| WordVariable:
 #|     Definition of a word variable defined in a dictionary
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
-    
+
     def __init__(self, id, name, mutable, value):
         Variable.__init__(self, "Word", id, name, mutable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
-        
+
         self.strVal = value
         self.binVal = TypeConvertor.string2bin(self.strVal, "big")
-    
+
     def compare(self, value, indice, negative, memory):
         self.log.debug("Compare received : '" + str(value[indice:]) + "' with '" + str(self.binVal) + "' ")
         tmp = value[indice:]
-        if len(tmp) >= len(self.binVal) :
-            if tmp[:len(self.binVal)] == self.binVal :
+        if len(tmp) >= len(self.binVal):
+            if tmp[:len(self.binVal)] == self.binVal:
                 self.log.debug("Compare successful")
-                return indice + len(self.binVal)              
-            else :
+                return indice + len(self.binVal)
+            else:
                 self.log.info("error in the comparison : " + str(tmp[:len(self.binVal)]) + " != " + str(self.binVal))
-                return -1                  
-        else :
+                return -1
+        else:
             self.log.debug("Compare fail")
             return -1
-    
+
     def send(self, negative, memory):
         return (self.binVal, self.strVal)
-            
+
     def getValue(self, negative, dictionary):
         return (self.binVal, self.strVal)
-    
+
     def getDescription(self):
-        if self.isMutable() :
+        if self.isMutable():
             mut = "[M]"
-        else :
+        else:
             mut = "[!M]"
         return "WordVariable " + mut + " (" + self.strVal + ")"
 
-
-#    
-#   
+#
+#
 #    def generateValue(self, negative, dictionary):
-#        # Generate a WORD value 
+#        # Generate a WORD value
 #        nb_letter = random.randint(0, 10)
 #        self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
 #        self.binVal = self.string2bin(self.strVal)
 #        self.log.debug("Generated : " + self.strVal)
-#        self.log.debug("Generated -bin )= " + str(self.binVal))
-#    
+#        self.log.debug("Generated -bin)= " + str(self.binVal))
+#
 #    def learn(self, val, indice, isForced, dictionary):
 #        self.log.debug("Received : " + str(val))
-#        
-#        if self.binVal == None or isForced :
+#
+#        if self.binVal == None or isForced:
 #            tmp = val[indice:]
-#            
+#
 #            res = ""
 #            i = 0
 #            finish = False
-#            while not finish :
+#            while not finish:
 #                v = int(tmp[i: i + 2], 16)
 #                if v > 0x21 and v <= 0x7e:
 #                    res += chr(v)
 #                    i = i + 2
 #                else:
 #                    finish = True
-#                
-#            if i > 0 :
+#
+#            if i > 0:
 #                self.strVal = res
 #                self.binVal = binascii.unhexlify(self.strVal)
 #
 #                return indice + i
-#            
-#        
-#                
+#
+#
+#
 #        return -1
-    
+
     def save(self, root, namespace):
         xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlWordVariable.set("id", str(self.getID()))
         xmlWordVariable.set("name", str(self.getName()))
         xmlWordVariable.set("mutable", TypeConvertor.bool2str(self.isMutable()))
-        
+
         xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:WordVariable")
-        
+
         # Definition of a binary variable
         xmlWordVariableValue = etree.SubElement(xmlWordVariable, "{" + namespace + "}value")
         xmlWordVariableValue.text = self.strVal
         return xmlWordVariable
-        
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
-        if version == "0.1" :
+        if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
             varIsMutable = TypeConvertor.str2bool(xmlRoot.get("mutable"))
-            
+
             varValue = xmlRoot.find("{" + namespace + "}value").text
             return WordVariable(varId, varName, varIsMutable, varValue)
-            
-        return None    
-    
+
+        return None

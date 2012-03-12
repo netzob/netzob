@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import subprocess
@@ -35,17 +35,18 @@ import subprocess
 #+---------------------------------------------------------------------------+
 from netzob.Common.Process import Process
 
+
 #+---------------------------------------------------------------------------+
-#| ExecutionContext :
+#| ExecutionContext:
 #|    A set of methods to extract the current
 #|    context of the execution (processes,
 #|    env vars, ...)
 #+---------------------------------------------------------------------------+
 class ExecutionContext(object):
-  
+
     def __init__(self):
         pass
-    
+
     @staticmethod
     def getCurrentProcesses():
         result = []
@@ -56,11 +57,11 @@ class ExecutionContext(object):
         nfields = len(processes[0].split()) - 1
         for row in processes[1:]:
             infos = row.split(None, nfields)
-            if len(infos) > 1 :
+            if len(infos) > 1:
                 user = infos[0]
                 pid = infos[1]
                 cmd = infos[len(infos) - 1]
                 process = Process(cmd, pid, user)
                 result.append(process)
-            
+
         return result

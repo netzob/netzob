@@ -26,11 +26,18 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+ 
 
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import sys
 import logging.config
 import gobject
 import os
+import optparse
 
+#+---------------------------------------------------------------------------+
+#| Prepare, load and import the required modules
+#+---------------------------------------------------------------------------+
 sys.path.insert(0, 'src/')
 
 #insert in the path the directory where _libNeedleman.pyd is
@@ -48,9 +55,14 @@ except:
     sys.path.append(build_lib_path)
 
 import netzob.NetzobGui as NetzobGui
+from netzob import release
+
+
+
 
 if __name__ == "__main__":
     gobject.threads_init() # for handling concurrent GUI access from threads
 
-    netZob = NetzobGui.NetzobGui()
-    netZob.startGui()
+    
+    netzob = NetzobGui.NetzobGui()
+    netzob.startGui()

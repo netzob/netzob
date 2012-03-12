@@ -29,17 +29,17 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 
+
 class Task:
-    
+
     """Base class for asynchronous tasks."""
     def config(self, return_cb, exception_cb):
         """Set return and exception callbacks."""
         self.return_cb = return_cb
         self.exception_cb = exception_cb
 
-    def run(self):        
-        raise RuntimeError, "Run method must be overriden"
-    
+    def run(self):
+        raise RuntimeError("Run method must be overriden")
+
     def cancel(self):
         pass
-    

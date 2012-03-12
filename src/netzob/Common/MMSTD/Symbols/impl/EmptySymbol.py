@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -38,44 +38,48 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 
 #+---------------------------------------------------------------------------+
-#| EmptySymbol :
+#| EmptySymbol:
 #|     Definition of an empty symbol
 #+---------------------------------------------------------------------------+
 class EmptySymbol(AbstractSymbol):
     
+    # Name of the "type" of the symbol
+    TYPE = "EmptySymbol"
+
+
     def __init__(self):
-        AbstractSymbol.__init__(self, "EmptySymbol")
+        AbstractSymbol.__init__(self, EmptySymbol.TYPE)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.EmptySymbol.py')
-        
-    
+
     def isEquivalent(self, symbol):
-        
+
         if symbol.__class__.__name__ == EmptySymbol.__name__:
             self.log.debug("The symbols are equivalents")
             return True
-        else :
+        else:
             self.log.debug("The symbols are not equivalents")
             return False
-    
-    def getValueToSend(self, inverse, memory):
+
+    def getValueToSend(self, inverse, vocabulary, memory):
         return (bitarray(endian='big'), "")
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
         return 0
+
     def getEntry(self):
         return None
+
     def getName(self):
         return "EmptySymbol"
-  
+
     def __str__(self):
         return "EmptySymbol"
-        
+
 #    def setID(self, id):
 #        self.id = id
 #    def setEntry(self, entry):
 #        self.entry = entry
-    

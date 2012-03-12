@@ -25,18 +25,19 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
 from lxml import etree
 
+
 #+---------------------------------------------------------------------------+
-#| EnvironmentalDependency :
+#| EnvironmentalDependency:
 #|     Class definition of an environmental dependency
 #+---------------------------------------------------------------------------+
 class EnvironmentalDependency(object):
-    
+
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
@@ -44,7 +45,7 @@ class EnvironmentalDependency(object):
         self.name = name
         self.type = aType
         self.value = value
-    
+
     def save(self, root, namespace):
         environmental_dependency = etree.SubElement(root, "{" + namespace + "}environmental_dependency")
         environmental_dependency.set("name", str(self.name))
@@ -53,20 +54,24 @@ class EnvironmentalDependency(object):
 
     #+-----------------------------------------------------------------------+
     #| GETTERS
-    #+-----------------------------------------------------------------------+   
+    #+-----------------------------------------------------------------------+
     def getName(self):
         return self.name
+
     def getType(self):
         return self.type
+
     def getValue(self):
         return self.value
 
     #+-----------------------------------------------------------------------+
     #| SETTERS
-    #+-----------------------------------------------------------------------+       
+    #+-----------------------------------------------------------------------+
     def setName(self, name):
         self.name = name
+
     def setType(self, type):
         self.type = type
+
     def setValue(self, value):
         self.value = value

@@ -37,7 +37,7 @@ class SleepTask(Task):
     """Sleep for some time and return."""
     def __init__(self, seconds):
         self.seconds = seconds
-        
+
     def run(self):
         def _return():
             self.return_cb()

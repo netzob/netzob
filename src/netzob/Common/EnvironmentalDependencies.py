@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import os
@@ -40,22 +40,23 @@ import time
 from netzob.Common.EnvironmentalDependency import EnvironmentalDependency
 from netzob.Common.Type.Format import Format
 
-#+---------------------------------------------- 
-#| EnvDependancies :
+
+#+----------------------------------------------
+#| EnvDependancies:
 #|     Handle environmental dependancies
-#+---------------------------------------------- 
+#+----------------------------------------------
 class EnvironmentalDependencies(object):
-    
-    #+---------------------------------------------- 
-    #| Constructor :
-    #+----------------------------------------------   
+
+    #+----------------------------------------------
+    #| Constructor:
+    #+----------------------------------------------
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.EnvDependancies.py')
-        self.envData = [] # List containing environmental data
+        self.envData = []  # List containing environmental data
 
-    #+---------------------------------------------- 
-    #| captureEnvData: 
+    #+----------------------------------------------
+    #| captureEnvData:
     #|   Capture environmental data,
     #|   like local IP address, Ethernet address, etc.
     #+----------------------------------------------
@@ -76,33 +77,35 @@ class EnvironmentalDependencies(object):
             self.envData.append( EnvironmentalDependency("os_version", Format.STRING, os.uname()[2]) ) # result of 'uname -r' under linux
             self.envData.append( EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4]) ) # result of 'uname -m' under linux
             # User specific
-            self.envData.append( EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']) )
-            self.envData.append( EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']) )
-           
+            if 'HOME' in os.environ:
+                self.envData.append( EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']) )
+            if 'LANG' in os.environ:
+                self.envData.append( EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']) )
 
         # User specific
-        self.envData.append( EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']) )
+        if 'USERNAME' in os.environ:
+            self.envData.append( EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']) )
 
         # System specific
-        self.envData.append( EnvironmentalDependency("hostname", Format.STRING, socket.gethostname()) )
-        self.envData.append( EnvironmentalDependency("domainname", Format.STRING, "".join( socket.getfqdn().split(".", 1)[1:] )) )
+        self.envData.append(EnvironmentalDependency("hostname", Format.STRING, socket.gethostname()))
+        self.envData.append(EnvironmentalDependency("domainname", Format.STRING, "".join(socket.getfqdn().split(".", 1)[1:])))
 
         # Trick to retrieve the usual IP address
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("gmail.com",80))
+            s.connect(("gmail.com", 80))
             ip_address = s.getsockname()[0]
             s.close()
         except:
             ip_address = "127.0.0.1"
 
-        self.envData.append( EnvironmentalDependency("ip_address", Format.STRING, ip_address) )
-        self.envData.append( EnvironmentalDependency("mac_address", Format.STRING, hex(int(get_mac_address()))[2:-1]) )
+        self.envData.append(EnvironmentalDependency("ip_address", Format.STRING, ip_address))
+        self.envData.append(EnvironmentalDependency("mac_address", Format.STRING, hex(int(get_mac_address()))[2:-1]))
 
-        # Misc        
-        self.envData.append( EnvironmentalDependency("date", Format.STRING, str(time.time())) ) # elapsed second since epoch in UTC
+        # Misc
+        self.envData.append(EnvironmentalDependency("date", Format.STRING, str(time.time())))  # elapsed second since epoch in UTC
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getEnvData(self):

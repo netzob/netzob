@@ -25,95 +25,101 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
 import logging
 import time
+import gobject
+import os
 
-
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local application imports
 #+----------------------------------------------
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
-import gobject
 
-#+---------------------------------------------- 
-#| LearningAlgorithm :
-#|    Abstract class which provides to his children 
-#| the necessary functions to learn 
-#+---------------------------------------------- 
+
+
+#+----------------------------------------------
+#| LearningAlgorithm:
+#|    Abstract class which provides to his children
+#| the necessary functions to learn
+#+----------------------------------------------
 class LearningAlgorithm(object):
-     
-    def __init__(self, dictionary, communicationChannel, callbackFunction):
+
+    def __init__(self, dictionary, communicationChannel, resetScript, callbackFunction):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
         self.communicationChannel = communicationChannel
         self.inferedAutomata = None
+        self.resetScript = resetScript
         self.submitedQueries = []
 
         self.callbackFunction = callbackFunction
-    
-    
+
     def attachStatusCallBack(self, callbackFunction):
         self.callbackFunction = callbackFunction
-    
+
     def learn(self):
         self.log.error("The LearningAlgorithm class doesn't support 'learn'.")
         raise NotImplementedError("The LearningAlgorithm class doesn't support 'learn'.")
-    
+
     def getSubmitedQueries(self):
-        return self.submitedQueries    
-  
-    
+        return self.submitedQueries
+
     def submitQuery(self, query):
+        self.log.info("Reseting the oracle by executing script : " + self.resetScript)
+        # TODO : must be UPGRADED
+        # WARNING
+        os.system("sh " + self.resetScript)
+        
+        
         self.log.info("Submit the following query : " + str(query))
-        
-        
+
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary)
-        
+
         # create an oracle for this MMSTD
         oracle = NetworkOracle(self.communicationChannel)
-        
+
         # start the oracle with the MMSTD
         oracle.setMMSTD(mmstd)
         oracle.start()
-        
+
         # wait it has finished
         self.log.info("Waiting for the oracle to finish")
-        while oracle.isAlive() :
+        while oracle.isAlive():
             time.sleep(0.01)
         self.log.info("The oracle has finished !")
-        
+
         # stop the oracle and retrieve the query
         oracle.stop()
-        
+
         resultQuery = oracle.getResults()
         tmpResultQuery = oracle.getGeneratedOutputSymbols()
-        
+
         self.log.info("The following query has been computed : " + str(resultQuery))
-        
+
         # Register this query and the associated response
         self.submitedQueries.append([query, resultQuery])
-        
+
         # return only the last result
-        if len(resultQuery) > 0 :
+        if len(resultQuery) > 0:
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
             return resultQuery[len(resultQuery) - 1]
-        else :
+        else:
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, "OUPS")
             return resultQuery
-    
+
     def getInferedAutomata(self):
         return self.inferedAutomata

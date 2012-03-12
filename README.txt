@@ -1,13 +1,13 @@
-[*******************************************************************************]
-[***********]                                                       [***********]
-[***********]       Netzob : inferring communication protocols      [***********]
-[***********]                                                       [***********]
-[*******************************************************************************]
+[******************************************************************************]
+[**********]                                                       [***********]
+[**********]       Netzob : inferring communication protocols      [***********]
+[**********]                                                       [***********]
+[******************************************************************************]
 
 
-[*******************************************************************************]
-[************************]       1. Presentation      [*************************]
-[*******************************************************************************]
+[******************************************************************************]
+[***********************]       1. Presentation      [*************************]
+[******************************************************************************]
 
 Netzob simplifies the work for security auditors by providing a
 complete framework for the reverse engineering of communication
@@ -22,56 +22,53 @@ with modules dedicated to capture data in multiple contexts (network,
 file, process and kernel data acquisition).
 
 
-[*******************************************************************************]
-[************************]       2. Installation      [*************************]
-[*******************************************************************************]
+[******************************************************************************]
+[***********************]       2. Installation      [*************************]
+[******************************************************************************]
 
-Netzob currently supports Linux x86 and x64 platforms.
+Netzob currently supports Linux x86 and x64 platforms. A Windows
+version is expected soon.
 
 Dependencies :
 
-* tcpdump
 * python
 * python-ptrace
-* nfqueue-bindings-python
-* python-hachoir
 * python-matplotlib
-* python-dpkt
 * python-pcapy
-* strace
-* lsof
-* iptables
 * python-bitarray
-* python-pyasn1
 * python-lxml
 * python-dev
 * libjs-sphinxdoc
 * python-sphinx
 
-or, on Debian-like operating systems :
+Linux-specific dependencies :
 
-$ sudo apt-get install tcpdump python python-ptrace nfqueue-bindings-python \
-  python-hachoir-subfile python-matplotlib python-dpkt strace lsof iptables \
-  python-pcapy python-bitarray python-pyasn1 python-dev python-lxml         \
-  libjs-sphinxdoc python-sphinx
+* strace
+* lsof
+
+Or, on Debian-like operating systems :
+
+$ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
+  python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
+  python-sphinx
 
 And then, 
 
 $ python setup.py build
 
 
-[*******************************************************************************]
-[************************]           3. Usage         [*************************]
-[*******************************************************************************]
+[******************************************************************************]
+[***********************]           3. Usage         [*************************]
+[******************************************************************************]
 
 Just run the following command to launch the graphical interface
 
 $ ./netzob
 
 
-[*******************************************************************************]
-[************************]       4. Documentation     [*************************]
-[*******************************************************************************]
+[******************************************************************************]
+[***********************]       4. Documentation     [*************************]
+[******************************************************************************]
 
 Documentation generation :
 
@@ -84,9 +81,9 @@ following command :
 $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
 
 
-[*******************************************************************************]
-[************************]       5. Miscellaneous     [*************************]
-[*******************************************************************************]
+[******************************************************************************]
+[***********************]       5. Miscellaneous     [*************************]
+[******************************************************************************]
 
 ** Requirements for Network and PCAP input **
 
@@ -101,9 +98,9 @@ $ sudo setcap cap_net_raw=ep /usr/sbin/tcpdump
 $ sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 
 
-[*******************************************************************************]
-[************************]          6. Contact        [*************************]
-[*******************************************************************************]
+[******************************************************************************]
+[***********************]          6. Contact        [*************************]
+[******************************************************************************]
 
 * Website : http://www.netzob.org
 * Email : contact@netzob.org

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -40,42 +40,39 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Values.AbstractValue import AbstractValue
 
+
 #+---------------------------------------------------------------------------+
-#| EndValue :
+#| EndValue:
 #|     Represents the end of a symbol
 #+---------------------------------------------------------------------------+
 class EndValue(AbstractValue):
-    
+
     def __init__(self):
         AbstractValue.__init__(self, "EndValue")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Values.EndValue.py')
-        
-    
+
     def send(self, negative, dictionary):
         return (bitarray(endian='big'), "")
-    
+
     def compare(self, val, indice, negative, dictionary):
         self.log.debug("Endvalue ? indice = " + str(indice))
-        if len(val[indice:]) == 0 :
+        if len(val[indice:]) == 0:
             self.log.debug("Compare successful (" + str(indice) + " != " + str(len(val)) + ")")
             return indice
-        else :
+        else:
             cr = bitarray('00001010', endian='big')
-            
-            if val[indice:] == cr :
+
+            if val[indice:] == cr:
                 self.log.debug("Compare successfull we consider \\n as the end")
                 return indice + len(cr)
-                
+
             self.log.debug("Compare Fail, received '" + str(val[indice:]) + "'")
             return -1
-        
+
     def restore(self):
         return
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
-  
-    
-    

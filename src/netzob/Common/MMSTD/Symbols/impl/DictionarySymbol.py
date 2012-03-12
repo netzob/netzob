@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -37,53 +37,61 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 
 #+---------------------------------------------------------------------------+
-#| DictionarySymbol :
+#| DictionarySymbol:
 #|     Definition of a symbol based on a dictionary
 #+---------------------------------------------------------------------------+
 class DictionarySymbol(AbstractSymbol):
-    
+
     def __init__(self, dictionaryEntry):
         AbstractSymbol.__init__(self, "DictionarySymbol")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Symbols.impl.DictionarySymbol.py')
         self.entry = dictionaryEntry
-        
-    
+
     def isEquivalent(self, symbol):
-        if self.entry.getID() == symbol.getID() :
+        if self.entry.getID() == symbol.getID():
             self.log.debug("The symbols are equivalents")
             return True
-        else :
+        else:
             self.log.debug("The symbols are not equivalents")
             return False
-    
-    def getValueToSend(self, inverse, memory):
-        result = self.entry.getValueToSend(inverse, memory)
+
+    def getValueToSend(self, inverse, vocabulary, memory):
+        result = self.entry.getValueToSend(inverse, vocabulary, memory)
         return result
-    
+
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.entry.getID()
+
     def getEntry(self):
         return self.entry
+
     def getName(self):
         return self.entry.getName()
-  
-        
+
     def setID(self, id):
         self.id = id
+
     def setEntry(self, entry):
         self.entry = entry
-    
+
     def __str__(self):
         return str(self.entry)
     
+    def __repr__(self):
+        return str(self.entry)
+
     def __cmp__(self, other):
-        if other == None :
+        if other == None:
             return 0
-        if self.getID() == other.getID() :
-            return 0
-        else :
+        try :
+            if self.getID() == other.getID() and self.getEntry() == other.getEntry():
+                return 0
+            else:
+                return 1
+        except :
+            self.log.warn("Tried to compare a DictionarySymbol with " + str(other))
             return 1

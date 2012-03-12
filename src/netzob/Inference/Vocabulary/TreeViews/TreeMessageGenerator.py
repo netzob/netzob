@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import logging
@@ -33,108 +33,155 @@ import pango
 import gobject
 import gtk
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Field import Field
 from netzob.Common.NetzobException import NetzobException
+import uuid
+import time
 
-#+---------------------------------------------- 
-#| TreeMessageGenerator :
-#|     update and generates the treeview and its 
+
+#+----------------------------------------------
+#| TreeMessageGenerator:
+#|     update and generates the treeview and its
 #|     treestore dedicated to the messages
-#+---------------------------------------------- 
+#+----------------------------------------------
 class TreeMessageGenerator():
-    
-    #+---------------------------------------------- 
-    #| Constructor :
+
+    #+----------------------------------------------
+    #| Constructor:
     #| @param vbox : where the treeview will be hold
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def __init__(self):
         self.symbol = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.TreeStores.TreeMessageGenerator.py')
-   
-    #+---------------------------------------------- 
-    #| initialization :
+        self.currentColumns = []
+
+    #+----------------------------------------------
+    #| initialization:
     #| builds and configures the treeview
-    #+----------------------------------------------     
+    #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(str, str, str)     
-        # creation of the treeview   
+        self.treestore = gtk.TreeStore(str, str, str)
+        # creation of the treeview
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
-        # Creation of a cell rendered and of a column
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Messages')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
-        column.set_attributes(cell, markup=0)
-        self.treeview.append_column(column)
+        
+        # maximum number of columns = 200
+        for i_col in range(4, 204) :
+            # Define cellRenderer object
+            textCellRenderer = gtk.CellRendererText()
+            textCellRenderer.set_property("size-points", 9)
+            textCellRenderer.set_property('background-set', True)
+
+            # Column Messages
+            lvcolumn = gtk.TreeViewColumn(str("#" + str(i_col - 4)))
+            lvcolumn.set_resizable(True)
+            lvcolumn.set_sort_column_id(i_col)
+            lvcolumn.set_clickable(True)
+            lvcolumn.pack_start(textCellRenderer, True)
+            lvcolumn.set_attributes(textCellRenderer, markup=i_col, background=1, weight=2, editable=3)
+            
+#            self.treeview.append_column(lvcolumn)
+            self.currentColumns.append(lvcolumn)
+        
+
         self.treeview.show()
         self.treeview.set_reorderable(True)
         self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.scroll = gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 200)
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
+        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll.add(self.treeview)
         self.scroll.show()
 
-    #+---------------------------------------------- 
-    #| clear :
+    #+----------------------------------------------
+    #| clear:
     #|         Clear the class
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def clear(self):
         self.symbol = None
         self.treestore.clear()
-        
-    #+---------------------------------------------- 
-    #| error :
+
+    #+----------------------------------------------
+    #| error:
     #|         Update the treestore in error mode
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def error(self):
-        self.log.warning("The treeview for the messages is in error mode")      
+        self.log.warning("The treeview for the messages is in error mode")
         self.treestore.clear()
 
-    #+---------------------------------------------- 
-    #| show :
+    #+----------------------------------------------
+    #| show:
     #|   Display the panel
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def show(self):
         self.scroll.show_all()
 
-    #+---------------------------------------------- 
-    #| hide :
+    #+----------------------------------------------
+    #| hide:
     #|   Hide the panel
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def hide(self):
         self.scroll.hide_all()
-    
-    #+---------------------------------------------- 
-    #| default :
+
+    #+----------------------------------------------
+    #| default:
     #|         Update the treestore in normal mode
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def default(self, symbol):
-        self.treestore.clear()
-        if symbol == None :
-            return
+        self.treestore.clear()            
         
+        if symbol == None:
+            return
+
         self.symbol = symbol
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
         
-        # Verifies we have everything needed for the creation of the treeview
-        if (self.symbol == None) :
-            self.log.warn("Error while trying to update the list of messages")
-            return
 
-        if (len(self.symbol.getMessages()) < 1 or len(self.symbol.getFields()) == 0) :
+        # Verifies we have everything needed for the creation of the treeview
+        if (len(self.symbol.getMessages()) < 1):
             self.log.debug("It's an empty symbol so nothing to display")
             return
+         
+        # Build the next rows from messages after applying the regex
+        content_lines = []
+        maxNumberOfCol = 0
+        for message in self.symbol.getMessages():
+            # For each message we create a line and computes its cols
+            try:
+                messageTable = message.applyAlignment(styled=True, encoded=True)
+                self.log.debug("Computed alignment of message : " + str(messageTable))
+            except NetzobException:
+                self.log.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
+                self.log.warn("Message : " + str(message.getStringData()))
+                
+                continue  # We don't display the message in error
+            line = []
+            line.append(message.getID())
+            line.append("#ffffff")
+            line.append(pango.WEIGHT_NORMAL)
+            line.append(False)
+            line.extend(messageTable)
+            content_lines.append(line)
+            if len(messageTable) > maxNumberOfCol :
+                maxNumberOfCol = len(messageTable)
+            
+        
+        
 
         # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
+        # str : Name of the row
+        # str : Color of the row
+        # int : pango type (weight bold)
+        # bool : is row editable
+        # [str...str] : value of cols
+        
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
-        for field in self.symbol.getFields():
+        for i in range(0, maxNumberOfCol):
             treeStoreTypes.append(str)
         self.treestore = gtk.TreeStore(*treeStoreTypes)
 
@@ -144,68 +191,41 @@ class TreeMessageGenerator():
         regex_row.append("#c8c8c8")
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
-        
         for field in self.symbol.getFields():
-            if field.getRegex().find("{") != -1: # This is a real regex
-                regex_row.append(field.getRegex())
-            else: # This is a simple value
-                regex_row.append(field.getEncodedVersionOfTheRegex())
-        self.treestore.append(None, regex_row)
-
+            regex_row.append(field.getEncodedVersionOfTheRegex())
+        
+        
+        
+        
         # Build the types row
         types_line = []
         types_line.append("HEADER TYPE")
-        types_line.append("#DEDEDE")
+        types_line.append("#dedede")
         types_line.append(pango.WEIGHT_BOLD)
-        types_line.append(True)        
+        types_line.append(True)
         for field in self.symbol.getFields():
-#            types_line.append(self.getSymbol().getStyledPossibleTypesForAField(field))
             types_line.append(field.getFormat())
-        self.treestore.append(None, types_line)
         
-        # Build the next rows from messages after applying the regex
-        for message in self.symbol.getMessages():
-            # For each message we create a line and computes its cols
-            try:
-                messageTable = message.applyAlignment(styled=True, encoded=True)
-            except NetzobException:
-                continue # We don't display the message in error
-            line = []
-            line.append(message.getID())
-            line.append("#ffffff")
-            line.append(pango.WEIGHT_NORMAL)
-            line.append(False)
-            line.extend(messageTable)
+        
+        self.treestore.append(None, regex_row)
+        self.treestore.append(None, types_line)
+        for line in content_lines :
             self.treestore.append(None, line)
-
-        # Remove all the columns of the current treeview
-        for col in self.treeview.get_columns() :
+                    
+        # activate or deactiave the perfect number of columns = nb Field
+        for col in self.treeview.get_columns():
             self.treeview.remove_column(col)
-            
-        iField = 4
-        for field in self.symbol.getFields() :
-            # Define cellRenderer object
-            textCellRenderer = gtk.CellRendererText()
-            textCellRenderer.set_property("size-points", 9)
-            textCellRenderer.set_property('background-set' , True)
-
-            # Column Messages
-            lvcolumn = gtk.TreeViewColumn(field.getName())
-            lvcolumn.set_resizable(True)
-#            lvcolumn.set_sort_column_id(iField)
-#            lvcolumn.set_clickable(True)
-            lvcolumn.pack_start(textCellRenderer, True)
-            lvcolumn.set_attributes(textCellRenderer, markup=iField, background=1, weight=2, editable=3)
-            self.treeview.append_column(lvcolumn)
-            iField = iField + 1
+        for i in range(0, min(200, len(self.symbol.getFields()))) :
+            self.treeview.append_column(self.currentColumns[i])
 
         self.treeview.set_model(self.treestore)
 
     def updateDefault(self):
         self.default(self.symbol)
-    
-    #+---------------------------------------------- 
-    #| GETTERS : 
+        
+
+    #+----------------------------------------------
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview

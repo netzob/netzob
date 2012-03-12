@@ -132,7 +132,7 @@ class TextShape(Shape):
             # set font
             font = pango.FontDescription()
             font.set_family(self.pen.fontname)
-            font.set_absolute_size(self.pen.fontsize*pango.SCALE)
+            font.set_absolute_size(self.pen.fontsize * pango.SCALE)
             layout.set_font_description(font)
 
             # set text
@@ -146,8 +146,8 @@ class TextShape(Shape):
         descent = 2 # XXX get descender from font metrics
 
         width, height = layout.get_size()
-        width = float(width)/pango.SCALE
-        height = float(height)/pango.SCALE
+        width = float(width) / pango.SCALE
+        height = float(height) / pango.SCALE
         # we know the width that dot thinks this text should have
         # we do not necessarily have a font with the same metrics
         # scale it so that the text fits inside its box
@@ -162,7 +162,7 @@ class TextShape(Shape):
         if self.j == self.LEFT:
             x = self.x
         elif self.j == self.CENTER:
-            x = self.x - 0.5*width
+            x = self.x - 0.5 * width
         elif self.j == self.RIGHT:
             x = self.x - width
         else:
@@ -184,11 +184,11 @@ class TextShape(Shape):
             if self.j == self.LEFT:
                 x = self.x
             elif self.j == self.CENTER:
-                x = self.x - 0.5*self.w
+                x = self.x - 0.5 * self.w
             elif self.j == self.RIGHT:
                 x = self.x - self.w
             cr.move_to(x, self.y)
-            cr.line_to(x+self.w, self.y)
+            cr.line_to(x + self.w, self.y)
             cr.stroke()
 
 
@@ -206,8 +206,8 @@ class ImageShape(Shape):
     def draw(self, cr, highlight=False):
         cr2 = gtk.gdk.CairoContext(cr)
         pixbuf = gtk.gdk.pixbuf_new_from_file(self.path)
-        sx = float(self.w)/float(pixbuf.get_width())
-        sy = float(self.h)/float(pixbuf.get_height())
+        sx = float(self.w) / float(pixbuf.get_width())
+        sy = float(self.h) / float(pixbuf.get_height())
         cr.save()
         cr.translate(self.x0, self.y0 - self.h)
         cr.scale(sx, sy)
@@ -232,7 +232,7 @@ class EllipseShape(Shape):
         cr.translate(self.x0, self.y0)
         cr.scale(self.w, self.h)
         cr.move_to(1.0, 0.0)
-        cr.arc(0.0, 0.0, 1.0, 0, 2.0*math.pi)
+        cr.arc(0.0, 0.0, 1.0, 0, 2.0 * math.pi)
         cr.restore()
         pen = self.select_pen(highlight)
         if self.filled:
@@ -371,10 +371,10 @@ class Node(Element):
         self.x = x
         self.y = y
 
-        self.x1 = x - 0.5*w
-        self.y1 = y - 0.5*h
-        self.x2 = x + 0.5*w
-        self.y2 = y + 0.5*h
+        self.x1 = x - 0.5 * w
+        self.y1 = y - 0.5 * h
+        self.x2 = x + 0.5 * w
+        self.y2 = y + 0.5 * h
 
         self.url = url
 
@@ -398,7 +398,7 @@ class Node(Element):
 def square_distance(x1, y1, x2, y2):
     deltax = x2 - x1
     deltay = y2 - y1
-    return deltax*deltax + deltay*deltay
+    return deltax * deltax + deltay * deltay
 
 
 class Edge(Element):
@@ -412,9 +412,9 @@ class Edge(Element):
     RADIUS = 10
 
     def get_jump(self, x, y):
-        if square_distance(x, y, *self.points[0]) <= self.RADIUS*self.RADIUS:
+        if square_distance(x, y, *self.points[0]) <= self.RADIUS * self.RADIUS:
             return Jump(self, self.dst.x, self.dst.y, highlight=set([self, self.dst]))
-        if square_distance(x, y, *self.points[-1]) <= self.RADIUS*self.RADIUS:
+        if square_distance(x, y, *self.points[-1]) <= self.RADIUS * self.RADIUS:
             return Jump(self, self.src.x, self.src.y, highlight=set([self, self.src]))
         return None
 
@@ -477,7 +477,7 @@ class XDotAttrParser:
         self.parser = parser
         self.buf = buf
         self.pos = 0
-        
+
         self.pen = Pen()
         self.shapes = []
 
@@ -525,7 +525,7 @@ class XDotAttrParser:
         c = self.read_text()
         c1 = c[:1]
         if c1 == '#':
-            hex2float = lambda h: float(int(h, 16)/255.0)
+            hex2float = lambda h: float(int(h, 16) / 255.0)
             r = hex2float(c[1:3])
             g = hex2float(c[3:5])
             b = hex2float(c[5:7])
@@ -549,10 +549,10 @@ class XDotAttrParser:
         except ValueError:
             pass
         else:
-            s = 1.0/65535.0
-            r = color.red*s
-            g = color.green*s
-            b = color.blue*s
+            s = 1.0 / 65535.0
+            r = color.red * s
+            g = color.green * s
+            b = color.blue * s
             a = 1.0
             return r, g, b, a
 
@@ -562,13 +562,13 @@ class XDotAttrParser:
         except (ValueError, KeyError):
             pass
         else:
-            s = 1.0/255.0
-            r = r*s
-            g = g*s
-            b = b*s
+            s = 1.0 / 255.0
+            r = r * s
+            g = g * s
+            b = b * s
             a = 1.0
             return r, g, b, a
-                
+
         sys.stderr.write("unknown color '%s'\n" % c)
         return None
 
@@ -640,7 +640,7 @@ class XDotAttrParser:
                 break
 
         return self.shapes
-    
+
     def transform(self, x, y):
         return self.parser.transform(x, y)
 
@@ -657,7 +657,7 @@ class XDotAttrParser:
         if style == "solid":
             self.pen.dash = ()
         elif style == "dashed":
-            self.pen.dash = (6, )       # 6pt on, 6pt off
+            self.pen.dash = (6,)       # 6pt on, 6pt off
         elif style == "dotted":
             self.pen.dash = (2, 4)       # 2pt on, 4pt off
 
@@ -707,7 +707,7 @@ class ParseError(Exception):
 
     def __str__(self):
         return ':'.join([str(part) for part in (self.filename, self.line, self.col, self.msg) if part != None])
-        
+
 
 class Scanner:
     """Stateless scanner."""
@@ -760,7 +760,7 @@ class Lexer:
 
     newline_re = re.compile(r'\r\n?|\n')
 
-    def __init__(self, buf = None, pos = 0, filename = None, fp = None):
+    def __init__(self, buf=None, pos=0, filename=None, fp=None):
         if fp is not None:
             try:
                 fileno = fp.fileno()
@@ -774,7 +774,7 @@ class Lexer:
                 # map the whole file into memory
                 if length:
                     # length must not be zero
-                    buf = mmap.mmap(fileno, length, access = mmap.ACCESS_READ)
+                    buf = mmap.mmap(fileno, length, access=mmap.ACCESS_READ)
                     pos = os.lseek(fileno, 0, 1)
                 else:
                     buf = ''
@@ -816,7 +816,7 @@ class Lexer:
                 raise ParseError(msg, self.filename, line, col)
             else:
                 break
-        return Token(type = type, text = text, line = line, col = col)
+        return Token(type=type, text=text, line=line, col=col)
 
     def consume(self, text):
         # update line number
@@ -832,7 +832,7 @@ class Lexer:
             if tabpos == -1:
                 break
             self.col += tabpos - pos
-            self.col = ((self.col - 1)//self.tabsize + 1)*self.tabsize + 1
+            self.col = ((self.col - 1) // self.tabsize + 1) * self.tabsize + 1
             pos = tabpos + 1
         self.col += len(text) - pos
 
@@ -846,10 +846,10 @@ class Parser:
     def match(self, type):
         if self.lookahead.type != type:
             raise ParseError(
-                msg = 'unexpected token %r' % self.lookahead.text, 
-                filename = self.lexer.filename, 
-                line = self.lookahead.line, 
-                col = self.lookahead.col)
+                msg='unexpected token %r' % self.lookahead.text,
+                filename=self.lexer.filename,
+                line=self.lookahead.line,
+                col=self.lookahead.col)
 
     def skip(self, type):
         while self.lookahead.type != type:
@@ -951,7 +951,7 @@ class DotLexer(Lexer):
             text = text.replace('\\\r\n', '')
             text = text.replace('\\\r', '')
             text = text.replace('\\\n', '')
-            
+
             # quotes
             text = text.replace('\\"', '"')
 
@@ -1091,9 +1091,9 @@ class DotParser(Parser):
 class XDotParser(DotParser):
 
     def __init__(self, xdotcode):
-        lexer = DotLexer(buf = xdotcode)
+        lexer = DotLexer(buf=xdotcode)
         DotParser.__init__(self, lexer)
-        
+
         self.nodes = []
         self.edges = []
         self.shapes = []
@@ -1118,11 +1118,11 @@ class XDotParser(DotParser):
             self.yscale = -1.0
             # FIXME: scale from points to pixels
 
-            self.width  = max(xmax - xmin, 1)
+            self.width = max(xmax - xmin, 1)
             self.height = max(ymax - ymin, 1)
 
             self.top_graph = False
-        
+
         for attr in ("_draw_", "_ldraw_", "_hdraw_", "_tdraw_", "_hldraw_", "_tldraw_"):
             if attr in attrs:
                 parser = XDotAttrParser(self, attrs[attr])
@@ -1135,8 +1135,8 @@ class XDotParser(DotParser):
             return
 
         x, y = self.parse_node_pos(pos)
-        w = float(attrs.get('width', 0))*72
-        h = float(attrs.get('height', 0))*72
+        w = float(attrs.get('width', 0)) * 72
+        h = float(attrs.get('height', 0)) * 72
         shapes = []
         for attr in ("_draw_", "_ldraw_"):
             if attr in attrs:
@@ -1153,7 +1153,7 @@ class XDotParser(DotParser):
             pos = attrs['pos']
         except KeyError:
             return
-        
+
         points = self.parse_edge_pos(pos)
         shapes = []
         for attr in ("_draw_", "_ldraw_", "_hdraw_", "_tdraw_", "_hldraw_", "_tldraw_"):
@@ -1189,8 +1189,8 @@ class XDotParser(DotParser):
 
     def transform(self, x, y):
         # XXX: this is not the right place for this code
-        x = (x + self.xoffset)*self.xscale
-        y = (y + self.yoffset)*self.yscale
+        x = (x + self.xoffset) * self.xscale
+        y = (y + self.yoffset) * self.yscale
         return x, y
 
 
@@ -1253,8 +1253,8 @@ class MoveToAnimation(LinearAnimation):
     def animate(self, t):
         sx, sy = self.source_x, self.source_y
         tx, ty = self.target_x, self.target_y
-        self.dot_widget.x = tx * t + sx * (1-t)
-        self.dot_widget.y = ty * t + sy * (1-t)
+        self.dot_widget.x = tx * t + sx * (1 - t)
+        self.dot_widget.y = ty * t + sy * (1 - t)
         self.dot_widget.queue_draw()
 
 
@@ -1279,7 +1279,7 @@ class ZoomToAnimation(MoveToAnimation):
 
     def animate(self, t):
         a, b, c = self.source_zoom, self.extra_zoom, self.target_zoom
-        self.dot_widget.zoom_ratio = c*t + b*t*(1-t) + a*(1-t)
+        self.dot_widget.zoom_ratio = c * t + b * t * (1 - t) + a * (1 - t)
         self.dot_widget.zoom_to_fit_on_resize = False
         MoveToAnimation.animate(self, t)
 
@@ -1515,7 +1515,7 @@ class DotWidget(gtk.DrawingArea):
 
         cr.save()
         rect = self.get_allocation()
-        cr.translate(0.5*rect.width, 0.5*rect.height)
+        cr.translate(0.5 * rect.width, 0.5 * rect.height)
         cr.scale(self.zoom_ratio, self.zoom_ratio)
         cr.translate(-self.x, -self.y)
 
@@ -1541,13 +1541,13 @@ class DotWidget(gtk.DrawingArea):
 
     def zoom_image(self, zoom_ratio, center=False, pos=None):
         if center:
-            self.x = self.graph.width/2
-            self.y = self.graph.height/2
+            self.x = self.graph.width / 2
+            self.y = self.graph.height / 2
         elif pos is not None:
             rect = self.get_allocation()
             x, y = pos
-            x -= 0.5*rect.width
-            y -= 0.5*rect.height
+            x -= 0.5 * rect.width
+            y -= 0.5 * rect.height
             self.x += x / self.zoom_ratio - x / zoom_ratio
             self.y += y / self.zoom_ratio - y / zoom_ratio
         self.zoom_ratio = zoom_ratio
@@ -1559,8 +1559,8 @@ class DotWidget(gtk.DrawingArea):
         width = abs(x1 - x2)
         height = abs(y1 - y2)
         self.zoom_ratio = min(
-            float(rect.width)/float(width),
-            float(rect.height)/float(height)
+            float(rect.width) / float(width),
+            float(rect.height) / float(height)
         )
         self.zoom_to_fit_on_resize = False
         self.x = (x1 + x2) / 2
@@ -1574,8 +1574,8 @@ class DotWidget(gtk.DrawingArea):
         rect.width -= 2 * self.ZOOM_TO_FIT_MARGIN
         rect.height -= 2 * self.ZOOM_TO_FIT_MARGIN
         zoom_ratio = min(
-            float(rect.width)/float(self.graph.width),
-            float(rect.height)/float(self.graph.height)
+            float(rect.width) / float(self.graph.width),
+            float(rect.height) / float(self.graph.height)
         )
         self.zoom_image(zoom_ratio, center=True)
         self.zoom_to_fit_on_resize = True
@@ -1599,19 +1599,19 @@ class DotWidget(gtk.DrawingArea):
 
     def on_key_press_event(self, widget, event):
         if event.keyval == gtk.keysyms.Left:
-            self.x -= self.POS_INCREMENT/self.zoom_ratio
+            self.x -= self.POS_INCREMENT / self.zoom_ratio
             self.queue_draw()
             return True
         if event.keyval == gtk.keysyms.Right:
-            self.x += self.POS_INCREMENT/self.zoom_ratio
+            self.x += self.POS_INCREMENT / self.zoom_ratio
             self.queue_draw()
             return True
         if event.keyval == gtk.keysyms.Up:
-            self.y -= self.POS_INCREMENT/self.zoom_ratio
+            self.y -= self.POS_INCREMENT / self.zoom_ratio
             self.queue_draw()
             return True
         if event.keyval == gtk.keysyms.Down:
-            self.y += self.POS_INCREMENT/self.zoom_ratio
+            self.y += self.POS_INCREMENT / self.zoom_ratio
             self.queue_draw()
             return True
         if event.keyval in (gtk.keysyms.Page_Up,
@@ -1716,8 +1716,8 @@ class DotWidget(gtk.DrawingArea):
 
     def window2graph(self, x, y):
         rect = self.get_allocation()
-        x -= 0.5*rect.width
-        y -= 0.5*rect.height
+        x -= 0.5 * rect.width
+        y -= 0.5 * rect.height
         x /= self.zoom_ratio
         y /= self.zoom_ratio
         x += self.x
@@ -1899,24 +1899,24 @@ def main():
 
 # Apache-Style Software License for ColorBrewer software and ColorBrewer Color
 # Schemes, Version 1.1
-# 
+#
 # Copyright (c) 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State
 # University. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #    1. Redistributions as source code must retain the above copyright notice,
-#    this list of conditions and the following disclaimer.  
+#    this list of conditions and the following disclaimer.
 #
 #    2. The end-user documentation included with the redistribution, if any,
 #    must include the following acknowledgment:
-# 
+#
 #       This product includes color specifications and designs developed by
 #       Cynthia Brewer (http://colorbrewer.org/).
-# 
+#
 #    Alternately, this acknowledgment may appear in the software itself, if and
-#    wherever such third-party acknowledgments normally appear.  
+#    wherever such third-party acknowledgments normally appear.
 #
 #    3. The name "ColorBrewer" must not be used to endorse or promote products
 #    derived from this software without prior written permission. For written
@@ -1924,8 +1924,8 @@ def main():
 #
 #    4. Products derived from this software may not be called "ColorBrewer",
 #    nor may "ColorBrewer" appear in their name, without prior written
-#    permission of Cynthia Brewer. 
-# 
+#    permission of Cynthia Brewer.
+#
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES,
 # INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 # FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL CYNTHIA
@@ -1935,7 +1935,7 @@ def main():
 # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 brewer_colors = {
     'accent3': [(127, 201, 127), (190, 174, 212), (253, 192, 134)],
     'accent4': [(127, 201, 127), (190, 174, 212), (253, 192, 134), (255, 255, 153)],

@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -45,18 +45,18 @@ from lxml import etree
 
 
 #+---------------------------------------------------------------------------+
-#| OpenChannelTransition :
+#| OpenChannelTransition:
 #|    Special transition in charge of opening the transition
 #+---------------------------------------------------------------------------+
 class OpenChannelTransition(AbstractTransition):
-    
+
     def __init__(self, id, name, inputState, outputState, connectionTime, maxNumberOfAttempt):
         AbstractTransition.__init__(self, "OpenChannel", id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition.py')
         self.connectionTime = connectionTime
         self.maxNumberOfAttempt = maxNumberOfAttempt
-    
+
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Computes if the received symbol is valid
@@ -64,7 +64,7 @@ class OpenChannelTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def isValid(self, receivedSymbol):
         return True
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Open the connection
@@ -72,48 +72,48 @@ class OpenChannelTransition(AbstractTransition):
     #| @return the new state
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
-         
+
         self.log.debug("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
-         
-        if abstractionLayer.getCommunicationChannel().isServer() :
+
+        if abstractionLayer.getCommunicationChannel().isServer():
             # start a specific listening network thread
             self.activate()
-            self.log.info("We instanciate a new server and close the current MMSTD")     
+            self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, False)
             self.deactivate()
             return None
-        else :  
-            self.activate()     
+        else:
+            self.activate()
             result = self.openConnection(abstractionLayer)
             self.deactivate()
-            if result :
+            if result:
                 return self.outputState
-            else :
+            else:
                 return None
-            
+
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Open the connection
     #| @param abstractionLayer the abstract layer to contact in order to reach outside world
     #| @return the new state
     #+-----------------------------------------------------------------------+
-    def executeAsMaster(self, abstractionLayer):    
-        if abstractionLayer.getCommunicationChannel().isServer() :
+    def executeAsMaster(self, abstractionLayer):
+        if abstractionLayer.getCommunicationChannel().isServer():
             # start a specific listening network thread
-            self.activate()     
-            self.log.info("We instanciate a new server and close the current MMSTD")   
+            self.activate()
+            self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, True)
             self.deactivate()
             return None
-        else :  
-            self.activate()     
+        else:
+            self.activate()
             result = self.openConnection(abstractionLayer)
             self.deactivate()
-            if result :
+            if result:
                 return self.outputState
-            else :
+            else:
                 return None
-        
+
     #+-----------------------------------------------------------------------+
     #| openConnection
     #|     Open the connection
@@ -122,45 +122,49 @@ class OpenChannelTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def openConnection(self, abstractionLayer):
         self.log.info("OpenChannelTransition executed with the abstractionLayer : " + str(abstractionLayer))
-        
+
         i = self.maxNumberOfAttempt
-        while (not abstractionLayer.isConnected()  and i > 0) :
+        j = 1
+        while (not abstractionLayer.isConnected()  and i > 0):
             time.sleep(int(self.connectionTime) / 1000)
             abstractionLayer.connect()
-            if abstractionLayer.isConnected() :
+            if abstractionLayer.isConnected():
                 self.log.debug("Connected !")
-            else :
-                self.log.warn("Error, the connection attempt failed")
-            i = i - 1
-        
-        if (abstractionLayer.isConnected()) :
+            else:
+                self.log.warn("Error, the connection attempt number " + str(j) + "failed")
+#            i = i - 1
+            j = j + 1
+
+        if (abstractionLayer.isConnected()):
             return True
-        else :
+        else:
             self.log.warn("Max connection attempt reached !")
             return False
-    
+
     def getDescription(self):
         return "OpenChannelTransition"
+
     def getConnectionTime(self):
         return self.connectionTime
+
     def getMaxNumberOfAttempt(self):
         return self.maxNumberOfAttempt
-    
+
     def save(self, root, namespace):
         xmlTransition = etree.SubElement(root, "{" + namespace + "}transition")
         xmlTransition.set("id", str(self.getID()))
         xmlTransition.set("name", str(self.getName()))
         xmlTransition.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:OpenChannelTransition")
-        
+
         xmlStartState = etree.SubElement(xmlTransition, "{" + namespace + "}startState")
         xmlStartState.text = str(self.getInputState().getID())
-        
+
         xmlEndState = etree.SubElement(xmlTransition, "{" + namespace + "}endState")
         xmlEndState.text = str(self.getOutputState().getID())
-        
+
         xmlConnectionTime = etree.SubElement(xmlTransition, "{" + namespace + "}connectionTime")
         xmlConnectionTime.text = str(self.getConnectionTime())
-        
+
         xmlMaxNumberOfAttempt = etree.SubElement(xmlTransition, "{" + namespace + "}maxNumberOfAttempt")
         xmlMaxNumberOfAttempt.text = str(self.getMaxNumberOfAttempt())
 
@@ -173,22 +177,22 @@ class OpenChannelTransition(AbstractTransition):
     def loadFromXML(states, xmlTransition, namespace, version):
         idTransition = xmlTransition.get("id")
         nameTransition = xmlTransition.get("name")
-            
+
         idStartTransition = xmlTransition.find("{" + namespace + "}startState").text.strip()
         idEndTransition = xmlTransition.find("{" + namespace + "}endState").text.strip()
-        
+
         inputStateTransition = None
         outputStateTransition = None
-        for state in states :
-        
-            if state.getID() == idStartTransition :
+        for state in states:
+
+            if state.getID() == idStartTransition:
                 inputStateTransition = state
-            if state.getID() == idEndTransition :
+            if state.getID() == idEndTransition:
                 outputStateTransition = state
-        
+
         connectionTime = int(xmlTransition.find("{" + namespace + "}connectionTime").text)
         maxNumberOfAttempt = int(xmlTransition.find("{" + namespace + "}maxNumberOfAttempt").text)
-       
+
         transition = OpenChannelTransition(idTransition, nameTransition, inputStateTransition, outputStateTransition, connectionTime, maxNumberOfAttempt)
         inputStateTransition.registerTransition(transition)
         return transition

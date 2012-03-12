@@ -25,7 +25,8 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+
+#+----------------------------------------------
 #| Format representation of data
 #+----------------------------------------------
 class Format():
@@ -36,13 +37,19 @@ class Format():
     HEX = "hex"
     STRING = "string"
     FLOAT = "float"
+    NUM = "num"
+    ALPHA = "alpha"
+    ALPHA_NUM = "alphanum"
+    ASCII = "ascii"
+    BASE64_ENC = "base64enc"
+    BASE64_DEC = "base64dec"
 
     # Complex formats
     IP = "ip"
-    
+
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| getSupportedFormats :
+    #| getSupportedFormats:
     #|     Returns an array composed of the names of primary supported formats
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+
@@ -51,7 +58,7 @@ class Format():
 
     @staticmethod
     #+---------------------------------------------------------------------------+
-    #| getExtendedSupportedFormats :
+    #| getExtendedSupportedFormats:
     #|     Returns an array composed of the names of all supported formats
     #|     for the visualization of messages
     #+---------------------------------------------------------------------------+

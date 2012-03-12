@@ -25,42 +25,43 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import logging
 import gtk
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
-#| TreeTypeStructureGenerator :
-#|     update and generates the treeview and its 
+
+#+----------------------------------------------
+#| TreeTypeStructureGenerator:
+#|     update and generates the treeview and its
 #|     treestore dedicated to the type structure
-#+---------------------------------------------- 
+#+----------------------------------------------
 class TreeTypeStructureGenerator():
-    
-    #+---------------------------------------------- 
-    #| Constructor :
+
+    #+----------------------------------------------
+    #| Constructor:
     #| @param vbox : where the treeview will be hold
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
         self.symbol = None
         self.message = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.TreeViews.TreeTypeStructureGenerator.py')
-   
-    #+---------------------------------------------- 
-    #| initialization :
+
+    #+----------------------------------------------
+    #| initialization:
     #| builds and configures the treeview
-    #+----------------------------------------------     
+    #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str) # iCol, Name, Data, Description
-        # creation of the treeview   
+        self.treestore = gtk.TreeStore(int, str, str, str)  # iCol, Name, Data, Description
+        # creation of the treeview
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
@@ -74,31 +75,31 @@ class TreeTypeStructureGenerator():
         self.treeview.show()
         self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)        
+        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll.add(self.treeview)
         self.scroll.show()
 
-    #+---------------------------------------------- 
-    #| clear :
+    #+----------------------------------------------
+    #| clear:
     #|         Clear the class
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def clear(self):
         self.symbol = None
         self.message = None
         self.treestore.clear()
-        
-    #+---------------------------------------------- 
-    #| error :
+
+    #+----------------------------------------------
+    #| error:
     #|         Update the treestore in error mode
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def error(self):
-        self.log.warning("The treeview for the messages is in error mode")      
+        self.log.warning("The treeview for the messages is in error mode")
         pass
-    
-    #+---------------------------------------------- 
-    #| update :
+
+    #+----------------------------------------------
+    #| update:
     #|   Update the treestore
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     def update(self):
         if self.netzob.getCurrentProject() == None:
             return
@@ -121,34 +122,40 @@ class TreeTypeStructureGenerator():
             messageElt = splittedMessage[field.getIndex()]
             if field.getName() == "__sep__":
                 continue
-            if not field.isRegexStatic():
+            if not field.isStatic():
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getRegex() + " / " + messageElt, field.getDescription()])
             else:
                 self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", messageElt, field.getDescription()])
 
-    #+---------------------------------------------- 
-    #| GETTERS : 
+    #+----------------------------------------------
+    #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
         return self.treeview
+
     def getScrollLib(self):
         return self.scroll
+
     def getSymbol(self):
         return self.symbol
+
     def getMessage(self):
         return self.message
 
-    #+---------------------------------------------- 
-    #| SETTERS : 
+    #+----------------------------------------------
+    #| SETTERS:
     #+----------------------------------------------
     def setTreeview(self, treeview):
         self.treeview = treeview
+
     def setScrollLib(self, scroll):
         self.scroll = scroll
+
     def setSymbol(self, symbol):
         self.symbol = symbol
+
     def setMessage(self, message):
         self.message = message
+
     def setMessageByID(self, message_id):
         self.message = self.symbol.getMessageByID(message_id)
-

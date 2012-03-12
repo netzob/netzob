@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -39,19 +39,20 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 
+
 #+---------------------------------------------------------------------------+
-#| SimpleTransition :
+#| SimpleTransition:
 #|     Definition of a simple transition (only sends something after X ms)
 #+---------------------------------------------------------------------------+
 class SimpleTransition(AbstractTransition):
-    
+
     def __init__(self, id, name, inputState, outputState, timeBeforeSending, outputSymbol):
         AbstractTransition.__init__(self, "SimpleTransition", id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.SimpleTransition.py')
         self.outputSymbol = outputSymbol
         self.timeBeforeSending = timeBeforeSending
-        
+
     #+-----------------------------------------------------------------------+
     #| getOutputSymbol
     #|     Return the associated output symbol
@@ -59,7 +60,7 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def getOutputSymbol(self):
         return self.outputSymbol
-    
+
     #+-----------------------------------------------------------------------+
     #| getTimeBeforeSending
     #|     Return the time which will be paused before sending something
@@ -67,8 +68,7 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def getTimeBeforeSending(self):
         return self.timeBeforeSending
-   
-    
+
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Computes if the received symbol is valid
@@ -76,9 +76,7 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def isValid(self, receivedSymbol):
         return True
-    
- 
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Wait for the reception of a messag
@@ -90,7 +88,7 @@ class SimpleTransition(AbstractTransition):
         self.log.debug("Execute as a client")
         self.deactivate()
         return self.outputState
-    
+
     #+-----------------------------------------------------------------------+
     #| executeAsMaster
     #|     Send input symbol and waits to received one of the output symbol
@@ -103,19 +101,18 @@ class SimpleTransition(AbstractTransition):
         self.log.debug("Execute as a master")
         # write a message
         abstractionLayer.writeSymbol(self.outputSymbol)
-        
+
         # listen for input symbol for fex secondes
         abstractionLayer.receiveSymbolWithTimeout(3)
-        
+
         self.deactivate()
         return self.outputState
-     
-    
+
     def getDescription(self):
         outputSymbolId = self.getOutputSymbol().getID()
-         
+
         return "(" + str(outputSymbolId) + ";{after " + str(self.timeBeforeSending) + "})"
-    
+
     #+-----------------------------------------------------------------------+
     #| toXMLString
     #|     Abstract method to retrieve the XML definition of current transition
@@ -123,11 +120,11 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def toXMLString(self, idStartState):
         return None
-    
+
     #+-----------------------------------------------------------------------+
     #| parse
     #|     Extract from an XML declaration the definition of the transition
-    #| @param dictionary the dictionary which is used in the current MMSTD 
+    #| @param dictionary the dictionary which is used in the current MMSTD
     #| @param states the states already parsed while analyzing the MMSTD
     #| @return the instanciated object declared in the XML
     #+-----------------------------------------------------------------------+

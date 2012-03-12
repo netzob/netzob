@@ -25,27 +25,27 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import logging
 
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 
-#+---------------------------------------------- 
-#| SearchTask :
+#+----------------------------------------------
+#| SearchTask:
 #|     Describes a search operation
-#+---------------------------------------------- 
+#+----------------------------------------------
 class SearchTask(object):
-    
-    #+---------------------------------------------- 
-    #| Constructor :
+
+    #+----------------------------------------------
+    #| Constructor:
     #| @param data: the searched data
     #| @param type: the type of the searched data
-    #+----------------------------------------------   
+    #+----------------------------------------------
     def __init__(self, data, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.SearchTask.py')
@@ -53,16 +53,15 @@ class SearchTask(object):
         self.type = type
         self.searchedDatas = dict()
         self.results = []
-    
+
     def registerResults(self, r):
         self.results.extend(r)
-        
+
     def getResults(self):
         return self.results
-    
+
     def registerVariation(self, data, description):
         self.searchedDatas[data] = description
 
     def getVariations(self):
         return self.searchedDatas.keys()
-    

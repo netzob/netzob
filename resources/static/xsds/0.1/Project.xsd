@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema 
-	targetNamespace="http://www.netzob.org/project"
+<schema targetNamespace="http://www.netzob.org/project"
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:netzob-project="http://www.netzob.org/project" 
+	xmlns:netzob-project="http://www.netzob.org/project"
 	xmlns:netzob-common="http://www.netzob.org/common">
 
-    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
-    
-    <complexType name="Project">
+	<import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
+
+	<complexType name="Project">
 		<sequence>
-			<element name="configuration"
-				type="netzob-project:Project_configuration" minOccurs="0">
+			<element name="configuration" type="netzob-project:Project_configuration"
+				minOccurs="0">
 			</element>
 			<element name="vocabulary" type="netzob-project:Vocabulary"
 				minOccurs="0">
@@ -33,8 +32,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="creation_date" type="dateTime"
-			use="required">
+		<attribute name="creation_date" type="dateTime" use="required">
 		</attribute>
 		<attribute name="path" use="required">
 			<simpleType>
@@ -82,7 +80,8 @@
 			</element>
 			<element name="display_messages" type="boolean" minOccurs="0">
 			</element>
-			<element name="display_symbol_structure" type="boolean" minOccurs="0">
+			<element name="display_symbol_structure" type="boolean"
+				minOccurs="0">
 			</element>
 			<element name="display_console" type="boolean" minOccurs="0">
 			</element>
@@ -214,26 +213,13 @@
 			<element name="symbols" type="netzob-project:Symbols"></element>
 		</sequence>
 	</complexType>
+	
 
 	<complexType name="Grammar">
 		<sequence>
-			<element name="states" type="netzob-project:States"></element>
-			<element name="transitions" type="netzob-project:Transitions" minOccurs="0"></element>
+			<element name="automata" type="netzob-project:MMSTD" minOccurs="0"></element>
+			<element name="sequences" type="netzob-project:Sequences" minOccurs="0"></element>
 		</sequence>
-		<attribute name="type" use="required">
-			<simpleType>
-				<restriction base="string">
-					<enumeration value="MMSTD"></enumeration>
-				</restriction>
-			</simpleType>
-		</attribute>
-		<attribute name="initialState" use="required">
-			<simpleType>
-				<restriction base="string">
-					<minLength value="1"></minLength>
-				</restriction>
-			</simpleType>
-		</attribute>
 	</complexType>
 
 	<complexType name="Symbols">
@@ -271,7 +257,7 @@
 		<attribute name="rawDelimiter" type="string"></attribute>
 	</complexType>
 
-	
+
 
 
 
@@ -293,9 +279,11 @@
 			</element>
 			<element name="regex" type="string"></element>
 			<element name="format" type="string" maxOccurs="1" minOccurs="0"></element>
-			<element name="unitsize" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="unitsize" type="string" maxOccurs="1"
+				minOccurs="0"></element>
 			<element name="sign" type="string" maxOccurs="1" minOccurs="0"></element>
-			<element name="endianess" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="endianess" type="string" maxOccurs="1"
+				minOccurs="0"></element>
 			<element name="description" type="string" minOccurs="0"></element>
 			<element name="color" maxOccurs="1" minOccurs="0">
 				<simpleType>
@@ -304,7 +292,8 @@
 					</restriction>
 				</simpleType>
 			</element>
-			<element name="variable" type="netzob-project:Variable" minOccurs="0"></element>
+			<element name="variable" type="netzob-project:Variable"
+				minOccurs="0"></element>
 		</sequence>
 		<attribute name="name" use="required">
 			<simpleType>
@@ -323,6 +312,10 @@
 	</complexType>
 
 	<complexType name="State" abstract="true">
+		<sequence>
+			<element name="memopexs" type="netzob-project:MemOpexs"
+				minOccurs="0"></element>
+		</sequence>
 		<attribute name="id" use="required">
 			<simpleType>
 				<restriction base="string">
@@ -337,6 +330,42 @@
 				</restriction>
 			</simpleType>
 		</attribute>
+	</complexType>
+
+	<complexType name="MemOpexs">
+		<sequence>
+			<element name="memopex" type="netzob-project:MemOpex"
+				minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+
+	</complexType>
+
+	<complexType name="MemOpex">
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="transitionId" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+	
+	<complexType name="ForgetMemOpex">
+		<complexContent>
+			<extension base="netzob-project:MemOpex">
+				<sequence>
+
+					<element name="variableId" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="States">
@@ -551,29 +580,26 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-        <attribute name="mutable" type="boolean" default="false"></attribute>
 	</complexType>
 
 	<complexType name="AggregateVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">
 				<sequence>
-					<element name="variable"
-						type="netzob-project:Variable" minOccurs="0"
-						maxOccurs="unbounded">
+					<element name="variable" type="netzob-project:Variable"
+						minOccurs="0" maxOccurs="unbounded">
 					</element>
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
-	
+
 	<complexType name="AlternateVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">
 				<sequence>
-					<element name="variable"
-						type="netzob-project:Variable" minOccurs="0"
-						maxOccurs="unbounded">
+					<element name="variable" type="netzob-project:Variable"
+						minOccurs="0" maxOccurs="unbounded">
 					</element>
 				</sequence>
 			</extension>
@@ -584,22 +610,62 @@
 		<complexContent>
 			<extension base="netzob-project:Variable">
 				<sequence>
-					<element name="value" type="string"></element>
+					<element name="originalValue" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="minBits" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+					<element name="maxBits" type="string" minOccurs="1"
+						maxOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
 	
+	<complexType name="HexVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="originalValue" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="minHexs" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+					<element name="maxHexs" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
 	<complexType name="WordVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">
 				<sequence>
-					<element name="value" type="string"></element>
+					<element name="originalValue" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="regex" type="string" minOccurs="1"
+						maxOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
-	
+
+	<complexType name="IPv4Variable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="originalValue" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="startValue" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+					<element name="endValue" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+					<element name="format" type="string" minOccurs="1"
+						maxOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
 	<complexType name="ReferencedVariable">
 		<complexContent>
 			<extension base="netzob-project:Variable">
@@ -615,5 +681,69 @@
 
 	<element name="project" type="netzob-project:Project"></element>
 
-    
+
+
+	<complexType name="Sequences">
+		<sequence>
+			<element name="sequence" type="netzob-project:Sequence" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Sequence">
+		<sequence>
+			<element name="order" type="netzob-project:Order" maxOccurs="unbounded"></element>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="description" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Order">
+		<sequence>
+			<element name="msg-ref" maxOccurs="unbounded"
+				minOccurs="0">
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1"></minLength>
+					</restriction>
+				</simpleType>
+			</element>
+		</sequence>
+		<attribute name="value" type="int" use="required"></attribute>
+	</complexType>
+
+    <complexType name="MMSTD">
+    	<sequence>
+			<element name="states" type="netzob-project:States"></element>
+			<element name="transitions"
+				type="netzob-project:Transitions" minOccurs="0">
+			</element>
+		</sequence>
+		<attribute name="type" use="required">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="mmstd"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="initialState" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+    </complexType>
 </schema>

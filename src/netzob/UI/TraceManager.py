@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
 import gtk
@@ -45,41 +45,37 @@ pygtk.require('2.0')
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
 
-
-#+---------------------------------------------------------------------------+ 
-#| TraceManager :
-#|     This class displays the GUI to manage all the manipulated traces in a 
+#+---------------------------------------------------------------------------+
+#| TraceManager:
+#|     This class displays the GUI to manage all the manipulated traces in a
 #|     workspace
 #+---------------------------------------------------------------------------+
 class TraceManager():
-    
     #+-----------------------------------------------------------------------+
-    #| Constructor :
+    #| Constructor:
     #| @param workspace : the current workspace
-    #+-----------------------------------------------------------------------+  
+    #+-----------------------------------------------------------------------+
     def __init__(self, workspace, cb_update):
         self.workspace = workspace
-        
+
         self.createDialog()
-        
+
         self.updateContent()
         self.cb_update = cb_update
         self.cb_update()
-        
-        
+
     def createDialog(self):
         self.dialog = gtk.Dialog(title="Trace Manager", flags=0, buttons=None)
         self.dialog.set_default_size(800, 600)
         mainTable = gtk.Table(rows=2, columns=1, homogeneous=False)
-        
+
         scroll = gtk.ScrolledWindow()
-        self.treestoreTraces = gtk.TreeStore(str, str, str, str, str, int) # id, date, type, project name, description, nb message,
+        self.treestoreTraces = gtk.TreeStore(str, str, str, str, str, int)  # id, date, type, project name, description, nb message,
         treeview = gtk.TreeView(self.treestoreTraces)
         treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         treeview.connect('button-press-event', self.button_press_on_treeview_traces)
@@ -115,10 +111,9 @@ class TraceManager():
         scroll.show()
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         mainTable.attach(scroll, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        
-        
+
         scroll2 = gtk.ScrolledWindow()
-        self.treestoreMessages = gtk.TreeStore(str, str, str) # id, timestamp, data,
+        self.treestoreMessages = gtk.TreeStore(str, str, str)  # id, timestamp, data,
         treeviewMessage = gtk.TreeView(self.treestoreMessages)
         treeviewMessage.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 #        treeview.connect("cursor-changed", self.packet_details)
@@ -139,27 +134,25 @@ class TraceManager():
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeviewMessage.append_column(column)
-        
+
         treeviewMessage.show()
         scroll2.add(treeviewMessage)
         scroll2.show()
         scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         mainTable.attach(scroll2, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        
-        
+
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
-   
-        
+
     def updateContentMessage(self, trace=None):
         self.treestoreMessages.clear()
-        if trace != None :
-            for message in trace.getMessages() :
+        if trace != None:
+            for message in trace.getMessages():
                 self.treestoreMessages.append(None, [str(message.getID()), str(message.getTimestamp()), str(message.getData())])
-            
+
     def updateContent(self):
         self.treestoreTraces.clear()
-        for trace in self.workspace.getImportedTraces() :
+        for trace in self.workspace.getImportedTraces():
             id = str(trace.getImportID())
             date = str(trace.getDate())
             type = str(trace.getDataType())
@@ -167,10 +160,9 @@ class TraceManager():
             description = str(trace.getDescription())
             nbMessage = len(trace.getMessages())
             self.treestoreTraces.append(None, [id, date, type, projectName, description, nbMessage])
-    
-    
-    #+---------------------------------------------- 
-    #| button_press_on_treeview_symbols :
+
+    #+----------------------------------------------
+    #| button_press_on_treeview_symbols:
     #|   operation when the user click on the treeview.
     #|   mainly to open a contextual menu
     #+----------------------------------------------
@@ -178,47 +170,47 @@ class TraceManager():
         x = int(event.x)
         y = int(event.y)
         selectedTrace = None
-        
+
         info = treeview.get_path_at_pos(x, y)
-        
-        if info is not None :
+
+        if info is not None:
             path = info[0]
             iter = treeview.get_model().get_iter(path)
             idTrace = str(treeview.get_model().get_value(iter, 0))
-            if idTrace is not None :
-                for trace in self.workspace.getImportedTraces() :
-                    if str(trace.getImportID()) == idTrace :
+            if idTrace is not None:
+                for trace in self.workspace.getImportedTraces():
+                    if str(trace.getImportID()) == idTrace:
                         selectedTrace = trace
-        if selectedTrace == None :
+        if selectedTrace == None:
             logging.warn("The provided ID do not match any trace.")
-            return 
-        
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and selectedTrace != None :
+            return
+
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and selectedTrace != None:
             self.updateContentMessage(selectedTrace)
 
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
             self.show_menu_trace(event, selectedTrace)
-            
-    #+---------------------------------------------- 
-    #| show_menu_trace :
+
+    #+----------------------------------------------
+    #| show_menu_trace:
     #|   Create a menu to display available operations for a trace
     #+----------------------------------------------
     def show_menu_trace(self, event, trace):
-        entries = [        
+        entries = [
                   (gtk.STOCK_ADD, self.importTrace, (trace != None)),
                   (gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
-        ]
+       ]
 
         menu = gtk.Menu()
         for stock_id, callback, sensitive in entries:
             item = gtk.ImageMenuItem(stock_id)
-            
-            item.connect("activate", callback, trace)  
+
+            item.connect("activate", callback, trace)
             item.set_sensitive(sensitive)
             item.show()
             menu.append(item)
         menu.popup(None, None, None, event.button, event.time)
-        
+
     def importTrace(self, event, trace):
         importDialog = gtk.Dialog(title="Import selected Trace in a project", flags=0, buttons=None)
         panel = gtk.Table(rows=4, columns=2, homogeneous=False)
@@ -230,14 +222,13 @@ class TraceManager():
         label2 = NetzobLabel(trace.getImportID())
         panel.attach(label2, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-
         label3 = NetzobLabel("Select project")
         panel.attach(label3, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         # Delimiter type
         projectCombo = NetzobComboBoxEntry()
-        for project in self.workspace.getProjects() :
+        for project in self.workspace.getProjects():
             projectCombo.append_text(project.getName())
-            
+
         panel.attach(projectCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
@@ -251,49 +242,44 @@ class TraceManager():
 
         importDialog.vbox.pack_start(panel, True, True, 0)
         importDialog.show()
-        
-            
+
     def importTraceAction(self, event, trace, projectCombo, dialog):
         selectedProject = None
         selectedProjectName = projectCombo.get_active_text()
-        for project in self.workspace.getProjects() :
-            if project.getName() == selectedProjectName :
+        for project in self.workspace.getProjects():
+            if project.getName() == selectedProjectName:
                 selectedProject = project
-        
-        if selectedProject == None :
+
+        if selectedProject == None:
             logging.warn("Impossible to retrieve the selected project based on its name " + str(selectedProjectName))
             return
-        
+
         # Start the import job
         Job(self.startImport(trace, selectedProject, dialog))
-        
-    def startImport(self, trace, project, dialog):                
+
+    def startImport(self, trace, project, dialog):
         self.currentExecutionOfAlignmentHasFinished = False
         (yield ThreadedTask(self.importTraceInProject, trace, project))
         self.currentExecutionOfAlignmentHasFinished = True
         dialog.destroy()
         (yield ThreadedTask(self.cb_update))
-        
-    
+
     def importTraceInProject(self, trace, project):
         percent = 0.0
         inc = 1.0 / len(trace.getMessages())
         # We create a symbol dedicated for the trace
         symbol = Symbol(uuid.uuid4(), trace.getDataType(), project)
-        for message in trace.getMessages() :
+        for message in trace.getMessages():
             percent += inc
             symbol.addMessage(message)
             gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
-            
-        
+
         # We create a default field for the symbol
         symbol.addField(Field.createDefaultField())
         # and register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
         project.saveConfigFile(self.workspace)
-        
-        
-    
+
     def deleteTrace(self, event, trace):
         questionMsg = "Click yes to remove selected trace {0} from the Trace Manager".format(trace.getImportID())
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
@@ -303,6 +289,5 @@ class TraceManager():
             self.workspace.removeImportedTrace(trace)
             self.updateContent()
             self.updateContentMessage()
-        else :
-            self.log.debug("The user didn't confirm the deletion of the trace " + trace.getImportID())                
-        
+        else:
+            self.log.debug("The user didn't confirm the deletion of the trace " + trace.getImportID())

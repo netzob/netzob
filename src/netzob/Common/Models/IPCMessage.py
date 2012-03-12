@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
@@ -40,35 +40,36 @@ from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Type.Format import Format
 
+
 #+---------------------------------------------------------------------------+
-#| IPCMessage :
+#| IPCMessage:
 #|     Definition of an IPC message
 #+---------------------------------------------------------------------------+
 class IPCMessage(AbstractMessage):
     def __init__(self, id, timestamp, data, category, key, direction):
         AbstractMessage.__init__(self, id, timestamp, data, "IPC")
-        
+
         self.category = category
         self.key = key
         self.direction = direction
-        
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.IPCMessage.py')
-        
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
     #+-----------------------------------------------------------------------+
     def getFactory(self):
         return IPCMessageFactory
-    
+
     #+-----------------------------------------------------------------------+
     #| getProperties
     #|     Computes and returns the properties of the current message
     #| @return an array with all the properties [[key,val],...]
     #+-----------------------------------------------------------------------+
     def getProperties(self):
-        properties = []        
+        properties = []
         properties.append(['ID', Format.STRING, str(self.getID())])
         properties.append(['Type', Format.STRING, self.getType()])
         properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
@@ -76,31 +77,35 @@ class IPCMessage(AbstractMessage):
         properties.append(['Key', Format.STRING, self.getKey()])
         properties.append(['Direction', Format.STRING, self.getDirection()])
         properties.append(['Data', Format.STRING, self.getStringData()])
-        
-        return properties   
-        
-    #+---------------------------------------------- 
-    #| GETTERS : 
+
+        return properties
+
+    #+----------------------------------------------
+    #| GETTERS:
     #+----------------------------------------------
     def getCategory(self):
         return self.category
+
     def getKey(self):
         return self.key
+
     def getType(self):
         return self.type
+
     def getDirection(self):
         return self.direction
 
-    #+---------------------------------------------- 
-    #| SETTERS : 
+    #+----------------------------------------------
+    #| SETTERS:
     #+----------------------------------------------
     def setCategory(self, category):
         self.category = category
+
     def setKey(self, key):
         self.key = key
+
     def setType(self, type):
         self.type = type
+
     def setDirection(self, direction):
         self.direction = direction
-
-

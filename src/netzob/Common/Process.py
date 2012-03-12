@@ -25,7 +25,7 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import os
@@ -34,8 +34,10 @@ import os
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.SharedLib import SharedLib
+
+
 #+---------------------------------------------------------------------------+
-#| Process :
+#| Process:
 #|     Model object of a simple process definition
 #+---------------------------------------------------------------------------+
 class Process(object):
@@ -48,11 +50,11 @@ class Process(object):
     def __init__(self, name, pid, user):
         self.name = name
         self.pid = int(pid)
-        self.user = user        
-        
+        self.user = user
+
     #+-----------------------------------------------------------------------+
     #| getSharedLibs
-    #| @return a list of shared libraries linked with current process    
+    #| @return a list of shared libraries linked with current process
     #+-----------------------------------------------------------------------+
     def getSharedLibs(self):
         libs = []
@@ -65,28 +67,30 @@ class Process(object):
             perm = ar[1]
             path = ar[2][:len(ar[2]) - 1]
             found = False
-            for l in libs :
-                if l.getPath() == path :
+            for l in libs:
+                if l.getPath() == path:
                     found = True
-            if found == False :
+            if found == False:
                 (libName, libVersion) = SharedLib.findNameAndVersion(path)
-                
-                
-                
+
                 lib = SharedLib(libName, libVersion, path)
                 libs.append(lib)
         return libs
-        
-        
+
     def setPid(self, pid):
         self.pid = int(pid)
+
     def setName(self, name):
         self.name = name
+
     def setUser(self, user):
         self.user = user
+
     def getPid(self):
-        return self.pid;
+        return self.pid
+
     def getName(self):
         return self.name
+
     def getUser(self):
         return self.user
