@@ -43,10 +43,6 @@ import optparse
 from netzob.Common.Menu import Menu
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
-<<<<<<< HEAD
-#from netzob.Fuzzing.UIfuzzing import UIfuzzing
-=======
->>>>>>> d4d4714132bd03a42aa5cfb06ed281bd67f47669
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
@@ -70,7 +66,7 @@ class NetzobGui(gtk.Window):
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
         
-        self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
+        #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")
