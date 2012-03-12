@@ -40,9 +40,9 @@ import optparse
 #+---------------------------------------------------------------------------+
 sys.path.insert(0, 'src/')
 
-#insert in the path the directory where _libNeedleman.pyd is
+# Insert in the path the directory where _libNeedleman.pyd is
 if os.name == 'nt':
-	 sys.path.insert(0, 'lib/libNeedleman/')
+    sys.path.insert(0, 'lib/libNeedleman/')
 
 try:
     # Verify that libNeedleman is in the path
