@@ -40,7 +40,7 @@ from resources.sdist.manpage_command import manpage_command
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
 #+----------------------------------------------------------------------------
-moduleLibNeedleman = Extension('libNeedleman',
+moduleLibNeedleman = Extension('_libNeedleman',
                                extra_compile_args=["-fopenmp"],
                                extra_link_args=["-fopenmp"],
                                sources=['lib/libNeedleman/libNeedleman.c'])

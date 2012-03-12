@@ -286,7 +286,7 @@ class FileImport(AbstractImporter):
         self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), "", "normalTag")
 
     def getNetzobRawContentOfFile(self, filename):
-        file = open(filename, "r")
+        file = open(filename, "rb")
         content = file.read()
         file.close()
         return TypeConvertor.stringToNetzobRaw(content)

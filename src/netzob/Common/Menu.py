@@ -41,7 +41,8 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
-from netzob.Import.IpcImport import IpcImport
+if os.name == 'posix':
+    from netzob.Import.IpcImport import IpcImport
 from netzob.Import.FileImport import FileImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport

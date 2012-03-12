@@ -61,19 +61,30 @@ class EnvironmentalDependencies(object):
     #|   like local IP address, Ethernet address, etc.
     #+----------------------------------------------
     def captureEnvData(self):
-        # OS specific
-        self.envData.append(EnvironmentalDependency("os_name", Format.STRING, os.uname()[0]))  # for example 'Linux'
-        self.envData.append(EnvironmentalDependency("os_family", Format.STRING, os.name))  # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
-        self.envData.append(EnvironmentalDependency("os_version", Format.STRING, os.uname()[2]))  # result of 'uname -r' under linux
-        self.envData.append(EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4]))  # result of 'uname -m' under linux
+        if os.name == 'nt':
+            # OS specific
+            self.envData.append( EnvironmentalDependency("os_name", Format.STRING, 'Windows') )
+            self.envData.append( EnvironmentalDependency("os_family", Format.STRING, os.name) ) # TODO cmd /c Ver
+            self.envData.append( EnvironmentalDependency("os_version", Format.STRING, '') ) # TODO cmd /c Ver
+            self.envData.append( EnvironmentalDependency("os_arch", Format.STRING, os.environ['PROCESSOR_ARCHITECTURE']) )
+            # User specific
+            self.envData.append( EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['USERPROFILE']) )
+            self.envData.append( EnvironmentalDependency("user_lang", Format.STRING, '') ) # TODO
+        else:
+            # OS specific
+            self.envData.append( EnvironmentalDependency("os_name", Format.STRING, os.uname()[0]) ) # for example 'Linux'
+            self.envData.append( EnvironmentalDependency("os_family", Format.STRING, os.name) ) # for example 'posix', 'nt', 'os2', 'ce', 'java', 'riscos'
+            self.envData.append( EnvironmentalDependency("os_version", Format.STRING, os.uname()[2]) ) # result of 'uname -r' under linux
+            self.envData.append( EnvironmentalDependency("os_arch", Format.STRING, os.uname()[4]) ) # result of 'uname -m' under linux
+            # User specific
+            if 'HOME' in os.environ:
+                self.envData.append( EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']) )
+            if 'LANG' in os.environ:
+                self.envData.append( EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']) )
 
         # User specific
-        if 'HOME' in os.environ:
-            self.envData.append(EnvironmentalDependency("user_home_dir", Format.STRING, os.environ['HOME']))
         if 'USERNAME' in os.environ:
-            self.envData.append(EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']))
-        if 'LANG' in os.environ:
-            self.envData.append(EnvironmentalDependency("user_lang", Format.STRING, os.environ['LANG']))
+            self.envData.append( EnvironmentalDependency("user_name", Format.STRING, os.environ['USERNAME']) )
 
         # System specific
         self.envData.append(EnvironmentalDependency("hostname", Format.STRING, socket.gethostname()))

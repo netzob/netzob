@@ -16,6 +16,7 @@
 */
 
 // Compilation : gcc -fPIC -O3 -fopenmp -shared -I/usr/include/python2.6 -lpython2.6 -o libNeedleman.so NeedlemanWunsch.c
+//cl -Fe_libNeedleman.pyd -Ox -Ot -openmp -LD /I"C:\Python26\include" /I"C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\include" NeedlemanWunsch.c "C:\Python26\libs\python26.lib" "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\lib\vcomp.lib"
 
 #include "headers/NeedlemanWunsch.h"
 
@@ -33,6 +34,11 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	unsigned short int len;
 	int sizeSerialGroups;
 	t_group *t_groups;
+	
+	float **matrix;
+	float maxScore = -1.0f;
+	short int i_maximum = -1;
+	short int j_maximum = -1;
 
 	if (!PyArg_ParseTuple(args, "hhss#", &doInternalSlick, &nbGroups, &format, &serialGroups,
 			&sizeSerialGroups))
@@ -77,11 +83,6 @@ static PyObject* py_getMatrix(PyObject* self, PyObject* args) {
 	}
 
 	// Compute the matrix
-	float **matrix;
-	float maxScore = -1.0f;
-	short int i_maximum = -1;
-	short int j_maximum = -1;
-
 	matrix = (float **) malloc( nbGroups * sizeof(float*) );
 	for (i = 0; i < nbGroups; i++) {
 	  matrix[i] = (float *) malloc( sizeof(float) * nbGroups );
@@ -241,11 +242,7 @@ static PyObject* py_alignSequences(PyObject* self, PyObject* args) {
 	return Py_BuildValue("(fs#s#)", regex.score, regex.regex, regex.len, regex.mask, regex.len);
 }
 
-void initlibNeedleman() {
-	(void) Py_InitModule("libNeedleman", libNeedleman_methods);
-}
-
-void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex seq2, t_regex *regex) {
+static void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex seq2, t_regex *regex) {
 	const short int match = 10;
 	const short int mismatch = -10;
 	const short int gap = 0;
@@ -257,16 +254,28 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	short int **matrix;
 	unsigned short int i = 0;
 	unsigned short int j = 0;
-
+	
+	short int elt1, elt2, elt3, max, eltL, eltD, eltT;
+	BOOL finish;
+	unsigned char *regex1;
+	unsigned char *regex2;
+	unsigned char *regex1Mask;
+	unsigned char *regex2Mask;
+	unsigned short int iReg1;
+	unsigned short int iReg2;
+	unsigned char *regexTmp;
+	unsigned char *regexMaskTmp;
+	float nbDynamic = 0.0f;
+	float nbStatic = 0.0f;
+	float cent = 100.0f;
+	BOOL inDyn = FALSE;
+	
 	matrix = (short int**) malloc( sizeof(short int*) * (seq1.len + 1) );
 	for (i = 0; i < (seq1.len + 1); i++) {
 	  matrix[i] = (short int*) calloc( (seq2.len + 1), sizeof(short int) );
 	}
 
 	// fill the matrix
-	short int elt1, elt2, elt3, max, eltL, eltD, eltT;
-	BOOL finish;
-
 	for (i = 1; i < (seq1.len + 1); i++) {
 		for (j = 1; j < (seq2.len + 1); j++) {
 			/*
@@ -292,15 +301,15 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 
 	// Traceback
 	finish = FALSE;
-	unsigned char *regex1 = calloc( seq1.len + seq2.len, sizeof(unsigned char));
-	unsigned char *regex2 = calloc( seq1.len + seq2.len, sizeof(unsigned char));
-	unsigned char *regex1Mask = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
-	unsigned char *regex2Mask = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
+	regex1 = calloc( seq1.len + seq2.len, sizeof(unsigned char));
+	regex2 = calloc( seq1.len + seq2.len, sizeof(unsigned char));
+	regex1Mask = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
+	regex2Mask = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
 	// TODO: (fgy) handle errors on malloc operation
 	memset(regex1Mask, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
 	memset(regex2Mask, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
-	unsigned short int iReg1 = seq1.len + seq2.len - 1;
-	unsigned short int iReg2 = seq1.len + seq2.len - 1;
+	iReg1 = seq1.len + seq2.len - 1;
+	iReg2 = seq1.len + seq2.len - 1;
 
 	i = seq1.len;
 	j = seq2.len;
@@ -411,8 +420,8 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	*/
 
 	// Compute the common regex
-	unsigned char *regexTmp = calloc( seq1.len + seq2.len, sizeof(unsigned char));
-	unsigned char *regexMaskTmp = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
+	regexTmp = calloc( seq1.len + seq2.len, sizeof(unsigned char));
+	regexMaskTmp = malloc( (seq1.len + seq2.len) * sizeof(unsigned char));
 	memset(regexMaskTmp, 2, (seq1.len + seq2.len) * sizeof(unsigned char));
 	i = seq1.len + seq2.len;
 	while (i > 0) {
@@ -432,10 +441,6 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	}
 
 	// Compute the score of the regex
-	float nbDynamic = 0.0f;
-	float nbStatic = 0.0f;
-	float cent = 100.0f;
-	BOOL inDyn = FALSE;
 	for (i = (seq1.len + seq2.len - 1); i >= 1; --i) {
 	  if (regexMaskTmp[i] == 2) {
 	    break;
@@ -492,8 +497,19 @@ void alignTwoSequences(unsigned short int doInternalSlick, t_regex seq1, t_regex
 	free(regexMaskTmp);
 }
 
-int hexdump(unsigned char *buf, int dlen) {
-	int OPL = 64;
+PyMethodDef libNeedleman_methods[] = {
+	{"getMatrix", py_getMatrix, METH_VARARGS},
+	{"alignSequences", py_alignSequences, METH_VARARGS},
+	{NULL, NULL}
+};
+
+PyMODINIT_FUNC init_libNeedleman() {
+	(void) Py_InitModule("_libNeedleman", libNeedleman_methods);
+}
+
+#define OPL 64
+
+void hexdump(unsigned char *buf, int dlen) {
 	char c[OPL + 1];int
 	i, ct;
 

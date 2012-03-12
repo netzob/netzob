@@ -25,16 +25,28 @@
 //|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 //+---------------------------------------------------------------------------+
 
+//Compilation Windows
+//cl -Fe_libNeedleman.pyd -Ox -Ot -openmp -LD /I"C:\Python26\include" /I"C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\include" libNeedleman.c "C:\Python26\libs\python26.lib" "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\lib\vcomp.lib"
+
 //+---------------------------------------------------------------------------+
 //| Import Associated Header
 //+---------------------------------------------------------------------------+
 #include "libNeedleman.h"
 
+static PyMethodDef libNeedleman_methods[] = {
+  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
+  {"alignMessages", py_alignMessages, METH_VARARGS},
+  {"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
+  {"deserializeMessages", py_deserializeMessages, METH_VARARGS},
+  {"deserializeGroups", py_deserializeGroups, METH_VARARGS},
+  {NULL, NULL}
+};
+
 //+---------------------------------------------------------------------------+
 //| initlibNeedleman : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
-void initlibNeedleman(void) {
-  (void) Py_InitModule("libNeedleman", libNeedleman_methods);
+PyMODINIT_FUNC init_libNeedleman(void) {
+  (void) Py_InitModule("_libNeedleman", libNeedleman_methods);
 }
 //+---------------------------------------------------------------------------+
 //| callbackStatus : displays the status or call python wrapper is available
@@ -175,7 +187,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   int p = 0;
   double status = 0.0;
   int nbStep;
-  double sizeSteps;
+  //double sizeSteps;
   
 
   // First we fill the matrix with 0s
@@ -199,7 +211,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
       p = 0;
 
       for (p = 0; p < nbGroups; p++) {
-	status += sizeSteps;
+		  //status += sizeSteps;
         if (i < p) {
           int m, n;
           t_group p_group;
@@ -382,18 +394,17 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
   unsigned short int numberOfOperations;
   double costOfOperation;
   double status = 0.0;
-
+  
+  // Local variables
+  t_regex current_regex;
+  t_regex new_regex;
+  unsigned short int i_message;
+  
   //+------------------------------------------------------------------------+
   // Estimate the number of operation
   //+------------------------------------------------------------------------+
   numberOfOperations = group->len - 1;
   costOfOperation = 100.0 / numberOfOperations;
-
-
-  // Local variables
-  t_regex current_regex;
-  t_regex new_regex;
-  unsigned short int i_message;
 
   // Create a current regex (using first message)
   // current regex = Align N+1 message with current regex
@@ -889,14 +900,14 @@ static PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
   int sizeSerialMessages;
   unsigned short int debugMode;
   unsigned short int nbDeserializedMessage;
-
+  t_group group_result;
+  
   // Converts the arguments
   if (!PyArg_ParseTuple(args, "hss#h", &nbMessages, &format, &sizeFormat, &serialMessages, &sizeSerialMessages, &debugMode)) {
     printf("Error while parsing the arguments provided to py_deserializeMessages\n");
     return NULL;
   }
-
-  t_group group_result;
+  
   // Deserializes the provided arguments
   if (debugMode == 1) {
     printf("py_alignSequences : Deserialization of the arguments (format, serialMessages).\n");
@@ -985,14 +996,14 @@ static PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
   int sizeSerialGroups;
   unsigned short int debugMode;
   unsigned short int nbDeserializedGroup;
-
+  t_groups groups_result;
+  
   // Converts the arguments
   if (!PyArg_ParseTuple(args, "hss#h", &nbGroups, &format, &sizeFormat, &serialGroups, &sizeSerialGroups, &debugMode)) {
     printf("Error while parsing the arguments provided to py_deserializeGroups\n");
     return NULL;
   }
 
-  t_groups groups_result;
   // Deserializes the provided arguments
   if (debugMode == 1) {
     printf("py_deserializeGroups : Deserialization of the arguments (format, serialGroups).\n");
@@ -1082,10 +1093,9 @@ unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, 
 
 
 
+#define OPL 64
 
-
-int hexdump(unsigned char *buf, int dlen) {
-  int OPL = 64;
+void hexdump(unsigned char *buf, int dlen) {
   char c[OPL + 1];
   int i, ct;
 
