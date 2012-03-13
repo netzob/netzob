@@ -84,14 +84,14 @@ class ImportedTrace(object):
         # Save the messages
         root = etree.Element("{" + namespace_workspace + "}trace")
         root.set("id", str(self.getID()))
-        xmlMessages = etree.SubElement(root, "{" + namespace_common + "}messages")
+        xmlMessages = etree.SubElement(root, "{" + namespace_workspace + "}messages")
         for message in self.getMessages():
             AbstractMessageFactory.save(message, xmlMessages, namespace_workspace, namespace_common)
 
         # Save the sessions
-        xmlSessions = etree.SubElement(root, "{" + namespace_common + "}sessions")
+        xmlSessions = etree.SubElement(root, "{" + namespace_workspace + "}sessions")
         for session in self.getSessions():
-            session.save(xmlSessions, namespace_common)
+            session.save(xmlSessions, namespace_workspace, namespace_common)
 
         tree = ElementTree(root)
         contentOfFile = str(etree.tostring(tree.getroot()))
@@ -180,18 +180,18 @@ class ImportedTrace(object):
                 xmlRoot = tree.getroot()
 
                 # We retrieve the pool of messages
-                if xmlRoot.find("{" + namespace_common + "}messages") != None:
-                    xmlMessages = xmlRoot.find("{" + namespace_common + "}messages")
+                if xmlRoot.find("{" + namespace_workspace + "}messages") != None:
+                    xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
                     for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                         message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
                         if message != None:
                             importedTrace.addMessage(message)
 
                 # We retrieve the sessions
-                if xmlRoot.find("{" + namespace_common + "}sessions") != None:
-                    xmlSessions = xmlRoot.find("{" + namespace_common + "}sessions")
+                if xmlRoot.find("{" + namespace_workspace + "}sessions") != None:
+                    xmlSessions = xmlRoot.find("{" + namespace_workspace + "}sessions")
                     for xmlSession in xmlSessions.findall("{" + namespace_common + "}session"):
-                        session = Session.loadFromXML(xmlSession, namespace_common, version, importedTrace)
+                        session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, importedTrace)
                         if session != None:
                             importedTrace.addSession(session)
             return importedTrace

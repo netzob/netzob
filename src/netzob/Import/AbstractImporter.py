@@ -62,20 +62,20 @@ class AbstractImporter:
             project.getVocabulary().addMessage(message)
 
         # We create a session with each message
-        session = Session(uuid.uuid4(), "", "")
+        session = Session(uuid.uuid4(), "Session 1", "")
         for message in messages:
             session.addMessage(message)
         # We register the session in the vocabulary of the project
         project.getVocabulary().addSession(session)
 
-#        # We create a symbol dedicated for this
-#        symbol = Symbol(uuid.uuid4(), self.type, project)
-#        for message in messages:
-#            symbol.addMessage(message)
-#        # We create a default field for the symbol
-#        symbol.addField(Field.createDefaultField())
-#        # We register the symbol in the vocabulary of the project
-#        project.getVocabulary().addSymbol(symbol)
+        # We create a default symbol dedicated for this
+        symbol = Symbol(uuid.uuid4(), self.type, project)
+        for message in messages:
+            symbol.addMessage(message)
+        # We create a default field for the symbol
+        symbol.addField(Field.createDefaultField())
+        # We register the symbol in the vocabulary of the project
+        project.getVocabulary().addSymbol(symbol)
 
         # Add the environmental dependencies to the project
         if fetchEnv:
@@ -85,9 +85,11 @@ class AbstractImporter:
         date = datetime.now()
         description = "No description (yet not implemented)"
 
-        # We also save the session in the workspace
+        # We also save the session and the messages in the workspace
         trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
         trace.addSession(session)
+        for message in messages:
+            trace.addMessage(message)
         workspace.addImportedTrace(trace)
         
         # Now we save the workspace

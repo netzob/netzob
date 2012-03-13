@@ -183,7 +183,7 @@ class Vocabulary(object):
     def save(self, root, namespace_project, namespace_common):
         xmlVocabulary = etree.SubElement(root, "{" + namespace_project + "}vocabulary")
         # Messages
-        xmlMessages = etree.SubElement(xmlVocabulary, "{" + namespace_common + "}messages")
+        xmlMessages = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}messages")
         for message in self.messages:
             AbstractMessageFactory.save(message, xmlMessages, namespace_project, namespace_common)
         # Symbols
@@ -191,9 +191,9 @@ class Vocabulary(object):
         for symbol in self.symbols:
             symbol.save(xmlSymbols, namespace_project, namespace_common)
         # Sessions
-        xmlSessions = etree.SubElement(xmlVocabulary, "{" + namespace_common + "}sessions")
+        xmlSessions = etree.SubElement(xmlVocabulary, "{" + namespace_project + "}sessions")
         for session in self.sessions:
-            session.save(xmlSessions, namespace_common)
+            session.save(xmlSessions, namespace_project, namespace_common)
 
     @staticmethod
     def loadVocabulary(xmlRoot, namespace_project, namespace_common, version, project):
@@ -201,7 +201,7 @@ class Vocabulary(object):
 
         if version == "0.1":
             # Messages
-            for xmlMessage in xmlRoot.findall("{" + namespace_common + "}messages/{" + namespace_common + "}message"):
+            for xmlMessage in xmlRoot.findall("{" + namespace_project + "}messages/{" + namespace_common + "}message"):
                 message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
                 if message != None:
                     vocabulary.addMessage(message)
@@ -211,8 +211,8 @@ class Vocabulary(object):
                 if symbol != None:
                     vocabulary.addSymbol(symbol)
             # Sessions
-            for xmlSession in xmlRoot.findall("{" + namespace_common + "}sessions/{" + namespace_common + "}session"):
-                session = Session.loadFromXML(xmlSession, namespace_common, version, vocabulary)
+            for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
+                session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, vocabulary)
                 if session != None:
                     vocabulary.addSession(session)
         return vocabulary

@@ -77,24 +77,24 @@ class Session(object):
     def setDescription(self, description):
         self.description = description
 
-    def save(self, root, namespace):
-        xmlSession = etree.SubElement(root, "{" + namespace + "}session")
+    def save(self, root, namespace_main, namespace_common):
+        xmlSession = etree.SubElement(root, "{" + namespace_common + "}session")
         xmlSession.set("id", str(self.getID()))
         if self.getName() != None:
             xmlSession.set("name", str(self.getName()))
         if self.getDescription() != None:
             xmlSession.set("description", str(self.getDescription()))
 
-        xmlMessagesRef = etree.SubElement(xmlSession, "{" + namespace + "}messages-ref")
+        xmlMessagesRef = etree.SubElement(xmlSession, "{" + namespace_common + "}messages-ref")
         for message in self.getMessages():
-            xmlMessage = etree.SubElement(xmlMessagesRef, "{" + namespace + "}message-ref")
+            xmlMessage = etree.SubElement(xmlMessagesRef, "{" + namespace_common + "}message-ref")
             xmlMessage.set("id", str(message.getID()))
 
     #+----------------------------------------------
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadFromXML(xmlRoot, namespace_common, version, poolOfMessages):
+    def loadFromXML(xmlRoot, namespace_main, namespace_common, version, poolOfMessages):
         if version == "0.1":
             id = xmlRoot.get("id")
             name = xmlRoot.get("name")
@@ -108,7 +108,7 @@ class Session(object):
                     id = xmlMessage.get("id")
                     message = poolOfMessages.getMessageByID( id )
                     if message != None:
-                        message.setSymbol(symbol)
-                        symbol.addMessage(message)
+                        message.setSession(session)
+                        session.addMessage(message)
             return session
         return None

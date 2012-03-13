@@ -1059,7 +1059,7 @@ class Symbol(AbstractSymbol):
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
 
         # Save the message references
-        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_common + "}messages-ref")
+        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages-ref")
         for message in self.messages:
             xmlMessage = etree.SubElement(xmlMessages, "{" + namespace_common + "}message-ref")
             xmlMessage.set("id", str(message.getID()))
@@ -1330,7 +1330,10 @@ class Symbol(AbstractSymbol):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version, project, poolOfMessages):
+    def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
+
+
+        #### remplacer namespace par namespace_project
 
         if version == "0.1":
             nameSymbol = xmlRoot.get("name")
@@ -1347,8 +1350,8 @@ class Symbol(AbstractSymbol):
             symbol.setRawDelimiter(rawDelimiter)
 
             # we parse the messages
-            if xmlRoot.find("{" + namespace_common + "}messages-ref") != None:
-                xmlMessages = xmlRoot.find("{" + namespace_common + "}messages-ref")
+            if xmlRoot.find("{" + namespace_project + "}messages-ref") != None:
+                xmlMessages = xmlRoot.find("{" + namespace_project + "}messages-ref")
                 for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
                     id = xmlMessage.get("id")
                     message = poolOfMessages.getMessageByID( id )
@@ -1357,10 +1360,10 @@ class Symbol(AbstractSymbol):
                         symbol.addMessage(message)
 
             # we parse the fields
-            if xmlRoot.find("{" + namespace + "}fields") != None:
-                xmlFields = xmlRoot.find("{" + namespace + "}fields")
-                for xmlField in xmlFields.findall("{" + namespace + "}field"):
-                    field = Field.loadFromXML(xmlField, namespace, version)
+            if xmlRoot.find("{" + namespace_project + "}fields") != None:
+                xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
+                for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
+                    field = Field.loadFromXML(xmlField, namespace_project, version)
                     if field != None:
                         symbol.addField(field)
             

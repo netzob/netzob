@@ -324,7 +324,6 @@ class UImodelization:
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeSymbolGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
-#        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolChanged)
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+----------------------------------------------
