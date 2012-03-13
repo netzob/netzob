@@ -51,10 +51,6 @@ from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
-#+----------------------------------------------
-#| C Imports
-#+----------------------------------------------
-import _libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 

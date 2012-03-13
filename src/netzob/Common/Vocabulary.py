@@ -39,7 +39,6 @@ import uuid
 #+---------------------------------------------------------------------------+
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Session import Session
-from netzob.Inference.Vocabulary.Clusterer import Clusterer
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Field import Field
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
@@ -160,9 +159,6 @@ class Vocabulary(object):
         nbSteps = len(self.symbols) + 1 + reductionStep
         logging.debug("The number of estimated steps for Needleman is " + str(nbSteps))
         return nbSteps
-
-    
-
 
     #+----------------------------------------------
     #| alignWithDelimiter:
