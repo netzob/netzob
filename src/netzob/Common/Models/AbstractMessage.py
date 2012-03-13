@@ -189,14 +189,14 @@ class AbstractMessage():
                 if encoded :
                     result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
                 else :
-                    result.append(field.getRegex())
+                    result.append(glib.markup_escape_text(field.getRegex()))
             else :
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)
                 if encoded :
                     result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
                 else :
-                    result.append(data[start:end])
+                    result.append(glib.markup_escape_text(data[start:end]))
                 iCol += 1   
         return result
         
@@ -233,8 +233,8 @@ class AbstractMessage():
         return result
             
     def getVisualizationData(self, encoded=False):
-        return self.getStyledData(encoded)
-    
+        result = self.getStyledData(encoded)
+        return result
     
     #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
