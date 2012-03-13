@@ -63,7 +63,7 @@ class VisualizationFilter(object):
     #|     Abstract method to apply the filter on a provided message
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
-    def apply(self, i, message, unitSize):
+    def apply(self, message):
         self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
         raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")        
        

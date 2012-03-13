@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 import logging
 from netzob.Common.VisualizationFilters.VisualizationFilter import VisualizationFilter
-from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -42,22 +41,22 @@ from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+
-#| TextColorFilter:
-#|     Definition of a visualization filter wich colorize a text
+#| BackgroundColorFilter:
+#|     Definition of a visualization filter wich colorize the background
 #+---------------------------------------------------------------------------+
-class TextColorFilter(VisualizationFilter):
+class BackgroundColorFilter(VisualizationFilter):
     
-    TYPE = "TextColorFilter"
+    TYPE = "BackgroundColorFilter"
     
     def __init__(self, id, name, iStart, iEnd, color):
-        VisualizationFilter.__init__(self, id, name, TextColorFilter.TYPE)
+        VisualizationFilter.__init__(self, id, name, BackgroundColorFilter.TYPE)
         self.iStart = iStart
         self.iEnd = iEnd
         self.color = color
         
     def isValid(self, i, message, unitSize):
-        factor = (unitSize / float(Format.getUnitSize(Format.HEX))) 
+        factor = (unitSize / 4)
         return i >= self.iStart / factor and i <= self.iEnd / factor 
     
     def apply(self, message):
-        return '<span foreground="' + self.color + '">' + message + '</span>'
+        return '<span background="' + self.color + '">' + message + '</span>'

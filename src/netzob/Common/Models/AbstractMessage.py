@@ -42,6 +42,7 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+
@@ -207,27 +208,25 @@ class AbstractMessage():
         iCol = 0
         for data in splittedData :
             localResult = ""
+            
+            field = self.symbol.getFieldByIndex(iCol)
+            
             for iLocal in range(0, len(data)) :
                 currentLetter = data[iLocal]
                 tmp_result = currentLetter
                 
-                # adapt the position (none = 4bits)
-                nameUnitSize = self.symbol.getFieldByIndex(iCol).getUnitSize()  
-                unitSize = 4
-                if nameUnitSize == UnitSize.BITS8 :
-                    unitSize = 8
-                elif nameUnitSize == UnitSize.BITS16 :
-                    unitSize = 16
-                elif nameUnitSize == UnitSize.BITS32 :
-                    unitSize = 32
-                elif nameUnitSize == UnitSize.BITS64 :
-                    unitSize = 64            
-                
-                for filter in self.getVisualizationFilters() :
-                    if filter.isValid(iGlobal + iLocal, tmp_result, unitSize) :
-                        tmp_result = filter.apply(iGlobal + iLocal, tmp_result, unitSize)
-                
+                sizeFormat = Format.getUnitSize(field.getFormat())
+                if sizeFormat != None :
+                    for filter in self.getVisualizationFilters() :
+                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat) :
+                            tmp_result = filter.apply(tmp_result)
+                    
                 localResult += tmp_result
+                
+            # Now we apply the color to the fields
+            for filter in field.getVisualizationFilters() :
+                localResult = filter.apply(localResult)    
+                
             iGlobal = iGlobal + len(data)    
             result.append(localResult)
             iCol += 1
@@ -241,83 +240,83 @@ class AbstractMessage():
     #| applyRegex: apply the current regex on the message
     #|  and return a table
     #+----------------------------------------------
-    def applyRegex(self, styled=False, encoded=False):
-        res = []
-        regex = []
-        m = None
-        data = ""
-        for field in self.symbol.getFields():
-            regex.append(field.getRegex())
-        try:
-            compiledRegex = re.compile("".join(regex))
-            data = self.getReducedStringData()
-            m = compiledRegex.match(data)
-        except AssertionError:
-            raise NetzobException("This Python version only supports 100 named groups in regex")
-
-        if m == None:            
-            self.log.warning("The regex of the group doesn't match one of its message")
-            self.log.warning("Regex: " + "".join(regex))
-            self.log.warning("Message: " + data[:255] + "...")
-            raise NetzobException("The regex of the group doesn't match one of its message")
-
-
-
-        iCol = 0
-        dynamicCol = 1
-        nbLetterInNetzobRaw = 0
-        
-        for field in self.symbol.getFields():
-            if field.getRegex().find("(") != -1:  # Means this column is not static
-                start = m.start(dynamicCol)
-                end = m.end(dynamicCol)
-
-                # Define the color
-                if field.getColor() == "" or field.getColor() == None:
-                    color = 'blue'
-                else:
-                    color = field.getColor()
-
-                # Define the background color
-                if field.getBackgroundColor() != None:
-                    backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-                else:
-                    backgroundColor = ""
-
-                # Overwrite the background color (red if the variable doesn't match the data)
-                if field.getVariable() != None:
-                    # Creation of a temporary memory just for the current
-                    tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
-                    
-                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
-                        backgroundColor = 'background="red"'
-                    else:
-                        backgroundColor = 'background="green"'
-
-                if styled:
-                    if encoded:
-                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)) + '</span>')
-                    else:
-                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + data[start:end] + '</span>')
-                else:
-                    if encoded:
-                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-                    else:
-                        res.append(data[start:end])
-                dynamicCol += 1
-            else:
-                if styled:
-                    if encoded:
-                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)) + '</span>')
-                    else:
-                        res.append('<span>' + field.getRegex() + '</span>')
-                else:
-                    if encoded:
-                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-                    else:
-                        res.append(field.getRegex())
-            iCol = iCol + 1
-        return res
+#    def applyRegex(self, styled=False, encoded=False):
+#        res = []
+#        regex = []
+#        m = None
+#        data = ""
+#        for field in self.symbol.getFields():
+#            regex.append(field.getRegex())
+#        try:
+#            compiledRegex = re.compile("".join(regex))
+#            data = self.getReducedStringData()
+#            m = compiledRegex.match(data)
+#        except AssertionError:
+#            raise NetzobException("This Python version only supports 100 named groups in regex")
+#
+#        if m == None:            
+#            self.log.warning("The regex of the group doesn't match one of its message")
+#            self.log.warning("Regex: " + "".join(regex))
+#            self.log.warning("Message: " + data[:255] + "...")
+#            raise NetzobException("The regex of the group doesn't match one of its message")
+#
+#
+#
+#        iCol = 0
+#        dynamicCol = 1
+#        nbLetterInNetzobRaw = 0
+#        
+#        for field in self.symbol.getFields():
+#            if field.getRegex().find("(") != -1:  # Means this column is not static
+#                start = m.start(dynamicCol)
+#                end = m.end(dynamicCol)
+#
+#                # Define the color
+#                if field.getColor() == "" or field.getColor() == None:
+#                    color = 'blue'
+#                else:
+#                    color = field.getColor()
+#
+#                # Define the background color
+#                if field.getBackgroundColor() != None:
+#                    backgroundColor = 'background="' + field.getBackgroundColor() + '"'
+#                else:
+#                    backgroundColor = ""
+#
+#                # Overwrite the background color (red if the variable doesn't match the data)
+#                if field.getVariable() != None:
+#                    # Creation of a temporary memory just for the current
+#                    tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
+#                    
+#                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
+#                        backgroundColor = 'background="red"'
+#                    else:
+#                        backgroundColor = 'background="green"'
+#
+#                if styled:
+#                    if encoded:
+#                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)) + '</span>')
+#                    else:
+#                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + data[start:end] + '</span>')
+#                else:
+#                    if encoded:
+#                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
+#                    else:
+#                        res.append(data[start:end])
+#                dynamicCol += 1
+#            else:
+#                if styled:
+#                    if encoded:
+#                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)) + '</span>')
+#                    else:
+#                        res.append('<span>' + field.getRegex() + '</span>')
+#                else:
+#                    if encoded:
+#                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
+#                    else:
+#                        res.append(field.getRegex())
+#            iCol = iCol + 1
+#        return res
 
     #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message

@@ -146,10 +146,9 @@ class SearchView(object):
         for task in searchTasks:
             for result in task.getResults():
                 for (start, end) in result.getSegments() :
-                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end, "#DD0000")
+                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter)
-                    
+                    message.addVisualizationFilter(filter)                    
 #                    message.highlightSegment(start, end)
         # We update the different views
         self.messageViewGenerator.updateDefault()
