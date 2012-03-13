@@ -529,7 +529,7 @@ class Symbol(AbstractSymbol):
     #| findSizeFields:
     #|   Try to find the size fields
     #+----------------------------------------------
-    def findSizeFields(self, store):
+    def findSizeFields(self, results):
         if len(self.fields) <= 1:
             return None
         iField = 0
@@ -561,17 +561,18 @@ class Symbol(AbstractSymbol):
                     else:
                         lenJ = 2
                         stop = 0
+
                     for m in range(lenJ, stop, -2):
-                        for n in [4, 0, 1]:  # loop over different possible encoding of size field
+                        for n in [4, 2, 1]:  # loop over different possible encoding of size field
                             res = True
-                            for l in range(len(cellsSize)):
+                            for nbMsg in range(len(cellsSize)):
                                 if self.getFieldByIndex(j).isStatic():
-                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[l]
+                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[nbMsg]
                                 else:
-                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(k))[l] + aggregateCellsData[l]
+                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
-                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[l][:n * 2])
+                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[nbMsg][:n * 2])
                                 if len(rawMsgSize) == 1:
                                     expectedSizeType = "B"
                                 elif len(rawMsgSize) == 2:
@@ -588,13 +589,14 @@ class Symbol(AbstractSymbol):
                                     break
                             if res:
                                 if self.getFieldByIndex(j).isStatic():  # Means the regex j element is static and a sub-part is concerned
-                                    store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
+                                    results.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                 else:
-                                    store.append([self.id, iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
+                                    results.append([self.id, iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
                                 break
                     k += 1
                 j += 1
             iField += 1
+        return True
 
     #+----------------------------------------------
     #| applyDataType_cb:

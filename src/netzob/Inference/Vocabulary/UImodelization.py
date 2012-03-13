@@ -2258,9 +2258,13 @@ class UImodelization:
         # Text view containing potential size fields
         treeview.set_size_request(800, 300)
 
-        if None == self.selectedSymbol.findSizeFields(treeview.get_model()):
+        results = []
+        if None == self.selectedSymbol.findSizeFields( results ):
             NetzobErrorMessage("No size field found.")
         else:
+            for result in results:
+                treeview.get_model().append(result)
+
             treeview.show()
             scroll = gtk.ScrolledWindow()
             scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
