@@ -141,9 +141,9 @@ class NeedlemanAndWunsch(object):
         for c in mask:
             if c != '\x02':
                 if c == '\x01':
-                    align += "--"
+                    align += "-"
                 else:
-                    align += regex[i:i + 1].encode("hex")
+                    align += regex[i:i + 1].encode("hex")[1:]
             i += 1
         return align
         
