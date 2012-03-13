@@ -83,6 +83,16 @@ class Symbol(AbstractSymbol):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.project = project
+        self.visualizationFilters = []
+        
+    def addVisualizationFilters(self, filter):
+        self.visualizationFilters.append(filter)
+        
+    def cleanVisualizationFilters(self):
+        self.visualizationFilters = []
+        
+    def getVisualizationFilters(self):
+        return self.visualizationFilters
 
     #+----------------------------------------------
     #| forcePartitioning:

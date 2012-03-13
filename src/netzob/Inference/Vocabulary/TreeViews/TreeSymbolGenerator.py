@@ -110,7 +110,13 @@ class TreeSymbolGenerator():
             symbols = vocabulary.getSymbols()
 
             for symbol in symbols:
-                iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+                symbolName = symbol.getName()
+                for filter in symbol.getVisualizationFilters() :
+                    symbolName = filter.apply(symbolName)
+                symbolName = symbolName + " (" + str(len(symbol.getMessages())) + ")"
+                symbolEntry = [str(symbol.getID()), symbolName, str(symbol.getScore()), '#000000', '#DEEEF0']
+                self.treestore.append(None, symbolEntry)
+               
 
     #+----------------------------------------------
     #| getSymbolAtPosition:
