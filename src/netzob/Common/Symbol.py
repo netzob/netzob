@@ -85,7 +85,7 @@ class Symbol(AbstractSymbol):
         self.project = project
         self.visualizationFilters = []
         
-    def addVisualizationFilters(self, filter):
+    def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
         
     def cleanVisualizationFilters(self):

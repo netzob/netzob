@@ -143,12 +143,18 @@ class SearchView(object):
         self.updateView(searchTasks)
         
     def colorizeResults(self, searchTasks):
+        colorizedSymbols = []
         for task in searchTasks:
             for result in task.getResults():
                 for (start, end) in result.getSegments() :
                     filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter)                    
+                    message.addVisualizationFilter(filter) 
+                    # colorize the associated symbol
+                    symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(message)
+                    if not symbol in colorizedSymbols :
+                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000")) 
+                        colorizedSymbols.append(symbol)
 #                    message.highlightSegment(start, end)
         # We update the different views
         self.messageViewGenerator.updateDefault()

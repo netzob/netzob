@@ -74,10 +74,10 @@ class TreeSymbolGenerator():
         self.lvcolumn = gtk.TreeViewColumn('Symbols')
         self.lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
-        self.lvcolumn.pack_start(cell, True)
         cell.set_property('background-set', True)
         cell.set_property('foreground-set', True)
-        self.lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
+        self.lvcolumn.pack_start(cell, True)
+        self.lvcolumn.set_attributes(cell, markup=1, foreground=3, background=4)
         self.treeview.append_column(self.lvcolumn)
         self.treeview.show()
 
