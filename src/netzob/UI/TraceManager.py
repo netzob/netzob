@@ -70,7 +70,7 @@ class TraceManager():
         self.cb_update()
 
     def createDialog(self):
-        self.dialog = gtk.Dialog(title="Trace Manager", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Trace Manager"), flags=0, buttons=None)
         self.dialog.set_default_size(800, 600)
         mainTable = gtk.Table(rows=2, columns=1, homogeneous=False)
 
@@ -82,27 +82,27 @@ class TraceManager():
 
         cell = gtk.CellRendererText()
         # Col Date
-        column = gtk.TreeViewColumn('Date')
+        column = gtk.TreeViewColumn(_("Date"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
         # Col Type
-        column = gtk.TreeViewColumn('Type')
+        column = gtk.TreeViewColumn(_("Type"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeview.append_column(column)
         # Col project name
-        column = gtk.TreeViewColumn('Original project')
+        column = gtk.TreeViewColumn(_("Original project"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=3)
         treeview.append_column(column)
         # Col Description
-        column = gtk.TreeViewColumn('Description')
+        column = gtk.TreeViewColumn(_("Description"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=4)
         treeview.append_column(column)
         # Col Nb message
-        column = gtk.TreeViewColumn('Nb messages')
+        column = gtk.TreeViewColumn(_("Nb messages"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=5)
         treeview.append_column(column)
@@ -120,17 +120,17 @@ class TraceManager():
 
         cell = gtk.CellRendererText()
         # Col ID
-        column = gtk.TreeViewColumn('ID')
+        column = gtk.TreeViewColumn(_("ID"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         treeviewMessage.append_column(column)
         # Col Type
-        column = gtk.TreeViewColumn('Timestamp')
+        column = gtk.TreeViewColumn(_("Timestamp"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeviewMessage.append_column(column)
         # Col project name
-        column = gtk.TreeViewColumn('Data')
+        column = gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeviewMessage.append_column(column)
@@ -212,17 +212,17 @@ class TraceManager():
         menu.popup(None, None, None, event.button, event.time)
 
     def importTrace(self, event, trace):
-        importDialog = gtk.Dialog(title="Import selected Trace in a project", flags=0, buttons=None)
+        importDialog = gtk.Dialog(title=_("Import selected Trace in a project"), flags=0, buttons=None)
         panel = gtk.Table(rows=4, columns=2, homogeneous=False)
         panel.show()
 
         # Label
-        label = NetzobLabel("Trace ID")
+        label = NetzobLabel(_("Trace ID"))
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         label2 = NetzobLabel(trace.getID())
         panel.attach(label2, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        label3 = NetzobLabel("Select project")
+        label3 = NetzobLabel(_("Select project"))
         panel.attach(label3, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         # Delimiter type
         projectCombo = NetzobComboBoxEntry()
@@ -236,7 +236,7 @@ class TraceManager():
         panel.attach(self.progressbarAlignment, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        importButton = NetzobButton("Import")
+        importButton = NetzobButton(_("Import"))
         importButton.connect("clicked", self.importTraceAction, trace, projectCombo, importDialog)
         panel.attach(importButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -281,7 +281,7 @@ class TraceManager():
         project.saveConfigFile(self.workspace)
 
     def deleteTrace(self, event, trace):
-        questionMsg = "Click yes to remove selected trace {0} from the Trace Manager".format(trace.getID())
+        questionMsg = _("Click yes to remove selected trace {0} from the Trace Manager").format(trace.getID())
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
@@ -290,4 +290,4 @@ class TraceManager():
             self.updateContent()
             self.updateContentMessage()
         else:
-            self.log.debug("The user didn't confirm the deletion of the trace " + trace.getID())
+            self.log.debug(_("The user didn't confirm the deletion of the trace {0}").format(trace.getID()))
