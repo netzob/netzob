@@ -75,7 +75,7 @@ class UISimulator:
 
     def save(self, file):
         self.log = logging.getLogger('netzob.Simuator.UISimulator.py')
-        self.log.warn("The simulation process cannot be saved for the moment")
+        self.log.warn(_("The simulation process cannot be saved for the moment"))
 
     #+----------------------------------------------
     #| Constructor:
@@ -105,7 +105,7 @@ class UISimulator:
         self.tableFormNewActor = gtk.Table(rows=4, columns=4, homogeneous=True)
 
         # Actor's name
-        label_actorName = gtk.Label("Actor's name : ")
+        label_actorName = gtk.Label(_("Actor's name:"))
         label_actorName.show()
         self.entry_actorName = gtk.Entry()
 
@@ -119,7 +119,7 @@ class UISimulator:
         self.tableFormNewActor.attach(self.entry_actorName, 1, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # Type of actor
-        label_typeOfActor = gtk.Label("Type of actor : ")
+        label_typeOfActor = gtk.Label(_("Type of actor:"))
         label_typeOfActor.show()
         self.combo_typeOfActor = gtk.combo_box_entry_new_text()
         self.combo_typeOfActor.set_model(gtk.ListStore(str))
@@ -136,7 +136,7 @@ class UISimulator:
         self.tableFormNewActor.attach(self.combo_typeOfActor, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Network layer actor
-        label_typeOfNetworkActor = gtk.Label("Network layer : ")
+        label_typeOfNetworkActor = gtk.Label(_("Network layer:"))
         label_typeOfNetworkActor.show()
         self.combo_typeOfNetworkActor = gtk.combo_box_entry_new_text()
         self.combo_typeOfNetworkActor.set_model(gtk.ListStore(str))
@@ -153,12 +153,12 @@ class UISimulator:
         self.tableFormNewActor.attach(self.combo_typeOfNetworkActor, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Network protocol
-        label_protocolOfNetworkActor = gtk.Label("Network Protocol : ")
+        label_protocolOfNetworkActor = gtk.Label(_("Network Protocol:"))
         label_protocolOfNetworkActor.show()
         self.combo_protocolOfNetworkActor = gtk.combo_box_entry_new_text()
         self.combo_protocolOfNetworkActor.set_model(gtk.ListStore(str))
-        self.combo_protocolOfNetworkActor.append_text("TCP")
-        self.combo_protocolOfNetworkActor.append_text("UDP")
+        self.combo_protocolOfNetworkActor.append_text(_("TCP"))
+        self.combo_protocolOfNetworkActor.append_text(_("UDP"))
 
         if (config.get("simulating", "networkProtocol") == "TCP"):
             self.combo_protocolOfNetworkActor.set_active(0)
@@ -170,7 +170,7 @@ class UISimulator:
         self.tableFormNewActor.attach(self.combo_protocolOfNetworkActor, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # IP
-        label_IP = gtk.Label("IP : ")
+        label_IP = gtk.Label(_("IP:"))
         label_IP.show()
         self.entry_IP = gtk.Entry()
         if (config.get("simulating", "ip") != None):
@@ -183,7 +183,7 @@ class UISimulator:
         self.tableFormNewActor.attach(self.entry_IP, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # S-PORT
-        label_SPort = gtk.Label("Source Port : ")
+        label_SPort = gtk.Label(_("Source Port:"))
         label_SPort.show()
         self.entry_SPort = gtk.Entry()
         self.entry_SPort.show()
@@ -191,7 +191,7 @@ class UISimulator:
         self.tableFormNewActor.attach(self.entry_SPort, 3, 4, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # D-PORT
-        label_Port = gtk.Label("Destination Port : ")
+        label_Port = gtk.Label(_("Destination Port:"))
         label_Port.show()
         self.entry_Port = gtk.Entry()
 
@@ -206,7 +206,7 @@ class UISimulator:
 
         # Add actor button
         self.button_addActor = gtk.Button(gtk.STOCK_OK)
-        self.button_addActor.set_label("Add actor")
+        self.button_addActor.set_label(_("Add actor"))
         self.button_addActor.connect("clicked", self.addActor)
         self.button_addActor.show()
         self.tableFormNewActor.attach(self.button_addActor, 3, 4, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -232,7 +232,7 @@ class UISimulator:
         treeview_listActiveActors.connect("cursor-changed", self.actorDetails)
         cell = gtk.CellRendererText()
         # main col
-        column_listActiveActors_name = gtk.TreeViewColumn('Active actors')
+        column_listActiveActors_name = gtk.TreeViewColumn(_("Active actors"))
         column_listActiveActors_name.pack_start(cell, True)
         column_listActiveActors_name.set_attributes(cell, text=0)
         treeview_listActiveActors.append_column(column_listActiveActors_name)
@@ -260,15 +260,15 @@ class UISimulator:
 #        treeview_listActiveActors.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # col date
-        column_inputs_date = gtk.TreeViewColumn('Date')
+        column_inputs_date = gtk.TreeViewColumn(_("Date"))
         column_inputs_date.pack_start(cell, True)
         column_inputs_date.set_attributes(cell, text=0)
         # col message
-        column_inputs_message = gtk.TreeViewColumn('Received message')
+        column_inputs_message = gtk.TreeViewColumn(_("Received message"))
         column_inputs_message.pack_start(cell, True)
         column_inputs_message.set_attributes(cell, text=1)
         # col symbol
-        column_inputs_symbol = gtk.TreeViewColumn('Symbol')
+        column_inputs_symbol = gtk.TreeViewColumn(_("Symbol"))
         column_inputs_symbol.pack_start(cell, True)
         column_inputs_symbol.set_attributes(cell, text=2)
         treeview_inputs.append_column(column_inputs_date)
@@ -298,15 +298,15 @@ class UISimulator:
 #        treeview_listActiveActors.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # col date
-        column_outputs_date = gtk.TreeViewColumn('Date')
+        column_outputs_date = gtk.TreeViewColumn(_("Date"))
         column_outputs_date.pack_start(cell, True)
         column_outputs_date.set_attributes(cell, text=0)
         # col message
-        column_outputs_message = gtk.TreeViewColumn('Emitted message')
+        column_outputs_message = gtk.TreeViewColumn(_("Emitted message"))
         column_outputs_message.pack_start(cell, True)
         column_outputs_message.set_attributes(cell, text=1)
         # col symbol
-        column_outputs_symbol = gtk.TreeViewColumn('Emitted message')
+        column_outputs_symbol = gtk.TreeViewColumn(_("Emitted message"))
         column_outputs_symbol.pack_start(cell, True)
         column_outputs_symbol.set_attributes(cell, text=2)
         treeview_outputs.append_column(column_outputs_date)
@@ -334,15 +334,15 @@ class UISimulator:
 #        treeview_listActiveActors.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # col name
-        column_memory_name = gtk.TreeViewColumn('Variable')
+        column_memory_name = gtk.TreeViewColumn(_("Variable"))
         column_memory_name.pack_start(cell, True)
         column_memory_name.set_attributes(cell, text=0)
         # col type
-        column_memory_type = gtk.TreeViewColumn('Type')
+        column_memory_type = gtk.TreeViewColumn(_("Type"))
         column_memory_type.pack_start(cell, True)
         column_memory_type.set_attributes(cell, text=1)
         # col Value
-        column_memory_value = gtk.TreeViewColumn('Value')
+        column_memory_value = gtk.TreeViewColumn(_("Value"))
         column_memory_value.pack_start(cell, True)
         column_memory_value.set_attributes(cell, text=2)
 
@@ -370,21 +370,21 @@ class UISimulator:
         self.tableForBreakAndStop = gtk.Table(rows=1, columns=3, homogeneous=True)
         # Add start button
         self.button_startActor = gtk.Button(gtk.STOCK_OK)
-        self.button_startActor.set_label("START")
+        self.button_startActor.set_label(_("START"))
         self.button_startActor.connect("clicked", self.startSelectedActor)
         self.button_startActor.show()
         self.tableForBreakAndStop.attach(self.button_startActor, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Add stop button
         self.button_stopActor = gtk.Button(gtk.STOCK_OK)
-        self.button_stopActor.set_label("STOP")
+        self.button_stopActor.set_label(_("STOP"))
         self.button_stopActor.connect("clicked", self.stopSelectedActor)
         self.button_stopActor.show()
         self.tableForBreakAndStop.attach(self.button_stopActor, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         #Add delete actor button
         self.button_delActor = gtk.Button(gtk.STOCK_OK)
-        self.button_delActor.set_label("DELETE")
+        self.button_delActor.set_label(_("DELETE"))
         self.button_delActor.connect("clicked", self.deleteSelectedActor)
         self.button_delActor.show()
         self.tableForBreakAndStop.attach(self.button_delActor, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -403,7 +403,7 @@ class UISimulator:
         if self.selectedActor == None:
             return
 
-        self.log.info("Start the actor " + self.selectedActor.getName())
+        self.log.info(_("Start the actor {0}").format(self.selectedActor.getName()))
         self.selectedActor.start()
 
     #+----------------------------------------------
@@ -414,7 +414,7 @@ class UISimulator:
         if self.selectedActor == None:
             return
 
-        self.log.info("Stop the actor " + self.selectedActor.getName())
+        self.log.info(_("Stop the actor {0}").format(self.selectedActor.getName()))
         self.selectedActor.stop()
 
     #+----------------------------------------------
@@ -426,10 +426,10 @@ class UISimulator:
             return
 
         if self.selectedActor.isActive():
-            self.log.info("Impossible to delete an active actor. It must be stopped before")
+            self.log.info(_("Impossible to delete an active actor. It must be stopped before"))
             return
 
-        self.log.info("Delete the actor " + self.selectedActor.getName())
+        self.log.info(_("Delete the actor {0}").format(self.selectedActor.getName()))
         self.actors.remove(self.selectedActor)
         self.treestore_listActiveActors.clear()
         self.selectedActor = None
@@ -451,10 +451,10 @@ class UISimulator:
         # We verify we have everything and the actor's name is unique
         for actor in self.actors:
             if actor.getName() == actorName:
-                self.log.warn("Impossible to create the requested actor since another one has the same name")
+                self.log.warn(_("Impossible to create the requested actor since another one has the same name"))
                 return
 
-        self.log.info("Will add an actor named " + actorName)
+        self.log.info(_("Will add an actor named {0}").format(actorName))
 
         grammar = self.netzob.getCurrentProject().getGrammar()
         # We create an actor based on given informations
@@ -538,7 +538,7 @@ class UISimulator:
                     self.selectedActor = instance
 
         if self.selectedActor == None:
-            self.log.warn("Impossible to retrieve the requested actor")
+            self.log.warn(_("Impossible to retrieve the requested actor"))
             return
 
         # Now we update the GUI based on the actor
