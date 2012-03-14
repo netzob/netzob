@@ -38,7 +38,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
-import libNeedleman
+import _libNeedleman
 from netzob.Common.Symbol import Symbol
 import uuid
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
@@ -136,7 +136,7 @@ class UPGMA(object):
         
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
-        (i_max, j_max, maxScore) = libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
+        (i_max, j_max, maxScore) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
         return (i_max, j_max, maxScore)
     
     
@@ -239,5 +239,5 @@ class UPGMA(object):
         (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols)
         
         debug = True
-        return libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
+        return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
       

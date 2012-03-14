@@ -34,11 +34,15 @@
 	</complexType>
 	
 	<complexType name="Trace">
+		<sequence>
+			<element name="messages" type="netzob-common:Messages" maxOccurs="1" minOccurs="0"></element>
+			<element name="sessions" type="netzob-common:Sessions" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
 		<attribute name="date" type="dateTime"></attribute>
 		<attribute name="type" type="string"></attribute>
-		<attribute name="description" type="string"></attribute>
-		<attribute name="importID" type="string"></attribute>
-		<attribute name="projectName" type="string"></attribute>
 	</complexType>
 
 	<complexType name="Projects">

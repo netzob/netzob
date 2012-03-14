@@ -41,6 +41,7 @@ from StringIO import StringIO
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from netzob.Common.Session import Session
 
 
 #+---------------------------------------------------------------------------+
@@ -52,28 +53,29 @@ class ImportedTrace(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, importID, date, dataType, description, projectName):
-        self.importID = importID
+    def __init__(self, id, date, type, description, name):
+        self.id = id
         self.date = date
-        self.dataType = dataType
+        self.type = type
         self.description = description
-        self.projectName = projectName
+        self.name = name
         self.messages = []
+        self.sessions = []
 
     def save(self, root, namespace_workspace, namespace_common, pathOfTraces):
-        xmlSymbol = etree.SubElement(root, "{" + namespace_workspace + "}trace")
-        xmlSymbol.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
-        xmlSymbol.set("type", str(self.getDataType()))
-        xmlSymbol.set("description", str(self.getDescription()))
-        xmlSymbol.set("projectName", str(self.getProjectName()))
-        xmlSymbol.set("importID", str(self.getImportID()))
+        xmlTrace = etree.SubElement(root, "{" + namespace_workspace + "}trace")
+        xmlTrace.set("date", str(TypeConvertor.pythonDatetime2XSDDatetime(self.getDate())))
+        xmlTrace.set("type", str(self.getType()))
+        xmlTrace.set("description", str(self.getDescription()))
+        xmlTrace.set("name", str(self.getName()))
+        xmlTrace.set("id", str(self.getID()))
 
         # Creation of the XML File (in buffer)
-        # Compress it using gzip and save the tar.gz
-        tracesFile = os.path.join(pathOfTraces, str(self.getImportID()) + ".gz")
-        logging.info("Save the config file of the trace " + str(self.getImportID()) + " in " + tracesFile)
+        # Compress it using gzip and save the .gz
+        tracesFile = os.path.join(pathOfTraces, str(self.getID()) + ".gz")
+        logging.info("Save the trace " + str(self.getID()) + " in " + tracesFile)
 
-        # Register the namespace (2 way depending of the version)
+        # Register the namespace (2 way depending on the version)
         try:
             etree.register_namespace('netzob-common', namespace_common)
         except AttributeError:
@@ -81,10 +83,15 @@ class ImportedTrace(object):
 
         # Save the messages
         root = etree.Element("{" + namespace_workspace + "}trace")
-        root.set("id", str(self.getImportID()))
-        xmlMessages = etree.SubElement(root, "{" + namespace_common + "}messages")
+        root.set("id", str(self.getID()))
+        xmlMessages = etree.SubElement(root, "{" + namespace_workspace + "}messages")
         for message in self.getMessages():
             AbstractMessageFactory.save(message, xmlMessages, namespace_workspace, namespace_common)
+
+        # Save the sessions
+        xmlSessions = etree.SubElement(root, "{" + namespace_workspace + "}sessions")
+        for session in self.getSessions():
+            session.save(xmlSessions, namespace_workspace, namespace_common)
 
         tree = ElementTree(root)
         contentOfFile = str(etree.tostring(tree.getroot()))
@@ -99,57 +106,69 @@ class ImportedTrace(object):
         gzipFile.write(contentOfFile)
         gzipFile.close()
 
+    def addSession(self, session):
+        self.sessions.append(session)
+
     def addMessage(self, message):
         self.messages.append(message)
 
-    def getImportID(self):
-        return self.importID
+    def getID(self):
+        return self.id
 
     def getDate(self):
         return self.date
 
-    def getDataType(self):
-        return self.dataType
+    def getType(self):
+        return self.type
 
     def getDescription(self):
         return self.description
 
-    def getProjectName(self):
-        return self.projectName
+    def getName(self):
+        return self.name
+
+    def getSessions(self):
+        return self.sessions
 
     def getMessages(self):
         return self.messages
 
-    def setImportID(self, importID):
-        self.importID = importID
+    def getMessageByID(self, id):
+        for message in self.messages:
+            if message.getID() == id:
+                return message
+        return None
+
+    def setID(self, id):
+        self.id = id
 
     def setDate(self, date):
         self.date = date
 
-    def setDataType(self, dataType):
-        self.dataType = dataType
+    def setType(self, type):
+        self.type = type
 
     def setDescription(self, description):
         self.description = description
 
-    def setProjectName(self, projectName):
-        self.projectName = projectName
+    def setName(self, name):
+        self.name = name
 
     #+----------------------------------------------
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version, pathOfTraces):
+    def loadTrace(xmlRoot, namespace_workspace, namespace_common, version, pathOfTraces):
 
         if version == "0.1":
             date = TypeConvertor.xsdDatetime2PythonDatetime(str(xmlRoot.get("date")))
-            dataType = xmlRoot.get("type")
+            type = xmlRoot.get("type")
             description = xmlRoot.get("description", "")
-            importID = xmlRoot.get("importID")
-            projectName = xmlRoot.get("projectName")
+            id = xmlRoot.get("id")
+            name = xmlRoot.get("name")
 
-            importedTrace = ImportedTrace(importID, date, dataType, description, projectName)
-            tracesFile = os.path.join(pathOfTraces, str(importID) + ".gz")
+            importedTrace = ImportedTrace(id, date, type, description, name)
+            tracesFile = os.path.join(pathOfTraces, str(id) + ".gz")
             if not os.path.isfile(tracesFile):
                 logging.warn("The trace file " + str(tracesFile) + " is referenced but doesn't exist.")
             else:
@@ -157,16 +176,23 @@ class ImportedTrace(object):
                 xml_content = gzipFile.read()
                 gzipFile.close()
 
-                # We parse the xml content and fetch messages
                 tree = etree.parse(StringIO(xml_content))
                 xmlRoot = tree.getroot()
 
-                if xmlRoot.find("{" + namespace_common + "}messages") != None:
-                    xmlMessages = xmlRoot.find("{" + namespace_common + "}messages")
+                # We retrieve the pool of messages
+                if xmlRoot.find("{" + namespace_workspace + "}messages") != None:
+                    xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
                     for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                         message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
                         if message != None:
                             importedTrace.addMessage(message)
 
+                # We retrieve the sessions
+                if xmlRoot.find("{" + namespace_workspace + "}sessions") != None:
+                    xmlSessions = xmlRoot.find("{" + namespace_workspace + "}sessions")
+                    for xmlSession in xmlSessions.findall("{" + namespace_common + "}session"):
+                        session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, importedTrace)
+                        if session != None:
+                            importedTrace.addSession(session)
             return importedTrace
         return None

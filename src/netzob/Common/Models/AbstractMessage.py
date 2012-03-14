@@ -63,6 +63,7 @@ class AbstractMessage():
         self.data = data
         self.type = type
         self.symbol = None
+        self.session = None
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.visualizationFilters = []
@@ -374,6 +375,9 @@ class AbstractMessage():
     def getSymbol(self):
         return self.symbol
 
+    def getSession(self):
+        return self.session
+
     def getRightReductionFactor(self):
         return self.rightReductionFactor
 
@@ -397,6 +401,9 @@ class AbstractMessage():
 
     def setSymbol(self, symbol):
         self.symbol = symbol
+
+    def setSession(self, session):
+        self.session = session
 
     def setRightReductionFactor(self, factor):
         self.rightReductionFactor = factor

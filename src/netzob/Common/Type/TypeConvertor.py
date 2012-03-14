@@ -386,8 +386,11 @@ class TypeConvertor():
         serialMessages = ""
         format = ""
         for m in messages:
-            format += str(len(m.getReducedStringData()) / 2) + "M"
-            serialMessages += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())
+            data = m.getReducedStringData()
+            data = "".join(["0" + i for i in data])
+
+            format += str(len(data) / 2) + "M"
+            serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
         return (serialMessages, format)
     
     @staticmethod
@@ -403,22 +406,24 @@ class TypeConvertor():
             format += "1" + "G"
             messageTmp = ""
             alignmentTmp = ""
-            for i in range(0, len(symbol.getAlignment()), 2):
-                if symbol.getAlignment()[i:i + 2] == "--":
+            for i in range(0, len(symbol.getAlignment())):
+                if symbol.getAlignment()[i:i + 1] == "-":
                     messageTmp += "\xff"
                     alignmentTmp += "\x01"
                 else:
-                    messageTmp += TypeConvertor.netzobRawToPythonRaw(symbol.getAlignment()[i:i + 2])
+                    messageTmp += TypeConvertor.netzobRawToPythonRaw("0" + symbol.getAlignment()[i:i + 1])
                     alignmentTmp += "\x00"
-            format += str(len(symbol.getAlignment()) / 2) + "M"
+            format += str(len(symbol.getAlignment())) + "M"
             serialSymbol += messageTmp
             serialSymbol += alignmentTmp
         else:
             format += str(len(symbol.getMessages())) + "G"
             for m in symbol.getMessages():
-                format += str(len(m.getReducedStringData()) / 2) + "M"
-                serialSymbol += TypeConvertor.netzobRawToPythonRaw(m.getReducedStringData())  # The message
-                serialSymbol += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)])  # The alignement == "\x00" * len(the message), the first time
+                data = m.getReducedStringData()
+                data = "".join(["0" + i for i in data])
+                format += str(len(data) / 2) + "M"
+                serialSymbol += TypeConvertor.netzobRawToPythonRaw(data)  # The message
+                serialSymbol += "".join(['\x00' for x in range(len(data) / 2)])  # The alignement == "\x00" * len(the message), the first time
         
         return (serialSymbol, format)
     
@@ -562,7 +567,7 @@ class TypeConvertor():
             elif aFormat == Format.DECIMAL:
                 tmp = "%d" % tmp
             elif aFormat == Format.HEX:
-                fmt = "%0" + str(size / 4) + "x"
+                fmt = "%" + str(size / 4) + "x"
                 tmp = fmt % tmp
             elif aFormat == Format.STRING:
                 tmp = TypeConvertor.netzobRawToString(initTmp)

@@ -210,7 +210,9 @@
 
 	<complexType name="Vocabulary">
 		<sequence>
+			<element name="messages" type="netzob-common:Messages"></element>
 			<element name="symbols" type="netzob-project:Symbols"></element>
+			<element name="sessions" type="netzob-common:Sessions"></element>
 		</sequence>
 	</complexType>
 	
@@ -231,7 +233,7 @@
 
 	<complexType name="Symbol">
 		<sequence>
-			<element name="messages" type="netzob-common:Messages"
+			<element name="messages-ref" type="netzob-common:Messages-ref"
 				minOccurs="0">
 			</element>
 			<element name="fields" type="netzob-project:Fields"
@@ -256,10 +258,6 @@
 		<attribute name="alignmentType" type="string"></attribute>
 		<attribute name="rawDelimiter" type="string"></attribute>
 	</complexType>
-
-
-
-
 
 	<complexType name="Fields">
 		<sequence>

@@ -3,6 +3,31 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:netzob-common="http://www.netzob.org/common">
 
+	<complexType name="Sessions">
+		<sequence>
+			<element name="session" type="netzob-common:Session" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Session">
+		<sequence>
+			<element name="messages-ref" type="netzob-common:Messages-ref" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+	</complexType>
+
+	<complexType name="Messages-ref">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="message-ref" type="netzob-common:Message-ref"></element>
+		</choice>
+	</complexType>
+
+	<complexType name="Message-ref">
+		<attribute name="id" type="string"></attribute>
+	</complexType>
+
 	<complexType name="Messages">
 		<choice minOccurs="0" maxOccurs="unbounded">
 			<element name="message" type="netzob-common:Message"></element>

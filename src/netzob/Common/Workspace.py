@@ -84,7 +84,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
 
         xmlTraces = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces")
         for xmlTrace in xmlTraces.findall("{" + WORKSPACE_NAMESPACE + "}trace"):
-            trace = ImportedTrace.loadSymbol(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
+            trace = ImportedTrace.loadTrace(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
             if trace != None:
                 workspace.addImportedTrace(trace)
 

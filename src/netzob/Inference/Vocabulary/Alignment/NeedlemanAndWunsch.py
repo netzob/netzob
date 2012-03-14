@@ -38,7 +38,7 @@ import time
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
-import libNeedleman
+import _libNeedleman
 from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 import logging
@@ -92,7 +92,7 @@ class NeedlemanAndWunsch(object):
         (serialMessages, format) = TypeConvertor.serializeMessages(messages)
         
         debug = False
-        (score, regex, mask) = libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
+        (score, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
         alignment = self.deserializeAlignment(regex, mask)
         return (alignment, score)
    
@@ -108,7 +108,7 @@ class NeedlemanAndWunsch(object):
         (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2])
         
         debug = False
-        (score, regex, mask) = libNeedleman.alignTwoMessages(doInternalSlick, format, serialMessages, debug)
+        (score, regex, mask) = _libNeedleman.alignTwoMessages(doInternalSlick, format, serialMessages, debug)
         alignment = self.deserializeAlignment(regex, mask)
         
         return (score, alignment)
@@ -125,7 +125,7 @@ class NeedlemanAndWunsch(object):
         (serialMessages, format) = TypeConvertor.serializeMessages(messages)
         
         debug = False
-        return libNeedleman.deserializeMessages(len(messages), format, serialMessages, debug)
+        return _libNeedleman.deserializeMessages(len(messages), format, serialMessages, debug)
         
         
     #+-----------------------------------------------------------------------+
@@ -141,9 +141,9 @@ class NeedlemanAndWunsch(object):
         for c in mask:
             if c != '\x02':
                 if c == '\x01':
-                    align += "--"
+                    align += "-"
                 else:
-                    align += regex[i:i + 1].encode("hex")
+                    align += regex[i:i + 1].encode("hex")[1:]
             i += 1
         return align
         
@@ -190,9 +190,9 @@ class NeedlemanAndWunsch(object):
             doLoop = False
             for field in symbol.getFields():
                 # We try to see if this field produces only empty values when applied on messages
-                messagesValuesByField = symbol.getMessagesValuesByField(field)
-                messagesValuesByField = "".join(messagesValuesByField)
-                if messagesValuesByField == "":
+                cells = symbol.getCellsByField(field)
+                cells = "".join(cells)
+                if cells == "":
                     symbol.getFields().pop(field.getIndex())  # We remove this useless field
                     # Adpat index of the following fields, before breaking
                     for fieldNext in symbol.getFields():

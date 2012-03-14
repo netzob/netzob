@@ -25,8 +25,7 @@
 //|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 //+---------------------------------------------------------------------------+
 
-#ifndef __libNeedleman_header
-#define __libNeedleman_header
+#pragma once
 
 //+---------------------------------------------------------------------------+
 //| Imports
@@ -126,26 +125,15 @@ unsigned short int deserializeGroups(t_groups *, unsigned char *, int, unsigned 
 //+---------------------------------------------------------------------------+
 //| initLibNeedleman : Python will use this function to init the module
 //+---------------------------------------------------------------------------+
-void initlibNeedleman(void);
+PyMODINIT_FUNC init_libNeedleman(void);
 
 //+---------------------------------------------------------------------------+
 //| hexdump : for debug purposes
 //+---------------------------------------------------------------------------+
-int hexdump(unsigned char *bug, int dlen);
+void hexdump(unsigned char *bug, int dlen);
 
 //+---------------------------------------------------------------------------+
 //| dumpRegex : for debug purposes
 //+---------------------------------------------------------------------------+
 void dumpRegex(t_regex regex);
 
-
-static PyMethodDef libNeedleman_methods[] = {
-  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
-  {"alignMessages", py_alignMessages, METH_VARARGS},
-  {"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
-  {"deserializeMessages", py_deserializeMessages, METH_VARARGS},
-  {"deserializeGroups", py_deserializeGroups, METH_VARARGS},
-  {NULL, NULL}
-};
-
-#endif

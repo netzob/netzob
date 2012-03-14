@@ -170,9 +170,6 @@ class TreeMessageGenerator():
             content_lines.append(line)
             if len(messageTable) > maxNumberOfCol :
                 maxNumberOfCol = len(messageTable)
-            
-        
-        
 
         # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
         # str : Name of the row
@@ -195,9 +192,6 @@ class TreeMessageGenerator():
         for field in self.symbol.getFields():
             regex_row.append(field.getEncodedVersionOfTheRegex())
         
-        
-        
-        
         # Build the types row
         types_line = []
         types_line.append("HEADER TYPE")
@@ -206,7 +200,6 @@ class TreeMessageGenerator():
         types_line.append(True)
         for field in self.symbol.getFields():
             types_line.append(field.getFormat())
-        
         
         self.treestore.append(None, regex_row)
         self.treestore.append(None, types_line)
@@ -218,6 +211,7 @@ class TreeMessageGenerator():
             self.treeview.remove_column(col)
         for i in range(0, min(200, len(self.symbol.getFields()))) :
             self.treeview.append_column(self.currentColumns[i])
+            self.treeview.get_column(i).set_title( self.symbol.getFieldByIndex(i).getName() )
 
         self.treeview.set_model(self.treestore)
 

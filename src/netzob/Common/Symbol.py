@@ -43,7 +43,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
@@ -52,14 +51,10 @@ from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
-#+----------------------------------------------
-#| C Imports
-#+----------------------------------------------
-import libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 
-# Note: this is probably useless, as it is already specified in Project.py
+# TODO: Note: this is probably useless, as it is already specified in Project.py
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
@@ -93,6 +88,7 @@ class Symbol(AbstractSymbol):
         
     def getVisualizationFilters(self):
         return self.visualizationFilters
+
 
     #+----------------------------------------------
     #| forcePartitioning:
@@ -234,7 +230,7 @@ class Symbol(AbstractSymbol):
             if field.isStatic():
                 continue
             elif field.isRegexOnlyDynamic():
-                cells = self.getMessagesValuesByField(field)
+                cells = self.getCellsByField(field)
                 if len(cells) != len(self.getMessages()):
                     # There exists empty cells
                     continue
@@ -272,11 +268,11 @@ class Symbol(AbstractSymbol):
         return self.fields[index]
 
     #+----------------------------------------------
-    #| getMessagesValuesByField:
+    #| getCellsByField:
     #|  Return all the messages parts which are in
     #|  the specified field
     #+----------------------------------------------
-    def getMessagesValuesByField(self, field):
+    def getCellsByField(self, field):
         # First we verify the field exists in the symbol
         if not field in self.fields:
             logging.warn("The computing field is not part of the current symbol")
@@ -368,7 +364,7 @@ class Symbol(AbstractSymbol):
             return False
 
         # Find the static/dynamic cols
-        cells = self.getMessagesValuesByField(field)
+        cells = self.getCellsByField(field)
         ref1 = cells[0][:split_position]
         ref2 = cells[0][split_position:]
         isStatic1 = True
@@ -506,7 +502,7 @@ class Symbol(AbstractSymbol):
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
-                for cell in self.getMessagesValuesByField(field):
+                for cell in self.getCellsByField(field):
                     for match in regex.finditer(TypeConvertor.netzobRawToString(cell)):
                         matchElts += 1
                 if matchElts > 0:
@@ -544,16 +540,16 @@ class Symbol(AbstractSymbol):
     #| findSizeFields:
     #|   Try to find the size fields
     #+----------------------------------------------
-    def findSizeFields(self, store):
+    def findSizeFields(self, results):
         if len(self.fields) <= 1:
-            return None
+            return
         iField = 0
         # We cover each field for a potential size field
         for field in self.getFields():
             if field.isStatic():  # Means the element is static, so we assume it's not a good candidate
                 iField += 1
                 continue
-            cellsSize = self.getMessagesValuesByField(field)
+            cellsSize = self.getCellsByField(field)
             j = 0
             # We cover each field and aggregate them for a potential payload
             while j < len(self.getFields()):
@@ -567,7 +563,7 @@ class Symbol(AbstractSymbol):
                 while k < len(self.getFields()):
                     if k != j:
                         for l in range(len(cellsSize)):
-                            aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
+                            aggregateCellsData[l] += self.getCellsByField(self.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
                     if self.getFieldByIndex(j).isStatic():
@@ -576,17 +572,18 @@ class Symbol(AbstractSymbol):
                     else:
                         lenJ = 2
                         stop = 0
+
                     for m in range(lenJ, stop, -2):
-                        for n in [4, 0, 1]:  # loop over different possible encoding of size field
+                        for n in [4, 2, 1]:  # loop over different possible encoding of size field
                             res = True
-                            for l in range(len(cellsSize)):
+                            for nbMsg in range(len(cellsSize)):
                                 if self.getFieldByIndex(j).isStatic():
-                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[l]
+                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[nbMsg]
                                 else:
-                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(k))[l] + aggregateCellsData[l]
+                                    targetData = self.getCellsByField(self.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
-                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[l][:n * 2])
+                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[nbMsg][:n * 2])
                                 if len(rawMsgSize) == 1:
                                     expectedSizeType = "B"
                                 elif len(rawMsgSize) == 2:
@@ -603,9 +600,9 @@ class Symbol(AbstractSymbol):
                                     break
                             if res:
                                 if self.getFieldByIndex(j).isStatic():  # Means the regex j element is static and a sub-part is concerned
-                                    store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
+                                    results.append([iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                 else:
-                                    store.append([self.id, iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
+                                    results.append([iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
                                 break
                     k += 1
                 j += 1
@@ -635,7 +632,7 @@ class Symbol(AbstractSymbol):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
-                for cell in self.getMessagesValuesByField(self.getFieldByIndex(fieldIndex)):
+                for cell in self.getCellsByField(self.getFieldByIndex(fieldIndex)):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
@@ -752,7 +749,7 @@ class Symbol(AbstractSymbol):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
-                for cell in self.getMessagesValuesByField(field):
+                for cell in self.getCellsByField(field):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
@@ -809,7 +806,7 @@ class Symbol(AbstractSymbol):
         for field in self.getFields():
             cells = []
             try:
-                cells = self.getMessagesValuesByField(field)
+                cells = self.getCellsByField(field)
             except NetzobException, e:
                 logging.warning("ERROR: " + str(e.value))
                 break
@@ -884,7 +881,7 @@ class Symbol(AbstractSymbol):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
-                for cell in self.getMessagesValuesByField(field):
+                for cell in self.getCellsByField(field):
                     cell = glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(cell, envType))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
@@ -940,10 +937,11 @@ class Symbol(AbstractSymbol):
         xmlSymbol.set("alignmentType", str(self.getAlignmentType()))
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
 
-        # Save the messages
-        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages")
+        # Save the message references
+        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages-ref")
         for message in self.messages:
-            AbstractMessageFactory.save(message, xmlMessages, namespace_project, namespace_common)
+            xmlMessage = etree.SubElement(xmlMessages, "{" + namespace_common + "}message-ref")
+            xmlMessage.set("id", str(message.getID()))
         # Save the fields
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
         for field in self.getFields():
@@ -1211,8 +1209,7 @@ class Symbol(AbstractSymbol):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version, project):
-
+    def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":
             nameSymbol = xmlRoot.get("name")
             idSymbol = xmlRoot.get("id")
@@ -1228,23 +1225,22 @@ class Symbol(AbstractSymbol):
             symbol.setRawDelimiter(rawDelimiter)
 
             # we parse the messages
-            if xmlRoot.find("{" + namespace + "}messages") != None:
-                xmlMessages = xmlRoot.find("{" + namespace + "}messages")
-                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
-                    message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
+            if xmlRoot.find("{" + namespace_project + "}messages-ref") != None:
+                xmlMessages = xmlRoot.find("{" + namespace_project + "}messages-ref")
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
+                    id = xmlMessage.get("id")
+                    message = poolOfMessages.getMessageByID(id)
                     if message != None:
                         message.setSymbol(symbol)
                         symbol.addMessage(message)
 
             # we parse the fields
-            if xmlRoot.find("{" + namespace + "}fields") != None:
-                xmlFields = xmlRoot.find("{" + namespace + "}fields")
-                for xmlField in xmlFields.findall("{" + namespace + "}field"):
-                    field = Field.loadFromXML(xmlField, namespace, version)
+            if xmlRoot.find("{" + namespace_project + "}fields") != None:
+                xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
+                for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
+                    field = Field.loadFromXML(xmlField, namespace_project, version)
                     if field != None:
                         symbol.addField(field)
-            
-            
                 
             return symbol
         return None
