@@ -95,7 +95,7 @@ class NetzobGui(gtk.Window):
         else:
             workspace = opts.workspace
 
-        logging.debug("The workspace : " + str(workspace))
+        logging.debug("The workspace: {0}".format(str(workspace)))
 
         # loading the workspace
         self.currentWorkspace = (Workspace.loadWorkspace(workspace))
@@ -107,11 +107,11 @@ class NetzobGui(gtk.Window):
                 logging.fatal("Error while configuring the resources of Netzob")
                 sys.exit()
             workspace = str(ResourcesConfiguration.getWorkspaceFile())
-            logging.debug("The workspace : " + str(workspace))
+            logging.debug("The workspace: {0}".format(str(workspace)))
             # loading the workspace
             self.currentWorkspace = (Workspace.loadWorkspace(workspace))
             if self.currentWorkspace == None:
-                logging.fatal("Stopping the execution (no workspace computed) !")
+                logging.fatal("Stopping the execution (no workspace computed)!")
                 sys.exit()
 
         self.currentProject = self.currentWorkspace.getLastProject()
@@ -124,12 +124,12 @@ class NetzobGui(gtk.Window):
 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
-        self.log.info("Starting netzob")
+        self.log.info(_("Starting netzob"))
 
         # Main window definition
         gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
         self.set_default_size(800, 600)
-        self.set_title("Netzob : Inferring communication protocols")
+        self.set_title(_("Netzob: Inferring communication protocols"))
 
         self.set_icon_from_file(("%s/logo.png" %
                                  ResourcesConfiguration.getStaticResources()))
@@ -165,10 +165,10 @@ class NetzobGui(gtk.Window):
 #        self.fuzzing = UIfuzzing(self)
         self.simulator = UISimulator(self)
 
-        self.pageList.append(["Vocabulary inference", self.modelization])
-        self.pageList.append(["Grammar inference", self.grammarInference])
+        self.pageList.append([_("Vocabulary inference"), self.modelization])
+        self.pageList.append([_("Grammar inference"), self.grammarInference])
 #        self.pageList.append(["Fuzzing", self.fuzzing])
-        self.pageList.append(["Simulator", self.simulator])
+        self.pageList.append([_("Simulator"), self.simulator])
 
         for page in self.pageList:
             self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
@@ -202,7 +202,7 @@ class NetzobGui(gtk.Window):
                 page[1].update()
 
     def switchCurrentProject(self, project):
-        self.log.debug("The current project is : " + project.getName())
+        self.log.debug(_("The current project is: {0}").format(project.getName()))
         self.currentProject = project
         for page in self.pageList:
             page[1].clear()
@@ -211,8 +211,8 @@ class NetzobGui(gtk.Window):
         self.update()
 
     def offerToSaveCurrentProject(self):
-        questionMsg = ("Do you want to save the current project (" +
-                       self.getCurrentProject().getName() + ")")
+        questionMsg = (_("Do you want to save the current project (%s)") %
+                       self.getCurrentProject().getName())
         md = (gtk.MessageDialog(
                 None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                 gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg))
