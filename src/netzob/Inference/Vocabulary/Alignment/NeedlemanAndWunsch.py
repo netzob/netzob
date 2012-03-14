@@ -190,9 +190,9 @@ class NeedlemanAndWunsch(object):
             doLoop = False
             for field in symbol.getFields():
                 # We try to see if this field produces only empty values when applied on messages
-                messagesValuesByField = symbol.getMessagesValuesByField(field)
-                messagesValuesByField = "".join(messagesValuesByField)
-                if messagesValuesByField == "":
+                cells = symbol.getCellsByField(field)
+                cells = "".join(cells)
+                if cells == "":
                     symbol.getFields().pop(field.getIndex())  # We remove this useless field
                     # Adpat index of the following fields, before breaking
                     for fieldNext in symbol.getFields():

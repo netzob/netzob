@@ -118,7 +118,7 @@ class TreeTypeStructureGenerator():
         for field in self.getSymbol().getFields():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
-                tab += " "
+                tab += "  "
             messageElt = splittedMessage[field.getIndex()]
             if field.getName() == "__sep__":
                 continue

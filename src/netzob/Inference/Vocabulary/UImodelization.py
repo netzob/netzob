@@ -32,7 +32,6 @@ import gtk
 import pango
 import pygtk
 import gobject
-from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 pygtk.require('2.0')
 import logging
 import threading
@@ -65,6 +64,7 @@ from netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator import TreeSymbol
 from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessageGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 from netzob.Inference.Vocabulary.VariableView import VariableView
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 #+----------------------------------------------
 #| UImodelization:
@@ -815,7 +815,7 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the type of a specific column
-            subMenu = self.build_encoding_submenu_for_field(selectedField)
+            subMenu = self.build_encoding_submenu_for_field(selectedField, message_id)
             item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -925,16 +925,28 @@ class UImodelization:
     #| build_encoding_submenu_for_field:
     #|   Build a submenu for field data visualization.
     #+----------------------------------------------
-    def build_encoding_submenu_for_field(self, field):
+    def build_encoding_submenu_for_field(self, field, message_id):
         menu = gtk.Menu()
 
-        # Format submenu
+        # Retrieve the selected message
+        message = self.selectedSymbol.getMessageByID(message_id)
+        if message == None:
+            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            return
+        
+        # Retrieve content of the field
+        field_content = message.applyAlignment(styled=False, encoded=False)[field.getIndex()]
 
-        # Retrieves all the supported format of visualizations
+        # Format submenu
         possible_choices = Format.getSupportedFormats()
         subMenu = gtk.Menu()
         for value in possible_choices:
-            item = gtk.MenuItem(value)
+            # Get preview of field content
+            text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
+            if len(text_preview) > 10:
+                text_preview = text_preview[:10] + "..."
+
+            item = gtk.MenuItem(value + " (" + text_preview + ")")
             item.show()
             item.connect("activate", self.rightClickToChangeFormat, field, value)
             subMenu.append(item)
@@ -990,16 +1002,26 @@ class UImodelization:
                                    gtk.BUTTONS_CANCEL,
                                    "Modify field attributes")
         vbox = gtk.VBox()
+
         # Create hbox for field name
         hbox = gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
         hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
         entryName = gtk.Entry()
         entryName.set_text(field.getName())
-
         # Allow the user to press enter to do ok
         entryName.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryName)
+
+        # Create hbox for field description
+        hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, 5, 5)
+        hbox.pack_start(NetzobLabel("Description : "), False, 5, 5)
+        entryDescr = gtk.Entry()
+        entryDescr.set_text(field.getDescription())
+        # Allow the user to press enter to do ok
+        entryDescr.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        hbox.pack_end(entryDescr)
 
         # Create hbox for field regex
         hbox = gtk.HBox()
@@ -1010,6 +1032,19 @@ class UImodelization:
         # Allow the user to press enter to do ok
         entryRegex.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryRegex)
+
+        # Create hbox for field encapsulation level
+        hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, 5, 5)
+        hbox.pack_start(NetzobLabel("Encapsulation level : "), False, 5, 5)
+        comboEncap = NetzobComboBoxEntry()
+        for i in range(10):
+            comboEncap.append_text(str(i))
+            if i == field.getEncapsulationLevel():
+                comboEncap.set_active(i)
+        hbox.pack_end(comboEncap)
+
+        # Run the dialog
         dialog.vbox.pack_end(vbox, True, True, 0)
         dialog.show_all()
         dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
@@ -1023,11 +1058,26 @@ class UImodelization:
         if (len(text) > 0):
             field.setName(text)
 
+        # Update field description
+        text = entryDescr.get_text()
+        if (len(text) > 0):
+            field.setDescription(text)
+
         # Update field regex
         text = entryRegex.get_text()
         if (len(text) > 0):
             field.setRegex(text)
         dialog.destroy()
+        self.update()
+
+        # Update field encapsulation level
+        try:
+            encapLevel = int( comboEncap.get_active() )
+        except TypeError:
+            pass
+        else:
+            if encapLevel >= 0:
+                field.setEncapsulationLevel( encapLevel )
         self.update()
 
     #+----------------------------------------------
@@ -1149,7 +1199,7 @@ class UImodelization:
                     self.log.warn("Impossible to retrieve the clicked field !")
                     return
 
-                cells = self.treeTypeStructureGenerator.getSymbol().getMessagesValuesByField(selectedField)
+                cells = self.treeTypeStructureGenerator.getSymbol().getCellsByField(selectedField)
                 for i in range(len(cells)):
                     if not i in aggregatedCells:
                         aggregatedCells[i] = ""
@@ -1470,7 +1520,7 @@ class UImodelization:
         self.split_max_len = 0
 
         # Find the size of the longest message
-        cells = self.selectedSymbol.getMessagesValuesByField(field)
+        cells = self.selectedSymbol.getCellsByField(field)
         for m in cells:
             if len(m) > self.split_max_len:
                 self.split_max_len = len(m)
@@ -1605,7 +1655,7 @@ class UImodelization:
     def adjustSplitColumn(self, widget, textview, direction, field):
         if self.split_max_len <= 2:
             return
-        messages = self.selectedSymbol.getMessagesValuesByField(field)
+        messages = self.selectedSymbol.getCellsByField(field)
 
         # Bounds checking
         if direction == "left":
@@ -2229,12 +2279,13 @@ class UImodelization:
             NetzobErrorMessage("No symbol selected.")
             return
 
-        # Create a temporary symbol for testing size fields
-        tmp_symbol = Symbol("tmp_symbol", "tmp_symbol", self.netzob.getCurrentProject())
+        # Save the current encapsulation level of each field
+        savedEncapsulationLevel = []
+        for field in self.selectedSymbol.getFields():
+            savedEncapsulationLevel.append( field.getEncapsulationLevel() )
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format:
-        # str: symbol.id
         # int: size field column
         # int: size field size
         # int: start column
@@ -2242,24 +2293,25 @@ class UImodelization:
         # int: end column
         # int: subend column
         # str: message rendered in cell
-        treeview = gtk.TreeView(gtk.ListStore(str, int, int, int, int, int, int, str))
+        treeview = gtk.TreeView(gtk.ListStore(int, int, int, int, int, int, str))
         cell = gtk.CellRendererText()
-        treeview.connect("cursor-changed", self.sizeField_selected, tmp_symbol)
+        treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
         column = gtk.TreeViewColumn('Size field and related payload')
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=7)
+        column.set_attributes(cell, text=6)
         treeview.append_column(column)
 
         # Chose button
         but = NetzobButton("Apply size field")
-        but.connect("clicked", self.applySizeField, dialog, tmp_symbol)
+        but.connect("clicked", self.applySizeField, dialog, savedEncapsulationLevel)
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Text view containing potential size fields
         treeview.set_size_request(800, 300)
 
         results = []
-        if None == self.selectedSymbol.findSizeFields( results ):
+        self.selectedSymbol.findSizeFields( results )
+        if len(results) == 0:
             NetzobErrorMessage("No size field found.")
         else:
             for result in results:
@@ -2271,81 +2323,63 @@ class UImodelization:
             scroll.show()
             scroll.add(treeview)
             dialog.vbox.pack_start(scroll, True, True, 0)
+            dialog.connect("destroy", self.destroyDialogFindSizeFields, savedEncapsulationLevel)
             dialog.show()
 
+    def destroyDialogFindSizeFields(self, dialog, savedEncapsulationLevel):
+        # Optionaly restore original encapsulation levels if there were no modification
+        i = -1
+        for field in self.selectedSymbol.getFields():
+            i += 1
+            field.setEncapsulationLevel( savedEncapsulationLevel[i] )
+        self.update()
 
     #+----------------------------------------------
     #| Called when user wants to try to apply a size field on a symbol
     #+----------------------------------------------
-    def sizeField_selected(self, treeview, symbol):
+    def sizeField_selected(self, treeview, savedEncapsulationLevel):
+        # Optionaly restore original encapsulation levels
+        i = -1
+        for field in self.selectedSymbol.getFields():
+            i += 1
+            field.setEncapsulationLevel( savedEncapsulationLevel[i] )
+            
+        # Apply new encapsulation levels
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
-                symbol_id = model.get_value(iter, 0)
-                size_field = model.get_value(iter, 1)
-                size_field_len = model.get_value(iter, 2)
-                start_field = model.get_value(iter, 3)
-                start_field_len = model.get_value(iter, 4)
-                end_field = model.get_value(iter, 5)
-                end_field_len = model.get_value(iter, 6)
+                size_field = model.get_value(iter, 0)
+                size_field_len = model.get_value(iter, 1)
+                start_field = model.get_value(iter, 2)
+                start_field_len = model.get_value(iter, 3)
+                end_field = model.get_value(iter, 4)
+                end_field_len = model.get_value(iter, 5)
 
-                ## Select the related symbol
-                self.selectedSymbol = symbol
+                sizeField = self.selectedSymbol.getFieldByIndex( size_field )
+                startField = self.selectedSymbol.getFieldByIndex( start_field )
+                endField = self.selectedSymbol.getFieldByIndex( end_field )
+
+#                # We check if some values of the size field are longer than the expected size field length
+#                cells = self.selectedSymbol.getCellsByField(sizeField)
+#                for cell in cells:
+#                    if len(cell) > size_field_len:
+#                        print "SPLIT"
+#                        # Then we split the field
+#                        self.selectedSymbol.splitField(sizeField, size_field_len)
+
+                sizeField.setDescription( "size field" )
+                startField.setDescription( "start of payload" )
+                for i in range(start_field, end_field + 1):
+                    field = self.selectedSymbol.getFieldByIndex(i)
+                    field.setEncapsulationLevel( field.getEncapsulationLevel() + 1 )
+
                 self.update()
-
-                ## Select the first message for details (after the 2 header rows)
-                it = self.treeMessageGenerator.treestore.get_iter_first()
-                if it == None:
-                    return
-                it = self.treeMessageGenerator.treestore.iter_next(it)
-                if it == None:
-                    return
-                it = self.treeMessageGenerator.treestore.iter_next(it)
-                if it == None:
-                    return
-                it = self.treeMessageGenerator.treestore.iter_next(it)
-                if it == None:
-                    return
-
-                # Build a temporary symbol
-                symbol.clear()
-                for message in self.treeMessageGenerator.getSymbol().getMessages():
-                    tmp_message = RawMessage("tmp", 329832, message.getData())
-                    symbol.addMessage(tmp_message)
-                symbol.setAlignment(copy.deepcopy(self.treeMessageGenerator.getSymbol().getAlignment()))
-                symbol.setFields(copy.deepcopy(list(self.treeMessageGenerator.getSymbol().getFields())))
-
-                self.treeTypeStructureGenerator.setSymbol(symbol)
-
-                # Optionaly splits the columns if needed, and handles columns propagation
-#                if symbol.splitColumn(size_field, size_field_len) == True:
-#                    if size_field < start_field:
-#                        start_field += 1
-#                    if end_field != -1:
-#                        end_field += 1
-#                symbol.setDescriptionByCol(size_field, "Size field")
-#                symbol.setColorByCol(size_field, "red")
-#                if symbol.splitColumn(start_field, start_field_len) == True:
-#                    start_field += 1
-#                    if end_field != -1:
-#                        end_field += 1
-#                symbol.setDescriptionByCol(start_field, "Start of payload")
-#                symbol.splitColumn(end_field, end_field_len)
-#
-#                # Adapt tabulation for encapsulated payloads
-#                if end_field != -1:
-#                    for iCol in range(start_field, end_field + 1):
-#                        symbol.setTabulationByCol(iCol, symbol.getTabulationByCol(iCol) + 10)
-#                else:
-#                    symbol.setTabulationByCol(start_field, symbol.getTabulationByCol(start_field) + 10)
-
-                # View the proposed protocol structuration
-                self.update()
-
 
     #+----------------------------------------------
     #| Called when user wants to apply a size field on a symbol
     #+----------------------------------------------
-    def applySizeField(self, button, dialog, symbol):
-#        self.treeMessageGenerator.getSymbol().setColumns(copy.deepcopy(list(symbol.getColumns())))
-        dialog.destroy()
+    def applySizeField(self, button, dialog, savedEncapsulationLevel):
+        # Apply the new encapsulation levels on original fields
+        del savedEncapsulationLevel[:]
+        for field in self.selectedSymbol.getFields():
+            savedEncapsulationLevel.append( field.getEncapsulationLevel() )
