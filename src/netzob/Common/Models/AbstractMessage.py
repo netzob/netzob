@@ -147,13 +147,7 @@ class AbstractMessage():
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
         if self.getSymbol().getAlignmentType() == "regex":
-#            print "==>"
-#            print self.getVisualizationData()
-#            print self.getSplittedData()
-#            print self.applyRegex(styled, encoded)
-            
-            return self.getVisualizationData(encoded)
-#            return self.applyRegex(styled, encoded)
+            return self.getVisualizationData(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
     
@@ -202,9 +196,13 @@ class AbstractMessage():
         return result
         
         
-    def getStyledData(self, encoded=False):
+    def getStyledData(self, styled=False, encoded=False):
         result = []
         splittedData = self.getSplittedData(encoded)
+        
+        if styled == False :
+            return splittedData
+        
         iGlobal = 0
         iCol = 0
         for data in splittedData :
@@ -233,8 +231,8 @@ class AbstractMessage():
             iCol += 1
         return result
             
-    def getVisualizationData(self, encoded=False):
-        result = self.getStyledData(encoded)
+    def getVisualizationData(self, styled=False, encoded=False):
+        result = self.getStyledData(styled, encoded)
         return result
     
     #+----------------------------------------------
