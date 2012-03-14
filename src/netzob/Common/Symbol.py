@@ -88,7 +88,9 @@ class Symbol(AbstractSymbol):
         
     def getVisualizationFilters(self):
         return self.visualizationFilters
-
+    
+    def removeVisualizationFilter(self, filter):
+        self.visualizationFilters.remove(filter)
 
     #+----------------------------------------------
     #| forcePartitioning:
