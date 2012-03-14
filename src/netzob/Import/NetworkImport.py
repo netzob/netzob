@@ -84,7 +84,7 @@ class NetworkImport(AbstractImporter):
 
         self.init()
 
-        self.dialog = gtk.Dialog(title="Capture network trafic", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Capture network trafic"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
@@ -99,7 +99,7 @@ class NetworkImport(AbstractImporter):
         self.panel.show()
 
         # Network devices
-        label = gtk.Label("Network devices")
+        label = gtk.Label(_("Network devices"))
         label.show()
         listNetworkDevice = gtk.combo_box_entry_new_text()
         listNetworkDevice.show()
@@ -111,7 +111,7 @@ class NetworkImport(AbstractImporter):
         try:
             interfaces = pcapy.findalldevs()
         except:
-            self.log.warn("You don't have enough permissions to open any network interface on this system.")
+            self.log.warn(_("You don't have enough permissions to open any network interface on this system."))
             interfaces = []
 
         for interface in interfaces:
@@ -121,7 +121,7 @@ class NetworkImport(AbstractImporter):
         self.panel.attach(listNetworkDevice, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # BPF filter
-        label = gtk.Label("BPF filter")
+        label = gtk.Label(_("BPF filter"))
         label.show()
         entry_filter = gtk.Entry()
         entry_filter.set_width_chars(50)
@@ -131,7 +131,7 @@ class NetworkImport(AbstractImporter):
         self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Count capturing limit
-        label = gtk.Label("Count limit")
+        label = gtk.Label(_("Count limit"))
         label.show()
         entry_count = gtk.Entry()
         entry_count.show()
@@ -140,7 +140,7 @@ class NetworkImport(AbstractImporter):
         self.panel.attach(entry_count, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Time capturing limit
-        label = gtk.Label("Timeout")
+        label = gtk.Label(_("Timeout"))
         label.show()
         entry_time = gtk.Entry()
         entry_time.show()
@@ -149,7 +149,7 @@ class NetworkImport(AbstractImporter):
         self.panel.attach(entry_time, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Sniff launching button
-        but = gtk.Button(label="Sniff traffic")
+        but = gtk.Button(label=_("Sniff traffic"))
         but.show()
         but.connect("clicked", self.launch_sniff, listNetworkDevice, entry_filter, entry_count, entry_time)
         self.panel.attach(but, 1, 2, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -162,27 +162,27 @@ class NetworkImport(AbstractImporter):
         treeview.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # Col proto
-        column = gtk.TreeViewColumn('Proto')
+        column = gtk.TreeViewColumn(_("Proto"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
         # Col IP.src
-        column = gtk.TreeViewColumn('IP source')
+        column = gtk.TreeViewColumn(_("IP source"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeview.append_column(column)
         # Col IP.dst
-        column = gtk.TreeViewColumn('IP dest')
+        column = gtk.TreeViewColumn(_("IP dest"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=3)
         treeview.append_column(column)
         # Col {TCP,UDP}.sport
-        column = gtk.TreeViewColumn('sport')
+        column = gtk.TreeViewColumn(_("sport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=4)
         treeview.append_column(column)
         # Col {TCP,UDP}.dport
-        column = gtk.TreeViewColumn('dport')
+        column = gtk.TreeViewColumn(_("dport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=5)
         treeview.append_column(column)
@@ -192,7 +192,7 @@ class NetworkImport(AbstractImporter):
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.panel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
-        but = gtk.Button(label="Save selected packets")
+        but = gtk.Button(label=_("Save selected packets"))
         but.show()
         but.connect("clicked", self.save_packets, treeview)
         self.panel.attach(but, 1, 2, 6, 7, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -260,7 +260,7 @@ class NetworkImport(AbstractImporter):
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(messages)) + " selected packets in project " + currentProject.getName() + ".")
+            gtk.BUTTONS_OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
@@ -309,13 +309,14 @@ class NetworkImport(AbstractImporter):
             dev = ""
         dev = modele[est_actif][0]
 
-        self.log.info("Launching sniff process on dev " + dev + " with : count=" + count.get_text() + ", timeout=" + time.get_text() + ", filter=\"" + filter.get_text() + "\"")
+        self.log.info(_("Launching sniff process on dev {0} with : count={1}, timeout={2}, filter=\"{3}\"").format(dev, count.get_text(), time.get_text(), filter.get_text()))
+
         sniffer = pcapy.open_live(dev, 1024, False, int(time.get_text()))
 
         try:
             sniffer.setfilter(filter.get_text())
         except:
-            self.log.warn("The provided filter is not valid (it should respects the BPF format")
+            self.log.warn(_("The provided filter is not valid (it should respects the BPF format"))
             button.set_sensitive(True)
             return
 
