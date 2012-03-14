@@ -174,6 +174,7 @@ class Menu(object):
             self.displaySymbolStructure.set_sensitive(True)
             self.displayMessages.set_sensitive(True)
             self.displayConsole.set_sensitive(False)
+            self.displaySearchView.set_sensitive(True)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             self.displaySymbolStructure.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
@@ -201,6 +202,11 @@ class Menu(object):
         self.displayConsole.connect("activate", self.displayConsoleAction)
         self.menuView.append(self.displayConsole)
         self.displayConsole.set_sensitive(False)
+        
+        self.displaySearchView = gtk.CheckMenuItem("Display search results")
+        self.displaySearchView.connect("activate", self.displaySearchAction)
+        self.menuView.append(self.displaySearchView)
+        self.displaySearchView.set_sensitive(False)
 
         self.menuBar.append(menuRootView)
 
@@ -359,6 +365,14 @@ class Menu(object):
     def displayConsoleAction(self, widget):
         if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, self.displayConsole.get_active())
+        self.netzob.updateCurrentPanel()
+        
+    #+----------------------------------------------
+    #| Called when user wants to display search results panel
+    #+----------------------------------------------
+    def displaySearchAction(self, widget):
+        if self.netzob.getCurrentProject() != None:
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, self.displaySearchView.get_active())
         self.netzob.updateCurrentPanel()
 
     def aboutDialogAction(self, widget):
