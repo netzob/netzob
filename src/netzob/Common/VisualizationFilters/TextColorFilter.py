@@ -50,7 +50,7 @@ class TextColorFilter(VisualizationFilter):
     TYPE = "TextColorFilter"
     
     def __init__(self, id, name, iStart, iEnd, color):
-        VisualizationFilter.__init__(self, id, name, TextColorFilter.TYPE)
+        VisualizationFilter.__init__(self, id, TextColorFilter.TYPE, name)
         self.iStart = iStart
         self.iEnd = iEnd
         self.color = color

@@ -49,7 +49,7 @@ class BackgroundColorFilter(VisualizationFilter):
     TYPE = "BackgroundColorFilter"
     
     def __init__(self, id, name, iStart, iEnd, color):
-        VisualizationFilter.__init__(self, id, name, BackgroundColorFilter.TYPE)
+        VisualizationFilter.__init__(self, id, BackgroundColorFilter.TYPE, name)
         self.iStart = iStart
         self.iEnd = iEnd
         self.color = color
