@@ -32,7 +32,6 @@ import gtk
 import pango
 import pygtk
 import gobject
-from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 pygtk.require('2.0')
 import logging
 import threading
@@ -65,6 +64,7 @@ from netzob.Inference.Vocabulary.TreeViews.TreeSymbolGenerator import TreeSymbol
 from netzob.Inference.Vocabulary.TreeViews.TreeMessageGenerator import TreeMessageGenerator
 from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import TreeTypeStructureGenerator
 from netzob.Inference.Vocabulary.VariableView import VariableView
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 #+----------------------------------------------
 #| UImodelization:
@@ -815,7 +815,7 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the type of a specific column
-            subMenu = self.build_encoding_submenu_for_field(selectedField)
+            subMenu = self.build_encoding_submenu_for_field(selectedField, message_id)
             item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -925,16 +925,28 @@ class UImodelization:
     #| build_encoding_submenu_for_field:
     #|   Build a submenu for field data visualization.
     #+----------------------------------------------
-    def build_encoding_submenu_for_field(self, field):
+    def build_encoding_submenu_for_field(self, field, message_id):
         menu = gtk.Menu()
 
-        # Format submenu
+        # Retrieve the selected message
+        message = self.selectedSymbol.getMessageByID(message_id)
+        if message == None:
+            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            return
+        
+        # Retrieve content of the field
+        field_content = message.applyAlignment(styled=False, encoded=False)[field.getIndex()]
 
-        # Retrieves all the supported format of visualizations
+        # Format submenu
         possible_choices = Format.getSupportedFormats()
         subMenu = gtk.Menu()
         for value in possible_choices:
-            item = gtk.MenuItem(value)
+            # Get preview of field content
+            text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
+            if len(text_preview) > 10:
+                text_preview = text_preview[:10] + "..."
+
+            item = gtk.MenuItem(value + " (" + text_preview + ")")
             item.show()
             item.connect("activate", self.rightClickToChangeFormat, field, value)
             subMenu.append(item)
@@ -2341,6 +2353,13 @@ class UImodelization:
                 start_field_len = model.get_value(iter, 3)
                 end_field = model.get_value(iter, 4)
                 end_field_len = model.get_value(iter, 5)
+
+                print size_field
+                print size_field_len
+                print start_field
+                print start_field_len
+                print end_field
+                print end_field_len
 
                 sizeField = self.selectedSymbol.getFieldByIndex( size_field )
                 startField = self.selectedSymbol.getFieldByIndex( start_field )
