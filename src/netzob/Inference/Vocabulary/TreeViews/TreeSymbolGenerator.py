@@ -75,9 +75,8 @@ class TreeSymbolGenerator():
         self.lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
         cell.set_property('background-set', True)
-        cell.set_property('foreground-set', True)
         self.lvcolumn.pack_start(cell, True)
-        self.lvcolumn.set_attributes(cell, markup=1, foreground=3, background=4)
+        self.lvcolumn.set_attributes(cell, markup=1, background=4)
         self.treeview.append_column(self.lvcolumn)
         self.treeview.show()
 
@@ -113,6 +112,7 @@ class TreeSymbolGenerator():
                 symbolName = symbol.getName()
                 for filter in symbol.getVisualizationFilters() :
                     symbolName = filter.apply(symbolName)
+                    
                 symbolName = symbolName + " (" + str(len(symbol.getMessages())) + ")"
                 symbolEntry = [str(symbol.getID()), symbolName, str(symbol.getScore()), '#000000', '#DEEEF0']
                 self.treestore.append(None, symbolEntry)
