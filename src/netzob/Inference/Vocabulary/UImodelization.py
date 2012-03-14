@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import gtk
 import pango
 import pygtk

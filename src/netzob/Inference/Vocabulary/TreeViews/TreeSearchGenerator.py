@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import gtk
 import uuid

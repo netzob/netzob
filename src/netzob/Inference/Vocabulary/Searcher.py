@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.Format import Format

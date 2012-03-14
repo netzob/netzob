@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import socket
 import select
 import logging

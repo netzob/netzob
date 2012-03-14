@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery

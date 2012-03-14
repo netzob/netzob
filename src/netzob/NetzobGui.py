@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import gtk
 import pygtk
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin

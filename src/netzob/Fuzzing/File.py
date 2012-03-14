@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import gtk
 import pygtk
 pygtk.require('2.0')

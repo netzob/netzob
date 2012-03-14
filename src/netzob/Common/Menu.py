@@ -29,6 +29,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import gtk
 import logging
 import os

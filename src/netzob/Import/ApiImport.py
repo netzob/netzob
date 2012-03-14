@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import gtk
 import pygtk
 import tempfile
