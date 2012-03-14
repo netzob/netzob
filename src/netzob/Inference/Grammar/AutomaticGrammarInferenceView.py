@@ -69,26 +69,26 @@ class AutomaticGrammarInferenceView(object):
 
     def display(self):
         # Display the form for the creation of a word variable
-        self.dialog = gtk.Dialog(title="Configuration of the automatic inference", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Configuration of the automatic inference"), flags=0, buttons=None)
 
         mainTable = gtk.Table(rows=9, columns=2, homogeneous=False)
 
         # Infer a client or a server
-        targetOfInferenceLabel = gtk.Label("Target : ")
+        targetOfInferenceLabel = gtk.Label(_("Target:"))
         targetOfInferenceLabel.show()
         self.targetOfInferenceCombo = gtk.ComboBox()
         self.targetOfInferenceCombo.set_model(gtk.ListStore(str))
         targetOfInferenceComboCell = gtk.CellRendererText()
         self.targetOfInferenceCombo.pack_start(targetOfInferenceComboCell, True)
         self.targetOfInferenceCombo.add_attribute(targetOfInferenceComboCell, 'text', 0)
-        self.targetOfInferenceCombo.append_text("CLIENT")
-        self.targetOfInferenceCombo.append_text("SERVER")
+        self.targetOfInferenceCombo.append_text(_("CLIENT"))
+        self.targetOfInferenceCombo.append_text(_("SERVER"))
         self.targetOfInferenceCombo.show()
         mainTable.attach(targetOfInferenceLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(self.targetOfInferenceCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # IP of the server
-        IPLabel = gtk.Label("IP :")
+        IPLabel = gtk.Label(_("IP:"))
         IPLabel.show()
         self.IPEntry = gtk.Entry()
         self.IPEntry.show()
@@ -96,12 +96,12 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.IPEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Protocol of the server
-        ProtocolLabel = gtk.Label("Protocol :")
+        ProtocolLabel = gtk.Label(_("Protocol:"))
         ProtocolLabel.show()
         self.combo_protocolOfNetworkActor = gtk.combo_box_entry_new_text()
         self.combo_protocolOfNetworkActor.set_model(gtk.ListStore(str))
-        self.combo_protocolOfNetworkActor.append_text("TCP")
-        self.combo_protocolOfNetworkActor.append_text("UDP")
+        self.combo_protocolOfNetworkActor.append_text(_("TCP"))
+        self.combo_protocolOfNetworkActor.append_text(_("UDP"))
         self.combo_protocolOfNetworkActor.set_active(0)
         self.combo_protocolOfNetworkActor.show()
 
@@ -109,7 +109,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.combo_protocolOfNetworkActor, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Source port
-        SourcePortLabel = gtk.Label("Our port :")
+        SourcePortLabel = gtk.Label(_("Our port:"))
         SourcePortLabel.show()
         self.ourPortEntry = gtk.Entry()
         self.ourPortEntry.show()
@@ -117,7 +117,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.ourPortEntry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Port of the server
-        PortLabel = gtk.Label("Target Port :")
+        PortLabel = gtk.Label(_("Target Port:"))
         PortLabel.show()
         self.targetPortEntry = gtk.Entry()
         self.targetPortEntry.show()
@@ -125,7 +125,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.targetPortEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Estimated number of states
-        MaxStatesLabel = gtk.Label("Maximum number of states :")
+        MaxStatesLabel = gtk.Label(_("Maximum number of states:"))
         MaxStatesLabel.show()
         self.MaxStatesEntry = gtk.Entry()
         self.MaxStatesEntry.show()
@@ -133,7 +133,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.MaxStatesEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Script to execute to reset the implementation
-        scriptLabel = gtk.Label("Reseting script :")
+        scriptLabel = gtk.Label(_("Reseting script:"))
         scriptLabel.show()
         self.scriptEntry = gtk.Entry()
         self.scriptEntry.show()
@@ -141,7 +141,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.scriptEntry, 1, 2, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Create button
-        startButton = gtk.Button("Start inference")
+        startButton = gtk.Button(_("Start inference"))
         startButton.show()
         startButton.connect("clicked", self.startInference)
         mainTable.attach(startButton, 1, 2, 7, 8, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -150,7 +150,7 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.show_all()
 
     def createInferringStatusView(self):
-        self.dialog = gtk.Dialog(title="Execution of the inferring process", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Execution of the inferring process"), flags=0, buttons=None)
 
         mainTable = gtk.Table(rows=5, columns=4, homogeneous=False)
 
@@ -169,12 +169,12 @@ class AutomaticGrammarInferenceView(object):
 #        treeview_queries.connect('button-press-event', self.button_press_on_transitions)
         cell = gtk.CellRendererText()
         # col : membership queries
-        col_queries_querie = gtk.TreeViewColumn('Membership queries')
+        col_queries_querie = gtk.TreeViewColumn(_("Membership queries"))
         col_queries_querie.pack_start(cell, True)
         col_queries_querie.set_attributes(cell, text=0)
         treeview_queries.append_column(col_queries_querie)
         # col : responses to queries
-        column_queries_responses = gtk.TreeViewColumn('Responses')
+        column_queries_responses = gtk.TreeViewColumn(_("Responses"))
         column_queries_responses.pack_start(cell, True)
         column_queries_responses.set_attributes(cell, text=1)
         treeview_queries.append_column(column_queries_responses)
@@ -192,13 +192,13 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(self.progressbar, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Insert the stop button
-        self.stopButton = gtk.Button("Stop")
+        self.stopButton = gtk.Button(_("Stop"))
         self.stopButton.show()
         self.stopButton.connect("clicked", self.stopInference)
         mainTable.attach(self.stopButton, 2, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Insert the Save button
-        self.saveButton = gtk.Button("Save as Grammar")
+        self.saveButton = gtk.Button(_("Save as Grammar"))
         self.saveButton.show()
         self.saveButton.connect("clicked", self.saveGrammar)
         mainTable.attach(self.saveButton, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -214,7 +214,7 @@ class AutomaticGrammarInferenceView(object):
 
     def callback_submitedQuery(self, query, resultQuery):
         if query == None:
-            self.log.debug("Impossible to show a Null query")
+            self.log.debug(_("Impossible to show a Null query"))
             return
 
         # Create a str view of the Query
@@ -248,7 +248,7 @@ class AutomaticGrammarInferenceView(object):
 
     def stopInference(self, button):
         self.finish = True
-        self.log.info("Stop the inferer")
+        self.log.info(_("Stop the inferer"))
         self.inferer.stop()
 
     def startInferer(self):
@@ -258,7 +258,7 @@ class AutomaticGrammarInferenceView(object):
 
     def saveGrammar(self, button):
         if self.computedAutomaton != None:
-            self.log.debug("Saving the computed automata as the grammar of current project")
+            self.log.debug(_("Saving the computed automata as the grammar of current project"))
             self.project.getGrammar().setAutomata(self.computedAutomaton)
             self.dialog.destroy()
 
