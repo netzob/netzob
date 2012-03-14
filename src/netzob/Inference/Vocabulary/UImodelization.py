@@ -990,16 +990,26 @@ class UImodelization:
                                    gtk.BUTTONS_CANCEL,
                                    "Modify field attributes")
         vbox = gtk.VBox()
+
         # Create hbox for field name
         hbox = gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
         hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
         entryName = gtk.Entry()
         entryName.set_text(field.getName())
-
         # Allow the user to press enter to do ok
         entryName.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryName)
+
+        # Create hbox for field description
+        hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, 5, 5)
+        hbox.pack_start(NetzobLabel("Description : "), False, 5, 5)
+        entryDescr = gtk.Entry()
+        entryDescr.set_text(field.getName())
+        # Allow the user to press enter to do ok
+        entryDescr.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        hbox.pack_end(entryDescr)
 
         # Create hbox for field regex
         hbox = gtk.HBox()
@@ -1010,6 +1020,19 @@ class UImodelization:
         # Allow the user to press enter to do ok
         entryRegex.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryRegex)
+
+        # Create hbox for field encapsulation level
+        hbox = gtk.HBox()
+        vbox.pack_start(hbox, False, 5, 5)
+        hbox.pack_start(NetzobLabel("Encapsulation level : "), False, 5, 5)
+        comboEncap = NetzobComboBoxEntry()
+        for i in range(10):
+            comboEncap.append_text(str(i))
+            if i == field.getEncapsulationLevel():
+                comboEncap.set_active(i)
+        hbox.pack_end(comboEncap)
+
+        # Run the dialog
         dialog.vbox.pack_end(vbox, True, True, 0)
         dialog.show_all()
         dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
@@ -1023,11 +1046,26 @@ class UImodelization:
         if (len(text) > 0):
             field.setName(text)
 
+        # Update field description
+        text = entryDescr.get_text()
+        if (len(text) > 0):
+            field.setDescription(text)
+
         # Update field regex
         text = entryRegex.get_text()
         if (len(text) > 0):
             field.setRegex(text)
         dialog.destroy()
+        self.update()
+
+        # Update field encapsulation level
+        try:
+            encapLevel = int( comboEncap.get_active() )
+        except TypeError:
+            pass
+        else:
+            if encapLevel >= 0:
+                field.setEncapsulationLevel( encapLevel )
         self.update()
 
     #+----------------------------------------------
