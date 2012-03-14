@@ -38,6 +38,9 @@ import sys
 import logging
 import optparse
 
+import locale
+import gettext
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -66,6 +69,15 @@ class NetzobGui(gtk.Window):
         # Command line commands
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
+        
+        gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
+        gettext.textdomain("netzob")
+
+        try:
+            locale.getlocale()
+        except:
+            logging.exception("setlocale failed, resetting to C")
+            locale.setlocale(locale.LC_ALL, "C")
 
         (status, version) = DepCheck.test_lxml()
         if status == False:
