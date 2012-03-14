@@ -321,7 +321,6 @@ class UImodelization:
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeSymbolGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
-#        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolChanged)
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+----------------------------------------------
@@ -2252,9 +2251,13 @@ class UImodelization:
         # Text view containing potential size fields
         treeview.set_size_request(800, 300)
 
-        if None == self.selectedSymbol.findSizeFields(treeview.get_model()):
+        results = []
+        if None == self.selectedSymbol.findSizeFields( results ):
             NetzobErrorMessage("No size field found.")
         else:
+            for result in results:
+                treeview.get_model().append(result)
+
             treeview.show()
             scroll = gtk.ScrolledWindow()
             scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)

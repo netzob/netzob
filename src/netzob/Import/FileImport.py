@@ -69,9 +69,9 @@ class FileImport(AbstractImporter):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, zob):
+    def __init__(self, netzob):
         AbstractImporter.__init__(self, "FILE IMPORT")
-        self.zob = zob
+        self.netzob = netzob
 
         # create the environmental dependancy object
         self.envDeps = EnvironmentalDependencies()
@@ -89,7 +89,7 @@ class FileImport(AbstractImporter):
         
     def init(self):
         # Default line separator is <CR>
-        self.lineSeparator = []
+        self.lineSeparator = ""
         self.fileName = ""
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,7 +107,7 @@ class FileImport(AbstractImporter):
 #        entry_filepath.set_width_chars(50)
         entry_filepath.set_text("")
         entry_filepath.show()
-        but.connect("clicked", self.select_file, entry_filepath)
+        but.connect("clicked", self.selectFiles, entry_filepath)
         self.panel.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         self.panel.attach(entry_filepath, 2, 6, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
@@ -119,7 +119,7 @@ class FileImport(AbstractImporter):
         label_separator.show()
         entry_separator = gtk.Entry()
 #        entry_separator.set_width_chars(50)
-        entry_separator.set_text("".join(self.lineSeparator))
+        entry_separator.set_text(self.lineSeparator)
         entry_separator.show()
         entry_separator.connect("activate", self.entry_separator_callback, entry_separator)
 
@@ -152,7 +152,6 @@ class FileImport(AbstractImporter):
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         self.lineView.append_column(column)
-
         self.lineView.show()
 
         scroll2.add(self.lineView)
@@ -196,33 +195,46 @@ class FileImport(AbstractImporter):
     #| Called when user select a list of packet
     #+----------------------------------------------
     def import_file(self, button):
-        currentProject = self.zob.getCurrentProject()
+        currentProject = self.netzob.getCurrentProject()
 
         # We ask the confirmation
-        md = gtk.MessageDialog(None,
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
-#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-        resp = md.run()
-        md.destroy()
+        dialog = gtk.MessageDialog(None,
+                               gtk.DIALOG_DESTROY_WITH_PARENT,
+                               gtk.MESSAGE_QUESTION,
+                               gtk.BUTTONS_OK_CANCEL,
+                               "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
+
+        # Checkbox for session
+        vbox = gtk.VBox()
+        vbox.show()
+        hbox = gtk.HBox()
+        hbox.show()
+        vbox.pack_start(hbox)
+        isSession = gtk.CheckButton("Check if this trace is a session")
+        isSession.set_active(False)
+        isSession.show()
+#        hbox.pack_start(isSession)
+
+        dialog.vbox.pack_end(vbox, True, True, 0)
+        resp = dialog.run()
+        dialog.destroy()
 
         if resp == gtk.RESPONSE_OK:
-            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, self.messages)
-        self.dialog.destroy()
-
-        # We update the gui
-        self.zob.update()
+            self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), currentProject, self.messages)
+            self.dialog.destroy()
+            # We update the gui
+            self.netzob.update()
 
     #+----------------------------------------------
-    #| Called when user import a file
+    #| Called when user import files
     #+----------------------------------------------
-    def select_file(self, button, label):
+    def selectFiles(self, button, label):
         aFile = ""
         chooser = gtk.FileChooserDialog(title="Select one or multiple file", action=gtk.FILE_CHOOSER_ACTION_OPEN,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_select_multiple(True)
 
-        filesToBeImported = []
+        self.filesToBeImported = []
 
         # Computes the selected file(s)
         res = chooser.run()
@@ -230,20 +242,28 @@ class FileImport(AbstractImporter):
             for filename in chooser.get_filenames() :
                 filename = unicode(filename, "utf-8")
                 if filename != None and filename != "" and os.path.isfile(filename) :
-                    filesToBeImported.append(filename)
+                    self.filesToBeImported.append(filename)
         chooser.destroy()
 
+        # We update the label with the list of the selected files
+        label.set_text(";".join(self.filesToBeImported))
+
+        # Retrieve the selected files
+        self.retrieveMessagesFromFiles()
+
+    #+----------------------------------------------
+    #| Retrieve messages from files
+    #+----------------------------------------------
+    def retrieveMessagesFromFiles(self):
         # We capture the current environment
         self.envDeps.captureEnvData()
-
-        # We update the label with the list of the selected files
-        label.set_text(";".join(filesToBeImported))
 
         # We read each file and create one message for each file
         fileNumber = 0
         self.messages = []
+        self.lineView.get_model().clear()
 
-        for file in filesToBeImported:
+        for file in self.filesToBeImported:
             # Extraction of the metadata
             fileName = file.strip()
             size = os.path.getsize(file)
@@ -266,7 +286,7 @@ class FileImport(AbstractImporter):
         self.textview.get_buffer().insert_with_tags_by_name(self.textview.get_buffer().get_start_iter(), "", "normalTag")
 
     def getNetzobRawContentOfFile(self, filename):
-        file = open(filename, "r")
+        file = open(filename, "rb")
         content = file.read()
         file.close()
         return TypeConvertor.stringToNetzobRaw(content)
@@ -274,7 +294,6 @@ class FileImport(AbstractImporter):
     def entry_separator_callback(self, widget, entry):
         entry_text = widget.get_text()
         self.lineSeparator = entry_text
-
         self.updateMessageList()
 
     def updateMessageList(self):
@@ -282,11 +301,14 @@ class FileImport(AbstractImporter):
         fileNumber = 0
 
         # We split the content of each message and retrieve new messages
+        self.retrieveMessagesFromFiles()
         new_messages = []
         for message in self.messages:
             lineNumber = 0
-
-            splittedStrHexData = message.getData().split(self.lineSeparator)
+            if len(self.lineSeparator) > 0:
+                splittedStrHexData = message.getData().split(self.lineSeparator)
+            else:
+                splittedStrHexData = [ message.getData() ]
             for s in splittedStrHexData:
                 if len(s) > 0:
                     message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)

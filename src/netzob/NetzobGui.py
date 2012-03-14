@@ -66,7 +66,7 @@ class NetzobGui(gtk.Window):
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
         
-        self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
+        #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")
@@ -193,9 +193,6 @@ class NetzobGui(gtk.Window):
 
     def startGui(self):
         gtk.main()
-        # UI thread launching
-        #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
-#        self.uiThread.start()
 
     def evnmtDelete(self, widget, event, data=None):
         return False
@@ -212,10 +209,7 @@ class NetzobGui(gtk.Window):
             page[1].kill()
         gtk.main_quit()
 
-    def guiThread(self):
-        gtk.main()
-
-    #+----------------------------------------------
+    #+---------------------------------------------- 
     #| Called when user select a notebook
     #+----------------------------------------------
     def notebookFocus(self, notebook, page, pagenum):

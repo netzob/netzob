@@ -43,7 +43,6 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
@@ -52,14 +51,10 @@ from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
-#+----------------------------------------------
-#| C Imports
-#+----------------------------------------------
-import libNeedleman
 
 NAMESPACE = "http://www.netzob.org/"
 
-# Note: this is probably useless, as it is already specified in Project.py
+# TODO: Note: this is probably useless, as it is already specified in Project.py
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
@@ -83,135 +78,6 @@ class Symbol(AbstractSymbol):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.project = project
-
-#    #+----------------------------------------------
-#    #| buildRegexAndAlignment : compute regex and
-#    #| self.alignment from the binary strings computed
-#    #| in the C Needleman library
-#    #+----------------------------------------------
-#    def buildRegexAndAlignment(self, projectConfiguration):
-#        self.alignmentType = "regex"
-#        self.rawDelimiter = ""
-#        # Use the default protocol type for representation
-#        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-#
-#        self.fields = []
-#
-#        # If only one message (easy)
-#        if len(self.getMessages()) == 1:
-#            field = Field("Field 0", 0, self.getMessages()[0].getStringData())
-#            field.setFormat(aFormat)
-#            self.addField(field)
-#            return
-#
-#        # If more messages, we align them
-#        # Serialize the messages before sending them to the C library
-#        (serialMessages, format) = TypeConvertor.serializeMessages(self.getMessages())
-#        
-#        maxLeftReducedStringData = 0
-#        maxRightReducedStringData = 0
-#        maxReducedSize = 0
-#        for m in self.getMessages():
-#            if m.getLeftReductionFactor() > maxLeftReducedStringData:
-#                maxLeftReducedStringData = m.getLeftReductionFactor()
-#            if m.getRightReductionFactor() > maxRightReducedStringData:
-#                maxRightReducedStringData = m.getRightReductionFactor()
-#            if m.getReducedSize() > maxReducedSize:
-#                maxReducedSize = m.getReducedSize()
-#
-#        if projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK):
-#            doInternalSlick = 1
-#        else:
-#            doInternalSlick = 0
-#
-#        # Align sequences in C library
-#        logging.debug("Alignment with : ")
-#        logging.debug("internal slick = " + str(doInternalSlick))
-#        logging.debug("len messages : " + str(len(self.getMessages())))
-#        logging.debug("format = " + format)
-#        logging.debug("serial = " + serialMessages)
-#        
-#        (score, aRegex, aMask) = libNeedleman.alignSequences(doInternalSlick, len(self.getMessages()), format, serialMessages)
-#        
-#        self.setScore(score)
-#
-#        # Build alignment C library result
-#        align = ""
-#        i = 0
-#        for c in aMask:
-#            if c != '\x02':
-#                if c == '\x01':
-#                    align += "--"
-#                else:
-#                    align += aRegex[i:i + 1].encode("hex")
-#            i += 1
-#
-#        if maxLeftReducedStringData > 0:
-#            logging.warning("add on the left part adding a bit of --")
-#            for i in range(0, maxReducedSize):
-#                align = "--" + align
-#        if maxRightReducedStringData > 0:
-#            logging.warning("add on the right part adding a bit of --")
-#            for i in range(0, maxReducedSize):
-#                align = align + "--"
-#
-#        self.setAlignment(align)
-#        # Initialized the self.fields structure based on alignement
-#        self.buildRegexFromAlignment(align, projectConfiguration)
-
-#    def buildRegexFromAlignment(self, align, projectConfiguration):
-#        # Build regex from alignment
-#        i = 0
-#        start = 0
-#        regex = []
-#        found = False
-#        for i in range(len(align)):
-#            if (align[i] == "-"):
-#                if (found == False):
-#                    start = i
-#                    found = True
-#            else:
-#                if (found == True):
-#                    found = False
-#                    nbTiret = i - start
-#                    regex.append("(.{," + str(nbTiret) + "})")
-#                    regex.append(align[i])
-#                else:
-#                    if len(regex) == 0:
-#                        regex.append(align[i])
-#                    else:
-#                        regex[-1] += align[i]
-#        if (found == True):
-#            nbTiret = i - start
-#            regex.append("(.{," + str(nbTiret) + "})")
-#
-#        # Use the default protocol type for representation
-#        aFormat = projectConfiguration.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-#
-#        iField = 0
-#        for regexElt in regex:
-#            field = Field("Field " + str(iField), iField, regexElt)
-#            field.setFormat(aFormat)
-#            self.addField(field)
-#            iField = iField + 1
-#
-#        # We look for useless fields
-#        doLoop = True
-#        # We loop until we don't pop any field
-#        while doLoop == True:
-#            doLoop = False
-#            for field in self.getFields():
-#                # We try to see if this field produces only empty values when applied on messages
-#                messagesValuesByField = self.getMessagesValuesByField(field)
-#                messagesValuesByField = "".join(messagesValuesByField)
-#                if messagesValuesByField == "":
-#                    self.getFields().pop(field.getIndex())  # We remove this useless field
-#                    # Adpat index of the following fields, before breaking
-#                    for fieldNext in self.getFields():
-#                        if fieldNext.getIndex() > field.getIndex():
-#                            fieldNext.setIndex(fieldNext.getIndex() - 1)
-#                    doLoop = True
-#                    break
 
     #+----------------------------------------------
     #| forcePartitioning:
@@ -663,7 +529,7 @@ class Symbol(AbstractSymbol):
     #| findSizeFields:
     #|   Try to find the size fields
     #+----------------------------------------------
-    def findSizeFields(self, store):
+    def findSizeFields(self, results):
         if len(self.fields) <= 1:
             return None
         iField = 0
@@ -695,17 +561,18 @@ class Symbol(AbstractSymbol):
                     else:
                         lenJ = 2
                         stop = 0
+
                     for m in range(lenJ, stop, -2):
-                        for n in [4, 0, 1]:  # loop over different possible encoding of size field
+                        for n in [4, 2, 1]:  # loop over different possible encoding of size field
                             res = True
-                            for l in range(len(cellsSize)):
+                            for nbMsg in range(len(cellsSize)):
                                 if self.getFieldByIndex(j).isStatic():
-                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[l]
+                                    targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[nbMsg]
                                 else:
-                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(k))[l] + aggregateCellsData[l]
+                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
-                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[l][:n * 2])
+                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[nbMsg][:n * 2])
                                 if len(rawMsgSize) == 1:
                                     expectedSizeType = "B"
                                 elif len(rawMsgSize) == 2:
@@ -722,13 +589,14 @@ class Symbol(AbstractSymbol):
                                     break
                             if res:
                                 if self.getFieldByIndex(j).isStatic():  # Means the regex j element is static and a sub-part is concerned
-                                    store.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
+                                    results.append([self.id, iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
                                 else:
-                                    store.append([self.id, iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
+                                    results.append([self.id, iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
                                 break
                     k += 1
                 j += 1
             iField += 1
+        return True
 
     #+----------------------------------------------
     #| applyDataType_cb:
@@ -1057,10 +925,11 @@ class Symbol(AbstractSymbol):
         xmlSymbol.set("alignmentType", str(self.getAlignmentType()))
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
 
-        # Save the messages
-        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages")
+        # Save the message references
+        xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages-ref")
         for message in self.messages:
-            AbstractMessageFactory.save(message, xmlMessages, namespace_project, namespace_common)
+            xmlMessage = etree.SubElement(xmlMessages, "{" + namespace_common + "}message-ref")
+            xmlMessage.set("id", str(message.getID()))
         # Save the fields
         xmlFields = etree.SubElement(xmlSymbol, "{" + namespace_project + "}fields")
         for field in self.getFields():
@@ -1328,8 +1197,7 @@ class Symbol(AbstractSymbol):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def loadSymbol(xmlRoot, namespace, namespace_common, version, project):
-
+    def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":
             nameSymbol = xmlRoot.get("name")
             idSymbol = xmlRoot.get("id")
@@ -1345,23 +1213,22 @@ class Symbol(AbstractSymbol):
             symbol.setRawDelimiter(rawDelimiter)
 
             # we parse the messages
-            if xmlRoot.find("{" + namespace + "}messages") != None:
-                xmlMessages = xmlRoot.find("{" + namespace + "}messages")
-                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
-                    message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
+            if xmlRoot.find("{" + namespace_project + "}messages-ref") != None:
+                xmlMessages = xmlRoot.find("{" + namespace_project + "}messages-ref")
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
+                    id = xmlMessage.get("id")
+                    message = poolOfMessages.getMessageByID( id )
                     if message != None:
                         message.setSymbol(symbol)
                         symbol.addMessage(message)
 
             # we parse the fields
-            if xmlRoot.find("{" + namespace + "}fields") != None:
-                xmlFields = xmlRoot.find("{" + namespace + "}fields")
-                for xmlField in xmlFields.findall("{" + namespace + "}field"):
-                    field = Field.loadFromXML(xmlField, namespace, version)
+            if xmlRoot.find("{" + namespace_project + "}fields") != None:
+                xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
+                for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
+                    field = Field.loadFromXML(xmlField, namespace_project, version)
                     if field != None:
                         symbol.addField(field)
-            
-            
                 
             return symbol
         return None

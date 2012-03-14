@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
@@ -26,71 +27,88 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
-from datetime import datetime
 import logging
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Session import Session
+
 
 #+---------------------------------------------------------------------------+
-#| AbstractImporter:
-#|     Mother class which provides common methods too any kind of importers
+#| Session:
+#|     Class definition of a session of messages
 #+---------------------------------------------------------------------------+
-class AbstractImporter:
-
-    def __init__(self, type):
-        self.type = type
+class Session(object):
 
     #+-----------------------------------------------------------------------+
-    #| saveMessagesInProject:
-    #|   Add a selection of messages to an existing project
-    #|   it also saves them in the workspace
+    #| Constructor
     #+-----------------------------------------------------------------------+
-    def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
+    def __init__(self, id, name, description):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.messages = []
+         
+    def addMessage(self, message):
+        self.messages.append(message)
 
-        # We register each message in the vocabulary of the project
-        for message in messages:
-            project.getVocabulary().addMessage(message)
+    def getID(self):
+        return self.id
 
-        # We create a session with each message
-        session = Session(uuid.uuid4(), "Session 1", "")
-        for message in messages:
-            session.addMessage(message)
-        # We register the session in the vocabulary of the project
-        project.getVocabulary().addSession(session)
+    def getName(self):
+        return self.name
 
-        # We create a default symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), self.type, project)
-        for message in messages:
-            symbol.addMessage(message)
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
-        # We register the symbol in the vocabulary of the project
-        project.getVocabulary().addSymbol(symbol)
+    def getDescription(self):
+        return self.description
 
-        # Add the environmental dependencies to the project
-        if fetchEnv:
-            project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                       self.envDeps.getEnvData())
-        # Computes current date
-        date = datetime.now()
-        description = "No description (yet not implemented)"
+    def getMessages(self):
+        return self.messages
 
-        # We also save the session and the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
-        trace.addSession(session)
-        for message in messages:
-            trace.addMessage(message)
-        workspace.addImportedTrace(trace)
-        
-        # Now we save the workspace
-        workspace.saveConfigFile()
+    def setID(self, id):
+        self.id = id
+
+    def setName(self, name):
+        self.name = name
+
+    def setDescription(self, description):
+        self.description = description
+
+    def save(self, root, namespace_main, namespace_common):
+        xmlSession = etree.SubElement(root, "{" + namespace_common + "}session")
+        xmlSession.set("id", str(self.getID()))
+        if self.getName() != None:
+            xmlSession.set("name", str(self.getName()))
+        if self.getDescription() != None:
+            xmlSession.set("description", str(self.getDescription()))
+
+        xmlMessagesRef = etree.SubElement(xmlSession, "{" + namespace_common + "}messages-ref")
+        for message in self.getMessages():
+            xmlMessage = etree.SubElement(xmlMessagesRef, "{" + namespace_common + "}message-ref")
+            xmlMessage.set("id", str(message.getID()))
+
+    #+----------------------------------------------
+    #| Static methods
+    #+----------------------------------------------
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace_main, namespace_common, version, poolOfMessages):
+        if version == "0.1":
+            id = xmlRoot.get("id")
+            name = xmlRoot.get("name")
+            description = xmlRoot.get("description")
+
+            session = Session(id, name, description)
+
+            if xmlRoot.find("{" + namespace_common + "}messages-ref") != None:
+                xmlMessages = xmlRoot.find("{" + namespace_common + "}messages-ref")
+                for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
+                    id = xmlMessage.get("id")
+                    message = poolOfMessages.getMessageByID( id )
+                    if message != None:
+                        message.setSession(session)
+                        session.addMessage(message)
+            return session
+        return None

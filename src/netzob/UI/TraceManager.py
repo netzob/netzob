@@ -153,13 +153,13 @@ class TraceManager():
     def updateContent(self):
         self.treestoreTraces.clear()
         for trace in self.workspace.getImportedTraces():
-            id = str(trace.getImportID())
+            id = str(trace.getID())
             date = str(trace.getDate())
             type = str(trace.getDataType())
-            projectName = str(trace.getProjectName())
+            name = str(trace.getName())
             description = str(trace.getDescription())
             nbMessage = len(trace.getMessages())
-            self.treestoreTraces.append(None, [id, date, type, projectName, description, nbMessage])
+            self.treestoreTraces.append(None, [id, date, type, name, description, nbMessage])
 
     #+----------------------------------------------
     #| button_press_on_treeview_symbols:
@@ -179,7 +179,7 @@ class TraceManager():
             idTrace = str(treeview.get_model().get_value(iter, 0))
             if idTrace is not None:
                 for trace in self.workspace.getImportedTraces():
-                    if str(trace.getImportID()) == idTrace:
+                    if str(trace.getID()) == idTrace:
                         selectedTrace = trace
         if selectedTrace == None:
             logging.warn("The provided ID do not match any trace.")
@@ -219,7 +219,7 @@ class TraceManager():
         # Label
         label = NetzobLabel("Trace ID")
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        label2 = NetzobLabel(trace.getImportID())
+        label2 = NetzobLabel(trace.getID())
         panel.attach(label2, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         label3 = NetzobLabel("Select project")
@@ -281,7 +281,7 @@ class TraceManager():
         project.saveConfigFile(self.workspace)
 
     def deleteTrace(self, event, trace):
-        questionMsg = "Click yes to remove selected trace {0} from the Trace Manager".format(trace.getImportID())
+        questionMsg = "Click yes to remove selected trace {0} from the Trace Manager".format(trace.getID())
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
@@ -290,4 +290,4 @@ class TraceManager():
             self.updateContent()
             self.updateContentMessage()
         else:
-            self.log.debug("The user didn't confirm the deletion of the trace " + trace.getImportID())
+            self.log.debug("The user didn't confirm the deletion of the trace " + trace.getID())
