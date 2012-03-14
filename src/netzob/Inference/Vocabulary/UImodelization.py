@@ -1018,7 +1018,7 @@ class UImodelization:
         vbox.pack_start(hbox, False, 5, 5)
         hbox.pack_start(NetzobLabel("Description : "), False, 5, 5)
         entryDescr = gtk.Entry()
-        entryDescr.set_text(field.getName())
+        entryDescr.set_text(field.getDescription())
         # Allow the user to press enter to do ok
         entryDescr.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryDescr)
@@ -2310,7 +2310,8 @@ class UImodelization:
         treeview.set_size_request(800, 300)
 
         results = []
-        if None == self.selectedSymbol.findSizeFields( results ):
+        self.selectedSymbol.findSizeFields( results )
+        if len(results) == 0:
             NetzobErrorMessage("No size field found.")
         else:
             for result in results:
@@ -2326,7 +2327,7 @@ class UImodelization:
             dialog.show()
 
     def destroyDialogFindSizeFields(self, dialog, savedEncapsulationLevel):
-        # Optionaly restore original encapsulation levels
+        # Optionaly restore original encapsulation levels if there were no modification
         i = -1
         for field in self.selectedSymbol.getFields():
             i += 1
@@ -2357,6 +2358,14 @@ class UImodelization:
                 sizeField = self.selectedSymbol.getFieldByIndex( size_field )
                 startField = self.selectedSymbol.getFieldByIndex( start_field )
                 endField = self.selectedSymbol.getFieldByIndex( end_field )
+
+#                # We check if some values of the size field are longer than the expected size field length
+#                cells = self.selectedSymbol.getCellsByField(sizeField)
+#                for cell in cells:
+#                    if len(cell) > size_field_len:
+#                        print "SPLIT"
+#                        # Then we split the field
+#                        self.selectedSymbol.splitField(sizeField, size_field_len)
 
                 sizeField.setDescription( "size field" )
                 startField.setDescription( "start of payload" )

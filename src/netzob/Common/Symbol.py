@@ -531,7 +531,7 @@ class Symbol(AbstractSymbol):
     #+----------------------------------------------
     def findSizeFields(self, results):
         if len(self.fields) <= 1:
-            return None
+            return
         iField = 0
         # We cover each field for a potential size field
         for field in self.getFields():
@@ -596,7 +596,6 @@ class Symbol(AbstractSymbol):
                     k += 1
                 j += 1
             iField += 1
-        return True
 
     #+----------------------------------------------
     #| applyDataType_cb:
