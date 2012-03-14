@@ -8,3 +8,4 @@
 /.project
 /.pydevproject
 /doc/netzob.1
+/build/*
