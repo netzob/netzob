@@ -1199,7 +1199,7 @@ class UImodelization:
                     self.log.warn("Impossible to retrieve the clicked field !")
                     return
 
-                cells = self.treeTypeStructureGenerator.getSymbol().getMessagesValuesByField(selectedField)
+                cells = self.treeTypeStructureGenerator.getSymbol().getCellsByField(selectedField)
                 for i in range(len(cells)):
                     if not i in aggregatedCells:
                         aggregatedCells[i] = ""
@@ -1520,7 +1520,7 @@ class UImodelization:
         self.split_max_len = 0
 
         # Find the size of the longest message
-        cells = self.selectedSymbol.getMessagesValuesByField(field)
+        cells = self.selectedSymbol.getCellsByField(field)
         for m in cells:
             if len(m) > self.split_max_len:
                 self.split_max_len = len(m)
@@ -1655,7 +1655,7 @@ class UImodelization:
     def adjustSplitColumn(self, widget, textview, direction, field):
         if self.split_max_len <= 2:
             return
-        messages = self.selectedSymbol.getMessagesValuesByField(field)
+        messages = self.selectedSymbol.getCellsByField(field)
 
         # Bounds checking
         if direction == "left":
@@ -2353,13 +2353,6 @@ class UImodelization:
                 start_field_len = model.get_value(iter, 3)
                 end_field = model.get_value(iter, 4)
                 end_field_len = model.get_value(iter, 5)
-
-                print size_field
-                print size_field_len
-                print start_field
-                print start_field_len
-                print end_field
-                print end_field_len
 
                 sizeField = self.selectedSymbol.getFieldByIndex( size_field )
                 startField = self.selectedSymbol.getFieldByIndex( start_field )

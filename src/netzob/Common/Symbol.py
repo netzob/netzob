@@ -219,7 +219,7 @@ class Symbol(AbstractSymbol):
             if field.isStatic():
                 continue
             elif field.isRegexOnlyDynamic():
-                cells = self.getMessagesValuesByField(field)
+                cells = self.getCellsByField(field)
                 if len(cells) != len(self.getMessages()):
                     # There exists empty cells
                     continue
@@ -257,11 +257,11 @@ class Symbol(AbstractSymbol):
         return self.fields[index]
 
     #+----------------------------------------------
-    #| getMessagesValuesByField:
+    #| getCellsByField:
     #|  Return all the messages parts which are in
     #|  the specified field
     #+----------------------------------------------
-    def getMessagesValuesByField(self, field):
+    def getCellsByField(self, field):
         # First we verify the field exists in the symbol
         if not field in self.fields:
             logging.warn("The computing field is not part of the current symbol")
@@ -353,7 +353,7 @@ class Symbol(AbstractSymbol):
             return False
 
         # Find the static/dynamic cols
-        cells = self.getMessagesValuesByField(field)
+        cells = self.getCellsByField(field)
         ref1 = cells[0][:split_position]
         ref2 = cells[0][split_position:]
         isStatic1 = True
@@ -491,7 +491,7 @@ class Symbol(AbstractSymbol):
         for field in self.getFields():
             for (carver, regex) in infoCarvers.items():
                 matchElts = 0
-                for cell in self.getMessagesValuesByField(field):
+                for cell in self.getCellsByField(field):
                     for match in regex.finditer(TypeConvertor.netzobRawToString(cell)):
                         matchElts += 1
                 if matchElts > 0:
@@ -538,7 +538,7 @@ class Symbol(AbstractSymbol):
             if field.isStatic():  # Means the element is static, so we assume it's not a good candidate
                 iField += 1
                 continue
-            cellsSize = self.getMessagesValuesByField(field)
+            cellsSize = self.getCellsByField(field)
             j = 0
             # We cover each field and aggregate them for a potential payload
             while j < len(self.getFields()):
@@ -552,7 +552,7 @@ class Symbol(AbstractSymbol):
                 while k < len(self.getFields()):
                     if k != j:
                         for l in range(len(cellsSize)):
-                            aggregateCellsData[l] += self.getMessagesValuesByField(self.getFieldByIndex(k))[l]
+                            aggregateCellsData[l] += self.getCellsByField(self.getFieldByIndex(k))[l]
 
                     # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
                     if self.getFieldByIndex(j).isStatic():
@@ -569,7 +569,7 @@ class Symbol(AbstractSymbol):
                                 if self.getFieldByIndex(j).isStatic():
                                     targetData = self.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[nbMsg]
                                 else:
-                                    targetData = self.getMessagesValuesByField(self.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
+                                    targetData = self.getCellsByField(self.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
 
                                 # Handle big and little endian for size field of 1, 2 and 4 octets length
                                 rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[nbMsg][:n * 2])
@@ -622,7 +622,7 @@ class Symbol(AbstractSymbol):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
-                for cell in self.getMessagesValuesByField(self.getFieldByIndex(fieldIndex)):
+                for cell in self.getCellsByField(self.getFieldByIndex(fieldIndex)):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     segments = []
                     for match in infoCarvers[dataType].finditer(cell):
@@ -739,7 +739,7 @@ class Symbol(AbstractSymbol):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
-                for cell in self.getMessagesValuesByField(field):
+                for cell in self.getCellsByField(field):
                     cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
@@ -796,7 +796,7 @@ class Symbol(AbstractSymbol):
         for field in self.getFields():
             cells = []
             try:
-                cells = self.getMessagesValuesByField(field)
+                cells = self.getCellsByField(field)
             except NetzobException, e:
                 logging.warning("ERROR: " + str(e.value))
                 break
@@ -871,7 +871,7 @@ class Symbol(AbstractSymbol):
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
-                for cell in self.getMessagesValuesByField(field):
+                for cell in self.getCellsByField(field):
                     cell = glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenType(cell, envType))
                     pattern = re.compile(envValue, re.IGNORECASE)
                     cell = pattern.sub('<span foreground="red" font_family="monospace">' + envValue + "</span>", cell)
