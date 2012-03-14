@@ -97,7 +97,8 @@ class AbstractMessage():
     #|     Remove a visualization filter
     #+-----------------------------------------------------------------------+    
     def removeVisualizationFilter(self, filter):
-        self.visualizationFilters.remove(filter)
+        if filter in self.visualizationFilters :
+            self.visualizationFilters.remove(filter)
     
     
     #+----------------------------------------------

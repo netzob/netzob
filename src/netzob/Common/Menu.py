@@ -181,6 +181,8 @@ class Menu(object):
             self.displayMessages.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
             self.displayConsole.set_active(isActive)
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
+            self.displaySearchView.set_active(isActive)
 
     def createViewMenu(self):
         self.menuView = gtk.Menu()
@@ -276,6 +278,9 @@ class Menu(object):
 
     def exitAction(self, widget):
         self.netzob.destroy(widget)
+
+    def setDisplaySearchViewActiveStatus(self, status):
+        self.displaySearchView.set_active(status)
 
     #+----------------------------------------------
     #| Called when user wants to manage the traces
