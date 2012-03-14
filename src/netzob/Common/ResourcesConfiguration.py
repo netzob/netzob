@@ -187,3 +187,10 @@ class ResourcesConfiguration(object):
             return ResourcesConfiguration.verifyUserResources()
         else:
             return NetzobResources.WORKSPACE_DIR
+
+    @staticmethod
+    def getLocaleLocation():
+        if (os.path.isdir(NetzobResources.LOCAL_LOCALES_DIR)):
+            return NetzobResources.LOCAL_LOCALES_DIR
+        elif (os.path.isdir(NetzobResources.LOCALES_DIR)):
+            return NetzobResources.LOCALES_DIR

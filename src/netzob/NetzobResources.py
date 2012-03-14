@@ -37,3 +37,9 @@ LOCAL_STATIC_DIR = "./resources/static"
 #| Establishes the path for workspace resources (only used by testing)
 #+---------------------------------------------------------------------------+
 WORKSPACE_DIR = None
+
+#+---------------------------------------------------------------------------+
+#| Locale's directory
+#+---------------------------------------------------------------------------+
+LOCALES_DIR = os.path.join(sys.exec_prefix, "share/locale")
+LOCAL_LOCALES_DIR = "./locales/"
