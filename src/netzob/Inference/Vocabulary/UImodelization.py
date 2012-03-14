@@ -931,11 +931,11 @@ class UImodelization:
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(message_id)
         if message == None:
-            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(message_id))
             return
         
         # Retrieve content of the field
-        field_content = message.applyAlignment(styled=False, encoded=False)[field.getIndex()]
+        field_content = message.getSplittedData(False)[field.getIndex()]
 
         # Format submenu
         possible_choices = Format.getSupportedFormats()
@@ -1072,12 +1072,12 @@ class UImodelization:
 
         # Update field encapsulation level
         try:
-            encapLevel = int( comboEncap.get_active() )
+            encapLevel = int(comboEncap.get_active())
         except TypeError:
             pass
         else:
             if encapLevel >= 0:
-                field.setEncapsulationLevel( encapLevel )
+                field.setEncapsulationLevel(encapLevel)
         self.update()
 
     #+----------------------------------------------
@@ -2282,7 +2282,7 @@ class UImodelization:
         # Save the current encapsulation level of each field
         savedEncapsulationLevel = []
         for field in self.selectedSymbol.getFields():
-            savedEncapsulationLevel.append( field.getEncapsulationLevel() )
+            savedEncapsulationLevel.append(field.getEncapsulationLevel())
 
         dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
         ## ListStore format:
@@ -2310,7 +2310,7 @@ class UImodelization:
         treeview.set_size_request(800, 300)
 
         results = []
-        self.selectedSymbol.findSizeFields( results )
+        self.selectedSymbol.findSizeFields(results)
         if len(results) == 0:
             NetzobErrorMessage("No size field found.")
         else:
@@ -2331,7 +2331,7 @@ class UImodelization:
         i = -1
         for field in self.selectedSymbol.getFields():
             i += 1
-            field.setEncapsulationLevel( savedEncapsulationLevel[i] )
+            field.setEncapsulationLevel(savedEncapsulationLevel[i])
         self.update()
 
     #+----------------------------------------------
@@ -2342,7 +2342,7 @@ class UImodelization:
         i = -1
         for field in self.selectedSymbol.getFields():
             i += 1
-            field.setEncapsulationLevel( savedEncapsulationLevel[i] )
+            field.setEncapsulationLevel(savedEncapsulationLevel[i])
             
         # Apply new encapsulation levels
         (model, iter) = treeview.get_selection().get_selected()
@@ -2355,9 +2355,9 @@ class UImodelization:
                 end_field = model.get_value(iter, 4)
                 end_field_len = model.get_value(iter, 5)
 
-                sizeField = self.selectedSymbol.getFieldByIndex( size_field )
-                startField = self.selectedSymbol.getFieldByIndex( start_field )
-                endField = self.selectedSymbol.getFieldByIndex( end_field )
+                sizeField = self.selectedSymbol.getFieldByIndex(size_field)
+                startField = self.selectedSymbol.getFieldByIndex(start_field)
+                endField = self.selectedSymbol.getFieldByIndex(end_field)
 
 #                # We check if some values of the size field are longer than the expected size field length
 #                cells = self.selectedSymbol.getCellsByField(sizeField)
@@ -2367,11 +2367,11 @@ class UImodelization:
 #                        # Then we split the field
 #                        self.selectedSymbol.splitField(sizeField, size_field_len)
 
-                sizeField.setDescription( "size field" )
-                startField.setDescription( "start of payload" )
+                sizeField.setDescription("size field")
+                startField.setDescription("start of payload")
                 for i in range(start_field, end_field + 1):
                     field = self.selectedSymbol.getFieldByIndex(i)
-                    field.setEncapsulationLevel( field.getEncapsulationLevel() + 1 )
+                    field.setEncapsulationLevel(field.getEncapsulationLevel() + 1)
 
                 self.update()
 
@@ -2382,4 +2382,4 @@ class UImodelization:
         # Apply the new encapsulation levels on original fields
         del savedEncapsulationLevel[:]
         for field in self.selectedSymbol.getFields():
-            savedEncapsulationLevel.append( field.getEncapsulationLevel() )
+            savedEncapsulationLevel.append(field.getEncapsulationLevel())
