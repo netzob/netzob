@@ -92,13 +92,13 @@ class Menu(object):
     def createHelpMenu(self):
         self.menuHelp = gtk.Menu()
 
-        menuRootHelp = gtk.MenuItem("Help")
+        menuRootHelp = gtk.MenuItem(_("Help"))
         menuRootHelp.set_submenu(self.menuHelp)
 
-        self.helpContent = gtk.MenuItem("Help Contents")
+        self.helpContent = gtk.MenuItem(_("Help Contents"))
         self.menuHelp.append(self.helpContent)
 
-        self.about = gtk.MenuItem("About Netzob")
+        self.about = gtk.MenuItem(_("About Netzob"))
         self.about.connect("activate", self.aboutDialogAction)
 
         self.menuHelp.append(self.about)
@@ -108,39 +108,39 @@ class Menu(object):
     def createProjectMenu(self):
         self.menuProject = gtk.Menu()
 
-        menuRootProject = gtk.MenuItem("Project")
+        menuRootProject = gtk.MenuItem(_("Project"))
         menuRootProject.set_submenu(self.menuProject)
 
-        self.saveProject = gtk.MenuItem("Save project")
+        self.saveProject = gtk.MenuItem(_("Save project"))
         self.saveProject.connect("activate", self.saveProjectAction)
         self.menuProject.append(self.saveProject)
 
-        self.sessionManager = gtk.MenuItem("Session manager")
+        self.sessionManager = gtk.MenuItem(_("Session manager"))
         self.sessionManager.connect("activate", self.sessionManagerAction)
         # TODO
         # self.menuProject.append(self.sessionManager)
 
         self.menuImport = gtk.Menu()
-        self.importRootMenu = gtk.MenuItem("Import traces")
+        self.importRootMenu = gtk.MenuItem(_("Import traces"))
         self.importRootMenu.set_submenu(self.menuImport)
 
-        captureNetworkTracesEntry = gtk.MenuItem("Capture network traces")
+        captureNetworkTracesEntry = gtk.MenuItem(_("Capture network traces"))
         captureNetworkTracesEntry.connect("activate", self.importNetworkTraficAction)
         self.menuImport.append(captureNetworkTracesEntry)
 
-        captureIPCFlowsEntry = gtk.MenuItem("Capture IPC flows")
+        captureIPCFlowsEntry = gtk.MenuItem(_("Capture IPC flows"))
         captureIPCFlowsEntry.connect("activate", self.importIPCFlowsAction)
         self.menuImport.append(captureIPCFlowsEntry)
 
-        importPCAPFileEntry = gtk.MenuItem("Import from PCAP")
+        importPCAPFileEntry = gtk.MenuItem(_("Import from PCAP"))
         importPCAPFileEntry.connect("activate", self.importPcapAction)
         self.menuImport.append(importPCAPFileEntry)
 
-        importFileEntry = gtk.MenuItem("Import from File")
+        importFileEntry = gtk.MenuItem(_("Import from File"))
         importFileEntry.connect("activate", self.importFileAction)
         self.menuImport.append(importFileEntry)
 
-        importXMLEntry = gtk.MenuItem("Import from XML File")
+        importXMLEntry = gtk.MenuItem(_("Import from XML File"))
         importXMLEntry.connect("activate", self.importXMLAction)
         self.menuImport.append(importXMLEntry)
 
@@ -151,22 +151,22 @@ class Menu(object):
         self.menuProject.append(self.importRootMenu)
 
         self.menuExport = gtk.Menu()
-        self.exportRootMenu = gtk.MenuItem("Export project")
+        self.exportRootMenu = gtk.MenuItem(_("Export project"))
         self.exportRootMenu.set_submenu(self.menuExport)
 
-        exportScapyEntry = gtk.MenuItem("Scapy dissector")
+        exportScapyEntry = gtk.MenuItem(_("Scapy dissector"))
         exportScapyEntry.connect("activate", self.exportScapyAction)
 #        self.menuExport.append(exportScapyEntry)
 
-        exportWiresharkEntry = gtk.MenuItem("Wireshark dissector")
+        exportWiresharkEntry = gtk.MenuItem(_("Wireshark dissector"))
         exportWiresharkEntry.connect("activate", self.exportWiresharkAction)
 #        self.menuExport.append(gtk.MenuItem("Wireshark dissector"))
 
-        exportXMLEntry = gtk.MenuItem("XML")
+        exportXMLEntry = gtk.MenuItem(_("XML"))
         exportXMLEntry.connect("activate", self.exportXMLAction)
         self.menuExport.append(exportXMLEntry)
 
-        exportTextEntry = gtk.MenuItem("Text")
+        exportTextEntry = gtk.MenuItem(_("Text"))
         exportTextEntry.connect("activate", self.exportTextAction)
         self.menuExport.append(exportTextEntry)
 
@@ -204,25 +204,25 @@ class Menu(object):
     def createViewMenu(self):
         self.menuView = gtk.Menu()
 
-        menuRootView = gtk.MenuItem("View")
+        menuRootView = gtk.MenuItem(_("View"))
         menuRootView.set_submenu(self.menuView)
 
-        self.displaySymbolStructure = gtk.CheckMenuItem("Display symbol structure")
+        self.displaySymbolStructure = gtk.CheckMenuItem(_("Display symbol structure"))
         self.displaySymbolStructure.connect("activate", self.displaySymbolStructureAction)
         self.menuView.append(self.displaySymbolStructure)
         self.displaySymbolStructure.set_sensitive(False)
 
-        self.displayMessages = gtk.CheckMenuItem("Display messages")
+        self.displayMessages = gtk.CheckMenuItem(_("Display messages"))
         self.displayMessages.connect("activate", self.displayMessagesAction)
         self.menuView.append(self.displayMessages)
         self.displayMessages.set_sensitive(False)
 
-        self.displaySearchView = gtk.CheckMenuItem("Display search results")
+        self.displaySearchView = gtk.CheckMenuItem(_("Display search results"))
         self.displaySearchView.connect("activate", self.displaySearchAction)
         self.menuView.append(self.displaySearchView)
         self.displaySearchView.set_sensitive(False)
 
-        self.displayPropertiesView = gtk.CheckMenuItem("Display properties")
+        self.displayPropertiesView = gtk.CheckMenuItem(_("Display properties"))
         self.displayPropertiesView.connect("activate", self.displayPropertiesAction)
         self.menuView.append(self.displayPropertiesView)
         self.displayPropertiesView.set_sensitive(False)
@@ -236,37 +236,37 @@ class Menu(object):
         agr = gtk.AccelGroup()
         self.netzob.add_accel_group(agr)
 
-        menuRootWorkspace = gtk.MenuItem("Workspace")
+        menuRootWorkspace = gtk.MenuItem(_("Workspace"))
         menuRootWorkspace.set_submenu(self.menuWorkspace)
 
-        self.createProject = gtk.MenuItem("Create a project")
+        self.createProject = gtk.MenuItem(_("Create a project"))
         self.createProject.connect("activate", self.createProjectAction)
         self.menuWorkspace.append(self.createProject)
 
         self.selectAProject = gtk.Menu()
-        self.selectAProjectRoot = gtk.MenuItem("Switch project")
+        self.selectAProjectRoot = gtk.MenuItem(_("Switch project"))
         self.selectAProjectRoot.set_submenu(self.selectAProject)
         self.menuWorkspace.append(self.selectAProjectRoot)
 
-        self.importProject = gtk.MenuItem("Import a project")
+        self.importProject = gtk.MenuItem(_("Import a project"))
         self.importProject.connect("activate", self.importProjectAction)
         self.menuWorkspace.append(self.importProject)
 
-        self.exportProject = gtk.MenuItem("Export a project")
+        self.exportProject = gtk.MenuItem(_("Export a project"))
         self.exportProject.connect("activate", self.exportProjectAction)
         self.menuWorkspace.append(self.exportProject)
 
-        self.manageProject = gtk.MenuItem("Manage projects")
+        self.manageProject = gtk.MenuItem(_("Manage projects"))
         self.menuWorkspace.append(self.manageProject)
 
-        self.manageTraces = gtk.MenuItem("Manage traces")
+        self.manageTraces = gtk.MenuItem(_("Manage traces"))
         self.manageTraces.connect("activate", self.manageTracesAction)
         self.menuWorkspace.append(self.manageTraces)
 
-        self.options = gtk.MenuItem("Options")
+        self.options = gtk.MenuItem(_("Options"))
         self.menuWorkspace.append(self.options)
 
-        self.switchWorkspace = gtk.MenuItem("Switch workspace")
+        self.switchWorkspace = gtk.MenuItem(_("Switch workspace"))
         self.menuWorkspace.append(self.switchWorkspace)
 
         self.exit = gtk.ImageMenuItem(gtk.STOCK_QUIT, agr)
@@ -340,7 +340,7 @@ class Menu(object):
     #| Called when user wants to export a project
     #+----------------------------------------------
     def importProjectAction(self, widget):
-        chooser = gtk.FileChooserDialog(title="Export as", action=gtk.FILE_CHOOSER_ACTION_OPEN,
+        chooser = gtk.FileChooserDialog(title=_("Export as"), action=gtk.FILE_CHOOSER_ACTION_OPEN,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
@@ -365,19 +365,19 @@ class Menu(object):
 
             project = Project.loadProject(self.netzob.getCurrentWorkspace(), destPath)
             project.setID(idProject)
-            project.setName("Copy of " + project.getName())
+            project.setName(_("Copy of {0}").format(project.getName()))
             project.setPath(projectPath)
             project.saveConfigFile(self.netzob.getCurrentWorkspace())
             self.netzob.getCurrentWorkspace().referenceProject(project.getPath())
             self.netzob.getCurrentWorkspace().saveConfigFile()
-            NetzobInfoMessage("Project '" + project.getName() + "' correctly imported")
+            NetzobInfoMessage(_("Project '{0}' correctly imported").format(project.getName()))
             self.update()
 
     #+----------------------------------------------
     #| Called when user wants to export a project
     #+----------------------------------------------
     def exportProjectAction(self, widget):
-        chooser = gtk.FileChooserDialog(title="Export as (XML)", action=gtk.FILE_CHOOSER_ACTION_SAVE,
+        chooser = gtk.FileChooserDialog(title=_("Export as (XML)"), action=gtk.FILE_CHOOSER_ACTION_SAVE,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
@@ -391,7 +391,7 @@ class Menu(object):
         else:
             md = gtk.MessageDialog(None,
                                    gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-                                   gtk.BUTTONS_OK_CANCEL, "Are you sure to override the file '" + fileName + "' ?")
+                                   gtk.BUTTONS_OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
             resp = md.run()
             md.destroy()
             if resp == gtk.RESPONSE_OK:
@@ -401,7 +401,7 @@ class Menu(object):
             root = self.netzob.getCurrentProject().generateXMLConfigFile()
             tree = ElementTree(root)
             tree.write(fileName)
-            NetzobInfoMessage("Project correctly exported to '" + fileName + "'")
+            NetzobInfoMessage(_("Project correctly exported to '{0}'").format(fileName))
 
     #+----------------------------------------------
     #| Called when user wants to import network trafic
@@ -530,7 +530,7 @@ class Menu(object):
     #| Called when user save the current project
     #+----------------------------------------------
     def saveProjectAction(self, widget):
-        logging.info("Starting the saving of the current project : " + str(self.netzob.getCurrentProject().getName()))
+        logging.info(_("Starting the saving of the current project: %s") % str(self.netzob.getCurrentProject().getName()))
         self.netzob.getCurrentProject().saveConfigFile(self.netzob.getCurrentWorkspace())
 
     def sessionManagerAction(self, widget):
@@ -538,14 +538,14 @@ class Menu(object):
         sessionManagerPanel = SessionManager(self.netzob)
 
     def createProjectAction(self, widget):
-        dialog = gtk.Dialog(title="Create a new project", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Create a new project"), flags=0, buttons=None)
         dialog.show()
         table = gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
-        label = gtk.Label("New project name")
+        label = gtk.Label(_("New project name"))
         label.show()
         entry = gtk.Entry()
-        but = gtk.Button("Create project")
+        but = gtk.Button(_("Create project"))
         but.connect("clicked", self.createProjectAction_cb, entry, dialog)
         but.set_flags(gtk.CAN_DEFAULT)
         but.show()
@@ -567,8 +567,8 @@ class Menu(object):
 
         # we verify a name has been provided
         if projectName == None or projectName == "":
-            logging.warn("Impossible to create a project with an empty name.")
-            errorDialog = NetzobErrorMessage("Impossible to create a project with an empty name.")
+            logging.warn(_("Unable to create a project with an empty name."))
+            errorDialog = NetzobErrorMessage(_("Unable to create a project with an empty name."))
             return
 
         # We verify the project name doesn't already exist
@@ -577,8 +577,8 @@ class Menu(object):
             if project.getName() == projectName:
                 found = True
         if found:
-            dialogBis = gtk.Dialog(title="Error", flags=0, buttons=None)
-            label = gtk.Label("This project name already exists")
+            dialogBis = gtk.Dialog(title=_("Error"), flags=0, buttons=None)
+            label = gtk.Label(_("This project name already exists"))
             label.show()
             dialogBis.action_area.pack_start(label, True, True, 0)
             dialogBis.set_size_request(250, 50)
