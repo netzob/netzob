@@ -32,6 +32,7 @@ import gtk
 import pango
 import pygtk
 import gobject
+from netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator import TreeSearchGenerator
 pygtk.require('2.0')
 import logging
 import threading
@@ -127,13 +128,7 @@ class UImodelization:
         self.updateTreeStoreSymbol()
         self.updateTreeStoreTypeStructure()
         self.updateTreeStoreMessage()
-        if self.netzob.getCurrentProject() != None:
-            pass
-            #isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
-            #if isActive:
-            #    self.consoleGenerator.show()
-            #else:
-            #    self.consoleGenerator.hide()
+        self.updateTreeStoreSearchView()
 
     def clear(self):
         self.selectedSymbol = None
@@ -154,13 +149,20 @@ class UImodelization:
         self.netzob = netzob
         self.selectedSymbol = None
         self.selectedMessage = None
+        # Messages
         self.treeMessageGenerator = TreeMessageGenerator()
         self.treeMessageGenerator.initialization()
+        # Symbol definition
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
+        # Symbols
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
-
+        # Search view
+        self.treeSearchGenerator = TreeSearchGenerator(self.netzob)
+        self.treeSearchGenerator.initialization()
+        
+        
         # Definition of the Sequence Onglet
         # First we create an VBox which hosts the two main children
         self.panel = gtk.VBox(False, spacing=0)
@@ -339,7 +341,11 @@ class UImodelization:
         #+----------------------------------------------
         #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
         #+----------------------------------------------
-        rightPanel.add(self.treeMessageGenerator.getScrollLib())
+        rightPanelOptions = gtk.VPaned()
+        rightPanelOptions.show()
+        rightPanel.add(rightPanelOptions)
+        
+        rightPanelOptions.add(self.treeMessageGenerator.getScrollLib())
 
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
@@ -347,6 +353,12 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
+        
+        #+----------------------------------------------
+        #| RIGHT PART OF THE GUI : Search view
+        #+----------------------------------------------
+        rightPanelOptions.add(self.treeSearchGenerator.getScrollLib())
+#        self.treeSearchGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
 
     def sequenceAlignmentOnAllSymbols(self, widget):
         # Sanity checks
@@ -2042,6 +2054,18 @@ class UImodelization:
                 self.treeTypeStructureGenerator.update()
             else:
                 self.treeTypeStructureGenerator.hide()
+                
+    #+----------------------------------------------
+    #| Update the content of the tree store for type structure
+    #+----------------------------------------------
+    def updateTreeStoreSearchView(self):
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
+            if isActive:
+                self.treeSearchGenerator.show()
+                self.treeSearchGenerator.update()
+            else:
+                self.treeSearchGenerator.hide()
 
     #+----------------------------------------------
     #| Called when user select a new score limit
