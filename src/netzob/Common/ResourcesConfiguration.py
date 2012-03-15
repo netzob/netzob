@@ -72,7 +72,7 @@ class ResourcesConfiguration(object):
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
         if staticPath == None:
-            logging.fatal("The static resources were not found !")
+            logging.fatal(_("The static resources were not found !"))
             return False
 
         if not forceWSCreation:
@@ -114,7 +114,7 @@ class ResourcesConfiguration(object):
         if os.path.isfile(os.path.join(path, Workspace.CONFIGURATION_FILENAME)):
             return
         else:
-            workspace = Workspace.createWorkspace("New Workspace", path)
+            workspace = Workspace.createWorkspace(_("New Workspace"), path)
             return workspace
 
     @staticmethod
