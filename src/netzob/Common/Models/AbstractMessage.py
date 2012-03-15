@@ -92,15 +92,15 @@ class AbstractMessage():
     #+-----------------------------------------------------------------------+
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
+
     #+-----------------------------------------------------------------------+
     #| removeVisualizationFilter
     #|     Remove a visualization filter
-    #+-----------------------------------------------------------------------+    
+    #+-----------------------------------------------------------------------+
     def removeVisualizationFilter(self, filter):
-        if filter in self.visualizationFilters :
+        if filter in self.visualizationFilters:
             self.visualizationFilters.remove(filter)
-    
-    
+
     #+----------------------------------------------
     #|`getStringData : compute a string representation
     #| of the data
@@ -151,9 +151,7 @@ class AbstractMessage():
             return self.getVisualizationData(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
-    
-    
-    
+
     #+-----------------------------------------------------------------------+
     #| getSplittedData
     #|     Split the message using its symbol's regex and return an array of it
@@ -177,23 +175,23 @@ class AbstractMessage():
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-        
+
         result = []
         iCol = 1
-        for field in self.symbol.getFields() :
-            if field.isStatic() :
-                if encoded :
+        for field in self.symbol.getFields():
+            if field.isStatic():
+                if encoded:
                     result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-                else :
+                else:
                     result.append(glib.markup_escape_text(field.getRegex()))
-            else :
+            else:
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)
                 if encoded:
                     result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
                 else:
                     result.append(glib.markup_escape_text(data[start:end]))
-                iCol += 1   
+                iCol += 1
         return result
 
     def getStyledData(self, styled=False, encoded=False):
@@ -224,10 +222,10 @@ class AbstractMessage():
                 localResult += tmp_result
 
             # Now we apply the color to the fields
-            for filter in field.getVisualizationFilters() :
-                localResult = filter.apply(localResult)    
+            for filter in field.getVisualizationFilters():
+                localResult = filter.apply(localResult)
 
-            iGlobal = iGlobal + len(data)    
+            iGlobal = iGlobal + len(data)
             result.append(localResult)
             iCol += 1
         return result
@@ -254,7 +252,7 @@ class AbstractMessage():
 #        except AssertionError:
 #            raise NetzobException("This Python version only supports 100 named groups in regex")
 #
-#        if m == None:            
+#        if m == None:
 #            self.log.warning("The regex of the group doesn't match one of its message")
 #            self.log.warning("Regex: " + "".join(regex))
 #            self.log.warning("Message: " + data[:255] + "...")
@@ -385,7 +383,7 @@ class AbstractMessage():
 
     def getTimestamp(self):
         return self.timestamp
-    
+
     def getVisualizationFilters(self):
         return self.visualizationFilters
 

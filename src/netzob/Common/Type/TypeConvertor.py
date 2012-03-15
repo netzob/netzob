@@ -573,6 +573,6 @@ class TypeConvertor():
             elif aFormat == Format.FLOAT:
                 tmp = "%f" % tmp
 
-            res += str(tmp) 
+            res += str(tmp)
 
-        return res#s[:-1]  # We delete the last space character
+        return res  # s[:-1]  # We delete the last space character

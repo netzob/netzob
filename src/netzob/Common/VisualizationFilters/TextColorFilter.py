@@ -46,18 +46,18 @@ from netzob.Common.Type.Format import Format
 #|     Definition of a visualization filter wich colorize a text
 #+---------------------------------------------------------------------------+
 class TextColorFilter(VisualizationFilter):
-    
+
     TYPE = "TextColorFilter"
-    
+
     def __init__(self, id, name, iStart, iEnd, color):
         VisualizationFilter.__init__(self, id, TextColorFilter.TYPE, name)
         self.iStart = iStart
         self.iEnd = iEnd
         self.color = color
-        
+
     def isValid(self, i, message, unitSize):
-        factor = (unitSize / float(Format.getUnitSize(Format.HEX))) 
-        return i >= self.iStart / factor and i <= self.iEnd / factor 
-    
+        factor = (unitSize / float(Format.getUnitSize(Format.HEX)))
+        return i >= self.iStart / factor and i <= self.iEnd / factor
+
     def apply(self, message):
         return '<span foreground="' + self.color + '">' + message + '</span>'

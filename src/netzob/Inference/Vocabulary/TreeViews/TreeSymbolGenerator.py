@@ -110,13 +110,12 @@ class TreeSymbolGenerator():
 
             for symbol in symbols:
                 symbolName = symbol.getName()
-                for filter in symbol.getVisualizationFilters() :
+                for filter in symbol.getVisualizationFilters():
                     symbolName = filter.apply(symbolName)
-                    
+
                 symbolName = symbolName + " (" + str(len(symbol.getMessages())) + ")"
                 symbolEntry = [str(symbol.getID()), symbolName, str(symbol.getScore()), '#000000', '#DEEEF0']
                 self.treestore.append(None, symbolEntry)
-               
 
     #+----------------------------------------------
     #| getSymbolAtPosition:

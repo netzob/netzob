@@ -135,7 +135,7 @@ class ProjectConfiguration(object):
 
         xmlVocabularyInferenceDisplayConsole = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
         xmlVocabularyInferenceDisplayConsole.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)).lower()
-        
+
         xmlVocabularyInferenceDisplaySearch = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
         xmlVocabularyInferenceDisplaySearch.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)).lower()
 
@@ -210,7 +210,7 @@ class ProjectConfiguration(object):
                 xmlDisplayConsole = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
                 if xmlDisplayConsole != None and xmlDisplayConsole.text != None and len(xmlDisplayConsole.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, TypeConvertor.str2bool(xmlDisplayConsole.text))
-                    
+
                 # Display Search
                 xmlDisplaySearch = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
                 if xmlDisplaySearch != None and xmlDisplaySearch.text != None and len(xmlDisplaySearch.text) > 0:

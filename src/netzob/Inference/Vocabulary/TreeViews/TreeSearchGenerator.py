@@ -64,7 +64,7 @@ class TreeSearchGenerator():
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
-        
+
         self.tree = gtk.TreeView()
         colResult = gtk.TreeViewColumn()
         colResult.set_title("Search results")
@@ -74,21 +74,16 @@ class TreeSearchGenerator():
         colResult.add_attribute(cell, "text", 0)
 
         self.treestore = gtk.TreeStore(str)
-        
-        
 
         self.tree.append_column(colResult)
         self.tree.set_model(self.treestore)
         self.tree.show()
-        
-        
+
         self.scroll = gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 250)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scroll.add(self.tree)
         self.scroll.show()
-        
-     
 
     #+----------------------------------------------
     #| clear:
@@ -125,80 +120,74 @@ class TreeSearchGenerator():
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def update(self, searchTasks=[]):
-        
-        if len(searchTasks) == 0 :
+        if len(searchTasks) == 0:
             self.decolorizeAnySearchResult()
             self.treestore.clear()
             return
-        
-        
+
         foundSymbols = dict()
         foundMessages = dict()
-                
+
         for task in searchTasks:
             for result in task.getResults():
                 # retrieve the symbol associated with the message
                 symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
-                
+
                 # Display the tree item for the symbol
                 treeItemSymbol = None
-                if str(symbol.getID()) in foundSymbols.keys() :
+                if str(symbol.getID()) in foundSymbols.keys():
                     treeItemSymbol = foundSymbols[str(symbol.getID())]
-                else :
+                else:
                     treeItemSymbol = self.treestore.append(None, [symbol.getName()])
                     foundSymbols[str(symbol.getID())] = treeItemSymbol
-                    
+
                 # Display the tree item for the message
                 treeItemMessage = None
-                if str(result.getMessage().getID()) in foundMessages.keys() :
+                if str(result.getMessage().getID()) in foundMessages.keys():
                     treeItemMessage = foundMessages[str(result.getMessage().getID())]
-                else :
+                else:
                     treeItemMessage = self.treestore.append(treeItemSymbol, [result.getMessage().getID()])
                     foundMessages[str(result.getMessage().getID())] = treeItemMessage
-                
+
                 # Add the result
                 self.treestore.append(treeItemMessage, [str(result.getSegments())])
-                
+
         self.colorizeResults(searchTasks)
-    
-       
-        
+
     def colorizeResults(self, searchTasks):
         colorizedSymbols = []
         for task in searchTasks:
             for result in task.getResults():
-                for (start, end) in result.getSegments() :
+                for (start, end) in result.getSegments():
                     filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter) 
+                    message.addVisualizationFilter(filter)
                     # colorize the associated symbol
                     symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(message)
-                    if not symbol in colorizedSymbols :
-                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000")) 
+                    if not symbol in colorizedSymbols:
+                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
                         colorizedSymbols.append(symbol)
-        
+
     def decolorizeAnySearchResult(self):
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
-        for symbol in vocabulary.getSymbols() :
+        for symbol in vocabulary.getSymbols():
             filterToRemoveFromSymbol = []
-            for filter in symbol.getVisualizationFilters() :
-                if filter.getName() == "Search" :
+            for filter in symbol.getVisualizationFilters():
+                if filter.getName() == "Search":
                     filterToRemoveFromSymbol.append(filter)
-                    
-            for filter in filterToRemoveFromSymbol :
+
+            for filter in filterToRemoveFromSymbol:
                 symbol.removeVisualizationFilter(filter)
-                
+
             filterToRemoveFromMessage = []
-            for message in symbol.getMessages() :
-                for filter in message.getVisualizationFilters() :
-                    if filter.getName() == "Search" :
+            for message in symbol.getMessages():
+                for filter in message.getVisualizationFilters():
+                    if filter.getName() == "Search":
                         filterToRemoveFromMessage.append(filter)
-                        
-                for f in filterToRemoveFromMessage :
+
+                for f in filterToRemoveFromMessage:
                     message.removeVisualizationFilter(f)
-        
-        
-        
+
     #+----------------------------------------------
     #| GETTERS:
     #+----------------------------------------------

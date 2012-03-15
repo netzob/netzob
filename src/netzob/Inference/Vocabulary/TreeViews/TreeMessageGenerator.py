@@ -150,7 +150,7 @@ class TreeMessageGenerator():
         content_lines = []
         maxNumberOfCol = 0
         for message in self.symbol.getMessages():
-            
+
             # For each message we create a line and computes its cols
             try:
                 messageTable = message.applyAlignment(styled=True, encoded=True)

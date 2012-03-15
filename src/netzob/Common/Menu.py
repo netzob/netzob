@@ -205,7 +205,7 @@ class Menu(object):
         self.displayConsole.connect("activate", self.displayConsoleAction)
         self.menuView.append(self.displayConsole)
         self.displayConsole.set_sensitive(False)
-        
+
         self.displaySearchView = gtk.CheckMenuItem("Display search results")
         self.displaySearchView.connect("activate", self.displaySearchAction)
         self.menuView.append(self.displaySearchView)
@@ -372,7 +372,7 @@ class Menu(object):
         if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, self.displayConsole.get_active())
         self.netzob.updateCurrentPanel()
-        
+
     #+----------------------------------------------
     #| Called when user wants to display search results panel
     #+----------------------------------------------

@@ -129,7 +129,6 @@ class UImodelization:
         self.updateTreeStoreSymbol()
         self.updateTreeStoreTypeStructure()
         self.updateTreeStoreMessage()
-        
 
     def clear(self):
         self.selectedSymbol = None
@@ -162,8 +161,7 @@ class UImodelization:
         # Search view
         self.treeSearchGenerator = TreeSearchGenerator(self.netzob)
         self.treeSearchGenerator.initialization()
-        
-        
+
         # Definition of the Sequence Onglet
         # First we create an VBox which hosts the two main children
         self.panel = gtk.VBox(False, spacing=0)
@@ -233,7 +231,7 @@ class UImodelization:
         but.connect("clicked", self.messagesDistribution_cb)
         but.set_tooltip_text("Open a graph with messages distribution, separated by fields")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
-        
+
         # Widget button data carving
         but = NetzobButton("Data carving")
         but.connect("clicked", self.dataCarving_cb)
@@ -264,7 +262,6 @@ class UImodelization:
         but.set_tooltip_text("Automatically look for environmental dependencies (retrieved during capture) in messages")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
-        
         ## Visualization
         frame = NetzobFrame("4 - Visualization")
         topPanel.pack_start(frame, False, False, 0)
@@ -299,7 +296,7 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
-        
+
         ## Semantic inference
         frame = NetzobFrame(" - Search data")
         topPanel.pack_start(frame, False, False, 0)
@@ -311,7 +308,7 @@ class UImodelization:
         self.searchEntry = gtk.Entry()
         self.searchEntry.show()
         table.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
-        
+
         # Combo to select the type of the input
         self.typeCombo = gtk.combo_box_entry_new_text()
         self.typeCombo.show()
@@ -323,13 +320,11 @@ class UImodelization:
         self.typeCombo.get_model().append([Format.OCTAL])
         self.typeCombo.get_model().append([Format.DECIMAL])
         table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
-        
+
         but = NetzobButton("Search")
         but.connect("clicked", self.search_cb)
         but.set_tooltip_text("A search function available in different encoding format")
         table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
-        
-        
 
         #+----------------------------------------------
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -364,7 +359,7 @@ class UImodelization:
         rightPanelOptions = gtk.VPaned()
         rightPanelOptions.show()
         rightPanel.add(rightPanelOptions)
-        
+
         rightPanelOptions.add(self.treeMessageGenerator.getScrollLib())
 
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
@@ -373,7 +368,7 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
-        
+
         #+----------------------------------------------
         #| RIGHT PART OF THE GUI : Search view
         #+----------------------------------------------
@@ -2056,7 +2051,7 @@ class UImodelization:
                 self.treeTypeStructureGenerator.update()
             else:
                 self.treeTypeStructureGenerator.hide()
-                
+
     #+----------------------------------------------
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
@@ -2223,7 +2218,7 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        
+
         searchedPattern = self.searchEntry.get_text()
         if len(searchedPattern) == 0:
             NetzobErrorMessage("Do not start the searching process since no pattern has been provided")
@@ -2236,14 +2231,14 @@ class UImodelization:
 
         self.log.debug("User searches for " + searchedPattern + " of type " + typeOfPattern)
         self.search(searchedPattern, typeOfPattern)
-        
+
         # Active the messages and the search view
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, True)
         self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, True)
         self.netzob.getMenu().setDisplaySearchViewActiveStatus(True)
         # We update the different views
         self.update()
-        
+
     def search(self, pattern, typeOfPattern):
 
         # Initialize the searcher
