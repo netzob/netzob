@@ -70,7 +70,7 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
         cell.set_property("size-points", 9)
-        columns = ["iCol", "Name", "Description", "Variable"]
+        columns = [_("iCol"), _("Name"), _("Description"), _("Variable")]
         for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
             column.set_resizable(True)
@@ -98,7 +98,7 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
-        self.log.warning("The treeview for the symbol is in error mode")
+        self.log.warning(_("The treeview for the symbol is in error mode"))
         # TODO : delete pass statement if useless
         #pass
 
