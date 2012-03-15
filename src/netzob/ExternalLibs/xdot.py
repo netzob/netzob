@@ -141,7 +141,7 @@ class TextShape(Shape):
         else:
             cr.update_layout(layout)
 
-        descent = 2 # XXX get descender from font metrics
+        descent = 2  # XXX get descender from font metrics
 
         width, height = layout.get_size()
         width = float(width) / pango.SCALE
@@ -151,7 +151,7 @@ class TextShape(Shape):
         # scale it so that the text fits inside its box
         if width > self.w:
             f = self.w / width
-            width = self.w # equivalent to width *= f
+            width = self.w  # equivalent to width *= f
             height *= f
             descent *= f
         else:
@@ -1406,7 +1406,7 @@ class DotWidget(gtk.DrawingArea):
 
     __gsignals__ = {
         'expose-event': 'override',
-        'clicked' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))
+        'clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))
     }
 
     filter = 'dot'

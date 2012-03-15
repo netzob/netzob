@@ -50,6 +50,7 @@ from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Import.AbstractImporter import AbstractImporter
 
+
 #+----------------------------------------------
 #| Pcap:
 #|     GUI for capturing messages imported through a provided PCAP

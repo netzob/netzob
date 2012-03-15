@@ -50,7 +50,6 @@ from netzob.Common.Workspace import Workspace
 from netzob.Common import CommandLine
 
 
-
 #+----------------------------------------------
 #| NetzobGUI:
 #|     Graphical runtime class
@@ -61,20 +60,20 @@ class NetzobGui(gtk.Window):
     #| Constructor:
     #+----------------------------------------------
     def __init__(self):
-        
-        # Command line commands        
+
+        # Command line commands
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
-        
+
         #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
 
-        if opts.workspace == None :
+        if opts.workspace == None:
             workspace = str(ResourcesConfiguration.getWorkspaceFile())
-        else :
+        else:
             workspace = opts.workspace
             
         logging.debug("The workspace : " + str(workspace))
@@ -100,7 +99,7 @@ class NetzobGui(gtk.Window):
         self.set_default_size(800, 600)
         self.set_title("Netzob : Inferring communication protocols")
 
-        self.set_icon_from_file(("%s/logo.png" % 
+        self.set_icon_from_file(("%s/logo.png" %
                                  ResourcesConfiguration.getStaticResources()))
         self.connect("delete_event", self.evnmtDelete)
         self.connect("destroy", self.destroy)

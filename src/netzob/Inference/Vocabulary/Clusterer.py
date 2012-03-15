@@ -88,15 +88,14 @@ class Clusterer(object):
             doInternalSlick = 1
         else:
             doInternalSlick = 0
-        
+
         # Serialize the symbols
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols)
-        
+
         # Execute the Clustering part in C :) (thx fgy)
         (i_max, j_max, maxScore) = libNeedleman.getMatrix(doInternalSlick, len(self.symbols), formatSymbols, serialSymbols)
         return (i_max, j_max, maxScore)
-            
-            
+
 #        serialSymbols = ""
 #        format = ""
 #
@@ -115,7 +114,7 @@ class Clusterer(object):
 #                format += str(len(symbol.getAlignment()) / 2) + "M"
 #                serialSymbols += messageTmp
 #                serialSymbols += alignmentTmp
-#                
+#
 #            else:
 #                format += str(len(symbol.getMessages())) + "G"
 #                for m in symbol.getMessages():
@@ -124,8 +123,6 @@ class Clusterer(object):
 ##                    print m.getReducedStringData()
 #                    serialSymbols += "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)])  # The alignement == "\x00" * len(the message), the first time
 ##                    print "".join(['\x00' for x in range(len(m.getReducedStringData()) / 2)]).encode("hex")
-
-        
 
     def retrieveMaxIJ(self):
         return self.retrieveEffectiveMaxIJ()

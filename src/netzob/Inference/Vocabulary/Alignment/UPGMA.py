@@ -43,25 +43,26 @@ from netzob.Common.Symbol import Symbol
 import uuid
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
+
 #+---------------------------------------------------------------------------+
 #| UPGMA:
 #|     Supports the use of UPGMA clustering
 #+---------------------------------------------------------------------------+
 class UPGMA(object):
-    
+
     def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None):
-        self.project = project;
+        self.project = project
         self.nbIteration = nbIteration
         self.minEquivalence = minEquivalence
         self.doInternalSlick = doInternalSlick
         self.cb_status = cb_status
         self.defaultFormat = defaultFormat
-        
+
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
-        
+
         if explodeSymbols == False:
             self.symbols = symbols
-            
+
         else:
             # Create a symbol for each message
             self.symbols = []
@@ -72,10 +73,9 @@ class UPGMA(object):
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
                     i_symbol += 1
-                    
+
         self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
-        
-        
+
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
     #|     Callback function called by the C extension to provide info on status
@@ -83,11 +83,11 @@ class UPGMA(object):
     #| @param currentMessage a str which represents the current alignment status
     #+-----------------------------------------------------------------------+
     def cb_executionStatus(self, donePercent, currentMessage):
-        if self.cb_status == None :
+        if self.cb_status == None:
             print "[UPGMA status] " + str(donePercent) + "% " + currentMessage
-        else :
+        else:
             self.cb_status(donePercent, currentMessage)
-    
+
     #+-----------------------------------------------------------------------+
     #| executeClustering
     #|     execute the clustering operation
@@ -96,7 +96,7 @@ class UPGMA(object):
     #| @minEquivalence the minimum requirement to consider two symbol as equivalent
     #| @return the new list of symbols
     #+-----------------------------------------------------------------------+
-    def executeClustering(self):    
+    def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
         for iteration in range(0, self.nbIteration):
             self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
@@ -116,10 +116,9 @@ class UPGMA(object):
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
-            
-            
+
         return self.symbols
-            
+
     #+----------------------------------------------
     #| retrieveMaxIJ:
     #|   given a list of symbols, it computes the
@@ -130,16 +129,15 @@ class UPGMA(object):
     #+----------------------------------------------
     def retrieveEffectiveMaxIJ(self):
         self.log.debug("Computing the associated matrix")
-        
+
         # Serialize the symbols
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols)
-        
+
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
         (i_max, j_max, maxScore) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
         return (i_max, j_max, maxScore)
-    
-    
+
     #+----------------------------------------------
     #| mergeRowCol:
     #|   Merge the symbols i and j in the "symbols" structure
@@ -163,9 +161,8 @@ class UPGMA(object):
             newSymbol.addMessage(message)
 
         # Append th new symbol to the "symbols" structure
-        self.symbols.append(newSymbol)  
-        
-        
+        self.symbols.append(newSymbol)
+
     #+----------------------------------------------
     #| mergeOrphanSymbols:
     #|   try to merge orphan symbols by progressively
@@ -226,18 +223,16 @@ class UPGMA(object):
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
         return self.symbols
-        
-        
+
     #+-----------------------------------------------------------------------+
     #| deserializeGroups
     #|     Useless (functionally) function created for testing purposes
     #| @param symbols a list of symbols
     #| @returns number Of Deserialized symbols
     #+-----------------------------------------------------------------------+
-    def deserializeGroups(self, symbols): 
+    def deserializeGroups(self, symbols):
         # First we serialize the messages
         (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols)
-        
+
         debug = True
         return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
-      

@@ -77,8 +77,7 @@ class LearningAlgorithm(object):
         # TODO : must be UPGRADED
         # WARNING
         os.system("sh " + self.resetScript)
-        
-        
+
         self.log.info("Submit the following query : " + str(query))
 
         # transform the query into a MMSTD

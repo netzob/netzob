@@ -151,10 +151,8 @@ class AbstractMessage():
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
-        
-
         if m == None:
-            
+
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
@@ -183,7 +181,7 @@ class AbstractMessage():
                 if field.getVariable() != None:
                     # Creation of a temporary memory just for the current
                     tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
-                    
+
                     if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
                         backgroundColor = 'background="red"'
                     else:

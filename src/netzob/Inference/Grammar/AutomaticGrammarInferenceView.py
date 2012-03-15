@@ -90,7 +90,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(ProtocolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(self.combo_protocolOfNetworkActor, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        # Source port 
+        # Source port
         SourcePortLabel = gtk.Label("Source port :")
         SourcePortLabel.show()
         self.SourcePortEntry = gtk.Entry()
@@ -113,7 +113,7 @@ class AutomaticGrammarInferenceView(object):
         self.MaxStatesEntry.show()
         mainTable.attach(MaxStatesLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(self.MaxStatesEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
+
         # Script to execute to reset the implementation
         scriptLabel = gtk.Label("Reseting script :")
         scriptLabel.show()
