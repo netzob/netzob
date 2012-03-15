@@ -76,7 +76,7 @@ class TreeProcessesGenerator():
         self.scroll.set_size_request(200, 300)
         self.scroll.add(self.treeview)
 
-        lvcolumn = gtk.TreeViewColumn(_('Processes'))
+        lvcolumn = gtk.TreeViewColumn(_("Processes"))
         lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
         lvcolumn.pack_start(cell, True)
