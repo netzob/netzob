@@ -964,23 +964,25 @@ class UImodelization:
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(message_id)
-        if message == None:
-            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(message_id))
-            return
-        
-        # Retrieve content of the field
-        field_content = message.getSplittedData(False)[field.getIndex()]
+        if message != None:
+            # Retrieve content of the field
+            field_content = message.getSplittedData(False)[field.getIndex()]
+        else:
+            field_content = None
 
         # Format submenu
         possible_choices = Format.getSupportedFormats()
         subMenu = gtk.Menu()
         for value in possible_choices:
-            # Get preview of field content
-            text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
-            if len(text_preview) > 10:
-                text_preview = text_preview[:10] + "..."
-
-            item = gtk.MenuItem(value + " (" + text_preview + ")")
+            if field_content != None:
+                # Get preview of field content
+                text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
+                if len(text_preview) > 10:
+                    text_preview = text_preview[:10] + "..."
+                    
+                item = gtk.MenuItem(value + " (" + text_preview + ")")
+            else:
+                item = gtk.MenuItem(value)
             item.show()
             item.connect("activate", self.rightClickToChangeFormat, field, value)
             subMenu.append(item)
@@ -1145,7 +1147,7 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the type of a specific field
-            subMenu = self.build_encoding_submenu_for_field(selectedField)
+            subMenu = self.build_encoding_submenu_for_field(selectedField, None)
             item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
