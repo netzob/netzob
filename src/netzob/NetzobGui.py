@@ -75,9 +75,9 @@ class NetzobGui(gtk.Window):
             workspace = str(ResourcesConfiguration.getWorkspaceFile())
         else:
             workspace = opts.workspace
-            
+
         logging.debug("The workspace : " + str(workspace))
-        
+
         # loading the workspace
         self.currentWorkspace = (Workspace.loadWorkspace(workspace))
 
@@ -179,7 +179,7 @@ class NetzobGui(gtk.Window):
         self.update()
 
     def offerToSaveCurrentProject(self):
-        questionMsg = ("Do you want to save the current project (" + 
+        questionMsg = ("Do you want to save the current project (" +
                        self.getCurrentProject().getName() + ")")
         md = (gtk.MessageDialog(
                 None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -208,7 +208,7 @@ class NetzobGui(gtk.Window):
             page[1].kill()
         gtk.main_quit()
 
-    #+---------------------------------------------- 
+    #+----------------------------------------------
     #| Called when user select a notebook
     #+----------------------------------------------
     def notebookFocus(self, notebook, page, pagenum):

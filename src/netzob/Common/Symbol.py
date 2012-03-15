@@ -58,6 +58,7 @@ NAMESPACE = "http://www.netzob.org/"
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
 
+
 #+---------------------------------------------------------------------------+
 #| Symbol:
 #|     Class definition of a symbol
@@ -172,7 +173,7 @@ class Symbol(AbstractSymbol):
         nbElements = 1
         iField = -1
         for it in range(1, len(resultMask)):
-            if resultMask[it] == "1": # The current column is dynamic
+            if resultMask[it] == "1":  # The current column is dynamic
                 if isLastDyn:
                     nbElements += 1
                 else:
@@ -211,7 +212,7 @@ class Symbol(AbstractSymbol):
 
     #+----------------------------------------------
     #| freezePartitioning:
-    #|   
+    #|
     #+----------------------------------------------
     def freezePartitioning(self):
         for field in self.getFields():
@@ -883,7 +884,7 @@ class Symbol(AbstractSymbol):
     def getVariables(self):
         result = []
         for field in self.getFields():
-            if not field.isStatic() :
+            if not field.isStatic():
                 if field.getVariable() != None:
                     result.append(field.getVariable())
         return result
@@ -904,9 +905,9 @@ class Symbol(AbstractSymbol):
 
     def addField(self, field):
         self.fields.append(field)
-        
+
     def cleanFields(self):
-        while len(self.fields) != 0 :
+        while len(self.fields) != 0:
             self.fields.pop()
 
     def popField(self, index=None):
@@ -1172,25 +1173,24 @@ class Symbol(AbstractSymbol):
 
     def setRawDelimiter(self, rawDelimiter):
         self.rawDelimiter = rawDelimiter
-        
+
     def __str__(self):
         return str(self.getName())
 
     def __repr__(self):
         return str(self.getName())
-    
+
     def __cmp__(self, other):
         if other == None:
             return 1
-        try :
+        try:
             if self.getID() == other.getID():
                 return 0
             else:
                 return 1
-        except  :
+        except:
             self.log.warn("Tried to compare a Symbol with " + str(other))
             return 1
-
 
     #+----------------------------------------------
     #| Static methods
@@ -1216,7 +1216,7 @@ class Symbol(AbstractSymbol):
                 xmlMessages = xmlRoot.find("{" + namespace_project + "}messages-ref")
                 for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
                     id = xmlMessage.get("id")
-                    message = poolOfMessages.getMessageByID( id )
+                    message = poolOfMessages.getMessageByID(id)
                     if message != None:
                         message.setSymbol(symbol)
                         symbol.addMessage(message)
@@ -1228,6 +1228,6 @@ class Symbol(AbstractSymbol):
                     field = Field.loadFromXML(xmlField, namespace_project, version)
                     if field != None:
                         symbol.addField(field)
-                
+
             return symbol
         return None

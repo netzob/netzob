@@ -51,6 +51,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
 from netzob import release
 
+
 #+---------------------------------------------------------------------------+
 #| Menu:
 #|     Class definition of the menu

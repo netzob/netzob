@@ -38,6 +38,7 @@ pygtk.require('2.0')
 #+----------------------------------------------
 from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame
 
+
 #+----------------------------------------------
 #| SessionManager:
 #|     GUI for session manager at a project level
@@ -198,7 +199,7 @@ class SessionManager:
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll.show()
         scroll.add(self.treeview_session_messages)
-        sessionBox.pack_start(scroll)        
+        sessionBox.pack_start(scroll)
 
     #+----------------------------------------------
     #| CALLBACKS
@@ -225,7 +226,7 @@ class SessionManager:
         if(iter):
             if(model.iter_is_valid(iter)):
                 symbol_id = model.get_value(iter, 0)
-                symbol = project.getVocabulary().getSymbol( symbol_id )
+                symbol = project.getVocabulary().getSymbol(symbol_id)
                 if symbol != None:
                     for message in symbol.getMessages():
                         self.treeview_symbol_messages.get_model().append([message.getID(), message.getStringData()])
@@ -251,15 +252,13 @@ class SessionManager:
         if(iter):
             if(model.iter_is_valid(iter)):
                 session_id = model.get_value(iter, 0)
-                session = project.getVocabulary().getSession( session_id )
+                session = project.getVocabulary().getSession(session_id)
                 if session != None:
                     for message in session.getMessages():
                         self.treeview_session_messages.get_model().append([message.getID(), message.getStringData()])
-
 
     #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
     def getPanel(self):
         return self.panel
-

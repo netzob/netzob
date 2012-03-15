@@ -51,18 +51,18 @@ class Memory():
         self.memory = dict()
         self.temporaryMemory = dict()
         self.variables = variables
-        
+
     def createMemory(self):
         # We create a temporary memory
         self.temporaryMemory = dict()
-        for key in self.memory.keys() :
+        for key in self.memory.keys():
             self.temporaryMemory[key] = self.memory[key]
-            
+
     def persistMemory(self):
         self.memory = dict()
-        for key in self.temporaryMemory.keys() :
+        for key in self.temporaryMemory.keys():
             self.memory[key] = self.temporaryMemory[key]
-        
+
     def hasMemorized(self, variable):
         return variable.getID() in self.temporaryMemory.keys()
 
@@ -74,12 +74,7 @@ class Memory():
 
     def recallAll(self):
         return self.temporaryMemory
-    
-    def restore(self, variable):
-        if variable.getID() in self.memory.keys() :
-            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
-        
-    
-        
 
-    
+    def restore(self, variable):
+        if variable.getID() in self.memory.keys():
+            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
