@@ -144,7 +144,7 @@ class Symbol(AbstractSymbol):
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
         if minNbSplit <= 1:  # If the delimiter does not create splitted fields
-            field = Field("Name", 0, "(.{,})")
+            field = Field(_("Name"), 0, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
@@ -154,7 +154,7 @@ class Symbol(AbstractSymbol):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field("Name", iField, "(.{,})")
+            field = Field(_("Name"), iField, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
@@ -244,7 +244,7 @@ class Symbol(AbstractSymbol):
                 else:
                     # We change the field
                     iField += 1
-                    field = Field("Name", iField, currentStaticField)
+                    field = Field(_("Name"), iField, currentStaticField)
                     field.setColor("black")
                     self.addField(field)
                     # We start a new field
@@ -254,7 +254,7 @@ class Symbol(AbstractSymbol):
             else:  # The current column is static
                 if isLastDyn:  # We change the field
                     iField += 1
-                    field = Field("Name", iField, "(.{," + str(nbElements) + "})")
+                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
                     field.setColor("blue")
                     self.addField(field)
                     # We start a new field
@@ -268,10 +268,10 @@ class Symbol(AbstractSymbol):
         # We add the last field
         iField += 1
         if resultMask[-1] == "1":  # If the last column is dynamic
-            field = Field("Name", iField, "(.{," + str(nbElements) + "})")
+            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
             field.setColor("blue")
         else:
-            field = Field("Name", iField, currentStaticField)
+            field = Field(_("Name"), iField, currentStaticField)
             field.setColor("black")
         self.addField(field)
 
@@ -334,7 +334,7 @@ class Symbol(AbstractSymbol):
     def getCellsByField(self, field):
         # First we verify the field exists in the symbol
         if not field in self.fields:
-            logging.warn("The computing field is not part of the current symbol")
+            logging.warn(_("The computing field is not part of the current symbol"))
             return []
 
         res = []
@@ -669,11 +669,11 @@ class Symbol(AbstractSymbol):
         store = gtk.ListStore(int, str, str, str)
         treeviewRes = gtk.TreeView(store)
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Column')
+        column = gtk.TreeViewColumn(_("Column"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Results')
+        column = gtk.TreeViewColumn(_("Results"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeviewRes.append_column(column)
@@ -712,7 +712,7 @@ class Symbol(AbstractSymbol):
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Data')
+        column = gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
         column.set_attributes(cell, markup=0)
         treeview.append_column(column)
@@ -726,7 +726,7 @@ class Symbol(AbstractSymbol):
         vbox.pack_start(hbox, True, True, 0)
 
         # Apply button
-        but = gtk.Button(label="Apply data type on column")
+        but = gtk.Button(label=_("Apply data type on column"))
         but.show()
         self.butDataCarvingHandle = None
         treeviewRes.connect("cursor-changed", self.ASN1ResultSelected_cb, treeview, but)
@@ -748,7 +748,7 @@ class Symbol(AbstractSymbol):
                 envName = model.get_value(it, 1)
                 envType = model.get_value(it, 2)
                 envValue = model.get_value(it, 3)
-                treeviewTarget.get_column(0).set_title("Field " + str(field.getIndex()))
+                treeviewTarget.get_column(0).set_title(_("Field {0}").format(str(field.getIndex())))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
@@ -786,11 +786,11 @@ class Symbol(AbstractSymbol):
         store = gtk.ListStore(int, str, str, str)
         treeviewRes = gtk.TreeView(store)
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Column')
+        column = gtk.TreeViewColumn(_("Column"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Env. dependancy')
+        column = gtk.TreeViewColumn(_("Env. dependancy"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeviewRes.append_column(column)
@@ -844,7 +844,7 @@ class Symbol(AbstractSymbol):
         # str: data
         treeview = gtk.TreeView(gtk.ListStore(str))
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Data')
+        column = gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
         column.set_attributes(cell, markup=0)
         treeview.append_column(column)
@@ -858,7 +858,7 @@ class Symbol(AbstractSymbol):
         vbox.pack_start(hbox, True, True, 0)
 
         # Apply button
-        but = gtk.Button(label="Apply data type on column")
+        but = gtk.Button(label=_("Apply data type on column"))
         but.show()
         self.butDataCarvingHandle = None
         treeviewRes.connect("cursor-changed", self.envDependenciesResultSelected_cb, treeview, but)
@@ -880,7 +880,7 @@ class Symbol(AbstractSymbol):
                 envName = model.get_value(it, 1)
                 envType = model.get_value(it, 2)
                 envValue = model.get_value(it, 3)
-                treeviewTarget.get_column(0).set_title("Field " + str(field.getIndex()))
+                treeviewTarget.get_column(0).set_title(_("Field {0}").format(str(field.getIndex())))
                 if self.butDataCarvingHandle != None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
@@ -1259,7 +1259,7 @@ class Symbol(AbstractSymbol):
             else:
                 return 1
         except:
-            self.log.warn("Tried to compare a Symbol with " + str(other))
+            self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
             return 1
 
     #+----------------------------------------------
