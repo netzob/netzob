@@ -71,7 +71,7 @@ class ScapyExport:
 
         self.init()
 
-        self.dialog = gtk.Dialog(title="Export project as Scapy dissector", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Export project as Scapy dissector"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(800, 700)
@@ -116,7 +116,7 @@ class ScapyExport:
 
     def updateTextareaWithDissector(self):
         if self.selectedSymbol == None:
-            self.textarea.get_buffer().set_text("Select a symbol to see its Scapy dissector")
+            self.textarea.get_buffer().set_text(_("Select a symbol to see its Scapy dissector"))
         else:
             found = False
             for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
@@ -125,7 +125,7 @@ class ScapyExport:
                     self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getScapyDissector(), "normalTag")
                     found = True
             if found == False:
-                self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))
+                self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(self.selectedSymbol)))
 
     #+----------------------------------------------
     #| GETTERS
