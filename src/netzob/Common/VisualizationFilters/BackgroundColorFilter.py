@@ -25,55 +25,38 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import logging
+from netzob.Common.VisualizationFilters.VisualizationFilter import VisualizationFilter
 
-#+----------------------------------------------
-#| Format representation of data
-#+----------------------------------------------
-class Format():
-    # Primary formats
-    BINARY = "binary"
-    OCTAL = "octal"
-    DECIMAL = "decimal"
-    HEX = "hex"
-    STRING = "string"
-    FLOAT = "float"
-    NUM = "num"
-    ALPHA = "alpha"
-    ALPHA_NUM = "alphanum"
-    ASCII = "ascii"
-    BASE64_ENC = "base64enc"
-    BASE64_DEC = "base64dec"
-    
-    formatVisualizationUnitSizes = {BINARY:1, HEX:4, STRING:8}
-    
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
 
-    # Complex formats
-    IP = "ip"
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 
-    @staticmethod
-    #+---------------------------------------------------------------------------+
-    #| getSupportedFormats:
-    #|     Returns an array composed of the names of primary supported formats
-    #|     for the visualization of messages
-    #+---------------------------------------------------------------------------+
-    def getSupportedFormats():
-        return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING]
 
-    @staticmethod
-    #+---------------------------------------------------------------------------+
-    #| getExtendedSupportedFormats:
-    #|     Returns an array composed of the names of all supported formats
-    #|     for the visualization of messages
-    #+---------------------------------------------------------------------------+
-    def getExtendedSupportedFormats():
-        return [Format.BINARY, Format.OCTAL, Format.DECIMAL, Format.HEX, Format.STRING, Format.IP]
+#+---------------------------------------------------------------------------+
+#| BackgroundColorFilter:
+#|     Definition of a visualization filter wich colorize the background
+#+---------------------------------------------------------------------------+
+class BackgroundColorFilter(VisualizationFilter):
     
+    TYPE = "BackgroundColorFilter"
     
-    @staticmethod
-    def getUnitSize(format):
-        if format in Format.formatVisualizationUnitSizes :
-            return Format.formatVisualizationUnitSizes[format]
-        else :
-            return None
+    def __init__(self, id, name, iStart, iEnd, color):
+        VisualizationFilter.__init__(self, id, BackgroundColorFilter.TYPE, name)
+        self.iStart = iStart
+        self.iEnd = iEnd
+        self.color = color
         
-        
+    def isValid(self, i, message, unitSize):
+        factor = (unitSize / 4)
+        return i >= self.iStart / factor and i <= self.iEnd / factor 
+    
+    def apply(self, message):
+        return '<span background="' + self.color + '">' + message + '</span>'

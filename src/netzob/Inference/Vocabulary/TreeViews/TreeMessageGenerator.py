@@ -32,6 +32,7 @@ import logging
 import pango
 import gobject
 import gtk
+import glib
 
 #+----------------------------------------------
 #| Local Imports
@@ -149,6 +150,7 @@ class TreeMessageGenerator():
         content_lines = []
         maxNumberOfCol = 0
         for message in self.symbol.getMessages():
+            
             # For each message we create a line and computes its cols
             try:
                 messageTable = message.applyAlignment(styled=True, encoded=True)
@@ -187,7 +189,7 @@ class TreeMessageGenerator():
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
         for field in self.symbol.getFields():
-            regex_row.append(field.getEncodedVersionOfTheRegex())
+            regex_row.append(glib.markup_escape_text(field.getEncodedVersionOfTheRegex()))
 
         # Build the types row
         types_line = []
@@ -203,7 +205,7 @@ class TreeMessageGenerator():
         for line in content_lines:
             self.treestore.append(None, line)
 
-        # activate or deactiave the perfect number of columns = nb Field
+        # activate or deactivate the perfect number of columns = nb Field
         for col in self.treeview.get_columns():
             self.treeview.remove_column(col)
         for i in range(0, min(200, len(self.symbol.getFields()))):

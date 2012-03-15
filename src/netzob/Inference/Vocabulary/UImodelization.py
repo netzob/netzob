@@ -32,6 +32,9 @@ import gtk
 import pango
 import pygtk
 import gobject
+from netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator import TreeSearchGenerator
+from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 pygtk.require('2.0')
 import logging
 import copy
@@ -122,16 +125,11 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
+        self.updateTreeStoreSearchView()
         self.updateTreeStoreSymbol()
         self.updateTreeStoreTypeStructure()
         self.updateTreeStoreMessage()
-        if self.netzob.getCurrentProject() != None:
-            pass
-            #isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
-            #if isActive:
-            #    self.consoleGenerator.show()
-            #else:
-            #    self.consoleGenerator.hide()
+        
 
     def clear(self):
         self.selectedSymbol = None
@@ -152,13 +150,20 @@ class UImodelization:
         self.netzob = netzob
         self.selectedSymbol = None
         self.selectedMessage = None
+        # Messages
         self.treeMessageGenerator = TreeMessageGenerator()
         self.treeMessageGenerator.initialization()
+        # Symbol definition
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
         self.treeTypeStructureGenerator.initialization()
+        # Symbols
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
-
+        # Search view
+        self.treeSearchGenerator = TreeSearchGenerator(self.netzob)
+        self.treeSearchGenerator.initialization()
+        
+        
         # Definition of the Sequence Onglet
         # First we create an VBox which hosts the two main children
         self.panel = gtk.VBox(False, spacing=0)
@@ -228,6 +233,12 @@ class UImodelization:
         but.connect("clicked", self.messagesDistribution_cb)
         but.set_tooltip_text("Open a graph with messages distribution, separated by fields")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        
+        # Widget button data carving
+        but = NetzobButton("Data carving")
+        but.connect("clicked", self.dataCarving_cb)
+        but.set_tooltip_text("Automatically look for known patterns of data (URL, IP, email, etc.)")
+        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
 #        but = NetzobButton("Find ASN.1 fields")
@@ -253,27 +264,9 @@ class UImodelization:
         but.set_tooltip_text("Automatically look for environmental dependencies (retrieved during capture) in messages")
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
-        ## Semantic inference
-        frame = NetzobFrame("4 - Semantic inference")
-        topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
-        table.show()
-        frame.add(table)
-
-        # Widget button data carving
-        but = NetzobButton("Data carving")
-        but.connect("clicked", self.dataCarving_cb)
-        but.set_tooltip_text("Automatically look for known patterns of data (URL, IP, email, etc.)")
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
-
-        # Widget button for search
-        but = NetzobButton("Search")
-        but.connect("clicked", self.search_cb)
-        but.set_tooltip_text("A search function available in different encoding format")
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
-
+        
         ## Visualization
-        frame = NetzobFrame("5 - Visualization")
+        frame = NetzobFrame("4 - Visualization")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
@@ -306,6 +299,37 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        
+        ## Semantic inference
+        frame = NetzobFrame(" - Search data")
+        topPanel.pack_start(frame, False, False, 0)
+        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table.show()
+        frame.add(table)
+
+        # Widget button for search
+        self.searchEntry = gtk.Entry()
+        self.searchEntry.show()
+        table.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        
+        # Combo to select the type of the input
+        self.typeCombo = gtk.combo_box_entry_new_text()
+        self.typeCombo.show()
+        self.typeStore = gtk.ListStore(str)
+        self.typeCombo.set_model(self.typeStore)
+        self.typeCombo.get_model().append([Format.STRING])
+        self.typeCombo.get_model().append([Format.HEX])
+        self.typeCombo.get_model().append([Format.BINARY])
+        self.typeCombo.get_model().append([Format.OCTAL])
+        self.typeCombo.get_model().append([Format.DECIMAL])
+        table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        
+        but = NetzobButton("Search")
+        but.connect("clicked", self.search_cb)
+        but.set_tooltip_text("A search function available in different encoding format")
+        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        
+        
 
         #+----------------------------------------------
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
@@ -337,7 +361,11 @@ class UImodelization:
         #+----------------------------------------------
         #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
         #+----------------------------------------------
-        rightPanel.add(self.treeMessageGenerator.getScrollLib())
+        rightPanelOptions = gtk.VPaned()
+        rightPanelOptions.show()
+        rightPanel.add(rightPanelOptions)
+        
+        rightPanelOptions.add(self.treeMessageGenerator.getScrollLib())
 
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
@@ -345,6 +373,12 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
+        
+        #+----------------------------------------------
+        #| RIGHT PART OF THE GUI : Search view
+        #+----------------------------------------------
+        rightPanelOptions.add(self.treeSearchGenerator.getScrollLib())
+#        self.treeSearchGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
 
     def sequenceAlignmentOnAllSymbols(self, widget):
         # Sanity checks
@@ -919,11 +953,11 @@ class UImodelization:
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(message_id)
         if message == None:
-            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(message_id))
             return
 
         # Retrieve content of the field
-        field_content = message.applyAlignment(styled=False, encoded=False)[field.getIndex()]
+        field_content = message.getSplittedData(False)[field.getIndex()]
 
         # Format submenu
         possible_choices = Format.getSupportedFormats()
@@ -2022,6 +2056,18 @@ class UImodelization:
                 self.treeTypeStructureGenerator.update()
             else:
                 self.treeTypeStructureGenerator.hide()
+                
+    #+----------------------------------------------
+    #| Update the content of the tree store for type structure
+    #+----------------------------------------------
+    def updateTreeStoreSearchView(self):
+        if self.netzob.getCurrentProject() != None:
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
+            if isActive:
+                self.treeSearchGenerator.show()
+            else:
+                self.treeSearchGenerator.update()
+                self.treeSearchGenerator.hide()
 
     #+----------------------------------------------
     #| Called when user select a new score limit
@@ -2177,11 +2223,60 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
+        
+        searchedPattern = self.searchEntry.get_text()
+        if len(searchedPattern) == 0:
+            NetzobErrorMessage("Do not start the searching process since no pattern has been provided")
+            return
 
-        dialog = gtk.Dialog(title="Search", flags=0, buttons=None)
-        searchPanel = SearchView(self.netzob.getCurrentProject())
-        dialog.vbox.pack_start(searchPanel.getPanel(), True, True, 0)
-        dialog.show()
+        typeOfPattern = self.typeCombo.get_active_text()
+        if len(typeOfPattern) == 0:
+            NetzobErrorMessage("Do not start the searching process since no type has been provided")
+            return
+
+        self.log.debug("User searches for " + searchedPattern + " of type " + typeOfPattern)
+        self.search(searchedPattern, typeOfPattern)
+        
+        # Active the messages and the search view
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, True)
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, True)
+        self.netzob.getMenu().setDisplaySearchViewActiveStatus(True)
+        # We update the different views
+        self.update()
+        
+    def search(self, pattern, typeOfPattern):
+
+        # Initialize the searcher
+        searcher = Searcher(self.netzob.getCurrentProject())
+
+        # First we generate the different researched data
+        searchedData = []
+        if typeOfPattern == Format.IP:
+            searchedData.extend(searcher.getSearchedDataForIP(pattern))
+        if typeOfPattern == Format.BINARY:
+            searchedData.extend(searcher.getSearchedDataForBinary(pattern))
+        if typeOfPattern == Format.OCTAL:
+            searchedData.extend(searcher.getSearchedDataForOctal(pattern))
+        if typeOfPattern == Format.DECIMAL:
+            searchedData.extend(searcher.getSearchedDataForDecimal(pattern))
+        if typeOfPattern == Format.HEX:
+            searchedData.extend(searcher.getSearchedDataForHexadecimal(pattern))
+        if typeOfPattern == Format.STRING:
+            searchedData.extend(searcher.getSearchedDataForString(pattern))
+
+        if len(searchedData) == 0:
+            self.log.warn("No data to search after were computed.")
+            return
+
+        self.log.debug("The following data will be searched for :")
+        for data in searchedData:
+            self.log.debug(" - " + str(data))
+
+        # Then we search them in the list of messages included in the vocabulary
+        searchTasks = searcher.search(searchedData)
+
+        # Give the results to the dedicated view
+        self.treeSearchGenerator.update(searchTasks)
 
     #+----------------------------------------------
     #| Called when user wants to identifies environment dependencies

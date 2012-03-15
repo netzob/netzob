@@ -113,7 +113,6 @@ class Searcher(object):
     #| @param tasks the set of "search" task
     #+----------------------------------------------
     def search(self, tasks):
-        results = []
         for task in tasks:
             for symbols in self.project.getVocabulary().getSymbols():
                 for message in symbols.getMessages():
@@ -134,14 +133,9 @@ class Searcher(object):
     def naturalSearch(self, data, message):
         results = []
 
-        print "Search " + data
-        print "in " + message.getStringData()
-
         # Search naturally all the possible places of data in message
         indice = 0
         while indice + len(data) <= len(message.getStringData()):
-            self.log.info("indice = " + str(indice))
-            self.log.info(message.getStringData()[indice:len(data) + indice] + "== " + data)
             if message.getStringData()[indice:len(data) + indice] == data:
                 # We have a match
                 searchResult = SearchResult(message)

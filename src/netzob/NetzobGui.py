@@ -222,6 +222,9 @@ class NetzobGui(gtk.Window):
 
     def getCurrentWorkspace(self):
         return self.currentWorkspace
+    
+    def getMenu(self):
+        return self.menu
 
 # To be deleted : in few days
 #    def getDictionary(self):

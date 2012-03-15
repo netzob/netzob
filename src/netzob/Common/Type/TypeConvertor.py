@@ -243,11 +243,11 @@ class TypeConvertor():
 
         if len(raw) % 2 == 0:  # Even length
             for i in range(0, len(raw), 2):
-                res = res + " " + oct(int(raw[i: i + 2], 16))
+                res = res + oct(int(raw[i: i + 2], 16))
         else:  # Odd length
             for i in range(0, len(raw) - 1, 2):
-                res = res + " " + oct(int(raw[i: i + 2], 16))
-            res = res + " " + oct(int(raw[-1], 16))
+                res = res + oct(int(raw[i: i + 2], 16))
+            res = res + oct(int(raw[-1], 16))
         return res
 
     @staticmethod
@@ -269,11 +269,11 @@ class TypeConvertor():
 
         if len(raw) % 2 == 0:  # Even length
             for i in range(0, len(raw), 2):
-                res = res + " " + str(int(raw[i: i + 2], 16))
+                res = res + str(int(raw[i: i + 2], 16))
         else:  # Odd length
             for i in range(0, len(raw) - 1, 2):
-                res = res + " " + str(int(raw[i: i + 2], 16))
-            res = res + " " + str(int(raw[-1], 16))
+                res = res + str(int(raw[i: i + 2], 16))
+            res = res + str(int(raw[-1], 16))
         return res
 
     @staticmethod
@@ -573,6 +573,6 @@ class TypeConvertor():
             elif aFormat == Format.FLOAT:
                 tmp = "%f" % tmp
 
-            res += str(tmp) + " "
+            res += str(tmp) 
 
-        return res[:-1]  # We delete the last space character
+        return res#s[:-1]  # We delete the last space character

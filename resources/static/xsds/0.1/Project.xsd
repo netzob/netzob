@@ -80,10 +80,11 @@
 			</element>
 			<element name="display_messages" type="boolean" minOccurs="0">
 			</element>
-			<element name="display_symbol_structure" type="boolean"
-				minOccurs="0">
+			<element name="display_symbol_structure" type="boolean" minOccurs="0">
 			</element>
 			<element name="display_console" type="boolean" minOccurs="0">
+			</element>
+			<element name="display_search" type="boolean" minOccurs="0">
 			</element>
 			<element name="global_format" minOccurs="0">
 				<simpleType>
