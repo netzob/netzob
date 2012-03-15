@@ -90,12 +90,12 @@ class UIfuzzing:
 
         # Network Capturing Panel
         self.netPanel = Network(self.netzob)
-        notebook.append_page(self.netPanel.getPanel(), gtk.Label("Network fuzzing"))
+        notebook.append_page(self.netPanel.getPanel(), gtk.Label(_("Network fuzzing")))
 
         # IPC Capturing Panel
         self.ipcPanel = Ipc(self.netzob)
-        notebook.append_page(self.ipcPanel.getPanel(), gtk.Label("IPC fuzzing"))
+        notebook.append_page(self.ipcPanel.getPanel(), gtk.Label(_("IPC fuzzing")))
 
         # File Panel
         self.filePanel = File(self.netzob)
-        notebook.append_page(self.filePanel.getPanel(), gtk.Label("File fuzzing"))
+        notebook.append_page(self.filePanel.getPanel(), gtk.Label(_("File fuzzing")))
