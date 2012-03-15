@@ -200,66 +200,66 @@ class UImodelization:
         self.panel.pack_start(topPanel, False, False, 0)
 
         ## Message format inference
-        frame = NetzobFrame("1 - Message format inference")
+        frame = NetzobFrame(_("1 - Message format inference"))
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget for sequence alignment
-        but = NetzobButton("Sequence alignment")
-        but.set_tooltip_text("Automatically discover the best alignment of messages")
+        but = NetzobButton(_("Sequence alignment"))
+        but.set_tooltip_text(_("Automatically discover the best alignment of messages"))
         but.connect("clicked", self.sequenceAlignmentOnAllSymbols)
 #        but.show()
         table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for forcing partitioning delimiter
-        but = NetzobButton("Force partitioning")
+        but = NetzobButton(_("Force partitioning"))
         but.connect("clicked", self.forcePartitioningOnAllSymbols)
-        but.set_tooltip_text("Set a delimiter to force partitioning")
+        but.set_tooltip_text(_("Set a delimiter to force partitioning"))
         table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget for simple partitioning
-        but = NetzobButton("Simple partitioning")
+        but = NetzobButton(_("Simple partitioning"))
         but.connect("clicked", self.simplePartitioningOnAllSymbols)
-        but.set_tooltip_text("In order to show the simple differences between messages")
+        but.set_tooltip_text(_("In order to show the simple differences between messages"))
         table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
-        but = NetzobButton("Smooth partitioning")
+        but = NetzobButton(_("Smooth partitioning"))
         but.connect("clicked", self.smoothPartitioningOnAllSymbols)
-        but.set_tooltip_text("Merge small static fields with its neighbours")
+        but.set_tooltip_text(_("Merge small static fields with its neighbours"))
         table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button reset partitioning
-        but = NetzobButton("Reset partitioning")
+        but = NetzobButton(_("Reset partitioning"))
         but.connect("clicked", self.resetPartitioningOnAllSymbols)
-        but.set_tooltip_text("Reset the current partitioning")
+        but.set_tooltip_text(_("Reset the current partitioning"))
         table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
-        frame = NetzobFrame("2 - Field type inference")
+        frame = NetzobFrame(_("2 - Field type inference"))
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget button refine regex
-        but = NetzobButton("Freeze partitioning")
+        but = NetzobButton(_("Freeze partitioning"))
         but.connect("clicked", self.freezePartitioning_cb)
-        but.set_tooltip_text("Automatically find and freeze the boundaries (min/max of cell's size) for each fields")
+        but.set_tooltip_text(_("Automatically find and freeze the boundaries (min/max of cell's size) for each fields"))
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
-        but = NetzobButton("Messages distribution")
+        but = NetzobButton(_("Messages distribution"))
         but.connect("clicked", self.messagesDistribution_cb)
-        but.set_tooltip_text("Open a graph with messages distribution, separated by fields")
+        but.set_tooltip_text(_("Open a graph with messages distribution, separated by fields"))
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button data carving
-        but = NetzobButton("Data carving")
+        but = NetzobButton(_("Data carving"))
         but.connect("clicked", self.dataCarving_cb)
-        but.set_tooltip_text("Automatically look for known patterns of data (URL, IP, email, etc.)")
+        but.set_tooltip_text(_("Automatically look for known patterns of data (URL, IP, email, etc.)"))
         table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
@@ -268,61 +268,61 @@ class UImodelization:
 #        table.attach(but, 0, 1, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Dependencies inference
-        frame = NetzobFrame("3 - Dependencies inference")
+        frame = NetzobFrame(_("3 - Dependencies inference"))
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget button find size fields
-        but = NetzobButton("Find size fields")
+        but = NetzobButton(_("Find size fields"))
         but.connect("clicked", self.findSizeFields)
-        but.set_tooltip_text("Automatically find potential size fields and associated payloads")
+        but.set_tooltip_text(_("Automatically find potential size fields and associated payloads"))
         table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         # Widget button for environment dependencies
-        but = NetzobButton("Environment dependencies")
+        but = NetzobButton(_("Environment dependencies"))
         but.connect("clicked", self.env_dependencies_cb)
-        but.set_tooltip_text("Automatically look for environmental dependencies (retrieved during capture) in messages")
+        but.set_tooltip_text(_("Automatically look for environmental dependencies (retrieved during capture) in messages"))
         table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Visualization
-        frame = NetzobFrame("4 - Visualization")
+        frame = NetzobFrame(_("4 - Visualization"))
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget for choosing the format
-        label = NetzobLabel("Format : ")
+        label = NetzobLabel(_("Format : "))
         self.comboDisplayFormat = NetzobComboBoxEntry()
         self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
         table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the unit size
-        label = NetzobLabel("Unit size : ")
+        label = NetzobLabel(_("Unit size : "))
         self.comboDisplayUnitSize = NetzobComboBoxEntry()
         self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
         table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed sign
-        label = NetzobLabel("Sign : ")
+        label = NetzobLabel(_("Sign : "))
         self.comboDisplaySign = NetzobComboBoxEntry()
         self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
         table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed endianess
-        label = NetzobLabel("Endianess : ")
+        label = NetzobLabel(_("Endianess : "))
         self.comboDisplayEndianess = NetzobComboBoxEntry()
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         ## Semantic inference
-        frame = NetzobFrame("5 - Search data")
+        frame = NetzobFrame(_("5 - Search data"))
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
@@ -347,9 +347,9 @@ class UImodelization:
         self.typeCombo.set_active(0)
         table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
-        but = NetzobButton("Search")
+        but = NetzobButton(_("Search"))
         but.connect("clicked", self.search_cb)
-        but.set_tooltip_text("A search function available in different encoding format")
+        but.set_tooltip_text(_("A search function available in different encoding format"))
         table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         #+----------------------------------------------
@@ -391,7 +391,7 @@ class UImodelization:
     def sequenceAlignmentOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
@@ -414,12 +414,12 @@ class UImodelization:
         self.treeTypeStructureGenerator.clear()
         self.update()
 
-        dialog = gtk.Dialog(title="Sequence alignment", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Sequence alignment"), flags=0, buttons=None)
         panel = gtk.Table(rows=5, columns=3, homogeneous=False)
         panel.show()
 
         ## Similarity threshold
-        label = NetzobLabel("Similarity threshold:")
+        label = NetzobLabel(_("Similarity threshold:"))
         combo = gtk.combo_box_entry_new_text()
         combo.set_model(gtk.ListStore(str))
         combo.connect("changed", self.updateScoreLimit)
@@ -435,7 +435,7 @@ class UImodelization:
         panel.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         ## UnitSize for alignment
-        label = NetzobLabel("Unit size (in bits):")
+        label = NetzobLabel(_("Unit size (in bits):"))
         comboUnitSize = gtk.combo_box_entry_new_text()
         comboUnitSize.set_model(gtk.ListStore(str))
         possible_choices = [8, 4]
@@ -448,7 +448,7 @@ class UImodelization:
         panel.attach(comboUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button activate orphan reduction
-        butOrphanReduction = gtk.CheckButton("Orphan reduction")
+        butOrphanReduction = gtk.CheckButton(_("Orphan reduction"))
         doOrphanReduction = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
         if doOrphanReduction:
             butOrphanReduction.set_active(True)
@@ -459,7 +459,7 @@ class UImodelization:
         panel.attach(butOrphanReduction, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
-        but = gtk.CheckButton("Smooth alignment")
+        but = gtk.CheckButton(_("Smooth alignment"))
         doInternalSlick = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         if doInternalSlick:
             but.set_active(True)
@@ -474,7 +474,7 @@ class UImodelization:
         panel.attach(self.progressbarAlignment, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Sequence alignment")
+        searchButton = NetzobButton(_("Sequence alignment"))
         searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog, symbols, comboUnitSize)
         panel.attach(searchButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -505,7 +505,7 @@ class UImodelization:
         try:
             (yield ThreadedTask(alignmentSolution.alignSymbols, symbols, self.netzob.getCurrentProject()))
         except TaskError, e:
-            self.log.error("Error while proceeding to the alignment : " + str(e))
+            self.log.error(_("Error while proceeding to the alignment: {0}").format(str(e)))
 
         new_symbols = alignmentSolution.getLastResult()
         self.currentExecutionOfAlignmentHasFinished = True
@@ -540,7 +540,7 @@ class UImodelization:
     def forcePartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
@@ -561,12 +561,12 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title="Force partitioning", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Force partitioning"), flags=0, buttons=None)
         panel = gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
         # Label
-        label = NetzobLabel("Delimiter: ")
+        label = NetzobLabel(_("Delimiter: "))
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Entry for delimiter
@@ -575,7 +575,7 @@ class UImodelization:
         panel.attach(entry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Label
-        label = NetzobLabel("Format type: ")
+        label = NetzobLabel(_("Format type: "))
         panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
@@ -589,7 +589,7 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Force partitioning")
+        searchButton = NetzobButton(_("Force partitioning"))
         searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry, symbols)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -614,7 +614,7 @@ class UImodelization:
     def simplePartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
@@ -625,7 +625,7 @@ class UImodelization:
     def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
@@ -641,12 +641,12 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title="Simple partitioning", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Simple partitioning"), flags=0, buttons=None)
         panel = gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
         # Label
-        label = NetzobLabel("Minimum unit size: ")
+        label = NetzobLabel(_("Minimum unit size: "))
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
@@ -659,7 +659,7 @@ class UImodelization:
         panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Simple partitioning")
+        searchButton = NetzobButton(_("Simple partitioning"))
         searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo, symbols)
         panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -680,7 +680,7 @@ class UImodelization:
     def smoothPartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
@@ -691,7 +691,7 @@ class UImodelization:
     def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Execute the process of alignment (show the gui...)
         self.smoothPartitioning(symbols)
@@ -702,7 +702,7 @@ class UImodelization:
     def smoothPartitioning(self, symbols):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         for symbol in symbols:
@@ -713,7 +713,7 @@ class UImodelization:
     def resetPartitioningOnAllSymbols(self, widget):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
@@ -731,7 +731,7 @@ class UImodelization:
     def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         # Execute the process of alignment (show the gui...)
         self.resetPartitioning(symbols)
@@ -743,7 +743,7 @@ class UImodelization:
     def resetPartitioning(self, symbols):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         for symbol in symbols:
             symbol.resetPartitioning(self.netzob.getCurrentProject())
@@ -758,10 +758,10 @@ class UImodelization:
         # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if project.getVocabulary() == None:
-            NetzobErrorMessage("The current project doesn't have any referenced vocabulary.")
+            NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
         x = int(event.x)
@@ -826,7 +826,7 @@ class UImodelization:
 
         # Popup a menu
         elif event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
-            self.log.debug("User requested a contextual menu (treeview messages)")
+            self.log.debug(_("User requested a contextual menu (treeview messages)"))
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
@@ -850,7 +850,7 @@ class UImodelization:
                 if field.getIndex() == iField:
                     selectedField = field
             if selectedField == None:
-                self.log.warn("Impossible to retrieve the clicked field !")
+                self.log.warn(_("Impossible to retrieve the clicked field !"))
                 return
 
             # Add entry to move seleted messages
@@ -864,20 +864,20 @@ class UImodelization:
                     listmessages.append(id_message)
 
             subMenu = self.build_moveto_submenu(self.selectedSymbol, listmessages)
-            item = gtk.MenuItem("Move to ...")
+            item = gtk.MenuItem(_("Move to..."))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add entry to edit field
-            item = gtk.MenuItem("Edit field")
+            item = gtk.MenuItem(_("Edit field"))
             item.show()
             item.connect("activate", self.displayPopupToEditField, selectedField)
             menu.append(item)
 
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu(selectedField, message_id)
-            item = gtk.MenuItem("Field visualization")
+            item = gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
@@ -892,53 +892,53 @@ class UImodelization:
             # Add entries to concatenate column
             concatMenu = gtk.Menu()
             if selectedField.getIndex() > 0:
-                item = gtk.MenuItem("with precedent field")
+                item = gtk.MenuItem(_("with precedent field"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
                 concatMenu.append(item)
 
-                item = gtk.MenuItem("with all precedent field")
+                item = gtk.MenuItem(_("with all precedent field"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
                 concatMenu.append(item)
 
             if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
-                item = gtk.MenuItem("with next field")
+                item = gtk.MenuItem(_("with next field"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
 
-                item = gtk.MenuItem("with all next fields")
+                item = gtk.MenuItem(_("with all next fields"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
                 concatMenu.append(item)
 
             # Personalize the fields to be concatenated
-            item = gtk.MenuItem("personalize selection")
+            item = gtk.MenuItem(_("personalize selection"))
             item.show()
             item.connect("activate", self.ConcatChosenColumns)
             concatMenu.append(item)
 
-            item = gtk.MenuItem("Concatenate field")
+            item = gtk.MenuItem(_("Concatenate field"))
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
 
             # Add entry to split the column
-            item = gtk.MenuItem("Split field")
+            item = gtk.MenuItem(_("Split field"))
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
 
             # Add sub-entries to do partitioning of field cells
             subMenu = self.build_partitioning_submenu_for_field(selectedField)
-            item = gtk.MenuItem("Partitioning")
+            item = gtk.MenuItem(_("Partitioning"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add entry to retrieve the field domain of definition
-            item = gtk.MenuItem("Field's domain of definition")
+            item = gtk.MenuItem(_("Field's domain of definition"))
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
@@ -946,24 +946,24 @@ class UImodelization:
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
                 typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem("Create a variable")
+                itemVariable = gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
                 typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem("Edit variable")
+                itemVariable = gtk.MenuItem(_("Edit variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
             if selectedField.getVariable() != None:
-                itemVariable3 = gtk.MenuItem("Remove variable")
+                itemVariable3 = gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
                 typeMenuVariable.append(itemVariable3)
 
-            item = gtk.MenuItem("Configure variation of field")
+            item = gtk.MenuItem(_("Configure variation of field"))
             item.set_submenu(typeMenuVariable)
             item.show()
             menu.append(item)
@@ -974,39 +974,39 @@ class UImodelization:
 
             # Add entries for copy functions
             copyMenu = gtk.Menu()
-            item = gtk.MenuItem("Raw message")
+            item = gtk.MenuItem(_("Raw message"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, False, False, None)
             copyMenu.append(item)
-            item = gtk.MenuItem("Aligned message")
+            item = gtk.MenuItem(_("Aligned message"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, None)
             copyMenu.append(item)
-            item = gtk.MenuItem("Aligned formatted message")
+            item = gtk.MenuItem(_("Aligned formatted message"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, None)
             copyMenu.append(item)
-            item = gtk.MenuItem("Field")
+            item = gtk.MenuItem(_("Field"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, selectedField)
             copyMenu.append(item)
-            item = gtk.MenuItem("Formatted field")
+            item = gtk.MenuItem(_("Formatted field"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, selectedField)
             copyMenu.append(item)
-            item = gtk.MenuItem("Copy to clipboard")
+            item = gtk.MenuItem(_("Copy to clipboard"))
             item.set_submenu(copyMenu)
             item.show()
             menu.append(item)
 
             # Add entry to show properties of the message
-            item = gtk.MenuItem("Message properties")
+            item = gtk.MenuItem(_("Message properties"))
             item.show()
             item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
             menu.append(item)
 
             # Add entry to delete the message
-            item = gtk.MenuItem("Delete message")
+            item = gtk.MenuItem(_("Delete message"))
             item.show()
             item.connect("activate", self.rightClickDeleteMessage)
             menu.append(item)
@@ -1022,7 +1022,7 @@ class UImodelization:
 
         # Sanity checks
         if project == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         menu = gtk.Menu()
 
@@ -1042,7 +1042,7 @@ class UImodelization:
         menu = gtk.Menu()
 
         # Sequence alignment
-        item = gtk.MenuItem("Sequence Alignment")
+        item = gtk.MenuItem(_("Sequence Alignment"))
         item.show()
         item.connect("activate", self.fieldPartitioning, field, "alignment")
         menu.append(item)
@@ -1055,7 +1055,7 @@ class UImodelization:
 #        menu.append(item)
 
         # Simple partitioning
-        item = gtk.MenuItem("Simple Partitioning")
+        item = gtk.MenuItem(_("Simple Partitioning"))
         item.show()
         item.connect("activate", self.fieldPartitioning, field, "simple")
         menu.append(item)
@@ -1135,7 +1135,7 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToChangeFormat, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem("Format")
+        item = gtk.MenuItem(_("Format"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
@@ -1148,7 +1148,7 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToChangeUnitSize, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem("UnitSize")
+        item = gtk.MenuItem(_("UnitSize"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
@@ -1161,7 +1161,7 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToChangeSign, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem("Sign")
+        item = gtk.MenuItem(_("Sign"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
@@ -1174,7 +1174,7 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToChangeEndianess, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem("Endianess")
+        item = gtk.MenuItem(_("Endianess"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
@@ -1185,13 +1185,13 @@ class UImodelization:
                                    gtk.DIALOG_MODAL,
                                    gtk.MESSAGE_INFO,
                                    gtk.BUTTONS_CANCEL,
-                                   "Modify field attributes")
+                                   _("Modify field attributes"))
         vbox = gtk.VBox()
 
         # Create hbox for field name
         hbox = gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Name : ")), False, 5, 5)
         entryName = gtk.Entry()
         entryName.set_text(field.getName())
         # Allow the user to press enter to do ok
@@ -1201,7 +1201,7 @@ class UImodelization:
         # Create hbox for field description
         hbox = gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel("Description : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Description : ")), False, 5, 5)
         entryDescr = gtk.Entry()
         if field.getDescription():
             entryDescr.set_text(field.getDescription())
@@ -1214,7 +1214,7 @@ class UImodelization:
         # Create hbox for field regex
         hbox = gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel("Regex (be careful !) : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Regex (be careful !) : ")), False, 5, 5)
         entryRegex = gtk.Entry()
         entryRegex.set_text(field.getRegex())
         # Allow the user to press enter to do ok
@@ -1224,7 +1224,7 @@ class UImodelization:
         # Create hbox for field encapsulation level
         hbox = gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel("Encapsulation level : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Encapsulation level : ")), False, 5, 5)
         comboEncap = NetzobComboBoxEntry()
         for i in range(10):
             comboEncap.append_text(str(i))
@@ -1276,7 +1276,7 @@ class UImodelization:
     def button_press_on_treeview_typeStructure(self, treeview, event):
         # Popup a menu
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
-            self.log.debug("User requested a contextual menu (on treeview typeStructure)")
+            self.log.debug(_("User requested a contextual menu (on treeview typeStructure)"))
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
@@ -1287,62 +1287,62 @@ class UImodelization:
                 if field.getIndex() == iField:
                     selectedField = field
             if selectedField == None:
-                self.log.warn("Impossible to retrieve the clicked field !")
+                self.log.warn(_("Impossible to retrieve the clicked field!"))
                 return
 
             menu = gtk.Menu()
 
             # Add entry to edit field
-            item = gtk.MenuItem("Edit field")
+            item = gtk.MenuItem(_("Edit field"))
             item.show()
             item.connect("activate", self.displayPopupToEditField, selectedField)
             menu.append(item)
 
             # Add sub-entries to change the type of a specific field
             subMenu = self.build_encoding_submenu(selectedField, None)
-            item = gtk.MenuItem("Field visualization")
+            item = gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add entries to concatenate fields
             concatMenu = gtk.Menu()
-            item = gtk.MenuItem("with precedent field")
+            item = gtk.MenuItem(_("with precedent field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
             concatMenu.append(item)
-            item = gtk.MenuItem("with all precedent field")
+            item = gtk.MenuItem(_("with all precedent field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
             concatMenu.append(item)
 
-            item = gtk.MenuItem("with next field")
+	    item = gtk.MenuItem(_("with next field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
             concatMenu.append(item)
-            item = gtk.MenuItem("with all next field")
+            item = gtk.MenuItem(_("with all next field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
             concatMenu.append(item)
 
-            item = gtk.MenuItem("personalize selection")
+            item = gtk.MenuItem(_("personalize selection"))
             item.show()
             item.connect("activate", self.ConcatChosenColumns)
             concatMenu.append(item)
 
-            item = gtk.MenuItem("Concatenate field")
+            item = gtk.MenuItem(_("Concatenate field"))
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
 
             # Add entry to split the field
-            item = gtk.MenuItem("Split field")
+            item = gtk.MenuItem(_("Split field"))
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
 
             # Add entry to retrieve the field domain of definition
-            item = gtk.MenuItem("Field's domain of definition")
+            item = gtk.MenuItem(_("Field's domain of definition"))
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
@@ -1350,30 +1350,30 @@ class UImodelization:
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
                 typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem("Create a variable")
+                itemVariable = gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
                 typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem("Edit variable")
+                itemVariable = gtk.MenuItem(_("Edit variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
             if selectedField.getVariable() != None:
-                itemVariable3 = gtk.MenuItem("Remove variable")
+                itemVariable3 = gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
                 typeMenuVariable.append(itemVariable3)
 
-            item = gtk.MenuItem("Configure variation of field")
+            item = gtk.MenuItem(_("Configure variation of field"))
             item.set_submenu(typeMenuVariable)
             item.show()
             menu.append(item)
 
             # Add entry to export fields
-            item = gtk.MenuItem("Export selected fields")
+            item = gtk.MenuItem(_("Export selected fields"))
             item.show()
             item.connect("activate", self.exportSelectedFields_cb)
             menu.append(item)
@@ -1399,7 +1399,7 @@ class UImodelization:
                     if field.getIndex() == iField:
                         selectedField = field
                 if selectedField == None:
-                    self.log.warn("Impossible to retrieve the clicked field !")
+                    self.log.warn(_("Impossible to retrieve the clicked field !"))
                     return
 
                 cells = self.treeTypeStructureGenerator.getSymbol().getCellsByField(selectedField)
@@ -1409,13 +1409,13 @@ class UImodelization:
                     aggregatedCells[i] += str(cells[i])
 
         # Popup a menu to save the data
-        dialog = gtk.Dialog(title="Save selected data", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Save selected data"), flags=0, buttons=None)
         dialog.show()
         table = gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
 
         # Add to an existing trace
-        label = NetzobLabel("Add to an existing trace")
+        label = NetzobLabel(_("Add to an existing trace"))
         entry = gtk.combo_box_entry_new_text()
         entry.show()
         entry.set_size_request(300, -1)
@@ -1425,17 +1425,17 @@ class UImodelization:
             if tmpDir == '.svn':
                 continue
             entry.append_text(tmpDir)
-        but = NetzobButton("Save")
+        but = NetzobButton(_("Save"))
         but.connect("clicked", self.add_packets_to_existing_trace, entry, aggregatedCells, dialog)
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Create a new trace
-        label = NetzobLabel("Create a new trace")
+        label = NetzobLabel(_("Create a new trace"))
         entry = gtk.Entry()
         entry.show()
-        but = NetzobButton("Save")
+        but = NetzobButton(_("Save"))
         but.connect("clicked", self.create_new_trace, entry, aggregatedCells, dialog)
         table.attach(label, 0, 1, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 1, 2, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -1469,7 +1469,7 @@ class UImodelization:
     #| Creation of a new trace from a selection of packets
     #+----------------------------------------------
     def create_new_trace(self, button, entry, messages, dialog):
-        logging.warn("Not yet implemented")
+        logging.warn(_("Not yet implemented"))
         return
 
         # projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
@@ -1507,7 +1507,7 @@ class UImodelization:
         # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         cells = self.treeMessageGenerator.getSymbol().getUniqValuesByField(field)
@@ -1516,7 +1516,7 @@ class UImodelization:
             tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, field.getFormat()))
         domain = sorted(tmpDomain)
 
-        dialog = gtk.Dialog(title="Domain of definition for the column " + field.getName(), flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Domain of definition for the column ") + field.getName(), flags=0, buttons=None)
 
         # Text view containing domain of definition
         ## ListStore format:
@@ -1529,7 +1529,7 @@ class UImodelization:
         cell.set_sensitive(True)
         cell.set_property('editable', True)
 
-        column = gtk.TreeViewColumn("Column " + str(field.getIndex()))
+        column = gtk.TreeViewColumn(_("Column ") + str(field.getIndex()))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
 
@@ -1551,12 +1551,12 @@ class UImodelization:
     #|   Copy the message to the clipboard
     #+----------------------------------------------
     def rightClickToCopyToClipboard(self, event, id_message, aligned, encoded, field):
-        self.log.debug("The user wants to copy the following message to the clipboard : " + str(id_message))
+        self.log.debug(_("The user wants to copy the following message to the clipboard: {0}").format(str(id_message)))
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(id_message)
         if message == None:
-            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]".format(id_message)))
             return
 
         if aligned == False:  # Copy the entire raw message
@@ -1571,16 +1571,16 @@ class UImodelization:
     #|   Show a popup to present the properties of the selected message
     #+----------------------------------------------
     def rightClickShowPropertiesOfMessage(self, event, id_message):
-        self.log.debug("The user wants to see the properties of message " + str(id_message))
+        self.log.debug(_("The user wants to see the properties of message {0}").format(str(id_message)))
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(id_message)
         if message == None:
-            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(id_message))
+            self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]").format(id_message))
             return
 
         # Create the dialog
-        dialog = gtk.Dialog(title="Properties of message " + str(message.getID()), flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Properties of message ") + str(message.getID()), flags=0, buttons=None)
         ## ListStore format : (str=key, str=type, str=value)
         treeview = gtk.TreeView(gtk.ListStore(str, str, str))
         treeview.set_size_request(500, 300)
@@ -1588,15 +1588,15 @@ class UImodelization:
 
         cell = gtk.CellRendererText()
 
-        columnProperty = gtk.TreeViewColumn("Property")
+        columnProperty = gtk.TreeViewColumn(_("Property"))
         columnProperty.pack_start(cell, True)
         columnProperty.set_attributes(cell, text=0)
 
-        columnType = gtk.TreeViewColumn("Type")
+        columnType = gtk.TreeViewColumn(_("Type"))
         columnType.pack_start(cell, True)
         columnType.set_attributes(cell, text=1)
 
-        columnValue = gtk.TreeViewColumn("Value")
+        columnValue = gtk.TreeViewColumn(_("Value"))
         columnValue.pack_start(cell, True)
         columnValue.set_attributes(cell, text=2)
 
@@ -1622,7 +1622,7 @@ class UImodelization:
     #|   Delete the requested message
     #+----------------------------------------------
     def rightClickDeleteMessage(self, event):
-        questionMsg = "Click yes to confirm the deletion of the selected messages"
+        questionMsg = _("Click yes to confirm the deletion of the selected messages")
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
@@ -1635,14 +1635,14 @@ class UImodelization:
             aIter = model.get_iter(path)
             if(model.iter_is_valid(aIter)):
                 id_message = model.get_value(aIter, 0)
-                self.log.debug("The user wants to delete the message " + str(id_message))
+                self.log.debug(_("The user wants to delete the message {0}").format(str(id_message)))
 
                 message_symbol = self.selectedSymbol
                 message = self.selectedSymbol.getMessageByID(id_message)
 
                 # Break if the message to move was not found
                 if message == None:
-                    self.log.warning("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message))
+                    self.log.warning(_("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message)))
                     return
                 message_symbol.removeMessage(message)
                 self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
@@ -1692,15 +1692,15 @@ class UImodelization:
         nrows = 2
         if(errormessage):
             nrows = 3
-        dialog = gtk.Dialog(title="Concatenation of Fields", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Concatenation of Fields"), flags=0, buttons=None)
         panel = gtk.Table(rows=nrows, columns=4, homogeneous=False)
         panel.show()
 
         ## Label for indexes of the fields
-        label = NetzobLabel("Fields from:")
+        label = NetzobLabel(_("Fields from:"))
         index1 = gtk.Entry(4)
         index1.show()
-        label2 = NetzobLabel("to:")
+        label2 = NetzobLabel(_("to:"))
         index2 = gtk.Entry(4)
         index2.show()
         if(errormessage):
@@ -1715,7 +1715,7 @@ class UImodelization:
             panel.attach(label3, 2, 4, 2, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
-        searchButton = NetzobButton("Concatenate fields")
+        searchButton = NetzobButton(_("Concatenate fields"))
         searchButton.connect("clicked", self.clickToConcatChosenColumns, index1, index2, dialog)
         panel.attach(searchButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -1730,10 +1730,10 @@ class UImodelization:
         try:
             nfirst = int(index1.get_text())
             nlast = int(index2.get_text())
-            self.log.debug("Concatenate from " + str(nfirst) + " to the column " + str(nlast))
+            self.log.debug(_("Concatenate from {0} to the column {1}").format(str(nfirst), str(nlast)))
             if max(nlast, nfirst) >= len(self.selectedSymbol.fields):
                 dialog.destroy()
-                self.ConcatChosenColumns(errormessage="Error: " + str(max(nlast, nfirst)) + " > Last field index")
+                self.ConcatChosenColumns(errormessage=_("Error: {0} > Last field index".format(str(max(nlast, nfirst)))))
                 return 1
             if(nlast > nfirst):
                 for i_concatleft in range(nlast - nfirst):
@@ -1748,21 +1748,20 @@ class UImodelization:
                 dialog.destroy()
         except:
             dialog.destroy()
-            self.ConcatChosenColumns(errormessage="Error: You must put integers in forms")
+            self.ConcatChosenColumns(errormessage=_("Error: You must put integers in forms"))
 
     #+----------------------------------------------
     #|  rightClickToConcatColumns:
     #|   Callback to concatenate two columns
     #+----------------------------------------------
     def rightClickToConcatColumns(self, event, field, strOtherCol):
-        self.log.debug("Concatenate the column " + str(field.getIndex()) + " with the " + str(strOtherCol) + " column")
-
+        self.log.debug(_("Concatenate the column {0} with the {1} column").format(str(field.getIndex()), str(strOtherCol)))
         if field.getIndex() == 0 and (strOtherCol == "left" or strOtherCol == "allleft"):
-            self.log.debug("Can't concatenate the first column with its left column")
+            self.log.debug(_("Can't concatenate the first column with its left column"))
             return
 
         if field.getIndex() + 1 == len(self.selectedSymbol.getFields()) and (strOtherCol == "right" or strOtherCol == "allright"):
-            self.log.debug("Can't concatenate the last column with its right column")
+            self.log.debug(_("Can't concatenate the last column with its right column"))
             return
 
         if strOtherCol == "left":
@@ -1784,7 +1783,7 @@ class UImodelization:
     #|   Callback to split a column
     #+----------------------------------------------
     def rightClickToSplitColumn(self, event, field):
-        dialog = gtk.Dialog(title="Split column " + str(field.getIndex()), flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Split column ") + str(field.getIndex()), flags=0, buttons=None)
         textview = gtk.TextView()
         textview.set_editable(False)
         textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
@@ -1800,7 +1799,7 @@ class UImodelization:
 
         # Padding orientation
         self.split_align = "left"
-        but = NetzobButton("Align to right")
+        but = NetzobButton(_("Align to right"))
         but.connect("clicked", self.doAlignSplit, textview, field, but)
         dialog.action_area.pack_start(but, True, True, 0)
 
@@ -1823,12 +1822,12 @@ class UImodelization:
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Split button
-        but = NetzobButton("Split column")
+        but = NetzobButton(_("Split column"))
         but.connect("clicked", self.doSplitColumn, textview, field, dialog)
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Text view containing selected column messages
-        frame = NetzobFrame("Content of the column to split")
+        frame = NetzobFrame(_("Content of the column to split"))
         textview.set_size_request(600, 300)
 #        cells = self.treeMessageGenerator.getSymbol().getCellsByCol(iCol)
 
@@ -1845,32 +1844,32 @@ class UImodelization:
         dialog.show()
 
     def rightClickCreateVariable(self, widget, symbol, field):
-        self.log.debug("Opening the dialog for the creation of a variable")
+        self.log.debug(_("Opening the dialog for the creation of a variable"))
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
-        dialog.set_markup('Definition of the new variable')
+        dialog.set_markup(_("Definition of the new variable"))
 
         # Create the ID of the new variable
         variableID = uuid.uuid4()
 
         mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
         # id of the variable
-        variableIDLabel = NetzobLabel("ID :")
+        variableIDLabel = NetzobLabel(_("ID :"))
         variableIDValueLabel = NetzobLabel(str(variableID))
         variableIDValueLabel.set_sensitive(False)
         mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # name of the variable
-        variableNameLabel = NetzobLabel("Name : ")
+        variableNameLabel = NetzobLabel(_("Name : "))
         variableNameEntry = gtk.Entry()
         variableNameEntry.show()
         mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Include current binary values
-        variableWithCurrentBinariesLabel = NetzobLabel("Add current binaries : ")
+        variableWithCurrentBinariesLabel = NetzobLabel(_("Add current binaries : "))
 
-        variableWithCurrentBinariesButton = gtk.CheckButton("Disjunctive inclusion")
+        variableWithCurrentBinariesButton = gtk.CheckButton(_("Disjunctive inclusion"))
         variableWithCurrentBinariesButton.set_active(False)
         variableWithCurrentBinariesButton.show()
 
@@ -1905,7 +1904,7 @@ class UImodelization:
         creationPanel.display()
 
     def rightClickRemoveVariable(self, widget, field):
-        questionMsg = "Click yes to confirm the removal of the variable {0}".format(field.getVariable().getID())
+        questionMsg = _("Click yes to confirm the removal of the variable {0}").format(field.getVariable().getID())
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
@@ -1913,10 +1912,10 @@ class UImodelization:
             field.setVariable(None)
             self.update()
         else:
-            self.log.debug("The user didn't confirm the deletion of the variable " + str(field.getVariable().getID()))
+            self.log.debug(_("The user didn't confirm the deletion of the variable {0}").format(str(field.getVariable().getID())))
 
     def rightClickEditVariable(self, widget, field):
-        logging.error("The edition of an existing variable is not yet implemented")
+        logging.error(_("The edition of an existing variable is not yet implemented"))
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 1:
@@ -1976,10 +1975,10 @@ class UImodelization:
     def doAlignSplit(self, widget, textview, field, button_align):
         if self.split_align == "left":
             self.split_align = "right"
-            button_align.set_label("Align to left")
+            button_align.set_label(_("Align to left"))
         else:
             self.split_align = "left"
-            button_align.set_label("Align to right")
+            button_align.set_label(_("Align to right"))
 
         messages = self.selectedSymbol.getCellsByField(field)
 
@@ -2018,7 +2017,7 @@ class UImodelization:
                 selectedField = field
 
         if selectedField == None:
-            self.log.warn("Impossible to retrieve the clicked field !")
+            self.log.warn(_("Impossible to retrieve the clicked field !"))
             return
 
         possible_choices = Format.getSupportedFormats()
@@ -2088,13 +2087,13 @@ class UImodelization:
 
         if (symbol != None):
             # Edit the Symbol
-            itemEditSymbol = gtk.MenuItem("Edit symbol")
+            itemEditSymbol = gtk.MenuItem(_("Edit symbol"))
             itemEditSymbol.show()
             itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
             menu.append(itemEditSymbol)
 
             # Search in the Symbol
-            itemSearchSymbol = gtk.MenuItem("Search in")
+            itemSearchSymbol = gtk.MenuItem(_("Search in"))
             itemSearchSymbol.show()
             itemSearchSymbol.connect("activate", self.displayPopupToSearch, "Symbol", symbol)
             menu.append(itemSearchSymbol)
@@ -2103,36 +2102,36 @@ class UImodelization:
             subMenuAlignment = gtk.Menu()
 
             # Sequence alignment
-            itemSequenceAlignment = gtk.MenuItem("Sequence Alignment")
+            itemSequenceAlignment = gtk.MenuItem(_("Sequence Alignment"))
             itemSequenceAlignment.show()
             itemSequenceAlignment.connect("activate", self.sequenceAlignmentOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSequenceAlignment)
 
             # Force partitioning
-            itemForcePartitioning = gtk.MenuItem("Force Partitioning")
+            itemForcePartitioning = gtk.MenuItem(_("Force Partitioning"))
             itemForcePartitioning.show()
             itemForcePartitioning.connect("activate", self.forcePartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemForcePartitioning)
 
             # Simple partitioning
-            itemSimplePartitioning = gtk.MenuItem("Simple Partitioning")
+            itemSimplePartitioning = gtk.MenuItem(_("Simple Partitioning"))
             itemSimplePartitioning.show()
             itemSimplePartitioning.connect("activate", self.simplePartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSimplePartitioning)
 
             # Smooth partitioning
-            itemSmoothPartitioning = gtk.MenuItem("Smooth Partitioning")
+            itemSmoothPartitioning = gtk.MenuItem(_("Smooth Partitioning"))
             itemSmoothPartitioning.show()
             itemSmoothPartitioning.connect("activate", self.smoothPartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSmoothPartitioning)
 
             # Reset partitioning
-            itemResetPartitioning = gtk.MenuItem("Reset Partitioning")
+            itemResetPartitioning = gtk.MenuItem(_("Reset Partitioning"))
             itemResetPartitioning.show()
             itemResetPartitioning.connect("activate", self.resetPartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemResetPartitioning)
 
-            itemMenuAlignment = gtk.MenuItem("Align the symbol")
+            itemMenuAlignment = gtk.MenuItem(_("Align the symbol"))
             itemMenuAlignment.show()
             itemMenuAlignment.set_submenu(subMenuAlignment)
 
@@ -2140,19 +2139,19 @@ class UImodelization:
 
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu(symbol, None)
-            item = gtk.MenuItem("Field visualization")
+            item = gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Remove a Symbol
-            itemRemoveSymbol = gtk.MenuItem("Remove symbol")
+            itemRemoveSymbol = gtk.MenuItem(_("Remove symbol"))
             itemRemoveSymbol.show()
             itemRemoveSymbol.connect("activate", self.displayPopupToRemoveSymbol, symbol)
             menu.append(itemRemoveSymbol)
         else:
             # Create a Symbol
-            itemCreateSymbol = gtk.MenuItem("Create a symbol")
+            itemCreateSymbol = gtk.MenuItem(_("Create a symbol"))
             itemCreateSymbol.show()
             itemCreateSymbol.connect("activate", self.displayPopupToCreateSymbol, symbol)
             menu.append(itemCreateSymbol)
@@ -2164,7 +2163,7 @@ class UImodelization:
                                    gtk.DIALOG_MODAL,
                                    gtk.MESSAGE_OTHER,
                                    gtk.BUTTONS_OK,
-                                   "Searching")
+                                   _("Searching"))
         # Create the main panel
         panel = gtk.Table(rows=3, columns=2, homogeneous=False)
         panel.show()
@@ -2206,7 +2205,7 @@ class UImodelization:
         gtk.MESSAGE_QUESTION,
         gtk.BUTTONS_OK,
         None)
-        dialog.set_markup("<b>Please enter the name of the symbol :</b>")
+        dialog.set_markup(_("<b>Please enter the name of the symbol :</b>"))
         #create the text input field
         entry = gtk.Entry()
         entry.set_text(symbol.getName())
@@ -2214,7 +2213,7 @@ class UImodelization:
         entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
-        hbox.pack_start(NetzobLabel("Name : "), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Name : ")), False, 5, 5)
         hbox.pack_end(entry)
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
@@ -2247,14 +2246,14 @@ class UImodelization:
                                    gtk.MESSAGE_QUESTION,
                                    gtk.BUTTONS_OK,
                                    None)
-        dialog.set_markup("<b>Please enter symbol's name</b> :")
+        dialog.set_markup(_("<b>Please enter symbol's name</b> :"))
         #create the text input field
         entry = gtk.Entry()
         #allow the user to press enter to do ok
         entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         #create a horizontal box to pack the entry and a label
         hbox = gtk.HBox()
-        hbox.pack_start(NetzobLabel("Name :"), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Name :")), False, 5, 5)
         hbox.pack_end(entry)
         #add it and show it
         dialog.vbox.pack_end(hbox, True, True, 0)
@@ -2266,7 +2265,7 @@ class UImodelization:
 
         if (len(newSymbolName) > 0):
             newSymbolId = str(uuid.uuid4())
-            self.log.debug("a new symbol will be created with the given name : {0}".format(newSymbolName))
+            self.log.debug(_("a new symbol will be created with the given name : {0}").format(newSymbolName))
             newSymbol = Symbol(newSymbolId, newSymbolName, self.netzob.getCurrentProject())
 
             self.netzob.getCurrentProject().getVocabulary().addSymbol(newSymbol)
@@ -2282,8 +2281,8 @@ class UImodelization:
     #+----------------------------------------------
     def displayPopupToRemoveSymbol(self, event, symbol):
 
-        self.log.debug("Can remove the symbol {0} since it's an empty one.".format(symbol.getName()))
-        questionMsg = "Click yes to confirm the removal of the symbol {0}".format(symbol.getName())
+        self.log.debug(_("Can remove the symbol {0} since it's an empty one.").format(symbol.getName()))
+        questionMsg = _("Click yes to confirm the removal of the symbol {0}").format(symbol.getName())
         md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
         result = md.run()
         md.destroy()
@@ -2296,7 +2295,7 @@ class UImodelization:
             #Update Left and Right
             self.update()
         else:
-            self.log.debug("The user didn't confirm the deletion of the symbol " + symbol.getName())
+            self.log.debug(_("The user didn't confirm the deletion of the symbol {0}").format(symbol.getName()))
 
     #+----------------------------------------------
     #| drop_fromDND:
@@ -2320,10 +2319,10 @@ class UImodelization:
 
             # Break if the message to move was not found
             if message == None:
-                self.log.warning("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id))
+                self.log.warning(_("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id)))
                 return
 
-            self.log.debug("The message having the ID [{0}] has been found !".format(msg_id))
+            self.log.debug(_("The message having the ID [{0}] has been found !".format(msg_id)))
 
             # Now we search for the new symbol of the message
             if info_depot:
@@ -2335,11 +2334,10 @@ class UImodelization:
                 new_message_symbol = self.netzob.getCurrentProject().getVocabulary().getSymbol(new_symbol_id)
 
             if new_message_symbol == None:
-                self.log.warning("Impossible to retrieve the symbol in which the selected message must be moved out.")
+                self.log.warning(_("Impossible to retrieve the symbol in which the selected message must be moved out."))
                 return
 
-            self.log.debug("The new symbol of the message is {0}".format(str(new_message_symbol.getID())))
-            # Removing from its old symbol
+            self.log.debug(_("The new symbol of the message is {0}").format(str(new_message_symbol.getID())))
             message_symbol.removeMessage(message)
 
             # Adding to its new symbol
@@ -2370,7 +2368,7 @@ class UImodelization:
     #+--------------------------------------------------------
     def moveTo(self, widget, symbol_dst, symbol_src, listmessages):
 
-        self.log.debug("Move messages from {0} to {1} : {2}".format(symbol_src.getName(), symbol_dst.getName(), ",".join(listmessages)))
+        self.log.debug(_("Move messages from {0} to {1} : {2}").format(symbol_src.getName(), symbol_dst.getName(), ",".join(listmessages)))
 
         if not listmessages:
             return
@@ -2446,7 +2444,7 @@ class UImodelization:
         self.update()
 
     def loggingNeedlemanStatus(self, status, message):
-        self.log.debug("Status = " + str(status) + " : " + str(message))
+        self.log.debug(_("Status = {0}: {1}").format(str(status), str(message)))
 
     #+----------------------------------------------
     #| drag_fromDND:
@@ -2548,7 +2546,7 @@ class UImodelization:
     def updateDisplayFormat(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         # Set the format choice as default
@@ -2567,7 +2565,7 @@ class UImodelization:
     def updateDisplayUnitSize(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         # Set the unitSize choice as default
@@ -2586,7 +2584,7 @@ class UImodelization:
     def updateDisplaySign(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         # Set the sign choice as default
@@ -2605,7 +2603,7 @@ class UImodelization:
     def updateDisplayEndianess(self, combo):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         # Set the endianess choice as default
@@ -2624,15 +2622,15 @@ class UImodelization:
     def freezePartitioning_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
         self.selectedSymbol.freezePartitioning()
         self.update()
-        NetzobInfoMessage("Freezing done.")
+        NetzobInfoMessage(_("Freezing done."))
 
     #+----------------------------------------------
     #| Called when user wants to execute data carving
@@ -2640,13 +2638,13 @@ class UImodelization:
     def dataCarving_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
-        self.log.info("Execute Data Carving on symbol ${0}".format(self.selectedSymbol.getName()))
+        self.log.info(_("Execute Data Carving on symbol ${0}").format(self.selectedSymbol.getName()))
         self.executeDataCarving(self.selectedSymbol)
 
         # Active the messages and the search view
@@ -2681,21 +2679,21 @@ class UImodelization:
     def search_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         self.prepareSearch(self.searchEntry.get_text(), self.typeCombo.get_active_text())
 
     def prepareSearch(self, searchedPattern, typeOfPattern):
         if len(searchedPattern) == 0:
-            NetzobErrorMessage("Do not start the searching process since no pattern has been provided")
+            NetzobErrorMessage(_("Do not start the searching process since no pattern has been provided"))
             return
 
         if len(typeOfPattern) == 0:
-            NetzobErrorMessage("Do not start the searching process since no type has been provided")
+            NetzobErrorMessage(_("Do not start the searching process since no type has been provided"))
             return
 
-        self.log.debug("User searches for " + searchedPattern + " of type " + typeOfPattern)
+        self.log.debug(_("User searches for {0} of type {1}").format(searchedPattern, typeOfPattern))
         self.search(searchedPattern, typeOfPattern)
 
         # Active the messages and the search view
@@ -2707,14 +2705,16 @@ class UImodelization:
 
     def prepareSearchInSymbol(self, searchedPattern, typeOfPattern, symbol):
         if len(searchedPattern) == 0:
-            NetzobErrorMessage("Do not start the searching process since no pattern has been provided")
+            NetzobErrorMessage(_("Do not start the searching process since no pattern has been provided"))
             return
 
         if len(typeOfPattern) == 0:
-            NetzobErrorMessage("Do not start the searching process since no type has been provided")
+            NetzobErrorMessage(_("Do not start the searching process since no type has been provided"))
             return
 
-        self.log.debug("User searches for " + searchedPattern + " of type " + typeOfPattern + " in symbol " + str(symbol.getName()))
+        self.log.debug(_("User searches for {0} of type {1} in symbol {2}").format(searchedPattern, typeOfPattern, str(symbol.getName())))
+
+
         self.search(searchedPattern, typeOfPattern, "Symbol", symbol)
 
         # Active the messages and the search view
@@ -2744,10 +2744,10 @@ class UImodelization:
             searchedData.extend(searcher.getSearchedDataForString(pattern))
 
         if len(searchedData) == 0:
-            self.log.warn("No data to search after were computed.")
+            self.log.warn(_("No data to search after were computed."))
             return
 
-        self.log.debug("The following data will be searched for :")
+        self.log.debug(_("The following data will be searched for:"))
         for data in searchedData:
             self.log.debug(" - " + str(data))
 
@@ -2766,7 +2766,7 @@ class UImodelization:
     def env_dependencies_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
 
         # Initialize the searcher
@@ -2797,10 +2797,10 @@ class UImodelization:
     def messagesDistribution_cb(self, but):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
         entropy = Entropy(self.selectedSymbol)
@@ -2812,17 +2812,17 @@ class UImodelization:
     def findASN1Fields_cb(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
         box = self.selectedSymbol.findASN1Fields(self.netzob.getCurrentProject())
         if box == None:
-            NetzobErrorMessage("No ASN.1 field found.")
+            NetzobErrorMessage(_("No ASN.1 field found."))
         else:  # Show the results
-            dialog = gtk.Dialog(title="Find ASN.1 fields", flags=0, buttons=None)
+            dialog = gtk.Dialog(title=_("Find ASN.1 fields"), flags=0, buttons=None)
             dialog.vbox.pack_start(box, True, True, 0)
             dialog.show()
 
@@ -2832,10 +2832,10 @@ class UImodelization:
     def findSizeFields(self, button):
         # Sanity checks
         if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
+            NetzobErrorMessage(_("No symbol selected."))
             return
 
         # Save the current encapsulation level of each field
@@ -2846,7 +2846,7 @@ class UImodelization:
         sizeFieldIdentifier = SizeFieldIdentifier()
 
         # Show the progression dialog
-        dialog = gtk.Dialog(title="Size Fields Identifications", flags=0, buttons=None)
+        dialog = gtk.Dialog(title=_("Size Fields Identifications"), flags=0, buttons=None)
         panel = gtk.Table(rows=2, columns=2, homogeneous=False)
         panel.show()
 
@@ -2855,8 +2855,8 @@ class UImodelization:
         panel.attach(self.progressBarSizeField, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Buttons
-        cancelSizeFieldButton = NetzobButton("Cancel")
-        startSizeFieldButton = NetzobButton("Start")
+        cancelSizeFieldButton = NetzobButton(_("Cancel"))
+        startSizeFieldButton = NetzobButton(_("Start"))
 
         cancelSizeFieldButton.set_sensitive(False)
         cancelSizeFieldButton.connect("clicked", self.cancelfindSizeFields_cb, dialog, startSizeFieldButton, sizeFieldIdentifier)
@@ -2886,7 +2886,7 @@ class UImodelization:
         try:
             (yield ThreadedTask(sizeFieldIdentifier.search, symbols, results))
         except TaskError, e:
-            self.log.error("Error while proceeding to the size field identification : " + str(e))
+            self.log.error(_("Error while proceeding to the size field identification: {0}").format(str(e)))
 
         sizeFields = sizeFieldIdentifier.getResults()
         logging.debug(sizeFields)
@@ -2997,8 +2997,8 @@ class UImodelization:
 #                        # Then we split the field
 #                        self.selectedSymbol.splitField(sizeField, size_field_len)
 
-                sizeField.setDescription("size field")
-                startField.setDescription("start of payload")
+                sizeField.setDescription(_("size field"))
+                startField.setDescription(_("start of payload"))
                 for i in range(start_field, end_field + 1):
                     field = self.selectedSymbol.getFieldByIndex(i)
                     field.setEncapsulationLevel(field.getEncapsulationLevel() + 1)
