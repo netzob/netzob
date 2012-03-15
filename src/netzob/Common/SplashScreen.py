@@ -51,7 +51,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 class SplashScreen(object):
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_title('Netzob')
+        self.window.set_title(_("Netzob"))
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_decorated(False)
         self.window.set_default_size(268, 501)
@@ -75,9 +75,9 @@ class SplashScreen(object):
 
         workspace = ResourcesConfiguration.getWorkspace()
         if workspace != None:
-            self.lbl = gtk.Label("Current workspace : " + workspace)
+            self.lbl = gtk.Label(_("Current workspace : ") + workspace)
         else:
-            self.lbl = gtk.Label("Current workspace : NO WORKSPACE COMPUTED !")
+            self.lbl = gtk.Label(_("Current workspace : NO WORKSPACE COMPUTED !"))
         self.lbl.set_alignment(0, 0.5)
 
         main_vbox.pack_start(self.image, True, True, 2)
