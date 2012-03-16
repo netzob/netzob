@@ -33,6 +33,24 @@ import time
 import random
 import string
 import unittest
+import os
+import sys
+#insert in the path the directory where _libNeedleman.pyd is
+if os.name == 'nt':
+     sys.path.insert(0, 'lib/libNeedleman/')
+
+try:
+    # Verify that libNeedleman is in the path
+    import _libNeedleman
+except:
+    # Else, assume the path is gotten from the 'python setup.py build' command
+    arch = os.uname()[-1]
+    python_version = sys.version[:3]
+    build_lib_path = "../../../../build/lib.linux-" + arch + "-" + python_version
+    sys.path.append(build_lib_path)
+
+
+sys.path.insert(0, 'src/')
 
 
 #+---------------------------------------------------------------------------+
@@ -50,7 +68,7 @@ class test_NeedlemanInC(unittest.TestCase):
 
     def test_deserialisationMessages(self):
         nbTest = 10
-        alignmentSolution = NeedlemanAndWunsch()
+        alignmentSolution = NeedlemanAndWunsch(8)
         
         for iTest in range(0, nbTest) :
             messages = []
@@ -65,7 +83,7 @@ class test_NeedlemanInC(unittest.TestCase):
             self.assertEqual(nbMessage, nbDeserializedTest)
         
     def test_AlignementOfMessages(self):     
-        alignmentSolution = NeedlemanAndWunsch()
+        alignmentSolution = NeedlemanAndWunsch(4)
         nbTest = 100
         
         for iTest in range(0, nbTest) :
@@ -77,14 +95,18 @@ class test_NeedlemanInC(unittest.TestCase):
                 message = RawMessage(uuid.uuid4(), str(time.time()), data)
                 messages.append(message)
             
-            (score, alignment) = alignmentSolution.align(False, messages)
-            (score2, alignmen2t) = alignmentSolution.align(True, messages)
+            (alignment, scores) = alignmentSolution.align(False, messages)
+            (score1, score2, score3) = scores
+            (alignmentBis, scoresBis) = alignmentSolution.align(True, messages)
+            (scoreBis1, scoreBis2, scoreBis3) = scoresBis
+            print alignment
+            print alignmentBis
             
-            self.assertGreaterEqual(score2, score)
-            self.assertGreaterEqual(score2, 90)            
+            self.assertGreaterEqual(scoreBis1, score1)
+            self.assertGreaterEqual(scoreBis1, 90)            
         
     def test_alignmentOfEquivalentMessages(self):     
-        alignmentSolution = NeedlemanAndWunsch()
+        alignmentSolution = NeedlemanAndWunsch(8)
         nbTest = 1000
         for i_test in range(0, nbTest) :
             common_pattern = self.generateRandomString(30, 40)
@@ -95,14 +117,20 @@ class test_NeedlemanInC(unittest.TestCase):
             message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
             message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
             
-            (score, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
-            self.assertEqual(score, 100.0)
+            (scores, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
+            (score1, score2, score3) = scores
+            self.assertEqual(score1, 100.0)
+            self.assertEqual(score2, 100.0)
+            self.assertEqual(score3, 100.0)
             
-            (score, alignment) = alignmentSolution.alignTwoMessages(True, message1, message2)
-            self.assertEqual(score, 100.0)
+            (scores, alignment) = alignmentSolution.alignTwoMessages(True, message1, message2)
+            (score1, score2, score3) = scores
+            self.assertEqual(score1, 100.0)
+            self.assertEqual(score2, 100.0)
+            self.assertEqual(score3, 100.0)
             
     def test_alignmentOfAlmostEquivalentMessages(self):     
-        alignmentSolution = NeedlemanAndWunsch()
+        alignmentSolution = NeedlemanAndWunsch(8)
         nbTest = 1000
         for i_test in range(0, nbTest) :
             common_pattern_before = self.generateRandomString(30, 40)
@@ -114,8 +142,10 @@ class test_NeedlemanInC(unittest.TestCase):
             message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
             message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
             
-            (score, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
-            (score2, alignment2) = alignmentSolution.alignTwoMessages(True, message1, message2)
-                        
-            self.assertGreater(score2, score)
-            self.assertGreater(score2, 95)
+            (scores, alignment) = alignmentSolution.alignTwoMessages(False, message1, message2)
+            (score1, score2, score3) = scores
+            (scoresBis, alignment2) = alignmentSolution.alignTwoMessages(True, message1, message2)
+            (scoreBis1, scoreBis2, scoreBis3) = scoresBis
+           
+            self.assertGreater(scoreBis1, score1)
+            self.assertGreater(scoreBis1, 95)

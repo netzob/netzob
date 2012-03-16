@@ -93,10 +93,12 @@ class NeedlemanAndWunsch(object):
         (serialMessages, format) = TypeConvertor.serializeMessages(messages)
 
         debug = False
-        (score, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
+        (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
+        scores = (score1, score2, score3)
+        
         alignment = self.deserializeAlignment(regex, mask)
         alignment = self.smoothAlignment(alignment)
-        return (alignment, score)
+        return (alignment, scores)
 
     #+-----------------------------------------------------------------------+
     #| alignTwoMessages
@@ -110,10 +112,11 @@ class NeedlemanAndWunsch(object):
         (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2])
 
         debug = False
-        (score, regex, mask) = _libNeedleman.alignTwoMessages(doInternalSlick, format, serialMessages, debug)
+        (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(doInternalSlick, format, serialMessages, debug)
+        scores = (score1, score2, score3)
         alignment = self.deserializeAlignment(regex, mask)
 
-        return (score, alignment)
+        return (scores, alignment)
 
     #+-----------------------------------------------------------------------+
     #| deserializeMessages
