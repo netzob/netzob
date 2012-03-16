@@ -99,19 +99,19 @@ class UPGMA(object):
     def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
 	###################################	FIND EQUAL MESSAGES
-	################################### 	useful for redundant protocols before doing heavy computations with Leedleman (complexity=O(N²) where N is #Symbols) 
-        ll=len(self.symbols)-1
-        i_equ=0
-        while(ll>0):
-	    currentMess=self.symbols[i_equ].getMessages()[0].getReducedStringData()
+	################################### 	useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols) 
+        ll = len(self.symbols) - 1
+        i_equ = 0
+        while(ll > 0):
+            currentMess = self.symbols[i_equ].getMessages()[0].getReducedStringData()
             for j in range(ll):
-                if(currentMess==self.symbols[i_equ+j+1].getMessages()[0].getReducedStringData()):
-                    self.mergeEffectiveRowCol(i_equ, i_equ+j+1)
-                    self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j+1)))
-                    i_equ-=1
+                if(currentMess == self.symbols[i_equ + j + 1].getMessages()[0].getReducedStringData()):
+                    self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
+                    self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
+                    i_equ -= 1
                     break
-            ll-=1
-            i_equ+=1
+            ll -= 1
+            i_equ += 1
 	########################################        
 	#################################################################
 
