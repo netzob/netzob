@@ -49,8 +49,9 @@ import logging
 #+---------------------------------------------------------------------------+
 class NeedlemanAndWunsch(object):
     
-    def __init__(self, cb_status=None):
+    def __init__(self, unitSize, cb_status=None):
         self.cb_status = cb_status
+        self.unitSize = unitSize
         self.result = []
     
     #+-----------------------------------------------------------------------+
@@ -94,6 +95,7 @@ class NeedlemanAndWunsch(object):
         debug = False
         (score, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
         alignment = self.deserializeAlignment(regex, mask)
+        alignment = self.smoothAlignment(alignment)
         return (alignment, score)
    
     #+-----------------------------------------------------------------------+
@@ -126,7 +128,23 @@ class NeedlemanAndWunsch(object):
         
         debug = False
         return _libNeedleman.deserializeMessages(len(messages), format, serialMessages, debug)
-        
+
+    #+-----------------------------------------------------------------------+
+    #| smoothAlignment:
+    #|     Try to smooth the given alignment
+    #| @param alignment The sequence alignment result
+    #| @returns The smoothed alignment
+    #+-----------------------------------------------------------------------+
+    def smoothAlignment(self, alignment): 
+        result = ""
+        nbLetters = self.unitSize / 4
+        for i in range(0, len(alignment), nbLetters):
+            if alignment[i:i+nbLetters].count("-") == 1:
+                for j in range(nbLetters):
+                    result += "-"
+            else:
+                result += alignment[i:i+nbLetters]
+        return result
         
     #+-----------------------------------------------------------------------+
     #| deserializeAlignment
@@ -229,21 +247,21 @@ class NeedlemanAndWunsch(object):
         fraction = 0.0
 #        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
         
-#        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
         defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
         minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
-#        
+        
         # We try to cluster each symbol
         for symbol in symbols:
-            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.cb_status)
+            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
             tmpSymbols.extend(clusteringSolution.executeClustering())
 
         # Now that all the symbols are reorganized separately
         # we should consider merging them
-        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.cb_status)        
+        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
         self.result = clusteringSolution.executeClustering()        
         
         if doOrphanReduction :

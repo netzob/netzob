@@ -49,13 +49,14 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 #+---------------------------------------------------------------------------+
 class UPGMA(object):
     
-    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None):
+    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, unitSize, cb_status=None):
         self.project = project;
         self.nbIteration = nbIteration
         self.minEquivalence = minEquivalence
         self.doInternalSlick = doInternalSlick
         self.cb_status = cb_status
         self.defaultFormat = defaultFormat
+        self.unitSize = unitSize
         
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
         
@@ -112,7 +113,7 @@ class UPGMA(object):
                 break
 
         self.cb_executionStatus(50.0, "Executing last alignment...")
-        alignment = NeedlemanAndWunsch(self.cb_status)
+        alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
@@ -221,7 +222,7 @@ class UPGMA(object):
             self.symbols = tmp_symbols
 
         self.cb_executionStatus(50.0, "Executing last alignment...")
-        alignment = NeedlemanAndWunsch(self.cb_status)
+        alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)

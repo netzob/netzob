@@ -416,7 +416,7 @@ class UImodelization:
         self.update()
 
         dialog = gtk.Dialog(title="Sequence alignment", flags=0, buttons=None)
-        panel = gtk.Table(rows=4, columns=3, homogeneous=False)
+        panel = gtk.Table(rows=5, columns=3, homogeneous=False)
         panel.show()
 
         ## Similarity threshold
@@ -435,6 +435,19 @@ class UImodelization:
         panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         panel.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        ## UnitSize for alignment
+        label = NetzobLabel("Unit size (in bits):")
+        comboUnitSize = gtk.combo_box_entry_new_text()
+        comboUnitSize.set_model(gtk.ListStore(str))
+        possible_choices = [4, 8]
+
+        for i in range(len(possible_choices)):
+            comboUnitSize.append_text(str(possible_choices[i]))
+        comboUnitSize.set_active(0)
+        comboUnitSize.show()
+        panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(comboUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
         # Widget button activate orphan reduction
         butOrphanReduction = gtk.CheckButton("Orphan reduction")
         doOrphanReduction = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
@@ -444,7 +457,7 @@ class UImodelization:
             butOrphanReduction.set_active(False)
         butOrphanReduction.connect("toggled", self.activeOrphanReduction)
         butOrphanReduction.show()
-        panel.attach(butOrphanReduction, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(butOrphanReduction, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
         but = gtk.CheckButton("Smooth alignment")
@@ -455,16 +468,16 @@ class UImodelization:
             but.set_active(False)
         but.connect("toggled", self.activeInternalSlickRegexes)
         but.show()
-        panel.attach(but, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(but, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
         self.progressbarAlignment = NetzobProgressBar()
-        panel.attach(self.progressbarAlignment, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(self.progressbarAlignment, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = NetzobButton("Sequence alignment")
-        searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog, symbols)
-        panel.attach(searchButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog, symbols, comboUnitSize)
+        panel.attach(searchButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -473,20 +486,21 @@ class UImodelization:
     #| sequenceAlignment_cb_cb:
     #|   Launch a sequence alignment thread
     #+----------------------------------------------
-    def sequenceAlignment_cb_cb(self, widget, dialog, symbols):
+    def sequenceAlignment_cb_cb(self, widget, dialog, symbols, comboUnitSize):
         self.currentExecutionOfAlignmentHasFinished = False
         # Start the progress bar
         gobject.timeout_add(200, self.do_pulse_for_sequenceAlignment)
         # Start the alignment JOB
-        Job(self.startSequenceAlignment(symbols, dialog))
+        unitSize = int( comboUnitSize.get_active_text() )
+        Job(self.startSequenceAlignment(symbols, dialog, unitSize))
 
     #+----------------------------------------------
     #| startSequenceAlignment:
     #|   Execute the Job of the Alignment in a unsynchronized way
     #+----------------------------------------------
-    def startSequenceAlignment(self, symbols, dialog):
+    def startSequenceAlignment(self, symbols, dialog, unitSize):
         self.currentExecutionOfAlignmentHasFinished = False
-        alignmentSolution = NeedlemanAndWunsch(self.percentOfAlignmentProgessBar)
+        alignmentSolution = NeedlemanAndWunsch(unitSize, self.percentOfAlignmentProgessBar)
         
         try :
             (yield ThreadedTask(alignmentSolution.alignSymbols, symbols, self.netzob.getCurrentProject()))
@@ -964,23 +978,25 @@ class UImodelization:
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(message_id)
-        if message == None:
-            self.log.warning("Impossible to retrieve the message based on its ID [{0}]".format(message_id))
-            return
-        
-        # Retrieve content of the field
-        field_content = message.getSplittedData(False)[field.getIndex()]
+        if message != None:
+            # Retrieve content of the field
+            field_content = message.getSplittedData(False)[field.getIndex()]
+        else:
+            field_content = None
 
         # Format submenu
         possible_choices = Format.getSupportedFormats()
         subMenu = gtk.Menu()
         for value in possible_choices:
-            # Get preview of field content
-            text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
-            if len(text_preview) > 10:
-                text_preview = text_preview[:10] + "..."
-
-            item = gtk.MenuItem(value + " (" + text_preview + ")")
+            if field_content != None:
+                # Get preview of field content
+                text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
+                if len(text_preview) > 10:
+                    text_preview = text_preview[:10] + "..."
+                    
+                item = gtk.MenuItem(value + " (" + text_preview + ")")
+            else:
+                item = gtk.MenuItem(value)
             item.show()
             item.connect("activate", self.rightClickToChangeFormat, field, value)
             subMenu.append(item)
@@ -1145,7 +1161,7 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the type of a specific field
-            subMenu = self.build_encoding_submenu_for_field(selectedField)
+            subMenu = self.build_encoding_submenu_for_field(selectedField, None)
             item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -2007,11 +2023,12 @@ class UImodelization:
 
             #Adding to its new symbol
             new_message_symbol.addMessage(message)
-            
-            alignmentProcess = NeedlemanAndWunsch(self.loggingNeedlemanStatus)
+
+            global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
             doInternalSlick = False
             defaultFormat = Format.HEX
-            
+
+            alignmentProcess = NeedlemanAndWunsch(global_unitsize, self.loggingNeedlemanStatus)
             alignmentProcess.alignSymbol(new_message_symbol, doInternalSlick, defaultFormat)
             alignmentProcess.alignSymbol(message_symbol, doInternalSlick, defaultFormat)
             
