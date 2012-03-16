@@ -45,18 +45,18 @@ from netzob.Common.VisualizationFilters.VisualizationFilter import Visualization
 #|     Definition of a visualization filter wich colorize the background
 #+---------------------------------------------------------------------------+
 class BackgroundColorFilter(VisualizationFilter):
-    
+
     TYPE = "BackgroundColorFilter"
-    
+
     def __init__(self, id, name, iStart, iEnd, color):
         VisualizationFilter.__init__(self, id, BackgroundColorFilter.TYPE, name)
         self.iStart = iStart
         self.iEnd = iEnd
         self.color = color
-        
+
     def isValid(self, i, message, unitSize):
         factor = (unitSize / 4)
-        return i >= self.iStart / factor and i <= self.iEnd / factor 
-    
+        return i >= self.iStart / factor and i <= self.iEnd / factor
+
     def apply(self, message):
         return '<span background="' + self.color + '">' + message + '</span>'

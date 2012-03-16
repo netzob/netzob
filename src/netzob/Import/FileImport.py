@@ -48,6 +48,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 from netzob.Import.AbstractImporter import AbstractImporter
 
+
 #+----------------------------------------------
 #| FileImport:
 #|     GUI for capturing messages
@@ -86,7 +87,7 @@ class FileImport(AbstractImporter):
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(1000, 600)
-        
+
     def init(self):
         # Default line separator is <CR>
         self.lineSeparator = ""
@@ -239,9 +240,9 @@ class FileImport(AbstractImporter):
         # Computes the selected file(s)
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
-            for filename in chooser.get_filenames() :
+            for filename in chooser.get_filenames():
                 filename = unicode(filename, "utf-8")
-                if filename != None and filename != "" and os.path.isfile(filename) :
+                if filename != None and filename != "" and os.path.isfile(filename):
                     self.filesToBeImported.append(filename)
         chooser.destroy()
 
@@ -308,7 +309,7 @@ class FileImport(AbstractImporter):
             if len(self.lineSeparator) > 0:
                 splittedStrHexData = message.getData().split(self.lineSeparator)
             else:
-                splittedStrHexData = [ message.getData() ]
+                splittedStrHexData = [message.getData()]
             for s in splittedStrHexData:
                 if len(s) > 0:
                     message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)

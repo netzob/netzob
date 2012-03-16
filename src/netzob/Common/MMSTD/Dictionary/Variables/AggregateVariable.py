@@ -40,12 +40,13 @@ from lxml import etree
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from bitarray import bitarray
 
+
 #+---------------------------------------------------------------------------+
 #| AggregrateVariable:
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
-    
+
     TYPE = "Aggregate"
 
     def __init__(self, idVar, name, vars=None):
@@ -57,9 +58,10 @@ class AggregateVariable(Variable):
 
     def addChild(self, variable):
         self.vars.append(variable)
+
     def getChildren(self):
         return self.vars
-        
+
     #+-----------------------------------------------------------------------+
     #| getValue :
     #|     Returns the current value of the variable
@@ -76,7 +78,7 @@ class AggregateVariable(Variable):
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
-        
+
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -93,16 +95,17 @@ class AggregateVariable(Variable):
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
-    
+
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
-    #+-----------------------------------------------------------------------+   
+    #+-----------------------------------------------------------------------+
     def getUncontextualizedDescription(self):
         values = []
         for var in self.vars:
             values.append(var.getUncontextualizedDescription())
         return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
@@ -112,12 +115,13 @@ class AggregateVariable(Variable):
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
         return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+
     #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
     #|     it can return the followings :
     #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten 
+    #|     >=0    : it matchs and the following number of bits were eaten
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         result = indice
@@ -130,18 +134,19 @@ class AggregateVariable(Variable):
             else:
                 self.log.debug("Compare successful")
         return result
+
     #+-----------------------------------------------------------------------+
     #| learn :
     #|     Exactly like "compare" but it stores learns from the provided message
     #|     it can return the followings :
     #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten 
+    #|     >=0    : it matchs and the following number of bits were eaten
     #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
         status = True
         toBeRestored = []
         result = indice
-        
+
         for var in self.vars:
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.learn(value, result, negative, vocabulary, memory)
@@ -152,25 +157,25 @@ class AggregateVariable(Variable):
                 break
             else:
                 self.log.debug("Compare successful")
-                
+
         # If it has failed we restore every executed vars
-        if not status :
-            for var in toBeRestored :
-                var.restore(vocabulary, memory)                
+        if not status:
+            for var in toBeRestored:
+                var.restore(vocabulary, memory)
         return result
-    
+
     #+-----------------------------------------------------------------------+
     #| restore :
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
         self.log.debug("Restore learnt values")
-        for var in self.vars :
+        for var in self.vars:
             var.restore(vocabulary, memory)
-    
+
     #+-----------------------------------------------------------------------+
     #| toXML
-    #|     Returns the XML description of the variable 
+    #|     Returns the XML description of the variable
     #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")

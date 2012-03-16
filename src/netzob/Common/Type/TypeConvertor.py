@@ -310,7 +310,7 @@ class TypeConvertor():
                 hex_octets.append('0' + hex(int(dec_octet))[2:])
             else:
                 hex_octets.append(hex(int(dec_octet))[2:])
-                
+
         hex_ip = ''.join(hex_octets)
         return hex_ip
 
@@ -326,7 +326,7 @@ class TypeConvertor():
             tmp = str(tmp)[10:len(str(tmp)) - 2][4:]
             res.extend(tmp)
         return res.to01()
-    
+
     @staticmethod
     #+----------------------------------------------
     #| Return the string parameter in a bitarray
@@ -375,7 +375,7 @@ class TypeConvertor():
         for i in range(0, len(msg), 1):
             res = res + msg[i:i + 1].encode("hex")
         return res
-    
+
     @staticmethod
     #+----------------------------------------------
     #| serializeMessages :
@@ -392,7 +392,7 @@ class TypeConvertor():
             format += str(len(data) / 2) + "M"
             serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
         return (serialMessages, format)
-    
+
     @staticmethod
     #+----------------------------------------------
     #| serializeSymbol :
@@ -401,8 +401,8 @@ class TypeConvertor():
     #+----------------------------------------------
     def serializeSymbol(symbol):
         serialSymbol = ""
-        format = ""        
-        if symbol.getAlignment() != None and symbol.getAlignment() != "" :
+        format = ""
+        if symbol.getAlignment() != None and symbol.getAlignment() != "":
             format += "1" + "G"
             messageTmp = ""
             alignmentTmp = ""
@@ -424,9 +424,9 @@ class TypeConvertor():
                 format += str(len(data) / 2) + "M"
                 serialSymbol += TypeConvertor.netzobRawToPythonRaw(data)  # The message
                 serialSymbol += "".join(['\x00' for x in range(len(data) / 2)])  # The alignement == "\x00" * len(the message), the first time
-        
+
         return (serialSymbol, format)
-    
+
     @staticmethod
     #+----------------------------------------------
     #| serializeSymbols :
@@ -435,13 +435,13 @@ class TypeConvertor():
     #+----------------------------------------------
     def serializeSymbols(symbols):
         serialSymbols = ""
-        formatSymbols = ""        
-        for symbol in symbols :
+        formatSymbols = ""
+        for symbol in symbols:
             (serialSymbol, formatSymbol) = TypeConvertor.serializeSymbol(symbol)
             serialSymbols += serialSymbol
             formatSymbols += formatSymbol
         return (serialSymbols, formatSymbols)
-    
+
     @staticmethod
     #+----------------------------------------------
     #| deserializeContent :
@@ -453,13 +453,12 @@ class TypeConvertor():
         # first we retrieve the size of all the messages
         size_messages = format.split("M")
         total = 0
-        for str_size_message in size_messages[:-1] :
+        for str_size_message in size_messages[:-1]:
             size_message = int(str_size_message)
             result.append(TypeConvertor.pythonRawToNetzobRaw(serializedContents[total:total + size_message]))
             total += size_message
-        
+
         return result
-        
 
     @staticmethod
     #+----------------------------------------------
@@ -574,6 +573,6 @@ class TypeConvertor():
             elif aFormat == Format.FLOAT:
                 tmp = "%f" % tmp
 
-            res += str(tmp) 
+            res += str(tmp)
 
-        return res#s[:-1]  # We delete the last space character
+        return res  # s[:-1]  # We delete the last space character

@@ -100,7 +100,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         W = []
         self.log.info("The MMSTD has " + str(len(states)) + " states")
         self.log.info("A number of " + str(self.m) + " states is estimated.")
-        
+
         for state in states:
             for state2 in states:
                 if state != state2:
@@ -110,7 +110,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                             found = True
                     if not found:
                         couples.append((state, state2))
-                        
+
         self.log.info("A number of " + str(len(couples)) + " couples was found")
 
         for (state1, state2) in couples:

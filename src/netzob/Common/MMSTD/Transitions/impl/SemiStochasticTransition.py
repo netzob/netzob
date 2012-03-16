@@ -137,7 +137,7 @@ class SemiStochasticTransition(AbstractTransition):
         # write the input symbol on the output channel
         finish = False
         errors = False
-        
+
         abstractionLayer.writeSymbol(self.inputSymbol)
         while (not finish):
             (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(-1)
@@ -145,29 +145,29 @@ class SemiStochasticTransition(AbstractTransition):
                 self.log.info("Message received = NONE ")
                 finish = True
                 errors = True
-            else :
+            else:
                 self.log.info("The MASTER received " + str(receivedSymbol.getName()))
-                
+
                 if (len(self.outputSymbols) == 0):
                     self.log.debug("Nothing is considered since the server didn't expect anything.")
                     finish = True
-                
+
                 for arSymbol in self.outputSymbols:
                     [symbol, proba, rtime] = arSymbol
                     if symbol.getID() == receivedSymbol.getID():
                         self.log.debug("Received symbol is understood !!")
                         finish = True
-                    elif symbol.getType() == receivedSymbol.getType() and symbol.getType() == EmptySymbol.TYPE :
+                    elif symbol.getType() == receivedSymbol.getType() and symbol.getType() == EmptySymbol.TYPE:
                         self.log.debug("We consider the reception of an EmptySymbol and validate the transition")
-                        finish = True                
+                        finish = True
         self.deactivate()
-        
-        if errors :
+
+        if errors:
             self.log.warn("The execution of transition " + str(self.getName()) + " as a Master, failed.")
             return None
-        else :
+        else:
             self.log.debug("The execution of transition " + str(self.getName()) + " as a Master was successful.")
-        
+
         return self.outputState
 
     def getDescription(self):

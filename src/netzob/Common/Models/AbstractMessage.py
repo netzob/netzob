@@ -92,15 +92,15 @@ class AbstractMessage():
     #+-----------------------------------------------------------------------+
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
+
     #+-----------------------------------------------------------------------+
     #| removeVisualizationFilter
     #|     Remove a visualization filter
-    #+-----------------------------------------------------------------------+    
+    #+-----------------------------------------------------------------------+
     def removeVisualizationFilter(self, filter):
-        if filter in self.visualizationFilters :
+        if filter in self.visualizationFilters:
             self.visualizationFilters.remove(filter)
-    
-    
+
     #+----------------------------------------------
     #|`getStringData : compute a string representation
     #| of the data
@@ -151,9 +151,7 @@ class AbstractMessage():
             return self.getVisualizationData(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
-    
-    
-    
+
     #+-----------------------------------------------------------------------+
     #| getSplittedData
     #|     Split the message using its symbol's regex and return an array of it
@@ -172,70 +170,70 @@ class AbstractMessage():
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
-        if dynamicDatas == None:            
+        if dynamicDatas == None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-        
+
         result = []
         iCol = 1
-        for field in self.symbol.getFields() :
-            if field.isStatic() :
-                if encoded :
+        for field in self.symbol.getFields():
+            if field.isStatic():
+                if encoded:
                     result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-                else :
+                else:
                     result.append(glib.markup_escape_text(field.getRegex()))
-            else :
+            else:
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)
-                if encoded :
+                if encoded:
                     result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-                else :
+                else:
                     result.append(glib.markup_escape_text(data[start:end]))
-                iCol += 1   
+                iCol += 1
         return result
-        
-        
+
     def getStyledData(self, styled=False, encoded=False):
         result = []
         splittedData = self.getSplittedData(encoded)
-        
-        if styled == False :
+
+        if styled == False:
             return splittedData
-        
+
         iGlobal = 0
         iCol = 0
-        for data in splittedData :
+
+        for data in splittedData:
             localResult = ""
-            
+
             field = self.symbol.getFieldByIndex(iCol)
-            
-            for iLocal in range(0, len(data)) :
+
+            for iLocal in range(0, len(data)):
                 currentLetter = data[iLocal]
                 tmp_result = currentLetter
-                
+
                 sizeFormat = Format.getUnitSize(field.getFormat())
-                if sizeFormat != None :
-                    for filter in self.getVisualizationFilters() :
-                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat) :
+                if sizeFormat != None:
+                    for filter in self.getVisualizationFilters():
+                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):
                             tmp_result = filter.apply(tmp_result)
-                    
+
                 localResult += tmp_result
-                
+
             # Now we apply the color to the fields
-            for filter in field.getVisualizationFilters() :
-                localResult = filter.apply(localResult)    
-                
-            iGlobal = iGlobal + len(data)    
+            for filter in field.getVisualizationFilters():
+                localResult = filter.apply(localResult)
+
+            iGlobal = iGlobal + len(data)
             result.append(localResult)
             iCol += 1
         return result
-            
+
     def getVisualizationData(self, styled=False, encoded=False):
         result = self.getStyledData(styled, encoded)
         return result
-    
+
     #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
     #|  and return a table
@@ -254,7 +252,7 @@ class AbstractMessage():
 #        except AssertionError:
 #            raise NetzobException("This Python version only supports 100 named groups in regex")
 #
-#        if m == None:            
+#        if m == None:
 #            self.log.warning("The regex of the group doesn't match one of its message")
 #            self.log.warning("Regex: " + "".join(regex))
 #            self.log.warning("Message: " + data[:255] + "...")
@@ -265,7 +263,7 @@ class AbstractMessage():
 #        iCol = 0
 #        dynamicCol = 1
 #        nbLetterInNetzobRaw = 0
-#        
+#
 #        for field in self.symbol.getFields():
 #            if field.getRegex().find("(") != -1:  # Means this column is not static
 #                start = m.start(dynamicCol)
@@ -287,7 +285,7 @@ class AbstractMessage():
 #                if field.getVariable() != None:
 #                    # Creation of a temporary memory just for the current
 #                    tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
-#                    
+#
 #                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
 #                        backgroundColor = 'background="red"'
 #                    else:
@@ -385,7 +383,7 @@ class AbstractMessage():
 
     def getTimestamp(self):
         return self.timestamp
-    
+
     def getVisualizationFilters(self):
         return self.visualizationFilters
 

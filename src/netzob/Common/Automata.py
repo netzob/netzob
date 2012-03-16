@@ -49,13 +49,13 @@ class Automata(object):
     #+-----------------------------------------------------------------------+
     def __init__(self, type):
         self.type = type
-    
+
     #+-----------------------------------------------------------------------+
     #| Getters & Setters
     #+-----------------------------------------------------------------------+
     def getType(self):
         return self.type
-    
+
     #+-----------------------------------------------------------------------+
     #| Save & Load
     #+-----------------------------------------------------------------------+
@@ -66,11 +66,11 @@ class Automata(object):
     @staticmethod
     def loadFromXML(xmlRoot, vocabulary, namespace, version):
         if version == "0.1":
-            automata_type = xmlRoot.get("type")          
-            from netzob.Common.MMSTD.MMSTD import MMSTD  
-            if automata_type == MMSTD.TYPE :
+            automata_type = xmlRoot.get("type")
+            from netzob.Common.MMSTD.MMSTD import MMSTD
+            if automata_type == MMSTD.TYPE:
                 automata = MMSTD.loadFromXML(xmlRoot, vocabulary, namespace, version)
                 return automata
-            else :
+            else:
                 logging.warn("The provided type of automata (" + automata_type + ") cannot be parsed.")
         return None

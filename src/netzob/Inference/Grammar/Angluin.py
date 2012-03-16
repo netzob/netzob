@@ -29,15 +29,12 @@
 #| Standard library imports
 #+----------------------------------------------
 import logging
-import time
-
 
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Inference.Grammar.LearningAlgorithm import LearningAlgorithm
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
-from numpy.core.numeric import zeros
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransition
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
@@ -208,11 +205,11 @@ class Angluin(LearningAlgorithm):
                 if self.rowsEquals(rowS, rowSA):
                     self.log.debug("     is closed: YES (" + str(rowS) + " is equal !")
                     found = True
-                    
+
             if not found:
                 self.log.info("The low-row associated with " + str(wordSA) + " was not found in S")
                 return False
-            
+
         return True
 
     def closeTable(self):
@@ -383,19 +380,18 @@ class Angluin(LearningAlgorithm):
                 # retrieve the value:
                 dicValue = self.observationTable[symbol]
                 value = dicValue[word]
-                
+
                 # search for the output state
                 mq = word.getMQSuffixedWithMQ(symbol)
                 for wordSandSA in self.getSandSAWords():
-                    
+
                     self.log.info("IS " + str(wordSandSA) + " eq " + str(mq))
-                    
+
                     if wordSandSA == mq:
                         self.log.info("YES its equal")
                         rowOutputState = self.getRowOfObservationTable(wordSandSA)
                         outputStateName = self.appendValuesInRow(rowOutputState)
-                        
-                        
+
                         # search for the state having this name:
                         outputState = None
                         self.log.info("Search for the output state : " + outputStateName)
@@ -403,25 +399,23 @@ class Angluin(LearningAlgorithm):
                             if s2.getName() == outputStateName:
                                 outputState = s2
                                 self.log.info("  == " + str(s2.getName()))
-                            else :
+                            else:
                                 self.log.info("   != " + str(s2.getName()))
-                                
-                                
-                                
+
                         if outputState != None:
                             inputSymbol = symbol.getSymbolsWhichAreNotEmpty()[0]
-                            
+
                             self.log.info("We create a transition from " + str(state.getName()) + "=>" + str(outputState.getName()))
                             self.log.info(" input : " + str(inputSymbol))
                             self.log.info(" output : " + str(value))
-                            
+
                             transition = SemiStochasticTransition(idTransition, "Transition " + str(idTransition), state, outputState, inputSymbol)
                             transition.addOutputSymbol(value, 100, 1000)
                             state.registerTransition(transition)
-                            
+
                             idTransition = idTransition + 1
-                            
-                        else :
+
+                        else:
                             self.log.error("<!!> Impossible to retrieve the output state named " + str(s2.getName()))
 
         if startState != None:

@@ -41,6 +41,7 @@ from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Session import Session
 
+
 #+---------------------------------------------------------------------------+
 #| AbstractImporter:
 #|     Mother class which provides common methods too any kind of importers
@@ -91,6 +92,6 @@ class AbstractImporter:
         for message in messages:
             trace.addMessage(message)
         workspace.addImportedTrace(trace)
-        
+
         # Now we save the workspace
         workspace.saveConfigFile()

@@ -42,10 +42,9 @@ from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 #|     Definition of an empty symbol
 #+---------------------------------------------------------------------------+
 class EmptySymbol(AbstractSymbol):
-    
+
     # Name of the "type" of the symbol
     TYPE = "EmptySymbol"
-
 
     def __init__(self):
         AbstractSymbol.__init__(self, EmptySymbol.TYPE)

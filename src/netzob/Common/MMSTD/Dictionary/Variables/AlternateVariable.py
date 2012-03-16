@@ -40,6 +40,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
+
 #+---------------------------------------------------------------------------+
 #| AlternateVariable:
 #|     Definition of an alternative of variables defined in a dictionary
@@ -57,6 +58,7 @@ class AlternateVariable(Variable):
 
     def addChild(self, variable):
         self.vars.append(variable)
+
     def getChildren(self):
         return self.vars
 
@@ -70,8 +72,8 @@ class AlternateVariable(Variable):
     def getValue(self, negative, vocabulary, memory):
         self.log.info("getValue")
         validVars = []
-        for var in self.vars :
-            if var.getValue(negative, vocabulary, memory) != None :
+        for var in self.vars:
+            if var.getValue(negative, vocabulary, memory) != None:
                 return var.getValue(negative, vocabulary, memory)
         return None
 #        self.log.debug("Valid vars = " + str(validVars))
@@ -79,6 +81,7 @@ class AlternateVariable(Variable):
 #        picked = validVars[idRandom]
 #        self.log.debug("Get value will return : " + str(picked))
 #        return picked.getValue(negative, vocabulary, memory)
+
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -88,24 +91,26 @@ class AlternateVariable(Variable):
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
         self.log.info("getValueToSend")
-        
-        for var in self.vars :
-            if var.getValue(negative, vocabulary, memory) != None :
+
+        for var in self.vars:
+            if var.getValue(negative, vocabulary, memory) != None:
                 return var.getValueToSend(negative, vocabulary, memory)
         return None
-#        
+#
 #        idRandom = random.randint(0, len(self.vars) - 1)
 #        picked = self.vars[idRandom]
 #        return picked.getValueToSend(negative, vocabulary, memory)
+
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
-    #+-----------------------------------------------------------------------+   
+    #+-----------------------------------------------------------------------+
     def getUncontextualizedDescription(self):
         values = []
         for var in self.vars:
             values.append(var.getUncontextualizedDescription())
         return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
@@ -114,13 +119,14 @@ class AlternateVariable(Variable):
         values = []
         for var in self.vars:
             values.append(var.getDescription(negative, vocabulary, memory))
-        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"    
+        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+
     #+-----------------------------------------------------------------------+
     #| compare :
     #|     Returns the number of letters which match the variable
     #|     it can return the followings :
     #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten 
+    #|     >=0    : it matchs and the following number of bits were eaten
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         saved = indice
@@ -131,12 +137,13 @@ class AlternateVariable(Variable):
                 self.log.info("Compare successful")
                 return result
         return -1
+
     #+-----------------------------------------------------------------------+
     #| learn :
     #|     Exactly like "compare" but it stores learns from the provided message
     #|     it can return the followings :
     #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten 
+    #|     >=0    : it matchs and the following number of bits were eaten
     #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
         saved = indice
@@ -146,22 +153,23 @@ class AlternateVariable(Variable):
             if result != -1 and result != None:
                 self.log.info("Compare successful")
                 return result
-            else :
+            else:
                 var.restore(vocabulary, memory)
-            
+
         return -1
-    
+
     #+-----------------------------------------------------------------------+
     #| restore :
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
         self.log.debug("Restore learnt values")
-        for var in self.vars :
+        for var in self.vars:
             var.restore(vocabulary, memory)
+
     #+-----------------------------------------------------------------------+
     #| toXML
-    #|     Returns the XML description of the variable 
+    #|     Returns the XML description of the variable
     #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")

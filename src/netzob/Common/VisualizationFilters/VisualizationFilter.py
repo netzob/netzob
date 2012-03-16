@@ -48,7 +48,7 @@ class VisualizationFilter(object):
         self.id = id
         self.type = type
         self.name = name
-    
+
     #+-----------------------------------------------------------------------+
     #| isValid
     #|     Abstract method to compute if the provided message should be filtered
@@ -57,7 +57,7 @@ class VisualizationFilter(object):
     def isValid(self, i, message, unitSize):
         self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
         raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
-    
+
     #+-----------------------------------------------------------------------+
     #| apply
     #|     Abstract method to apply the filter on a provided message
@@ -65,18 +65,22 @@ class VisualizationFilter(object):
     #+-----------------------------------------------------------------------+
     def apply(self, message):
         self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")        
-       
+        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+
     #+-----------------------------------------------------------------------+
     #| Getter & Setters
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
+
     def getType(self):
         return self.type
+
     def getName(self):
         return self.name
+
     def setType(self, type):
         self.type = type
+
     def setName(self, name):
         self.name = name

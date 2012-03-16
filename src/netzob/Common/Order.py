@@ -50,55 +50,54 @@ class Order(object):
     def __init__(self, value):
         self.value = value
         self.messages = []
-    
+
     def addMessage(self, message):
-        if not message in self.messages :
+        if not message in self.messages:
             self.messages.append(message)
-    
+
     def removeMessage(self, message):
-        if message in self.messages :
+        if message in self.messages:
             self.messages.remove(message)
-        else :
+        else:
             logging.warn("Impossible to remove the message : it doesn't exist in order")
-    
-    
-     
+
     def save(self, root, namespace):
         xmlOrder = etree.SubElement(root, "{" + namespace + "}order")
-        xmlOrder.set("value", str(self.getValue()))        
-        for message in self.messages :
+        xmlOrder.set("value", str(self.getValue()))
+        for message in self.messages:
             xmlMessage = etree.SubElement(xmlOrder, "{" + namespace + "}msg-ref")
             xmlMessage.text = str(message.getID())
-            
+
     #+----------------------------------------------
     #| GETTERS & SETTERS
     #+----------------------------------------------
     def getValue(self):
         return self.value
+
     def getMessages(self):
         return self.messages
+
     def setValue(self, value):
         self.value = value
+
     def setMesages(self, messages):
         self.messages = messages
-       
 
     @staticmethod
     def loadFromXML(xmlRoot, vocabulary, namespace, version):
         if version == "0.1":
             order_value = int(xmlRoot.get("value"))
-            
+
             order = Order(order_value)
-            
-            if xmlRoot.find("{" + namespace + "}msg-ref") != None :
+
+            if xmlRoot.find("{" + namespace + "}msg-ref") != None:
                 for xmlMsg in xmlRoot.findall("{" + namespace + "}msg-ref"):
                     msgID = str(xmlMsg.text)
                     msg = vocabulary.getMessageByID(msgID)
-                    if msg == None :
+                    if msg == None:
                         logging.warn("Impossible to retrieve the message with ID " + str(msgID))
-                    else :
+                    else:
                         order.addMessage(msg)
-            
 
             return order
 

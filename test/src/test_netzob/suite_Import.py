@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -25,56 +26,29 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+ 
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
+import unittest
+from test_netzob.test_Import import suite_Type, test_ExecutionContext # to be modified by maxime
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
 
-#+---------------------------------------------------------------------------+
-#| Memory:
-#|     Definition of an memory
-#+---------------------------------------------------------------------------+
-class Memory():
+def getSuite():
+    importSuite = unittest.TestSuite()
 
-    def __init__(self, variables):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
-        self.memory = dict()
-        self.temporaryMemory = dict()
-        self.variables = variables
+    modulesOfTests = [test_ExecutionContext]
+    modulesOfSuites = [suite_Type]
 
-    def createMemory(self):
-        # We create a temporary memory
-        self.temporaryMemory = dict()
-        for key in self.memory.keys():
-            self.temporaryMemory[key] = self.memory[key]
+    # Add individual tests    
+    for module in modulesOfTests :
+        importSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
 
-    def persistMemory(self):
-        self.memory = dict()
-        for key in self.temporaryMemory.keys():
-            self.memory[key] = self.temporaryMemory[key]
+    # Add suites    
+    for module in modulesOfSuites :
+        importSuite.addTests(module.getSuite())
 
-    def hasMemorized(self, variable):
-        return variable.getID() in self.temporaryMemory.keys()
-
-    def memorize(self, variable, binValue):
-        self.temporaryMemory[variable.getID()] = binValue
-
-    def recall(self, variable):
-        return self.temporaryMemory[variable.getID()]
-
-    def recallAll(self):
-        return self.temporaryMemory
-
-    def restore(self, variable):
-        if variable.getID() in self.memory.keys():
-            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
+    return importSuite

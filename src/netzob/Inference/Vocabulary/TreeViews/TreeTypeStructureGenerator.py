@@ -30,13 +30,11 @@
 #+----------------------------------------------
 import logging
 import gtk
-from netzob.Common.Field import Field
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+----------------------------------------------
@@ -97,7 +95,8 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def error(self):
         self.log.warning("The treeview for the symbol is in error mode")
-        pass
+        # TODO : delete pass statement if useless
+        #pass
 
     #+----------------------------------------------
     #| show:

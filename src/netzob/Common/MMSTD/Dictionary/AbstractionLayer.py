@@ -165,7 +165,7 @@ class AbstractionLayer():
             return (symbol, None)
 
     def writeSymbol(self, symbol):
-        
+
         self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
         (binMessage, strMessage) = self.specialize(symbol)
@@ -177,10 +177,8 @@ class AbstractionLayer():
         sendingTime = now.strftime("%H:%M:%S")
         self.outputMessages.append([sendingTime, strMessage, symbol])
         self.manipulatedSymbols.append(symbol)
-        
-        self.communicationChannel.write(binMessage)
 
-        
+        self.communicationChannel.write(binMessage)
 
     #+-----------------------------------------------------------------------+
     #| abstract

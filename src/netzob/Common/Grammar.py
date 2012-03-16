@@ -54,72 +54,70 @@ class Grammar(object):
     def __init__(self):
         self.automata = None
         self.sequences = []
-        
+
     def addsequence(self, sequence):
-        if not sequence in self.sequences :
+        if not sequence in self.sequences:
             self.sequences.append(sequence)
-        else :
+        else:
             logging.debug("Can't add the provided sequence, since its already registered")
-            
+
     #+-----------------------------------------------------------------------+
     #| Save & Load
     #+-----------------------------------------------------------------------+
     def save(self, root, namespace):
-        xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")        
-        if self.automata != None :
+        xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")
+        if self.automata != None:
             self.automata.save(xmlGrammar, namespace)
-            
-        if len(self.sequences) > 0 :
+
+        if len(self.sequences) > 0:
             xmlSequences = etree.SubElement(xmlGrammar, "{" + namespace + "}sequences")
-            for sequence in self.getSequences() :
-                sequence.save(xmlSequences, namespace)    
-    
+            for sequence in self.getSequences():
+                sequence.save(xmlSequences, namespace)
+
     @staticmethod
-    def loadGrammar(xmlRoot, vocabulary, namespace, version):        
-        if version == "0.1" :
+    def loadGrammar(xmlRoot, vocabulary, namespace, version):
+        if version == "0.1":
             automata = None
             sequences = []
-            
+
             if xmlRoot.find("{" + namespace + "}automata") != None:
                 xmlAutomata = xmlRoot.find("{" + namespace + "}automata")
                 automata = Automata.loadFromXML(xmlAutomata, vocabulary, namespace, version)
-            
+
             if xmlRoot.find("{" + namespace + "}sequences") != None:
                 xmlSequences = xmlRoot.find("{" + namespace + "}sequences")
-                for xmlSequence in xmlSequences.findall("{" + namespace + "}sequence") :
+                for xmlSequence in xmlSequences.findall("{" + namespace + "}sequence"):
                     sequence = Sequence.loadFromXML(xmlSequence, vocabulary, namespace, version)
                     sequences.append(sequence)
-                
+
             grammar = None
-            if automata != None or len(sequences) > 0 :
+            if automata != None or len(sequences) > 0:
                 grammar = Grammar()
-                if automata != None :
+                if automata != None:
                     grammar.setAutomata(automata)
-                if len(sequences) > 0 :
+                if len(sequences) > 0:
                     grammar.setSequences(sequences)
-            
+
             return grammar
-            
+
         return None
-                
-    
-        
+
     #+-----------------------------------------------------------------------+
     #| Getters & Setters
     #+-----------------------------------------------------------------------+
     def getAutomata(self):
         return self.automata
-    
+
     def getSequences(self):
         return self.sequences
-    
+
     def setAutomata(self, automata):
         self.automata = automata
-        
+
     def setSequences(self, sequences):
         self.sequences = sequences
-    
-#    
+
+#
 #    def __init__(self, type, initialState):
 #        self.type = type
 #        self.states = []
@@ -136,7 +134,7 @@ class Grammar(object):
 #            self.states.append(state)
 #        else:
 #            logging.debug("The state cannot be added one more time in the grammar.")
-#    
+#
 #    #+---------------------------------------------------------------------------+
 #    #| getTransitionsLeadingToState:
 #    #|     retrieve all the transitions which ends on the provide state
@@ -147,9 +145,8 @@ class Grammar(object):
 #        for transition in self.getTransitions() :
 #            if transition.getOutputState().getID() == state.getID() :
 #                transitions.append(transition)
-#        
-#        return transitions        
-#    
+#
+#        return transitions
 #
 #    def removeState(self, state):
 #        # First we remove the transitions

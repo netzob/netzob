@@ -135,32 +135,30 @@ class SearchView(object):
         # Then we search them in the list of messages included in the vocabulary
         searchTasks = searcher.search(searchedData)
         self.log.info("A number of " + str(len(searchTasks)) + " results found !")
-        
+
         # Colorize the segments
         self.colorizeResults(searchTasks)
-        
+
         # Display the dedicated view
         self.updateView(searchTasks)
-        
+
     def colorizeResults(self, searchTasks):
         colorizedSymbols = []
         for task in searchTasks:
             for result in task.getResults():
-                for (start, end) in result.getSegments() :
+                for (start, end) in result.getSegments():
                     filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter) 
+                    message.addVisualizationFilter(filter)
                     # colorize the associated symbol
                     symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(message)
-                    if not symbol in colorizedSymbols :
-                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000")) 
+                    if not symbol in colorizedSymbols:
+                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
                         colorizedSymbols.append(symbol)
 #                    message.highlightSegment(start, end)
         # We update the different views
         self.messageViewGenerator.updateDefault()
         self.symbolViewGenerator.default()
-            
-        
 
     def updateView(self, tasks):
 
@@ -173,31 +171,30 @@ class SearchView(object):
         colResult.add_attribute(cell, "text", 0)
 
         treestore = gtk.TreeStore(str)
-        
+
         foundSymbols = dict()
         foundMessages = dict()
-                
+
         for task in tasks:
             for result in task.getResults():
                 # retrieve the symbol associated with the message
                 symbol = self.project.getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
-                
+
                 # Display the tree item for the symbol
                 treeItemSymbol = None
-                if str(symbol.getID()) in foundSymbols.keys() :
+                if str(symbol.getID()) in foundSymbols.keys():
                     treeItemSymbol = foundSymbols[str(symbol.getID())]
-                else :
+                else:
                     treeItemSymbol = treestore.append(None, [symbol.getName()])
                     foundSymbols[str(symbol.getID())] = treeItemSymbol
-                    
+
                 # Display the tree item for the message
                 treeItemMessage = None
-                if str(result.getMessage().getID()) in foundMessages.keys() :
+                if str(result.getMessage().getID()) in foundMessages.keys():
                     treeItemMessage = foundMessages[str(result.getMessage().getID())]
-                else :
+                else:
                     treeItemMessage = treestore.append(treeItemSymbol, [result.getMessage().getID()])
                     foundMessages[str(result.getMessage().getID())] = treeItemMessage
-                
                 # Add the result
                 treestore.append(treeItemMessage, [str(result.getSegments())])
 

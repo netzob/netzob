@@ -34,9 +34,7 @@ import uuid
 import errno
 pygtk.require('2.0')
 import logging
-import os
 import time
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -51,6 +49,7 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Import.AbstractImporter import AbstractImporter
+
 
 #+----------------------------------------------
 #| Pcap:
@@ -291,8 +290,6 @@ class PcapImport(AbstractImporter):
             md.destroy()
 
             return
-
-            raise
 
         button.set_sensitive(False)
         self.packets = []
