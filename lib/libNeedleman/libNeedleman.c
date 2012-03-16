@@ -216,6 +216,11 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
           int m, n;
           t_group p_group;
           t_regex regex;
+	  t_score score;
+	  score.s1 = 0;
+	  score.s2 = 0;
+	  score.s3 = 0;
+	  regex.score = &score;
           t_regex regex1;
           t_regex regex2;
           p_group.len = groups->groups[i].len + groups->groups[p].len;
@@ -899,16 +904,15 @@ float getScoreRatio(t_regex * regex) {
     nbDynamic = nbDynamic + 1.0f;
 
   result = 100.0 / (nbStatic + nbDynamic) * nbStatic;
-
   return result;
 }
 float getScoreDynSize(t_regex * regex) {
-  float result = 100;
+  float result = 0;
 
   return result;
 }
 float getScoreRang(t_regex * regex) {
-  float result = 100;
+  float result = 0;
   
   return result;
 }
