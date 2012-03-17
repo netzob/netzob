@@ -28,21 +28,21 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
+import logging
+import time
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-import time
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Field import Field
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.NetzobException import NetzobException
 
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
 import _libNeedleman
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-import logging
-
 
 #+---------------------------------------------------------------------------+
 #| NeedlemanAndWunsch:
@@ -71,7 +71,6 @@ class NeedlemanAndWunsch(object):
     #| alignSymbol
     #|     Default alignment of messages declared in a Symbol
     #| @param the symbol
-    #| @returns (alignment, score)
     #+-----------------------------------------------------------------------+
     def alignSymbol(self, symbol, doInternalSlick, defaultFormat):
         messages = symbol.getMessages()
@@ -80,7 +79,15 @@ class NeedlemanAndWunsch(object):
         symbol.setAlignment(alignment)
 
         # We update the regex based on the results
-        self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
+        try:
+            self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
+        except NetzobException:
+            logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
+            symbol.cleanFields()
+            field = Field("Field 0", 0, "(.{,})")
+            # Use the default protocol type for representation
+            field.setFormat(defaultFormat)
+            symbol.addField(field)
 
     #+-----------------------------------------------------------------------+
     #| align
@@ -211,16 +218,19 @@ class NeedlemanAndWunsch(object):
             doLoop = False
             for field in symbol.getFields():
                 # We try to see if this field produces only empty values when applied on messages
-                cells = symbol.getCellsByField(field)
-                cells = "".join(cells)
-                if cells == "":
-                    symbol.getFields().pop(field.getIndex())  # We remove this useless field
-                    # Adpat index of the following fields, before breaking
-                    for fieldNext in symbol.getFields():
-                        if fieldNext.getIndex() > field.getIndex():
-                            fieldNext.setIndex(fieldNext.getIndex() - 1)
-                    doLoop = True
-                    break
+                if field.isStatic():
+                    cells = symbol.getCellsByField(field)
+                    cells = "".join(cells)
+                    if cells == "":
+                        symbol.getFields().pop(field.getIndex())  # We remove this useless field
+                        # Adpat index of the following fields
+                        for fieldNext in symbol.getFields():
+                            if fieldNext.getIndex() > field.getIndex():
+                                fieldNext.setIndex(fieldNext.getIndex() - 1)
+                        # Concatenate the surrounding fields (because they should be static fields)
+                        symbol.concatFields( field.getIndex() - 1)
+                        doLoop = True
+                        break
 
     #+----------------------------------------------
     #| alignWithNeedlemanWunsh:
@@ -260,13 +270,12 @@ class NeedlemanAndWunsch(object):
         for symbol in symbols:
             clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
             tmpSymbols.extend(clusteringSolution.executeClustering())
-
+            
         clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
         self.result = clusteringSolution.executeClustering()        
         
         if doOrphanReduction :
             self.result = clusteringSolution.executeOrphanReduction()
-
         self.result.extend(preResults)
         logging.info("Time of parsing : " + str(time.time() - t1))
 
