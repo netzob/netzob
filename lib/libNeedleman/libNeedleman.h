@@ -140,7 +140,7 @@ PyMODINIT_FUNC init_libNeedleman(void);
 //| Scores : functions for their computations
 //+---------------------------------------------------------------------------+
 float getScoreRatio(t_regex *);
-float getScoreDynSize(t_regex *);
+float getScoreDynSize(unsigned short int, unsigned short int);
 float getScoreRang(t_regex *);
 float computeDistance(t_score *);
 

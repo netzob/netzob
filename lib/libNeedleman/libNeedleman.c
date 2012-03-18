@@ -251,8 +251,8 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
           //                              omp_set_lock(&my_lock);
           matrix[i][p] = computeDistance(regex.score);
           //                              omp_unset_lock(&my_lock);
-	  if (debugMode == TRUE) {
-	    printf("matrix %d,%d = %f\n", i, p, regex.score);
+	  if (debugMode) {
+	    printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
 	  }
 
           free( regex.regex );
@@ -283,7 +283,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     }
     free( groups->groups );
     
-      // First we fill the matrix with 0s
     if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
       printf("Error, error while executing C callback.\n");
     }
@@ -587,6 +586,10 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   unsigned char *regexTmp;
   unsigned char *regexMaskTmp;
 
+  // Score computation
+  unsigned short int nbDynTotal = 0;
+  unsigned short int nbDynCommon = 0;
+
   //+------------------------------------------------------------------------+
   // Create and initialize the matrix
   //+------------------------------------------------------------------------+
@@ -801,6 +804,12 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     else {
       regexTmp[i] = 0xf5;
       regexMaskTmp[i] = DIFFERENT;
+
+      // Compute score of common dynamic elements
+      nbDynTotal += 1;
+      if ((maskRegex1[i] == EQUAL) && (maskRegex2[i] == EQUAL)) {
+	nbDynCommon += 1;
+      }      
     }
   }
 
@@ -848,10 +857,9 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   memcpy(regex->mask, regexMaskTmp + i, regex->len);
 
 
-  // COMPUTE THE SCORES
-  // Using the regex, we compute the multiple scores
+  // Compute the scores of similarity, using the regex
   regex->score->s1 = getScoreRatio(regex);
-  regex->score->s2 = getScoreDynSize(regex);
+  regex->score->s2 = getScoreDynSize(nbDynTotal, nbDynCommon);
   regex->score->s3 = getScoreRang(regex);
 
   if (debugMode) {
@@ -906,9 +914,11 @@ float getScoreRatio(t_regex * regex) {
   result = 100.0 / (nbStatic + nbDynamic) * nbStatic;
   return result;
 }
-float getScoreDynSize(t_regex * regex) {
+float getScoreDynSize(unsigned short int nbDynTotal, unsigned short int nbDynCommon) {
+  // Compute score of common dynamic elements
   float result = 0;
 
+  result = 100.0 / nbDynTotal * nbDynCommon;
   return result;
 }
 float getScoreRang(t_regex * regex) {
