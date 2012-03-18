@@ -149,11 +149,12 @@ class NeedlemanAndWunsch(object):
         result = ""
         nbLetters = self.unitSize / 4
         for i in range(0, len(alignment), nbLetters):
-            if alignment[i:i + nbLetters].count("-") == 1:
-                for j in range(nbLetters):
+            tmpText = alignment[i:i + nbLetters]
+            if tmpText.count("-") >= 1:
+                for j in range(len(tmpText)):
                     result += "-"
             else:
-                result += alignment[i:i + nbLetters]
+                result += tmpText
         return result
         
 
