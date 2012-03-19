@@ -274,7 +274,7 @@ class AutomaticGrammarInferenceView(object):
 
         if actorType == "CLIENT" :
             # Lets create a simple network oracle
-            oracleCommunicationChannel = NetworkServer(actorIP, actorNetworkProtocol, targetPort, ourPort)
+            oracleCommunicationChannel = NetworkServer(actorIP, actorNetworkProtocol, ourPort, targetPort)
         else :
             # Lets create a simple network oracle
             oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, targetPort, ourPort)

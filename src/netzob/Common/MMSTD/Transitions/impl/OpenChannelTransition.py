@@ -104,7 +104,14 @@ class OpenChannelTransition(AbstractTransition):
             self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, True)
             self.deactivate()
-            return None
+            
+            # Here we wait for someone to connect to our server !
+            while (not abstractionLayer.isConnected()):
+                time.sleep(int(self.connectionTime) / 1000)
+                self.log.info("No one is connected !")
+            
+            
+            return self.outputState
         else:
             self.activate()
             result = self.openConnection(abstractionLayer)

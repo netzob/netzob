@@ -50,11 +50,12 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+----------------------------------------------
 class NetworkOracle(threading.Thread):
 
-    def __init__(self, communicationChannel):
+    def __init__(self, communicationChannel, isMaster):
         threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Oracle.NetworkOracle.py')
         self.communicationChannel = communicationChannel
+        self.isMaster = isMaster
 
     def setMMSTD(self, mmstd):
         self.mmstd = mmstd
@@ -63,10 +64,10 @@ class NetworkOracle(threading.Thread):
         self.log.info("Start the network oracle based on given MMSTD")
 
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getDictionary(), Memory(self.mmstd.getDictionary().getVariables()))
+        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), Memory(self.mmstd.getVocabulary().getVariables()))
 
         # And we create an MMSTD visitor for this
-        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, True, abstractionLayer)
+        self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
         self.oracle.start()
 
         while (self.oracle.isAlive()):

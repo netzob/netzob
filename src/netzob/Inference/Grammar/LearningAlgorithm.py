@@ -82,9 +82,11 @@ class LearningAlgorithm(object):
 
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary)
+        
+        isMaster = self.communicationChannel.isServer()            
 
         # create an oracle for this MMSTD
-        oracle = NetworkOracle(self.communicationChannel)
+        oracle = NetworkOracle(self.communicationChannel, isMaster)
 
         # start the oracle with the MMSTD
         oracle.setMMSTD(mmstd)

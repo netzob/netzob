@@ -51,8 +51,8 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+---------------------------------------------------------------------------+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
-    def __init__(self, connectionInfos, UDPConnectionHandler):
-        SocketServer.TCPServer.__init__(self, connectionInfos, UDPConnectionHandler)
+    def __init__(self, connectionInfos, TCPConnectionHandler):
+        SocketServer.TCPServer.__init__(self, connectionInfos, TCPConnectionHandler)
         self.instances = []
 
     def getVocabulary(self):
@@ -81,6 +81,12 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
     def getGeneratedInstances(self):
         return self.instances
+    
+    def setCBWhenAClientConnects(self, cb) :
+        self.cbClientConnected = cb
+
+    def notifyAClientIsConnected(self):
+        self.cbClientConnected()
 
     def shutdown(self):
         logging.info("shutingdown")
@@ -106,6 +112,12 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
     def setMaster(self, master):
         self.master = master
+        
+    def setCBWhenAClientConnects(self, cb) :
+        self.cbClientConnected = cb
+        
+    def notifyAClientIsConnected(self):
+        self.cbClientConnected()
 
 
 class TCPConnectionHandler(SocketServer.BaseRequestHandler):
@@ -117,7 +129,9 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
-
+        
+        self.server.notifyAClientIsConnected()
+        
         initialState = self.server.getInitialState()
         vocabulary = self.server.getVocabulary()
         isMaster = self.server.isMaster()
@@ -154,6 +168,9 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
 class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
     def handle(self):
+        
+        self.server.notifyAClientIsConnected()
+        
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
         self.log.info("A client has just initiated a connection on the server.")
 
@@ -184,14 +201,16 @@ class NetworkServer(AbstractActor):
         self.server = None
         self.instantiatedServers = []
 
-    def openServer(self, vocabulary, initialState, master):
+    def openServer(self, vocabulary, initialState, master, cb_whenAClientConnects):
         # Instantiates the server
         if self.protocol == "UDP":
             self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
+            self.server.setCBWhenAClientConnects(cb_whenAClientConnects)
         else:
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
+            self.server.setCBWhenAClientConnects(cb_whenAClientConnects)
 
         self.server.setVocabulary(vocabulary)
         self.server.setInitialState(initialState)
