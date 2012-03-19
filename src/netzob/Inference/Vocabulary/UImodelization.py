@@ -873,14 +873,20 @@ class UImodelization:
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
- 
+
             if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
                 item = gtk.MenuItem("with all next fields")
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
                 concatMenu.append(item)
-            
-	    item = gtk.MenuItem("Concatenate field")
+        
+        # Personalize the fields to be concatenated
+	    item = gtk.MenuItem("personalize selection")
+        item.show()
+        item.connect("activate", self.ConcatChosenColumns)
+        concatMenu.append(item)
+
+        item = gtk.MenuItem("Concatenate field")
         item.set_submenu(concatMenu)
         item.show()
         menu.append(item)
@@ -1185,6 +1191,11 @@ class UImodelization:
             item = gtk.MenuItem("with all next field")
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
+            concatMenu.append(item)
+	    
+	    item = gtk.MenuItem("personalize selection")
+	    item.show()
+            item.connect("activate", self.ConcatChosenColumns)
             concatMenu.append(item)
 
 	    item = gtk.MenuItem("Concatenate field")
@@ -1539,6 +1550,73 @@ class UImodelization:
     def rightClickToChangeEndianess(self, event, field, endianess):
         field.setEndianess(endianess)
         self.update()
+    #+----------------------------------------------
+    #| concatenateChosenFields:
+    #|   Ask the user which field to concatenate
+    #+----------------------------------------------
+    def ConcatChosenColumns(self, event=None, errormessage=""):
+
+	nrows = 2
+	if(errormessage):
+	    nrows = 3
+        dialog = gtk.Dialog(title="Concatenation of Fields", flags=0, buttons=None)
+        panel = gtk.Table(rows=nrows, columns=4, homogeneous=False)
+        panel.show()
+
+        ## Label for indexes of the fields
+        label = NetzobLabel("Fields from:")
+        index1 = gtk.Entry(4)
+        index1.show()
+        label2 = NetzobLabel("to:")
+        index2 = gtk.Entry(4)
+        index2.show()
+	if(errormessage):
+            label3 = NetzobLabel(errormessage)
+
+        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(index1, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label2, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(index2, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+	if(errormessage):
+            panel.attach(label3, 2, 4, 2, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+	# Button
+        searchButton = NetzobButton("Concatenate fields")
+        searchButton.connect("clicked", self.clickToConcatChosenColumns, index1, index2, dialog)
+        panel.attach(searchButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+
+   #+--------------------------------------------
+   #|  clickToConcatChosenColumns:
+   #|	try to concatenate wanted fields.	
+   #+-------------------------------------------
+    def clickToConcatChosenColumns(self, event, index1, index2, dialog):
+	try:
+	    nfirst = int(index1.get_text())
+	    nlast = int(index2.get_text())
+	    self.log.debug("Concatenate from " + str(nfirst) + " to the column " + str(nlast))
+	    if max(nlast, nfirst) >= len(self.selectedSymbol.fields):
+		dialog.destroy()
+            	self.ConcatChosenColumns(errormessage="Error: " + str(max(nlast, nfirst)) + " > Last field index")
+		return 1
+	    if(nlast > nfirst):
+		for i_concatleft in range(nlast - nfirst):
+            	    if not self.selectedSymbol.concatFields(nfirst):
+			break
+	    else:
+		for i_concatleft in range(nfirst - nlast):
+            	    if not self.selectedSymbol.concatFields(nlast):
+			break
+	    self.treeMessageGenerator.updateDefault()
+            self.update()
+	    dialog.destroy()
+	except:
+	    dialog.destroy()
+	    self.ConcatChosenColumns(errormessage="Error: You must put integers in forms")
+		
 
     #+----------------------------------------------
     #|  rightClickToConcatColumns:
