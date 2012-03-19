@@ -861,13 +861,26 @@ class UImodelization:
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
                 concatMenu.append(item)
+	
+	    if selectedField.getIndex() > 0:
+                item = gtk.MenuItem("with all precedent field")
+                item.show()
+                item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
+                concatMenu.append(item)
 
             if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
                 item = gtk.MenuItem("with next field")
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
-            item = gtk.MenuItem("Concatenate field")
+ ###FRANCK
+            if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
+                item = gtk.MenuItem("with all next fields")
+                item.show()
+                item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
+                concatMenu.append(item)
+            
+	    item = gtk.MenuItem("Concatenate field")
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
@@ -1160,11 +1173,21 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
             concatMenu.append(item)
-            item = gtk.MenuItem("with next field")
+            item = gtk.MenuItem("with all precedent field")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
+            concatMenu.append(item)
+
+	    item = gtk.MenuItem("with next field")
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
             concatMenu.append(item)
-            item = gtk.MenuItem("Concatenate field")
+            item = gtk.MenuItem("with all next field")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
+            concatMenu.append(item)
+
+	    item = gtk.MenuItem("Concatenate field")
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
@@ -1524,16 +1547,23 @@ class UImodelization:
     def rightClickToConcatColumns(self, event, field, strOtherCol):
         self.log.debug("Concatenate the column " + str(field.getIndex()) + " with the " + str(strOtherCol) + " column")
 
-        if field.getIndex() == 0 and strOtherCol == "left":
+        if field.getIndex() == 0 and (strOtherCol == "left" or strOtherCol == "allleft"):
             self.log.debug("Can't concatenate the first column with its left column")
             return
 
-        if field.getIndex() + 1 == len(self.selectedSymbol.getFields()) and strOtherCol == "right":
+        if field.getIndex() + 1 == len(self.selectedSymbol.getFields()) and (strOtherCol == "right" or strOtherCol == "allright"):
             self.log.debug("Can't concatenate the last column with its right column")
             return
 
         if strOtherCol == "left":
             self.selectedSymbol.concatFields(field.getIndex() - 1)
+	elif strOtherCol == "allleft":
+	    for i_concatleft in range(field.getIndex()):
+		 self.selectedSymbol.concatFields(0)
+	elif strOtherCol == "allright":
+	    cont=self.selectedSymbol.concatFields(field.getIndex())
+	    while(cont):
+		cont=self.selectedSymbol.concatFields(field.getIndex())
         else:
             self.selectedSymbol.concatFields(field.getIndex())
         self.treeMessageGenerator.updateDefault()

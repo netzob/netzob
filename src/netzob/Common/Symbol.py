@@ -317,7 +317,10 @@ class Symbol(AbstractSymbol):
     def concatFields(self, iField):
         field1 = None
         field2 = None
-        for field in self.fields:
+        ##FRANCK
+	if iField == len(self.fields)-1:
+	    return 0
+	for field in self.fields:
             if field.getIndex() == iField:
                 field1 = field
             elif field.getIndex() == iField + 1:
@@ -356,7 +359,7 @@ class Symbol(AbstractSymbol):
         self.fields.append(newField)
         # sort fields by their index
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-
+	return 1
     #+----------------------------------------------
     #| splitField:
     #|  Split a field in two fields
