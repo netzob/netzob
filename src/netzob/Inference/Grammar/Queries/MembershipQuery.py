@@ -78,7 +78,7 @@ class MembershipQuery(object):
         # Create the transition which opens the connection
         rootState = NormalState(0, "State 0")
         initialState = NormalState(1, "State 1")
-        openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 1000, 3)
+        openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 10000, 3)
         rootState.registerTransition(openingTransition)
 
         previousState = initialState
