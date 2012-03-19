@@ -2000,9 +2000,16 @@ class UImodelization:
             new_message_symbol.addMessage(message)
 
             global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+            if global_unitsize == None or global_unitsize == "none":
+                global_unitsize = "8"
+            
+            global_unitsize = int(global_unitsize)
+            
+                
+            
             doInternalSlick = False
             defaultFormat = Format.HEX
-            alignmentProcess = NeedlemanAndWunsch(global_unitsize, self.loggingNeedlemanStatus)
+            alignmentProcess = NeedlemanAndWunsch(int(global_unitsize), self.loggingNeedlemanStatus)
 
             alignmentProcess.alignSymbol(new_message_symbol, doInternalSlick, defaultFormat)
             alignmentProcess.alignSymbol(message_symbol, doInternalSlick, defaultFormat)
