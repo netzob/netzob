@@ -1959,25 +1959,20 @@ class UImodelization:
     #+----------------------------------------------
     def displayPopupToRemoveSymbol(self, event, symbol):
 
-        if (len(symbol.getMessages()) == 0):
-            self.log.debug("Can remove the symbol {0} since it's an empty one.".format(symbol.getName()))
-            questionMsg = "Click yes to confirm the removal of the symbol {0}".format(symbol.getName())
-            md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
-            result = md.run()
-            md.destroy()
-            if result == gtk.RESPONSE_YES:
-                self.netzob.getCurrentProject().getVocabulary().removeSymbol(symbol)
-                #Update Left and Right
-                self.update()
-            else:
-                self.log.debug("The user didn't confirm the deletion of the symbol " + symbol.getName())
-
+        self.log.debug("Can remove the symbol {0} since it's an empty one.".format(symbol.getName()))
+        questionMsg = "Click yes to confirm the removal of the symbol {0}".format(symbol.getName())
+        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == gtk.RESPONSE_YES:
+	    while(symbol.getMessages()):
+		symbol.removeMessage(symbol.getMessages()[0])    
+            self.netzob.getCurrentProject().getVocabulary().removeSymbol(symbol)
+            #Update Left and Right
+            self.update()
         else:
-            self.log.debug("Can't remove the symbol {0} since its not an empty one.".format(symbol.getName()))
-            errorMsg = "The selected symbol cannot be removed since it contains messages."
-            md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, errorMsg)
-            md.run()
-            md.destroy()
+            self.log.debug("The user didn't confirm the deletion of the symbol " + symbol.getName())
+
 
     #+----------------------------------------------
     #| drop_fromDND:
@@ -2421,6 +2416,7 @@ class UImodelization:
         treeview.set_size_request(800, 300)
 
         results = []
+	self.log.debug("BEGING SIZE FIELD")
         self.selectedSymbol.findSizeFields(results)
         if len(results) == 0:
             NetzobErrorMessage("No size field found.")
