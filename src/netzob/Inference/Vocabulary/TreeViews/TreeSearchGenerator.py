@@ -30,55 +30,59 @@
 #+----------------------------------------------
 import logging
 import gtk
+from netzob.Common.Field import Field
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
+import uuid
 
 
 #+----------------------------------------------
-#| TreeTypeStructureGenerator:
+#| TreeSearchGenerator:
 #|     update and generates the treeview and its
-#|     treestore dedicated to the type structure
+#|     treestore dedicated to the search process
 #+----------------------------------------------
-class TreeTypeStructureGenerator():
+class TreeSearchGenerator():
 
     #+----------------------------------------------
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
-    def __init__(self):
-        self.symbol = None
+    def __init__(self, netzob):
+        self.netzob = netzob
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeTypeStructureGenerator.py')
+        self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator.py')
+        self.tree = None
+        self.searchTasks = []
 
     #+----------------------------------------------
     #| initialization:
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
-        # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str)  # iCol, Name, Description, Variable
-        # creation of the treeview
-        self.treeview = gtk.TreeView(self.treestore)
-        self.treeview.set_reorderable(True)
-        # Creation of a cell rendered and of a column
+
+        self.tree = gtk.TreeView()
+        colResult = gtk.TreeViewColumn()
+        colResult.set_title("Search results")
+
         cell = gtk.CellRendererText()
-        cell.set_property("size-points", 9)
-        columns = ["iCol", "Name", "Description", "Variable"]
-        for i in range(1, len(columns)):
-            column = gtk.TreeViewColumn(columns[i])
-            column.set_resizable(True)
-            column.pack_start(cell, True)
-            column.set_attributes(cell, markup=i)
-            self.treeview.append_column(column)
-        self.treeview.show()
-        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        colResult.pack_start(cell, True)
+        colResult.add_attribute(cell, "text", 0)
+
+        self.treestore = gtk.TreeStore(str)
+
+        self.tree.append_column(colResult)
+        self.tree.set_model(self.treestore)
+        self.tree.show()
+
         self.scroll = gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 250)
         self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.scroll.add(self.treeview)
+        self.scroll.add(self.tree)
         self.scroll.show()
 
     #+----------------------------------------------
@@ -86,7 +90,7 @@ class TreeTypeStructureGenerator():
     #|         Clear the class
     #+----------------------------------------------
     def clear(self):
-        self.symbol = None
+        self.taks = []
         self.treestore.clear()
 
     #+----------------------------------------------
@@ -95,8 +99,7 @@ class TreeTypeStructureGenerator():
     #+----------------------------------------------
     def error(self):
         self.log.warning("The treeview for the symbol is in error mode")
-        # TODO : delete pass statement if useless
-        #pass
+        pass
 
     #+----------------------------------------------
     #| show:
@@ -116,54 +119,89 @@ class TreeTypeStructureGenerator():
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
-    def update(self):
-        if self.getSymbol() == None:
-            self.clear()
+    def update(self, searchTasks=[]):
+        if len(searchTasks) == 0:
+            self.decolorizeAnySearchResult()
+            self.treestore.clear()
             return
 
-        self.treestore.clear()
-        for field in self.getSymbol().getFields():
-            tab = ""
-            for k in range(field.getEncapsulationLevel()):
-                tab += "  "
-            if field.getName() == "__sep__":  # Do not show the delimiter fields
-                continue
+        foundSymbols = dict()
+        foundMessages = dict()
 
-            # Define the background color
-            if field.getBackgroundColor() != None:
-                backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-            else:
-                backgroundColor = ""
+        for task in searchTasks:
+            for result in task.getResults():
+                # retrieve the symbol associated with the message
+                symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
 
-            # Compute the associated variable (specified or automatically computed)
-            variableDescription = "-"
-            if field.getVariable() != None:
-                variableDescription = field.getVariable().getUncontextualizedDescription()
-            elif field.getDefaultVariable(self.getSymbol()) != None:
-                variableDescription = field.getDefaultVariable(self.getSymbol()).getUncontextualizedDescription()
+                # Display the tree item for the symbol
+                treeItemSymbol = None
+                if str(symbol.getID()) in foundSymbols.keys():
+                    treeItemSymbol = foundSymbols[str(symbol.getID())]
+                else:
+                    treeItemSymbol = self.treestore.append(None, [symbol.getName()])
+                    foundSymbols[str(symbol.getID())] = treeItemSymbol
 
-            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
+                # Display the tree item for the message
+                treeItemMessage = None
+                if str(result.getMessage().getID()) in foundMessages.keys():
+                    treeItemMessage = foundMessages[str(result.getMessage().getID())]
+                else:
+                    treeItemMessage = self.treestore.append(treeItemSymbol, [result.getMessage().getID()])
+                    foundMessages[str(result.getMessage().getID())] = treeItemMessage
+
+                # Add the result
+                self.treestore.append(treeItemMessage, [str(result.getSegments())])
+
+        self.colorizeResults(searchTasks)
+
+    def colorizeResults(self, searchTasks):
+        colorizedSymbols = []
+        for task in searchTasks:
+            for result in task.getResults():
+                for (start, end) in result.getSegments():
+                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
+                    message = result.getMessage()
+                    message.addVisualizationFilter(filter)
+                    # colorize the associated symbol
+                    symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(message)
+                    if not symbol in colorizedSymbols:
+                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
+                        colorizedSymbols.append(symbol)
+
+    def decolorizeAnySearchResult(self):
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        for symbol in vocabulary.getSymbols():
+            filterToRemoveFromSymbol = []
+            for filter in symbol.getVisualizationFilters():
+                if filter.getName() == "Search":
+                    filterToRemoveFromSymbol.append(filter)
+
+            for filter in filterToRemoveFromSymbol:
+                symbol.removeVisualizationFilter(filter)
+
+            filterToRemoveFromMessage = []
+            for message in symbol.getMessages():
+                for filter in message.getVisualizationFilters():
+                    if filter.getName() == "Search":
+                        filterToRemoveFromMessage.append(filter)
+
+                for f in filterToRemoveFromMessage:
+                    message.removeVisualizationFilter(f)
 
     #+----------------------------------------------
     #| GETTERS:
     #+----------------------------------------------
     def getTreeview(self):
-        return self.treeview
+        return self.tree
 
     def getScrollLib(self):
         return self.scroll
 
-    def getSymbol(self):
-        return self.symbol
-
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------
-    def setTreeview(self, treeview):
-        self.treeview = treeview
+    def setTreeview(self, tree):
+        self.tree = tree
 
     def setScrollLib(self, scroll):
         self.scroll = scroll
-
-    def setSymbol(self, symbol):
-        self.symbol = symbol

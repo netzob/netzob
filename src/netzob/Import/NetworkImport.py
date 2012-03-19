@@ -35,9 +35,7 @@ from netzob.Import.AbstractImporter import AbstractImporter
 pygtk.require('2.0')
 import logging
 import threading
-import os
 import time
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -51,7 +49,6 @@ import impacket.ImpactPacket as Packets
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
 

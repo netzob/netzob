@@ -33,6 +33,25 @@ import time
 import random
 import string
 import unittest
+import os
+import sys
+
+#insert in the path the directory where _libNeedleman.pyd is
+if os.name == 'nt':
+     sys.path.insert(0, 'lib/libNeedleman/')
+
+try:
+    # Verify that libNeedleman is in the path
+    import _libNeedleman
+except:
+    # Else, assume the path is gotten from the 'python setup.py build' command
+    arch = os.uname()[-1]
+    python_version = sys.version[:3]
+    build_lib_path = "../../../../build/lib.linux-" + arch + "-" + python_version
+    sys.path.append(build_lib_path)
+    
+
+
 
 from netzob.Common.ExecutionContext import ExecutionContext
 from netzob.Common.Models.RawMessage import RawMessage
@@ -51,8 +70,11 @@ class test_UPGMAInC(unittest.TestCase):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
     
     def test_deserialisationGroups(self):        
+        print "start"
+        
         symbols = []
         nbSymbol = random.randint(2, 50)
+        
         for iSymbol in range(0, nbSymbol) :        
             # We create 6 messages of 2 group
             originalSymbol = Symbol(uuid.uuid4(), "TestSymbol", None)        
@@ -73,7 +95,7 @@ class test_UPGMAInC(unittest.TestCase):
             originalSymbol.addMessage(message6)
             symbols.append(originalSymbol)
             
-            
+        
         # Start the clustering
         clusteringSolution = UPGMA(None, [originalSymbol], True, 100, 90, True)
         result = clusteringSolution.deserializeGroups(symbols)

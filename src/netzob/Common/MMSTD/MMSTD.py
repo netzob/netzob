@@ -61,24 +61,22 @@ class MMSTD(Automata):
     #+----------------------------------------------
     def __init__(self, initialState, vocabulary):
         Automata.__init__(self, MMSTD.TYPE)
-        
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.MMSTD.py')
 
         # Initial state
         self.initialState = initialState
-        
+
         # The states of the automata
         self.states = []
-        
+
         # The transitions
         self.transitions = []
-        
+
         # The dictionary
         self.vocabulary = vocabulary
-        
-    
-    
+
     def setInitialState(self, state):
         self.initialState = state
 
@@ -87,7 +85,7 @@ class MMSTD(Automata):
             self.states.append(state)
         else:
             logging.debug("The state cannot be added one more time in the grammar.")
-    
+
     #+---------------------------------------------------------------------------+
     #| getTransitionsLeadingToState:
     #|     retrieve all the transitions which ends on the provide state
@@ -95,12 +93,11 @@ class MMSTD(Automata):
     #+---------------------------------------------------------------------------+
     def getTransitionsLeadingToState(self, state):
         transitions = []
-        for transition in self.getTransitions() :
-            if transition.getOutputState().getID() == state.getID() :
+        for transition in self.getTransitions():
+            if transition.getOutputState().getID() == state.getID():
                 transitions.append(transition)
-        
-        return transitions        
-    
+
+        return transitions
 
     def removeState(self, state):
         # First we remove the transitions
@@ -125,7 +122,6 @@ class MMSTD(Automata):
     def addTransition(self, transition):
         if not transition in self.transitions:
             self.transitions.append(transition)
-
 
     #+---------------------------------------------------------------------------+
     #| getOutputTrace:
@@ -167,7 +163,6 @@ class MMSTD(Automata):
         dotCode = dotCode + "}"
         return dotCode
 
-
     #+---------------------------------------------------------------------------+
     #| getAllStates:
     #|     Visits the automata to discover all the available states
@@ -198,10 +193,9 @@ class MMSTD(Automata):
                         if not found:
                             toAnalyze.append(outputState)
                     states.append(currentState)
-            else :
+            else:
                 self.log.error("state = NONE !!")
         return states
-
 
     #+---------------------------------------------------------------------------+
     #| Save & Load
@@ -217,14 +211,14 @@ class MMSTD(Automata):
         xmlTransitions = etree.SubElement(xmlGrammar, "{" + namespace + "}transitions")
         for transition in self.getTransitions():
             transition.save(xmlTransitions, namespace)
-    
+
     @staticmethod
     def loadFromXML(xmlRoot, vocabulary, namespace, version):
         if version == "0.1":
             initialStateID = xmlRoot.get("initialState")
             states = []
             transitions = []
-            
+
             # Retrieve all the states
             for xmlState in xmlRoot.findall("{" + namespace + "}states/{" + namespace + "}state"):
                 state = AbstractState.loadFromXML(xmlState, namespace, version)
@@ -248,10 +242,10 @@ class MMSTD(Automata):
             if initialState == None:
                 logging.warn("Impossible to retrieve the initial state of the saved grammar")
                 return None
-            
+
             # Creation of the automata
             automata = MMSTD(initialState, vocabulary)
-            
+
             # Register all the states
             for state in states:
                 automata.addState(state)
@@ -260,8 +254,7 @@ class MMSTD(Automata):
                 automata.addTransition(transition)
 
             return automata
-            
-    
+
     #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------

@@ -32,11 +32,10 @@ import gtk
 import pygtk
 import uuid
 import errno
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 pygtk.require('2.0')
 import logging
-import os
 import time
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -51,6 +50,7 @@ import impacket.ImpactPacket as Packets
 from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Import.AbstractImporter import AbstractImporter
+
 
 #+----------------------------------------------
 #| Pcap:
@@ -292,8 +292,6 @@ class PcapImport(AbstractImporter):
 
             return
 
-            raise
-
         button.set_sensitive(False)
         self.packets = []
         self.treestore.clear()
@@ -312,7 +310,11 @@ class PcapImport(AbstractImporter):
 
         self.log.info("Starting import from " + pcapFile + " (linktype:" + str(reader.datalink()) + ")")
         self.datalink = reader.datalink()
-        reader.loop(0, self.packetHandler)
+        
+        if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL :
+            NetzobErrorMessage("This pcap cannot be imported since the layer 2 is not supported (" + str(self.datalink) + ")")
+        else :
+            reader.loop(0, self.packetHandler)
         button.set_sensitive(True)
 
     def packetHandler(self, header, payload):
@@ -321,6 +323,10 @@ class PcapImport(AbstractImporter):
             layer2_decoder = Decoders.EthDecoder()
         elif self.datalink == pcapy.DLT_LINUX_SLL:
             layer2_decoder = Decoders.LinuxSLLDecoder()
+        else :
+            layer2_decoder = None
+            self.log.warn("Cannot import one of the provided packets since its layer2 cannot be parsed (datalink = " + str(self.datalink) + " has no decoder)")
+            return         
 
         ip_decoder = Decoders.IPDecoder()
         udp_decoder = Decoders.UDPDecoder()
@@ -331,13 +337,15 @@ class PcapImport(AbstractImporter):
             ip = ip_decoder.decode(payload[ethernet.get_header_size():])
             if ip.get_ip_p() == Packets.UDP.protocol:
                 udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
-                self.packets.append(payload)
+                if len(udp.get_data_as_string()) > 0:
+                    self.treestore.append(None, [len(self.packets), "UDP", ip.get_ip_src(), ip.get_ip_dst(), udp.get_uh_sport(), udp.get_uh_dport(), int(time.time())])
+                    self.packets.append(payload)
 
             if ip.get_ip_p() == Packets.TCP.protocol:
                 tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
-                self.packets.append(payload)
+                if len(tcp.get_data_as_string()) > 0:
+                    self.treestore.append(None, [len(self.packets), "TCP", ip.get_ip_src(), ip.get_ip_dst(), tcp.get_th_sport(), tcp.get_th_dport(), int(time.time())])
+                    self.packets.append(payload)
 
     #+----------------------------------------------
     #| GETTERS

@@ -36,6 +36,7 @@ import optparse
 #+---------------------------------------------------------------------------+
 from netzob import release
 
+
 #+---------------------------------------------------------------------------+
 #| get_parser
 #|  Creates and returns the command line parser.

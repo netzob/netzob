@@ -22,7 +22,6 @@ __author__ = "Jose Fonseca"
 
 __version__ = "0.4"
 
-
 import os
 import sys
 import subprocess
@@ -38,7 +37,6 @@ import gtk.keysyms
 import cairo
 import pango
 import pangocairo
-
 
 # See http://www.graphviz.org/pub/scm/graphviz-cairo/plugin/cairo/gvrender_cairo.c
 
@@ -143,7 +141,7 @@ class TextShape(Shape):
         else:
             cr.update_layout(layout)
 
-        descent = 2 # XXX get descender from font metrics
+        descent = 2  # XXX get descender from font metrics
 
         width, height = layout.get_size()
         width = float(width) / pango.SCALE
@@ -153,7 +151,7 @@ class TextShape(Shape):
         # scale it so that the text fits inside its box
         if width > self.w:
             f = self.w / width
-            width = self.w # equivalent to width *= f
+            width = self.w  # equivalent to width *= f
             height *= f
             descent *= f
         else:
@@ -178,7 +176,7 @@ class TextShape(Shape):
         cr.show_layout(layout)
         cr.restore()
 
-        if 0: # DEBUG
+        if 0:  # DEBUG
             # show where dot thinks the text should appear
             cr.set_source_rgba(1, 0, 0, .9)
             if self.j == self.LEFT:
@@ -657,9 +655,9 @@ class XDotAttrParser:
         if style == "solid":
             self.pen.dash = ()
         elif style == "dashed":
-            self.pen.dash = (6,)       # 6pt on, 6pt off
+            self.pen.dash = (6,)  # 6pt on, 6pt off
         elif style == "dotted":
-            self.pen.dash = (2, 4)       # 2pt on, 4pt off
+            self.pen.dash = (2, 4)  # 2pt on, 4pt off
 
     def handle_font(self, size, name):
         self.pen.fontsize = size
@@ -1196,7 +1194,7 @@ class XDotParser(DotParser):
 
 class Animation(object):
 
-    step = 0.03 # seconds
+    step = 0.03  # seconds
 
     def __init__(self, dot_widget):
         self.dot_widget = dot_widget
@@ -1408,7 +1406,7 @@ class DotWidget(gtk.DrawingArea):
 
     __gsignals__ = {
         'expose-event': 'override',
-        'clicked' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))
+        'clicked': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_STRING, gtk.gdk.Event))
     }
 
     filter = 'dot'
@@ -1486,7 +1484,7 @@ class DotWidget(gtk.DrawingArea):
             return True
 
     def set_xdotcode(self, xdotcode):
-        #print xdotcode
+        # print xdotcode
         parser = XDotParser(xdotcode)
         self.graph = parser.parse()
         self.zoom_image(self.zoom_ratio, center=True)
@@ -1641,7 +1639,7 @@ class DotWidget(gtk.DrawingArea):
 
     def get_drag_action(self, event):
         state = event.state
-        if event.button in (1, 2): # left or middle button
+        if event.button in (1, 2):  # left or middle button
             if state & gtk.gdk.CONTROL_MASK:
                 return ZoomAction
             elif state & gtk.gdk.SHIFT_MASK:

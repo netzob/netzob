@@ -32,13 +32,11 @@ import gtk
 import gobject
 import re
 import pygtk
-import uuid
 pygtk.require('2.0')
 import logging
 import threading
 import os
 import time
-import random
 from ptrace.linux_proc import readProcesses, readProcessCmdline
 import subprocess
 
@@ -48,6 +46,7 @@ import subprocess
 from netzob.Common.Models.IPCMessage import IPCMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Import.AbstractImporter import AbstractImporter
+
 
 #+----------------------------------------------
 #| IPpc:

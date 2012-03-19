@@ -47,7 +47,7 @@ from netzob.Common.MMSTD.MemOpexs.MemOpex import MemOpex
 #+---------------------------------------------------------------------------+
 class ForgetMemOpex(MemOpex):
 
-    def __init__(self, id, transitionId, variableId) :
+    def __init__(self, id, transitionId, variableId):
         MemOpex.__init__(self, "ForgetMemOpex", id, transitionId)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.MemOpex.impl.ForgetMemOpex.py')
@@ -57,18 +57,18 @@ class ForgetMemOpex(MemOpex):
         xmlForgetMemOpex = etree.SubElement(root, "{" + namespace + "}memopex")
         xmlForgetMemOpex.set("id", str(self.getID()))
         xmlForgetMemOpex.set("transitionId", str(self.getTransitionID()))
-        
-        # variableID 
+
+        # variableID
         xmlForgetMemOpexVariable = etree.SubElement(xmlForgetMemOpex, "{" + namespace + "}variableId")
         xmlForgetMemOpexVariable.text = str(self.getVariableID())
-        
+
         xmlForgetMemOpex.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ForgetMemOpex")
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         idMemOpex = xmlRoot.get("id")
         idTransition = xmlRoot.get("transitionId")
-        
+
         xmlForgetVariable = xmlRoot.find("{" + namespace + "}variableId")
         variableID = xmlForgetVariable.text
 
@@ -80,6 +80,6 @@ class ForgetMemOpex(MemOpex):
     #+-----------------------------------------------------------------------+
     def getVariableID(self):
         return self.variableId
-    
+
     def setVariableID(self, variableID):
         self.variableId = variableID

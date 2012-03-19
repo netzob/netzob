@@ -37,6 +37,7 @@ import sys
 #+---------------------------------------------------------------------------+
 from test_netzob import suite_Common
 from test_netzob import suite_Alignment
+from test_netzob import suite_Import
 from common.xmlrunner import XMLTestRunner
 from test_netzob import test_NetzobGui
 
@@ -44,33 +45,33 @@ from test_netzob import test_NetzobGui
 
 def getSuite():
     globalSuite = unittest.TestSuite()
-    
+
     modulesOfTests = [test_NetzobGui]
-    modulesOfSuites = [suite_Common, suite_Alignment]
-    
+    modulesOfSuites = [suite_Common, suite_Alignment, suite_Import]
+
     # Add individual tests    
     for module in modulesOfTests :
         globalSuite.addTests(unittest.TestLoader().loadTestsFromModule(module))
-        
-    # Add suites    
+
+    # Add suites
     for module in modulesOfSuites :
         globalSuite.addTests(module.getSuite())
-        
+
     return globalSuite
 
-    
+
 if __name__ == "__main__":    
     # Output is given through argument.
     # If no argument : output to stdout 
     outputStdout = True
-    
+
     if (len(sys.argv) == 2) :
         outputStdout = False
         reportFile = sys.argv[1]
-    
+
     # We retrieve the current test suite
     currentTestSuite = getSuite()
-    
+
     # We execute the test suite
     if (outputStdout == True) :
         runner = unittest.TextTestRunner()

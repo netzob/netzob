@@ -87,11 +87,9 @@ $ sphinx-build -b html doc/documentation/source/ doc/documentation/build/
 
 ** Requirements for Network and PCAP input **
 
-Dependencies : tcpdump
 Configuration : 
 
 $ sudo setcap cap_net_raw=ep /usr/bin/python2.XX
-$ sudo setcap cap_net_raw=ep /usr/sbin/tcpdump
 
 ** Requirements for IPC input on Ubuntu **
 

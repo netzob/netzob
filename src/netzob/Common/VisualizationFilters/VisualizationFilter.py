@@ -26,72 +26,61 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
-import uuid
-from datetime import datetime
 import logging
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Session import Session
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractImporter:
-#|     Mother class which provides common methods too any kind of importers
+#| VisualizationFilter:
+#|     Class definition of a filter for visualization purposes (color, bold, ...)
 #+---------------------------------------------------------------------------+
-class AbstractImporter:
+class VisualizationFilter(object):
 
-    def __init__(self, type):
+    #+-----------------------------------------------------------------------+
+    #| Constructor
+    #+-----------------------------------------------------------------------+
+    def __init__(self, id, type, name):
+        self.id = id
+        self.type = type
+        self.name = name
+
+    #+-----------------------------------------------------------------------+
+    #| isValid
+    #|     Abstract method to compute if the provided message should be filtered
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def isValid(self, i, message, unitSize):
+        self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+
+    #+-----------------------------------------------------------------------+
+    #| apply
+    #|     Abstract method to apply the filter on a provided message
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def apply(self, message):
+        self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+
+    #+-----------------------------------------------------------------------+
+    #| Getter & Setters
+    #+-----------------------------------------------------------------------+
+    def getID(self):
+        return self.id
+
+    def getType(self):
+        return self.type
+
+    def getName(self):
+        return self.name
+
+    def setType(self, type):
         self.type = type
 
-    #+-----------------------------------------------------------------------+
-    #| saveMessagesInProject:
-    #|   Add a selection of messages to an existing project
-    #|   it also saves them in the workspace
-    #+-----------------------------------------------------------------------+
-    def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
-
-        # We register each message in the vocabulary of the project
-        for message in messages:
-            project.getVocabulary().addMessage(message)
-
-        # We create a session with each message
-        session = Session(uuid.uuid4(), "Session 1", "")
-        for message in messages:
-            session.addMessage(message)
-        # We register the session in the vocabulary of the project
-        project.getVocabulary().addSession(session)
-
-        # We create a default symbol dedicated for this
-        symbol = Symbol(uuid.uuid4(), self.type, project)
-        for message in messages:
-            symbol.addMessage(message)
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
-        # We register the symbol in the vocabulary of the project
-        project.getVocabulary().addSymbol(symbol)
-
-        # Add the environmental dependencies to the project
-        if fetchEnv:
-            project.getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES,
-                                                                       self.envDeps.getEnvData())
-        # Computes current date
-        date = datetime.now()
-        description = "No description (yet not implemented)"
-
-        # We also save the session and the messages in the workspace
-        trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
-        trace.addSession(session)
-        for message in messages:
-            trace.addMessage(message)
-        workspace.addImportedTrace(trace)
-
-        # Now we save the workspace
-        workspace.saveConfigFile()
+    def setName(self, name):
+        self.name = name

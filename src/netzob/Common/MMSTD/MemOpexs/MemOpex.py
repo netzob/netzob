@@ -34,6 +34,7 @@ import logging
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| MemOpex:
 #|     Definition of a Memory Operation (must be subclassed to be useful)
@@ -52,7 +53,7 @@ class MemOpex():
     #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
-    
+
     def getTransitionID(self):
         return self.transitionId
 
@@ -61,10 +62,10 @@ class MemOpex():
 
     def setID(self, id):
         self.id = id
-        
+
     def setTransitionID(self, transitionID):
         self.transitionId = transitionID
-    
+
     #+-----------------------------------------------------------------------+
     #| save
     #|     Abstract method to retrieve the XML definition of current MemOpex

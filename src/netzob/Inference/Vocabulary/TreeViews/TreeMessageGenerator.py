@@ -32,6 +32,7 @@ import logging
 import pango
 import gobject
 import gtk
+import glib
 
 #+----------------------------------------------
 #| Local Imports
@@ -69,9 +70,9 @@ class TreeMessageGenerator():
         # creation of the treeview
         self.treeview = gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
-        
+
         # maximum number of columns = 200
-        for i_col in range(4, 204) :
+        for i_col in range(4, 204):
             # Define cellRenderer object
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property("size-points", 9)
@@ -84,10 +85,9 @@ class TreeMessageGenerator():
             lvcolumn.set_clickable(True)
             lvcolumn.pack_start(textCellRenderer, True)
             lvcolumn.set_attributes(textCellRenderer, markup=i_col, background=1, weight=2, editable=3)
-            
+
 #            self.treeview.append_column(lvcolumn)
             self.currentColumns.append(lvcolumn)
-        
 
         self.treeview.show()
         self.treeview.set_reorderable(True)
@@ -133,24 +133,24 @@ class TreeMessageGenerator():
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self, symbol):
-        self.treestore.clear()            
-        
+        self.treestore.clear()
+
         if symbol == None:
             return
 
         self.symbol = symbol
         self.log.debug("Updating the treestore of the messages in default mode with the messages from the symbol " + self.symbol.getName())
-        
 
         # Verifies we have everything needed for the creation of the treeview
         if (len(self.symbol.getMessages()) < 1):
             self.log.debug("It's an empty symbol so nothing to display")
             return
-         
+
         # Build the next rows from messages after applying the regex
         content_lines = []
         maxNumberOfCol = 0
         for message in self.symbol.getMessages():
+
             # For each message we create a line and computes its cols
             try:
                 messageTable = message.applyAlignment(styled=True, encoded=True)
@@ -158,7 +158,7 @@ class TreeMessageGenerator():
             except NetzobException:
                 self.log.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
                 self.log.warn("Message : " + str(message.getStringData()))
-                
+
                 continue  # We don't display the message in error
             line = []
             line.append(message.getID())
@@ -167,7 +167,7 @@ class TreeMessageGenerator():
             line.append(False)
             line.extend(messageTable)
             content_lines.append(line)
-            if len(messageTable) > maxNumberOfCol :
+            if len(messageTable) > maxNumberOfCol:
                 maxNumberOfCol = len(messageTable)
 
         # Create a TreeStore with N cols, with N := len(self.symbol.getFields())
@@ -176,7 +176,7 @@ class TreeMessageGenerator():
         # int : pango type (weight bold)
         # bool : is row editable
         # [str...str] : value of cols
-        
+
         treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
         for i in range(0, maxNumberOfCol):
             treeStoreTypes.append(str)
@@ -189,8 +189,8 @@ class TreeMessageGenerator():
         regex_row.append(pango.WEIGHT_BOLD)
         regex_row.append(True)
         for field in self.symbol.getFields():
-            regex_row.append(field.getEncodedVersionOfTheRegex())
-        
+            regex_row.append(glib.markup_escape_text(field.getEncodedVersionOfTheRegex()))
+
         # Build the types row
         types_line = []
         types_line.append("HEADER TYPE")
@@ -199,24 +199,23 @@ class TreeMessageGenerator():
         types_line.append(True)
         for field in self.symbol.getFields():
             types_line.append(field.getFormat())
-        
+
         self.treestore.append(None, regex_row)
         self.treestore.append(None, types_line)
-        for line in content_lines :
+        for line in content_lines:
             self.treestore.append(None, line)
-                    
-        # activate or deactiave the perfect number of columns = nb Field
+
+        # activate or deactivate the perfect number of columns = nb Field
         for col in self.treeview.get_columns():
             self.treeview.remove_column(col)
-        for i in range(0, min(200, len(self.symbol.getFields()))) :
+        for i in range(0, min(200, len(self.symbol.getFields()))):
             self.treeview.append_column(self.currentColumns[i])
-            self.treeview.get_column(i).set_title( self.symbol.getFieldByIndex(i).getName() )
+            self.treeview.get_column(i).set_title(self.symbol.getFieldByIndex(i).getName())
 
         self.treeview.set_model(self.treestore)
 
     def updateDefault(self):
         self.default(self.symbol)
-        
 
     #+----------------------------------------------
     #| GETTERS:

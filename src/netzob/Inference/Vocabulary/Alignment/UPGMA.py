@@ -43,25 +43,26 @@ from netzob.Common.Symbol import Symbol
 import uuid
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
+
 #+---------------------------------------------------------------------------+
 #| UPGMA:
 #|     Supports the use of UPGMA clustering
 #+---------------------------------------------------------------------------+
 class UPGMA(object):
-    
-    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, cb_status=None):
-        self.project = project;
+
+    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, unitSize, cb_status=None):
+        self.project = project
         self.nbIteration = nbIteration
         self.minEquivalence = minEquivalence
         self.doInternalSlick = doInternalSlick
         self.cb_status = cb_status
         self.defaultFormat = defaultFormat
-        
+        self.unitSize = unitSize
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
-        
+
         if explodeSymbols == False:
             self.symbols = symbols
-            
+
         else:
             # Create a symbol for each message
             self.symbols = []
@@ -72,10 +73,9 @@ class UPGMA(object):
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
                     i_symbol += 1
-                    
+
         self.log.debug("A number of {0} already aligned symbols will be clustered.".format(str(len(symbols))))
-        
-        
+
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
     #|     Callback function called by the C extension to provide info on status
@@ -83,11 +83,11 @@ class UPGMA(object):
     #| @param currentMessage a str which represents the current alignment status
     #+-----------------------------------------------------------------------+
     def cb_executionStatus(self, donePercent, currentMessage):
-        if self.cb_status == None :
+        if self.cb_status == None:
             print "[UPGMA status] " + str(donePercent) + "% " + currentMessage
-        else :
+        else:
             self.cb_status(donePercent, currentMessage)
-    
+
     #+-----------------------------------------------------------------------+
     #| executeClustering
     #|     execute the clustering operation
@@ -96,8 +96,25 @@ class UPGMA(object):
     #| @minEquivalence the minimum requirement to consider two symbol as equivalent
     #| @return the new list of symbols
     #+-----------------------------------------------------------------------+
-    def executeClustering(self):    
+    def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
+	###################################	FIND EQUAL MESSAGES
+	################################### 	useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols) 
+        ll = len(self.symbols) - 1
+        i_equ = 0
+        while(ll > 0):
+            currentMess = self.symbols[i_equ].getMessages()[0].getReducedStringData()
+            for j in range(ll):
+                if(currentMess == self.symbols[i_equ + j + 1].getMessages()[0].getReducedStringData()):
+                    self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
+                    self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
+                    i_equ -= 1
+                    break
+            ll -= 1
+            i_equ += 1
+	########################################        
+	#################################################################
+
         for iteration in range(0, self.nbIteration):
             self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
             # Create the score matrix for each symbol
@@ -112,14 +129,13 @@ class UPGMA(object):
                 break
 
         self.cb_executionStatus(50.0, "Executing last alignment...")
-        alignment = NeedlemanAndWunsch(self.cb_status)
+        alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
-            
-            
+
         return self.symbols
-            
+
     #+----------------------------------------------
     #| retrieveMaxIJ:
     #|   given a list of symbols, it computes the
@@ -130,16 +146,15 @@ class UPGMA(object):
     #+----------------------------------------------
     def retrieveEffectiveMaxIJ(self):
         self.log.debug("Computing the associated matrix")
-        
+
         # Serialize the symbols
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols)
-        
+
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
         (i_max, j_max, maxScore) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
         return (i_max, j_max, maxScore)
-    
-    
+
     #+----------------------------------------------
     #| mergeRowCol:
     #|   Merge the symbols i and j in the "symbols" structure
@@ -163,9 +178,8 @@ class UPGMA(object):
             newSymbol.addMessage(message)
 
         # Append th new symbol to the "symbols" structure
-        self.symbols.append(newSymbol)  
-        
-        
+        self.symbols.append(newSymbol)
+
     #+----------------------------------------------
     #| mergeOrphanSymbols:
     #|   try to merge orphan symbols by progressively
@@ -221,23 +235,21 @@ class UPGMA(object):
             self.symbols = tmp_symbols
 
         self.cb_executionStatus(50.0, "Executing last alignment...")
-        alignment = NeedlemanAndWunsch(self.cb_status)
+        alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
         return self.symbols
-        
-        
+
     #+-----------------------------------------------------------------------+
     #| deserializeGroups
     #|     Useless (functionally) function created for testing purposes
     #| @param symbols a list of symbols
     #| @returns number Of Deserialized symbols
     #+-----------------------------------------------------------------------+
-    def deserializeGroups(self, symbols): 
+    def deserializeGroups(self, symbols):
         # First we serialize the messages
         (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols)
-        
+
         debug = True
         return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
-      

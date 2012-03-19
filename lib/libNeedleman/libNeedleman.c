@@ -216,6 +216,11 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
           int m, n;
           t_group p_group;
           t_regex regex;
+	  t_score score;
+	  score.s1 = 0;
+	  score.s2 = 0;
+	  score.s3 = 0;
+	  regex.score = &score;
           t_regex regex1;
           t_regex regex2;
           p_group.len = groups->groups[i].len + groups->groups[p].len;
@@ -244,10 +249,10 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
             regex1.regex = regex.regex;
           }
           //                              omp_set_lock(&my_lock);
-          matrix[i][p] = regex.score;
+          matrix[i][p] = computeDistance(regex.score);
           //                              omp_unset_lock(&my_lock);
-	  if (debugMode == TRUE) {
-	    printf("matrix %d,%d = %f\n", i, p, regex.score);
+	  if (debugMode) {
+	    printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
 	  }
 
           free( regex.regex );
@@ -278,30 +283,15 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     }
     free( groups->groups );
     
-      // First we fill the matrix with 0s
     if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
       printf("Error, error while executing C callback.\n");
     }
 
     result->i = i_maximum;
     result->j = j_maximum;
-    result->score = maxScore;
-
-    
+    result->score = maxScore;   
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 //+---------------------------------------------------------------------------+
 //| py_alignSequences : Python wrapper for alignMessages
@@ -321,6 +311,7 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   unsigned short int nbDeserializedMessage;
   t_regex regex;
   t_group group;
+  t_score score;
   Bool bool_doInternalSlick;
   Bool bool_debugMode;
 
@@ -375,7 +366,10 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   }
 
   // Fix the default values associated with regex
-  regex.score = 0.0;
+  score.s1 = 0;
+  score.s2 = 0;
+  score.s3 = 0;
+  regex.score = &score;
   regex.regex = malloc(group.messages[0].len * sizeof(unsigned char));
   memset(regex.regex, '\0', group.messages[0].len);
   regex.len = 0;
@@ -387,7 +381,7 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   alignMessages(&regex, bool_doInternalSlick, nbMessages, &group, bool_debugMode);
 
   // Return the results
-  return Py_BuildValue("(fs#s#)", regex.score, regex.regex, regex.len, regex.mask, regex.len);
+  return Py_BuildValue("(fffs#s#)", regex.score->s1, regex.score->s2, regex.score->s3, regex.regex, regex.len, regex.mask, regex.len);
 }
 void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMessages, t_group* group, Bool debugMode) {
   // local variable
@@ -418,7 +412,7 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
     regex->len = current_regex.len;
     regex->mask = current_regex.mask;
     regex->regex = current_regex.regex;
-    regex->score = 0.0;
+    regex->score = current_regex.score;
   }
   for (i_message=1; i_message < group->len; i_message++) {
     // Update the execution status
@@ -469,8 +463,11 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   // local variables
   unsigned short int nbDeserializedMessage;
   t_regex regexMessage1;
+  t_score scoreMessage1;
   t_regex regexMessage2;
+  t_score scoreMessage2;
   t_regex regex;
+  t_score score;
   t_group group;
   Bool bool_doInternalSlick;
   Bool bool_debugMode;
@@ -524,21 +521,30 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
 
   // Establishes regex for message1
   regexMessage1.len = group.messages[0].len;
-  regexMessage1.score = 0.0;
+  scoreMessage1.s1 = 0;
+  scoreMessage1.s2 = 0;
+  scoreMessage1.s3 = 0;
+  regexMessage1.score = &scoreMessage1;
   regexMessage1.regex = group.messages[0].message;
   regexMessage1.mask  = malloc(group.messages[0].len * sizeof(unsigned char));
   memset(regexMessage1.mask, 0, group.messages[0].len);
 
   // Establishes regex for message2
   regexMessage2.len = group.messages[1].len;
-  regexMessage2.score = 0.0;
+  scoreMessage2.s1 = 0;
+  scoreMessage2.s2 = 0;
+  scoreMessage2.s3 = 0;
+  regexMessage2.score = &scoreMessage2;
   regexMessage2.regex = group.messages[1].message;
   regexMessage2.mask  = malloc(group.messages[1].len * sizeof(unsigned char));
   memset(regexMessage2.mask, 0, group.messages[1].len);
 
   // Prepare the response
   regex.len = 0;
-  regex.score = 0.0;
+  score.s1 = 0;
+  score.s2 = 0;
+  score.s3 = 0;
+  regex.score = &score;
   if (regexMessage1.len >= regexMessage2.len) {
     regex.mask = malloc(regexMessage1.len * sizeof(unsigned char));
     memset(regex.mask, 0, regexMessage1.len);
@@ -557,7 +563,7 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   free(regexMessage2.mask);
 
   // Return the result
-  return Py_BuildValue("(fs#s#)", regex.score, regex.regex, regex.len, regex.mask, regex.len);
+  return Py_BuildValue("(fffs#s#)", regex.score->s1, regex.score->s2, regex.score->s3, regex.regex, regex.len, regex.mask, regex.len);
 }
 int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_regex * regex2, Bool debugMode){
   // local variables
@@ -580,11 +586,9 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   unsigned char *regexTmp;
   unsigned char *regexMaskTmp;
 
-  // Computing score of the regex
-  float nbDynamic = 0.0f;
-  float nbStatic = 0.0f;
-  float cent = 100.0f;
-  Bool inDyn = FALSE;
+  // Score computation
+  unsigned short int nbDynTotal = 0;
+  unsigned short int nbDynCommon = 0;
 
   //+------------------------------------------------------------------------+
   // Create and initialize the matrix
@@ -800,21 +804,13 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     else {
       regexTmp[i] = 0xf5;
       regexMaskTmp[i] = DIFFERENT;
-    }
-  }
 
-  if (debugMode) {
-    printf("Result    : ");
-    for( i = 0; i < regex1->len + regex2->len; i++) {
-      if(regexMaskTmp[i] == EQUAL ) {
-        printf("%02x", (unsigned char) regexTmp[i]);
-      } else if ( regexMaskTmp[i] == END ) {
-        printf("##");
-      } else {
-        printf("--");
-      }
+      // Compute score of common dynamic elements
+      nbDynTotal += 1;
+      if ((maskRegex1[i] == EQUAL) && (maskRegex2[i] == EQUAL)) {
+	nbDynCommon += 1;
+      }      
     }
-    printf("\n");
   }
 
   // Try to slick the regex
@@ -831,31 +827,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     }
   }
 
-  // Compute the score of the regex
-  for (i = (regex1->len + regex2->len - 1); i >= 1; --i) {
-    if (regexMaskTmp[i] == END) {
-      break;
-    }
-
-    if (regexMaskTmp[i] == EQUAL) {
-
-      if (inDyn == TRUE) {
-        nbDynamic = nbDynamic + 1.0f;
-        inDyn = FALSE;
-      }
-      nbStatic = nbStatic + 1.0f;
-    } else if (regexMaskTmp[i] == DIFFERENT) {
-      inDyn = TRUE;
-    }
-  }
-  if (inDyn == TRUE)
-    nbDynamic = nbDynamic + 1.0f;
-
-  regex->score = 100.0 / (nbStatic + nbDynamic) * nbStatic;
-  if (debugMode) {
-    printf("Computed score = %0.2f (nbStatic = %0.2f, nbDynamix = %0.2f).\n", regex->score, nbStatic, nbDynamic);
-  }
-
+  // Create the regex based on obtained data
   // Remove the first # of the regex (where mask = END)
   // Retrieve the shortest possible regex
   i = 0;
@@ -869,6 +841,35 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   // TODO: (fgy) free regex.mask and regex.regex
   memcpy(regex->regex, regexTmp + i, regex->len);
   memcpy(regex->mask, regexMaskTmp + i, regex->len);
+
+
+  // Compute the scores of similarity, using the regex
+  if (debugMode) {
+    printf("Result    : ");
+    for( i = 0; i < regex->len; i++) {
+      if(regex->mask[i] == EQUAL ) {
+        printf("%02x", (unsigned char) regex->regex[i]);
+      } else if ( regex->mask[i] == END ) {
+        printf("##");
+      } else {
+        printf("--");
+      }
+    }
+    printf("\n");
+  }
+
+
+  // COMPUTE THE SCORES
+  // Using the regex, we compute the multiple scores
+  regex->score->s1 = getScoreRatio(regex);
+  regex->score->s2 = getScoreDynSize(nbDynTotal, nbDynCommon);
+  regex->score->s3 = getScoreRang(regex);
+
+  if (debugMode) {
+    printf("Score ratio : %0.2f.\n", regex->score->s1);
+    printf("Score DynSize : %0.2f.\n", regex->score->s2);
+    printf("Score Rang : %0.2f.\n", regex->score->s3);
+  }
 
 
   // Room service
@@ -886,6 +887,54 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
 }
 
 
+float getScoreRatio(t_regex * regex) {
+  // Computing score of the regex
+  float nbDynamic = 0.0f;
+  float nbStatic = 0.0f;
+  float cent = 100.0f;
+  Bool inDyn = FALSE;
+
+  int i=0;
+  float result = 0;
+  // Compute the score of the regex
+  for (i = (regex->len - 1); i >= 1; --i) {
+    if (regex->mask[i] == END) {
+      break;
+    }
+    if (regex->mask[i] == EQUAL) {
+      if (inDyn == TRUE) {
+        nbDynamic = nbDynamic + 1.0f;
+        inDyn = FALSE;
+      }
+      nbStatic = nbStatic + 1.0f;
+    } else if (regex->mask[i] == DIFFERENT) {
+      inDyn = TRUE;
+    }
+  }
+  if (inDyn == TRUE)
+    nbDynamic = nbDynamic + 1.0f;
+
+  result = 100.0 / (nbStatic + nbDynamic) * nbStatic;
+  return result;
+}
+float getScoreDynSize(unsigned short int nbDynTotal, unsigned short int nbDynCommon) {
+  // Compute score of common dynamic elements
+  float result = 0;
+  result = 100.0 / nbDynTotal * nbDynCommon;
+  return result;
+}
+float getScoreRang(t_regex * regex) {
+  float result = 0;
+  
+  return result;
+}
+float computeDistance(t_score * score) {
+  float result = 0;
+  result = sqrt(pow(score->s1,2) + pow(score->s2,2) + pow(score->s3,2));
+  return result;
+}
+  
+ 
 
 
 

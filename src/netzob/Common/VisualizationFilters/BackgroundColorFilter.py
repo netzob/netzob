@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+from netzob.Common.VisualizationFilters.VisualizationFilter import VisualizationFilter
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -40,41 +41,22 @@ import logging
 
 
 #+---------------------------------------------------------------------------+
-#| Memory:
-#|     Definition of an memory
+#| BackgroundColorFilter:
+#|     Definition of a visualization filter wich colorize the background
 #+---------------------------------------------------------------------------+
-class Memory():
+class BackgroundColorFilter(VisualizationFilter):
 
-    def __init__(self, variables):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
-        self.memory = dict()
-        self.temporaryMemory = dict()
-        self.variables = variables
+    TYPE = "BackgroundColorFilter"
 
-    def createMemory(self):
-        # We create a temporary memory
-        self.temporaryMemory = dict()
-        for key in self.memory.keys():
-            self.temporaryMemory[key] = self.memory[key]
+    def __init__(self, id, name, iStart, iEnd, color):
+        VisualizationFilter.__init__(self, id, BackgroundColorFilter.TYPE, name)
+        self.iStart = iStart
+        self.iEnd = iEnd
+        self.color = color
 
-    def persistMemory(self):
-        self.memory = dict()
-        for key in self.temporaryMemory.keys():
-            self.memory[key] = self.temporaryMemory[key]
+    def isValid(self, i, message, unitSize):
+        factor = (unitSize / 4)
+        return i >= self.iStart / factor and i <= self.iEnd / factor
 
-    def hasMemorized(self, variable):
-        return variable.getID() in self.temporaryMemory.keys()
-
-    def memorize(self, variable, binValue):
-        self.temporaryMemory[variable.getID()] = binValue
-
-    def recall(self, variable):
-        return self.temporaryMemory[variable.getID()]
-
-    def recallAll(self):
-        return self.temporaryMemory
-
-    def restore(self, variable):
-        if variable.getID() in self.memory.keys():
-            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
+    def apply(self, message):
+        return '<span background="' + self.color + '">' + message + '</span>'

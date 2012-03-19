@@ -45,6 +45,9 @@ from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
+from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
+from netzob.Common.VisualizationFilters.BackgroundColorFilter import BackgroundColorFilter
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 #+---------------------------------------------------------------------------+
@@ -117,6 +120,19 @@ class Field(object):
 
     def setVariable(self, variable):
         self.variable = variable
+
+    def getVisualizationFilters(self):
+        filters = []
+
+        # dynamic fields are in Blue
+        if not self.isStatic():
+            filters.append(TextColorFilter(uuid.uuid4(), "Dynamic Field", None, None, "blue"))
+
+            # fields with no variable define are in yellow
+            if self.variable == None:
+                filters.append(BackgroundColorFilter(uuid.uuid4(), "Default variable", None, None, "yellow"))
+
+        return filters
 
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")

@@ -33,13 +33,11 @@ import pygtk
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 pygtk.require('2.0')
 import logging
-import os
 import threading
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from lxml.etree import ElementTree
 
 #+----------------------------------------------
 #| Local Imports
@@ -73,7 +71,6 @@ class UISimulator:
 
     def kill(self):
         self.finish = True
-        pass
 
     def save(self, file):
         self.log = logging.getLogger('netzob.Simuator.UISimulator.py')
@@ -527,7 +524,7 @@ class UISimulator:
         if(iter):
             if(model.iter_is_valid(iter)):
                 actorName = model.get_value(iter, 0)
-                actorType = model.get_value(iter, 1)
+                #actorType = model.get_value(iter, 1)
 
         for actor in self.actors:
             if actor.getName() == actorName:
@@ -571,7 +568,7 @@ class UISimulator:
             self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallAll()[memory_id]])
 
     def refreshGUI(self, tempo=0.5):
-#TODO 
+#TODO
 #        if not self.finish:
 #            threading.Timer(tempo, self.refreshGUI, [tempo]).start()
 #            self.updateListOfActors()

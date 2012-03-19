@@ -45,6 +45,7 @@ from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 
+
 #+---------------------------------------------------------------------------+
 #| Vocabulary:
 #|     Class definition of the vocabulary
@@ -86,9 +87,9 @@ class Vocabulary(object):
             if symbol.getID() == symbolID:
                 return symbol
         # Exceptions : if ID = 0, we return an EmptySymbol
-        if symbolID == str(0) :
-            return EmptySymbol()    
-        
+        if symbolID == str(0):
+            return EmptySymbol()
+
         return None
 
     def getSession(self, sessionID):
@@ -137,7 +138,7 @@ class Vocabulary(object):
                 if not variable in variables:
                     variables.append(variable)
         return variables
-    
+
     def getVariableByID(self, idVar):
         for symbol in self.symbols:
             for variable in symbol.getVariables():

@@ -85,11 +85,11 @@ class NormalState(AbstractState):
                 if t.getType() == "SemiStochastic" and t.getInputSymbol().getID() == inputSymbol.getID():
                     self.log.warn("Symbol = " + str(inputSymbol) + " == " + str(t.getInputSymbol()))
                     found = True
-                else :
+                else:
                     self.log.debug("Symbol = " + str(inputSymbol) + " != " + str(t.getInputSymbol()))
             if not found:
                 self.transitions.append(transition)
-            else :
+            else:
                 self.log.warn("OUPS, impossible to register the provided transition")
         else:
             self.transitions.append(transition)
@@ -155,15 +155,15 @@ class NormalState(AbstractState):
         idRandom = random.randint(0, len(self.getTransitions()) - 1)
         pickedTransition = self.getTransitions()[idRandom]
         self.log.info("Randomly picked the transition " + pickedTransition.getName())
-        
+
         newState = pickedTransition.executeAsMaster(abstractionLayer)
-        
+
         # in case an error occured while executing the transition
-        if newState == None :
+        if newState == None:
             self.log.debug("The state has detected an error while executing the transition and consider it !")
             self.deactivate()
             return None
-        
+
         self.deactivate()
         return newState
 
@@ -172,11 +172,11 @@ class NormalState(AbstractState):
         xmlState.set("id", str(self.getID()))
         xmlState.set("name", str(self.getName()))
         xmlState.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:NormalState")
-        
+
         # Save MemOpex
-        if len(self.getMemOpexs()) > 0 :
+        if len(self.getMemOpexs()) > 0:
             xmlMemOpexs = etree.SubElement(xmlState, "{" + namespace + "}memopexs")
-            for memOpex in self.getMemOpexs() :
+            for memOpex in self.getMemOpexs():
                 memOpex.save(xmlMemOpexs, namespace)
 
     @staticmethod

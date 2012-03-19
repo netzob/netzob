@@ -52,7 +52,7 @@ class Session(object):
         self.name = name
         self.description = description
         self.messages = []
-         
+
     def addMessage(self, message):
         self.messages.append(message)
 
@@ -106,7 +106,7 @@ class Session(object):
                 xmlMessages = xmlRoot.find("{" + namespace_common + "}messages-ref")
                 for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
                     id = xmlMessage.get("id")
-                    message = poolOfMessages.getMessageByID( id )
+                    message = poolOfMessages.getMessageByID(id)
                     if message != None:
                         message.setSession(session)
                         session.addMessage(message)

@@ -38,6 +38,7 @@ pygtk.require('2.0')
 #+----------------------------------------------
 from netzob.Export.TreeViews.TreeSymbolGenerator import TreeSymbolGenerator
 
+
 #+----------------------------------------------
 #| TextExport:
 #|     GUI for exporting results in raw mode
