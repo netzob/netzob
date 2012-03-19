@@ -69,7 +69,12 @@ class AbstractionLayer():
         return self.connected
     
     def setConnected(self):
+        self.log.debug("Connected changes to TRUE")
         self.connected = True
+        
+    def setDisconnected(self):
+        self.log.debug("Disconnected changes to FALSE")
+        self.connected = False
 
     def openServer(self, vocabulary, outputState, isMaster):
         self.log.info("OpenServer " + str(self.communicationChannel))
@@ -81,7 +86,7 @@ class AbstractionLayer():
 #            self.communicationChannel = self.communicationChannel.createNewServer()
             pass
         else:
-            self.communicationChannel.openServer(vocabulary, outputState, isMaster, self.setConnected)
+            self.communicationChannel.openServer(vocabulary, outputState, isMaster, self.setConnected, self.setDisconnected)
 
     def closeServer(self):
         self.log.debug("CloseServer ...")

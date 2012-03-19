@@ -84,9 +84,15 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     
     def setCBWhenAClientConnects(self, cb) :
         self.cbClientConnected = cb
-
+        
+    def setCBWhenAClientDisconnects(self, cb) :
+        self.cbClientDisconnected = cb
+        
     def notifyAClientIsConnected(self):
         self.cbClientConnected()
+        
+    def notifyAClientIsDisconnected(self):
+        self.cbClientDisconnected()
 
     def shutdown(self):
         logging.info("shutingdown")
@@ -116,8 +122,14 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
     def setCBWhenAClientConnects(self, cb) :
         self.cbClientConnected = cb
         
+    def setCBWhenAClientDisconnects(self, cb) :
+        self.cbClientDisconnected = cb
+        
     def notifyAClientIsConnected(self):
         self.cbClientConnected()
+        
+    def notifyAClientIsDisconnected(self):
+        self.cbClientDisconnected()
 
 
 class TCPConnectionHandler(SocketServer.BaseRequestHandler):
@@ -157,6 +169,8 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         while (self.subVisitor.isAlive()):
             ready = select.select([self.request], [], [], 1)
             time.sleep(0.1)
+            
+        self.server.notifyAClientIsDisconnected()
 
         self.log.warn("End of the execution of the TCP Connection handler")
 #    def finish(self):
@@ -180,7 +194,16 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
-        modelVisitor.run()
+        modelVisitor.start()
+        
+        # save it
+        self.server.addGeneratedInstance(modelVisitor)
+
+        while (modelVisitor.isAlive()):
+            ready = select.select([self.request], [], [], 1)
+            time.sleep(0.1)
+            
+        self.server.notifyAClientIsDisconnected()
 
 
 #+---------------------------------------------------------------------------+
@@ -201,16 +224,18 @@ class NetworkServer(AbstractActor):
         self.server = None
         self.instantiatedServers = []
 
-    def openServer(self, vocabulary, initialState, master, cb_whenAClientConnects):
+    def openServer(self, vocabulary, initialState, master, cb_whenAClientConnects, cb_whenAClienDisconnects):
         # Instantiates the server
         if self.protocol == "UDP":
             self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
             self.server.setCBWhenAClientConnects(cb_whenAClientConnects)
+            self.server.setCBWhenAClientDisconnects(cb_whenAClienDisconnects)
         else:
             self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
             self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
             self.server.setCBWhenAClientConnects(cb_whenAClientConnects)
+            self.server.setCBWhenAClientDisconnects(cb_whenAClienDisconnects)
 
         self.server.setVocabulary(vocabulary)
         self.server.setInitialState(initialState)

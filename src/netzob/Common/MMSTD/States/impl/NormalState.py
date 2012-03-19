@@ -117,7 +117,7 @@ class NormalState(AbstractState):
         self.activate()
         # Wait for a message
 
-        tupleReception = abstractionLayer.receiveSymbol()
+        tupleReception = abstractionLayer.receiveSymbolWithTimeout(3)
         if tupleReception == (None, None):
             self.log.warn("Warning the abstraction layer returns null")
             return None

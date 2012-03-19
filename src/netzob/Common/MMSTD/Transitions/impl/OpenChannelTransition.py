@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import time
-
+from datetime import datetime
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -76,12 +76,45 @@ class OpenChannelTransition(AbstractTransition):
         self.log.debug("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
 
         if abstractionLayer.getCommunicationChannel().isServer():
-            # start a specific listening network thread
             self.activate()
             self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, False)
             self.deactivate()
-            return None
+            
+            startTime = datetime.now()
+            
+            # Here we wait for someone to connect to our server !
+            finish = abstractionLayer.isConnected()
+            error = False
+            while (not finish):
+                self.log.info("No one is connected !")
+                currentTime = datetime.now()
+                if ((currentTime - startTime).microseconds > self.connectionTime) :
+                    finish = True
+                    error = True
+                else :
+                    finish = abstractionLayer.isConnected()
+                time.sleep(1)
+                
+            if error :
+                self.log.warn("No client has connect to our oracle.")
+                return None
+            else :
+                error = False
+                startTime = datetime.now()
+                finish = not abstractionLayer.isConnected()
+                while (not finish):
+                    self.log.info("Waiting for the client to disconnect")
+                    currentTime = datetime.now()
+                    if ((currentTime - startTime).microseconds > 60000) :
+                        finish = True
+                        error = True
+                    else :
+                        finish = not abstractionLayer.isConnected()
+                    time.sleep(1)
+                if error :
+                    self.log.warn("Stop the server even if the client are still up")
+                return None
         else:
             self.activate()
             result = self.openConnection(abstractionLayer)
@@ -105,13 +138,26 @@ class OpenChannelTransition(AbstractTransition):
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, True)
             self.deactivate()
             
+            startTime = datetime.now()
+            
             # Here we wait for someone to connect to our server !
-            while (not abstractionLayer.isConnected()):
-                time.sleep(int(self.connectionTime) / 1000)
+            finish = abstractionLayer.isConnected()
+            error = False
+            while (not finish):
                 self.log.info("No one is connected !")
-            
-            
-            return self.outputState
+                currentTime = datetime.now()
+                if ((currentTime - startTime).microseconds > self.connectionTime) :
+                    finish = True
+                    error = True
+                else :
+                    finish = abstractionLayer.isConnected()
+                time.sleep(1)
+                
+            if error :
+                self.log.warn("No client has connect to our oracle.")
+                return None
+            else :
+                return self.outputState
         else:
             self.activate()
             result = self.openConnection(abstractionLayer)
