@@ -216,13 +216,15 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
           int m, n;
           t_group p_group;
           t_regex regex;
-	  t_score score;
-	  score.s1 = 0;
-	  score.s2 = 0;
-	  score.s3 = 0;
-	  regex.score = &score;
-          t_regex regex1;
+			 t_regex regex1;
           t_regex regex2;
+          t_score score;
+
+          score.s1 = 0;
+          score.s2 = 0;
+          score.s3 = 0;
+          regex.score = &score;
+          
           p_group.len = groups->groups[i].len + groups->groups[p].len;
           p_group.messages = malloc(p_group.len * sizeof(t_message));
           for (m = 0; m < groups->groups[i].len; ++m) {
@@ -392,7 +394,13 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
   // Local variables
   t_regex current_regex;
   t_regex new_regex;
+  t_score score;
   unsigned short int i_message;
+  
+  score.s1 = 0;
+  score.s2 = 0;
+  score.s3 = 0;
+  score.value = 0;
   
   //+------------------------------------------------------------------------+
   // Estimate the number of operation
@@ -406,6 +414,7 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
   current_regex.regex = group->messages[0].message;
   current_regex.mask = malloc(group->messages[0].len * sizeof(unsigned char));
   memset(current_regex.mask, 0, group->messages[0].len);
+  current_regex.score = &score;
 
   // Prepare for the regex
   if (group->len == 1) {
