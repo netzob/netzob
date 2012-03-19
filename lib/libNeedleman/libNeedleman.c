@@ -813,20 +813,6 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     }
   }
 
-  if (debugMode) {
-    printf("Result    : ");
-    for( i = 0; i < regex1->len + regex2->len; i++) {
-      if(regexMaskTmp[i] == EQUAL ) {
-        printf("%02x", (unsigned char) regexTmp[i]);
-      } else if ( regexMaskTmp[i] == END ) {
-        printf("##");
-      } else {
-        printf("--");
-      }
-    }
-    printf("\n");
-  }
-
   // Try to slick the regex
   if(doInternalSlick == TRUE) {
     for(i = 1; i < regex1->len + regex2->len - 1; i++) {
@@ -858,6 +844,23 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
 
 
   // Compute the scores of similarity, using the regex
+  if (debugMode) {
+    printf("Result    : ");
+    for( i = 0; i < regex->len; i++) {
+      if(regex->mask[i] == EQUAL ) {
+        printf("%02x", (unsigned char) regex->regex[i]);
+      } else if ( regex->mask[i] == END ) {
+        printf("##");
+      } else {
+        printf("--");
+      }
+    }
+    printf("\n");
+  }
+
+
+  // COMPUTE THE SCORES
+  // Using the regex, we compute the multiple scores
   regex->score->s1 = getScoreRatio(regex);
   regex->score->s2 = getScoreDynSize(nbDynTotal, nbDynCommon);
   regex->score->s3 = getScoreRang(regex);
@@ -917,7 +920,6 @@ float getScoreRatio(t_regex * regex) {
 float getScoreDynSize(unsigned short int nbDynTotal, unsigned short int nbDynCommon) {
   // Compute score of common dynamic elements
   float result = 0;
-
   result = 100.0 / nbDynTotal * nbDynCommon;
   return result;
 }
