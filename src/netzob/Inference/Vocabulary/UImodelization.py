@@ -873,7 +873,7 @@ class UImodelization:
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
- ###FRANCK
+ 
             if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
                 item = gtk.MenuItem("with all next fields")
                 item.show()
@@ -881,91 +881,91 @@ class UImodelization:
                 concatMenu.append(item)
             
 	    item = gtk.MenuItem("Concatenate field")
-            item.set_submenu(concatMenu)
-            item.show()
-            menu.append(item)
+        item.set_submenu(concatMenu)
+        item.show()
+        menu.append(item)
 
-            # Add entry to split the column
-            item = gtk.MenuItem("Split field")
-            item.show()
-            item.connect("activate", self.rightClickToSplitColumn, selectedField)
-            menu.append(item)
+        # Add entry to split the column
+        item = gtk.MenuItem("Split field")
+        item.show()
+        item.connect("activate", self.rightClickToSplitColumn, selectedField)
+        menu.append(item)
 
-            # Add entry to retrieve the field domain of definition
-            item = gtk.MenuItem("Field's domain of definition")
-            item.show()
-            item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
-            menu.append(item)
+        # Add entry to retrieve the field domain of definition
+        item = gtk.MenuItem("Field's domain of definition")
+        item.show()
+        item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
+        menu.append(item)
 
-            # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None:
-                typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem("Create a variable")
-                itemVariable.show()
-                itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
-                typeMenuVariable.append(itemVariable)
-            else:
-                typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem("Edit variable")
-                itemVariable.show()
-                itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
-                typeMenuVariable.append(itemVariable)
+        # Add sub-entries to change the variable of a specific column
+        if selectedField.getVariable() == None:
+            typeMenuVariable = gtk.Menu()
+            itemVariable = gtk.MenuItem("Create a variable")
+            itemVariable.show()
+            itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
+            typeMenuVariable.append(itemVariable)
+        else:
+            typeMenuVariable = gtk.Menu()
+            itemVariable = gtk.MenuItem("Edit variable")
+            itemVariable.show()
+            itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
+            typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None:
-                itemVariable3 = gtk.MenuItem("Remove variable")
-                itemVariable3.show()
-                itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
-                typeMenuVariable.append(itemVariable3)
+        if selectedField.getVariable() != None:
+            itemVariable3 = gtk.MenuItem("Remove variable")
+            itemVariable3.show()
+            itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
+            typeMenuVariable.append(itemVariable3)
 
-            item = gtk.MenuItem("Configure variation of field")
-            item.set_submenu(typeMenuVariable)
-            item.show()
-            menu.append(item)
+        item = gtk.MenuItem("Configure variation of field")
+        item.set_submenu(typeMenuVariable)
+        item.show()
+        menu.append(item)
 
-            item = gtk.SeparatorMenuItem()
-            item.show()
-            menu.append(item)
+        item = gtk.SeparatorMenuItem()
+        item.show()
+        menu.append(item)
 
-            # Add entries for copy functions
-            copyMenu = gtk.Menu()
-            item = gtk.MenuItem("Raw message")
-            item.show()
-            item.connect("activate", self.rightClickToCopyToClipboard, message_id, False, False, None)
-            copyMenu.append(item)
-            item = gtk.MenuItem("Aligned message")
-            item.show()
-            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, None)
-            copyMenu.append(item)
-            item = gtk.MenuItem("Aligned formatted message")
-            item.show()
-            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, None)
-            copyMenu.append(item)
-            item = gtk.MenuItem("Field")
-            item.show()
-            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, selectedField)
-            copyMenu.append(item)
-            item = gtk.MenuItem("Formatted field")
-            item.show()
-            item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, selectedField)
-            copyMenu.append(item)
-            item = gtk.MenuItem("Copy to clipboard")
-            item.set_submenu(copyMenu)
-            item.show()
-            menu.append(item)
+        # Add entries for copy functions
+        copyMenu = gtk.Menu()
+        item = gtk.MenuItem("Raw message")
+        item.show()
+        item.connect("activate", self.rightClickToCopyToClipboard, message_id, False, False, None)
+        copyMenu.append(item)
+        item = gtk.MenuItem("Aligned message")
+        item.show()
+        item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, None)
+        copyMenu.append(item)
+        item = gtk.MenuItem("Aligned formatted message")
+        item.show()
+        item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, None)
+        copyMenu.append(item)
+        item = gtk.MenuItem("Field")
+        item.show()
+        item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, selectedField)
+        copyMenu.append(item)
+        item = gtk.MenuItem("Formatted field")
+        item.show()
+        item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, selectedField)
+        copyMenu.append(item)
+        item = gtk.MenuItem("Copy to clipboard")
+        item.set_submenu(copyMenu)
+        item.show()
+        menu.append(item)
 
-            # Add entry to show properties of the message
-            item = gtk.MenuItem("Message properties")
-            item.show()
-            item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
-            menu.append(item)
+        # Add entry to show properties of the message
+        item = gtk.MenuItem("Message properties")
+        item.show()
+        item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
+        menu.append(item)
 
-            # Add entry to delete the message
-            item = gtk.MenuItem("Delete message")
-            item.show()
-            item.connect("activate", self.rightClickDeleteMessage)
-            menu.append(item)
+        # Add entry to delete the message
+        item = gtk.MenuItem("Delete message")
+        item.show()
+        item.connect("activate", self.rightClickDeleteMessage)
+        menu.append(item)
 
-            menu.popup(None, None, None, event.button, event.time)
+        menu.popup(None, None, None, event.button, event.time)
 
     #+----------------------------------------------
     #| build_encoding_submenu_for_field:
@@ -1561,9 +1561,9 @@ class UImodelization:
 	    for i_concatleft in range(field.getIndex()):
 		 self.selectedSymbol.concatFields(0)
 	elif strOtherCol == "allright":
-	    cont=self.selectedSymbol.concatFields(field.getIndex())
+	    cont = self.selectedSymbol.concatFields(field.getIndex())
 	    while(cont):
-		cont=self.selectedSymbol.concatFields(field.getIndex())
+		cont = self.selectedSymbol.concatFields(field.getIndex())
         else:
             self.selectedSymbol.concatFields(field.getIndex())
         self.treeMessageGenerator.updateDefault()
@@ -2033,7 +2033,7 @@ class UImodelization:
             doInternalSlick = False
             defaultFormat = Format.HEX
             global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
-            unitSize = UnitSize.getSizeInBits( global_unitsize )
+            unitSize = UnitSize.getSizeInBits(global_unitsize)
             if unitSize == None:
                 unitSize = 8
 
