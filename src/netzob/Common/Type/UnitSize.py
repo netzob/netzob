@@ -37,3 +37,12 @@ class UnitSize():
     BITS16 = "16-bits"
     BITS32 = "32-bits"
     BITS64 = "64-bits"
+
+    unitSizeInBits = {BIT: 1, BITS4: 4, BITS8: 8, BITS16: 16, BITS32: 32, BITS64: 64}
+
+    @staticmethod
+    def getSizeInBits(unitSize):
+        if unitSize in UnitSize.unitSizeInBits:
+            return UnitSize.unitSizeInBits[unitSize]
+        else:
+            return None
