@@ -2387,7 +2387,6 @@ class UImodelization:
         treeview.set_size_request(800, 300)
 
         results = []
-	self.log.debug("BEGING SIZE FIELD")
         self.selectedSymbol.findSizeFields(results)
         if len(results) == 0:
             NetzobErrorMessage("No size field found.")
