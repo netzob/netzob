@@ -6,6 +6,4 @@ include README.txt
 recursive-include doc *
 recursive-include resources *
 recursive-include lib *
-exclude resources/__init__.pyc
-exclude resources/sdist/manpage_command.pyc
-exclude resources/sdist/__init__.pyc
+recursive-exclude * *~ *.orig *.bak *.tmp *.pyc
