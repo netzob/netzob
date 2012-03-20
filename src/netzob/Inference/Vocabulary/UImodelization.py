@@ -1658,7 +1658,7 @@ class UImodelization:
         textview.set_editable(False)
         textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
         textview.get_buffer().create_tag("greenTag", weight=pango.WEIGHT_BOLD, foreground="#006400", family="Courier")
-        self.split_position = 2
+        self.split_position = 1
         self.split_max_len = 0
 
         # Find the size of the longest message
@@ -1666,6 +1666,12 @@ class UImodelization:
         for m in cells:
             if len(m) > self.split_max_len:
                 self.split_max_len = len(m)
+
+        # Padding orientation
+        self.split_align = "left"
+        but = NetzobButton("Align to right")
+        but.connect("clicked", self.doAlignSplit, textview, field, but)
+        dialog.action_area.pack_start(but, True, True, 0)
 
         # Left arrow
         arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
@@ -1692,7 +1698,7 @@ class UImodelization:
 
         # Text view containing selected column messages
         frame = NetzobFrame("Content of the column to split")
-        textview.set_size_request(400, 300)
+        textview.set_size_request(600, 300)
 #        cells = self.treeMessageGenerator.getSymbol().getCellsByCol(iCol)
 
         for m in cells:
@@ -1782,35 +1788,85 @@ class UImodelization:
         logging.error("The edition of an existing variable is not yet implemented")
 
     def doSplitColumn(self, widget, textview, field, dialog):
-        if self.split_max_len <= 2:
+        if self.split_max_len <= 1:
             dialog.destroy()
             return
 
-        self.selectedSymbol.splitField(field, self.split_position)
+        if self.split_align == "right":
+            split_index = -self.split_position
+        else:
+            split_index = self.split_position
+        self.selectedSymbol.splitField(field, split_index, self.split_align)
         self.treeMessageGenerator.updateDefault()
         dialog.destroy()
         self.update()
 
     def adjustSplitColumn(self, widget, textview, direction, field):
-        if self.split_max_len <= 2:
+        if self.split_max_len <= 1:
             return
         messages = self.selectedSymbol.getCellsByField(field)
 
         # Bounds checking
-        if direction == "left":
-            self.split_position -= 2
-            if self.split_position < 2:
-                self.split_position = 2
+        if self.split_align == "left":
+            if direction == "left":
+                self.split_position -= 1
+                if self.split_position < 1:
+                    self.split_position = 1
+            else:
+                self.split_position += 1
+                if self.split_position > self.split_max_len - 1:
+                    self.split_position = self.split_max_len - 1
         else:
-            self.split_position += 2
-            if self.split_position > self.split_max_len - 2:
-                self.split_position = self.split_max_len - 2
+            if direction == "left":
+                self.split_position += 1
+                if self.split_position > self.split_max_len - 1:
+                    self.split_position = self.split_max_len - 1
+            else:
+                self.split_position -= 1
+                if self.split_position < 1:
+                    self.split_position = 1
 
         # Colorize text according to position
         textview.get_buffer().set_text("")
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getFormat()) + "  ", "redTag")
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
+            # Crate padding in case of right alignment
+            if self.split_align == "right":
+                padding = ""
+                messageLen = len(m)
+                for i in range( self.split_max_len - messageLen ):
+                    padding += " "
+                textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), padding, "greenTag")
+                split_index = -self.split_position
+            else:
+                split_index = self.split_position
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], field.getFormat()) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], field.getFormat()) + "\n", "greenTag")
+
+    def doAlignSplit(self, widget, textview, field, button_align):
+        if self.split_align == "left":
+            self.split_align = "right"
+            button_align.set_label("Align to left")
+        else:
+            self.split_align = "left"
+            button_align.set_label("Align to right")
+        
+        messages = self.selectedSymbol.getCellsByField(field)
+
+        # Adapt alignment
+        textview.get_buffer().set_text("")
+        for m in messages:
+            # Crate padding in case of right alignment
+            if self.split_align == "right":
+                padding = ""
+                messageLen = len(m)
+                for i in range( self.split_max_len - messageLen ):
+                    padding += " "
+                textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), padding, "greenTag")
+                split_index = -self.split_position
+            else:
+                split_index = self.split_position
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], field.getFormat()) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], field.getFormat()) + "\n", "greenTag")
 
     #+----------------------------------------------
     #| dbClickToChangeFormat:

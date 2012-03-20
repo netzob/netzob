@@ -365,8 +365,8 @@ class Symbol(AbstractSymbol):
     #|  Split a field in two fields
     #|  return False if the split does not occure, else True
     #+----------------------------------------------
-    def splitField(self, field, split_position):
-        if not (split_position > 0):
+    def splitField(self, field, split_position, split_align):
+        if split_position == 0:
             return False
 
         # Find the static/dynamic cols
@@ -391,11 +391,17 @@ class Symbol(AbstractSymbol):
         if isStatic1:
             regex1 = ref1
         else:
-            regex1 = "(.{," + str(lenDyn1) + "})"
+            if split_align == "left":
+                regex1 = "(.{" + str(lenDyn1) + "})" # The size is fixed
+            else:
+                regex1 = "(.{," + str(lenDyn1) + "})"
         if isStatic2:
             regex2 = ref2
         else:
-            regex2 = "(.{," + str(lenDyn2) + "})"
+            if split_align == "right":
+                regex2 = "(.{" + str(lenDyn2) + "})" # The size is fixed
+            else:
+                regex2 = "(.{," + str(lenDyn2) + "})"
 
         if regex1 == "":
             return False
