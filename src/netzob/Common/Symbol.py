@@ -925,8 +925,15 @@ class Symbol(AbstractSymbol):
         message.setSymbol(self)
         self.messages.append(message)
 
-    def addField(self, field):
-        self.fields.append(field)
+    def addField(self, field, index=None):
+        if index == None:
+            self.fields.append(field)
+        else:
+            self.fields.insert(index, field)
+
+        realIndex = self.fields.index(field)
+        field.setIndex( realIndex )
+        return realIndex
 
     def cleanFields(self):
         while len(self.fields) != 0:

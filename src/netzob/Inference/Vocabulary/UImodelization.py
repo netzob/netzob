@@ -387,12 +387,6 @@ class UImodelization:
         self.sequenceAlignment(symbols)
 
     def sequenceAlignmentOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        # Retrieve all the symbols
-        project = self.netzob.getCurrentProject()
         # Execute the process of alignment (show the gui...)
         self.sequenceAlignment(symbols)
 
@@ -542,12 +536,6 @@ class UImodelization:
         self.forcePartitioning(symbols)
 
     def forcePartitioningOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        # Retrieve all the symbols
-        project = self.netzob.getCurrentProject()
         # Execute the process of alignment (show the gui...)
         self.forcePartitioning(symbols)
 
@@ -556,7 +544,6 @@ class UImodelization:
     #|   Force the delimiter for partitioning
     #+----------------------------------------------
     def forcePartitioning(self, symbols):
-
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -894,7 +881,14 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
-    
+
+            # Add sub-entries to do partitioning of field cells
+            subMenu = self.build_partitioning_submenu_for_field(selectedField)
+            item = gtk.MenuItem("Partitioning")
+            item.set_submenu(subMenu)
+            item.show()
+            menu.append(item)
+
             # Add entry to retrieve the field domain of definition
             item = gtk.MenuItem("Field's domain of definition")
             item.show()
@@ -970,6 +964,34 @@ class UImodelization:
             menu.append(item)
     
             menu.popup(None, None, None, event.button, event.time)
+
+    #+----------------------------------------------
+    #| build_partitioning_submenu_for_field:
+    #|   Build a submenu for field cell partitioning.
+    #+----------------------------------------------
+    def build_partitioning_submenu_for_field(self, field):
+        menu = gtk.Menu()
+
+        # Sequence alignment
+        item = gtk.MenuItem("Sequence Alignment")
+        item.show()
+        item.connect("activate", self.fieldPartitioning, field, "alignment")
+        menu.append(item)
+
+        # Force partitioning
+        # TODO
+#        item = gtk.MenuItem("Force Partitioning")
+#        item.show()
+#        item.connect("activate", self.fieldPartitioning, field, "force")
+#        menu.append(item)
+
+        # Simple partitioning
+        item = gtk.MenuItem("Simple Partitioning")
+        item.show()
+        item.connect("activate", self.fieldPartitioning, field, "simple")
+        menu.append(item)
+
+        return menu
 
     #+----------------------------------------------
     #| build_encoding_submenu_for_field:
@@ -1973,51 +1995,6 @@ class UImodelization:
             itemCreateSymbol.connect("activate", self.displayPopupToCreateSymbol, symbol)
             menu.append(itemCreateSymbol)
 
-#
-#
-#
-#         # Add sub-entries to change the type of a specific field
-#
-#            item = gtk.MenuItem("Field visualization")
-#            item.set_submenu(subMenu)
-#            item.show()
-#            menu.append(item)
-#
-#            # Add entries to concatenate fields
-#            concatMenu = gtk.Menu()
-#            item = gtk.MenuItem("with precedent field")
-#            item.show()
-#            item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
-#
-#
-#        # Create the submenu of the alignment of the symbol
-#        item = gtk.MenuItem("")
-#        item.show()
-#        item.connect("activate", self.displayPopupToEditField, selectedField)
-#        menu.append(item)
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#        entries = [
-#                (gtk.STOCK_BOLD, self.sequenceAlignment, (symbol != None)),
-#                (gtk.STOCK_EDIT, self.displayPopupToEditSymbol, (symbol != None)),
-#                (gtk.STOCK_ADD, self.displayPopupToCreateSymbol, (symbol == None)),
-#                (gtk.STOCK_REMOVE, self.displayPopupToRemoveSymbol, (symbol != None))
-#       ]
-#
-#        menu = gtk.Menu()
-#        for stock_id, callback, sensitive in entries:
-#            item = gtk.ImageMenuItem(stock_id)
-#            item.connect("activate", callback, symbol)
-#            item.set_sensitive(sensitive)
-#            item.show()
-#            menu.append(item)
         menu.popup(None, None, None, event.button, event.time)
 
     def displayPopupToEditSymbol(self, event, symbol):
@@ -2182,6 +2159,56 @@ class UImodelization:
         #Update Left and Right
         self.update()
         return
+
+    #+----------------------------------------------
+    #| fieldPartitioning:
+    #|   Make a partitioning at the field level
+    #+----------------------------------------------
+    def fieldPartitioning(self, widget, field, partitioningType):
+        # Create a temporary symbol to store cells
+        id = str(uuid.uuid4())
+        tmpSymbol = Symbol(id, "", self.netzob.getCurrentProject())
+        for cell in self.selectedSymbol.getCellsByField(field):
+            idMsg = str(uuid.uuid4())
+            msg = RawMessage(idMsg, 0, cell)
+            tmpSymbol.addMessage(msg)
+
+        # Retrieve default parameters of alignment
+        doInternalSlick = False
+        defaultFormat = Format.HEX
+        global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        unitSize = UnitSize.getSizeInBits(global_unitsize)
+        if unitSize == None:
+            unitSize = 4
+
+        # Process the partitioning
+        if partitioningType == "alignment":
+            alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)
+            alignmentProcess.alignSymbol(tmpSymbol, doInternalSlick, defaultFormat)
+        elif partitioningType == "force":
+            logging.warn("Not yet implemented")
+            return
+        elif partitioningType == "simple":
+            tmpSymbol.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
+        else:
+            return
+
+        # Adapt the computated field partitionment to the original symbol
+        index = field.getIndex()
+        self.selectedSymbol.popField( index )
+
+        i = 0
+        for tmpField in tmpSymbol.getFields():
+            currentIndex = index + i
+            i += 1
+            self.selectedSymbol.addField( tmpField, currentIndex )
+            tmpField.setName( tmpField.getName() + "-" + str(i) )
+
+        # Adapt next fields indexes
+        for nextField in self.selectedSymbol.fields:
+            if nextField.getIndex() > index:
+                nextField.setIndex(index + len(tmpSymbol.getFields()))
+        self.update()
 
     def loggingNeedlemanStatus(self, status, message):
         self.log.debug("Status = " + str(status) + " : " + str(message))
