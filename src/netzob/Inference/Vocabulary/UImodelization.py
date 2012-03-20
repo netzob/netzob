@@ -1658,7 +1658,7 @@ class UImodelization:
         textview.set_editable(False)
         textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
         textview.get_buffer().create_tag("greenTag", weight=pango.WEIGHT_BOLD, foreground="#006400", family="Courier")
-        self.split_position = 2
+        self.split_position = 1
         self.split_max_len = 0
 
         # Find the size of the longest message
@@ -1782,7 +1782,7 @@ class UImodelization:
         logging.error("The edition of an existing variable is not yet implemented")
 
     def doSplitColumn(self, widget, textview, field, dialog):
-        if self.split_max_len <= 2:
+        if self.split_max_len <= 1:
             dialog.destroy()
             return
 
@@ -1792,19 +1792,19 @@ class UImodelization:
         self.update()
 
     def adjustSplitColumn(self, widget, textview, direction, field):
-        if self.split_max_len <= 2:
+        if self.split_max_len <= 1:
             return
         messages = self.selectedSymbol.getCellsByField(field)
 
         # Bounds checking
         if direction == "left":
-            self.split_position -= 2
-            if self.split_position < 2:
-                self.split_position = 2
+            self.split_position -= 1
+            if self.split_position < 1:
+                self.split_position = 1
         else:
-            self.split_position += 2
-            if self.split_position > self.split_max_len - 2:
-                self.split_position = self.split_max_len - 2
+            self.split_position += 1
+            if self.split_position > self.split_max_len - 1:
+                self.split_position = self.split_max_len - 1
 
         # Colorize text according to position
         textview.get_buffer().set_text("")
