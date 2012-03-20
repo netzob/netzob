@@ -219,7 +219,7 @@ class NeedlemanAndWunsch(object):
             doLoop = False
             for field in symbol.getFields():
                 # We try to see if this field produces only empty values when applied on messages
-                if field.isStatic():
+                if not field.isStatic():
                     cells = symbol.getCellsByField(field)
                     cells = "".join(cells)
                     if cells == "":
