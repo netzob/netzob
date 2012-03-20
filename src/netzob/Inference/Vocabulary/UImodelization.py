@@ -862,28 +862,45 @@ class UImodelization:
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
                 concatMenu.append(item)
 
+                item = gtk.MenuItem("with all precedent field")
+                item.show()
+                item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
+                concatMenu.append(item)
+
             if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
                 item = gtk.MenuItem("with next field")
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
+
+                item = gtk.MenuItem("with all next fields")
+                item.show()
+                item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
+                concatMenu.append(item)
+        
+            # Personalize the fields to be concatenated
+    	    item = gtk.MenuItem("personalize selection")
+            item.show()
+            item.connect("activate", self.ConcatChosenColumns)
+            concatMenu.append(item)
+    
             item = gtk.MenuItem("Concatenate field")
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
-
+    
             # Add entry to split the column
             item = gtk.MenuItem("Split field")
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
-
+    
             # Add entry to retrieve the field domain of definition
             item = gtk.MenuItem("Field's domain of definition")
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
-
+    
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
                 typeMenuVariable = gtk.Menu()
@@ -897,22 +914,22 @@ class UImodelization:
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
-
+    
             if selectedField.getVariable() != None:
                 itemVariable3 = gtk.MenuItem("Remove variable")
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
                 typeMenuVariable.append(itemVariable3)
-
+    
             item = gtk.MenuItem("Configure variation of field")
             item.set_submenu(typeMenuVariable)
             item.show()
             menu.append(item)
-
+    
             item = gtk.SeparatorMenuItem()
             item.show()
             menu.append(item)
-
+    
             # Add entries for copy functions
             copyMenu = gtk.Menu()
             item = gtk.MenuItem("Raw message")
@@ -939,19 +956,19 @@ class UImodelization:
             item.set_submenu(copyMenu)
             item.show()
             menu.append(item)
-
+    
             # Add entry to show properties of the message
             item = gtk.MenuItem("Message properties")
             item.show()
             item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
             menu.append(item)
-
+    
             # Add entry to delete the message
             item = gtk.MenuItem("Delete message")
             item.show()
             item.connect("activate", self.rightClickDeleteMessage)
             menu.append(item)
-
+    
             menu.popup(None, None, None, event.button, event.time)
 
     #+----------------------------------------------
@@ -1160,11 +1177,26 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
             concatMenu.append(item)
-            item = gtk.MenuItem("with next field")
+            item = gtk.MenuItem("with all precedent field")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
+            concatMenu.append(item)
+
+	    item = gtk.MenuItem("with next field")
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
             concatMenu.append(item)
-            item = gtk.MenuItem("Concatenate field")
+            item = gtk.MenuItem("with all next field")
+            item.show()
+            item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
+            concatMenu.append(item)
+	    
+	    item = gtk.MenuItem("personalize selection")
+	    item.show()
+            item.connect("activate", self.ConcatChosenColumns)
+            concatMenu.append(item)
+
+	    item = gtk.MenuItem("Concatenate field")
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
@@ -1516,6 +1548,73 @@ class UImodelization:
     def rightClickToChangeEndianess(self, event, field, endianess):
         field.setEndianess(endianess)
         self.update()
+    #+----------------------------------------------
+    #| concatenateChosenFields:
+    #|   Ask the user which field to concatenate
+    #+----------------------------------------------
+    def ConcatChosenColumns(self, event=None, errormessage=""):
+
+	nrows = 2
+	if(errormessage):
+	    nrows = 3
+        dialog = gtk.Dialog(title="Concatenation of Fields", flags=0, buttons=None)
+        panel = gtk.Table(rows=nrows, columns=4, homogeneous=False)
+        panel.show()
+
+        ## Label for indexes of the fields
+        label = NetzobLabel("Fields from:")
+        index1 = gtk.Entry(4)
+        index1.show()
+        label2 = NetzobLabel("to:")
+        index2 = gtk.Entry(4)
+        index2.show()
+	if(errormessage):
+            label3 = NetzobLabel(errormessage)
+
+        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(index1, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label2, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(index2, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+	if(errormessage):
+            panel.attach(label3, 2, 4, 2, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+	# Button
+        searchButton = NetzobButton("Concatenate fields")
+        searchButton.connect("clicked", self.clickToConcatChosenColumns, index1, index2, dialog)
+        panel.attach(searchButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+
+   #+--------------------------------------------
+   #|  clickToConcatChosenColumns:
+   #|	try to concatenate wanted fields.	
+   #+-------------------------------------------
+    def clickToConcatChosenColumns(self, event, index1, index2, dialog):
+	try:
+	    nfirst = int(index1.get_text())
+	    nlast = int(index2.get_text())
+	    self.log.debug("Concatenate from " + str(nfirst) + " to the column " + str(nlast))
+	    if max(nlast, nfirst) >= len(self.selectedSymbol.fields):
+		dialog.destroy()
+            	self.ConcatChosenColumns(errormessage="Error: " + str(max(nlast, nfirst)) + " > Last field index")
+		return 1
+	    if(nlast > nfirst):
+		for i_concatleft in range(nlast - nfirst):
+            	    if not self.selectedSymbol.concatFields(nfirst):
+			break
+	    else:
+		for i_concatleft in range(nfirst - nlast):
+            	    if not self.selectedSymbol.concatFields(nlast):
+			break
+	    self.treeMessageGenerator.updateDefault()
+            self.update()
+	    dialog.destroy()
+	except:
+	    dialog.destroy()
+	    self.ConcatChosenColumns(errormessage="Error: You must put integers in forms")
+		
 
     #+----------------------------------------------
     #|  rightClickToConcatColumns:
@@ -1524,16 +1623,23 @@ class UImodelization:
     def rightClickToConcatColumns(self, event, field, strOtherCol):
         self.log.debug("Concatenate the column " + str(field.getIndex()) + " with the " + str(strOtherCol) + " column")
 
-        if field.getIndex() == 0 and strOtherCol == "left":
+        if field.getIndex() == 0 and (strOtherCol == "left" or strOtherCol == "allleft"):
             self.log.debug("Can't concatenate the first column with its left column")
             return
 
-        if field.getIndex() + 1 == len(self.selectedSymbol.getFields()) and strOtherCol == "right":
+        if field.getIndex() + 1 == len(self.selectedSymbol.getFields()) and (strOtherCol == "right" or strOtherCol == "allright"):
             self.log.debug("Can't concatenate the last column with its right column")
             return
 
         if strOtherCol == "left":
             self.selectedSymbol.concatFields(field.getIndex() - 1)
+	elif strOtherCol == "allleft":
+	    for i_concatleft in range(field.getIndex()):
+		 self.selectedSymbol.concatFields(0)
+	elif strOtherCol == "allright":
+	    cont = self.selectedSymbol.concatFields(field.getIndex())
+	    while(cont):
+		cont = self.selectedSymbol.concatFields(field.getIndex())
         else:
             self.selectedSymbol.concatFields(field.getIndex())
         self.treeMessageGenerator.updateDefault()
@@ -2003,7 +2109,7 @@ class UImodelization:
             doInternalSlick = False
             defaultFormat = Format.HEX
             global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
-            unitSize = UnitSize.getSizeInBits( global_unitsize )
+            unitSize = UnitSize.getSizeInBits(global_unitsize)
             if unitSize == None:
                 unitSize = 8
 
