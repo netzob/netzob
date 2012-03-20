@@ -1072,7 +1072,10 @@ class UImodelization:
         vbox.pack_start(hbox, False, 5, 5)
         hbox.pack_start(NetzobLabel("Description : "), False, 5, 5)
         entryDescr = gtk.Entry()
-        entryDescr.set_text(field.getDescription())
+        if field.getDescription():
+	    entryDescr.set_text(field.getDescription())
+	else:
+	    entryDescr.set_text("")
         # Allow the user to press enter to do ok
         entryDescr.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryDescr)
