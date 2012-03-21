@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import SocketServer
+SocketServer.TCPServer.allow_reuse_address = True 
 import threading
 import time
 import uuid
@@ -54,6 +55,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def __init__(self, connectionInfos, TCPConnectionHandler):
         SocketServer.TCPServer.__init__(self, connectionInfos, TCPConnectionHandler)
         self.instances = []
+        self.allow_reuse_address = True
 
     def getVocabulary(self):
         return self.vocabulary
@@ -106,9 +108,9 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def getCBOutputSymbol(self):
         return self.cbOutputSymbol
 
-    def shutdown(self):
-        logging.info("shutingdown")
-        SocketServer.TCPServer.shutdown(self)
+#    def shutdown(self):
+#        logging.info("shutingdown")
+#        SocketServer.TCPServer.shutdown(self)
 
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
@@ -160,6 +162,7 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 class TCPConnectionHandler(SocketServer.BaseRequestHandler):
 
     def __init__(self, request, client_address, server):
+        server.allow_reuse_address = True
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
         self.subVisitor = None
 
@@ -191,11 +194,26 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         # save it
         self.server.addGeneratedInstance(self.subVisitor)
 
-        while (self.subVisitor.isAlive()):
-            ready = select.select([self.request], [], [], 1)
-            time.sleep(0.1)
-            
+        finish = not self.subVisitor.isAlive()
+
+        while (not finish):
+            try :
+                ready = select.select([self.request], [], [], 1)
+                time.sleep(0.1)
+                finish = not self.subVisitor.isAlive()
+            except :
+                self.log.warn("The socket is not anymore opened !")
+                finish = True
+#        instanciatedNetworkServer.close()  
+        
+        self.subVisitor.join(None)
+#                
+#        
         self.server.notifyAClientIsDisconnected()
+#        self.server.shutdown_request(self.request)
+#        self.server.close_request(self.request)
+#        self.server.shutdown()
+        
 
         self.log.warn("End of the execution of the TCP Connection handler")
 #    def finish(self):
@@ -242,6 +260,7 @@ class NetworkServer(AbstractActor):
         AbstractActor.__init__(self, True, False)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer.py')
+        
         self.port = port
         self.sourcePort = sourcePort
         self.host = host
@@ -249,7 +268,7 @@ class NetworkServer(AbstractActor):
         self.server = None
         self.instantiatedServers = []
 
-    def openServer(self, vocabulary, initialState, master, cb_whenAClientConnects, cb_whenAClienDisconnects, cb_registerInputSymbol, cb_registerOutputSymbol):
+    def openServer(self, vocabulary, initialState, master, cb_whenAClientConnects, cb_whenAClientDisconnects, cb_registerInputSymbol, cb_registerOutputSymbol):
         # Instantiates the server
         maxNumberOfAttempts = 3
         nbAttempts = 0
@@ -262,7 +281,6 @@ class NetworkServer(AbstractActor):
                 if self.protocol == "UDP":
                     self.log.info("Configure an UDP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
                     self.server = ThreadedUDPServer((self.host, self.port), UDPConnectionHandler)
-                    
                 else:
                     self.log.info("Configure a TCP Network Server to listen on " + self.host + ":" + str(self.port) + ".")
                     self.server = ThreadedTCPServer((self.host, self.port), TCPConnectionHandler)
@@ -276,7 +294,7 @@ class NetworkServer(AbstractActor):
             
         if not error :        
             self.server.setCBWhenAClientConnects(cb_whenAClientConnects)
-            self.server.setCBWhenAClientDisconnects(cb_whenAClienDisconnects)
+            self.server.setCBWhenAClientDisconnects(cb_whenAClientDisconnects)
             self.server.setCBWhenInputSymbol(cb_registerInputSymbol)
             self.server.setCBWhenOutputSymbol(cb_registerOutputSymbol)
             self.server.allow_reuse_address = True
@@ -292,8 +310,19 @@ class NetworkServer(AbstractActor):
             
 
     def close(self):
-        self.log.info("Shutdown down the server")
-        self.server.shutdown()
+        self.log.info("Shutdown down the server")        
+#        self.server.shutdown()
+#        
+#        # verify it has stopped
+#        finish = not self.server_thread.is_alive()
+#        while not finish :
+#            self.log.warn("The thread hosting the server hasn't finished")
+#            time.sleep(1)
+#            finish = not self.server_thread.is_alive()
+#            
+        self.log.info("The thread which hosts the server has finished")
+        
+        self.log.info("The server has been shutted down")
 
     def getInputMessages(self):
         return []
@@ -311,6 +340,9 @@ class NetworkServer(AbstractActor):
 
     def stop(self):
         self.log.debug("Stopping the thread of the network server")
+       
+            
+        
         self.close()
         AbstractActor.stop(self)
 

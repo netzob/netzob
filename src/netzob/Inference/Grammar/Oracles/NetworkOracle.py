@@ -93,6 +93,7 @@ class NetworkOracle(threading.Thread):
         symbols = []
         # Retrieve all the IO from the abstraction layer
         abstractionLayer = self.oracle.getAbstractionLayer()
+        print "Abstraction layer = " + str(abstractionLayer)
         for io in abstractionLayer.getGeneratedInputAndOutputsSymbols():
             symbols.append(DictionarySymbol(io))
         return symbols

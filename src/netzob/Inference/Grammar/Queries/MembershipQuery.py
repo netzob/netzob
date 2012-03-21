@@ -80,7 +80,6 @@ class MembershipQuery(object):
         initialState = NormalState(1, "State 1")
         openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 10000, 3)
         rootState.registerTransition(openingTransition)
-
         previousState = initialState
         idState = 2
         for symbol in self.symbols:

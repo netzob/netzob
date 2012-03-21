@@ -31,7 +31,7 @@
 import logging
 import time
 from datetime import datetime
-
+import uuid
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -42,6 +42,8 @@ from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 from lxml import etree
+from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
+from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 
 
 #+---------------------------------------------------------------------------+
@@ -114,7 +116,14 @@ class OpenChannelTransition(AbstractTransition):
                     time.sleep(1)
                 if error :
                     self.log.warn("Stop the server even if the client are still up")
-                return None
+                
+                self.log.debug("The openChannelTransition finishes (the generated instance has been closed)!")
+                # We create a Close Channel Transition to close the server
+                inputState = NormalState(uuid.uuid4(), "Input State of the close server transition")
+                outputState = NormalState(uuid.uuid4(), "Output State of the close server transition")
+                closeChannelTransition = CloseChannelTransition(uuid.uuid4(), "Close Server transition", inputState, outputState, 300)
+                inputState.registerTransition(closeChannelTransition)
+                return inputState
         else:
             self.activate()
             result = self.openConnection(abstractionLayer)

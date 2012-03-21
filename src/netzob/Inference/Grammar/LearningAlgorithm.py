@@ -100,6 +100,9 @@ class LearningAlgorithm(object):
 
         # stop the oracle and retrieve the query
         oracle.stop()
+        
+        self.log.info("Close (again) the server")
+        self.communicationChannel.close()
 
         resultQuery = oracle.getResults()
         tmpResultQuery = oracle.getGeneratedOutputSymbols()

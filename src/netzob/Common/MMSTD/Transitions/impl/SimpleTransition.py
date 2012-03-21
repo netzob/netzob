@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-
+import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -46,12 +46,12 @@ from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransitio
 #+---------------------------------------------------------------------------+
 class SimpleTransition(AbstractTransition):
 
-    def __init__(self, id, name, inputState, outputState, timeBeforeSending, outputSymbol):
+    def __init__(self, id, name, inputState, outputState, timeBeforeActing, outputSymbol):
         AbstractTransition.__init__(self, "SimpleTransition", id, name, inputState, outputState)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Transitions.impl.SimpleTransition.py')
         self.outputSymbol = outputSymbol
-        self.timeBeforeSending = timeBeforeSending
+        self.timeBeforeActing = timeBeforeActing
 
     #+-----------------------------------------------------------------------+
     #| getOutputSymbol
@@ -66,8 +66,8 @@ class SimpleTransition(AbstractTransition):
     #|     Return the time which will be paused before sending something
     #| @return the time time before sending
     #+-----------------------------------------------------------------------+
-    def getTimeBeforeSending(self):
-        return self.timeBeforeSending
+    def getTimeBeforeActing(self):
+        return self.timeBeforeActing
 
     #+-----------------------------------------------------------------------+
     #| isValid
@@ -85,7 +85,10 @@ class SimpleTransition(AbstractTransition):
     #+-----------------------------------------------------------------------+
     def executeAsClient(self, abstractionLayer):
         self.activate()
-        self.log.debug("Execute as a client")
+        self.log.debug("Executing as a client")
+        time.sleep(1)
+        # write a message
+        abstractionLayer.writeSymbol(self.outputSymbol)
         self.deactivate()
         return self.outputState
 
@@ -111,7 +114,7 @@ class SimpleTransition(AbstractTransition):
     def getDescription(self):
         outputSymbolId = self.getOutputSymbol().getID()
 
-        return "(" + str(outputSymbolId) + ";{after " + str(self.timeBeforeSending) + "})"
+        return "(" + str(outputSymbolId) + ";{after " + str(self.timeBeforeActing) + "})"
 
     #+-----------------------------------------------------------------------+
     #| toXMLString

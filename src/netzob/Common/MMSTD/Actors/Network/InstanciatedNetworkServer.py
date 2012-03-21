@@ -53,13 +53,13 @@ class InstanciatedNetworkServer(AbstractActor):
         self.socket = socket
         self.inputMessages = []
         self.outputMessages = []
-
-    def createNewServer(self):
-        host = "localhost"
-        protocol = "TCP"
-        port = 6666
-        from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
-        return NetworkServer(host, protocol, port)
+#
+#    def createNewServer(self):
+#        host = "localhost"
+#        protocol = "TCP"
+#        port = 6666
+#        from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
+#        return NetworkServer(host, protocol, port)
 
     def open(self):
         self.log.warn("Impossible to open an InstanciatedNetworkServer")
@@ -68,15 +68,21 @@ class InstanciatedNetworkServer(AbstractActor):
     def close(self):
         self.log.debug("Closing the socket")
         if self.socket == None:
-            self.log.debug("No need to close the socket since it's not even open")
+            self.log.warn("No need to close the socket since it's not even open")
             return True
-        self.log.debug("SHUTDOWN THE SOCKET")
-        self.socket.shutdown(socket.SHUT_RDWR)
+        self.log.debug("Shuting down the socket of the instanciated network server")
+        try :
+            self.socket.shutdown(socket.SHUT_RDWR)
+        except :
+            self.log.warn("Error while shuting down a socket")
         self.socket.close()
+        
+        chars = self.socket.recv(4096)
+        
         return True
 
     def read(self, timeout):
-        self.log.debug("Reading from the socket some data")
+        self.log.debug("Reading from the socket some data (timeout = " + str(timeout))
         result = bitarray(endian='big')
 
         chars = []
