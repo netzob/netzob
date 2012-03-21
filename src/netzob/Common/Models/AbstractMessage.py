@@ -43,6 +43,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
+from netzob.Common.Token import Token
 
 
 #+---------------------------------------------------------------------------+
@@ -67,6 +68,7 @@ class AbstractMessage():
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.visualizationFilters = []
+        self.pattern = []
 
     #+-----------------------------------------------------------------------+
     #| getFactory
@@ -141,7 +143,54 @@ class AbstractMessage():
                 end = end + 1
 
         return "".join(self.getStringData()[start:end])
-
+    #+----------------------------------------------
+    #| compilePattern:
+    #|    compile the pattern of the data part in the Discover way (direction, [Token1,Token2...])
+    #+----------------------------------------------
+    def compilePattern(self):
+        tokens = []
+        maxA=126                #Max of ascii char not extended
+        minA=32                 #Min of ascii printable
+        spe=[9,10,13]           #tab,\n,\r
+        tempstr = ""
+        tempbstr =""
+        ASCIITHRESHOLD=5
+        isAsciiPrintable = lambda t: (ord(t)>=minA and ord(t)<=maxA) or ord(t) in spe
+        current=""              #
+        tempLength=0            #Temporary length of byte token
+        
+        canRemove=False
+        if len(str(self.getData()))>0:
+            for i in TypeConvertor.netzobRawToPythonRaw(str(self.getData())):
+                if isAsciiPrintable(i):
+                    if tempLength:
+                        if not canRemove:                                                  # Means that there where bytes before
+                            tokens.append(Token(Format.HEX,tempLength,"constant",tempbstr))
+                            canRemove=True
+                        tempLength+=1
+                    tempstr+=i
+                else:                                                               #We have a byte
+                    if len(tempstr)>ASCIITHRESHOLD:
+                        tempLength=0
+                        tokens.append(Token(Format.ASCII,len(tempstr),"constant",tempstr))
+                        canRemove=False
+                    elif canRemove:                                                 #It is not considered as a text string or we have a byte
+                        tokens.pop()
+                        canRemove=False
+                    elif tempstr:
+                        tempLength+=len(tempstr)            
+                    tempstr=""
+                    tempLength+=1
+            
+        
+            if len(tempstr)>ASCIITHRESHOLD:
+                tokens.append(Token(Format.ASCII,len(tempstr),"constant",tempstr))
+            else:
+                if canRemove:
+                    tokens.pop()
+                tokens.append(Token(Format.HEX,tempLength,"constant",tempbstr))                    
+            
+        self.pattern.append(tokens)
     #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
     #|  and return a table
@@ -386,6 +435,9 @@ class AbstractMessage():
 
     def getVisualizationFilters(self):
         return self.visualizationFilters
+    
+    def getPattern(self):
+        return self.pattern
 
     def setID(self, id):
         self.id = id
@@ -409,3 +461,4 @@ class AbstractMessage():
     def setLeftReductionFactor(self, factor):
         self.leftReductionFactor = factor
         self.rightReductionFactor = 0
+    
