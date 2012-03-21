@@ -77,7 +77,7 @@ int callbackStatus(double percent, char* message, ...) {
     return 1;
   }
   else {
-    printf("[%d] %s\n", percent, buffer);
+    printf("[%f] %s\n", percent, buffer);
     return 1;
   }
   return 0;
@@ -103,7 +103,6 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   int nbDeserializedGroups;
   t_equivalentGroup result;
   Bool bool_debugMode;
-  Bool bool_doInternalSlick;
 
   // Converts the arguments
   if (!PyArg_ParseTuple(args, "hhs#s#Oh", &doInternalSlick, &nbGroups, &format, &sizeFormat, &serialGroups, &sizeSerialGroups, &temp_cb, &debugMode)) {
@@ -150,12 +149,6 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     bool_debugMode = FALSE;
   }
 
-  // Concert doInternalSlick parameter in a BOOL
-  if (doInternalSlick) {
-    bool_doInternalSlick = TRUE;
-  } else {
-    bool_doInternalSlick = FALSE;
-  }
   result.i = -1;
   result.j= -1;
   result.score = -1;
@@ -186,8 +179,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   // local variable
   int p = 0;
   double status = 0.0;
-  int nbStep;
-  //double sizeSteps;
   
 
   // First we fill the matrix with 0s
@@ -462,7 +453,6 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
 static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   // Parameters (in order)
   unsigned short int doInternalSlick;
-  unsigned short int nbMessages;
   unsigned char *format;
   int sizeFormat;
   unsigned char *serialMessages;
@@ -900,7 +890,6 @@ float getScoreRatio(t_regex * regex) {
   // Computing score of the regex
   float nbDynamic = 0.0f;
   float nbStatic = 0.0f;
-  float cent = 100.0f;
   Bool inDyn = FALSE;
 
   int i=0;
@@ -996,7 +985,6 @@ static PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
 //| deserializeMessages : Deserialization of messages
 //+---------------------------------------------------------------------------+
 unsigned short int deserializeMessages(t_group * group, unsigned char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
-  t_message * messages= NULL;
   int i_message = 0;
   unsigned char * p;
   unsigned short int serial_shift = 0;
@@ -1093,7 +1081,6 @@ unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, 
   int l = 0;
   unsigned char * p;
   unsigned char *q;
-  unsigned short int serial_shift = 0;
   unsigned short int format_shift = 0;
   unsigned short int len_size_group = 0;
   unsigned short int len_size_message = 0;
@@ -1164,7 +1151,7 @@ void hexdump(unsigned char *buf, int dlen) {
 
   for (i = 0; i < dlen; ++i) {
     if (i == 0)
-      printf("DATA: ",c);
+      printf("DATA: ");
     else if ((i % OPL) == 0) {
       c[OPL] = '\0';
       printf("\t\"%s\"\nDATA: ", c);
