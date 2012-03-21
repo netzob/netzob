@@ -311,7 +311,9 @@ class NetworkServer(AbstractActor):
 
     def close(self):
         self.log.info("Shutdown down the server")        
-#        self.server.shutdown()
+        self.server.server_close()
+        self.server.shutdown()
+        
 #        
 #        # verify it has stopped
 #        finish = not self.server_thread.is_alive()
