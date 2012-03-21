@@ -32,6 +32,9 @@
 import gtk
 import logging
 import os
+from lxml.etree import ElementTree
+import uuid
+import shutil
 
 #+---------------------------------------------------------------------------+
 #| Local imports
@@ -49,6 +52,7 @@ from netzob.Export.RawExport import RawExport
 from netzob.Export.TextExport import TextExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
+from netzob.UI.NetzobWidgets import NetzobInfoMessage
 from netzob import release
 
 
@@ -232,6 +236,14 @@ class Menu(object):
         selectAProjectRoot.set_submenu(self.selectAProject)
         self.menuWorkspace.append(selectAProjectRoot)
 
+        self.importProject = gtk.MenuItem("Import a project")
+        self.importProject.connect("activate", self.importProjectAction)
+        self.menuWorkspace.append(self.importProject)
+
+        self.exportProject = gtk.MenuItem("Export a project")
+        self.exportProject.connect("activate", self.exportProjectAction)
+        self.menuWorkspace.append(self.exportProject)
+
         self.manageProject = gtk.MenuItem("Manage projects")
         self.menuWorkspace.append(self.manageProject)
 
@@ -255,11 +267,16 @@ class Menu(object):
 
     def updateWorkspaceMenu(self):
         self.createProject.set_sensitive(True)
+        self.importProject.set_sensitive(True)
         self.manageTraces.set_sensitive(True)
         self.manageProject.set_sensitive(False)
         self.options.set_sensitive(False)
         self.switchWorkspace.set_sensitive(False)
         self.exit.set_sensitive(True)
+        if self.netzob.getCurrentProject() == None:
+            self.exportProject.set_sensitive(False)
+        else:
+            self.exportProject.set_sensitive(True)
 
         # Update the list of project
         for i in self.selectAProject.get_children():
@@ -292,6 +309,73 @@ class Menu(object):
     def switchProjectAction(self, widget, newProject):
         self.netzob.switchCurrentProject(newProject)
         self.update()
+
+    #+----------------------------------------------
+    #| Called when user wants to export a project
+    #+----------------------------------------------
+    def importProjectAction(self, widget):
+        chooser = gtk.FileChooserDialog(title="Export as", action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        res = chooser.run()
+        if res == gtk.RESPONSE_OK:
+            fileName = chooser.get_filename()
+        chooser.destroy()
+
+        if os.path.isfile( fileName ):
+            idProject = str(uuid.uuid4())
+            # First we verify and create if necessary the directory of the project
+            projectPath = "projects/" + idProject + "/"
+            destPath = os.path.join(os.path.join(self.netzob.getCurrentWorkspace().getPath(), projectPath))
+            if not os.path.exists(destPath):
+                logging.info("Creation of the directory " + destPath)
+                os.mkdir(destPath)
+            # Retrieving and storing of the config file
+            try:
+                destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
+                shutil.copy(fileName, destFile)
+            except IOError, e:
+                logging.warn("Error when importing project: " + str(e))
+                return None
+
+            project = Project.loadProject(self.netzob.getCurrentWorkspace(), destPath)
+            project.setID( idProject )
+            project.setName( "Copy of " + project.getName() )
+            project.setPath( projectPath )
+            project.saveConfigFile(self.netzob.getCurrentWorkspace())
+            self.netzob.getCurrentWorkspace().referenceProject( project.getPath() )
+            self.netzob.getCurrentWorkspace().saveConfigFile()
+            NetzobInfoMessage("Project '" + project.getName() + "' correctly imported")
+            self.update()
+
+    #+----------------------------------------------
+    #| Called when user wants to export a project
+    #+----------------------------------------------
+    def exportProjectAction(self, widget):
+        chooser = gtk.FileChooserDialog(title="Export as (XML)", action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        res = chooser.run()
+        if res == gtk.RESPONSE_OK:
+            fileName = chooser.get_filename()
+        chooser.destroy()
+
+        doCreateFile = False
+        isFile = os.path.isfile( fileName )
+        if not isFile:
+            doCreateFile = True
+        else:
+            md = gtk.MessageDialog(None,
+                                   gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
+                                   gtk.BUTTONS_OK_CANCEL, "Are you sure to override the file '" + fileName + "' ?")
+            resp = md.run()
+            md.destroy()
+            if resp == gtk.RESPONSE_OK:
+                doCreateFile = True
+
+        if doCreateFile:
+            root = self.netzob.getCurrentProject().generateXMLConfigFile()
+            tree = ElementTree(root)
+            tree.write( fileName )
+            NetzobInfoMessage("Project correctly exported to '" + fileName + "'")
 
     #+----------------------------------------------
     #| Called when user wants to import network trafic

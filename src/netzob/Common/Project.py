@@ -35,14 +35,12 @@ import re
 import uuid
 from lxml.etree import ElementTree
 from lxml import etree
-
 import types
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
@@ -302,8 +300,14 @@ class Project(object):
     def getConfiguration(self):
         return self.configuration
 
+    def setID(self, id):
+        self.id = id
+
     def setName(self, name):
         self.name = name
+
+    def setPath(self, path):
+        self.path = path
 
     def setCreationDate(self, creationDate):
         self.creationDate = creationDate

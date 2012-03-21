@@ -387,12 +387,6 @@ class UImodelization:
         self.sequenceAlignment(symbols)
 
     def sequenceAlignmentOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        # Retrieve all the symbols
-        project = self.netzob.getCurrentProject()
         # Execute the process of alignment (show the gui...)
         self.sequenceAlignment(symbols)
 
@@ -542,12 +536,6 @@ class UImodelization:
         self.forcePartitioning(symbols)
 
     def forcePartitioningOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage("No project selected.")
-            return
-        # Retrieve all the symbols
-        project = self.netzob.getCurrentProject()
         # Execute the process of alignment (show the gui...)
         self.forcePartitioning(symbols)
 
@@ -556,7 +544,6 @@ class UImodelization:
     #|   Force the delimiter for partitioning
     #+----------------------------------------------
     def forcePartitioning(self, symbols):
-
         self.treeMessageGenerator.clear()
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
@@ -894,7 +881,14 @@ class UImodelization:
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
-    
+
+            # Add sub-entries to do partitioning of field cells
+            subMenu = self.build_partitioning_submenu_for_field(selectedField)
+            item = gtk.MenuItem("Partitioning")
+            item.set_submenu(subMenu)
+            item.show()
+            menu.append(item)
+
             # Add entry to retrieve the field domain of definition
             item = gtk.MenuItem("Field's domain of definition")
             item.show()
@@ -970,6 +964,34 @@ class UImodelization:
             menu.append(item)
     
             menu.popup(None, None, None, event.button, event.time)
+
+    #+----------------------------------------------
+    #| build_partitioning_submenu_for_field:
+    #|   Build a submenu for field cell partitioning.
+    #+----------------------------------------------
+    def build_partitioning_submenu_for_field(self, field):
+        menu = gtk.Menu()
+
+        # Sequence alignment
+        item = gtk.MenuItem("Sequence Alignment")
+        item.show()
+        item.connect("activate", self.fieldPartitioning, field, "alignment")
+        menu.append(item)
+
+        # Force partitioning
+        # TODO
+#        item = gtk.MenuItem("Force Partitioning")
+#        item.show()
+#        item.connect("activate", self.fieldPartitioning, field, "force")
+#        menu.append(item)
+
+        # Simple partitioning
+        item = gtk.MenuItem("Simple Partitioning")
+        item.show()
+        item.connect("activate", self.fieldPartitioning, field, "simple")
+        menu.append(item)
+
+        return menu
 
     #+----------------------------------------------
     #| build_encoding_submenu_for_field:
@@ -1072,7 +1094,10 @@ class UImodelization:
         vbox.pack_start(hbox, False, 5, 5)
         hbox.pack_start(NetzobLabel("Description : "), False, 5, 5)
         entryDescr = gtk.Entry()
-        entryDescr.set_text(field.getDescription())
+        if field.getDescription():
+	    entryDescr.set_text(field.getDescription())
+	else:
+	    entryDescr.set_text("")
         # Allow the user to press enter to do ok
         entryDescr.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
         hbox.pack_end(entryDescr)
@@ -1655,7 +1680,7 @@ class UImodelization:
         textview.set_editable(False)
         textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
         textview.get_buffer().create_tag("greenTag", weight=pango.WEIGHT_BOLD, foreground="#006400", family="Courier")
-        self.split_position = 2
+        self.split_position = 1
         self.split_max_len = 0
 
         # Find the size of the longest message
@@ -1663,6 +1688,12 @@ class UImodelization:
         for m in cells:
             if len(m) > self.split_max_len:
                 self.split_max_len = len(m)
+
+        # Padding orientation
+        self.split_align = "left"
+        but = NetzobButton("Align to right")
+        but.connect("clicked", self.doAlignSplit, textview, field, but)
+        dialog.action_area.pack_start(but, True, True, 0)
 
         # Left arrow
         arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
@@ -1689,7 +1720,7 @@ class UImodelization:
 
         # Text view containing selected column messages
         frame = NetzobFrame("Content of the column to split")
-        textview.set_size_request(400, 300)
+        textview.set_size_request(600, 300)
 #        cells = self.treeMessageGenerator.getSymbol().getCellsByCol(iCol)
 
         for m in cells:
@@ -1779,35 +1810,85 @@ class UImodelization:
         logging.error("The edition of an existing variable is not yet implemented")
 
     def doSplitColumn(self, widget, textview, field, dialog):
-        if self.split_max_len <= 2:
+        if self.split_max_len <= 1:
             dialog.destroy()
             return
 
-        self.selectedSymbol.splitField(field, self.split_position)
+        if self.split_align == "right":
+            split_index = -self.split_position
+        else:
+            split_index = self.split_position
+        self.selectedSymbol.splitField(field, split_index, self.split_align)
         self.treeMessageGenerator.updateDefault()
         dialog.destroy()
         self.update()
 
     def adjustSplitColumn(self, widget, textview, direction, field):
-        if self.split_max_len <= 2:
+        if self.split_max_len <= 1:
             return
         messages = self.selectedSymbol.getCellsByField(field)
 
         # Bounds checking
-        if direction == "left":
-            self.split_position -= 2
-            if self.split_position < 2:
-                self.split_position = 2
+        if self.split_align == "left":
+            if direction == "left":
+                self.split_position -= 1
+                if self.split_position < 1:
+                    self.split_position = 1
+            else:
+                self.split_position += 1
+                if self.split_position > self.split_max_len - 1:
+                    self.split_position = self.split_max_len - 1
         else:
-            self.split_position += 2
-            if self.split_position > self.split_max_len - 2:
-                self.split_position = self.split_max_len - 2
+            if direction == "left":
+                self.split_position += 1
+                if self.split_position > self.split_max_len - 1:
+                    self.split_position = self.split_max_len - 1
+            else:
+                self.split_position -= 1
+                if self.split_position < 1:
+                    self.split_position = 1
 
         # Colorize text according to position
         textview.get_buffer().set_text("")
         for m in messages:
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getFormat()) + "  ", "redTag")
-            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
+            # Crate padding in case of right alignment
+            if self.split_align == "right":
+                padding = ""
+                messageLen = len(m)
+                for i in range( self.split_max_len - messageLen ):
+                    padding += " "
+                textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), padding, "greenTag")
+                split_index = -self.split_position
+            else:
+                split_index = self.split_position
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], field.getFormat()) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], field.getFormat()) + "\n", "greenTag")
+
+    def doAlignSplit(self, widget, textview, field, button_align):
+        if self.split_align == "left":
+            self.split_align = "right"
+            button_align.set_label("Align to left")
+        else:
+            self.split_align = "left"
+            button_align.set_label("Align to right")
+        
+        messages = self.selectedSymbol.getCellsByField(field)
+
+        # Adapt alignment
+        textview.get_buffer().set_text("")
+        for m in messages:
+            # Crate padding in case of right alignment
+            if self.split_align == "right":
+                padding = ""
+                messageLen = len(m)
+                for i in range( self.split_max_len - messageLen ):
+                    padding += " "
+                textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), padding, "greenTag")
+                split_index = -self.split_position
+            else:
+                split_index = self.split_position
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:split_index], field.getFormat()) + "  ", "redTag")
+            textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[split_index:], field.getFormat()) + "\n", "greenTag")
 
     #+----------------------------------------------
     #| dbClickToChangeFormat:
@@ -1914,51 +1995,6 @@ class UImodelization:
             itemCreateSymbol.connect("activate", self.displayPopupToCreateSymbol, symbol)
             menu.append(itemCreateSymbol)
 
-#
-#
-#
-#         # Add sub-entries to change the type of a specific field
-#
-#            item = gtk.MenuItem("Field visualization")
-#            item.set_submenu(subMenu)
-#            item.show()
-#            menu.append(item)
-#
-#            # Add entries to concatenate fields
-#            concatMenu = gtk.Menu()
-#            item = gtk.MenuItem("with precedent field")
-#            item.show()
-#            item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
-#
-#
-#        # Create the submenu of the alignment of the symbol
-#        item = gtk.MenuItem("")
-#        item.show()
-#        item.connect("activate", self.displayPopupToEditField, selectedField)
-#        menu.append(item)
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#        entries = [
-#                (gtk.STOCK_BOLD, self.sequenceAlignment, (symbol != None)),
-#                (gtk.STOCK_EDIT, self.displayPopupToEditSymbol, (symbol != None)),
-#                (gtk.STOCK_ADD, self.displayPopupToCreateSymbol, (symbol == None)),
-#                (gtk.STOCK_REMOVE, self.displayPopupToRemoveSymbol, (symbol != None))
-#       ]
-#
-#        menu = gtk.Menu()
-#        for stock_id, callback, sensitive in entries:
-#            item = gtk.ImageMenuItem(stock_id)
-#            item.connect("activate", callback, symbol)
-#            item.set_sensitive(sensitive)
-#            item.show()
-#            menu.append(item)
         menu.popup(None, None, None, event.button, event.time)
 
     def displayPopupToEditSymbol(self, event, symbol):
@@ -2123,6 +2159,56 @@ class UImodelization:
         #Update Left and Right
         self.update()
         return
+
+    #+----------------------------------------------
+    #| fieldPartitioning:
+    #|   Make a partitioning at the field level
+    #+----------------------------------------------
+    def fieldPartitioning(self, widget, field, partitioningType):
+        # Create a temporary symbol to store cells
+        id = str(uuid.uuid4())
+        tmpSymbol = Symbol(id, "", self.netzob.getCurrentProject())
+        for cell in self.selectedSymbol.getCellsByField(field):
+            idMsg = str(uuid.uuid4())
+            msg = RawMessage(idMsg, 0, cell)
+            tmpSymbol.addMessage(msg)
+
+        # Retrieve default parameters of alignment
+        doInternalSlick = False
+        defaultFormat = Format.HEX
+        global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        unitSize = UnitSize.getSizeInBits(global_unitsize)
+        if unitSize == None:
+            unitSize = 4
+
+        # Process the partitioning
+        if partitioningType == "alignment":
+            alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)
+            alignmentProcess.alignSymbol(tmpSymbol, doInternalSlick, defaultFormat)
+        elif partitioningType == "force":
+            logging.warn("Not yet implemented")
+            return
+        elif partitioningType == "simple":
+            tmpSymbol.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
+        else:
+            return
+
+        # Adapt the computated field partitionment to the original symbol
+        index = field.getIndex()
+        self.selectedSymbol.popField( index )
+
+        i = 0
+        for tmpField in tmpSymbol.getFields():
+            currentIndex = index + i
+            i += 1
+            self.selectedSymbol.addField( tmpField, currentIndex )
+            tmpField.setName( tmpField.getName() + "-" + str(i) )
+
+        # Adapt next fields indexes
+        for nextField in self.selectedSymbol.fields:
+            if nextField.getIndex() > index:
+                nextField.setIndex(index + len(tmpSymbol.getFields()))
+        self.update()
 
     def loggingNeedlemanStatus(self, status, message):
         self.log.debug("Status = " + str(status) + " : " + str(message))

@@ -219,7 +219,7 @@ class NeedlemanAndWunsch(object):
             doLoop = False
             for field in symbol.getFields():
                 # We try to see if this field produces only empty values when applied on messages
-                if field.isStatic():
+                if not field.isStatic():
                     cells = symbol.getCellsByField(field)
                     cells = "".join(cells)
                     if cells == "":
@@ -271,10 +271,12 @@ class NeedlemanAndWunsch(object):
         for symbol in symbols:
             clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
             tmpSymbols.extend(clusteringSolution.executeClustering())
-            
-        clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
-        self.result = clusteringSolution.executeClustering()        
-        
+        if len(symbols)!=1:    
+            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
+            self.result = clusteringSolution.executeClustering()        
+        else:
+            self.result = tmpSymbols        
+	    
         if doOrphanReduction :
             self.result = clusteringSolution.executeOrphanReduction()
         self.result.extend(preResults)

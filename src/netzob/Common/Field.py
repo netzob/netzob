@@ -139,29 +139,37 @@ class Field(object):
         xmlField.set("name", str(self.getName()))
         xmlField.set("index", str(self.getIndex()))
 
-        xmlFieldEncapsulationLevel = etree.SubElement(xmlField, "{" + namespace + "}encapsulation_level")
-        xmlFieldEncapsulationLevel.text = str(self.getEncapsulationLevel())
+        if self.getEncapsulationLevel() != None:
+            xmlFieldEncapsulationLevel = etree.SubElement(xmlField, "{" + namespace + "}encapsulation_level")
+            xmlFieldEncapsulationLevel.text = str(self.getEncapsulationLevel())
 
-        xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
-        xmlFieldRegex.text = str(self.getRegex())
+        if self.getRegex() != None:
+            xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
+            xmlFieldRegex.text = str(self.getRegex())
 
-        xmlFieldFormat = etree.SubElement(xmlField, "{" + namespace + "}format")
-        xmlFieldFormat.text = str(self.getFormat())
+        if self.getFormat() != None:
+            xmlFieldFormat = etree.SubElement(xmlField, "{" + namespace + "}format")
+            xmlFieldFormat.text = str(self.getFormat())
 
-        xmlFieldUnitSize = etree.SubElement(xmlField, "{" + namespace + "}unitsize")
-        xmlFieldUnitSize.text = str(self.getUnitSize())
+        if self.getUnitSize() != None:
+            xmlFieldUnitSize = etree.SubElement(xmlField, "{" + namespace + "}unitsize")
+            xmlFieldUnitSize.text = str(self.getUnitSize())
 
-        xmlFieldSign = etree.SubElement(xmlField, "{" + namespace + "}sign")
-        xmlFieldSign.text = str(self.getSign())
+        if self.getSign() != None:
+            xmlFieldSign = etree.SubElement(xmlField, "{" + namespace + "}sign")
+            xmlFieldSign.text = str(self.getSign())
 
-        xmlFieldEndianess = etree.SubElement(xmlField, "{" + namespace + "}endianess")
-        xmlFieldEndianess.text = str(self.getEndianess())
+        if self.getEndianess() != None:
+            xmlFieldEndianess = etree.SubElement(xmlField, "{" + namespace + "}endianess")
+            xmlFieldEndianess.text = str(self.getEndianess())
 
-        xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
-        xmlFieldDescription.text = str(self.getDescription())
+        if self.getDescription() != None:
+            xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
+            xmlFieldDescription.text = str(self.getDescription())
 
-        xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
-        xmlFieldColor.text = str(self.getColor())
+        if self.getColor() != None:
+            xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
+            xmlFieldColor.text = str(self.getColor())
 
         if self.getVariable() != None:
             self.getVariable().toXML(xmlField, namespace)
