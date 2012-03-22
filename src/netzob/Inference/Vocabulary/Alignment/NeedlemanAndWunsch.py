@@ -200,7 +200,7 @@ class NeedlemanAndWunsch(object):
                     else:
                         regex[-1] += align[i]
         if (found == True):
-            nbTiret = i - start
+            nbTiret = i - start + 1
             regex.append("(.{," + str(nbTiret) + "})")
 
         iField = 0
@@ -229,7 +229,7 @@ class NeedlemanAndWunsch(object):
                             if fieldNext.getIndex() > field.getIndex():
                                 fieldNext.setIndex(fieldNext.getIndex() - 1)
                         # Concatenate the surrounding fields (because they should be static fields)
-                        symbol.concatFields( field.getIndex() - 1)
+                        symbol.concatFields(field.getIndex() - 1)
                         doLoop = True
                         break
 
@@ -271,7 +271,7 @@ class NeedlemanAndWunsch(object):
         for symbol in symbols:
             clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
             tmpSymbols.extend(clusteringSolution.executeClustering())
-        if len(symbols)!=1:    
+        if len(symbols) != 1:    
             clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
             self.result = clusteringSolution.executeClustering()        
         else:
