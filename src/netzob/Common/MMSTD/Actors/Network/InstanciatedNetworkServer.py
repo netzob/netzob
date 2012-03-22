@@ -77,8 +77,6 @@ class InstanciatedNetworkServer(AbstractActor):
             self.log.warn("Error while shuting down a socket")
         self.socket.close()
         
-        chars = self.socket.recv(4096)
-        
         return True
 
     def read(self, timeout):
