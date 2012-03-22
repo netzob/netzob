@@ -266,20 +266,25 @@ class NeedlemanAndWunsch(object):
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
  
+        tmpEqu = symbols[0].getMinEqu()
+        if tmpEqu != minEquivalence:
+            if tmpEqu < minEquivalence: #Try to split current symbols only if the threshold wanted is higher
+                for symbol in symbols:
+                    clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+                    tmpSymbols.extend(clusteringSolution.executeClustering())
+                self.result = tmpSymbols
+            elif len(symbols) != 1 and tmpEqu > minEquivalence: #Try to merge symbols only if threshold is lower than previously     
+                clusteringSolution = UPGMA(project, symbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
+                self.result = clusteringSolution.executeClustering()        
+            elif len(symbols) == 1:  # threshold is lower and there is only 1 symbol ==> do nothing
+                self.result = symbols
+                
+            if doOrphanReduction :
+                self.result = clusteringSolution.executeOrphanReduction()
+            self.result.extend(preResults)
 
-        # We try to cluster each symbol
-        for symbol in symbols:
-            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-            tmpSymbols.extend(clusteringSolution.executeClustering())
-        if len(symbols) != 1:    
-            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
-            self.result = clusteringSolution.executeClustering()        
         else:
-            self.result = tmpSymbols        
-	    
-        if doOrphanReduction :
-            self.result = clusteringSolution.executeOrphanReduction()
-        self.result.extend(preResults)
+            self.result = symbols
         logging.info("Time of parsing : " + str(time.time() - t1))
 
     def getLastResult(self):

@@ -68,7 +68,7 @@ class Symbol(AbstractSymbol):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name, project):
+    def __init__(self, id, name, project,pattern=[],minEqu=0):
         AbstractSymbol.__init__(self, "Symbol")
         self.id = id
         self.name = name
@@ -80,6 +80,8 @@ class Symbol(AbstractSymbol):
         self.rawDelimiter = ""
         self.project = project
         self.visualizationFilters = []
+        self.pattern=pattern
+        self.minEqu=minEqu
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -1181,7 +1183,12 @@ class Symbol(AbstractSymbol):
 
     def getProject(self):
         return self.project
-
+    
+    def getPattern(self):
+        return self.pattern
+    
+    def getMinEqu(self):
+        return self.minEqu
     #+----------------------------------------------
     #| SETTERS
     #+----------------------------------------------

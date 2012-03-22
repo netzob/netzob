@@ -40,6 +40,7 @@ import logging
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.Type.Format import Format
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -56,7 +57,10 @@ class NetworkMessage(AbstractMessage):
         self.l4_destination_port = l4_destination_port
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
-
+        self.pattern=[ip_destination]
+        self.compilePattern()
+        #print str(self.pattern[0])+" "+str([str(i) for i in self.pattern[1]])+" "+str(TypeConvertor.netzobRawToString(str(self.getData())))
+    
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
