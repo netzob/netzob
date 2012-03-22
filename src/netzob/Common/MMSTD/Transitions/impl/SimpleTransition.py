@@ -86,7 +86,9 @@ class SimpleTransition(AbstractTransition):
     def executeAsClient(self, abstractionLayer):
         self.activate()
         self.log.debug("Executing as a client")
-        time.sleep(1)
+        
+        
+        time.sleep(0.5)
         # write a message
         abstractionLayer.writeSymbol(self.outputSymbol)
         self.deactivate()
