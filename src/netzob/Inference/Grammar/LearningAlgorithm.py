@@ -51,7 +51,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+----------------------------------------------
 class LearningAlgorithm(object):
 
-    def __init__(self, dictionary, communicationChannel, resetScript, callbackFunction):
+    def __init__(self, dictionary, communicationChannel, resetScript, callbackFunction, cb_hypotheticalAutomaton):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
@@ -61,6 +61,7 @@ class LearningAlgorithm(object):
         self.submitedQueries = []
 
         self.callbackFunction = callbackFunction
+        self.cb_hypotheticalAutomaton = cb_hypotheticalAutomaton
 
     def attachStatusCallBack(self, callbackFunction):
         self.callbackFunction = callbackFunction
@@ -80,17 +81,17 @@ class LearningAlgorithm(object):
 
         self.log.info("Submit the following query : " + str(query))
         
+        
+        isMaster = not self.communicationChannel.isServer()    
 
         # transform the query into a MMSTD
-        mmstd = query.toMMSTD(self.dictionary)
+        mmstd = query.toMMSTD(self.dictionary, isMaster)
         
+        self.cb_hypotheticalAutomaton(mmstd)
+        time.sleep(1)
         self.log.info("The current experimentation has generated the following MMSTD :")
         self.log.debug(mmstd.getDotCode())
-        
-        
-        
-        
-        isMaster = not self.communicationChannel.isServer()            
+                
 
         # create an oracle for this MMSTD
         oracle = NetworkOracle(self.communicationChannel, isMaster)

@@ -73,7 +73,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         self.log.info("Find a counterexample which invalids the given MMSTD")
 
         inputDictionary = []
-        for entry in mmstd.dictionary.getSymbols():
+        for entry in mmstd.getVocabulary().getSymbols():
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
             self.log.info("The vocabulary contains : " + str(letter))

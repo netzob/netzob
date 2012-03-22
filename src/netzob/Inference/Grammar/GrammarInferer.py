@@ -41,7 +41,7 @@ from netzob.Inference.Grammar.Angluin import Angluin
 # Replace by previous import statement : from Angluin import Angluin
 import threading
 import gobject
-
+import time
 
 #+----------------------------------------------
 #| GrammarInferer:
@@ -92,8 +92,12 @@ class GrammarInferer(threading.Thread):
     def infer(self):
         self.active = True
         equivalent = False
+        
+        startTime = time.time()
+        
+        
         # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.oracle, self.resetScript, self.cb_submitedQuery)
+        self.learner = Angluin(self.vocabulary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton)
         while not equivalent and self.active:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")
@@ -120,9 +124,12 @@ class GrammarInferer(threading.Thread):
                 for s in counterExample.getSymbols():
                     self.log.info("symbol : " + str(s) + " => " + str(s.getID()))
                 self.learner.addCounterExamples([counterExample])
-
+                
         automaton = self.learner.getInferedAutomata()
-
+        
+        endTime = time.time()
+        
         self.log.info("The inferring process is finished !")
-        self.log.info("The following automaton has been computed : " + str(automaton))
+        self.log.info("The following automaton has been computed : " + str(automaton.getDotCode()))
+        print "Elapsed time: ", (endTime - startTime) * 1000, " msecs"
         self.inferedAutomaton = automaton
