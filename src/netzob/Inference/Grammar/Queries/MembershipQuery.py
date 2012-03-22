@@ -42,6 +42,7 @@ from netzob.Common.MMSTD.Transitions.impl.SimpleTransition import SimpleTransiti
 from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
 from netzob.Common.MMSTD.Transitions.impl.CloseChannelTransition import CloseChannelTransition
 from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 
 
 #+----------------------------------------------
@@ -74,26 +75,24 @@ class MembershipQuery(object):
 
     def toMMSTD(self, dictionary, isMaster):
         # We create an MMSTD which will submit the following symbols
-
+        generatedStates = []
+        
+        
         # Create the transition which opens the connection
         rootState = NormalState(0, "State 0")
+        generatedStates.append(rootState)
         initialState = NormalState(1, "State 1")
+        generatedStates.append(initialState)
         openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 10000, 3)
         rootState.registerTransition(openingTransition)
         previousState = initialState
         idState = 2
-        
-        if not isMaster : 
-            # We create the opening transition to listen for the first entry
-            newState = NormalState(idState, "State " + str(idState))
-            transition = SimpleTransition(idTransition, "Transition " + str(idState - 1), previousState, newState, 3000, None)
-            previsousState.registerTransition(transition)
-            previsousState = newState
-            idState += 1
+
         
         for symbol in self.symbols:
             # we create the current state
             currentState = NormalState(idState, "State " + str(idState))
+            generatedStates.append(currentState)
             # we create a normal transition between it and the previous state
             idTransition = idState - 1
             transition = SimpleTransition(idTransition, "Transition " + str(idTransition), previousState, currentState, 3000, symbol)
@@ -101,12 +100,26 @@ class MembershipQuery(object):
             idState = idState + 1
             previousState = currentState
 
+                
+        if not isMaster : 
+            # We create the opening transition to listen for the first entry
+            currentState = NormalState(idState, "State " + str(idState))
+            generatedStates.append(currentState)
+            transition = SimpleTransition(idState - 1, "Transition " + str(idState - 1), previousState, currentState, 3000, EmptySymbol())
+            previousState.registerTransition(transition)
+            previousState = currentState
+            idState += 1
+
+
         # Create the transition which close the connection
         endState = NormalState(idState, "State " + str(idState))
+        generatedStates.append(endState)
         closingTransition = CloseChannelTransition(idState - 1, "Disconnection", currentState, endState, 1000)
         currentState.registerTransition(closingTransition)
 
         mmstd = MMSTD(rootState, dictionary)
+        for state in generatedStates :
+            mmstd.addState(state)
         return mmstd
 
     def multiply(self, mqs):
