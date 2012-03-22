@@ -183,20 +183,14 @@ class WordVariable(Variable):
         if size <= 16 :
             self.log.debug("Too small, not even 16 bits available (2 letters)")
             return -1
-        
-        for i in range(size, 16) :
-            subValue = value[indice:indice + size - 1]
-            str = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
-            self.log.debug("Convert in str = " + str(str))
-            if TypeIdentifier.isAscii(str) :
-                self.log.debug("Its an ASCII, we verify if it contains only alphas")
-                if (str.isalpha()) :
-                    self.log.debug("Its an alpha")
-                    return i
-                else :
-                    self.log.debug("Its not an alpha")
-            else :
-                self.log.debug("Its not an ASCII")
+        for i in range(size, 16, -1) :
+            subValue = value[indice:indice + i - 1]
+            strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
+            typeIdentifier = TypeIdentifier()
+            if typeIdentifier.isAscii(strVal) :
+                if (strVal.isalpha()) :
+                    self.log.debug("Its an alpha : (" + str(strVal) + ")")
+                    return i + indice - 1
         
         return -1    
     
