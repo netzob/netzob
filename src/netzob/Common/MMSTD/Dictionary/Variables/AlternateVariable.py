@@ -163,7 +163,6 @@ class AlternateVariable(Variable):
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        self.log.debug("Restore learnt values")
         for var in self.vars:
             var.restore(vocabulary, memory)
 

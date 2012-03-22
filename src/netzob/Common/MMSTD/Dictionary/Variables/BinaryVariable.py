@@ -155,13 +155,14 @@ class BinaryVariable(Variable):
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         localValue = self.getValue(negative, vocabulary, memory)
+        self.log.debug("Receive : " + str(value[indice:]))
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
         if localValue == None:
             self.log.debug("We compare the format (will we be able to learn it afterwards ?")
             return self.compareFormat(value, indice, negative, vocabulary, memory)
         else:
             (binVal, strVal) = localValue
-            self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
+            self.log.info("Compare : '" + str(value[indice:]) + "' with '" + str(binVal) + "' ")
             tmp = value[indice:]
             if len(tmp) >= len(binVal):
                 if tmp[:len(binVal)] == binVal:
@@ -197,7 +198,6 @@ class BinaryVariable(Variable):
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        self.log.debug("Restore learnt values")
         memory.restore(self)
 
     def getCurrentValue(self):

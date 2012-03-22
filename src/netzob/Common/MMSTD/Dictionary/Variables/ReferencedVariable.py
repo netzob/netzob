@@ -134,7 +134,6 @@ class ReferencedVariable(Variable):
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        self.log.debug("Restore learnt values")
         var = vocabulary.getVariableByID(self.varID)
         if var == None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)

@@ -79,9 +79,16 @@ class LearningAlgorithm(object):
         os.system("sh " + self.resetScript)
 
         self.log.info("Submit the following query : " + str(query))
+        
 
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary)
+        
+        self.log.info("The current experimentation has generated the following MMSTD :")
+        self.log.debug(mmstd.getDotCode())
+        
+        
+        
         
         isMaster = not self.communicationChannel.isServer()            
 
@@ -104,9 +111,33 @@ class LearningAlgorithm(object):
         self.log.info("Close (again) the server")
         self.communicationChannel.close()
 
-        resultQuery = oracle.getResults()
-        tmpResultQuery = oracle.getGeneratedOutputSymbols()
 
+        if isMaster :
+            resultQuery = oracle.getResults()
+            tmpResultQuery = oracle.getGeneratedOutputSymbols()
+        else :
+            resultQuery = oracle.getGeneratedInputSymbols()
+            tmpResultQuery = oracle.getGeneratedInputSymbols()
+            
+        self.log.info("---------------------------------------------")
+        self.log.info("RESUMONS UN PETIT PEU TOUT CA :")
+        self.log.info("---------------------------------------------")
+        self.log.info("SUBMITED : ")
+        self.log.info(str(query))
+        self.log.info("---------------------------------------------")
+        self.log.info("RESULT :")
+        self.log.info("---------------------------------------------")
+        self.log.info("+ getResults :")
+        self.log.info(str(resultQuery))
+        self.log.info("---------------------------------------------")
+        self.log.info("+ getGeneratedInputSymbols :")
+        self.log.info(str(oracle.getGeneratedInputSymbols()))
+        self.log.info("---------------------------------------------")
+        self.log.info("+ getGeneratedOutputSymbols :")
+        self.log.info(str(oracle.getGeneratedOutputSymbols()))
+        self.log.info("---------------------------------------------")
+            
+            
         self.log.info("The following query has been computed : " + str(resultQuery))
 
         # Register this query and the associated response

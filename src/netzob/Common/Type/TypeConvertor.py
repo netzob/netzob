@@ -54,7 +54,7 @@ class TypeConvertor():
     #| @return
     #+----------------------------------------------
     @staticmethod
-    def string2bin(aStr, endian):
+    def string2bin(aStr, endian='big'):
         result = bitarray(endian=endian)
         result.fromstring(aStr)
         return result

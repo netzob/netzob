@@ -202,8 +202,19 @@ class WordVariable(Variable):
     #|     >=0    : it matchs and the following number of bits were eaten
     #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
-        self.log.warn("We should be learning but we dont do !!!!!!!")
-        return self.compare(value, indice, negative, vocabulary, memory)
+        # First we retrieve the size of the value to memorize
+        size = self.compare(value, indice, negative, vocabulary, memory)
+        if size > 0 :
+            # memorize 
+            self.log.debug("Memorize : " + str(value[indice:size]))
+            memory.memorize(self, (value[indice:size], TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(value[indice:size]))))
+            return size
+        else :
+            self.log.debug("Incompatible for learning")
+            return -1
+            
+            
+            
     
     #+-----------------------------------------------------------------------+
     #| restore :
@@ -217,7 +228,8 @@ class WordVariable(Variable):
 
     def getOriginalValue(self):
         return self.originalValue
-#+-----------------------------------------------------------------------+
+    
+    #+-----------------------------------------------------------------------+
     #| toXML :
     #|     Returns the XML description of the variable
     #+-----------------------------------------------------------------------+

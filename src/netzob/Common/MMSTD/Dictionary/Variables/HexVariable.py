@@ -191,7 +191,6 @@ class HexVariable(Variable):
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        self.log.debug("Restore learnt values")
         memory.restore(self)
 
     def getCurrentValue(self):

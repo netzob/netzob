@@ -127,6 +127,7 @@ class AggregateVariable(Variable):
         result = indice
         for var in self.vars:
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
+            self.log.debug("=> " + str(value[result:]))
             result = var.compare(value, result, negative, vocabulary, memory)
             if result == -1 or result == None:
                 self.log.debug("Compare fail")
@@ -169,7 +170,6 @@ class AggregateVariable(Variable):
     #|     Restore learnt value from the last execution of the variable
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        self.log.debug("Restore learnt values")
         for var in self.vars:
             var.restore(vocabulary, memory)
 

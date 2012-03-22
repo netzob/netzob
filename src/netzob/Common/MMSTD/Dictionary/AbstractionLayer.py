@@ -63,6 +63,7 @@ class AbstractionLayer():
         self.outputMessages = []
         self.manipulatedSymbols = []
         self.outputSymbols = []
+        self.inputSymbols = []
         self.connected = False
         self.cb_inputSymbol = cb_inputSymbol
         self.cb_outputSymbol = cb_outputSymbol
@@ -78,12 +79,13 @@ class AbstractionLayer():
         self.log.debug("Disconnected changes to FALSE")
         self.connected = False
         
-    def registerInputSymbol(self, symbol):
-        self.manipulatedSymbols.append(symbol)
+#    def registerInputSymbol(self, symbol):
+#        self.manipulatedSymbols.append(symbol)
+#        self.inputSymbols.append(symbol)
         
-    def registerOutputSymbol(self, symbol):
-        self.manipulatedSymbols.append(symbol)
-        self.outputSymbols.append(symbol)
+#    def registerOutputSymbol(self, symbol):
+#        self.manipulatedSymbols.append(symbol)
+#        self.outputSymbols.append(symbol)
 
     def openServer(self, vocabulary, outputState, isMaster):
         self.log.info("OpenServer " + str(self.communicationChannel))
@@ -144,6 +146,7 @@ class AbstractionLayer():
     
     def registerInputSymbol(self, symbol):
         self.manipulatedSymbols.append(symbol)
+        self.inputSymbols.append(symbol)
         if (self.cb_inputSymbol != None) :
             self.cb_inputSymbol(symbol)
         
@@ -217,6 +220,7 @@ class AbstractionLayer():
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
                 # It matchs so we learn from it if it's possible
                 self.memory.createMemory()
+                self.log.debug("We memorize the symbol " + str(symbol.getRoot()))
                 symbol.getRoot().learn(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory)
                 self.memory.persistMemory()
                 return symbol
@@ -243,6 +247,10 @@ class AbstractionLayer():
     def getGeneratedInputAndOutputsSymbols(self):
         print "communication channel = " + str(self.communicationChannel)
         return self.manipulatedSymbols
+    
+    def getGeneratedInputSymbols(self):
+        return self.inputSymbols
+    
 
     def getGeneratedOutputSymbols(self):
         return self.outputSymbols
