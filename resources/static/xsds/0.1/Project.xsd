@@ -641,7 +641,7 @@
 				<sequence>
 					<element name="originalValue" type="string" minOccurs="0"
 						maxOccurs="1"></element>
-					<element name="regex" type="string" minOccurs="1"
+					<element name="regex" type="string" minOccurs="0"
 						maxOccurs="1"></element>
 				</sequence>
 			</extension>
