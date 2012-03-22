@@ -72,7 +72,7 @@ class MembershipQuery(object):
                 result.append(s)
         return result
 
-    def toMMSTD(self, dictionary):
+    def toMMSTD(self, dictionary, isMaster):
         # We create an MMSTD which will submit the following symbols
 
         # Create the transition which opens the connection
@@ -82,6 +82,15 @@ class MembershipQuery(object):
         rootState.registerTransition(openingTransition)
         previousState = initialState
         idState = 2
+        
+        if not isMaster : 
+            # We create the opening transition to listen for the first entry
+            newState = NormalState(idState, "State " + str(idState))
+            transition = SimpleTransition(idTransition, "Transition " + str(idState - 1), previousState, newState, 3000, None)
+            previsousState.registerTransition(transition)
+            previsousState = newState
+            idState += 1
+        
         for symbol in self.symbols:
             # we create the current state
             currentState = NormalState(idState, "State " + str(idState))
