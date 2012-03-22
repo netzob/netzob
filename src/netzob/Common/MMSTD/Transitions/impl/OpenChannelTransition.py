@@ -106,7 +106,6 @@ class OpenChannelTransition(AbstractTransition):
                 startTime = datetime.now()
                 finish = not abstractionLayer.isConnected()
                 while (not finish):
-                    self.log.info("Waiting for the client to disconnect")
                     currentTime = datetime.now()
                     if ((currentTime - startTime).microseconds > 60000) :
                         finish = True
