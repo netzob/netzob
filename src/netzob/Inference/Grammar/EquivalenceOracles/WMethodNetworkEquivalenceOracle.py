@@ -224,7 +224,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             # Compute our results
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
             # Compute real results
-            testedMmstd = test.toMMSTD(mmstd.getDictionary())
+            testedMmstd = test.toMMSTD(mmstd.getVocabulary())
             oracle = NetworkOracle(self.communicationChannel)
             oracle.setMMSTD(testedMmstd)
             oracle.start()
