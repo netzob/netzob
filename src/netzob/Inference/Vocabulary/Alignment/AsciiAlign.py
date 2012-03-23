@@ -37,6 +37,7 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Field import Field
 from netzob.Common.Type.Format import Format
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class AsciiAlign():
@@ -49,55 +50,63 @@ class AsciiAlign():
         self.defaultFormat = defaultFormat
         self.unitSize = unitSize
         self.log = logging.getLogger('netzob.Inference.Vocabulary.AsciiAlign.py')
-
+        self.server = ""
         if explodeSymbols == False:
             self.symbols = symbols
         else:
-             #Create a symbol for each message
+             #Create a symbol for each message and reset to constant the tokens
             self.symbols = []
             i_symbol = 1
             for symbol in symbols:
                 for m in symbol.getMessages():
-                    print m.getPatternString() + " " + str(m.getData())
+#                    print m.getPatternString() + " " + str(m.getData())
+                    for t in m.getPattern()[1]:
+                        t.setType("constant")
                     tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project, m.getPattern())
                     tmpSymbol.addMessage(m)
                     self.symbols.append(tmpSymbol)
                     i_symbol += 1
 
     def clusterByTokenization(self, symbols):
-    ###################################    FIND EQUAL MESSAGES
-    ###################################useful for redundant protocols before doing heavy computations with Needleman (complexity = O(N²) where N is #Symbols)
+        self.ServerInference()
+    ################################### Cluster messages according to their tokens
         ll = len(self.symbols) - 1
         i_equ = 0
         while(ll > 0):
-            currentPattern = self.symbols[i_equ].getMessages()[0].getPattern()
+            currentPattern = self.symbols[i_equ].getMessages()[0].getPattern()[1]
             for j in range(ll):
                 cond = False
                 for message in self.symbols[i_equ + j + 1].getMessages():
-                    cond = (currentPattern == message.getPattern())
+                    cond = (currentPattern == message.getPattern()[1])
                     if cond:
                         break
+
                 if(cond):
-                    self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
-                    self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
-                    i_equ -= 1
-                    break
+                    currentDst = self.symbols[i_equ].getPattern()[0]
+                    otherDst = self.symbols[i_equ + j + 1].getPattern()[0]
+                    if not self.server or (currentDst == otherDst) or (currentDst != self.server and otherDst != self.server):
+                        self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
+#                        self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
+                        i_equ -= 1
+                        break
             ll -= 1
             i_equ += 1
 
+    ################################## Align messages
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         for symbol in self.symbols:
             al = self.computeAlignment(symbol)
             symbol.setAlignment(al)
+
             try:
                 alignment.buildRegexFromAlignment(symbol, al, self.defaultFormat)
                 symbol.getFields()[0].setFormat(Format.STRING)
-                #for (p, fields) in zip(symbol.getPattern()[1], symbol.getFields()):
-                 #   field.setFormat(p.getFormat())
+#                for (p, fields) in zip(symbol.getPattern()[1], symbol.getFields()):
+#                    field.setFormat(p.getFormat())
             except:
-                logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getFields())))
+                logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getFields())) + "len " + str(len(symbol.getPattern()[1])))
                 symbol.cleanFields()
-                field = Field("Field 0", 0, "(.{, })")
+                field = Field("Field 0", 0, "(.{,})")
                 # Use the default protocol type for representation
                 field.setFormat(self.defaultFormat)
                 symbol.addField(field)
@@ -119,7 +128,7 @@ class AsciiAlign():
         messages.extend(symbol2.getMessages())
 
         newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project, pattern=self.mergePattern(symbol1.getPattern(), symbol2.getPattern()))
-        self.log.debug("Patterns to merge: {0} with {1}: Give Result {2}".format(symbol1.getPatternString(), symbol2.getPatternString(), newSymbol.getPatternString()))
+#        self.log.debug("Patterns to merge: {0} with {1}: Give Result {2}".format(symbol1.getPatternString(), symbol2.getPatternString(), newSymbol.getPatternString()))
         for message in messages:
             newSymbol.addMessage(message)
 
@@ -131,6 +140,7 @@ class AsciiAlign():
         patTemp.append(p1[0])
         patTemp2 = []
         for t1, t2 in zip(p1[1], p2[1]):
+
             if t1.getLength() == t2.getLength() and t1.getValue() != t2.getValue():
                 t1.setType("variable")
                 patTemp2.append(t1)
@@ -141,12 +151,16 @@ class AsciiAlign():
                 t2.setType("variable")
                 patTemp2.append(t2)
             else:
-                patTemp2.append(t1)
+                if(t2.getType() == "variable"):
+                    patTemp2.append(t2)
+                else:
+                    patTemp2.append(t1)
+
         patTemp.append(patTemp2)
         return patTemp
 
     def computeAlignment(self, symbol):
-        self.log.debug("Patterns to align: {0} ".format(str(symbol.getPattern())))
+#        self.log.debug("Patterns to align: {0} ".format(str(symbol.getPattern())))
         pat1 = symbol.getPattern()[1]
         align = ""
         mess = str(symbol.getMessages()[0].getData())
@@ -158,8 +172,26 @@ class AsciiAlign():
             else:
                 align += "-" * (t1.getLength() * 2)
             currentPos += t2.getLength() * 2
-        self.log.debug("Alignment= {0} ".format(align))
+#        self.log.debug("Alignment= {0} ".format(align))
         return align
 
+    def ServerInference(self):
+        candidates = []
+        score = []
+        for symbol in self.symbols:
+            for m in symbol.getMessages():
+                dst = m.getPattern()[0]
+                if dst in candidates:
+                    score[candidates.index(dst)] += 1
+                else:
+                    candidates.append(dst)
+                    score.append(1)
+        print candidates
+        if score.count(max(score)) == 1 and len(candidates) > 2:
+            self.server = candidates[score.index(max(score))]
+
+#+---------------------------------------------------------------------------+
+#| Getters
+#+---------------------------------------------------------------------------+
     def getLastResult(self):
         return self.symbols
