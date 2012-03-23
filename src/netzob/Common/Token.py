@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -44,7 +45,7 @@ class Token():
         self.value = value
 
     def __str__(self):
-        return str(self.format) + "_" + str(self.length) + "_" + str(self.type) + "_" + str(self.value)
+        return str(self.format) + "_" + str(self.length) + "_" + str(self.type) + "_" + TypeConvertor.pythonRawToNetzobRaw(str(self.value))
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -56,13 +57,16 @@ class Token():
                     isSub = (other.getValue().find(self.value) > -1)
                 else:
                     isSub = (self.value.find(other.getValue()) > -1)
-            return (sameFormat and isSub)
+            return (sameFormat)
         else:
             return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
+#+---------------------------------------------------------------------------+
+#| Getters
+#+---------------------------------------------------------------------------+
     def getFormat(self):
         return self.format
 
@@ -75,6 +79,9 @@ class Token():
     def getValue(self):
         return self.value
 
+#+---------------------------------------------------------------------------+
+#| Setters
+#+---------------------------------------------------------------------------+
     def setType(self, type):
         if type in ["variable", "constant"]:
             self.type = type
