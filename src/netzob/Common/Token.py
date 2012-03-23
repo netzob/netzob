@@ -40,7 +40,7 @@ class Token():
     def __init__(self, format, length, type, value):
         self.format = format
         self.setType(type)
-        self.length = length
+        self.length = int(length)
         self.value = value
 
     def __str__(self):
