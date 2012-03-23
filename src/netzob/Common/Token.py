@@ -37,36 +37,44 @@ import logging
 #+---------------------------------------------------------------------------+
 
 class Token():
-    def __init__(self,format,length,type,value):
-        self.format=format
+    def __init__(self, format, length, type, value):
+        self.format = format
         self.setType(type)
-        self.length=length
-        self.value=value
-    
+        self.length = length
+        self.value = value
+
     def __str__(self):
-        return str(self.format)+"_"+str(self.length)+"_"+str(self.type)+"_"+str(self.value)
-    
+        return str(self.format) + "_" + str(self.length) + "_" + str(self.type) + "_" + str(self.value)
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.format == other.format
+            sameFormat = (self.format == other.getFormat())
+            sameType = (self.type == other.getType())
+            isSub = True
+            if not sameType or (sameType and self.type == "variable"):
+                if self.length <= other.getLength():
+                    isSub = (other.getValue().find(self.value) > -1)
+                else:
+                    isSub = (self.value.find(other.getValue()) > -1)
+            return (sameFormat and isSub)
         else:
             return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
-    
+
     def getFormat(self):
         return self.format
-    
+
     def getLength(self):
         return self.length
-    
+
     def getType(self):
         return self.type
-    
+
     def getValue(self):
         return self.value
-    
-    def setType(self,type):
-        if type in ["variable","constant"]:
-            self.type=type 
+
+    def setType(self, type):
+        if type in ["variable", "constant"]:
+            self.type = type
