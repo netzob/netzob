@@ -89,6 +89,7 @@ class NetworkMessage(AbstractMessage):
         properties.append(['Source port', Format.DECIMAL, self.getL4SourcePort()])
         properties.append(['Target port', Format.DECIMAL, self.getL4DestinationPort()])
         properties.append(['Data', Format.HEX, self.getStringData()])
+        properties.append(['Pattern', Format.STRING, self.getPatternString()])
 
         return properties
 
