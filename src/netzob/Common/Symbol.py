@@ -1187,6 +1187,9 @@ class Symbol(AbstractSymbol):
     def getPattern(self):
         return self.pattern
     
+    def getPatternString(self):
+        return str(self.pattern[0])+";"+str([str(i) for i in self.pattern[1]])
+    
     def getMinEqu(self):
         return self.minEqu
     #+----------------------------------------------

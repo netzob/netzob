@@ -62,6 +62,7 @@
 							</restriction>
 						</simpleType>
 					</element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
 				</sequence>
 			</extension>
 		</complexContent>
@@ -136,4 +137,35 @@
 	</complexType>
 
 
+	<complexType name="Token">
+		<attribute name="format">
+			<simpleType>
+                                <restriction base="string">
+                                        <minLength value="1"></minLength>
+                                </restriction>
+                        </simpleType>
+                </attribute>
+		<attribute name="length" type="int"></attribute>
+		<attribute name="type">
+			<simpleType>
+                                <restriction base="string">
+                                        <enumeration value="constant"></enumeration>
+                                        <enumeration value="variable"></enumeration>
+                                </restriction>
+                        </simpleType>
+		</attribute>
+		<attribute name="value">
+			<simpleType>
+                                <restriction base="string">
+                                        <minLength value="1"></minLength>
+                                </restriction>
+                        </simpleType>
+		</attribute>
+	</complexType>
+	<complexType name="Pattern" mixed="true">
+		<sequence>
+			<element name="direction" type="string" minOccurs="0"></element>
+			<element name="token" type="netzob-common:Token" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>	
+	</complexType>
 </schema>

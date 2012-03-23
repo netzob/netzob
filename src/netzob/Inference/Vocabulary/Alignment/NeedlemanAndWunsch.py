@@ -200,11 +200,12 @@ class NeedlemanAndWunsch(object):
                     else:
                         regex[-1] += align[i]
         if (found == True):
-            nbTiret = i - start
+            nbTiret = i - start + 1
             regex.append("(.{," + str(nbTiret) + "})")
-
+        
         iField = 0
         symbol.cleanFields()
+        print "REGEX "+str(regex)
         for regexElt in regex:
             field = Field("Field " + str(iField), iField, regexElt)
             # Use the default protocol type for representation

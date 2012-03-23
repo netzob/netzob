@@ -52,7 +52,7 @@ from netzob.Common.Token import Token
 #+---------------------------------------------------------------------------+
 class AbstractMessage():
 
-    def __init__(self, id, timestamp, data, type):
+    def __init__(self, id, timestamp, data, type,pattern=[]):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         if id == None:
@@ -68,7 +68,14 @@ class AbstractMessage():
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.visualizationFilters = []
-        self.pattern = []
+        #self.log.debug("CALL Abstract")
+        self.pattern=[]
+        if not pattern:
+            self.compilePattern()
+            #self.log.debug("empty {0}".format(str(self.getPattern()[0][0])))
+        else:
+            self.pattern=pattern
+            #self.log.debug("not empty {0}".format(self.getPatternString()))
 
     #+-----------------------------------------------------------------------+
     #| getFactory
@@ -148,19 +155,21 @@ class AbstractMessage():
     #|    compile the pattern of the data part in the Discover way (direction, [Token1,Token2...])
     #+----------------------------------------------
     def compilePattern(self):
+        #self.log.debug("CALL COMPILE")
         tokens = []
         maxA=126                #Max of ascii char not extended
         minA=32                 #Min of ascii printable
         spe=[9,10,13]           #tab,\n,\r
         tempstr = ""
         tempbstr =""
-        ASCIITHRESHOLD=5
+        ASCIITHRESHOLD=5 ##TODO put as option in UI 
         isAsciiPrintable = lambda t: (ord(t)>=minA and ord(t)<=maxA) or ord(t) in spe
         current=""              #
         tempLength=0            #Temporary length of byte token
         
         canRemove=False
         if len(str(self.getData()))>0:
+            #self.log.debug(str(self.getData()))
             for i in TypeConvertor.netzobRawToPythonRaw(str(self.getData())):
                 if isAsciiPrintable(i):
                     if tempLength:
@@ -172,19 +181,22 @@ class AbstractMessage():
                 else:                                                               #We have a byte
                     if len(tempstr)>ASCIITHRESHOLD:
                         tempLength=0
-                        tokens.append(Token(Format.ASCII,len(tempstr),"constant",tempstr))
+                        tokens.append(Token(Format.STRING,len(tempstr),"constant",tempstr))
                         canRemove=False
                     elif canRemove:                                                 #It is not considered as a text string or we have a byte
                         tokens.pop()
+                        tempbstr+=tempstr
                         canRemove=False
                     elif tempstr:
-                        tempLength+=len(tempstr)            
+                        tempLength+=len(tempstr)
+                        tempbstr+=tempstr            
                     tempstr=""
+                    tempbstr+=i
                     tempLength+=1
             
         
-            if len(tempstr)>ASCIITHRESHOLD:
-                tokens.append(Token(Format.ASCII,len(tempstr),"constant",tempstr))
+            if len(tempstr)>ASCIITHRESHOLD or (not tokens and tempstr):
+                tokens.append(Token(Format.STRING,len(tempstr),"constant",tempstr))
             else:
                 if canRemove:
                     tokens.pop()
@@ -216,6 +228,7 @@ class AbstractMessage():
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
             dynamicDatas = compiledRegex.match(data)
+
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
@@ -261,7 +274,6 @@ class AbstractMessage():
             for iLocal in range(0, len(data)):
                 currentLetter = data[iLocal]
                 tmp_result = currentLetter
-
                 sizeFormat = Format.getUnitSize(field.getFormat())
                 if sizeFormat != None:
                     for filter in self.getVisualizationFilters():
@@ -438,7 +450,9 @@ class AbstractMessage():
     
     def getPattern(self):
         return self.pattern
-
+    
+    def getPatternString(self):
+        return str(self.pattern[0])+";"+str([str(i) for i in self.pattern[1]])
     def setID(self, id):
         self.id = id
 
