@@ -163,7 +163,7 @@ class AbstractMessage():
         tempstr = ""
         tempbstr =""
         ASCIITHRESHOLD=5 ##TODO put as option in UI 
-        isAsciiPrintable = lambda t: (ord(t)>=minA and ord(t)<=maxA) or ord(t) in spe
+        isAsciiPrintable = lambda t: (ord(t)>=minA and ord(t)<=maxA) #or ord(t) in spe
         current=""              #
         tempLength=0            #Temporary length of byte token
         
@@ -180,6 +180,7 @@ class AbstractMessage():
                     tempstr+=i
                 else:                                                               #We have a byte
                     if len(tempstr)>ASCIITHRESHOLD:
+                        tempbstr=""
                         tempLength=0
                         tokens.append(Token(Format.STRING,len(tempstr),"constant",tempstr))
                         canRemove=False
@@ -228,7 +229,7 @@ class AbstractMessage():
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
             dynamicDatas = compiledRegex.match(data)
-
+    
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
