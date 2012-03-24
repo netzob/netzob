@@ -162,7 +162,7 @@
                         </simpleType>
 		</attribute>
 	</complexType>
-	<complexType name="Pattern" mixed="true">
+	<complexType name="Pattern">
 		<sequence>
 			<element name="direction" type="string" minOccurs="0"></element>
 			<element name="token" type="netzob-common:Token" minOccurs="0" maxOccurs="unbounded"></element>

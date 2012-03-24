@@ -59,7 +59,6 @@ class AsciiAlign():
             i_symbol = 1
             for symbol in symbols:
                 for m in symbol.getMessages():
-#                    print m.getPatternString() + " " + str(m.getData())
                     for t in m.getPattern()[1]:
                         t.setType("constant")
                     tmpSymbol = Symbol(str(uuid.uuid4()), "Symbol " + str(i_symbol), project, m.getPattern())
@@ -75,17 +74,24 @@ class AsciiAlign():
         while(ll > 0):
             currentPattern = self.symbols[i_equ].getMessages()[0].getPattern()[1]
             for j in range(ll):
+                jnext = len(self.symbols) - j - 1
                 cond = False
-                for message in self.symbols[i_equ + j + 1].getMessages():
-                    cond = (currentPattern == message.getPattern()[1])
-                    if cond:
-                        break
+                for message in self.symbols[jnext].getMessages():
+                    if currentPattern == message.getPattern()[1]:
+#                        score = sum([p1 == p2 for p1, p2 in zip(currentPattern, message.getPattern()[1])])
+                        score2 = self.computeSimilarities(currentPattern, message.getPattern()[1])
+#                        if score >= min(len(currentPattern), len(message.getPattern()[1])):
+                        minilength = min(len(message.getData()), len(self.symbols[i_equ].getMessages()[0].getData()))
+                        if score2 * 2.0 / minilength >= 0.40:
+                            cond = True
+                        if cond:
+                            break
 
                 if(cond):
                     currentDst = self.symbols[i_equ].getPattern()[0]
-                    otherDst = self.symbols[i_equ + j + 1].getPattern()[0]
+                    otherDst = self.symbols[jnext].getPattern()[0]
                     if not self.server or (currentDst == otherDst) or (currentDst != self.server and otherDst != self.server):
-                        self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
+                        self.mergeEffectiveRowCol(i_equ, jnext)
 #                        self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
                         i_equ -= 1
                         break
@@ -94,24 +100,37 @@ class AsciiAlign():
 
     ################################## Align messages
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
+        tmpSymbols = []
         for symbol in self.symbols:
-            al = self.computeAlignment(symbol)
-            symbol.setAlignment(al)
 
+#            alignment.alignSymbols([symbol], self.project)
+#            symbol.getFields()[0].setFormat(Format.STRING)
+#            tmpSymbols.extend(alignment.getLastResult())
             try:
+#                print "l"
+                al = self.computeAlignment(symbol)
+                symbol.setAlignment(al)
                 alignment.buildRegexFromAlignment(symbol, al, self.defaultFormat)
-                symbol.getFields()[0].setFormat(Format.STRING)
+
 #                for (p, fields) in zip(symbol.getPattern()[1], symbol.getFields()):
 #                    field.setFormat(p.getFormat())
             except:
                 logging.warn("Partitionnement error: too much fields ( > 100) for the symbol '" + symbol.getName() + "' len=" + str(len(symbol.getFields())) + "len " + str(len(symbol.getPattern()[1])))
                 symbol.cleanFields()
-                field = Field("Field 0", 0, "(.{,})")
+                field = Field("Field 0", 0, "(.{, })")
                 # Use the default protocol type for representation
                 field.setFormat(self.defaultFormat)
                 symbol.addField(field)
 
-        return self.symbols
+        alignment.alignSymbols(self.symbols, self.project)
+        self.symbols = alignment.getLastResult()
+
+    def computeSimilarities(self, tl1, tl2):
+        temp = 0
+        for t1, t2 in zip(tl1, tl2):
+            for s1, s2 in zip(t1.getValue(), t2.getValue()):
+                temp += (s1 == s2)
+        return temp
 
     def mergeEffectiveRowCol(self, i_maximum, j_maximum):
         # Extract symbols i and j
