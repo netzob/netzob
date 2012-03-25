@@ -1,41 +1,41 @@
 # -*- coding: utf-8 -*-
 
-#+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# |          01001110 01100101 01110100 01111010 01101111 01100010            |
+# |                                                                           |
+# |               Netzob : Inferring communication protocols                  |
+# +---------------------------------------------------------------------------+
+# | Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+# | This program is free software: you can redistribute it and/or modify      |
+# | it under the terms of the GNU General Public License as published by      |
+# | the Free Software Foundation, either version 3 of the License, or         |
+# | (at your option) any later version.                                       |
+# |                                                                           |
+# | This program is distributed in the hope that it will be useful,           |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+# | GNU General Public License for more details.                              |
+# |                                                                           |
+# | You should have received a copy of the GNU General Public License         |
+# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+# +---------------------------------------------------------------------------+
+# | @url      : http://www.netzob.org                                         |
+# | @contact  : contact@netzob.org                                            |
+# | @sponsors : Amossys, http://www.amossys.fr                                |
+# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+# +---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Standard library imports
+# +---------------------------------------------------------------------------+
 import logging
 import uuid
 import re
 import glib
 
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | Local application imports
+# +---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
@@ -43,15 +43,16 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
+from netzob.Common.Token import Token
 
 
-#+---------------------------------------------------------------------------+
-#| AbstractMessage:
-#|     Definition of a message
-#+---------------------------------------------------------------------------+
+# +---------------------------------------------------------------------------+
+# | AbstractMessage:
+# |     Definition of a message
+# +---------------------------------------------------------------------------+
 class AbstractMessage():
 
-    def __init__(self, id, timestamp, data, type):
+    def __init__(self, id, timestamp, data, type, pattern=[]):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         if id == None:
@@ -67,45 +68,53 @@ class AbstractMessage():
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.visualizationFilters = []
+        # self.log.debug("CALL Abstract")
+        self.pattern = []
+        if not pattern:
+            self.compilePattern()
+            # self.log.debug("empty {0}".format(str(self.getPattern()[0][0])))
+        else:
+            self.pattern = pattern
+            # self.log.debug("not empty {0}".format(self.getPatternString()))
 
-    #+-----------------------------------------------------------------------+
-    #| getFactory
-    #|     Abstract method to retrieve the associated factory
-    #|     MUST BE IMPLEMENTED IN SUB CLASSES
-    #+-----------------------------------------------------------------------+
+    # +-----------------------------------------------------------------------+
+    # | getFactory
+    # |     Abstract method to retrieve the associated factory
+    # |     MUST BE IMPLEMENTED IN SUB CLASSES
+    # +-----------------------------------------------------------------------+
     def getFactory(self):
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
 
-    #+-----------------------------------------------------------------------+
-    #| getProperties
-    #|     Abstract method to retrieve the properties of the message
-    #|     MUST BE IMPLEMENTED IN SUB CLASSES
-    #+-----------------------------------------------------------------------+
+    # +-----------------------------------------------------------------------+
+    # | getProperties
+    # |     Abstract method to retrieve the properties of the message
+    # |     MUST BE IMPLEMENTED IN SUB CLASSES
+    # +-----------------------------------------------------------------------+
     def getProperties(self):
         self.log.error("The message class doesn't have a method 'getProperties' !")
         raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
 
-    #+-----------------------------------------------------------------------+
-    #| addVisualizationFilter
-    #|     Add a visualization filter
-    #+-----------------------------------------------------------------------+
+    # +-----------------------------------------------------------------------+
+    # | addVisualizationFilter
+    # |     Add a visualization filter
+    # +-----------------------------------------------------------------------+
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
 
-    #+-----------------------------------------------------------------------+
-    #| removeVisualizationFilter
-    #|     Remove a visualization filter
-    #+-----------------------------------------------------------------------+
+    # +-----------------------------------------------------------------------+
+    # | removeVisualizationFilter
+    # |     Remove a visualization filter
+    # +-----------------------------------------------------------------------+
     def removeVisualizationFilter(self, filter):
         if filter in self.visualizationFilters:
             self.visualizationFilters.remove(filter)
 
-    #+----------------------------------------------
-    #|`getStringData : compute a string representation
-    #| of the data
-    #| @return string(data)
-    #+----------------------------------------------
+    # +----------------------------------------------
+    # |`getStringData : compute a string representation
+    # | of the data
+    # | @return string(data)
+    # +----------------------------------------------
     def getStringData(self):
         return str(self.data)
 
@@ -142,20 +151,74 @@ class AbstractMessage():
 
         return "".join(self.getStringData()[start:end])
 
-    #+----------------------------------------------
-    #| applyRegex: apply the current regex on the message
-    #|  and return a table
-    #+----------------------------------------------
+    # +----------------------------------------------
+    # | compilePattern:
+    # |    compile the pattern of the data part in the Discover way (direction, [Token1, Token2...])
+    # +----------------------------------------------
+    def compilePattern(self):
+        # self.log.debug("CALL COMPILE")
+        tokens = []
+        maxA = 126                # Max of ascii char not extended
+        minA = 32                 # Min of ascii printable
+        spe = [9, 10, 13]           # tab, \n, \r
+        tempstr = ""
+        tempbstr = ""
+        ASCIITHRESHOLD = 5  # TODO put as option in UI
+        isAsciiPrintable = lambda t: (ord(t) >= minA and ord(t) <= maxA)  # or ord(t) in spe
+        current = ""
+        tempLength = 0            # Temporary length of byte token
+
+        canRemove = False
+        if len(str(self.getData())) > 0:
+            # self.log.debug(str(self.getData()))
+            for i in TypeConvertor.netzobRawToPythonRaw(str(self.getData())):
+                if isAsciiPrintable(i):
+                    if tempLength:
+                        if not canRemove:                                                  # Means that there where bytes before
+                            tokens.append(Token(Format.HEX, tempLength, "constant", tempbstr))
+                            canRemove = True
+                        tempLength += 1
+                    tempstr += i
+                else:                                                               # We have a byte
+                    if len(tempstr) > ASCIITHRESHOLD:
+                        tempbstr = ""
+                        tempLength = 0
+                        tokens.append(Token(Format.STRING, len(tempstr), "constant", tempstr))
+                        canRemove = False
+                    elif canRemove:                                                 # It is not considered as a text string or we have a byte
+                        tokens.pop()
+                        tempbstr += tempstr
+                        canRemove = False
+                    elif tempstr:
+                        tempLength += len(tempstr)
+                        tempbstr += tempstr
+                    tempstr = ""
+                    tempbstr += i
+                    tempLength += 1
+
+            if len(tempstr) > ASCIITHRESHOLD or (not tokens and tempstr):
+                tokens.append(Token(Format.STRING, len(tempstr), "constant", tempstr))
+            else:
+                if canRemove:
+                    tokens.pop()
+                tokens.append(Token(Format.HEX, tempLength, "constant", tempbstr))
+
+        self.pattern.append(tokens)
+
+    # +----------------------------------------------
+    # | applyRegex: apply the current regex on the message
+    # |  and return a table
+    # +----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
         if self.getSymbol().getAlignmentType() == "regex":
             return self.getVisualizationData(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
 
-    #+-----------------------------------------------------------------------+
-    #| getSplittedData
-    #|     Split the message using its symbol's regex and return an array of it
-    #+-----------------------------------------------------------------------+
+    # +-----------------------------------------------------------------------+
+    # | getSplittedData
+    # |     Split the message using its symbol's regex and return an array of it
+    # +-----------------------------------------------------------------------+
     def getSplittedData(self, encoded=False):
         regex = []
         dynamicDatas = None
@@ -167,6 +230,7 @@ class AbstractMessage():
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
             dynamicDatas = compiledRegex.match(data)
+
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
@@ -212,7 +276,6 @@ class AbstractMessage():
             for iLocal in range(0, len(data)):
                 currentLetter = data[iLocal]
                 tmp_result = currentLetter
-
                 sizeFormat = Format.getUnitSize(field.getFormat())
                 if sizeFormat != None:
                     for filter in self.getVisualizationFilters():
@@ -234,10 +297,10 @@ class AbstractMessage():
         result = self.getStyledData(styled, encoded)
         return result
 
-    #+----------------------------------------------
-    #| applyRegex: apply the current regex on the message
-    #|  and return a table
-    #+----------------------------------------------
+    # +----------------------------------------------
+    # | applyRegex: apply the current regex on the message
+    # |  and return a table
+    # +----------------------------------------------
 #    def applyRegex(self, styled=False, encoded=False):
 #        res = []
 #        regex = []
@@ -316,10 +379,10 @@ class AbstractMessage():
 #            iCol = iCol + 1
 #        return res
 
-    #+----------------------------------------------
-    #| applyDelimiter: apply the current delimiter on the message
-    #|  and return a table
-    #+----------------------------------------------
+    # +----------------------------------------------
+    # | applyDelimiter: apply the current delimiter on the message
+    # |  and return a table
+    # +----------------------------------------------
     def applyDelimiter(self, styled=False, encoded=False):
         delimiter = self.getSymbol().getRawDelimiter()
         res = []
@@ -357,9 +420,9 @@ class AbstractMessage():
                     res.append(tmp)
         return res
 
-    #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
-    #+-----------------------------------------------------------------------+
+    # +-----------------------------------------------------------------------+
+    # | GETTERS AND SETTERS
+    # +-----------------------------------------------------------------------+
     def getID(self):
         return self.id
 
@@ -386,6 +449,12 @@ class AbstractMessage():
 
     def getVisualizationFilters(self):
         return self.visualizationFilters
+
+    def getPattern(self):
+        return self.pattern
+
+    def getPatternString(self):
+        return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
 
     def setID(self, id):
         self.id = id

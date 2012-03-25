@@ -173,7 +173,7 @@ class UPGMA(object):
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
 
-        newSymbol = Symbol(str(uuid.uuid4()), "Symbol", self.project)
+        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project,minEqu=self.minEquivalence)
         for message in messages:
             newSymbol.addMessage(message)
 
