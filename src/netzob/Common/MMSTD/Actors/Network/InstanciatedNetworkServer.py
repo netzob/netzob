@@ -98,13 +98,14 @@ class InstanciatedNetworkServer(AbstractActor):
             self.log.debug("Impossible to read from the network socket")
             return None
 
+        
+
         if (len(chars) == 0):
             return result
         result.fromstring(chars)
 
 #        self.inputMessages.append(receivedData)
-
-        self.log.debug("Received : " + str(result))
+        self.log.debug("Received : " + str(result) + "(" + result.tostring() + ")")
         return result
 
     def write(self, message):
