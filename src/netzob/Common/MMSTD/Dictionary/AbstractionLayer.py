@@ -216,6 +216,7 @@ class AbstractionLayer():
         self.log.debug("We abstract the received message : " + str(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
+            self.log.debug("Try to abstract message through : " + str(symbol.getName()))
             if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory) != -1:
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
                 # It matchs so we learn from it if it's possible
