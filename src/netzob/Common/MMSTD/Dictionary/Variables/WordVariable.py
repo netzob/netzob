@@ -83,6 +83,7 @@ class WordVariable(Variable):
     #+-----------------------------------------------------------------------+
     def generateValue(self):
         # todo
+        self.log.debug("Generating value ")
         return 'babar'
 # Generate a WORD value
 #        nb_letter = random.randint(0, 10)
@@ -123,13 +124,14 @@ class WordVariable(Variable):
             return memory.recall(self)
 
         # We generate a new value
-        self.computeCurrentValue(self.generateValue())
+        strValue = self.generateValue()
+        binValue = TypeConvertor.string2bin(strValue)
 
         # We save in memory the current value
-        memory.memorize(self, self.getCurrentValue())
+        memory.memorize(self, (binValue, strValue))
 
         # We return the newly generated and memorized value
-        return self.getCurrentValue()
+        return (binValue, strValue)
     
      #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
@@ -191,6 +193,8 @@ class WordVariable(Variable):
                 if (strVal.isalpha()) :
                     self.log.debug("Its an alpha : (" + str(strVal) + ")")
                     return i + indice - 1
+            
+                
         
         return -1    
     
