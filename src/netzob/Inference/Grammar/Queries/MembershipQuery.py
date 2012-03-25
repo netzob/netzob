@@ -83,7 +83,7 @@ class MembershipQuery(object):
         generatedStates.append(rootState)
         initialState = NormalState(1, "State 1")
         generatedStates.append(initialState)
-        openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 10000, 3)
+        openingTransition = OpenChannelTransition(0, "Connection", rootState, initialState, 15000, 3)
         rootState.registerTransition(openingTransition)
         previousState = initialState
         idState = 2
@@ -95,7 +95,7 @@ class MembershipQuery(object):
             generatedStates.append(currentState)
             # we create a normal transition between it and the previous state
             idTransition = idState - 1
-            transition = SimpleTransition(idTransition, "Transition " + str(idTransition), previousState, currentState, 3000, symbol)
+            transition = SimpleTransition(idTransition, "Transition " + str(idTransition), previousState, currentState, 1000, symbol)
             previousState.registerTransition(transition)
             idState = idState + 1
             previousState = currentState
@@ -105,7 +105,7 @@ class MembershipQuery(object):
             # We create the opening transition to listen for the first entry
             currentState = NormalState(idState, "State " + str(idState))
             generatedStates.append(currentState)
-            transition = SimpleTransition(idState - 1, "Transition " + str(idState - 1), previousState, currentState, 3000, EmptySymbol())
+            transition = SimpleTransition(idState - 1, "Transition " + str(idState - 1), previousState, currentState, 1000, EmptySymbol())
             previousState.registerTransition(transition)
             previousState = currentState
             idState += 1
