@@ -202,10 +202,10 @@ class NeedlemanAndWunsch(object):
         if (found == True):
             nbTiret = i - start + 1
             regex.append("(.{," + str(nbTiret) + "})")
-        
+
         iField = 0
         symbol.cleanFields()
-        print "REGEX "+str(regex)
+        logging.debug( "REGEX "+str(regex) )
         for regexElt in regex:
             field = Field("Field " + str(iField), iField, regexElt)
             # Use the default protocol type for representation
@@ -260,33 +260,49 @@ class NeedlemanAndWunsch(object):
         fraction = 0.0
 #        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
 
-#       First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
         defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
         minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
- 
 
-        # We try to cluster each symbol
-        tmpEqu=symbols[0].getMinEqu()
-        if tmpEqu != minEquivalence:
-            if tmpEqu<minEquivalence: #Try to split current symbols only if the threshold wanted is higher
-                for symbol in symbols:
-                    clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-                    tmpSymbols.extend(clusteringSolution.executeClustering())
-                self.result = tmpSymbols
-            elif len(symbols)!=1 and tmpEqu>minEquivalence: #Try to merge symbols only if threshold is lower than previously     
-                clusteringSolution = UPGMA(project, symbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
-                self.result = clusteringSolution.executeClustering()        
-            elif len(symbols)==1:  # threshold is lower and there is only 1 symbol ==> do nothing
-                self.result=symbols
-                
-            if doOrphanReduction :
-                self.result = clusteringSolution.executeOrphanReduction()
-            self.result.extend(preResults)
+################################
+#        # We try to cluster each symbol
+#        tmpEqu = symbols[0].getMinEqu()
+#        if tmpEqu != minEquivalence:
+#            if tmpEqu<minEquivalence: #Try to split current symbols only if the threshold wanted is higher
+#                for symbol in symbols:
+#                    clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+#                    tmpSymbols.extend(clusteringSolution.executeClustering())
+#                self.result = tmpSymbols
+#            elif len(symbols)!=1 and tmpEqu>minEquivalence: #Try to merge symbols only if threshold is lower than previously     
+#                clusteringSolution = UPGMA(project, symbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
+#                self.result = clusteringSolution.executeClustering()        
+#            elif len(symbols)==1:  # threshold is lower and there is only 1 symbol ==> do nothing
+#                self.result=symbols
+#                
+#            if doOrphanReduction :
+#                self.result = clusteringSolution.executeOrphanReduction()
+#            self.result.extend(preResults)
+#        else:
+#            self.result = symbols
+################################
+
+         # We try to cluster each symbol
+        for symbol in symbols:
+            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+            tmpSymbols.extend(clusteringSolution.executeClustering())
+        if len(symbols) != 1:    
+            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+            self.result = clusteringSolution.executeClustering() 
         else:
-            self.result = symbols
+            self.result = tmpSymbols        
+           
+        if doOrphanReduction :
+            self.result = clusteringSolution.executeOrphanReduction()
+        self.result.extend(preResults)
+
         logging.info("Time of parsing : " + str(time.time() - t1))
 
     def getLastResult(self):

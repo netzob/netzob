@@ -1,41 +1,41 @@
 # -*- coding: utf-8 -*-
 
-# +---------------------------------------------------------------------------+
-# |          01001110 01100101 01110100 01111010 01101111 01100010            |
-# |                                                                           |
-# |               Netzob : Inferring communication protocols                  |
-# +---------------------------------------------------------------------------+
-# | Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
-# | This program is free software: you can redistribute it and/or modify      |
-# | it under the terms of the GNU General Public License as published by      |
-# | the Free Software Foundation, either version 3 of the License, or         |
-# | (at your option) any later version.                                       |
-# |                                                                           |
-# | This program is distributed in the hope that it will be useful,           |
-# | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-# | GNU General Public License for more details.                              |
-# |                                                                           |
-# | You should have received a copy of the GNU General Public License         |
-# | along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-# +---------------------------------------------------------------------------+
-# | @url      : http://www.netzob.org                                         |
-# | @contact  : contact@netzob.org                                            |
-# | @sponsors : Amossys, http://www.amossys.fr                                |
-# |             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-# +---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#+---------------------------------------------------------------------------+
 
-# +---------------------------------------------------------------------------+
-# | Standard library imports
-# +---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 import logging
 import uuid
 import re
 import glib
 
-# +---------------------------------------------------------------------------+
-# | Local application imports
-# +---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
@@ -46,10 +46,10 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
 
 
-# +---------------------------------------------------------------------------+
-# | AbstractMessage:
-# |     Definition of a message
-# +---------------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+
+#| AbstractMessage:
+#|     Definition of a message
+#+---------------------------------------------------------------------------+
 class AbstractMessage():
 
     def __init__(self, id, timestamp, data, type, pattern=[]):
@@ -77,44 +77,44 @@ class AbstractMessage():
             self.pattern = pattern
             # self.log.debug("not empty {0}".format(self.getPatternString()))
 
-    # +-----------------------------------------------------------------------+
-    # | getFactory
-    # |     Abstract method to retrieve the associated factory
-    # |     MUST BE IMPLEMENTED IN SUB CLASSES
-    # +-----------------------------------------------------------------------+
+    #+-----------------------------------------------------------------------+
+    #| getFactory
+    #|     Abstract method to retrieve the associated factory
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
     def getFactory(self):
         self.log.error("The message class doesn't have an associated factory !")
         raise NotImplementedError("The message class doesn't have an associated factory !")
 
-    # +-----------------------------------------------------------------------+
-    # | getProperties
-    # |     Abstract method to retrieve the properties of the message
-    # |     MUST BE IMPLEMENTED IN SUB CLASSES
-    # +-----------------------------------------------------------------------+
+    #+-----------------------------------------------------------------------+
+    #| getProperties
+    #|     Abstract method to retrieve the properties of the message
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
     def getProperties(self):
         self.log.error("The message class doesn't have a method 'getProperties' !")
         raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
 
-    # +-----------------------------------------------------------------------+
-    # | addVisualizationFilter
-    # |     Add a visualization filter
-    # +-----------------------------------------------------------------------+
+    #+-----------------------------------------------------------------------+
+    #| addVisualizationFilter
+    #|     Add a visualization filter
+    #+-----------------------------------------------------------------------+
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
 
-    # +-----------------------------------------------------------------------+
-    # | removeVisualizationFilter
-    # |     Remove a visualization filter
-    # +-----------------------------------------------------------------------+
+    #+-----------------------------------------------------------------------+
+    #| removeVisualizationFilter
+    #|     Remove a visualization filter
+    #+-----------------------------------------------------------------------+
     def removeVisualizationFilter(self, filter):
         if filter in self.visualizationFilters:
             self.visualizationFilters.remove(filter)
 
-    # +----------------------------------------------
-    # |`getStringData : compute a string representation
-    # | of the data
-    # | @return string(data)
-    # +----------------------------------------------
+    #+----------------------------------------------
+    #|`getStringData : compute a string representation
+    #| of the data
+    #| @return string(data)
+    #+----------------------------------------------
     def getStringData(self):
         return str(self.data)
 
@@ -151,10 +151,10 @@ class AbstractMessage():
 
         return "".join(self.getStringData()[start:end])
 
-    # +----------------------------------------------
-    # | compilePattern:
-    # |    compile the pattern of the data part in the Discover way (direction, [Token1, Token2...])
-    # +----------------------------------------------
+    #+----------------------------------------------
+    #| compilePattern:
+    #|    compile the pattern of the data part in the Discover way (direction, [Token1, Token2...])
+    #+----------------------------------------------
     def compilePattern(self):
         # self.log.debug("CALL COMPILE")
         tokens = []
@@ -205,20 +205,20 @@ class AbstractMessage():
 
         self.pattern.append(tokens)
 
-    # +----------------------------------------------
-    # | applyRegex: apply the current regex on the message
-    # |  and return a table
-    # +----------------------------------------------
+    #+----------------------------------------------
+    #| applyRegex: apply the current regex on the message
+    #|  and return a table
+    #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
         if self.getSymbol().getAlignmentType() == "regex":
             return self.getVisualizationData(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
 
-    # +-----------------------------------------------------------------------+
-    # | getSplittedData
-    # |     Split the message using its symbol's regex and return an array of it
-    # +-----------------------------------------------------------------------+
+    #+-----------------------------------------------------------------------+
+    #| getSplittedData
+    #|     Split the message using its symbol's regex and return an array of it
+    #+-----------------------------------------------------------------------+
     def getSplittedData(self, encoded=False):
         regex = []
         dynamicDatas = None
@@ -297,92 +297,10 @@ class AbstractMessage():
         result = self.getStyledData(styled, encoded)
         return result
 
-    # +----------------------------------------------
-    # | applyRegex: apply the current regex on the message
-    # |  and return a table
-    # +----------------------------------------------
-#    def applyRegex(self, styled=False, encoded=False):
-#        res = []
-#        regex = []
-#        m = None
-#        data = ""
-#        for field in self.symbol.getFields():
-#            regex.append(field.getRegex())
-#        try:
-#            compiledRegex = re.compile("".join(regex))
-#            data = self.getReducedStringData()
-#            m = compiledRegex.match(data)
-#        except AssertionError:
-#            raise NetzobException("This Python version only supports 100 named groups in regex")
-#
-#        if m == None:
-#            self.log.warning("The regex of the group doesn't match one of its message")
-#            self.log.warning("Regex: " + "".join(regex))
-#            self.log.warning("Message: " + data[:255] + "...")
-#            raise NetzobException("The regex of the group doesn't match one of its message")
-#
-#
-#
-#        iCol = 0
-#        dynamicCol = 1
-#        nbLetterInNetzobRaw = 0
-#
-#        for field in self.symbol.getFields():
-#            if field.getRegex().find("(") != -1:  # Means this column is not static
-#                start = m.start(dynamicCol)
-#                end = m.end(dynamicCol)
-#
-#                # Define the color
-#                if field.getColor() == "" or field.getColor() == None:
-#                    color = 'blue'
-#                else:
-#                    color = field.getColor()
-#
-#                # Define the background color
-#                if field.getBackgroundColor() != None:
-#                    backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-#                else:
-#                    backgroundColor = ""
-#
-#                # Overwrite the background color (red if the variable doesn't match the data)
-#                if field.getVariable() != None:
-#                    # Creation of a temporary memory just for the current
-#                    tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
-#
-#                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
-#                        backgroundColor = 'background="red"'
-#                    else:
-#                        backgroundColor = 'background="green"'
-#
-#                if styled:
-#                    if encoded:
-#                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)) + '</span>')
-#                    else:
-#                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + data[start:end] + '</span>')
-#                else:
-#                    if encoded:
-#                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-#                    else:
-#                        res.append(data[start:end])
-#                dynamicCol += 1
-#            else:
-#                if styled:
-#                    if encoded:
-#                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)) + '</span>')
-#                    else:
-#                        res.append('<span>' + field.getRegex() + '</span>')
-#                else:
-#                    if encoded:
-#                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-#                    else:
-#                        res.append(field.getRegex())
-#            iCol = iCol + 1
-#        return res
-
-    # +----------------------------------------------
-    # | applyDelimiter: apply the current delimiter on the message
-    # |  and return a table
-    # +----------------------------------------------
+    #+----------------------------------------------
+    #| applyDelimiter: apply the current delimiter on the message
+    #|  and return a table
+    #+----------------------------------------------
     def applyDelimiter(self, styled=False, encoded=False):
         delimiter = self.getSymbol().getRawDelimiter()
         res = []
@@ -420,9 +338,9 @@ class AbstractMessage():
                     res.append(tmp)
         return res
 
-    # +-----------------------------------------------------------------------+
-    # | GETTERS AND SETTERS
-    # +-----------------------------------------------------------------------+
+    #+-----------------------------------------------------------------------+
+    #| GETTERS AND SETTERS
+    #+-----------------------------------------------------------------------+
     def getID(self):
         return self.id
 
