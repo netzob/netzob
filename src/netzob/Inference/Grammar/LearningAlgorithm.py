@@ -88,7 +88,7 @@ class LearningAlgorithm(object):
         mmstd = query.toMMSTD(self.dictionary, isMaster)
         
         self.cb_hypotheticalAutomaton(mmstd)
-        time.sleep(1)
+        time.sleep(10)
         self.log.info("The current experimentation has generated the following MMSTD :")
         self.log.debug(mmstd.getDotCode())
                 

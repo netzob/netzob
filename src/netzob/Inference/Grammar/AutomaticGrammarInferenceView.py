@@ -278,7 +278,6 @@ class AutomaticGrammarInferenceView(object):
         else :
             # Lets create a simple network oracle
             oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, targetPort, ourPort)
-            
                 
         # Lets create an equivalence oracle
         equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState)

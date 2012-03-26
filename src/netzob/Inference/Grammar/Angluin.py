@@ -306,7 +306,6 @@ class Angluin(LearningAlgorithm):
 
         for i in range(0, len(r1)):
             if r1[i].getID() != r2[i].getID():
-                self.log.debug(str(r1) + " != " + str(r2))
                 return False
         self.log.debug(str(r1) + " == " + str(r2))
         return True

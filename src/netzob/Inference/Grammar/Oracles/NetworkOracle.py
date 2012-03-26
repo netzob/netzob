@@ -62,9 +62,12 @@ class NetworkOracle(threading.Thread):
 
     def run(self):
         self.log.info("Start the network oracle based on given MMSTD")
-
+        
+        # Create a new and clean memory
+        memory = Memory(self.mmstd.getVocabulary().getVariables())
+        memory.createMemory()
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), Memory(self.mmstd.getVocabulary().getVariables()))
+        abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), memory)
 
         # And we create an MMSTD visitor for this
         self.oracle = MMSTDVisitor("MMSTD-NetworkOracle", self.mmstd, self.isMaster, abstractionLayer)
