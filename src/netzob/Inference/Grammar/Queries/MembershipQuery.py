@@ -147,13 +147,22 @@ class MembershipQuery(object):
         if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())):
             symbols = self.getSymbolsWhichAreNotEmpty()
             symbols2 = other.getSymbolsWhichAreNotEmpty()
-
-            nbSymbol = len(symbols)
-
-            for i in range(0, nbSymbol):
-                if symbols[i].getID() != symbols2[i].getID():
-                    return False
-            return True
+            
+            if (len(symbols) == 0) :
+                return True
+            
+            if (symbols[len(symbols) - 1].getID() != symbols2[len(symbols2) - 1].getID()) :
+                return False
+            else :
+                return True
+            
+#
+#            nbSymbol = len(symbols)
+#
+#            for i in range(0, nbSymbol):
+#                if symbols[i].getID() != symbols2[i].getID():
+#                    return False
+#            return True
         else:
             return False
 
