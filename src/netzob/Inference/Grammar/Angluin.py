@@ -54,8 +54,8 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
 
-    def __init__(self, dictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton):
-        LearningAlgorithm.__init__(self, dictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton)
+    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton):
+        LearningAlgorithm.__init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
 
@@ -72,7 +72,7 @@ class Angluin(LearningAlgorithm):
         self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
-        for entry in self.dictionary.getSymbols():
+        for entry in self.inputDictionary:
             letter = DictionarySymbol(entry)
             mq = MembershipQuery([letter])
             self.addWordInD(mq)
@@ -356,6 +356,7 @@ class Angluin(LearningAlgorithm):
         startState = None
         idState = 0
         idTransition = 0
+        states = []
 
         self.log.info("Compute the automata...")
 
@@ -367,6 +368,7 @@ class Angluin(LearningAlgorithm):
             nameState = self.appendValuesInRow(r)
             self.log.info("Create state : " + nameState)
             currentState = NormalState(idState, nameState)
+            states.append(currentState)
             wordAndStates.append((w, currentState))
             # Is it the starting state (wordS = [EmptySymbol])
             if startState == None and w == MembershipQuery([EmptySymbol()]):
@@ -426,6 +428,14 @@ class Angluin(LearningAlgorithm):
 
         if startState != None:
             self.log.info("An infered automata has been computed.")
+            
+            
+            
+            
+            
+            
+            
+            
             self.inferedAutomata = MMSTD(startState, self.dictionary)
             self.log.info(self.inferedAutomata.getDotCode())
 
