@@ -54,8 +54,8 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
 
-    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton):
-        LearningAlgorithm.__init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton)
+    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache):
+        LearningAlgorithm.__init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
 

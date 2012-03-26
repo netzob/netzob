@@ -42,6 +42,7 @@ from netzob.Inference.Grammar.Angluin import Angluin
 import threading
 import gobject
 import time
+from netzob.Inference.Grammar.MQCache import MQCache
 
 #+----------------------------------------------
 #| GrammarInferer:
@@ -96,9 +97,12 @@ class GrammarInferer(threading.Thread):
         
         startTime = time.time()
         
+        # Create a MQ cache
+        cache = MQCache()
+        
         
         # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.inputDictionary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton)
+        self.learner = Angluin(self.vocabulary, self.inputDictionary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton, cache)
         while not equivalent and self.active:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")

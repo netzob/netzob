@@ -51,7 +51,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+----------------------------------------------
 class LearningAlgorithm(object):
 
-    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, callbackFunction, cb_hypotheticalAutomaton):
+    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, callbackFunction, cb_hypotheticalAutomaton, cache):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
@@ -60,6 +60,7 @@ class LearningAlgorithm(object):
         self.inferedAutomata = None
         self.resetScript = resetScript
         self.submitedQueries = []
+        self.cache = cache
 
         self.callbackFunction = callbackFunction
         self.cb_hypotheticalAutomaton = cb_hypotheticalAutomaton
@@ -78,7 +79,16 @@ class LearningAlgorithm(object):
         return self.submitedQueries
 
     def submitQuery(self, query):
+        # Verify the request is not in the cache
+        cachedValue = self.cache.getCachedResult(query)
+        if cachedValue != None :
+            self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedvalue) + ".")
+            return cachedValue
+        
+        
         self.log.info("Reseting the oracle by executing script : " + self.resetScript)
+        
+        
         # TODO : must be UPGRADED
         # WARNING
         os.system("sh " + self.resetScript)
@@ -152,10 +162,13 @@ class LearningAlgorithm(object):
         if len(resultQuery) > 0:
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
-            return resultQuery[len(resultQuery) - 1]
+            result = resultQuery[len(resultQuery) - 1]
+            self.cache.cacheResult(query, result)
+            return result
         else:
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, "OUPS")
+            self.cache.cacheResult(query, resultQuery)
             return resultQuery
 
     def getInferedAutomata(self):
