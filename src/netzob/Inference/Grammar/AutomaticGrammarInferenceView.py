@@ -268,6 +268,11 @@ class AutomaticGrammarInferenceView(object):
         targetPort = int(self.targetPortEntry.get_text())
         scriptFilename = self.scriptEntry.get_text()
         maxNumberOfState = int(self.MaxStatesEntry.get_text())
+        
+        inputDictionary = []
+        for symbol in self.project.getVocabulary().getSymbols() :
+            if symbol.getName() == "WELCOME" or symbol.getName() == "WELCOME_JOIN" or symbol.getName() == "PING" or symbol.getName() == "LOGIN" or symbol.getName() == "STATUS":
+                inputDictionary.append(symbol)
 
         # Close the current dialog
         self.dialog.destroy()
@@ -280,10 +285,10 @@ class AutomaticGrammarInferenceView(object):
             oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, targetPort, ourPort)
                 
         # Lets create an equivalence oracle
-        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState)
+        equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState, scriptFilename)
 
         # Lets create the automatic inferer
-        self.inferer = GrammarInferer(self.project.getVocabulary(), oracleCommunicationChannel, equivalenceOracle, scriptFilename, self.callback_submitedQuery, self.callback_hypotheticalAutomaton)
+        self.inferer = GrammarInferer(self.project.getVocabulary(), inputDictionary, oracleCommunicationChannel, equivalenceOracle, scriptFilename, self.callback_submitedQuery, self.callback_hypotheticalAutomaton)
 
         # Open the new dialog which shows the status of the inferring process
         self.createInferringStatusView()
