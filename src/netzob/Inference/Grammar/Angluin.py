@@ -72,7 +72,7 @@ class Angluin(LearningAlgorithm):
         self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
-        for entry in self.inputDictionary:
+        for entry in self.getInputDictionary():
             letter = DictionarySymbol(entry)
             mq = MembershipQuery([letter])
             self.addWordInD(mq)
@@ -129,6 +129,9 @@ class Angluin(LearningAlgorithm):
         # Now we add
         for letter in self.D:
             self.addWordInSA(word.getMQSuffixedWithMQ(letter))
+            
+        self.displayObservationTable()
+        
 
     def addWordInSA(self, word):
         # first we verify the word is not already in SA
@@ -151,13 +154,14 @@ class Angluin(LearningAlgorithm):
                 cel = dict()
             cel[word] = self.submitQuery(mq)
             self.observationTable[letter] = cel
+            
+        self.displayObservationTable()
 
     def learn(self):
         self.log.info("Learn...")
         self.displayObservationTable()
-
+        
         while (not self.isClosed() or not self.isConsistent()):
-
             if not self.isClosed():
                 self.log.info("#================================================")
                 self.log.info("The table is not closed")

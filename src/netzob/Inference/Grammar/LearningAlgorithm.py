@@ -51,10 +51,11 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #+----------------------------------------------
 class LearningAlgorithm(object):
 
-    def __init__(self, dictionary, communicationChannel, resetScript, callbackFunction, cb_hypotheticalAutomaton):
+    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, callbackFunction, cb_hypotheticalAutomaton):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.LearningAlgorithm.py')
         self.dictionary = dictionary
+        self.inputDictionary = inputDictionary
         self.communicationChannel = communicationChannel
         self.inferedAutomata = None
         self.resetScript = resetScript
@@ -62,6 +63,9 @@ class LearningAlgorithm(object):
 
         self.callbackFunction = callbackFunction
         self.cb_hypotheticalAutomaton = cb_hypotheticalAutomaton
+        
+    def getInputDictionary(self):
+        return self.inputDictionary
 
     def attachStatusCallBack(self, callbackFunction):
         self.callbackFunction = callbackFunction
