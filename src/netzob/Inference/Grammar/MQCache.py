@@ -48,7 +48,7 @@ class MQCache():
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.MQCache.py')
-        self.cache = self.dict()
+        self.cache = dict()
 
     def getCachedResult(self, mq):
         if mq in self.cache :
@@ -57,7 +57,7 @@ class MQCache():
             return None
         
     def cacheResult(self, mq, result):
-        self.log.debug("Cache the folowing : " + str(mq) + " == " + str(result))
+        self.log.debug("Cache the following : " + str(mq) + " == " + str(result))
         self.cache[mq] = result 
         
         
