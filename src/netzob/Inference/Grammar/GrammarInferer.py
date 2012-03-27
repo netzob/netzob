@@ -118,8 +118,7 @@ class GrammarInferer(threading.Thread):
             # Execute the call back function for the hypothetial automaton
             gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
-#            counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary)
-            counterExample = None
+            counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary)
             
             if not self.active:
                 break
