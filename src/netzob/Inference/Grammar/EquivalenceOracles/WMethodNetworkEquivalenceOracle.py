@@ -51,13 +51,14 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 #+----------------------------------------------
 class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
-    def __init__(self, communicationChannel, maxSize, resetScript):
+    def __init__(self, communicationChannel, maxSize, resetScript, cache):
         AbstractEquivalenceOracle.__init__(self, "WMethodNetworkEquivalenceOracle")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle')
         self.communicationChannel = communicationChannel
         self.m = maxSize
         self.resetScript = resetScript
+        self.cache = cache
 
     def canWeDistinguishStates(self, mmstd, mq, state1, state2):
         (traceState1, endStateTrace1) = mmstd.getOutputTrace(state1, mq.getSymbols())
@@ -228,30 +229,34 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             i_test = i_test + 1
             # Compute our results
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
-            # Compute real results
-            os.system("sh " + self.resetScript)
             
-            self.log.debug("=====================")
-            self.log.debug("Execute test " + str(i_test) + "/" + str(len(T)) + " : " + str(test))
-            self.log.debug("=====================")
+            # Verify the request is not in the cache
+            cachedValue = self.cache.getCachedResult(query)
             
-            isMaster = not self.communicationChannel.isServer() 
-            
-            testedMmstd = test.toMMSTD(mmstd.getVocabulary(), isMaster) # TODO TODO 
-            oracle = NetworkOracle(self.communicationChannel, isMaster) # TODO TODO is master ??
-            oracle.setMMSTD(testedMmstd)
-            oracle.start()
-            while oracle.isAlive():
-                time.sleep(0.01)
-            oracle.stop()
-            
-            
-            
-            if isMaster :
-                resultQuery = oracle.getGeneratedOutputSymbols()
+            if cachedValue == None :
+                # Compute real results
+                os.system("sh " + self.resetScript)
+                
+                self.log.debug("=====================")
+                self.log.debug("Execute test " + str(i_test) + "/" + str(len(T)) + " : " + str(test))
+                self.log.debug("=====================")
+                
+                isMaster = not self.communicationChannel.isServer() 
+                
+                testedMmstd = test.toMMSTD(mmstd.getVocabulary(), isMaster) # TODO TODO 
+                oracle = NetworkOracle(self.communicationChannel, isMaster) # TODO TODO is master ??
+                oracle.setMMSTD(testedMmstd)
+                oracle.start()
+                while oracle.isAlive():
+                    time.sleep(0.01)
+                oracle.stop()
+                
+                if isMaster :
+                    resultQuery = oracle.getGeneratedOutputSymbols()
+                else :
+                    resultQuery = oracle.getGeneratedInputSymbols()
             else :
-                resultQuery = oracle.getGeneratedInputSymbols()
-            
+                resultQuery = cachedValue
             
 
             mqOur = MembershipQuery(traceTest)
