@@ -51,14 +51,13 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 #+----------------------------------------------
 class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
-    def __init__(self, communicationChannel, maxSize, resetScript, cache):
+    def __init__(self, communicationChannel, maxSize, resetScript):
         AbstractEquivalenceOracle.__init__(self, "WMethodNetworkEquivalenceOracle")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle')
         self.communicationChannel = communicationChannel
         self.m = maxSize
         self.resetScript = resetScript
-        self.cache = cache
 
     def canWeDistinguishStates(self, mmstd, mq, state1, state2):
         (traceState1, endStateTrace1) = mmstd.getOutputTrace(state1, mq.getSymbols())
@@ -72,7 +71,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             self.log.info("YES, its distinguished strings")
             return True
 
-    def findCounterExample(self, mmstd, inputSymbols):
+    def findCounterExample(self, mmstd, inputSymbols, cache):
         self.log.info("Find a counterexample which invalids the given MMSTD")
 
         inputDictionary = []
@@ -207,7 +206,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             for x in previousX:
                 X[i].extend(x.multiply(mqInputs))
             for w in W:
-                Z.extend(X[i])
+                if not X[i] in Z :
+                    Z.extend(X[i])
+                else :
+                    self.log.warn("Impossible to add X[" + str(i) + "] = " + str(X[i]) + " in Z, it already exists")
 
         for z in Z:
             self.log.info("z = " + str(z))
@@ -231,7 +233,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
             
             # Verify the request is not in the cache
-            cachedValue = self.cache.getCachedResult(query)
+            cachedValue = cache.getCachedResult(test)
             
             if cachedValue == None :
                 # Compute real results
@@ -255,6 +257,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     resultQuery = oracle.getGeneratedOutputSymbols()
                 else :
                     resultQuery = oracle.getGeneratedInputSymbols()
+                cache.cacheResult(query, resultQuery)    
+                
             else :
                 resultQuery = cachedValue
             
