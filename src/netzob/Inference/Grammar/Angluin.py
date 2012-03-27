@@ -433,14 +433,9 @@ class Angluin(LearningAlgorithm):
         if startState != None:
             self.log.info("An infered automata has been computed.")
             
-            
-            
-            
-            
-            
-            
-            
             self.inferedAutomata = MMSTD(startState, self.dictionary)
+            for state in states :
+                self.inferedAutomata.addState(state)
             self.log.info(self.inferedAutomata.getDotCode())
 
     def addCounterExamples(self, counterExamples):
