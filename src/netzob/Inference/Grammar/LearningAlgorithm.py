@@ -83,7 +83,7 @@ class LearningAlgorithm(object):
         cachedValue = self.cache.getCachedResult(query)
         if cachedValue != None :
             self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedvalue) + ".")
-            return cachedValue
+            return cachedValue[len(cachedValue) - 1]
         
         
         self.log.info("Reseting the oracle by executing script : " + self.resetScript)
@@ -163,7 +163,7 @@ class LearningAlgorithm(object):
             # Execute the call back function
             gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
             result = resultQuery[len(resultQuery) - 1]
-            self.cache.cacheResult(query, result)
+            self.cache.cacheResult(query, resultQuery)
             return result
         else:
             # Execute the call back function
