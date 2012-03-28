@@ -205,7 +205,7 @@ class NeedlemanAndWunsch(object):
 
         iField = 0
         symbol.cleanFields()
-        logging.debug( "REGEX "+str(regex) )
+        logging.debug("REGEX " + str(regex))
         for regexElt in regex:
             field = Field("Field " + str(iField), iField, regexElt)
             # Use the default protocol type for representation
@@ -291,8 +291,11 @@ class NeedlemanAndWunsch(object):
 
          # We try to cluster each symbol
         for symbol in symbols:
-            clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-            tmpSymbols.extend(clusteringSolution.executeClustering())
+            if len(symbol.getMessages()) > 1:  # If there is more than 1 message
+                clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+                tmpSymbols.extend(clusteringSolution.executeClustering())
+            else:
+                tmpSymbols.extend([symbol])
         if len(symbols) != 1:    
             clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
             self.result = clusteringSolution.executeClustering() 
