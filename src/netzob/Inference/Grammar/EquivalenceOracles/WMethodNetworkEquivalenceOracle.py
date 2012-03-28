@@ -206,10 +206,11 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             for x in previousX:
                 X[i].extend(x.multiply(mqInputs))
             for w in W:
-                if not X[i] in Z :
-                    Z.extend(X[i])
-                else :
-                    self.log.warn("Impossible to add X[" + str(i) + "] = " + str(X[i]) + " in Z, it already exists")
+                for xi in X[i] :
+                    if not xi in Z :
+                        Z.append(xi)
+                    else :
+                        self.log.warn("Impossible to add X[" + str(i) + "] = " + str(xi) + " in Z, it already exists")
 
         for z in Z:
             self.log.info("z = " + str(z))
@@ -257,7 +258,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     resultQuery = oracle.getGeneratedOutputSymbols()
                 else :
                     resultQuery = oracle.getGeneratedInputSymbols()
-                cache.cacheResult(query, resultQuery)    
+                cache.cacheResult(test, resultQuery)    
                 
             else :
                 resultQuery = cachedValue
