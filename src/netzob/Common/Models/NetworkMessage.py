@@ -40,6 +40,7 @@ import logging
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.Type.Format import Format
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -47,8 +48,8 @@ from netzob.Common.Type.Format import Format
 #|     Definition of a network message
 #+---------------------------------------------------------------------------+
 class NetworkMessage(AbstractMessage):
-    def __init__(self, id, timestamp, data, ip_source, ip_destination, protocol, l4_source_port, l4_destination_port):
-        AbstractMessage.__init__(self, id, timestamp, data, "Network")
+    def __init__(self, id, timestamp, data, ip_source, ip_destination, protocol, l4_source_port, l4_destination_port,pattern=[]):
+        AbstractMessage.__init__(self, id, timestamp, data, "Network",pattern)
         self.ip_source = ip_source
         self.ip_destination = ip_destination
         self.protocol = protocol
@@ -56,7 +57,15 @@ class NetworkMessage(AbstractMessage):
         self.l4_destination_port = l4_destination_port
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
+        #print "CALL Network "+str(self.getPattern())
 
+        if len(self.pattern)==1:
+            self.pattern.insert(0,ip_destination)
+
+            
+        
+        #print str(self.pattern[0])+" "+str([str(i) for i in self.pattern[1]])+" "+str(TypeConvertor.netzobRawToString(str(self.getData())))
+    
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
@@ -80,6 +89,7 @@ class NetworkMessage(AbstractMessage):
         properties.append(['Source port', Format.DECIMAL, self.getL4SourcePort()])
         properties.append(['Target port', Format.DECIMAL, self.getL4DestinationPort()])
         properties.append(['Data', Format.HEX, self.getStringData()])
+        properties.append(['Pattern', Format.STRING, self.getPatternString()])
 
         return properties
 

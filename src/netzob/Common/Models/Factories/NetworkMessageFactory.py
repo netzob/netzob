@@ -35,6 +35,7 @@
 #+---------------------------------------------------------------------------+
 from lxml.etree import ElementTree
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Token import Token
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
@@ -77,6 +78,16 @@ class NetworkMessageFactory():
         # l4 target port
         subL4TargetPort = etree.SubElement(root, "{" + namespace + "}l4_destination_port")
         subL4TargetPort.text = str(message.getL4DestinationPort())
+        #pattern
+        subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
+        subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
+        subsubDirection.text = str(message.getPattern()[0])
+        for t in message.getPattern()[1]:
+            subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
+            subsubToken.set("format",t.getFormat())
+            subsubToken.set("length",str(t.getLength()))
+            subsubToken.set("type",t.getType())
+            subsubToken.set("value",t.getValue().encode("base-64"))
         return etree.tostring(root)
 
     @staticmethod
@@ -95,7 +106,7 @@ class NetworkMessageFactory():
             raise NameError("The parsed xml doesn't represent a Network message.")
 
         # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") == None or rootElement.find("{" + namespace + "}data").text == None or len(rootElement.find("{" + namespace + "}data").text) == 0:
+        if rootElement.find("{" + namespace + "}data") == None or rootElement.find("{" + namespace + "}data").text == None or not rootElement.find("{" + namespace + "}data").text:
             raise NameError("The parsed message has no data specified")
 
         # Parse the data field and transform it into a byte array
@@ -121,11 +132,31 @@ class NetworkMessageFactory():
 
         # Retrieves the l4 target port (default 0)
         msg_l4TargetPort = rootElement.find("{" + namespace + "}l4_destination_port").text
+        
+        #Retrieve pattern
+        
+        pattern=[]
+        try:
+            patTemp = rootElement.find("{" + namespace + "}pattern")
+            pattern.append(patTemp.find("{" + namespace + "}direction").text)
+            tokens=patTemp.findall("{" + namespace + "}token")
+            #print "find "+str(tokens)
+            tokenList=[]
+            for t in tokens:
+                t_format=t.get("format")
+                t_length=t.get("length")
+                t_type=t.get("type")
+                t_value=t.get("value").decode("base-64")
+                tokenList.append(Token(t_format,t_length,t_type,t_value))
+            pattern.append(tokenList)
+        except:
+            pattern=[]
 
+        #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.NetworkMessage import NetworkMessage
 
-        result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort)
+        result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort,pattern)
 
         return result

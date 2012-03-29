@@ -43,6 +43,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
+from netzob.Common.Token import Token
 
 
 #+---------------------------------------------------------------------------+
@@ -51,7 +52,7 @@ from netzob.Common.Type.Format import Format
 #+---------------------------------------------------------------------------+
 class AbstractMessage():
 
-    def __init__(self, id, timestamp, data, type):
+    def __init__(self, id, timestamp, data, type, pattern=[]):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
         if id == None:
@@ -67,6 +68,14 @@ class AbstractMessage():
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.visualizationFilters = []
+        # self.log.debug("CALL Abstract")
+        self.pattern = []
+        if not pattern:
+            self.compilePattern()
+            # self.log.debug("empty {0}".format(str(self.getPattern()[0][0])))
+        else:
+            self.pattern = pattern
+            # self.log.debug("not empty {0}".format(self.getPatternString()))
 
     #+-----------------------------------------------------------------------+
     #| getFactory
@@ -143,6 +152,60 @@ class AbstractMessage():
         return "".join(self.getStringData()[start:end])
 
     #+----------------------------------------------
+    #| compilePattern:
+    #|    compile the pattern of the data part in the Discover way (direction, [Token1, Token2...])
+    #+----------------------------------------------
+    def compilePattern(self):
+        # self.log.debug("CALL COMPILE")
+        tokens = []
+        maxA = 126                # Max of ascii char not extended
+        minA = 32                 # Min of ascii printable
+        spe = [9, 10, 13]           # tab, \n, \r
+        tempstr = ""
+        tempbstr = ""
+        ASCIITHRESHOLD = 5  # TODO put as option in UI
+        isAsciiPrintable = lambda t: (ord(t) >= minA and ord(t) <= maxA)  # or ord(t) in spe
+        current = ""
+        tempLength = 0            # Temporary length of byte token
+
+        canRemove = False
+        if len(str(self.getData())) > 0:
+            # self.log.debug(str(self.getData()))
+            for i in TypeConvertor.netzobRawToPythonRaw(str(self.getData())):
+                if isAsciiPrintable(i):
+                    if tempLength:
+                        if not canRemove:                                                  # Means that there where bytes before
+                            tokens.append(Token(Format.HEX, tempLength, "constant", tempbstr))
+                            canRemove = True
+                        tempLength += 1
+                    tempstr += i
+                else:                                                               # We have a byte
+                    if len(tempstr) > ASCIITHRESHOLD:
+                        tempbstr = ""
+                        tempLength = 0
+                        tokens.append(Token(Format.STRING, len(tempstr), "constant", tempstr))
+                        canRemove = False
+                    elif canRemove:                                                 # It is not considered as a text string or we have a byte
+                        tokens.pop()
+                        tempbstr += tempstr
+                        canRemove = False
+                    elif tempstr:
+                        tempLength += len(tempstr)
+                        tempbstr += tempstr
+                    tempstr = ""
+                    tempbstr += i
+                    tempLength += 1
+
+            if len(tempstr) > ASCIITHRESHOLD or (not tokens and tempstr):
+                tokens.append(Token(Format.STRING, len(tempstr), "constant", tempstr))
+            else:
+                if canRemove:
+                    tokens.pop()
+                tokens.append(Token(Format.HEX, tempLength, "constant", tempbstr))
+
+        self.pattern.append(tokens)
+
+    #+----------------------------------------------
     #| applyRegex: apply the current regex on the message
     #|  and return a table
     #+----------------------------------------------
@@ -167,6 +230,7 @@ class AbstractMessage():
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
             dynamicDatas = compiledRegex.match(data)
+
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
@@ -212,7 +276,6 @@ class AbstractMessage():
             for iLocal in range(0, len(data)):
                 currentLetter = data[iLocal]
                 tmp_result = currentLetter
-
                 sizeFormat = Format.getUnitSize(field.getFormat())
                 if sizeFormat != None:
                     for filter in self.getVisualizationFilters():
@@ -233,88 +296,6 @@ class AbstractMessage():
     def getVisualizationData(self, styled=False, encoded=False):
         result = self.getStyledData(styled, encoded)
         return result
-
-    #+----------------------------------------------
-    #| applyRegex: apply the current regex on the message
-    #|  and return a table
-    #+----------------------------------------------
-#    def applyRegex(self, styled=False, encoded=False):
-#        res = []
-#        regex = []
-#        m = None
-#        data = ""
-#        for field in self.symbol.getFields():
-#            regex.append(field.getRegex())
-#        try:
-#            compiledRegex = re.compile("".join(regex))
-#            data = self.getReducedStringData()
-#            m = compiledRegex.match(data)
-#        except AssertionError:
-#            raise NetzobException("This Python version only supports 100 named groups in regex")
-#
-#        if m == None:
-#            self.log.warning("The regex of the group doesn't match one of its message")
-#            self.log.warning("Regex: " + "".join(regex))
-#            self.log.warning("Message: " + data[:255] + "...")
-#            raise NetzobException("The regex of the group doesn't match one of its message")
-#
-#
-#
-#        iCol = 0
-#        dynamicCol = 1
-#        nbLetterInNetzobRaw = 0
-#
-#        for field in self.symbol.getFields():
-#            if field.getRegex().find("(") != -1:  # Means this column is not static
-#                start = m.start(dynamicCol)
-#                end = m.end(dynamicCol)
-#
-#                # Define the color
-#                if field.getColor() == "" or field.getColor() == None:
-#                    color = 'blue'
-#                else:
-#                    color = field.getColor()
-#
-#                # Define the background color
-#                if field.getBackgroundColor() != None:
-#                    backgroundColor = 'background="' + field.getBackgroundColor() + '"'
-#                else:
-#                    backgroundColor = ""
-#
-#                # Overwrite the background color (red if the variable doesn't match the data)
-#                if field.getVariable() != None:
-#                    # Creation of a temporary memory just for the current
-#                    tmpMemory = Memory(self.symbol.getProject().getVocabulary().getVariables())
-#
-#                    if field.getVariable().compare(TypeConvertor.strBitarray2Bitarray(TypeConvertor.netzobRawToBinary(data[start:end])), 0, False, self.symbol.getProject().getVocabulary(), tmpMemory) == -1:
-#                        backgroundColor = 'background="red"'
-#                    else:
-#                        backgroundColor = 'background="green"'
-#
-#                if styled:
-#                    if encoded:
-#                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)) + '</span>')
-#                    else:
-#                        res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + data[start:end] + '</span>')
-#                else:
-#                    if encoded:
-#                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-#                    else:
-#                        res.append(data[start:end])
-#                dynamicCol += 1
-#            else:
-#                if styled:
-#                    if encoded:
-#                        res.append('<span>' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)) + '</span>')
-#                    else:
-#                        res.append('<span>' + field.getRegex() + '</span>')
-#                else:
-#                    if encoded:
-#                        res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-#                    else:
-#                        res.append(field.getRegex())
-#            iCol = iCol + 1
-#        return res
 
     #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message
@@ -386,6 +367,12 @@ class AbstractMessage():
 
     def getVisualizationFilters(self):
         return self.visualizationFilters
+
+    def getPattern(self):
+        return self.pattern
+
+    def getPatternString(self):
+        return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
 
     def setID(self, id):
         self.id = id

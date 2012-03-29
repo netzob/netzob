@@ -241,7 +241,7 @@ class UImodelization:
         # Widget button to analyze for ASN.1 presence
 #        but = NetzobButton("Find ASN.1 fields")
 #        but.connect("clicked", self.findASN1Fields_cb)
-#        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+#        table.attach(but, 0, 1, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
 
         ## Dependencies inference
         frame = NetzobFrame("3 - Dependencies inference")
