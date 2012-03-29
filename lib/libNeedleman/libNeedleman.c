@@ -197,9 +197,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   status = 2.0;
 
 
-
-  #pragma omp parallel for default(none) shared(groups, nbGroups, matrix) private(i,j,p,debugMode,doInternalSlick)
-  //    #pragma omp parallel for shared(groups, nbGroups, matrix)
+  //  #pragma omp parallel for shared(t_groups, nbGroups, matrix)
     for (i = 0; i < nbGroups; i++) {
       p = 0;
 
