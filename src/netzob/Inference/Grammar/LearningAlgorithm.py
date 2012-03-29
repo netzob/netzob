@@ -87,8 +87,6 @@ class LearningAlgorithm(object):
         
         
         self.log.info("Reseting the oracle by executing script : " + self.resetScript)
-        
-        
         # TODO : must be UPGRADED
         # WARNING
         os.system("sh " + self.resetScript)
@@ -151,8 +149,7 @@ class LearningAlgorithm(object):
         self.log.info("+ getGeneratedOutputSymbols :")
         self.log.info(str(oracle.getGeneratedOutputSymbols()))
         self.log.info("---------------------------------------------")
-            
-            
+        
         self.log.info("The following query has been computed : " + str(resultQuery))
 
         # Register this query and the associated response

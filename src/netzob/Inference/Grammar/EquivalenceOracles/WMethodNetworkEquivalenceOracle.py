@@ -102,7 +102,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         W = []
         self.log.info("The MMSTD has " + str(len(states)) + " states")
         self.log.info("A number of " + str(self.m) + " states is estimated.")
-
         for state in states:
             for state2 in states:
                 if state != state2:
@@ -128,6 +127,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             done = False
             i = 0
             while not done:
+                
                 mq = mqToTest.popleft()
                 if i > self.m * self.m:
                     break
@@ -158,6 +158,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         closeMQ = []
         statesSeen = [mmstd.getInitialState()]
         while len(openMQ) > 0:
+            self.log.info("Compute P, ...")
             mq = openMQ.popleft()
             tmpstatesSeen = []
             for letter in inputDictionary:
@@ -166,12 +167,13 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 (trace, outputState) = mmstd.getOutputTrace(mmstd.getInitialState(), z.getSymbols())
                 if outputState in statesSeen:
                     # we close this one
+                    self.log.info("Adding " + str(z) + " in closeMQ")
                     closeMQ.append(z)
                 else:
                     tmpstatesSeen.append(outputState)
+                    self.log.info("Adding " + str(z) + " in closeMQ")
                     closeMQ.append(z)
                     # still open
-
                     openMQ.append(z)
             statesSeen.extend(tmpstatesSeen)
 
