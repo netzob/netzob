@@ -54,8 +54,8 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
 
-    def __init__(self, dictionary, communicationChannel, resetScript, cb_query):
-        LearningAlgorithm.__init__(self, dictionary, communicationChannel, resetScript, cb_query)
+    def __init__(self, dictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton):
+        LearningAlgorithm.__init__(self, dictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
 
@@ -289,7 +289,7 @@ class Angluin(LearningAlgorithm):
                     # We find the E (col) which makes the unconsistency
                     e = None
                     for i in range(0, len(row_w1a)):
-                        if row_w1a[i] != row_w2a[i]:
+                        if row_w1a[i].getID() != row_w2a[i].getID():
                             e = self.D[i]
                     self.log.info("E found is " + str(e))
                     newCol = a.getMQSuffixedWithMQ(e)
@@ -305,8 +305,9 @@ class Angluin(LearningAlgorithm):
             return False
 
         for i in range(0, len(r1)):
-            if r1[i] != r2[i]:
+            if r1[i].getID() != r2[i].getID():
                 return False
+        self.log.debug(str(r1) + " == " + str(r2))
         return True
 
     def moveWordFromSAtoS(self, wordSA):
@@ -373,25 +374,30 @@ class Angluin(LearningAlgorithm):
                 self.log.info("Its the starting state")
 
             idState = idState + 1
-
+        
+        self.log.debug("Create the transition of the automata")
         # Create the transitions of the automata
         for (word, state) in wordAndStates:
+            self.log.debug("Working on state : " + str(state.getName()))
+            
             for symbol in self.initialD:
                 # retrieve the value:
                 dicValue = self.observationTable[symbol]
                 value = dicValue[word]
-
                 # search for the output state
                 mq = word.getMQSuffixedWithMQ(symbol)
+                self.log.debug("> What happen when we send " + str(symbol) + " after " + str(word))
+                self.log.debug(">> " + str(mq))
+                
                 for wordSandSA in self.getSandSAWords():
-
                     self.log.info("IS " + str(wordSandSA) + " eq " + str(mq))
-
                     if wordSandSA == mq:
                         self.log.info("YES its equal")
                         rowOutputState = self.getRowOfObservationTable(wordSandSA)
                         outputStateName = self.appendValuesInRow(rowOutputState)
-
+                        self.log.debug("rowOutputState = " + str(rowOutputState))
+                        self.log.debug("outputStateName = " + str(outputStateName))
+                        
                         # search for the state having this name:
                         outputState = None
                         self.log.info("Search for the output state : " + outputStateName)

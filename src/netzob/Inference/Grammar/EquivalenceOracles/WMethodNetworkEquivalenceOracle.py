@@ -73,7 +73,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         self.log.info("Find a counterexample which invalids the given MMSTD")
 
         inputDictionary = []
-        for entry in mmstd.dictionary.getSymbols():
+        for entry in mmstd.getVocabulary().getSymbols():
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
             self.log.info("The vocabulary contains : " + str(letter))
@@ -224,7 +224,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             # Compute our results
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
             # Compute real results
-            testedMmstd = test.toMMSTD(mmstd.getDictionary())
+            testedMmstd = test.toMMSTD(mmstd.getVocabulary(), False) # TODO TODO 
             oracle = NetworkOracle(self.communicationChannel)
             oracle.setMMSTD(testedMmstd)
             oracle.start()

@@ -56,6 +56,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         SocketServer.TCPServer.__init__(self, connectionInfos, TCPConnectionHandler)
         self.instances = []
         self.allow_reuse_address = True
+        self.multipleConnectionAllowed = True
 
     def getVocabulary(self):
         return self.vocabulary
@@ -107,6 +108,12 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         
     def getCBOutputSymbol(self):
         return self.cbOutputSymbol
+    
+    def setMultipleConnectionIsAllowed(self, multipleConnectionAllowed):
+        self.multipleConnectionAllowed = multipleConnectionAllowed
+    
+    def isMultipleConnectionAllowed(self):
+        return self.multipleConnectionAllowed
 
 #    def shutdown(self):
 #        logging.info("shutingdown")
@@ -157,6 +164,12 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
         
     def getCBOutputSymbol(self):
         return self.cbOutputSymbol
+    
+    def setMultipleConnectionIsAllowed(self, multipleConnectionAllowed):
+        self.multipleConnectionAllowed = multipleConnectionAllowed
+    
+    def isMultipleConnectionAllowed(self):
+        return self.multipleConnectionAllowed
 
 
 class TCPConnectionHandler(SocketServer.BaseRequestHandler):
@@ -168,8 +181,12 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
-        self.log.info("A client has just initiated a connection on the server.")
+
         
+        if not self.server.isMultipleConnectionAllowed() and len(self.server.getGeneratedInstances()) > 0 :
+#            self.log.warn("We do not adress this client, another one already connected")
+            return
+        self.log.info("A client has just initiated a connection on the server.")
         self.server.notifyAClientIsConnected()
         
         initialState = self.server.getInitialState()
@@ -275,7 +292,7 @@ class NetworkServer(AbstractActor):
         error = False
         finish = False
         while not finish :
-            time.sleep(5)
+            
             finish = True
             try :
                 if self.protocol == "UDP":
@@ -291,6 +308,7 @@ class NetworkServer(AbstractActor):
                 if nbAttempts > maxNumberOfAttempts :
                     finish = True
                     error = True
+            time.sleep(5)
             
         if not error :        
             self.server.setCBWhenAClientConnects(cb_whenAClientConnects)
@@ -301,6 +319,7 @@ class NetworkServer(AbstractActor):
             self.server.setVocabulary(vocabulary)
             self.server.setInitialState(initialState)
             self.server.setMaster(master)
+            self.server.setMultipleConnectionIsAllowed(False)
             self.server_thread = threading.Thread(target=self.server.serve_forever)
             self.server_thread.daemon = True
             self.log.info("Start the server")

@@ -78,6 +78,9 @@ class OpenChannelTransition(AbstractTransition):
         self.log.debug("Client is it a server ? " + str(abstractionLayer.getCommunicationChannel().isServer()))
 
         if abstractionLayer.getCommunicationChannel().isServer():
+            self.log.debug("Cleaning the memory")
+            abstractionLayer.getMemory().cleanMemory()
+            
             self.activate()
             self.log.info("We instanciate a new server and close the current MMSTD")
             abstractionLayer.openServer(abstractionLayer.getVocabulary(), self.outputState, False)
@@ -106,7 +109,6 @@ class OpenChannelTransition(AbstractTransition):
                 startTime = datetime.now()
                 finish = not abstractionLayer.isConnected()
                 while (not finish):
-                    self.log.info("Waiting for the client to disconnect")
                     currentTime = datetime.now()
                     if ((currentTime - startTime).microseconds > 60000) :
                         finish = True
