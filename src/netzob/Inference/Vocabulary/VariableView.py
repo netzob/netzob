@@ -40,6 +40,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
 from netzob.Common.Type.Format import Format
 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
 from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DecimalWordVariable import DecimalWordVariable
 pygtk.require('2.0')
 
 #+----------------------------------------------
@@ -164,6 +165,12 @@ class VariableView(object):
         itemWord.show()
         itemWord.connect("activate", self.addWord, rootVariable, aIter)
         subElementMenu.append(itemWord)
+        
+        # Decimal Word Variable
+        itemDecimalWord = gtk.MenuItem("Decimal Word")
+        itemDecimalWord.show()
+        itemDecimalWord.connect("activate", self.addDecimalWord, rootVariable, aIter)
+        subElementMenu.append(itemDecimalWord)
 
         # IPv4 Variable
         itemIPv4 = gtk.MenuItem("IPv4")
@@ -545,6 +552,63 @@ class VariableView(object):
         self.datas[str(wordVariable.getID())] = wordVariable
 
         self.treestore.append(rootEntry, [str(wordVariable.getID()), wordVariable.getUncontextualizedDescription()])
+
+        # We close the current dialog
+        dialog.destroy()
+    
+    def addDecimalWord(self, event, rootVariable, rootEntry):
+        # Display the form for the creation of a word variable
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog.set_markup('Definition of the Decimal WORD')
+
+        # Create the ID of the new variable
+        variableID = str(uuid.uuid4())
+
+        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        # parent id of the variable
+        variablePIDLabel = gtk.Label("Parent ID :")
+        variablePIDLabel.show()
+        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel.set_sensitive(False)
+        variablePIDValueLabel.show()
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # id of the variable
+        variableIDLabel = gtk.Label("ID :")
+        variableIDLabel.show()
+        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel.set_sensitive(False)
+        variableIDValueLabel.show()
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        # value of the variable
+        variableValueLabel = gtk.Label("Value : ")
+        variableValueLabel.show()
+        variableValueEntry = gtk.Entry()
+        variableValueEntry.show()
+        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_end(mainTable, True, True, 0)
+        dialog.show_all()
+        result = dialog.run()
+
+        if result != gtk.RESPONSE_OK:
+            dialog.destroy()
+            return
+
+        # We retrieve the value of the variable
+        varValue = variableValueEntry.get_text()
+
+        # Creation of the word id, name, mutable, value):
+        decimalwordVariable = DecimalWordVariable(variableID, varValue, None)
+        rootVariable.addChild(decimalwordVariable)
+
+        self.datas[str(decimalwordVariable.getID())] = decimalwordVariable
+
+        self.treestore.append(rootEntry, [str(decimalwordVariable.getID()), decimalwordVariable.getUncontextualizedDescription()])
 
         # We close the current dialog
         dialog.destroy()
