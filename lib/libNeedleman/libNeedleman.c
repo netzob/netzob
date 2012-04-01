@@ -1,3 +1,4 @@
+
 // -*- coding: utf-8 -*-
 
 //+---------------------------------------------------------------------------+
@@ -763,9 +764,9 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     printf("Message 1 : ");
     for( i = 0; i < regex1->len + regex2->len; i++) {
       if(maskRegex1[i] == EQUAL ) {
-        printf("%02x", (unsigned char) contentRegex1[i]);
+        printf("%2x", (unsigned char) contentRegex1[i]);
       } else if ( maskRegex2[i] == END ) {
-        printf("##");
+	//        printf("#");
       } else {
         printf("--");
       }
@@ -774,9 +775,9 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     printf("Message 2 : ");
     for( i = 0; i < regex1->len + regex2->len; i++) {
       if( maskRegex2[i] == EQUAL ) {
-        printf("%02x", (unsigned char) contentRegex2[i]);
+        printf("%2x", (unsigned char) contentRegex2[i]);
       } else if ( maskRegex2[i] == END ) {
-        printf("##");
+	//        printf("#");
       } else {
         printf("--");
       }
@@ -842,14 +843,14 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   memcpy(regex->mask, regexMaskTmp + i, regex->len);
 
 
-  // Compute the scores of similarity, using the regex
+  // Print the common alignment
   if (debugMode) {
     printf("Result    : ");
     for( i = 0; i < regex->len; i++) {
       if(regex->mask[i] == EQUAL ) {
-        printf("%02x", (unsigned char) regex->regex[i]);
+        printf("%2x", (unsigned char) regex->regex[i]);
       } else if ( regex->mask[i] == END ) {
-        printf("##");
+        printf("#");
       } else {
         printf("--");
       }
