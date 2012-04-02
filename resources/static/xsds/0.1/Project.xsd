@@ -647,6 +647,19 @@
 			</extension>
 		</complexContent>
 	</complexType>
+	
+	<complexType name="DecimalWordVariable">
+		<complexContent>
+			<extension base="netzob-project:Variable">
+				<sequence>
+					<element name="originalValue" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="regex" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 
 	<complexType name="IPv4Variable">
 		<complexContent>

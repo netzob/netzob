@@ -138,14 +138,14 @@ class DecimalWordVariable(Variable):
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
     #+-----------------------------------------------------------------------+
     def getUncontextualizedDescription(self):
-        return "[WORD]" + str(self.getName()) + "= (orig=" + str(self.getOriginalValue()) + ")"
+        return "[DECIMALWORD]" + str(self.getName()) + "= (orig=" + str(self.getOriginalValue()) + ")"
 
     #+-----------------------------------------------------------------------+
     #| getDescription :
     #|     Returns the full description of the variable
     #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
-        return "[WORD]" + str(self.getName()) + "= (getValue=" + str(self.getValue(negative, vocabulary, memory)) + ")"
+        return "[DECIMALWORD]" + str(self.getName()) + "= (getValue=" + str(self.getValue(negative, vocabulary, memory)) + ")"
 
     #+-----------------------------------------------------------------------+
     #| compare :
@@ -261,7 +261,7 @@ class DecimalWordVariable(Variable):
                 originalValue = None
 
 
-            return WordVariable(varId, varName, originalValue)
+            return DecimalWordVariable(varId, varName, originalValue)
         return None
 
 
