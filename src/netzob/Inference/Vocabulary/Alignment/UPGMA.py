@@ -219,6 +219,7 @@ class UPGMA(object):
                 # Reduce the size of the messages by 50% from the left
                 for orphan in self.symbols:
                     orphan.getMessages()[0].setLeftReductionFactor(leftReductionFactor)
+                    orphan.getMessages()[0].setRightReductionFactor( 0 )
 
                 self.log.info("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
                 self.executeClustering()
@@ -229,12 +230,16 @@ class UPGMA(object):
                 # Reduce the size of the messages from the right
                 for orphan in self.symbols:
                     orphan.getMessages()[0].setRightReductionFactor(rightReductionFactor)
+                    orphan.getMessages()[0].setLeftReductionFactor( 0 )
 
                 self.log.info("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
                 self.executeClustering()
                 currentReductionIsLeft = True
 
             for orphan in self.symbols:
+                for message in orphan.getMessages():
+                    message.setLeftReductionFactor( 0 )
+                    message.setRightReductionFactor( 0 )
                 tmp_symbols.append(orphan)
             self.symbols = tmp_symbols
 
