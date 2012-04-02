@@ -114,7 +114,7 @@ class SimpleTransition(AbstractTransition):
         return self.outputState
 
     def getDescription(self):
-        outputSymbolId = self.getOutputSymbol().getID()
+        outputSymbolId = self.getOutputSymbol().getName()
 
         return "(" + str(outputSymbolId) + ";{after " + str(self.timeBeforeActing) + "})"
 

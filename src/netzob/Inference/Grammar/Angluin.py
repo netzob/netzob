@@ -54,8 +54,10 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
 
-    def __init__(self, dictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton):
-        LearningAlgorithm.__init__(self, dictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton)
+
+    def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache):
+        LearningAlgorithm.__init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache)
+
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.Angluin.py')
 
@@ -72,7 +74,7 @@ class Angluin(LearningAlgorithm):
         self.SA = []
         self.initialD = []
         # fullfill D with the dictionary
-        for entry in self.dictionary.getSymbols():
+        for entry in self.getInputDictionary():
             letter = DictionarySymbol(entry)
             mq = MembershipQuery([letter])
             self.addWordInD(mq)
@@ -129,6 +131,9 @@ class Angluin(LearningAlgorithm):
         # Now we add
         for letter in self.D:
             self.addWordInSA(word.getMQSuffixedWithMQ(letter))
+            
+        self.displayObservationTable()
+        
 
     def addWordInSA(self, word):
         # first we verify the word is not already in SA
@@ -151,13 +156,14 @@ class Angluin(LearningAlgorithm):
                 cel = dict()
             cel[word] = self.submitQuery(mq)
             self.observationTable[letter] = cel
+            
+        self.displayObservationTable()
 
     def learn(self):
         self.log.info("Learn...")
         self.displayObservationTable()
-
+        
         while (not self.isClosed() or not self.isConsistent()):
-
             if not self.isClosed():
                 self.log.info("#================================================")
                 self.log.info("The table is not closed")
@@ -356,6 +362,7 @@ class Angluin(LearningAlgorithm):
         startState = None
         idState = 0
         idTransition = 0
+        states = []
 
         self.log.info("Compute the automata...")
 
@@ -367,6 +374,7 @@ class Angluin(LearningAlgorithm):
             nameState = self.appendValuesInRow(r)
             self.log.info("Create state : " + nameState)
             currentState = NormalState(idState, nameState)
+            states.append(currentState)
             wordAndStates.append((w, currentState))
             # Is it the starting state (wordS = [EmptySymbol])
             if startState == None and w == MembershipQuery([EmptySymbol()]):
@@ -426,7 +434,10 @@ class Angluin(LearningAlgorithm):
 
         if startState != None:
             self.log.info("An infered automata has been computed.")
+            
             self.inferedAutomata = MMSTD(startState, self.dictionary)
+            for state in states :
+                self.inferedAutomata.addState(state)
             self.log.info(self.inferedAutomata.getDotCode())
 
     def addCounterExamples(self, counterExamples):

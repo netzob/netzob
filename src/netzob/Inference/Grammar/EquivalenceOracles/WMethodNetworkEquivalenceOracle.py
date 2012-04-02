@@ -31,6 +31,7 @@
 import logging
 import time
 from collections import deque
+import os
 #+----------------------------------------------
 #| Related third party imports
 #+----------------------------------------------
@@ -50,12 +51,13 @@ from netzob.Inference.Grammar.Oracles.NetworkOracle import NetworkOracle
 #+----------------------------------------------
 class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
-    def __init__(self, communicationChannel, maxSize):
+    def __init__(self, communicationChannel, maxSize, resetScript):
         AbstractEquivalenceOracle.__init__(self, "WMethodNetworkEquivalenceOracle")
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle')
         self.communicationChannel = communicationChannel
         self.m = maxSize
+        self.resetScript = resetScript
 
     def canWeDistinguishStates(self, mmstd, mq, state1, state2):
         (traceState1, endStateTrace1) = mmstd.getOutputTrace(state1, mq.getSymbols())
@@ -69,11 +71,11 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             self.log.info("YES, its distinguished strings")
             return True
 
-    def findCounterExample(self, mmstd):
+    def findCounterExample(self, mmstd, inputSymbols, cache):
         self.log.info("Find a counterexample which invalids the given MMSTD")
 
         inputDictionary = []
-        for entry in mmstd.getVocabulary().getSymbols():
+        for entry in inputSymbols:
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
             self.log.info("The vocabulary contains : " + str(letter))
@@ -100,7 +102,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         W = []
         self.log.info("The MMSTD has " + str(len(states)) + " states")
         self.log.info("A number of " + str(self.m) + " states is estimated.")
-
         for state in states:
             for state2 in states:
                 if state != state2:
@@ -126,6 +127,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             done = False
             i = 0
             while not done:
+                
                 mq = mqToTest.popleft()
                 if i > self.m * self.m:
                     break
@@ -156,19 +158,22 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         closeMQ = []
         statesSeen = [mmstd.getInitialState()]
         while len(openMQ) > 0:
+            self.log.info("Compute P, ...")
             mq = openMQ.popleft()
             tmpstatesSeen = []
             for letter in inputDictionary:
                 z = mq.getMQSuffixedWithMQ(MembershipQuery([letter]))
+                self.log.debug("Get output trace if we execute the MMSTD with " + str(z.getSymbols()))
                 (trace, outputState) = mmstd.getOutputTrace(mmstd.getInitialState(), z.getSymbols())
                 if outputState in statesSeen:
                     # we close this one
+                    self.log.info("Adding " + str(z) + " in closeMQ")
                     closeMQ.append(z)
                 else:
                     tmpstatesSeen.append(outputState)
+                    self.log.info("Adding " + str(z) + " in closeMQ")
                     closeMQ.append(z)
                     # still open
-
                     openMQ.append(z)
             statesSeen.extend(tmpstatesSeen)
 
@@ -203,7 +208,11 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             for x in previousX:
                 X[i].extend(x.multiply(mqInputs))
             for w in W:
-                Z.extend(X[i])
+                for xi in X[i] :
+                    if not xi in Z :
+                        Z.append(xi)
+                    else :
+                        self.log.warn("Impossible to add X[" + str(i) + "] = " + str(xi) + " in Z, it already exists")
 
         for z in Z:
             self.log.info("z = " + str(z))
@@ -219,27 +228,59 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
         testsResults = dict()
         self.log.info("----> Compute the responses to the the tests over our model and compare them with the real one")
+        i_test = 0
         # We compute the response to the different tests over our learning model and compare them with the real one
         for test in T:
+            i_test = i_test + 1
             # Compute our results
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
-            # Compute real results
-            testedMmstd = test.toMMSTD(mmstd.getVocabulary(), False) # TODO TODO 
-            oracle = NetworkOracle(self.communicationChannel)
-            oracle.setMMSTD(testedMmstd)
-            oracle.start()
-            while oracle.isAlive():
-                time.sleep(0.01)
-            oracle.stop()
-            resultQuery = oracle.getGeneratedOutputSymbols()
+            
+            # Verify the request is not in the cache
+            cachedValue = cache.getCachedResult(test)
+            
+            if cachedValue == None :
+                # Compute real results
+                os.system("sh " + self.resetScript)
+                
+                self.log.debug("=====================")
+                self.log.debug("Execute test " + str(i_test) + "/" + str(len(T)) + " : " + str(test))
+                self.log.debug("=====================")
+                
+                isMaster = not self.communicationChannel.isServer() 
+                
+                testedMmstd = test.toMMSTD(mmstd.getVocabulary(), isMaster) # TODO TODO 
+                oracle = NetworkOracle(self.communicationChannel, isMaster) # TODO TODO is master ??
+                oracle.setMMSTD(testedMmstd)
+                oracle.start()
+                while oracle.isAlive():
+                    time.sleep(0.01)
+                oracle.stop()
+                
+                if isMaster :
+                    resultQuery = oracle.getGeneratedOutputSymbols()
+                else :
+                    resultQuery = oracle.getGeneratedInputSymbols()
+                cache.cacheResult(test, resultQuery)    
+                
+            else :
+                resultQuery = cachedValue
+            
+
 
             mqOur = MembershipQuery(traceTest)
             mqTheir = MembershipQuery(resultQuery)
 
             if not mqOur.isStrictlyEqual(mqTheir):
+                self.log.info("========================")
+                self.log.info("We found a counter example")
+                self.log.info("========================")
                 self.log.info("TEST : " + str(test))
                 self.log.info("OUR : " + str(mqOur))
                 self.log.info("THEIR : " + str(mqTheir))
                 return test
-
+            else :
+                self.log.info("========================")
+                self.log.info("Not a counter example")
+                self.log.info("========================")
+            
         return None

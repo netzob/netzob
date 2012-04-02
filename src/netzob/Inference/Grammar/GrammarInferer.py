@@ -38,10 +38,13 @@ import logging
 #| Local application imports
 #+----------------------------------------------
 from netzob.Inference.Grammar.Angluin import Angluin
+from netzob.Inference.Grammar.MQCache import MQCache
 # Replace by previous import statement : from Angluin import Angluin
 import threading
 import gobject
 import time
+
+
 
 #+----------------------------------------------
 #| GrammarInferer:
@@ -50,11 +53,12 @@ import time
 #+----------------------------------------------
 class GrammarInferer(threading.Thread):
 
-    def __init__(self, vocabulary, oracle, equivalenceOracle, resetScript, cb_submitedQuery, cb_hypotheticalAutomaton):
+    def __init__(self, vocabulary, inputDictionary, oracle, equivalenceOracle, resetScript, cb_submitedQuery, cb_hypotheticalAutomaton):
         threading.Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.GrammarInferer.py')
         self.vocabulary = vocabulary
+        self.inputDictionary = inputDictionary
         self.oracle = oracle
         self.equivalenceOracle = equivalenceOracle
         self.resetScript = resetScript
@@ -95,9 +99,11 @@ class GrammarInferer(threading.Thread):
         
         startTime = time.time()
         
-        
+        # Create a MQ cache
+        cache = MQCache()
         # we first initialize the angluin's algo
-        self.learner = Angluin(self.vocabulary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton)
+        self.learner = Angluin(self.vocabulary, self.inputDictionary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton, cache)
+
         while not equivalent and self.active:
             self.log.info("=============================================================================")
             self.log.info("Execute one new round of the inferring process")
@@ -113,7 +119,8 @@ class GrammarInferer(threading.Thread):
             # Execute the call back function for the hypothetial automaton
             gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
-            counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton)
+            counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary, cache)
+            
             if not self.active:
                 break
             if counterExample == None:
