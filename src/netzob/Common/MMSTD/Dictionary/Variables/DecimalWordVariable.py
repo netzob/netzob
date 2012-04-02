@@ -182,18 +182,18 @@ class DecimalWordVariable(Variable):
     def compareFormat(self, value, indice, negative, vocabulary, memory):
         tmp = value[indice:]
         size = len(tmp)
-        if size <= 16 :
-            self.log.debug("Too small, not even 16 bits available (2 letters)")
+        if size <= 8 :
+            self.log.debug("Too small, not even 8 bits available (1 number)")
             return -1
-        for i in range(size, 16, -1) :
+        for i in range(size, 8, -1) :
             subValue = value[indice:indice + i - 1]
             strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
             typeIdentifier = TypeIdentifier()
             if typeIdentifier.isAscii(strVal) :
-                if (strVal.isnumeric()) :
+                if (strVal.isdigit()) :
                     self.log.debug("Its a numeric : (" + str(strVal) + ")")
                     return i + indice - 1    
-        
+        self.log.debug("the value " + str(TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(tmp))) + " cannot be parsed as a decimalWord")
         return -1    
     
     #+-----------------------------------------------------------------------+
