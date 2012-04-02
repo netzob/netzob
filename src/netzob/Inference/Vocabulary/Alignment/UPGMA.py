@@ -128,6 +128,10 @@ class UPGMA(object):
                 self.log.debug("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
                 break
 
+            if len(self.symbols) <= 1:
+                self.log.debug("Stopping the clustering operation since there is only 1 symbol remaining")
+                break
+
         self.cb_executionStatus(50.0, "Executing last alignment...")
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
         # Compute the regex/alignment of each symbol
@@ -148,7 +152,7 @@ class UPGMA(object):
         self.log.debug("Computing the associated matrix")
 
         # Serialize the symbols
-        (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols)
+        (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize)
 
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
@@ -249,7 +253,7 @@ class UPGMA(object):
     #+-----------------------------------------------------------------------+
     def deserializeGroups(self, symbols):
         # First we serialize the messages
-        (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols)
+        (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols, self.unitSize)
 
-        debug = True
+        debug = False
         return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)

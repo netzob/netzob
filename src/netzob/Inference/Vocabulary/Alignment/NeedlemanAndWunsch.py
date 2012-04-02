@@ -97,7 +97,7 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def align(self, doInternalSlick, messages):
         # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages)
+        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
 
         debug = False
         (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
@@ -116,7 +116,7 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def alignTwoMessages(self, doInternalSlick, message1, message2):
         # First we serialize the two messages
-        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2])
+        (serialMessages, format) = TypeConvertor.serializeMessages([message1, message2], self.unitSize)
 
         debug = False
         (score1, score2, score3, regex, mask) = _libNeedleman.alignTwoMessages(doInternalSlick, format, serialMessages, debug)
@@ -171,9 +171,19 @@ class NeedlemanAndWunsch(object):
         for c in mask:
             if c != '\x02':
                 if c == '\x01':
-                    align += "-"
+                    if self.unitSize == 8:
+                        align += "--"
+                    elif self.unitSize == 4:
+                        align += "-"
+                    else:
+                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
                 else:
-                    align += regex[i:i + 1].encode("hex")[1:]
+                    if self.unitSize == 8:
+                        align += regex[i:i + 1].encode("hex")
+                    elif self.unitSize == 4:
+                        align += regex[i:i + 1].encode("hex")[1:]
+                    else:
+                        logging.warn("Deserializing at " + str(self.unitSize) + " unit size not yet implemented")
             i += 1
         return align
 

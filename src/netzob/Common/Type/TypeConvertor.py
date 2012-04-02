@@ -382,12 +382,19 @@ class TypeConvertor():
     #|     create a serialization view of the messages
     #| @returns (serialized, format)
     #+----------------------------------------------
-    def serializeMessages(messages):
+    def serializeMessages(messages, unitSize):
         serialMessages = ""
         format = ""
         for m in messages:
             data = m.getReducedStringData()
-            data = "".join(["0" + i for i in data])
+
+            if unitSize == 8:
+                data = data
+            elif unitSize == 4:
+                data = "".join(["0" + i for i in data])
+            else:
+                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                return
 
             format += str(len(data) / 2) + "M"
             serialMessages += TypeConvertor.netzobRawToPythonRaw(data)
@@ -399,20 +406,33 @@ class TypeConvertor():
     #|     create a serialization view of a symbol
     #| @returns (serialized, format)
     #+----------------------------------------------
-    def serializeSymbol(symbol):
+    def serializeSymbol(symbol, unitSize):
         serialSymbol = ""
         format = ""
         if symbol.getAlignment() != None and symbol.getAlignment() != "":
             format += "1" + "G"
             messageTmp = ""
             alignmentTmp = ""
-            for i in range(0, len(symbol.getAlignment())):
-                if symbol.getAlignment()[i:i + 1] == "-":
-                    messageTmp += "\xff"
-                    alignmentTmp += "\x01"
-                else:
-                    messageTmp += TypeConvertor.netzobRawToPythonRaw("0" + symbol.getAlignment()[i:i + 1])
-                    alignmentTmp += "\x00"
+
+            if unitSize == 8:
+                for i in range(0, len(symbol.getAlignment()), 2):
+                    if symbol.getAlignment()[i:i + 2] == "--":
+                        messageTmp += "\xff"
+                        alignmentTmp += "\x01"
+                    else:
+                        messageTmp += TypeConvertor.netzobRawToPythonRaw(symbol.getAlignment()[i:i + 2])
+                        alignmentTmp += "\x00"
+            elif unitSize == 4:
+                for i in range(0, len(symbol.getAlignment())):
+                    if symbol.getAlignment()[i:i + 1] == "-":
+                        messageTmp += "\xff"
+                        alignmentTmp += "\x01"
+                    else:
+                        messageTmp += TypeConvertor.netzobRawToPythonRaw("0" + symbol.getAlignment()[i:i + 1])
+                        alignmentTmp += "\x00"
+            else:
+                logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                return
             format += str(len(symbol.getAlignment())) + "M"
             serialSymbol += messageTmp
             serialSymbol += alignmentTmp
@@ -420,11 +440,16 @@ class TypeConvertor():
             format += str(len(symbol.getMessages())) + "G"
             for m in symbol.getMessages():
                 data = m.getReducedStringData()
-                data = "".join(["0" + i for i in data])
+                if unitSize == 8:
+                    data = data
+                elif unitSize == 4:
+                    data = "".join(["0" + i for i in data])
+                else:
+                    logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
+                    return
                 format += str(len(data) / 2) + "M"
                 serialSymbol += TypeConvertor.netzobRawToPythonRaw(data)  # The message
                 serialSymbol += "".join(['\x00' for x in range(len(data) / 2)])  # The alignement == "\x00" * len(the message), the first time
-
         return (serialSymbol, format)
 
     @staticmethod
@@ -433,11 +458,11 @@ class TypeConvertor():
     #|     create a serialization view of symbols
     #| @returns (serialized, format)
     #+----------------------------------------------
-    def serializeSymbols(symbols):
+    def serializeSymbols(symbols, unitSize):
         serialSymbols = ""
         formatSymbols = ""
         for symbol in symbols:
-            (serialSymbol, formatSymbol) = TypeConvertor.serializeSymbol(symbol)
+            (serialSymbol, formatSymbol) = TypeConvertor.serializeSymbol(symbol, unitSize)
             serialSymbols += serialSymbol
             formatSymbols += formatSymbol
         return (serialSymbols, formatSymbols)
