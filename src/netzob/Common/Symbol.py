@@ -1022,7 +1022,7 @@ class Symbol(AbstractSymbol):
             result += "\t"
 
             # Value
-            result += field.getRegex()
+            result += field.getEncodedVersionOfTheRegex()
 
             result += "\n"
         return result
