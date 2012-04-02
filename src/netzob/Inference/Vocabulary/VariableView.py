@@ -526,13 +526,21 @@ class VariableView(object):
         mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # name of the variable
+        variableNameLabel = gtk.Label("Name : ")
+        variableNameLabel.show()
+        variableNameEntry = gtk.Entry()
+        variableNameEntry.show()
+        mainTable.attach(variableNameLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableNameEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        
         # value of the variable
         variableValueLabel = gtk.Label("Value : ")
         variableValueLabel.show()
         variableValueEntry = gtk.Entry()
         variableValueEntry.show()
-        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
@@ -543,10 +551,14 @@ class VariableView(object):
             return
 
         # We retrieve the value of the variable
+        varName = variableNameEntry.get_text()
         varValue = variableValueEntry.get_text()
+        
+        if len(varValue) == 0 :
+            varValue = None
 
         # Creation of the word id, name, mutable, value):
-        wordVariable = WordVariable(variableID, varValue, None)
+        wordVariable = WordVariable(variableID, varName, varValue)
         rootVariable.addChild(wordVariable)
 
         self.datas[str(wordVariable.getID())] = wordVariable
