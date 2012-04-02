@@ -174,8 +174,8 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   float **matrix;
   int i, j;
   float maxScore = -1.0f;
-  short int i_maximum = -1;
-  short int j_maximum = -1;
+  int i_maximum = -1;
+  int j_maximum = -1;
 
   // local variable
   int p = 0;
@@ -568,8 +568,8 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
 int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_regex * regex2, Bool debugMode){
   // local variables
   short int **matrix;
-  unsigned short int i = 0;
-  unsigned short int j = 0;
+  unsigned int i = 0;
+  unsigned int j = 0;
 
   // Construction of the matrix
   short int elt1, elt2, elt3, max, eltL, eltD, eltT;
