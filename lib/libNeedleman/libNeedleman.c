@@ -90,14 +90,14 @@ int callbackStatus(double percent, char* message, ...) {
 //| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
 //+---------------------------------------------------------------------------+
 static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
-  unsigned short int doInternalSlick;
-  unsigned short int nbGroups;
+  unsigned int doInternalSlick = 0;
+  unsigned int nbGroups = 0;
   unsigned char * format;
   int sizeFormat;
   unsigned char * serialGroups;
   int sizeSerialGroups;
   PyObject *temp_cb;
-  unsigned short int debugMode;
+  unsigned int debugMode = 0;
 
   // local variables
   t_groups groups;
@@ -150,6 +150,7 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     bool_debugMode = FALSE;
   }
 
+  printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
   result.i = -1;
   result.j= -1;
   result.score = -1;
@@ -292,17 +293,17 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 //+---------------------------------------------------------------------------+
 static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   // Parameters (in order)
-  unsigned short int doInternalSlick;
-  unsigned short int nbMessages;
+  unsigned int doInternalSlick = 0;
+  unsigned int nbMessages = 0;
   unsigned char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
   PyObject *temp_cb;
-  unsigned short int debugMode;
+  unsigned int debugMode = 0;
 
   // local variables
-  unsigned short int nbDeserializedMessage;
+  unsigned int nbDeserializedMessage = 0;
   t_regex regex;
   t_group group;
   t_score score;
@@ -377,9 +378,9 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   // Return the results
   return Py_BuildValue("(fffs#s#)", regex.score->s1, regex.score->s2, regex.score->s3, regex.regex, regex.len, regex.mask, regex.len);
 }
-void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMessages, t_group* group, Bool debugMode) {
+void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned int nbMessages, t_group* group, Bool debugMode) {
   // local variable
-  unsigned short int numberOfOperations;
+  unsigned int numberOfOperations = 0;
   double costOfOperation;
   double status = 0.0;
   
@@ -387,7 +388,7 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
   t_regex current_regex;
   t_regex new_regex;
   t_score score;
-  unsigned short int i_message;
+  unsigned int i_message = 0;
   
   score.s1 = 0;
   score.s2 = 0;
@@ -453,15 +454,15 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned short int nbMe
 //+---------------------------------------------------------------------------+
 static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
   // Parameters (in order)
-  unsigned short int doInternalSlick;
+  unsigned int doInternalSlick = 0;
   unsigned char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
-  unsigned short int debugMode;
+  unsigned int debugMode = 0;
 
   // local variables
-  unsigned short int nbDeserializedMessage;
+  unsigned int nbDeserializedMessage = 0;
   t_regex regexMessage1;
   t_score scoreMessage1;
   t_regex regexMessage2;
@@ -579,16 +580,16 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   unsigned char *contentRegex2;
   unsigned char *maskRegex1;
   unsigned char *maskRegex2;
-  unsigned short int iReg1;
-  unsigned short int iReg2;
+  unsigned int iReg1 = 0;
+  unsigned int iReg2 = 0;
 
   // Computing Regex
   unsigned char *regexTmp;
   unsigned char *regexMaskTmp;
 
   // Score computation
-  unsigned short int nbDynTotal = 0;
-  unsigned short int nbDynCommon = 0;
+  unsigned int nbDynTotal = 0;
+  unsigned int nbDynCommon = 0;
 
   //+------------------------------------------------------------------------+
   // Create and initialize the matrix
@@ -916,7 +917,7 @@ float getScoreRatio(t_regex * regex) {
   result = 100.0 / (nbStatic + nbDynamic) * nbStatic;
   return result;
 }
-float getScoreDynSize(unsigned short int nbDynTotal, unsigned short int nbDynCommon) {
+float getScoreDynSize(unsigned int nbDynTotal, unsigned int nbDynCommon) {
   // Compute score of common dynamic elements
   float result = 0;
   result = 100.0 / nbDynTotal * nbDynCommon;
@@ -941,13 +942,13 @@ float computeDistance(t_score * score) {
 //| py_deserializeMessages : Python wrapper for deserializeMessages
 //+---------------------------------------------------------------------------+
 static PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
-  unsigned short int nbMessages;
+  unsigned int nbMessages = 0;
   unsigned char *format;
   int sizeFormat;
   unsigned char *serialMessages;
   int sizeSerialMessages;
-  unsigned short int debugMode;
-  unsigned short int nbDeserializedMessage;
+  unsigned int debugMode = 0;
+  unsigned int nbDeserializedMessage = 0;
   t_group group_result;
   
   // Converts the arguments
@@ -985,20 +986,20 @@ static PyObject* py_deserializeMessages(PyObject* self, PyObject* args) {
 //+---------------------------------------------------------------------------+
 //| deserializeMessages : Deserialization of messages
 //+---------------------------------------------------------------------------+
-unsigned short int deserializeMessages(t_group * group, unsigned char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
+unsigned int deserializeMessages(t_group * group, unsigned char *format, int sizeFormat, unsigned char *serialMessages, int nbMessages, int sizeSerialMessages, Bool debugMode) {
   int i_message = 0;
   unsigned char * p;
-  unsigned short int serial_shift = 0;
-  unsigned short int format_shift = 0;
-  unsigned short int len_size_message=0;
-  unsigned short int size_message=0;
+  unsigned int serial_shift = 0;
+  unsigned int format_shift = 0;
+  unsigned int len_size_message=0;
+  unsigned int size_message=0;
   unsigned char * size_message_str;
-  unsigned short int nbDeserializedMessages = 0;
+  unsigned int nbDeserializedMessages = 0;
 
   for (i_message=0; i_message < nbMessages; i_message++) {
     // Retrieve the size of each message
     p = strchr(format + format_shift, 'M');
-    len_size_message = (unsigned short int) (p - (format + format_shift));
+    len_size_message = (unsigned int) (p - (format + format_shift));
     size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
     memcpy(size_message_str, format + format_shift, len_size_message);
     size_message_str[len_size_message] = '\0';
@@ -1036,13 +1037,13 @@ unsigned short int deserializeMessages(t_group * group, unsigned char *format, i
 //| py_deserializeGroups : Python wrapper for deserializeGroups
 //+---------------------------------------------------------------------------+
 static PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
-  unsigned short int nbGroups;
+  unsigned int nbGroups = 0;
   unsigned char *format;
   int sizeFormat;
   unsigned char *serialGroups;
   int sizeSerialGroups;
-  unsigned short int debugMode;
-  unsigned short int nbDeserializedGroup;
+  unsigned int debugMode = 0;
+  unsigned int nbDeserializedGroup = 0;
   t_groups groups_result;
   
   // Converts the arguments
@@ -1077,16 +1078,16 @@ static PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
   return Py_BuildValue("i", nbDeserializedGroup);
 }
 
-unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
+unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
   int i_group = 0;
   int l = 0;
   unsigned char * p;
   unsigned char *q;
   unsigned short int format_shift = 0;
-  unsigned short int len_size_group = 0;
-  unsigned short int len_size_message = 0;
-  unsigned short int size_group = 0;
-  unsigned short int size_message = 0;
+  unsigned int len_size_group = 0;
+  unsigned int len_size_message = 0;
+  unsigned int size_group = 0;
+  unsigned int size_message = 0;
   unsigned char * size_group_str;
   unsigned char * size_message_str;
   int i_message = 0;
@@ -1095,7 +1096,7 @@ unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, 
   for (i_group = 0; i_group <nbGroups; i_group++)  {
     // retrieve the number of messages in the current group
     p = strchr(format + format_shift, 'G');
-    len_size_group = (unsigned short int) (p - (format + format_shift));
+    len_size_group = (unsigned int) (p - (format + format_shift));
     size_group_str = malloc((len_size_group + 1) * sizeof(unsigned char));
     memcpy(size_group_str, format + format_shift, len_size_group);
     size_group_str[len_size_group] = '\0';
@@ -1109,7 +1110,7 @@ unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, 
     for (i_message = 0; i_message < size_group; i_message++) {
       // Retrieve the size of each message
       q = strchr(format + format_shift, 'M');
-      len_size_message = (unsigned short int) (q - (format + format_shift));
+      len_size_message = (unsigned int) (q - (format + format_shift));
       size_message_str = malloc((len_size_message + 1) * sizeof(unsigned char));
       memcpy(size_message_str, format + format_shift, len_size_message);
       size_message_str[len_size_message] = '\0';
@@ -1128,15 +1129,6 @@ unsigned short int deserializeGroups(t_groups * groups, unsigned char * format, 
   }
   return i_group;
 }
-
-
-
-
-
-
-
-
-
 
 
 #define OPL 64

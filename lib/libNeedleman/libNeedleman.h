@@ -44,20 +44,20 @@ typedef enum { FALSE, TRUE } Bool;
 
 // Definition of a message :
 typedef struct {
-  unsigned short int len; // length of the message
+  unsigned int len; // length of the message
   unsigned char *message; // a message
   unsigned char *mask; // its mask
 } t_message;
 
 //Definition of a group of messages
 typedef struct {
-  unsigned short int len; // nb of messages in the group
+  unsigned int len; // nb of messages in the group
   t_message *messages; // a list of messages
 } t_group;
 
 // Definition of a group of group (a group of symbol)
 typedef struct {
-  unsigned short int len; // nb of group
+  unsigned int len; // nb of group
   t_group *groups; // a list of group
 } t_groups;
 
@@ -77,7 +77,7 @@ typedef struct {
 
 //Definition of a aligned set of messages
 typedef struct {
-  unsigned short int len; // size of the regex
+  unsigned int len; // size of the regex
   unsigned char *regex; // the actual regex
   unsigned char *mask; // its mask
   t_score *score;
@@ -111,7 +111,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 //| py_alignMessages : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
 static PyObject* py_alignMessages(PyObject* self, PyObject* args);
-void alignMessages(t_regex * regex, Bool doInternalSlick, unsigned short int nbMessages, t_group* messages, Bool debugMode);
+void alignMessages(t_regex * regex, Bool doInternalSlick, unsigned int nbMessages, t_group* messages, Bool debugMode);
 
 //+---------------------------------------------------------------------------+
 //| py_alignTwoMessages : Python wrapper for alignTwoMessages
@@ -123,13 +123,13 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
 //| py_deserializeMessages : Python wrapper for deserializeMessages
 //+---------------------------------------------------------------------------+
 static PyObject* py_deserializeMessages(PyObject* self, PyObject* args);
-unsigned short int deserializeMessages(t_group *, unsigned char *, int, unsigned char *, int, int, Bool);
+unsigned int deserializeMessages(t_group *, unsigned char *, int, unsigned char *, int, int, Bool);
 
 //+---------------------------------------------------------------------------+
 //| py_deserializeMGroups : Python wrapper for deserializeGroups
 //+---------------------------------------------------------------------------+
 static PyObject* py_deserializeGroups(PyObject* self, PyObject* args);
-unsigned short int deserializeGroups(t_groups *, unsigned char *, int, unsigned char *, int, int, Bool);
+unsigned int deserializeGroups(t_groups *, unsigned char *, int, unsigned char *, int, int, Bool);
 
 //+---------------------------------------------------------------------------+
 //| initLibNeedleman : Python will use this function to init the module
@@ -140,7 +140,7 @@ PyMODINIT_FUNC init_libNeedleman(void);
 //| Scores : functions for their computations
 //+---------------------------------------------------------------------------+
 float getScoreRatio(t_regex *);
-float getScoreDynSize(unsigned short int, unsigned short int);
+float getScoreDynSize(unsigned int, unsigned int);
 float getScoreRang(t_regex *);
 float computeDistance(t_score *);
 
@@ -153,4 +153,3 @@ void hexdump(unsigned char *bug, int dlen);
 //| dumpRegex : for debug purposes
 //+---------------------------------------------------------------------------+
 void dumpRegex(t_regex regex);
-
