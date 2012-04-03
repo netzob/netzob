@@ -41,6 +41,7 @@ import datetime
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 
 class TimeoutException(Exception):
@@ -183,7 +184,7 @@ class AbstractionLayer():
             return (symbol, receivedData)
         else:
             if len(self.manipulatedSymbols) > nbMaxAttempts:
-                if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == "EmptySymbol":
+                if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == EmptySymbol.TYPE or self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == UnknownSymbol.TYPE:
                     self.log.warn("Consider client has disconnected since no valid symbol received after " + str(nbMaxAttempts) + " attempts")
                     return (None, None)
 
@@ -231,7 +232,7 @@ class AbstractionLayer():
                 self.log.debug("Restore possibly learnt value")
                 symbol.getRoot().restore(self.vocabulary, self.memory)
 
-        return EmptySymbol()
+        return UnknownSymbol()
 
     def specialize(self, symbol):
         self.log.info("Specializing the symbol " + symbol.getName())

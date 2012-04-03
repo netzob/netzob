@@ -52,6 +52,9 @@ class Variable():
         self.idVar = idVar
         self.name = name
         self.typeVariable = typeVariable
+        
+    def isMutable(self):
+        return True
 
     #+-----------------------------------------------------------------------+
     #| getValue :

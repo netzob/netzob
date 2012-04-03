@@ -43,6 +43,7 @@ from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Transitions.AbstractTransition import AbstractTransition
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from lxml import etree
 
