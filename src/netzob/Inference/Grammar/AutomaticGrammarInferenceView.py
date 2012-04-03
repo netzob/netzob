@@ -271,7 +271,7 @@ class AutomaticGrammarInferenceView(object):
         
         inputDictionary = []
         for symbol in self.project.getVocabulary().getSymbols() :
-            if symbol.getName() == "LOGIN" or symbol.getName() == "SYSINFO":
+            if symbol.getName() == "LOGIN" or symbol.getName() == "SYSINFO"  or symbol.getName() == "NETINFO"   or symbol.getName() == "LOGOUT" or symbol.getName() == "STATUS":
                 inputDictionary.append(symbol)
 
         # Close the current dialog

@@ -133,10 +133,24 @@ class GrammarInferer(threading.Thread):
                 self.learner.addCounterExamples([counterExample])
                 
         automaton = self.learner.getInferedAutomata()
-        
-        endTime = time.time()
-        
-        self.log.info("The inferring process is finished !")
         self.log.info("The following automaton has been computed : " + str(automaton.getDotCode()))
+        
+        # Now we apply indeterminism
+        i_session = 0
+        sessions = self.vocabulary.getSessions()
+        for session in self.sessions :
+            self.log.info("Re-inject session (" + str(i_session) + ") in the automata")
+            new_automata = self.applyMessagesOnAutomata(automaton, messages)            
+            i_session = i_session + 1
+        
+        endTime = time.time()        
+        self.log.info("The inferring process is finished !")
+        
         print "Elapsed time: ", (endTime - startTime) * 1000, " msecs"
         self.inferedAutomaton = automaton
+    
+    def applyMessagesOnAutomata(automaton, messages) :
+        self.log.info("Apply the messages (" + str(messages) + ") on automata")
+        currentState = automaton.getInitialState()
+        return automaton
+        

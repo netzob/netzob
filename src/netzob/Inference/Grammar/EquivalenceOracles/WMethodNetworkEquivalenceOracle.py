@@ -72,7 +72,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             return True
 
     def findCounterExample(self, mmstd, inputSymbols, cache):
+        self.log.info("=====================================================")
         self.log.info("Find a counterexample which invalids the given MMSTD")
+        self.log.info("=====================================================")
 
         inputDictionary = []
         for entry in inputSymbols:
@@ -113,7 +115,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                         couples.append((state, state2))
 
         self.log.info("A number of " + str(len(couples)) + " couples was found")
-
+        
         for (state1, state2) in couples:
             self.log.info("Search a distinguish string between " + state1.getName() + " and " + state2.getName())
             z = MembershipQuery([EmptySymbol()])

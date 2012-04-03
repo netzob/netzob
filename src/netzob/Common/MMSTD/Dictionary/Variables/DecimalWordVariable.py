@@ -157,7 +157,7 @@ class DecimalWordVariable(Variable):
     def compare(self, value, indice, negative, vocabulary, memory):
         localValue = self.getValue(negative, vocabulary, memory)
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
-        if localValue == None:
+        if localValue == None or self.isMutable():
             self.log.debug("We compare the format (will we be able to learn it afterwards ?")
             return self.compareFormat(value, indice, negative, vocabulary, memory)
         else:
