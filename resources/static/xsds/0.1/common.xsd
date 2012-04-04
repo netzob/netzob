@@ -172,7 +172,7 @@
 		<complexContent>
 			<extension base="netzob-common:Message">
 				<sequence>
-					<element name="Direction">
+					<element name="direction">
 						<simpleType>
 							<restriction base="string">
 								<enumeration value="Request"></enumeration>
@@ -180,7 +180,7 @@
 							</restriction>
 						</simpleType>
 					</element>
-					<element name="Major">
+					<element name="major">
 						<simpleType>
 							<restriction base="string">
 								<enumeration value="IRP_MJ_CREATE"></enumeration>
@@ -214,8 +214,8 @@
 							</restriction>
 						</simpleType>
 					</element>
-					<element name="Minor" type="string"></element>
-					<element name="RequestMode">
+					<element name="minor" type="string"></element>
+					<element name="requestMode">
 						<simpleType>
 							<restriction base="string">
 								<enumeration value="KernelMode"></enumeration>
@@ -223,12 +223,12 @@
 							</restriction>
 						</simpleType>
 					</element>
-					<element name="PID" type="int" minOccurs="0"></element>
-					<element name="Status" type="int"></element>
-					<element name="Information" type="long"></element>
-					<element name="Cancel" type="boolean"></element>
-					<element name="Size_In" type="int"></element>
-					<element name="Size_Out" type="int"></element>
+					<element name="pid" type="int" minOccurs="0"></element>
+					<element name="status" type="int"></element>
+					<element name="information" type="long"></element>
+					<element name="cancel" type="boolean"></element>
+					<element name="size_In" type="int"></element>
+					<element name="size_Out" type="int"></element>
 				</sequence>
 			</extension>
 		</complexContent>
