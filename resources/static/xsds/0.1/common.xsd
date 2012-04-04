@@ -3,7 +3,7 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:netzob-common="http://www.netzob.org/common">
 
-	<complexType name="Sessions">
+    <complexType name="Sessions">
 		<sequence>
 			<element name="session" type="netzob-common:Session" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
@@ -167,5 +167,79 @@
 			<element name="direction" type="string" minOccurs="0"></element>
 			<element name="token" type="netzob-common:Token" minOccurs="0" maxOccurs="unbounded"></element>
 		</sequence>	
+	</complexType>
+	<complexType name="IRP">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="Direction">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="Request"></enumeration>
+								<enumeration value="Response"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="Major">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="IRP_MJ_CREATE"></enumeration>
+								<enumeration value="IRP_MJ_CREATE_NAMED_PIPE"></enumeration>
+								<enumeration value="IRP_MJ_CLOSE"></enumeration>
+								<enumeration value="IRP_MJ_READ"></enumeration>
+								<enumeration value="IRP_MJ_WRITE"></enumeration>
+								<enumeration value="IRP_MJ_QUERY_INFORMATION"></enumeration>
+								<enumeration value="IRP_MJ_SET_INFORMATION"></enumeration>
+								<enumeration value="IRP_MJ_QUERY_EA"></enumeration>
+								<enumeration value="IRP_MJ_SET_EA"></enumeration>
+								<enumeration value="IRP_MJ_FLUSH_BUFFERS"></enumeration>
+								<enumeration value="IRP_MJ_QUERY_VOLUME_INFORMATION"></enumeration>
+								<enumeration value="IRP_MJ_SET_VOLUME_INFORMATION"></enumeration>
+								<enumeration value="IRP_MJ_DIRECTORY_CONTROL"></enumeration>
+								<enumeration value="IRP_MJ_FILE_SYSTEM_CONTROL"></enumeration>
+								<enumeration value="IRP_MJ_DEVICE_CONTROL"></enumeration>
+								<enumeration value="IRP_MJ_INTERNAL_DEVICE_CONTROL"></enumeration>
+								<enumeration value="IRP_MJ_SHUTDOWN"></enumeration>
+								<enumeration value="IRP_MJ_LOCK_CONTROL"></enumeration>
+								<enumeration value="IRP_MJ_CLEANUP"></enumeration>
+								<enumeration value="IRP_MJ_CREATE_MAILSLOT"></enumeration>
+								<enumeration value="IRP_MJ_QUERY_SECURITY"></enumeration>
+								<enumeration value="IRP_MJ_SET_SECURITY"></enumeration>
+								<enumeration value="IRP_MJ_POWER"></enumeration>
+								<enumeration value="IRP_MJ_SYSTEM_CONTROL"></enumeration>
+								<enumeration value="IRP_MJ_DEVICE_CHANGE"></enumeration>
+								<enumeration value="IRP_MJ_QUERY_QUOTA"></enumeration>
+								<enumeration value="IRP_MJ_SET_QUOTA"></enumeration>
+								<enumeration value="IRP_MJ_PNP"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="Minor" type="string"></element>
+					<element name="RequestMode">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="KernelMode"></enumeration>
+								<enumeration value="UserMode"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="PID" type="int" minOccurs="0"></element>
+					<element name="Status" type="int"></element>
+					<element name="Information" type="long"></element>
+					<element name="Cancel" type="boolean"></element>
+					<element name="Size_In" type="int"></element>
+					<element name="Size_Out" type="int"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="IRP_DeviceIoControl">
+		<complexContent>
+			<extension base="netzob-common:IRP">
+				<sequence>
+					<element name="IOCTL" type="int"></element>
+				</sequence>
+			</extension>
+		</complexContent>
 	</complexType>
 </schema>
