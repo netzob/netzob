@@ -315,7 +315,8 @@ class Workspace(object):
             xmlRoot = etree.parse(xmlFile)
             schema.assertValid(xmlRoot)
             return True
-        except:
+        except Exception as e:
+            logging.warn(e)
             log = schema.error_log
             error = log.last_error
             logging.warn(error)

@@ -40,6 +40,8 @@
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
 from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
+from netzob.Common.Models.Factories.IRPMessageFactory import IRPMessageFactory
+from netzob.Common.Models.Factories.IRPDeviceIoControlMessageFactory import IRPDeviceIoControlMessageFactory
 from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 
 
@@ -61,6 +63,10 @@ class AbstractMessageFactory():
             return NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "IPC":
             return IPCMessageFactory.save(message, root, namespace_project, namespace_common)
+        elif message.getType() == "IRP":
+            return IRPMessageFactory.save(message, root, namespace_project, namespace_common)
+        elif message.getType() == "IRPDeviceIoControl":
+            return IRPDeviceIoControlMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "RAW":
             return RawMessageFactory.save(message, root, namespace_project, namespace_common)
         else:
@@ -83,11 +89,15 @@ class AbstractMessageFactory():
 
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage":
             return FileMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
             return NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage":
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage":
             return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage":
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPMessage":
+            return IRPMessageFactory.loadFromXML(rootElement, namespace, version)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPDeviceIoControlMessage":
+            return IRPDeviceIoControlMessageFactory.loadFromXML(rootElement, namespace, version)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:RawMessage":
             return RawMessageFactory.loadFromXML(rootElement, namespace, version)
         else:
             raise NameError("The parsed xml doesn't represent a valid type message.")
