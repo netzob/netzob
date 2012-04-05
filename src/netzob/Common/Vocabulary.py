@@ -89,7 +89,12 @@ class Vocabulary(object):
         # Exceptions : if ID = 0, we return an EmptySymbol
         if symbolID == str(0):
             return EmptySymbol()
+        return None
 
+    def getSymbolByName(self, symbolName):
+        for symbol in self.symbols :
+            if symbol.getName() == symbolName :
+                return symbol
         return None
 
     def getSession(self, sessionID):
