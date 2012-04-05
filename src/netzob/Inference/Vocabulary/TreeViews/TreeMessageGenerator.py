@@ -77,6 +77,7 @@ class TreeMessageGenerator():
             textCellRenderer = gtk.CellRendererText()
             textCellRenderer.set_property("size-points", 9)
             textCellRenderer.set_property('background-set', True)
+            textCellRenderer.set_property('family', 'Courier')
 
             # Column Messages
             lvcolumn = gtk.TreeViewColumn(str("#" + str(i_col - 4)))
