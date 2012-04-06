@@ -44,6 +44,7 @@ from netzob.Common.Field import Field
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 
 #+---------------------------------------------------------------------------+
@@ -95,6 +96,13 @@ class Vocabulary(object):
         for symbol in self.symbols :
             if symbol.getName() == symbolName :
                 return symbol
+            # Exceptions : if name = "EmptySymbol", we return an EmptySymbol
+            if symbolName == EmptySymbol.TYPE :
+                return EmptySymbol()
+            # Exceptions : if name = "UnkownSymbol", we return an UnknownSymbol
+            if symbolName == UnknownSymbol.TYPE :
+                return UnknownSymbol()
+        
         return None
 
     def getSession(self, sessionID):

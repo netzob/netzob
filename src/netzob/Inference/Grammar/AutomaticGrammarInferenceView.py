@@ -39,6 +39,8 @@ import gobject
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 from netzob.Common.Threads.Job import Job
 from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
+from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 pygtk.require('2.0')
 
@@ -271,9 +273,9 @@ class AutomaticGrammarInferenceView(object):
         
         inputDictionary = []
         for symbol in self.project.getVocabulary().getSymbols() :
-            if symbol.getName() == "LOGIN" or symbol.getName() == "SYSINFO"  or symbol.getName() == "NETINFO"   or symbol.getName() == "LOGOUT" or symbol.getName() == "STATUS":
+            if symbol.getName() == "LOGIN" or symbol.getName() == "SYSINFO" or symbol.getName() == "STATUS" or symbol.getName() == "LOGOUT" or symbol.getName() == "EXECUTE" :
                 inputDictionary.append(symbol)
-
+        inputDictionary.append(UnknownSymbol())
         # Close the current dialog
         self.dialog.destroy()
 

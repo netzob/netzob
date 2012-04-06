@@ -82,7 +82,7 @@ class LearningAlgorithm(object):
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
         if cachedValue != None :
-            self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedvalue) + ".")
+            self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedValue) + ".")
             return cachedValue[len(cachedValue) - 1]
         
         
@@ -148,8 +148,7 @@ class LearningAlgorithm(object):
         self.log.info("---------------------------------------------")
         self.log.info("+ getGeneratedOutputSymbols :")
         self.log.info(str(oracle.getGeneratedOutputSymbols()))
-        self.log.info("---------------------------------------------")
-        
+        self.log.info("---------------------------------------------")        
         self.log.info("The following query has been computed : " + str(resultQuery))
 
         # Register this query and the associated response
@@ -161,6 +160,9 @@ class LearningAlgorithm(object):
             gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
             result = resultQuery[len(resultQuery) - 1]
             self.cache.cacheResult(query, resultQuery)
+            
+            self.cache.dumpCache()
+            
             return result
         else:
             # Execute the call back function

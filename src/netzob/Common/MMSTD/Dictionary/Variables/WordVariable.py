@@ -190,8 +190,8 @@ class WordVariable(Variable):
             strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
             typeIdentifier = TypeIdentifier()
             if typeIdentifier.isAscii(strVal) :
-                if (strVal.isalpha()) :
-                    self.log.debug("Its an alpha : (" + str(strVal) + ")")
+                if (not ' ' in strVal) :
+                    self.log.debug("Its an ascii without space : (" + str(strVal) + ")")
                     return i + indice - 1
             
                 
