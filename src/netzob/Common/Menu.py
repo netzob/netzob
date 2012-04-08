@@ -47,6 +47,7 @@ from netzob.Import.PcapImport import PcapImport
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
 from netzob.Import.FileImport import FileImport
+from netzob.Import.XMLImport import XMLImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
 from netzob.Export.TextExport import TextExport
@@ -135,6 +136,10 @@ class Menu(object):
         importFileEntry = gtk.MenuItem("Import from File")
         importFileEntry.connect("activate", self.importFileAction)
         self.menuImport.append(importFileEntry)
+        
+        importXMLEntry = gtk.MenuItem("Import from XML File")
+        importXMLEntry.connect("activate", self.importXMLAction)
+        self.menuImport.append(importXMLEntry)
 
         self.menuProject.append(self.importRootMenu)
 
@@ -410,6 +415,12 @@ class Menu(object):
     def importFileAction(self, widget):
         fileImportPanel = FileImport(self.netzob)
 
+    #+----------------------------------------------
+    #| Called when user wants to import file
+    #+----------------------------------------------
+    def importXMLAction(self, widget):
+        xmlImportPanel = XMLImport(self.netzob)
+        
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector
     #+----------------------------------------------

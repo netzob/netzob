@@ -3,7 +3,7 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:netzob-common="http://www.netzob.org/common">
 
-	<complexType name="Sessions">
+    <complexType name="Sessions">
 		<sequence>
 			<element name="session" type="netzob-common:Session" maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
@@ -179,4 +179,118 @@
 			<element name="token" type="netzob-common:Token" minOccurs="0" maxOccurs="unbounded"></element>
 		</sequence>	
 	</complexType>
+	<complexType name="IRPMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="direction">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="Request"></enumeration>
+								<enumeration value="Response"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="major">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="IRP_MJ_CREATE"></enumeration>
+								<enumeration
+									value="IRP_MJ_CREATE_NAMED_PIPE">
+								</enumeration>
+								<enumeration value="IRP_MJ_CLOSE"></enumeration>
+								<enumeration value="IRP_MJ_READ"></enumeration>
+								<enumeration value="IRP_MJ_WRITE"></enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_INFORMATION">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_SET_INFORMATION">
+								</enumeration>
+								<enumeration value="IRP_MJ_QUERY_EA"></enumeration>
+								<enumeration value="IRP_MJ_SET_EA"></enumeration>
+								<enumeration
+									value="IRP_MJ_FLUSH_BUFFERS">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_VOLUME_INFORMATION">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_SET_VOLUME_INFORMATION">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_DIRECTORY_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_FILE_SYSTEM_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_DEVICE_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_INTERNAL_DEVICE_CONTROL">
+								</enumeration>
+								<enumeration value="IRP_MJ_SHUTDOWN"></enumeration>
+								<enumeration
+									value="IRP_MJ_LOCK_CONTROL">
+								</enumeration>
+								<enumeration value="IRP_MJ_CLEANUP"></enumeration>
+								<enumeration
+									value="IRP_MJ_CREATE_MAILSLOT">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_SECURITY">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_SET_SECURITY">
+								</enumeration>
+								<enumeration value="IRP_MJ_POWER"></enumeration>
+								<enumeration
+									value="IRP_MJ_SYSTEM_CONTROL">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_DEVICE_CHANGE">
+								</enumeration>
+								<enumeration
+									value="IRP_MJ_QUERY_QUOTA">
+								</enumeration>
+								<enumeration value="IRP_MJ_SET_QUOTA"></enumeration>
+								<enumeration value="IRP_MJ_PNP"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="minor" type="unsignedInt"></element>
+					<element name="requestMode">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="KernelMode"></enumeration>
+								<enumeration value="UserMode"></enumeration>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="pid" type="unsignedInt"
+						minOccurs="0">
+					</element>
+					<element name="status" type="unsignedInt"></element>
+					<element name="information" type="unsignedLong"></element>
+					<element name="cancel" type="boolean"></element>
+					<element name="sizeIn" type="unsignedInt"></element>
+					<element name="sizeOut" type="unsignedInt"></element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="IRPDeviceIoControlMessage">
+		<complexContent>
+			<extension base="netzob-common:IRPMessage">
+				<sequence>
+					<element name="ioctl" type="unsignedInt"></element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<element name="messages" type="netzob-common:Messages"></element>
 </schema>
