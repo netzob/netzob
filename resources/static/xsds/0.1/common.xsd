@@ -108,17 +108,6 @@
 		</complexContent>
 	</complexType>
 	
-	<complexType name="IRPMessage">
-		<complexContent>
-			<extension base="netzob-common:Message">
-				<sequence>
-					<element name="major_type" type="string"></element>
-					<element name="minor_type" type="string" minOccurs="0"></element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
 	<complexType name="RawMessage">
 		<complexContent>
 			<extension base="netzob-common:Message">
