@@ -149,8 +149,9 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   } else {
     bool_debugMode = FALSE;
   }
-
-  printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
+  if (debugMode) {
+    printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
+  }
   result.i = -1;
   result.j= -1;
   result.score = -1;
