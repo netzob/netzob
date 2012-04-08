@@ -232,9 +232,9 @@ class Menu(object):
         self.menuWorkspace.append(self.createProject)
 
         self.selectAProject = gtk.Menu()
-        selectAProjectRoot = gtk.MenuItem("Switch project")
-        selectAProjectRoot.set_submenu(self.selectAProject)
-        self.menuWorkspace.append(selectAProjectRoot)
+        self.selectAProjectRoot = gtk.MenuItem("Switch project")
+        self.selectAProjectRoot.set_submenu(self.selectAProject)
+        self.menuWorkspace.append(self.selectAProjectRoot)
 
         self.importProject = gtk.MenuItem("Import a project")
         self.importProject.connect("activate", self.importProjectAction)
@@ -281,11 +281,20 @@ class Menu(object):
         # Update the list of project
         for i in self.selectAProject.get_children():
             self.selectAProject.remove(i)
-        for project in self.netzob.getCurrentWorkspace().getProjects():
+            
+        availableProjects = self.netzob.getCurrentWorkspace().getProjects() 
+        for project in availableProjects :
             projectEntry = gtk.MenuItem(project.getName())
             projectEntry.connect("activate", self.switchProjectAction, project)
             self.selectAProject.append(projectEntry)
         self.selectAProject.show_all()
+        
+        # Deactivate the global 'switch menu' if no project is available
+        if len(availableProjects) == 0 :
+            self.selectAProjectRoot.set_sensitive(False)
+        else :
+            self.selectAProjectRoot.set_sensitive(True)
+        
 
     def update(self):
         self.updateWorkspaceMenu()
@@ -321,7 +330,7 @@ class Menu(object):
             fileName = chooser.get_filename()
         chooser.destroy()
 
-        if os.path.isfile( fileName ):
+        if os.path.isfile(fileName):
             idProject = str(uuid.uuid4())
             # First we verify and create if necessary the directory of the project
             projectPath = "projects/" + idProject + "/"
@@ -338,11 +347,11 @@ class Menu(object):
                 return None
 
             project = Project.loadProject(self.netzob.getCurrentWorkspace(), destPath)
-            project.setID( idProject )
-            project.setName( "Copy of " + project.getName() )
-            project.setPath( projectPath )
+            project.setID(idProject)
+            project.setName("Copy of " + project.getName())
+            project.setPath(projectPath)
             project.saveConfigFile(self.netzob.getCurrentWorkspace())
-            self.netzob.getCurrentWorkspace().referenceProject( project.getPath() )
+            self.netzob.getCurrentWorkspace().referenceProject(project.getPath())
             self.netzob.getCurrentWorkspace().saveConfigFile()
             NetzobInfoMessage("Project '" + project.getName() + "' correctly imported")
             self.update()
@@ -359,7 +368,7 @@ class Menu(object):
         chooser.destroy()
 
         doCreateFile = False
-        isFile = os.path.isfile( fileName )
+        isFile = os.path.isfile(fileName)
         if not isFile:
             doCreateFile = True
         else:
@@ -374,7 +383,7 @@ class Menu(object):
         if doCreateFile:
             root = self.netzob.getCurrentProject().generateXMLConfigFile()
             tree = ElementTree(root)
-            tree.write( fileName )
+            tree.write(fileName)
             NetzobInfoMessage("Project correctly exported to '" + fileName + "'")
 
     #+----------------------------------------------
