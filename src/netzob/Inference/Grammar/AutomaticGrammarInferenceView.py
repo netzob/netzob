@@ -31,23 +31,22 @@
 import logging
 import gtk
 import pygtk
+import gobject
+
+pygtk.require('2.0')
+
+#+---------------------------------------------------------------------------+
+#| Local Imports
+#+---------------------------------------------------------------------------+
 from netzob.Inference.Grammar.GrammarInferer import GrammarInferer
 from netzob.Inference.Grammar.EquivalenceOracles.WMethodNetworkEquivalenceOracle import WMethodNetworkEquivalenceOracle
 from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
 from netzob.Simulator.XDotWidget import XDotWidget
-import gobject
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 from netzob.Common.Threads.Job import Job
 from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
-
-pygtk.require('2.0')
-
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
-
 
 #+----------------------------------------------
 #| AutomaticGrammarInferenceView:
