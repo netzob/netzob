@@ -25,9 +25,9 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 import logging
 import gtk
 import pygtk
@@ -244,7 +244,8 @@ class AutomaticGrammarInferenceView(object):
 
     def callback_hypotheticalAutomaton(self, hypotheticalAutomaton):
         if hypotheticalAutomaton != None:
-            self.xdotWidget.set_dotcode(hypotheticalAutomaton.getDotCode())
+            self.computedAutomaton = hypotheticalAutomaton
+            self.xdotWidget.set_dotcode(self.computedAutomaton.getDotCode())
 
     def stopInference(self, button):
         self.finish = True
@@ -258,6 +259,7 @@ class AutomaticGrammarInferenceView(object):
 
     def saveGrammar(self, button):
         if self.computedAutomaton != None:
+            self.log.debug("Saving the computed automata as the grammar of current project")
             self.project.getGrammar().setAutomata(self.computedAutomaton)
             self.dialog.destroy()
 
