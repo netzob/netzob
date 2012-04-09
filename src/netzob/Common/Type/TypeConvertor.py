@@ -378,6 +378,36 @@ class TypeConvertor():
 
     @staticmethod
     #+----------------------------------------------
+    #| serializeScores :
+    #|     create a serialization view of the scores
+    #| @returns (format)
+    #+---------------------------------------------
+    def serializeScores(symbol, scores, symbols):
+        format = ""
+        iuid = symbol.getID()
+        if iuid in scores.keys():
+            for j in symbols:
+                juid = j.getID()
+                if juid in scores[iuid].keys():
+                    format += str(scores[iuid][juid]) + "S"
+        format += "E"
+        return format
+
+    @staticmethod
+    #+----------------------------------------------
+    #| serializeScores :
+    #|     create a serialization view of the scores
+    #| @returns (format)
+    #+---------------------------------------------
+    def deserializeScores(symbols,scores):
+        listScores = scores.split(";")
+        listScores.pop()
+        listScores = [i.split(",") for i in listScores]
+        listScores = [[symbols[int(i)].getID(), symbols[int(j)].getID(), float(score)] for (i, j, score) in listScores]
+        return listScores
+
+    @staticmethod
+    #+----------------------------------------------
     #| serializeMessages :
     #|     create a serialization view of the messages
     #| @returns (serialized, format)
@@ -458,11 +488,13 @@ class TypeConvertor():
     #|     create a serialization view of symbols
     #| @returns (serialized, format)
     #+----------------------------------------------
-    def serializeSymbols(symbols, unitSize):
+    def serializeSymbols(symbols, unitSize, scores):
         serialSymbols = ""
         formatSymbols = ""
         for symbol in symbols:
             (serialSymbol, formatSymbol) = TypeConvertor.serializeSymbol(symbol, unitSize)
+            formatScores = TypeConvertor.serializeScores(symbol, scores, symbols)
+            formatSymbols += formatScores
             serialSymbols += serialSymbol
             formatSymbols += formatSymbol
         return (serialSymbols, formatSymbols)

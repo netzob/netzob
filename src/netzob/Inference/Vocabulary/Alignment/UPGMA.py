@@ -50,7 +50,7 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 #+---------------------------------------------------------------------------+
 class UPGMA(object):
 
-    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, unitSize, cb_status=None):
+    def __init__(self, project, symbols, explodeSymbols, nbIteration, minEquivalence, doInternalSlick, defaultFormat, unitSize, cb_status=None, scores={}):
         self.project = project
         self.nbIteration = nbIteration
         self.minEquivalence = minEquivalence
@@ -59,7 +59,7 @@ class UPGMA(object):
         self.defaultFormat = defaultFormat
         self.unitSize = unitSize
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
-
+        self.scores = scores
         if explodeSymbols == False:
             self.symbols = symbols
 
@@ -152,11 +152,17 @@ class UPGMA(object):
         self.log.debug("Computing the associated matrix")
 
         # Serialize the symbols
-        (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize)
-
+        (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize, self.scores)
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
-        (i_max, j_max, maxScore) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
+        (i_max, j_max, maxScore, scores) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
+        listScores = TypeConvertor.deserializeScores(self.symbols,scores)
+        self.scores = {}
+        for (iuid,juid,score) in listScores:
+            if iuid not in self.scores.keys():
+                self.scores[iuid] = {}
+            self.scores[iuid][juid] = score
+            
         return (i_max, j_max, maxScore)
 
     #+----------------------------------------------
@@ -258,7 +264,15 @@ class UPGMA(object):
     #+-----------------------------------------------------------------------+
     def deserializeGroups(self, symbols):
         # First we serialize the messages
-        (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols, self.unitSize)
+        (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols, self.unitSize, self.scores)
 
         debug = False
         return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
+    
+    #+-----------------------------------------------------------------------+
+    #| getScores
+    #|     get the dictionary of scores
+    #+-----------------------------------------------------------------------+
+    def getScores(self):
+        return self.scores
+

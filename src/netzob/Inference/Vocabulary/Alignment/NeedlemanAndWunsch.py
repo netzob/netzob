@@ -54,6 +54,7 @@ class NeedlemanAndWunsch(object):
         self.cb_status = cb_status
         self.unitSize = unitSize
         self.result = []
+        self.scores = {}
 
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
@@ -133,7 +134,7 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def deserializeMessages(self, messages):
         # First we serialize the messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages)
+        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
 
         debug = False
         return _libNeedleman.deserializeMessages(len(messages), format, serialMessages, debug)
@@ -222,7 +223,8 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-
+        if len(symbol.getFields()) >= 100:
+            raise NetzobException("This Python version only supports 100 named groups in regex")
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
@@ -304,10 +306,11 @@ class NeedlemanAndWunsch(object):
             if len(symbol.getMessages()) > 1:  # If there is more than 1 message
                 clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
                 tmpSymbols.extend(clusteringSolution.executeClustering())
+                self.scores.update(clusteringSolution.getScores())
             else:
                 tmpSymbols.extend([symbol])
         if len(symbols) != 1:    
-            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status, scores=self.scores)
             self.result = clusteringSolution.executeClustering() 
         else:
             self.result = tmpSymbols        

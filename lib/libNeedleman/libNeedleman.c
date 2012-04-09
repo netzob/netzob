@@ -1,4 +1,3 @@
-
 // -*- coding: utf-8 -*-
 
 //+---------------------------------------------------------------------------+
@@ -125,7 +124,13 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
 
   groups.len = nbGroups;
   groups.groups = malloc(nbGroups*sizeof(t_group));
-
+  int i,j;
+  for(i=0; i<nbGroups-1; i++){
+    groups.groups[i].scores = malloc((nbGroups-i-1)*sizeof(float));
+    for(j=0;j<nbGroups-i-1;j++){
+      groups.groups[i].scores[j] = -1;
+    }
+  }
   //+------------------------------------------------------------------------+
   // Deserializes the provided arguments
   //+------------------------------------------------------------------------+
@@ -149,15 +154,24 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   } else {
     bool_debugMode = FALSE;
   }
-  if (debugMode) {
-    printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
-  }
+
+ // printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
   result.i = -1;
   result.j= -1;
   result.score = -1;
+  result.tag = malloc(((nbGroups*(nbGroups-1))/2)*sizeof(t_tag));
+  //printf("SIZE: %d\n",((nbGroups*(nbGroups-1))/2));
+  result.lengthTag = nbGroups*(nbGroups-1)/2;
+  char tagSerial[strlen("100.000000,100.000000,100.000000;")*result.lengthTag];
 
   getHighestEquivalentGroup(&result, doInternalSlick, nbGroups, &groups, debugMode);
 
+ // printf("Gethighest Done\n");
+
+  serializeTagResult(result,nbGroups,tagSerial);
+
+ // printf("SerialTag Done\n");
+  free(result.tag);
   if (debugMode) {
     printf("Group 1 i = %d\n", result.i);
     printf("Group 2 j = %d\n", result.j);
@@ -168,7 +182,7 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     printf("Impossible to compute the highest equivalent set of groups.");
   }
 
-  return Py_BuildValue("(iif)", result.i, result.j, result.score);
+  return Py_BuildValue("(iifs)", result.i, result.j, result.score,tagSerial);
 
 }
 void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroups, t_groups* groups, Bool debugMode) {
@@ -178,12 +192,13 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   float maxScore = -1.0f;
   int i_maximum = -1;
   int j_maximum = -1;
-
   // local variable
   int p = 0;
   double status = 0.0;
-  
-
+/*
+  Bool debugMode_copy = debugMode;
+  Bool doInternalSlick_copy = doInternalSlick;
+*/
   // First we fill the matrix with 0s
   if (callbackStatus(status, "Building the scoring matrix for %d groups", nbGroups) == -1) {
     printf("Error, error while executing C callback.\n");
@@ -200,82 +215,82 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   status = 2.0;
 
 
-  //  #pragma omp parallel for shared(t_groups, nbGroups, matrix)
+    #pragma omp parallel for shared(result,groups, nbGroups, matrix,debugMode,doInternalSlick,maxScore,i_maximum,j_maximum) private(i,p)
     for (i = 0; i < nbGroups; i++) {
       p = 0;
-
+  //   #pragma omp for nowait 
       for (p = 0; p < nbGroups; p++) {
 		  //status += sizeSteps;
         if (i < p) {
-          int m, n;
-          t_group p_group;
-          t_regex regex;
-			 t_regex regex1;
-          t_regex regex2;
-          t_score score;
+          if(groups->groups[i].scores[p-i-1]==-1){//Check if the score has been allready computed 
+            int m, n;
+            t_group p_group;
+            t_regex regex;
+  	    t_regex regex1;
+            t_regex regex2;
+            t_score score;
+            score.s1 = 0;
+            score.s2 = 0;
+            score.s3 = 0;
+            regex.score = &score;
+            p_group.len = groups->groups[i].len + groups->groups[p].len;
+            p_group.messages = malloc(p_group.len * sizeof(t_message));
+            for (m = 0; m < groups->groups[i].len; ++m) {
+              p_group.messages[m] = groups->groups[i].messages[m];
+            }
+            for (m = m, n = 0; n < groups->groups[p].len; ++m, ++n) {
+              p_group.messages[m] = groups->groups[p].messages[n];
+            }
+            // Align the messages of the current group
+            regex1.len = p_group.messages[0].len;
+            regex1.regex = p_group.messages[0].message;
+            regex1.mask = p_group.messages[0].mask;
 
-          score.s1 = 0;
-          score.s2 = 0;
-          score.s3 = 0;
-          regex.score = &score;
-          
-          p_group.len = groups->groups[i].len + groups->groups[p].len;
-          p_group.messages = malloc(p_group.len * sizeof(t_message));
-          for (m = 0; m < groups->groups[i].len; ++m) {
-            p_group.messages[m] = groups->groups[i].messages[m];
+            for (m = 1; m < p_group.len; ++m) {
+              regex2.len = p_group.messages[m].len;
+              regex2.regex = p_group.messages[m].message;
+              regex2.mask = p_group.messages[m].mask;
+              alignTwoMessages(&regex, doInternalSlick, &regex1, &regex2, debugMode);
+              regex1.len = regex.len;
+              regex1.mask = regex.mask;
+              regex1.regex = regex.regex;
+            }
+	    {
+              matrix[i][p] = computeDistance(regex.score);
+	    }
+            free( regex.regex );
+            free( regex.mask );
+            free( p_group.messages );
+	  }
+	  else{
+            matrix[i][p] = groups->groups[i].scores[p-i-1];// Put the score allready computed
           }
-          for (m = m, n = 0; n < groups->groups[p].len; ++m, ++n) {
-            p_group.messages[m] = groups->groups[p].messages[n];
+
+          if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
+                maxScore = matrix[i][p];
+                i_maximum = i;
+                j_maximum = p;
           }
-
-          // Align the messages of the current group
-          regex1.len = p_group.messages[0].len;
-          regex1.regex = p_group.messages[0].message;
-          regex1.mask = p_group.messages[0].mask;
-
-          for (m = 1; m < p_group.len; ++m) {
-            regex2.len = p_group.messages[m].len;
-            regex2.regex = p_group.messages[m].message;
-            regex2.mask = p_group.messages[m].mask;
-
-            alignTwoMessages(&regex, doInternalSlick, &regex1, &regex2, debugMode);
-
-            regex1.len = regex.len;
-            regex1.mask = regex.mask;
-            regex1.regex = regex.regex;
-          }
-          //                              omp_set_lock(&my_lock);
-          matrix[i][p] = computeDistance(regex.score);
-          //                              omp_unset_lock(&my_lock);
+ 
+	  //Record the scores for the next time
+          (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
+          (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
+	  (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).score = matrix[i][p];
 	  if (debugMode) {
 	    printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
 	  }
-
-          free( regex.regex );
-          free( regex.mask );
-          free( p_group.messages );
         }
       }
     }
-
-    for (i = 0; i < nbGroups; ++i) {
-      for (j = 0; j < nbGroups; ++j) {
-        if (i != j && ((maxScore < matrix[i][j]) || (maxScore == -1))) {
-          maxScore = matrix[i][j];
-          i_maximum = i;
-          j_maximum = j;
-        }
-      }
-    }
-
     // Room service
     for (i = 0; i < nbGroups; i++) {
       free( matrix[i] );
     }
     free( matrix );
-
     for (i = 0; i < nbGroups; ++i) {
       free( groups->groups[i].messages );
+      if(i < nbGroups-1){
+          free(groups->groups[i].scores);}
     }
     free( groups->groups );
     
@@ -766,9 +781,9 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     printf("Message 1 : ");
     for( i = 0; i < regex1->len + regex2->len; i++) {
       if(maskRegex1[i] == EQUAL ) {
-        printf("%2x", (unsigned char) contentRegex1[i]);
+        printf("%02x", (unsigned char) contentRegex1[i]);
       } else if ( maskRegex2[i] == END ) {
-	//        printf("#");
+        printf("##");
       } else {
         printf("--");
       }
@@ -777,9 +792,9 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     printf("Message 2 : ");
     for( i = 0; i < regex1->len + regex2->len; i++) {
       if( maskRegex2[i] == EQUAL ) {
-        printf("%2x", (unsigned char) contentRegex2[i]);
+        printf("%02x", (unsigned char) contentRegex2[i]);
       } else if ( maskRegex2[i] == END ) {
-	//        printf("#");
+        printf("##");
       } else {
         printf("--");
       }
@@ -807,7 +822,6 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
       regexTmp[i] = 0xf5;
       regexMaskTmp[i] = DIFFERENT;
 
-      // Compute score of common dynamic elements
       nbDynTotal += 1;
       if ((maskRegex1[i] == EQUAL) && (maskRegex2[i] == EQUAL)) {
 	nbDynCommon += 1;
@@ -845,14 +859,14 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   memcpy(regex->mask, regexMaskTmp + i, regex->len);
 
 
-  // Print the common alignment
+  // Compute the scores of similarity, using the regex
   if (debugMode) {
     printf("Result    : ");
     for( i = 0; i < regex->len; i++) {
       if(regex->mask[i] == EQUAL ) {
-        printf("%2x", (unsigned char) regex->regex[i]);
+        printf("%02x", (unsigned char) regex->regex[i]);
       } else if ( regex->mask[i] == END ) {
-        printf("#");
+        printf("##");
       } else {
         printf("--");
       }
@@ -914,14 +928,23 @@ float getScoreRatio(t_regex * regex) {
   }
   if (inDyn == TRUE)
     nbDynamic = nbDynamic + 1.0f;
-
+  if(nbStatic == 0){
+    result = 0;
+  }
+  else {
   result = 100.0 / (nbStatic + nbDynamic) * nbStatic;
+  }
   return result;
 }
 float getScoreDynSize(unsigned int nbDynTotal, unsigned int nbDynCommon) {
   // Compute score of common dynamic elements
   float result = 0;
-  result = 100.0 / nbDynTotal * nbDynCommon;
+  if(nbDynTotal == 0) {
+    result = 100;
+  }
+  else {
+    result = (100.0 - 1) / nbDynTotal * nbDynCommon;
+  }
   return result;
 }
 float getScoreRang(t_regex * regex) {
@@ -931,7 +954,7 @@ float getScoreRang(t_regex * regex) {
 }
 float computeDistance(t_score * score) {
   float result = 0;
-  result = sqrt(pow(score->s1,2) + pow(score->s2,2) + pow(score->s3,2));
+  result = sqrt(0.60 * pow(score->s1,2) + 0.40 * pow(score->s2,2) + 0 * pow(score->s3,2));
   return result;
 }
   
@@ -1081,20 +1104,44 @@ static PyObject* py_deserializeGroups(PyObject* self, PyObject* args) {
 
 unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int sizeFormat, unsigned char * serialGroups, int nbGroups, int sizeSerialGroups, Bool debugMode) {
   int i_group = 0;
+  int j_group = 0;
   int l = 0;
   unsigned char * p;
   unsigned char *q;
+  unsigned char *r;
+  unsigned char *s;
   unsigned short int format_shift = 0;
   unsigned int len_size_group = 0;
   unsigned int len_size_message = 0;
+  unsigned int len_score_group = 0;
   unsigned int size_group = 0;
   unsigned int size_message = 0;
   unsigned char * size_group_str;
   unsigned char * size_message_str;
+  unsigned char * score_group;
   int i_message = 0;
 
-
   for (i_group = 0; i_group <nbGroups; i_group++)  {
+    //Retrieve the precompiled scores
+    s = strchr(format + format_shift, 'E');
+    if (s != NULL){ // Used for compatibility between version
+      for (j_group = i_group + 1; j_group < nbGroups ; j_group ++){
+        r = strchr(format + format_shift, 'S');
+        if (r!=NULL && (int) (s - r) > 0){
+          len_score_group = (unsigned int) (r - (format + format_shift));
+          score_group = malloc((len_score_group + 1) * sizeof(unsigned char));
+          memcpy(score_group, format + format_shift, len_score_group);
+          score_group[len_score_group]='\0';
+          groups->groups[i_group].scores[j_group-(i_group+1)] = atof(score_group);
+          format_shift += len_score_group + 1;
+          free(score_group);
+        }
+        else{
+          break;
+        }
+      }
+    format_shift += 1; // FOR LETTER 'E'*/
+    }
     // retrieve the number of messages in the current group
     p = strchr(format + format_shift, 'G');
     len_size_group = (unsigned int) (p - (format + format_shift));
@@ -1130,6 +1177,37 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
   }
   return i_group;
 }
+// Serialize the scores between messages
+void serializeTagResult(t_equivalentGroup result,unsigned int nbGroups,char * serial){
+    int i;
+    char sInt[11];
+    char tagser[strlen("100.000000,100.000000,100.000000;")];
+    
+    for(i = 0; i < result.lengthTag; i++){
+        sprintf(sInt,"%d",result.tag[i].i); // i
+        sprintf(tagser,"%s",sInt);
+        strcat(tagser,",");
+        sprintf(sInt,"%d",result.tag[i].j); // j
+        strcat(tagser,sInt);
+        strcat(tagser,",");
+        sprintf(sInt,"%f",result.tag[i].score); // score
+        strcat(tagser,sInt);
+        strcat(tagser,";");
+        if( i == 0){
+        sprintf(serial,"%s",tagser);
+        }
+        else{
+        strcat(serial,tagser);
+        }
+    }
+}
+
+
+
+
+
+
+
 
 
 #define OPL 64
