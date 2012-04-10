@@ -87,12 +87,17 @@ def verifyResults(results) :
         resultFile = results[file]
         if len(resultFile) > 0 :
             print "[I] File %s :" % (file)
-            for ruleName in resultFile.keys() :
+            ruleNames = resultFile.keys()
+            localResult = 0
+            for ruleName in ruleNames :
                 ruleErrors = resultFile[ruleName]
-                for ruleError in ruleErrors :
-                    print "[I]\t %s : %s" % (ruleName, ruleError)
-
-            result = 1
+                if ruleErrors != None and len(ruleErrors) > 0 :
+                    for ruleError in ruleErrors :
+                        print "[E]\t %s : %s" % (ruleName, ruleError)
+                    result = 1
+                    localResult = 1
+            if localResult == 0 :
+                print "[I]\t no error found."            
     return result
 
 
