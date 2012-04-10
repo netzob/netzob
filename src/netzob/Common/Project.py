@@ -86,7 +86,8 @@ def loadProject_0_1(projectFile):
     # Parse the grammar
     if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") != None:
         projectGrammar = Grammar.loadGrammar(xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar"), projectVocabulary, PROJECT_NAMESPACE, "0.1")
-        project.setGrammar(projectGrammar)
+        if projectGrammar != None :
+            project.setGrammar(projectGrammar)
 
     return project
 
