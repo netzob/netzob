@@ -1536,6 +1536,7 @@ class UImodelization:
                     self.log.warning("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message))
                     return
                 message_symbol.removeMessage(message)
+                self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
         self.update()
 
     #+----------------------------------------------
@@ -2086,8 +2087,10 @@ class UImodelization:
         result = md.run()
         md.destroy()
         if result == gtk.RESPONSE_YES:
-	    while(symbol.getMessages()):
-		symbol.removeMessage(symbol.getMessages()[0])    
+            while(symbol.getMessages()):
+                message = symbol.getMessages()[0]
+                symbol.removeMessage(message)
+                self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
             self.netzob.getCurrentProject().getVocabulary().removeSymbol(symbol)
             #Update Left and Right
             self.update()

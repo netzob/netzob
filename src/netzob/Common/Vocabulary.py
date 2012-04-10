@@ -144,6 +144,9 @@ class Vocabulary(object):
     def removeSession(self, session):
         self.sessions.remove(session)
 
+    def removeMessage(self, message):
+        self.messages.remove(message)
+ 
     def getVariables(self):
         variables = []
         for symbol in self.symbols:
