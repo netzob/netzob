@@ -47,6 +47,7 @@ CMD_CLASS = {
              'build_manpage': manpage_command
              }
 
+
 #+---------------------------------------------------------------------------+
 #| find_packages
 #|     Retrieves all the packages (directories) with basename = base and
@@ -62,12 +63,12 @@ def find_packages(directory, base):
         full_path = os.path.join(base, path)
         if os.path.isdir(os.path.join(directory, full_path)):
             ret += find_packages(directory, full_path)
-            
+
     # transforms directories in packages names ('/' -> '.')
     result = []
     for r in ret:
         result.append(r.replace('/', '.'))
-        
+
     return result
 
 #+----------------------------------------------------------------------------
@@ -76,7 +77,7 @@ def find_packages(directory, base):
 setup(
     name=release.name,
     packages=find_packages('src/', 'netzob'),
-    package_dir={"netzob": "src/netzob" },
+    package_dir={"netzob": "src/netzob"},
     ext_modules=[moduleLibNeedleman],
     data_files=[
         ('share/netzob', ['resources/static/logo.png']),
