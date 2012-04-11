@@ -67,7 +67,7 @@ class UnknownSymbol(AbstractSymbol):
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
-        return 0
+        return "UnknownSymbol"
 
     def getEntry(self):
         return None

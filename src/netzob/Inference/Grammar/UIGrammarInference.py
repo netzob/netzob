@@ -49,6 +49,7 @@ from netzob.Common.Grammar import Grammar
 from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 
 #+---------------------------------------------------------------------------+
@@ -398,6 +399,8 @@ class UIGrammarInference:
 
         for symbol in symbols:
             inputSymbolCombo.get_model().append([symbol.getName(), str(symbol.getID())])
+        inputSymbolCombo.get_model().append(["EmptySymbol", "-1"])
+        inputSymbolCombo.get_model().append(["UnknownSymbol", "-2"])
         inputSymbolCombo.show()
 
         mainTable.attach(inputSymbolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -417,6 +420,7 @@ class UIGrammarInference:
         outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 1)
 
         outputSymbolCombo.get_model().append(["EmptySymbol", "EmptySymbol", ""])
+        outputSymbolCombo.get_model().append(["UnknownSymbol", "UnknownSymbol", ""])
         for symbol in symbols:
             outputSymbolCombo.get_model().append([symbol.getType(), symbol.getName(), str(symbol.getID())])
         outputSymbolCombo.show()
@@ -491,16 +495,20 @@ class UIGrammarInference:
             return None
 
         inputEntryID = inputSymbolCombo.get_model()[inputSymbolCombo.get_active()][1]
-        inputEntry = None
-        for symbol in symbols:
-            if str(symbol.getID()) == inputEntryID:
-                inputEntry = symbol
-
-        if inputEntry == None:
-            self.log.warn("Impossible to retrieve the selected input dictionary entry")
-            dialog.destroy()
-            return
-        inputSymbol = DictionarySymbol(inputEntry)
+        if inputEntryID == "-1":
+            inputSymbol = EmptySymbol()
+        elif inputEntryID == "-2":
+            inputSymbol = UnknownSymbol()
+        else:
+            inputEntry = None
+            for symbol in symbols:
+                if str(symbol.getID()) == inputEntryID:
+                    inputEntry = symbol
+            if inputEntry == None:
+                self.log.warn("Impossible to retrieve the selected input dictionary entry")
+                dialog.destroy()
+                return
+            inputSymbol = DictionarySymbol(inputEntry)
 
         # retrieve the output symbols
         outputSymbols = []  # [[symbol, proba, time], ...]
@@ -542,6 +550,10 @@ class UIGrammarInference:
             entryTime = outputTimeEntry.get_text()
             entryProba = outputProbabilityEntry.get_text()
             outputSymbolsTreeStore.append(None, [EmptySymbol.TYPE, "none", "EmptySymbol", entryTime, entryProba])
+        elif entryType == UnknownSymbol.TYPE:
+            entryTime = outputTimeEntry.get_text()
+            entryProba = outputProbabilityEntry.get_text()
+            outputSymbolsTreeStore.append(None, [UnknownSymbol.TYPE, "none", "UnknownSymbol", entryTime, entryProba])
         else:
             entryID = outputSymbolCombo.get_model()[outputSymbolCombo.get_active()][2]
             entryTime = outputTimeEntry.get_text()
