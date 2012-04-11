@@ -114,7 +114,7 @@ class UIGrammarInference:
         self.grammarAutomaticInferenceButton.show()
         self.grammarAutomaticInferenceButton.set_sensitive(True)
         leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
+
         # Add the button to abstract the current grammar
         self.grammarAbstractionButton = gtk.Button("Abstract current grammar")
         self.grammarAbstractionButton.connect("clicked", self.showAbstractionPanel)
