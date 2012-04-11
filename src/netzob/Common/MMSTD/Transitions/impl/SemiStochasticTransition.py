@@ -193,7 +193,7 @@ class SemiStochasticTransition(AbstractTransition):
         xmlEndState.text = str(self.getOutputState().getID())
 
         xmlInput = etree.SubElement(xmlTransition, "{" + namespace + "}input")
-        xmlInput.set("symbol", self.getInputSymbol().getID())
+        xmlInput.set("symbol", str(self.getInputSymbol().getID()))
 
         xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols:

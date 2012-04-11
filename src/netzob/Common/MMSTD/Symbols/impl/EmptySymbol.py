@@ -67,7 +67,7 @@ class EmptySymbol(AbstractSymbol):
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
     def getID(self):
-        return 0
+        return "EmptySymbol"
 
     def getEntry(self):
         return None

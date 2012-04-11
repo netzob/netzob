@@ -87,22 +87,24 @@ class Vocabulary(object):
         for symbol in self.symbols:
             if symbol.getID() == symbolID:
                 return symbol
-        # Exceptions : if ID = 0, we return an EmptySymbol
-        if symbolID == str(0):
+        # Exceptions : if ID = "EmptySymbol", we return an EmptySymbol
+        if symbolID == str("EmptySymbol"):
             return EmptySymbol()
+        # Exceptions : if ID = "UnknownSymbol", we return an UnknownSymbol
+        if symbolID == str("UnknownSymbol"):
+            return UnknownSymbol()
         return None
 
     def getSymbolByName(self, symbolName):
-        for symbol in self.symbols :
-            if symbol.getName() == symbolName :
+        for symbol in self.symbols:
+            if symbol.getName() == symbolName:
                 return symbol
             # Exceptions : if name = "EmptySymbol", we return an EmptySymbol
-            if symbolName == EmptySymbol.TYPE :
+            if symbolName == EmptySymbol.TYPE:
                 return EmptySymbol()
             # Exceptions : if name = "UnkownSymbol", we return an UnknownSymbol
-            if symbolName == UnknownSymbol.TYPE :
+            if symbolName == UnknownSymbol.TYPE:
                 return UnknownSymbol()
-        
         return None
 
     def getSession(self, sessionID):
