@@ -54,25 +54,54 @@ class AutomaticGrammarAbstractionView(object):
         self.log = logging.getLogger('netzob.Inference.Grammar.AutomaticGrammarAbstractionView.py')
         self.project = project
 
-
     def display(self):
         # Display the form for the creation of a word variable
         self.dialog = gtk.Dialog(title="Automatic abstraction of the current grammar", flags=0, buttons=None)
 
         mainTable = gtk.Table(rows=2, columns=2, homogeneous=False)
-        
         # Insert the Save button
         self.startButton = gtk.Button("Start the abstraction")
         self.startButton.show()
         self.startButton.connect("clicked", self.startAbstraction)
         mainTable.attach(self.startButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
-        
+
     def startAbstraction(self, button):
         self.log.debug("Start the abstraction")
         
+        # Retrieve available sequences
+        sessions = self.project.getVocabulary().getSessions()
+        self.log.debug("A number of %d sessions will be injected in the grammar" % (len(sessions)))
         
+        for session in sessions :
+            self.log.debug("Search for a difference with a new session")
+            # We apply the session on current automata and find an output symbol to include
+            difference = self.applySession(session)
+            while difference != None :
+                (transition, outputSymbol) = difference
+                self.log.debug("A difference has been found, symbol %s must be added to transition %s" % (outputSymbol.getName(), transition.getName()))
+                self.addOutputSymbolOnTransition(outputSymbol, transition)
+                difference = self.applySession(session)
+            self.log.debug("The current session does not introduce other differences")
         
+        self.log.debug("All the sessions have been applied on current automata")
+        
+    def addOutputSymbolOnTransition(self, symbol, transition):
+        pass    
+    
+    def applySession(self, session):
+        # retrieve the automata
+        automata = self.project.getGrammar().getAutomata()
+        if automata == None :
+            self.log.warn("Cannot apply a session on the current automata because it doesn't exist")
+            return None
+        
+        difference = None
+        
+        return difference            
+                
+                
+            
+            
         
