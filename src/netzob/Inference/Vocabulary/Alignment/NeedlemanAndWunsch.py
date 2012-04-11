@@ -286,9 +286,6 @@ class NeedlemanAndWunsch(object):
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
 
-        # excluded symbols from the alignment
-        excludedSymbols = []
-
 ################################
 #        # We try to cluster each symbol
 #        tmpEqu = symbols[0].getMinEqu()
@@ -311,25 +308,23 @@ class NeedlemanAndWunsch(object):
 #            self.result = symbols
 ################################
 
+        listEqu = []  # list of thresholds recorded
         emptySymbols = []  # list of all empty symbols
          # We try to cluster each symbol
         for symbol in symbols:
-            if len(symbol.getMessages()) <= 0:
-                excludedSymbols.append(symbol)
-            elif len(symbol.getMessages()) == 1:
-                tmpSymbols.extend([symbol])
-            else:
+            if len(symbol.getMessages()) > 1 and symbol.getMinEqu() < minEquivalence:  # If there is more than 1 message and
+                                                                                       # if the requested threshold is higher (we want to split the current cluster)
                 clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
                 tmpSymbols.extend(clusteringSolution.executeClustering())
                 self.scores.update(clusteringSolution.getScores())
-
-        if len(symbols) != 1:
-            elif len(symbol.getMessages()) > 0:  # if the symbol is not empty
+                listEqu.append(minEquivalence)
+            elif len(symbol.getMessages()) > 0:
+                listEqu.append(symbol.getMinEqu())
                 tmpSymbols.extend([symbol])
-            else:                                # if the symbol is empty
+            else:
                 emptySymbols.append(symbol)
 
-        if len(symbols) > 1:
+        if len(tmpSymbols) > 1 and max(listEqu) >= minEquivalence:  # If the requested threshold is lower than the highest threshold recorded, then we can try to merge symbols
             clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status, scores=self.scores)
             self.result = clusteringSolution.executeClustering()
         else:
@@ -337,9 +332,7 @@ class NeedlemanAndWunsch(object):
 
         if doOrphanReduction:
             self.result = clusteringSolution.executeOrphanReduction()
-
         self.result.extend(preResults)
-        self.result.extend(excludedSymbols)
         self.result.extend(emptySymbols)  # Add the empty symbols (To discuss: can we delete them before?)
         logging.info("Time of parsing : " + str(time.time() - t1))
 
