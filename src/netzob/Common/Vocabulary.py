@@ -148,7 +148,7 @@ class Vocabulary(object):
 
     def removeMessage(self, message):
         self.messages.remove(message)
- 
+
     def getVariables(self):
         variables = []
         for symbol in self.symbols:
