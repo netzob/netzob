@@ -157,23 +157,25 @@ class WordVariable(Variable):
     def compare(self, value, indice, negative, vocabulary, memory):
         localValue = self.getValue(negative, vocabulary, memory)
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
-        if localValue == None:
-            self.log.debug("We compare the format (will we be able to learn it afterwards ?")
-            return self.compareFormat(value, indice, negative, vocabulary, memory)
-        else:
-            (binVal, strVal) = localValue
-            self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + strVal + "' ")
-            tmp = value[indice:]
-            if len(tmp) >= len(binVal):
-                if tmp[:len(binVal)] == binVal:
-                    self.log.info("Compare successful")
-                    return indice + len(binVal)
-                else:
-                    self.log.info("error in the comparison")
-                    return -1
-            else:
-                self.log.info("Compare fail")
-                return -1
+#        if localValue == None:
+        self.log.debug("We compare the format (will we be able to learn it afterwards ?")
+        return self.compareFormat(value, indice, negative, vocabulary, memory)
+#        else:
+#            (binVal, strVal) = localValue
+#            self.log.info("Compare received : '" + str(value[indice:]) + "' with '" + strVal + "' ")
+#            tmp = value[indice:]
+#            if len(tmp) >= len(binVal):
+#                self.log.info("Compare %s with %s" % (tmp[:len(binVal)], binVal))
+#
+#                if tmp[:len(binVal)] == binVal:
+#                    self.log.info("Compare successful")
+#                    return indice + len(binVal)
+#                else:
+#                    self.log.info("error in the comparison")
+#                    return -1
+#            else:
+#                self.log.info("Compare fail")
+#                return -1
     #+-----------------------------------------------------------------------+
     #| compareFormat :
     #|     Compute if the provided data is "format-compliant"
@@ -192,7 +194,7 @@ class WordVariable(Variable):
                 typeIdentifier = TypeIdentifier()
                 if typeIdentifier.isAscii(strVal) :
                     self.log.debug("Its an ascii : (" + str(strVal) + ")")
-                    if (not ' ' in strVal) :
+                    if (not ' ' in strVal and not '\n' in strVal and not '\r' in strVal) :
                         self.log.debug("Its an ascii without space : (" + str(strVal) + ")")
                         self.log.debug("Binary value of the ascii  : %s" % str(TypeConvertor.strBitarray2Bitarray(subValue)))
                         return indice + i - 1
