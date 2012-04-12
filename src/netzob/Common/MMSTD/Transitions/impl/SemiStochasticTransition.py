@@ -173,7 +173,7 @@ class SemiStochasticTransition(AbstractTransition):
 
         abstractionLayer.writeSymbol(self.inputSymbol)
         while (not finish):
-            (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(-1)
+            (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(5)
             if receivedSymbol == None:
                 self.log.info("Message received = NONE ")
                 finish = True
