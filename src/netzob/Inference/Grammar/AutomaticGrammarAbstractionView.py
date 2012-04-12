@@ -32,6 +32,10 @@ import logging
 import gtk
 import pygtk
 import gobject
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
 
 pygtk.require('2.0')
 
@@ -40,15 +44,15 @@ pygtk.require('2.0')
 #+---------------------------------------------------------------------------+
 
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| AutomaticGrammarAbstractionView:
 #|     Class to show the wizard and to abstract the current gramar
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 class AutomaticGrammarAbstractionView(object):
 
-    #+----------------------------------------------
+    #+-----------------------------------------------------------------------+
     #| Constructor:
-    #+----------------------------------------------
+    #+-----------------------------------------------------------------------+
     def __init__(self, project):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Grammar.AutomaticGrammarAbstractionView.py')
@@ -69,39 +73,113 @@ class AutomaticGrammarAbstractionView(object):
 
     def startAbstraction(self, button):
         self.log.debug("Start the abstraction")
-        
+
         # Retrieve available sequences
         sessions = self.project.getVocabulary().getSessions()
         self.log.debug("A number of %d sessions will be injected in the grammar" % (len(sessions)))
-        
-        for session in sessions :
+
+        for session in sessions:
             self.log.debug("Search for a difference with a new session")
+
             # We apply the session on current automata and find an output symbol to include
             difference = self.applySession(session)
-            while difference != None :
+            while difference != None:
                 (transition, outputSymbol) = difference
                 self.log.debug("A difference has been found, symbol %s must be added to transition %s" % (outputSymbol.getName(), transition.getName()))
                 self.addOutputSymbolOnTransition(outputSymbol, transition)
+#                return
                 difference = self.applySession(session)
+
             self.log.debug("The current session does not introduce other differences")
-        
         self.log.debug("All the sessions have been applied on current automata")
-        
+
     def addOutputSymbolOnTransition(self, symbol, transition):
-        pass    
-    
+        self.log.debug("Adding symbol %s as an output transition %s." % (symbol.getName(), transition.getName()))
+        # Adding symbol as an output symbol of the provided transition
+        # to do so, we have to ;
+        #   - find out all current existing symbols in the transition
+        #   - add the current symbol
+        #   - put a static probability (will be computed in another step)
+
+        outputSymbolDefs = transition.getOutputSymbols()
+        numberOfExistingSymbols = len(outputSymbolDefs) + 1
+        new_probability = 100.0 / numberOfExistingSymbols
+        transition.addOutputSymbol(symbol, 0, 100)
+
+        # Update probabilities
+        for (symbol, proba, time) in transition.getOutputSymbols() :
+            transition.setProbabilityForOutputSymbol(symbol, new_probability)
+
     def applySession(self, session):
         # retrieve the automata
         automata = self.project.getGrammar().getAutomata()
-        if automata == None :
+
+        self.log.debug("automata : %s" % automata.getDotCode())
+
+        if automata == None:
             self.log.warn("Cannot apply a session on the current automata because it doesn't exist")
             return None
-        
+
         difference = None
-        
-        return difference            
-                
-                
-            
-            
-        
+
+        # Configure the role-play environment
+        # with :
+        #  - a memory
+        memory = Memory(None)
+        #  - an abstraction layer
+        abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
+
+        currentState = automata.getInitialState()
+        # We execute the opening transition
+        if len(currentState.getTransitions()) == 1 and currentState.getTransitions()[0].getType() == OpenChannelTransition.TYPE :
+            currentState = currentState.getTransitions()[0].getOutputState()
+
+
+        isInput = True
+        for message in session.getMessages():
+            self.log.debug("Inject message : %s" % (message.getData()))
+            # we abstract the message
+            symbol = abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData())))
+            if isInput :
+                # We simulate the reception of the message
+                #  - verify its a valid input symbol
+                #  - find out the associated transition
+                currentTransition = None
+                for transition in currentState.getTransitions():
+                    if transition.getInputSymbol() == symbol :
+                        currentTransition = transition
+                        break
+                if currentTransition == None :
+                    self.log.warn("Input symbol %s doesn't match any existing transition in current state %s" % (symbol.getName(), currentState.getName()))
+                    self.log.warn("We forget this message.")
+                else :
+                    self.log.debug("Input symbol %s matchs the transition %s from state %s" % (symbol.getName(), currentTransition.getName(), currentState.getName()))
+                    isInput = False
+            else :
+                # We simulate emiting the message
+                #  - we just verify the symbol matches available output message in current transition
+                found = False
+                for (outputSymbol, probability, time) in currentTransition.getOutputSymbols() :
+                    if symbol.getID() == outputSymbol.getID() :
+                        found = True
+                        isInput = True
+                        currentState = currentTransition.getOutputState()
+                        break
+
+                if not found :
+                    self.log.info("A difference has been found, symbol %s is not an output symbol of transition %s " % (symbol.getName(), currentTransition.getName()))
+                    return (currentTransition, symbol)
+        return difference
+
+    def displaySession(self, session):
+        memory = Memory(None)
+        #  - an abstraction layer
+        abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
+        symbols = []
+        for message in session.getMessages() :
+            symbols.append(abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData()))))
+
+        for symbol in symbols:
+            self.log.debug("- %s" % symbol.getName())
+
+
