@@ -284,6 +284,7 @@ class NetworkServer(AbstractActor):
         self.protocol = protocol
         self.server = None
         self.instantiatedServers = []
+        self.allowMultipleClients = True
 
     def openServer(self, vocabulary, initialState, master, cb_whenAClientConnects, cb_whenAClientDisconnects, cb_registerInputSymbol, cb_registerOutputSymbol):
         # Instantiates the server
@@ -319,7 +320,7 @@ class NetworkServer(AbstractActor):
             self.server.setVocabulary(vocabulary)
             self.server.setInitialState(initialState)
             self.server.setMaster(master)
-            self.server.setMultipleConnectionIsAllowed(True)
+            self.server.setMultipleConnectionIsAllowed(self.allowMultipleClients)
             self.server_thread = threading.Thread(target=self.server.serve_forever)
             self.server_thread.daemon = True
             self.log.info("Start the server")
@@ -333,14 +334,6 @@ class NetworkServer(AbstractActor):
         self.server.server_close()
         self.server.shutdown()
 
-#        
-#        # verify it has stopped
-#        finish = not self.server_thread.is_alive()
-#        while not finish :
-#            self.log.warn("The thread hosting the server hasn't finished")
-#            time.sleep(1)
-#            finish = not self.server_thread.is_alive()
-#            
         self.log.info("The thread which hosts the server has finished")
 
         self.log.info("The server has been shutted down")
@@ -353,6 +346,9 @@ class NetworkServer(AbstractActor):
 
     def getMemory(self):
         return []
+
+    def setAllowMultipleClients(self, allowMultipleClients):
+        self.allowMultipleClients = allowMultipleClients
 
     def getGeneratedInstances(self):
         if self.server == None:
