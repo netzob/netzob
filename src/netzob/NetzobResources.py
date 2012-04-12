@@ -24,11 +24,14 @@
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
+import os.path
+import sys
 
 #+---------------------------------------------------------------------------+
 #| Establishes the path for static resources
 #+---------------------------------------------------------------------------+
-STATIC_DIR = "resources/static"
+STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob")
+LOCAL_STATIC_DIR = "./resources/static"
 
 #+---------------------------------------------------------------------------+
 #| Establishes the path for workspace resources (only used by testing)

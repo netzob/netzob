@@ -121,10 +121,15 @@ class ResourcesConfiguration(object):
         staticPath = NetzobResources.STATIC_DIR
         if staticPath == "":
             return None
+        localStaticPath = NetzobResources.LOCAL_STATIC_DIR
+        if localStaticPath == "":
+            return None
 
         logging.debug("Static path declared : " + staticPath)
         if (os.path.isdir(staticPath)):
             return staticPath
+        elif (os.path.isdir(localStaticPath)):
+            return localStaticPath
 
         return None
 
@@ -171,7 +176,10 @@ class ResourcesConfiguration(object):
 
     @staticmethod
     def getStaticResources():
-        return NetzobResources.STATIC_DIR
+        if (os.path.isdir(NetzobResources.STATIC_DIR)):
+            return NetzobResources.STATIC_DIR
+        elif (os.path.isdir(NetzobResources.LOCAL_STATIC_DIR)):
+            return NetzobResources.LOCAL_STATIC_DIR
 
     @staticmethod
     def getWorkspaceFile():
