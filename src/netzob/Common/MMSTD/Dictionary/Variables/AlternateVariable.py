@@ -91,15 +91,16 @@ class AlternateVariable(Variable):
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
         self.log.info("getValueToSend")
-
+        """
         for var in self.vars:
             if var.getValue(negative, vocabulary, memory) != None:
                 return var.getValueToSend(negative, vocabulary, memory)
         return None
-#
-#        idRandom = random.randint(0, len(self.vars) - 1)
-#        picked = self.vars[idRandom]
-#        return picked.getValueToSend(negative, vocabulary, memory)
+        """
+
+        idRandom = random.randint(0, len(self.vars) - 1)
+        picked = self.vars[idRandom]
+        return picked.getValueToSend(negative, vocabulary, memory)
 
     #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
