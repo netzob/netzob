@@ -54,17 +54,17 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 #| a word is an ASCII set of characters (a-zA-Z)(a-zA-Z)*
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
-    
+
     # OriginalValue : must be an ASCII word
     def __init__(self, id, name, originalValue):
         Variable.__init__(self, "Word", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.WordVariable.py')
         self.originalValue = originalValue
-        
+
         # Set the original value (in bitarray)
         self.computeCurrentValue(self.originalValue)
-        
-    
+
+
     #+-----------------------------------------------------------------------+
     #| computeCurrentValue :
     #|     Transform and save the provided ('toto') as current value
@@ -76,7 +76,7 @@ class WordVariable(Variable):
             self.currentValue = (binCurrentValue, strCurrentValue)
         else:
             self.currentValue = None
-     
+
     #+-----------------------------------------------------------------------+
     #| generateValue :
     #|     Generate a valid value for the variable ('babar'...)
@@ -92,7 +92,7 @@ class WordVariable(Variable):
 #        self.log.debug("Generated : " + self.strVal)
 #        self.log.debug("Generated -bin)= " + str(self.binVal))    
 
-    
+
     #+-----------------------------------------------------------------------+
     #| getValue :
     #|     Returns the current value of the variable
@@ -108,7 +108,7 @@ class WordVariable(Variable):
             return memory.recall(self)
 
         return None
-    
+
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -132,7 +132,7 @@ class WordVariable(Variable):
 
         # We return the newly generated and memorized value
         return (binValue, strValue)
-    
+
      #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
@@ -187,17 +187,20 @@ class WordVariable(Variable):
             return -1
         for i in range(size, 16, -1) :
             subValue = value[indice:indice + i - 1]
-            strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
-            typeIdentifier = TypeIdentifier()
-            if typeIdentifier.isAscii(strVal) :
-                if (not ' ' in strVal) :
-                    self.log.debug("Its an ascii without space : (" + str(strVal) + ")")
-                    return i + indice - 1
-            
-                
-        
-        return -1    
-    
+            if (i - 1) % 8 == 0 :
+                strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
+                typeIdentifier = TypeIdentifier()
+                if typeIdentifier.isAscii(strVal) :
+                    self.log.debug("Its an ascii : (" + str(strVal) + ")")
+                    if (not ' ' in strVal) :
+                        self.log.debug("Its an ascii without space : (" + str(strVal) + ")")
+                        self.log.debug("Binary value of the ascii  : %s" % str(TypeConvertor.strBitarray2Bitarray(subValue)))
+                        return indice + i - 1
+
+
+
+        return -1
+
     #+-----------------------------------------------------------------------+
     #| learn :
     #|     Exactly like "compare" but it stores learns from the provided message
@@ -216,10 +219,10 @@ class WordVariable(Variable):
         else :
             self.log.debug("Incompatible for learning")
             return -1
-            
-            
-            
-    
+
+
+
+
     #+-----------------------------------------------------------------------+
     #| restore :
     #|     Restore learnt value from the last execution of the variable
@@ -232,7 +235,7 @@ class WordVariable(Variable):
 
     def getOriginalValue(self):
         return self.originalValue
-    
+
     #+-----------------------------------------------------------------------+
     #| toXML :
     #|     Returns the XML description of the variable
@@ -249,7 +252,7 @@ class WordVariable(Variable):
             xmlHexVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             xmlHexVariableOriginalValue.text = self.getOriginalValue()
 
-        
+
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
