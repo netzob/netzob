@@ -53,7 +53,7 @@ from netzob.Export.RawExport import RawExport
 from netzob.Export.TextExport import TextExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
-from netzob.UI.NetzobWidgets import NetzobInfoMessage
+from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 from netzob import release
 
 
@@ -288,18 +288,17 @@ class Menu(object):
             self.selectAProject.remove(i)
 
         availableProjects = self.netzob.getCurrentWorkspace().getProjects()
-        for project in availableProjects :
+        for project in availableProjects:
             projectEntry = gtk.MenuItem(project.getName())
             projectEntry.connect("activate", self.switchProjectAction, project)
             self.selectAProject.append(projectEntry)
         self.selectAProject.show_all()
 
         # Deactivate the global 'switch menu' if no project is available
-        if len(availableProjects) == 0 :
+        if len(availableProjects) == 0:
             self.selectAProjectRoot.set_sensitive(False)
-        else :
+        else:
             self.selectAProjectRoot.set_sensitive(True)
-
 
     def update(self):
         self.updateWorkspaceMenu()
@@ -516,7 +515,6 @@ class Menu(object):
         label = gtk.Label("New project name")
         label.show()
         entry = gtk.Entry()
-        entry.show()
         but = gtk.Button("Create project")
         but.connect("clicked", self.createProjectAction_cb, entry, dialog)
         but.set_flags(gtk.CAN_DEFAULT)
@@ -526,12 +524,22 @@ class Menu(object):
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         dialog.set_default(but)
         dialog.action_area.pack_start(table, True, True, 0)
+        # Grab focus must be called after adding the widget to the top level element
+        entry.set_flags(gtk.CAN_FOCUS)
+        entry.show()
+        entry.grab_focus()
 
     #+----------------------------------------------
     #| Creation of a new project from
     #+----------------------------------------------
     def createProjectAction_cb(self, button, entry, dialog):
         projectName = entry.get_text()
+
+        # we verify a name has been provided
+        if projectName == None or projectName == "" :
+            logging.warn("Impossible to create a project with an empty name.")
+            errorDialog = NetzobErrorMessage("Impossible to create a project with an empty name.")
+            return
 
         # We verify the project name doesn't already exist
         found = False
