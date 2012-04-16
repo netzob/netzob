@@ -136,7 +136,7 @@ class Menu(object):
         importFileEntry = gtk.MenuItem("Import from File")
         importFileEntry.connect("activate", self.importFileAction)
         self.menuImport.append(importFileEntry)
-        
+
         importXMLEntry = gtk.MenuItem("Import from XML File")
         importXMLEntry.connect("activate", self.importXMLAction)
         self.menuImport.append(importXMLEntry)
@@ -286,20 +286,20 @@ class Menu(object):
         # Update the list of project
         for i in self.selectAProject.get_children():
             self.selectAProject.remove(i)
-            
-        availableProjects = self.netzob.getCurrentWorkspace().getProjects() 
+
+        availableProjects = self.netzob.getCurrentWorkspace().getProjects()
         for project in availableProjects :
             projectEntry = gtk.MenuItem(project.getName())
             projectEntry.connect("activate", self.switchProjectAction, project)
             self.selectAProject.append(projectEntry)
         self.selectAProject.show_all()
-        
+
         # Deactivate the global 'switch menu' if no project is available
         if len(availableProjects) == 0 :
             self.selectAProjectRoot.set_sensitive(False)
         else :
             self.selectAProjectRoot.set_sensitive(True)
-        
+
 
     def update(self):
         self.updateWorkspaceMenu()
@@ -420,7 +420,7 @@ class Menu(object):
     #+----------------------------------------------
     def importXMLAction(self, widget):
         xmlImportPanel = XMLImport(self.netzob)
-        
+
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector
     #+----------------------------------------------
@@ -519,10 +519,12 @@ class Menu(object):
         entry.show()
         but = gtk.Button("Create project")
         but.connect("clicked", self.createProjectAction_cb, entry, dialog)
+        but.set_flags(gtk.CAN_DEFAULT)
         but.show()
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(but, 2, 3, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
+        dialog.set_default(but)
         dialog.action_area.pack_start(table, True, True, 0)
 
     #+----------------------------------------------
