@@ -81,29 +81,27 @@ class LearningAlgorithm(object):
     def submitQuery(self, query):
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
-        if cachedValue != None :
+        if cachedValue != None:
             self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedValue) + ".")
             return cachedValue[len(cachedValue) - 1]
-        
-        
+
         self.log.info("Reseting the oracle by executing script : " + self.resetScript)
         # TODO : must be UPGRADED
         # WARNING
-        os.system("sh " + self.resetScript)
+        if self.resetScript:
+            os.system("sh " + self.resetScript)
 
         self.log.info("Submit the following query : " + str(query))
-        
-        
-        isMaster = not self.communicationChannel.isServer()    
+
+        isMaster = not self.communicationChannel.isServer()
 
         # transform the query into a MMSTD
         mmstd = query.toMMSTD(self.dictionary, isMaster)
-        
+
         self.cb_hypotheticalAutomaton(mmstd)
         time.sleep(10)
         self.log.info("The current experimentation has generated the following MMSTD :")
         self.log.debug(mmstd.getDotCode())
-                
 
         # create an oracle for this MMSTD
         oracle = NetworkOracle(self.communicationChannel, isMaster)
@@ -120,18 +118,17 @@ class LearningAlgorithm(object):
 
         # stop the oracle and retrieve the query
         oracle.stop()
-        
+
         self.log.info("Close (again) the server")
         self.communicationChannel.close()
 
-
-        if isMaster :
+        if isMaster:
             resultQuery = oracle.getResults()
             tmpResultQuery = oracle.getGeneratedOutputSymbols()
-        else :
+        else:
             resultQuery = oracle.getGeneratedInputSymbols()
             tmpResultQuery = oracle.getGeneratedInputSymbols()
-            
+
         self.log.info("---------------------------------------------")
         self.log.info("RESUMONS UN PETIT PEU TOUT CA :")
         self.log.info("---------------------------------------------")
@@ -148,7 +145,7 @@ class LearningAlgorithm(object):
         self.log.info("---------------------------------------------")
         self.log.info("+ getGeneratedOutputSymbols :")
         self.log.info(str(oracle.getGeneratedOutputSymbols()))
-        self.log.info("---------------------------------------------")        
+        self.log.info("---------------------------------------------")
         self.log.info("The following query has been computed : " + str(resultQuery))
 
         # Register this query and the associated response
@@ -160,9 +157,9 @@ class LearningAlgorithm(object):
             gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
             result = resultQuery[len(resultQuery) - 1]
             self.cache.cacheResult(query, resultQuery)
-            
+
             self.cache.dumpCache()
-            
+
             return result
         else:
             # Execute the call back function

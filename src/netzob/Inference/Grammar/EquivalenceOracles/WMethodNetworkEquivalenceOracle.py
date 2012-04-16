@@ -115,7 +115,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                         couples.append((state, state2))
 
         self.log.info("A number of " + str(len(couples)) + " couples was found")
-        
+
         for (state1, state2) in couples:
             self.log.info("Search a distinguish string between " + state1.getName() + " and " + state2.getName())
             z = MembershipQuery([EmptySymbol()])
@@ -129,7 +129,6 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             done = False
             i = 0
             while not done:
-                
                 mq = mqToTest.popleft()
                 if i > self.m * self.m:
                     break
@@ -210,10 +209,10 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             for x in previousX:
                 X[i].extend(x.multiply(mqInputs))
             for w in W:
-                for xi in X[i] :
-                    if not xi in Z :
+                for xi in X[i]:
+                    if not xi in Z:
                         Z.append(xi)
-                    else :
+                    else:
                         self.log.warn("Impossible to add X[" + str(i) + "] = " + str(xi) + " in Z, it already exists")
 
         for z in Z:
@@ -236,38 +235,36 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             i_test = i_test + 1
             # Compute our results
             (traceTest, stateTest) = mmstd.getOutputTrace(mmstd.getInitialState(), test.getSymbols())
-            
+
             # Verify the request is not in the cache
             cachedValue = cache.getCachedResult(test)
-            
-            if cachedValue == None :
+            if cachedValue == None:
                 # Compute real results
-                os.system("sh " + self.resetScript)
-                
+                if self.resetScript:
+                    os.system("sh " + self.resetScript)
+
                 self.log.debug("=====================")
                 self.log.debug("Execute test " + str(i_test) + "/" + str(len(T)) + " : " + str(test))
                 self.log.debug("=====================")
-                
-                isMaster = not self.communicationChannel.isServer() 
-                
-                testedMmstd = test.toMMSTD(mmstd.getVocabulary(), isMaster) # TODO TODO 
-                oracle = NetworkOracle(self.communicationChannel, isMaster) # TODO TODO is master ??
+
+                isMaster = not self.communicationChannel.isServer()
+
+                testedMmstd = test.toMMSTD(mmstd.getVocabulary(), isMaster)  # TODO TODO
+                oracle = NetworkOracle(self.communicationChannel, isMaster)  # TODO TODO is master ??
                 oracle.setMMSTD(testedMmstd)
                 oracle.start()
                 while oracle.isAlive():
                     time.sleep(0.01)
                 oracle.stop()
-                
-                if isMaster :
-                    resultQuery = oracle.getGeneratedOutputSymbols()
-                else :
-                    resultQuery = oracle.getGeneratedInputSymbols()
-                cache.cacheResult(test, resultQuery)    
-                
-            else :
-                resultQuery = cachedValue
-            
 
+                if isMaster:
+                    resultQuery = oracle.getGeneratedOutputSymbols()
+                else:
+                    resultQuery = oracle.getGeneratedInputSymbols()
+                cache.cacheResult(test, resultQuery)
+
+            else:
+                resultQuery = cachedValue
 
             mqOur = MembershipQuery(traceTest)
             mqTheir = MembershipQuery(resultQuery)
@@ -280,9 +277,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 self.log.info("OUR : " + str(mqOur))
                 self.log.info("THEIR : " + str(mqTheir))
                 return test
-            else :
+            else:
                 self.log.info("========================")
                 self.log.info("Not a counter example")
                 self.log.info("========================")
-            
+
         return None

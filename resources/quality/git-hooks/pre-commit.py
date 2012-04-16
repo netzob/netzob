@@ -4,7 +4,7 @@
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
 #|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
+#|               Netzob: Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
 #| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
 #| This program is free software: you can redistribute it and/or modify      |
@@ -20,9 +20,9 @@
 #| You should have received a copy of the GNU General Public License         |
 #| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
 #+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
+#| @url: http://www.netzob.org                                               |
+#| @contact: contact@netzob.org                                              |
+#| @sponsors: Amossys, http://www.amossys.fr                                 |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 import os
@@ -30,98 +30,99 @@ import re
 import sys
 import subprocess
 from git import *
-    
+
+
 def getFiles():
     currentPath = os.getcwd()
     # First we initialize the repository object
-    repository = Repo(currentPath)    
+    repository = Repo(currentPath)
 
     listFile = []
     repositoryIndex = repository.index
-    for d in repositoryIndex.diff('HEAD') :
+    for d in repositoryIndex.diff('HEAD'):
         # Added path
         if d.deleted_file:
             path = d.a_blob.path
-            if not path in listFile :
+            if not path in listFile:
                 listFile.append(path)
-        elif not d.new_file :
+        elif not d.new_file:
             path = d.a_blob.path
-            if not path in listFile :
+            if not path in listFile:
                 listFile.append(path)
     return listFile
 
 
-def checkPEP8(file) :
+def checkPEP8(file):
     localResult = []
-    p = subprocess.Popen(['pep8', '--ignore=E501', file], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501', file], stdout=subprocess.PIPE)
     out, err = p.communicate()
     for line in out.splitlines():
         localResult.append(line)
     return localResult
 
-def searchForPattern(file, pattern, errorName) :
+
+def searchForPattern(file, pattern, errorName):
     localResult = []
     fileObject = open(file)
     lineNumber = 0
-    for line in fileObject :
+    for line in fileObject:
         lineNumber += 1
-        if re.search(pattern, line):
+        if re.search(pattern, line) and not re.search('Thisisnotaconflict', line):
             localResult.append(str(errorName) + " found at line " + str(lineNumber))
     return localResult
 
+
 def checkFile(file):
-    results = dict()    
-    
+    results = dict()
+
     # Verify no '<<<' and or conflicts info are commited
-    results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')
+    results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')  # Thisisnotaconflict
 
     # Check against PEP8 rules for python files
-    if os.path.splitext(file)[-1] == ".py" :
+    if os.path.splitext(file)[-1] == ".py":
         results['PEP8'] = checkPEP8(file)
-    
+
     return results
-    
-def verifyResults(results) :
+
+
+def verifyResults(results):
     result = 0
-    for file in results.keys() :
+    for file in results.keys():
         resultFile = results[file]
-        if len(resultFile) > 0 :
-            print "[I] File %s :" % (file)
+        if len(resultFile) > 0:
+            print "[I] File %s:" % (file)
             ruleNames = resultFile.keys()
             localResult = 0
-            for ruleName in ruleNames :
+            for ruleName in ruleNames:
                 ruleErrors = resultFile[ruleName]
-                if ruleErrors != None and len(ruleErrors) > 0 :
-                    for ruleError in ruleErrors :
+                if ruleErrors != None and len(ruleErrors) > 0:
+                    for ruleError in ruleErrors:
                         print "[E]\t %s : %s" % (ruleName, ruleError)
                     result = 1
                     localResult = 1
-            if localResult == 0 :
-                print "[I]\t no error found."            
+            if localResult == 0:
+                print "[I]\t no error found."
     return result
 
 
 def analyze():
-   # Retrieve all the files to analyze
-   print "[I] Retrieve all the files to analyze."
-   files = getFiles()
-   
-   print "[I] %d files will be analyzed." % (len(files))
-   globalResults = dict()
-   for file in files :
-       globalResults[file] = checkFile(file)
+    # Retrieve all the files to analyze
+    print "[I] Retrieve all the files to analyze."
+    files = getFiles()
+    print "[I] %d files will be analyzed." % (len(files))
+    globalResults = dict()
+    for file in files:
+        globalResults[file] = checkFile(file)
 
-   # Compute the final result (0=sucess, 1=cannot commit)
-   result = verifyResults(globalResults)
-   if result == 0 :
-       print "[I] No error found, commit allowed."
-   else :
-       print "[E] Errors founds, commit not allowed."
-   sys.exit(result)
+    # Compute the final result (0=sucess, 1=cannot commit)
+    result = verifyResults(globalResults)
+    if result == 0:
+        print "[I] No error found, commit allowed."
+    else:
+        print "[E] Errors founds, commit not allowed."
+    sys.exit(result)
 
 
-if __name__ == '__main__' :
+if __name__ == '__main__':
     # Execute the analysis
     analyze()
-
-
