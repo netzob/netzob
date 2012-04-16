@@ -47,8 +47,10 @@ from netzob.Common.MMSTD.Symbols.impl.DictionarySymbol import DictionarySymbol
 from netzob.Common.MMSTD.Transitions.impl.SemiStochasticTransition import SemiStochasticTransition
 from netzob.Common.Grammar import Grammar
 from netzob.Inference.Grammar.AutomaticGrammarInferenceView import AutomaticGrammarInferenceView
+from netzob.Inference.Grammar.AutomaticGrammarAbstractionView import AutomaticGrammarAbstractionView
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.MMSTD import MMSTD
+from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
 
 #+---------------------------------------------------------------------------+
@@ -104,7 +106,7 @@ class UIGrammarInference:
         self.mainPanel.show()
 
         # First we add a table
-        leftFormTable = gtk.Table(rows=6, columns=2, homogeneous=False)
+        leftFormTable = gtk.Table(rows=7, columns=2, homogeneous=False)
 
         # We add the button for the automatic inference process
         self.grammarAutomaticInferenceButton = gtk.Button("Open wizard for automatic inference")
@@ -113,12 +115,19 @@ class UIGrammarInference:
         self.grammarAutomaticInferenceButton.set_sensitive(True)
         leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
+        # Add the button to abstract the current grammar
+        self.grammarAbstractionButton = gtk.Button("Abstract current grammar")
+        self.grammarAbstractionButton.connect("clicked", self.showAbstractionPanel)
+        self.grammarAbstractionButton.show()
+        self.grammarAbstractionButton.set_sensitive(True)
+        leftFormTable.attach(self.grammarAbstractionButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
         # CREATE A STATE
         self.createStateButton = gtk.Button("Create a state")
         self.createStateButton.show()
         self.createStateButton.connect("clicked", self.createState)
         self.createStateButton.set_sensitive(False)
-        leftFormTable.attach(self.createStateButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.createStateButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # The list of current states
         scroll_listStates = gtk.ScrolledWindow()
@@ -143,14 +152,14 @@ class UIGrammarInference:
         scroll_listStates.add(treeview_listStates)
         scroll_listStates.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_listStates.show()
-        leftFormTable.attach(scroll_listStates, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(scroll_listStates, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # CREATE A TRANSITION
         self.createTransitionButton = gtk.Button("Create a transition")
         self.createTransitionButton.show()
         self.createTransitionButton.connect("clicked", self.createTransition)
         self.createTransitionButton.set_sensitive(False)
-        leftFormTable.attach(self.createTransitionButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(self.createTransitionButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # The list of current transitions
         scroll_listTransitions = gtk.ScrolledWindow()
@@ -185,7 +194,7 @@ class UIGrammarInference:
         scroll_listTransitions.add(treeview_listTransitions)
         scroll_listTransitions.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         scroll_listTransitions.show()
-        leftFormTable.attach(scroll_listTransitions, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        leftFormTable.attach(scroll_listTransitions, 0, 2, 5, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         leftFormTable.show()
         self.mainPanel.pack_start(leftFormTable, False, False, 0)
@@ -398,6 +407,8 @@ class UIGrammarInference:
 
         for symbol in symbols:
             inputSymbolCombo.get_model().append([symbol.getName(), str(symbol.getID())])
+        inputSymbolCombo.get_model().append(["EmptySymbol", EmptySymbol.TYPE])
+        inputSymbolCombo.get_model().append(["UnknownSymbol", UnknownSymbol.TYPE])
         inputSymbolCombo.show()
 
         mainTable.attach(inputSymbolLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -416,10 +427,11 @@ class UIGrammarInference:
         outputSymbolCombo.pack_start(outputSymbolComboCell, True)
         outputSymbolCombo.add_attribute(outputSymbolComboCell, 'text', 1)
 
-        outputSymbolCombo.get_model().append(["EmptySymbol", "EmptySymbol", ""])
         for symbol in symbols:
             outputSymbolCombo.get_model().append([symbol.getType(), symbol.getName(), str(symbol.getID())])
         outputSymbolCombo.show()
+        outputSymbolCombo.get_model().append([EmptySymbol.TYPE, "EmptySymbol", ""])
+        outputSymbolCombo.get_model().append([UnknownSymbol.TYPE, "UnknownSymbol", ""])
 
         mainTable.attach(outputSymbolLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(outputSymbolCombo, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -491,16 +503,20 @@ class UIGrammarInference:
             return None
 
         inputEntryID = inputSymbolCombo.get_model()[inputSymbolCombo.get_active()][1]
-        inputEntry = None
-        for symbol in symbols:
-            if str(symbol.getID()) == inputEntryID:
-                inputEntry = symbol
-
-        if inputEntry == None:
-            self.log.warn("Impossible to retrieve the selected input dictionary entry")
-            dialog.destroy()
-            return
-        inputSymbol = DictionarySymbol(inputEntry)
+        if inputEntryID == EmptySymbol.TYPE:
+            inputSymbol = EmptySymbol()
+        elif inputEntryID == UnknownSymbol.TYPE:
+            inputSymbol = UnknownSymbol()
+        else:
+            inputEntry = None
+            for symbol in symbols:
+                if str(symbol.getID()) == inputEntryID:
+                    inputEntry = symbol
+            if inputEntry == None:
+                self.log.warn("Impossible to retrieve the selected input dictionary entry")
+                dialog.destroy()
+                return
+            inputSymbol = DictionarySymbol(inputEntry)
 
         # retrieve the output symbols
         outputSymbols = []  # [[symbol, proba, time], ...]
@@ -511,6 +527,10 @@ class UIGrammarInference:
                 outputSymbolTime = outputData[3]
                 outputSymbolProba = outputData[4]
                 outputSymbols.append([EmptySymbol(), int(outputSymbolProba), int(outputSymbolTime)])
+            elif outputSymbolType == UnknownSymbol.TYPE:
+                outputSymbolTime = outputData[3]
+                outputSymbolProba = outputData[4]
+                outputSymbols.append([UnknownSymbol(), int(outputSymbolProba), int(outputSymbolTime)])
             else:
                 outputSymbolID = outputData[1]
                 outputSymbolName = outputData[2]
@@ -542,6 +562,10 @@ class UIGrammarInference:
             entryTime = outputTimeEntry.get_text()
             entryProba = outputProbabilityEntry.get_text()
             outputSymbolsTreeStore.append(None, [EmptySymbol.TYPE, "none", "EmptySymbol", entryTime, entryProba])
+        elif entryType == UnknownSymbol.TYPE:
+            entryTime = outputTimeEntry.get_text()
+            entryProba = outputProbabilityEntry.get_text()
+            outputSymbolsTreeStore.append(None, [UnknownSymbol.TYPE, "none", "UnknownSymbol", entryTime, entryProba])
         else:
             entryID = outputSymbolCombo.get_model()[outputSymbolCombo.get_active()][2]
             entryTime = outputTimeEntry.get_text()
@@ -654,6 +678,12 @@ class UIGrammarInference:
         else:
             self.createStateButton.set_sensitive(True)
             self.createTransitionButton.set_sensitive(True)
+
+    def showAbstractionPanel(self, button):
+        # Dedicated view to abstract current grammar
+        abstractionPanel = AutomaticGrammarAbstractionView(self.netzob.getCurrentProject())
+        abstractionPanel.display()
+        self.update()
 
     def showAutomaticInferencePanel(self, button):
         # Dedicated view for the inference process

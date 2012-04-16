@@ -107,6 +107,38 @@ class SemiStochasticTransition(AbstractTransition):
         return self.outputSymbols[r]
 
     #+-----------------------------------------------------------------------+
+    #| setProbabilityForOutputSymbol
+    #|     Change the value of the probability for a provided output symbol
+    #+-----------------------------------------------------------------------+
+    def setProbabilityForOutputSymbol(self, outputSymbol, newProbability):
+        savedSymbols = []
+
+        for (oldSymbol, oldProba, oldTime) in self.getOutputSymbols() :
+            if oldSymbol == outputSymbol :
+                savedSymbols.append([oldSymbol, newProbability, oldTime])
+            else :
+                savedSymbols.append([oldSymbol, oldProba, oldTime])
+
+        self.outputSymbols = []
+        self.outputSymbols.extend(savedSymbols)
+
+    #+-----------------------------------------------------------------------+
+    #| setTimeForOutputSymbol
+    #|     Change the value of the time for a provided output symbol
+    #+-----------------------------------------------------------------------+
+    def setTimeForOutputSymbol(self, outputSymbol, newTime):
+        savedSymbols = []
+
+        for (oldSymbol, oldProba, oldTime) in self.getOutputSymbols() :
+            if oldSymbol == outputSymbol :
+                savedSymbols.append([oldSymbol, oldProba, newTime])
+            else :
+                saved.symbols.append([oldSymbol, oldProba, oldTime])
+
+        self.outputSymbols = []
+        self.outputSymbols.extend(savedSymbols)
+
+    #+-----------------------------------------------------------------------+
     #| executeAsClient
     #|     Randomly pick an outputSymbol and send it
     #| @param abstractionLayer the abstract layer to contact in order to reach outside world
@@ -141,7 +173,7 @@ class SemiStochasticTransition(AbstractTransition):
 
         abstractionLayer.writeSymbol(self.inputSymbol)
         while (not finish):
-            (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(-1)
+            (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(5)
             if receivedSymbol == None:
                 self.log.info("Message received = NONE ")
                 finish = True
@@ -193,7 +225,7 @@ class SemiStochasticTransition(AbstractTransition):
         xmlEndState.text = str(self.getOutputState().getID())
 
         xmlInput = etree.SubElement(xmlTransition, "{" + namespace + "}input")
-        xmlInput.set("symbol", self.getInputSymbol().getID())
+        xmlInput.set("symbol", str(self.getInputSymbol().getID()))
 
         xmlOutputs = etree.SubElement(xmlTransition, "{" + namespace + "}outputs")
         for arSymbol in self.outputSymbols:
