@@ -53,6 +53,7 @@ typedef struct {
 typedef struct {
   unsigned int len; // nb of messages in the group
   t_message *messages; // a list of messages
+  float * scores; //list of score allready computed.
 } t_group;
 
 // Definition of a group of group (a group of symbol)
@@ -62,10 +63,19 @@ typedef struct {
 } t_groups;
 
 typedef struct {
+  int i;
+  int j;
+  float score;
+} t_tag;
+
+typedef struct {
   int i;  // group1 number
   int j;  // group2 number
   float score; // score of equivalence between group1 and group2
+  t_tag * tag;
+  int lengthTag;
 } t_equivalentGroup;
+
 
 // Definition of a score vector
 typedef struct {
@@ -153,3 +163,5 @@ void hexdump(unsigned char *bug, int dlen);
 //| dumpRegex : for debug purposes
 //+---------------------------------------------------------------------------+
 void dumpRegex(t_regex regex);
+
+void serializeTagResult(t_equivalentGroup result,unsigned int nbGroups, char * serial);

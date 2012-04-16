@@ -85,10 +85,10 @@ class LearningAlgorithm(object):
             self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedValue) + ".")
             return cachedValue[len(cachedValue) - 1]
 
-        self.log.info("Reseting the oracle by executing script : " + self.resetScript)
         # TODO : must be UPGRADED
         # WARNING
-        if self.resetScript:
+        if self.resetScript != "":
+            self.log.info("Reseting the oracle by executing script : " + self.resetScript)
             os.system("sh " + self.resetScript)
 
         self.log.info("Submit the following query : " + str(query))

@@ -44,6 +44,7 @@ from netzob.Common.NetzobException import NetzobException
 #+---------------------------------------------------------------------------+
 import _libNeedleman
 
+
 #+---------------------------------------------------------------------------+
 #| NeedlemanAndWunsch:
 #|     Supports the use of N&W alignment in Netzob
@@ -54,6 +55,7 @@ class NeedlemanAndWunsch(object):
         self.cb_status = cb_status
         self.unitSize = unitSize
         self.result = []
+        self.scores = {}
 
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
@@ -74,20 +76,28 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def alignSymbol(self, symbol, doInternalSlick, defaultFormat):
         messages = symbol.getMessages()
-        # We execute the alignment
-        (alignment, score) = self.align(doInternalSlick, messages)
-        symbol.setAlignment(alignment)
-
-        # We update the regex based on the results
-        try:
-            self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
-        except NetzobException:
-            logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
+        if not messages:
+            logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
             field = Field("Field 0", 0, "(.{,})")
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
             symbol.addField(field)
+        else:
+            # We execute the alignment
+            (alignment, score) = self.align(doInternalSlick, messages)
+            symbol.setAlignment(alignment)
+
+            # We update the regex based on the results
+            try:
+                self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
+            except NetzobException:
+                logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
+                symbol.cleanFields()
+                field = Field("Field 0", 0, "(.{,})")
+                # Use the default protocol type for representation
+                field.setFormat(defaultFormat)
+                symbol.addField(field)
 
     #+-----------------------------------------------------------------------+
     #| align
@@ -102,7 +112,7 @@ class NeedlemanAndWunsch(object):
         debug = False
         (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
         scores = (score1, score2, score3)
-        
+
         alignment = self.deserializeAlignment(regex, mask)
         alignment = self.smoothAlignment(alignment)
         return (alignment, scores)
@@ -133,11 +143,10 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def deserializeMessages(self, messages):
         # First we serialize the messages
-        (serialMessages, format) = TypeConvertor.serializeMessages(messages)
+        (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
 
         debug = False
         return _libNeedleman.deserializeMessages(len(messages), format, serialMessages, debug)
-
 
     #+-----------------------------------------------------------------------+
     #| smoothAlignment:
@@ -145,7 +154,7 @@ class NeedlemanAndWunsch(object):
     #| @param alignment The sequence alignment result
     #| @returns The smoothed alignment
     #+-----------------------------------------------------------------------+
-    def smoothAlignment(self, alignment): 
+    def smoothAlignment(self, alignment):
         result = ""
         nbLetters = self.unitSize / 4
         for i in range(0, len(alignment), nbLetters):
@@ -156,7 +165,6 @@ class NeedlemanAndWunsch(object):
             else:
                 result += tmpText
         return result
-        
 
     #+-----------------------------------------------------------------------+
     #| deserializeAlignment
@@ -222,7 +230,8 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-
+        if len(symbol.getFields()) >= 100:
+            raise NetzobException("This Python version only supports 100 named groups in regex")
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
@@ -277,44 +286,31 @@ class NeedlemanAndWunsch(object):
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
 
-################################
-#        # We try to cluster each symbol
-#        tmpEqu = symbols[0].getMinEqu()
-#        if tmpEqu != minEquivalence:
-#            if tmpEqu<minEquivalence: #Try to split current symbols only if the threshold wanted is higher
-#                for symbol in symbols:
-#                    clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-#                    tmpSymbols.extend(clusteringSolution.executeClustering())
-#                self.result = tmpSymbols
-#            elif len(symbols)!=1 and tmpEqu>minEquivalence: #Try to merge symbols only if threshold is lower than previously     
-#                clusteringSolution = UPGMA(project, symbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)        
-#                self.result = clusteringSolution.executeClustering()        
-#            elif len(symbols)==1:  # threshold is lower and there is only 1 symbol ==> do nothing
-#                self.result=symbols
-#                
-#            if doOrphanReduction :
-#                self.result = clusteringSolution.executeOrphanReduction()
-#            self.result.extend(preResults)
-#        else:
-#            self.result = symbols
-################################
+        # excluded symbols from the alignment
+        excludedSymbols = []
 
-         # We try to cluster each symbol
+        # We try to cluster each symbol
         for symbol in symbols:
-            if len(symbol.getMessages()) > 1:  # If there is more than 1 message
+            if len(symbol.getMessages()) <= 0:
+                excludedSymbols.append(symbol)
+            elif len(symbol.getMessages()) == 1:
+                tmpSymbols.extend([symbol])
+            else:
                 clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
                 tmpSymbols.extend(clusteringSolution.executeClustering())
-            else:
-                tmpSymbols.extend([symbol])
-        if len(symbols) != 1:    
-            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-            self.result = clusteringSolution.executeClustering() 
+                self.scores.update(clusteringSolution.getScores())
+
+        if len(symbols) != 1:
+            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status, scores=self.scores)
+            self.result = clusteringSolution.executeClustering()
         else:
-            self.result = tmpSymbols        
-           
-        if doOrphanReduction :
+            self.result = tmpSymbols
+
+        if doOrphanReduction:
             self.result = clusteringSolution.executeOrphanReduction()
+
         self.result.extend(preResults)
+        self.result.extend(excludedSymbols)
 
         logging.info("Time of parsing : " + str(time.time() - t1))
 

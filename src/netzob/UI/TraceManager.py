@@ -31,16 +31,9 @@
 import gtk
 import pygtk
 import logging
-from netzob.UI.NetzobWidgets import NetzobLabel, NetzobComboBoxEntry, \
-    NetzobButton, NetzobProgressBar
-from netzob.Common.Threads.Job import Job
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
-from netzob.Common.Symbol import Symbol
 import uuid
-from netzob.Common.Field import Field
 import gobject
 pygtk.require('2.0')
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -48,6 +41,12 @@ pygtk.require('2.0')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.UI.NetzobWidgets import NetzobLabel, NetzobComboBoxEntry, \
+    NetzobButton, NetzobProgressBar
+from netzob.Common.Threads.Job import Job
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Symbol import Symbol
+from netzob.Common.Field import Field
 
 
 #+---------------------------------------------------------------------------+
@@ -155,7 +154,7 @@ class TraceManager():
         for trace in self.workspace.getImportedTraces():
             id = str(trace.getID())
             date = str(trace.getDate())
-            type = str(trace.getDataType())
+            type = str(trace.getType())
             name = str(trace.getName())
             description = str(trace.getDescription())
             nbMessage = len(trace.getMessages())
