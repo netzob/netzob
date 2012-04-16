@@ -61,6 +61,7 @@ class ProjectConfiguration(object):
     VOCABULARY_DISPLAY_SYMBOL_STRUCTURE = "display_symbol_structure"
     VOCABULARY_DISPLAY_CONSOLE = "display_console"
     VOCABULARY_DISPLAY_SEARCH = "display_search"
+    VOCABULARY_DISPLAY_PROPERTIES = "display_view"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCIES = "environmental_dependencies"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCY = "environmental_dependency"
 
@@ -90,6 +91,7 @@ class ProjectConfiguration(object):
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, False)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, False)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, False)
+        self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, False)
         self.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ENVIRONMENTAL_DEPENDENCIES, [])
 
         # Grammar
@@ -138,6 +140,9 @@ class ProjectConfiguration(object):
 
         xmlVocabularyInferenceDisplaySearch = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
         xmlVocabularyInferenceDisplaySearch.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)).lower()
+
+        xmlVocabularyInferenceDisplayProperties = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
+        xmlVocabularyInferenceDisplayProperties.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)).lower()
 
         xmlVocabularyInferenceGlobalFormat = etree.SubElement(xmlVocabularyInference, "{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         xmlVocabularyInferenceGlobalFormat.text = str(self.getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT))
@@ -215,6 +220,11 @@ class ProjectConfiguration(object):
                 xmlDisplaySearch = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
                 if xmlDisplaySearch != None and xmlDisplaySearch.text != None and len(xmlDisplaySearch.text) > 0:
                     projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, TypeConvertor.str2bool(xmlDisplaySearch.text))
+
+                # Display Properties
+                xmlDisplayProperties = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
+                if xmlDisplayProperties != None and xmlDisplayProperties.text != None and len(xmlDisplayProperties.text) > 0:
+                    projectConfiguration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, TypeConvertor.str2bool(xmlDisplayProperties.text))
 
                 # Global format
                 xmlGlobalFormat = xmlVocabularyInference.find("{" + namespace + "}" + ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)

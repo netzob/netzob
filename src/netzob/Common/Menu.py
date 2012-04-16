@@ -136,7 +136,7 @@ class Menu(object):
         importFileEntry = gtk.MenuItem("Import from File")
         importFileEntry.connect("activate", self.importFileAction)
         self.menuImport.append(importFileEntry)
-        
+
         importXMLEntry = gtk.MenuItem("Import from XML File")
         importXMLEntry.connect("activate", self.importXMLAction)
         self.menuImport.append(importXMLEntry)
@@ -185,6 +185,7 @@ class Menu(object):
             self.displayMessages.set_sensitive(True)
             self.displayConsole.set_sensitive(False)
             self.displaySearchView.set_sensitive(True)
+            self.displayPropertiesView.set_sensitive(True)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             self.displaySymbolStructure.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
@@ -193,6 +194,8 @@ class Menu(object):
             self.displayConsole.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
             self.displaySearchView.set_active(isActive)
+            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
+            self.displayPropertiesView.set_active(isActive)
 
     def createViewMenu(self):
         self.menuView = gtk.Menu()
@@ -219,6 +222,11 @@ class Menu(object):
         self.displaySearchView.connect("activate", self.displaySearchAction)
         self.menuView.append(self.displaySearchView)
         self.displaySearchView.set_sensitive(False)
+
+        self.displayPropertiesView = gtk.CheckMenuItem("Display properties")
+        self.displayPropertiesView.connect("activate", self.displayPropertiesAction)
+        self.menuView.append(self.displayPropertiesView)
+        self.displayPropertiesView.set_sensitive(False)
 
         self.menuBar.append(menuRootView)
 
@@ -286,20 +294,19 @@ class Menu(object):
         # Update the list of project
         for i in self.selectAProject.get_children():
             self.selectAProject.remove(i)
-            
-        availableProjects = self.netzob.getCurrentWorkspace().getProjects() 
-        for project in availableProjects :
+
+        availableProjects = self.netzob.getCurrentWorkspace().getProjects()
+        for project in availableProjects:
             projectEntry = gtk.MenuItem(project.getName())
             projectEntry.connect("activate", self.switchProjectAction, project)
             self.selectAProject.append(projectEntry)
         self.selectAProject.show_all()
-        
+
         # Deactivate the global 'switch menu' if no project is available
-        if len(availableProjects) == 0 :
+        if len(availableProjects) == 0:
             self.selectAProjectRoot.set_sensitive(False)
-        else :
+        else:
             self.selectAProjectRoot.set_sensitive(True)
-        
 
     def update(self):
         self.updateWorkspaceMenu()
@@ -420,7 +427,7 @@ class Menu(object):
     #+----------------------------------------------
     def importXMLAction(self, widget):
         xmlImportPanel = XMLImport(self.netzob)
-        
+
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector
     #+----------------------------------------------
@@ -483,6 +490,14 @@ class Menu(object):
     def displaySearchAction(self, widget):
         if self.netzob.getCurrentProject() != None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, self.displaySearchView.get_active())
+        self.netzob.updateCurrentPanel()
+
+    #+----------------------------------------------
+    #| Called when user wants to display properties results panel
+    #+----------------------------------------------
+    def displayPropertiesAction(self, widget):
+        if self.netzob.getCurrentProject() != None:
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, self.displayPropertiesView.get_active())
         self.netzob.updateCurrentPanel()
 
     def aboutDialogAction(self, widget):
