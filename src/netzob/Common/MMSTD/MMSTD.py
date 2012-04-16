@@ -132,7 +132,8 @@ class MMSTD(Automata):
         communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
         abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
         for i in range(0, len(symbols)):
-            state = state.executeAsClient(abstractionLayer)
+            if state != None:
+                state = state.executeAsClient(abstractionLayer)
         outputMessages = abstractionLayer.getOutputMessages()
         generatedSymbols = []
         for (sendingTime, strMessage, symbol) in outputMessages:
