@@ -47,6 +47,7 @@ from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
@@ -176,6 +177,25 @@ class Symbol(AbstractSymbol):
             else:
                 resultString += ref
                 resultMask += "0"
+
+        # Apply unitSize
+        if unitSize != UnitSize.NONE:
+            unitSize = UnitSize.getSizeInBits( unitSize )
+            nbLetters = unitSize / 4
+            tmpResultString = ""
+            tmpResultMask = ""
+            for i in range(0, len(resultString), nbLetters):
+                tmpText = resultString[i:i + nbLetters]
+                if tmpText.count("-") >= 1:
+                    for j in range(len(tmpText)):
+                        tmpResultString += "-"
+                        tmpResultMask += "1"
+                else:
+                    tmpResultString += tmpText
+                    for j in range(len(tmpText)):
+                        tmpResultMask += "0"
+            resultString = tmpResultString
+            resultMask = tmpResultMask
 
         ## Build of the fields
         currentStaticField = ""
