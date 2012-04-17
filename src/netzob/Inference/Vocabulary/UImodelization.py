@@ -706,8 +706,15 @@ class UImodelization:
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
         symbols = project.getVocabulary().getSymbols()
-        # Execute the process of alignment (show the gui...)
-        self.resetPartitioning(symbols)
+        # Add all the messages in a uniq symbol
+        for symbol in symbols[1:]:
+            for message in symbol.getMessages():
+                symbols[0].addMessage(message)
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        vocabulary.setSymbols([symbols[0]])
+        self.selectedSymbol = vocabulary.getSymbols()[0]
+        self.resetPartitioning(vocabulary.getSymbols())
+        self.update()
 
     def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
