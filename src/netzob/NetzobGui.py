@@ -71,7 +71,6 @@ class NetzobGui(gtk.Window):
             logging.fatal("Version of python-lxml ({0}) is too old for Netzob. Please install a recent version (>= 2.3)".format(version))
             sys.exit()
 
-        #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")
@@ -87,9 +86,20 @@ class NetzobGui(gtk.Window):
         # loading the workspace
         self.currentWorkspace = (Workspace.loadWorkspace(workspace))
 
+        # the semi-automatic loading of the workspace has failed (second attempt)
         if self.currentWorkspace == None:
-            logging.fatal("Stopping the execution (no workspace computed) !")
             sys.exit()
+#            # we force the creation (or specification) of the workspace
+#            if not ResourcesConfiguration.initializeResources(True):
+#                logging.fatal("Error while configuring the resources of Netzob")
+#                sys.exit()
+#            workspace = str(ResourcesConfiguration.getWorkspaceFile())
+#            logging.debug("The workspace : " + str(workspace))
+#            # loading the workspace
+#            self.currentWorkspace = (Workspace.loadWorkspace(workspace))
+#            if self.currentWorkspace == None :
+#                logging.fatal("Stopping the execution (no workspace computed) !")
+#                sys.exit()
 
         self.currentProject = self.currentWorkspace.getLastProject()
 

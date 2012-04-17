@@ -59,7 +59,7 @@ class ResourcesConfiguration(object):
     #+----------------------------------------------
     #| initializeResources:
     #+----------------------------------------------
-    def initializeResources():
+    def initializeResources(forceWSCreation=False):
         # We search for the
         # STATIC resources (images, documentations, ...)
         # USER resources (workspaces, configurations, ...)
@@ -73,7 +73,11 @@ class ResourcesConfiguration(object):
             logging.fatal("The static resources were not found !")
             return False
 
-        userPath = ResourcesConfiguration.verifyUserResources()
+        if not forceWSCreation:
+            userPath = ResourcesConfiguration.verifyUserResources()
+        else:
+            userPath = None
+
         if userPath == None:
             logging.info("The user resources were not found, we ask to the user its Netzob home directory")
             userPath = ResourcesConfiguration.askForUserDir()

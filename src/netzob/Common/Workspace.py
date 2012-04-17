@@ -173,11 +173,11 @@ class Workspace(object):
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
-        
+
         # Register the namespace
         etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
         etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-            
+
         # Dump the file
         root = etree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
         root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))
@@ -273,7 +273,7 @@ class Workspace(object):
                 if workspace != None:
                     return workspace
             else:
-                logging.fatal("The specified Workspace file is not valid according to the XSD.")
+                logging.fatal("The specified Workspace file is not valid according to the XSD found in %s." % (xmlSchemaPath))
 
         return None
 
