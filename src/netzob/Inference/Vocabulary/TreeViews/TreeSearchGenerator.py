@@ -30,7 +30,7 @@
 #+----------------------------------------------
 import logging
 import gtk
-from netzob.Common.Field import Field
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
@@ -38,7 +38,8 @@ from netzob.Common.Field import Field
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
-import uuid
+from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
+from netzob.Common.Field import Field
 
 
 #+----------------------------------------------
@@ -46,13 +47,14 @@ import uuid
 #|     update and generates the treeview and its
 #|     treestore dedicated to the search process
 #+----------------------------------------------
-class TreeSearchGenerator():
+class TreeSearchGenerator(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self, netzob):
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Search")
         self.netzob = netzob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator.py')
@@ -100,20 +102,6 @@ class TreeSearchGenerator():
     def error(self):
         self.log.warning("The treeview for the symbol is in error mode")
         pass
-
-    #+----------------------------------------------
-    #| show:
-    #|   Display the panel
-    #+----------------------------------------------
-    def show(self):
-        self.scroll.show_all()
-
-    #+----------------------------------------------
-    #| hide:
-    #|   Hide the panel
-    #+----------------------------------------------
-    def hide(self):
-        self.scroll.hide_all()
 
     #+----------------------------------------------
     #| default:
@@ -195,6 +183,9 @@ class TreeSearchGenerator():
         return self.tree
 
     def getScrollLib(self):
+        return self.scroll
+
+    def getWidget(self):
         return self.scroll
 
     #+----------------------------------------------

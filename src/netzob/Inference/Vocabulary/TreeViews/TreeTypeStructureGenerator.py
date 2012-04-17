@@ -30,11 +30,13 @@
 #+----------------------------------------------
 import logging
 import gtk
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
 
 
 #+----------------------------------------------
@@ -42,13 +44,14 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 #|     update and generates the treeview and its
 #|     treestore dedicated to the type structure
 #+----------------------------------------------
-class TreeTypeStructureGenerator():
+class TreeTypeStructureGenerator(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self):
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Type Structure")
         self.symbol = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.TreeViews.TreeTypeStructureGenerator.py')
@@ -99,20 +102,6 @@ class TreeTypeStructureGenerator():
         #pass
 
     #+----------------------------------------------
-    #| show:
-    #|   Display the panel
-    #+----------------------------------------------
-    def show(self):
-        self.scroll.show_all()
-
-    #+----------------------------------------------
-    #| hide:
-    #|   Hide the panel
-    #+----------------------------------------------
-    def hide(self):
-        self.scroll.hide_all()
-
-    #+----------------------------------------------
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
@@ -151,6 +140,9 @@ class TreeTypeStructureGenerator():
         return self.treeview
 
     def getScrollLib(self):
+        return self.scroll
+
+    def getWidget(self):
         return self.scroll
 
     def getSymbol(self):

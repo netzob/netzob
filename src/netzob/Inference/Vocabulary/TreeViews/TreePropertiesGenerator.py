@@ -25,33 +25,35 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 import logging
 import gtk
 import uuid
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Local Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Field import Field
+from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
 
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| TreePropertiesGenerator:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the properties
-#+----------------------------------------------
-class TreePropertiesGenerator():
+#+---------------------------------------------------------------------------+
+class TreePropertiesGenerator(AbstractViewGenerator):
 
-    #+----------------------------------------------
+    #+-----------------------------------------------------------------------+
     #| Constructor:
-    #+----------------------------------------------
+    #+-----------------------------------------------------------------------+
     def __init__(self, netzob):
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Properties")
         self.netzob = netzob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.TreePropertiesGenerator.py')
@@ -106,20 +108,6 @@ class TreePropertiesGenerator():
         pass
 
     #+----------------------------------------------
-    #| show:
-    #|   Display the panel
-    #+----------------------------------------------
-    def show(self):
-        self.scroll.show_all()
-
-    #+----------------------------------------------
-    #| hide:
-    #|   Hide the panel
-    #+----------------------------------------------
-    def hide(self):
-        self.scroll.hide_all()
-
-    #+----------------------------------------------
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
@@ -141,6 +129,9 @@ class TreePropertiesGenerator():
         return self.tree
 
     def getScrollLib(self):
+        return self.scroll
+
+    def getWidget(self):
         return self.scroll
 
     #+----------------------------------------------

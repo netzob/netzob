@@ -30,21 +30,24 @@
 #+----------------------------------------------
 import logging
 import gtk
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
+from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
 
 
 #+----------------------------------------------
 #| TreeSymbolGenerator:
 #+----------------------------------------------
-class TreeSymbolGenerator():
+class TreeSymbolGenerator(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
     def __init__(self, netzob):
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Symbols")
         self.netzob = netzob
         self.treestore = None
         self.treeview = None
@@ -149,4 +152,7 @@ class TreeSymbolGenerator():
         return self.treeview
 
     def getScrollLib(self):
+        return self.scroll
+
+    def getWidget(self):
         return self.scroll

@@ -33,14 +33,15 @@ import pango
 import gobject
 import gtk
 import glib
+import uuid
+import time
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Field import Field
 from netzob.Common.NetzobException import NetzobException
-import uuid
-import time
+from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
 
 
 #+----------------------------------------------
@@ -48,13 +49,14 @@ import time
 #|     update and generates the treeview and its
 #|     treestore dedicated to the messages
 #+----------------------------------------------
-class TreeMessageGenerator():
+class TreeMessageGenerator(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self):
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Messages")
         self.symbol = None
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.TreeStores.TreeMessageGenerator.py')
@@ -229,3 +231,6 @@ class TreeMessageGenerator():
 
     def getSymbol(self):
         return self.symbol
+
+    def getWidget(self):
+        return self.scroll
