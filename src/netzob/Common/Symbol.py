@@ -72,7 +72,7 @@ class Symbol(AbstractSymbol):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, name, project,pattern=[],minEqu=0):
+    def __init__(self, id, name, project, pattern=[], minEqu=0):
         AbstractSymbol.__init__(self, "Symbol")
         self.id = id
         self.name = name
@@ -84,14 +84,20 @@ class Symbol(AbstractSymbol):
         self.rawDelimiter = ""
         self.project = project
         self.visualizationFilters = []
-        self.pattern=pattern
-        self.minEqu=minEqu
+        self.pattern = pattern
+        self.minEqu = minEqu
 
         # Interpretation attributes
         self.format = Format.HEX
         self.unitSize = UnitSize.NONE
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
+
+        # Clean the symbol
+        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        field = Field.createDefaultField()
+        field.setFormat(aFormat)
+        self.addField(field)
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -189,7 +195,7 @@ class Symbol(AbstractSymbol):
 
         # Apply unitSize
         if unitSize != UnitSize.NONE:
-            unitSize = UnitSize.getSizeInBits( unitSize )
+            unitSize = UnitSize.getSizeInBits(unitSize)
             nbLetters = unitSize / 4
             tmpResultString = ""
             tmpResultMask = ""
@@ -348,10 +354,10 @@ class Symbol(AbstractSymbol):
     def concatFields(self, iField):
         field1 = None
         field2 = None
-        ##FRANCK
-	if iField == len(self.fields)-1:
-	    return 0
-	for field in self.fields:
+        if iField == len(self.fields) - 1:
+            return 0
+
+        for field in self.fields:
             if field.getIndex() == iField:
                 field1 = field
             elif field.getIndex() == iField + 1:
@@ -390,7 +396,8 @@ class Symbol(AbstractSymbol):
         self.fields.append(newField)
         # sort fields by their index
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-	return 1
+        return 1
+
     #+----------------------------------------------
     #| splitField:
     #|  Split a field in two fields
@@ -423,14 +430,16 @@ class Symbol(AbstractSymbol):
             regex1 = ref1
         else:
             if split_align == "left":
-                regex1 = "(.{" + str(lenDyn1) + "})" # The size is fixed
+                # The size is fixed
+                regex1 = "(.{" + str(lenDyn1) + "})"
             else:
                 regex1 = "(.{," + str(lenDyn1) + "})"
         if isStatic2:
             regex2 = ref2
         else:
             if split_align == "right":
-                regex2 = "(.{" + str(lenDyn2) + "})" # The size is fixed
+                # The size is fixed
+                regex2 = "(.{" + str(lenDyn2) + "})"
             else:
                 regex2 = "(.{," + str(lenDyn2) + "})"
 
@@ -963,7 +972,7 @@ class Symbol(AbstractSymbol):
             self.fields.insert(index, field)
 
         realIndex = self.fields.index(field)
-        field.setIndex( realIndex )
+        field.setIndex(realIndex)
         return realIndex
 
     def cleanFields(self):
@@ -1018,11 +1027,11 @@ class Symbol(AbstractSymbol):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-        
+
         # Register the namespace
         etree.register_namespace('netzob', PROJECT_NAMESPACE)
         etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-            
+
         # create the file
         root = etree.Element("{" + NAMESPACE + "}netzob")
         root.set("project", str(self.getProject().getName()))
@@ -1172,7 +1181,7 @@ class Symbol(AbstractSymbol):
         self.fields = []
 
         # Create a single field
-        field = Field("Field 0", 0, "(.{,})")
+        field = Field.createDefaultField()
         field.setFormat(aFormat)
         self.addField(field)
 
@@ -1221,13 +1230,13 @@ class Symbol(AbstractSymbol):
 
     def getProject(self):
         return self.project
-    
+
     def getPattern(self):
         return self.pattern
-    
+
     def getPatternString(self):
-        return str(self.pattern[0])+";"+str([str(i) for i in self.pattern[1]])
-    
+        return str(self.pattern[0]) + ";" + str([str(i) for i in self.pattern[1]])
+
     def getMinEqu(self):
         return self.minEqu
 
