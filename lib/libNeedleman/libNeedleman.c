@@ -232,91 +232,71 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 
 
   #pragma omp parallel for shared(result,groups, nbGroups, matrix,debugMode,doInternalSlick,maxScore,i_maximum,j_maximum) private(i,p)
-    for (i = 0; i < nbGroups; i++) {
-      p = 0;
-  //   #pragma omp for nowait 
-      for (p = 0; p < nbGroups; p++) {
-		  //status += sizeSteps;
-        if (i < p) {
-          if(groups->groups[i].scores[p-i-1]==-1){//Check if the score has been allready computed 
-            int m, n;
-            t_group p_group;
-            t_message tmpMessage;
-  	    t_message tmpMessage1;
-            t_message tmpMessage2;
-            t_score score;
-            score.s1 = 0;
-            score.s2 = 0;
-            score.s3 = 0;
-            tmpMessage.score = &score;
-            p_group.len = groups->groups[i].len + groups->groups[p].len;
-            p_group.messages = malloc(p_group.len * sizeof(t_message));
-            for (m = 0; m < groups->groups[i].len; ++m) {
-              p_group.messages[m] = groups->groups[i].messages[m];
-            }
-            for (m = m, n = 0; n < groups->groups[p].len; ++m, ++n) {
-              p_group.messages[m] = groups->groups[p].messages[n];
-            }
-            // Align the messages of the current group
-            tmpMessage1.len = p_group.messages[0].len;
-            tmpMessage1.alignment = p_group.messages[0].alignment;
-            tmpMessage1.mask = p_group.messages[0].mask;
+  // We loop over each couple of groups
+  for (i = 0; i < nbGroups; i++) {
+    for (p = i + 1; p < nbGroups; p++) {
+      if(groups->groups[i].scores[p-i-1]==-1){//Check if the score has been allready computed 
+	int m, n;
+	float similarityScore = 0.0;
+	t_message tmpMessage;
+	t_score score;
+	tmpMessage.score = &score;
 
-            for (m = 1; m < p_group.len; ++m) {
-              tmpMessage2.len = p_group.messages[m].len;
-              tmpMessage2.alignment = p_group.messages[m].alignment;
-              tmpMessage2.mask = p_group.messages[m].mask;
-              alignTwoMessages(&tmpMessage, doInternalSlick, &tmpMessage1, &tmpMessage2, debugMode);
-              tmpMessage1.len = tmpMessage.len;
-              tmpMessage1.mask = tmpMessage.mask;
-              tmpMessage1.alignment = tmpMessage.alignment;
-            }
-	    {
-              matrix[i][p] = computeDistance(tmpMessage.score);
-	    }
-            free( tmpMessage.alignment );
-            free( tmpMessage.mask );
-            free( p_group.messages );
+	// We loop over each couple of messages
+	for (m = 0; m < groups->groups[i].len; ++m) {
+	  for (n = 0; n < groups->groups[p].len; ++n) {
+	    score.s1 = 0;
+	    score.s2 = 0;
+	    score.s3 = 0;
+	    alignTwoMessages(&tmpMessage, doInternalSlick, &groups->groups[i].messages[m], &groups->groups[p].messages[n], debugMode);
+	    similarityScore += computeDistance( tmpMessage.score );
 	  }
-	  else{
-            matrix[i][p] = groups->groups[i].scores[p-i-1];// Put the score allready computed
-          }
+	}
 
-          if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
-                maxScore = matrix[i][p];
-                i_maximum = i;
-                j_maximum = p;
-          }
+	{
+          matrix[i][p] = similarityScore / (groups->groups[i].len * groups->groups[p].len); 
+	}
+
+      }
+      else{
+	matrix[i][p] = groups->groups[i].scores[p-i-1];// Put the score allready computed
+      }
+
+      if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
+	maxScore = matrix[i][p];
+	i_maximum = i;
+	j_maximum = p;
+      }
  
-	  //Record the scores for the next time
-          (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
-          (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
-	  (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).score = matrix[i][p];
-	  if (debugMode) {
-	    printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
-	  }
-        }
+      //Record the scores for the next time
+      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
+      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
+      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).score = matrix[i][p];
+      if (debugMode) {
+	printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
       }
     }
-    // Room service
-    for (i = 0; i < nbGroups; i++) {
-      free( matrix[i] );
-    }
-    free( matrix );
-    for (i = 0; i < nbGroups; ++i) {
-      free( groups->groups[i].messages );
-      if(i < nbGroups-1){
-          free(groups->groups[i].scores);}
-    }
-    free( groups->groups );
-    
-    if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
-      printf("Error, error while executing C callback.\n");
-    }
+  }
 
-    result->i = i_maximum;
-    result->j = j_maximum;
-    result->score = maxScore;   
+  // Room service
+  for (i = 0; i < nbGroups; i++) {
+    free( matrix[i] );
+  }
+  free( matrix );
+  for (i = 0; i < nbGroups; ++i) {
+    free( groups->groups[i].messages );
+    if(i < nbGroups-1){
+      free(groups->groups[i].scores);}
+  }
+  free( groups->groups );
+
+  if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
+    printf("Error, error while executing C callback.\n");
+  }
+
+  result->i = i_maximum;
+  result->j = j_maximum;
+  result->score = maxScore;
 }
 
 //+---------------------------------------------------------------------------+
