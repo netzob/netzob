@@ -47,6 +47,7 @@ from netzob.Common.Field import Field
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
@@ -176,6 +177,25 @@ class Symbol(AbstractSymbol):
             else:
                 resultString += ref
                 resultMask += "0"
+
+        # Apply unitSize
+        if unitSize != UnitSize.NONE:
+            unitSize = UnitSize.getSizeInBits( unitSize )
+            nbLetters = unitSize / 4
+            tmpResultString = ""
+            tmpResultMask = ""
+            for i in range(0, len(resultString), nbLetters):
+                tmpText = resultString[i:i + nbLetters]
+                if tmpText.count("-") >= 1:
+                    for j in range(len(tmpText)):
+                        tmpResultString += "-"
+                        tmpResultMask += "1"
+                else:
+                    tmpResultString += tmpText
+                    for j in range(len(tmpText)):
+                        tmpResultMask += "0"
+            resultString = tmpResultString
+            resultMask = tmpResultMask
 
         ## Build of the fields
         currentStaticField = ""
@@ -972,14 +992,11 @@ class Symbol(AbstractSymbol):
     #|   @return a string containing the xml def.
     #+----------------------------------------------
     def getXMLDefinition(self):
-        # Register the namespace (2 way depending of the version)
-        try:
-            etree.register_namespace('netzob', PROJECT_NAMESPACE)
-            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-        except AttributeError:
-            etree._namespace_map[PROJECT_NAMESPACE] = 'netzob'
-            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
-
+        
+        # Register the namespace
+        etree.register_namespace('netzob', PROJECT_NAMESPACE)
+        etree.register_namespace('netzob-common', COMMON_NAMESPACE)
+            
         # create the file
         root = etree.Element("{" + NAMESPACE + "}netzob")
         root.set("project", str(self.getProject().getName()))

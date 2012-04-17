@@ -240,7 +240,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
             cachedValue = cache.getCachedResult(test)
             if cachedValue == None:
                 # Compute real results
-                if self.resetScript:
+                if self.resetScript != "":
                     os.system("sh " + self.resetScript)
 
                 self.log.debug("=====================")

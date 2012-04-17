@@ -24,16 +24,15 @@
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
-import os.path
-import sys
 
-#+---------------------------------------------------------------------------+
-#| Establishes the path for static resources
-#+---------------------------------------------------------------------------+
-STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob")
-LOCAL_STATIC_DIR = "./resources/static"
 
-#+---------------------------------------------------------------------------+
-#| Establishes the path for workspace resources (only used by testing)
-#+---------------------------------------------------------------------------+
-WORKSPACE_DIR = None
+lxml_required_ver = (2, 3, 0, 0)
+def test_lxml():
+    try:
+        from lxml.etree import LXML_VERSION, __version__
+        if LXML_VERSION >= lxml_required_ver:
+            return True, __version__
+        else:
+            return False, __version__
+    except ImportError:
+        return None, None

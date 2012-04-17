@@ -173,15 +173,11 @@ class Workspace(object):
         workspaceFile = os.path.join(self.path, Workspace.CONFIGURATION_FILENAME)
 
         logging.info("Save the config file of the workspace " + self.getName() + " in " + workspaceFile)
-
-        # Register the namespace (2 way depending of the version)
-        try:
-            etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
-            etree.register_namespace('netzob-common', COMMON_NAMESPACE)
-        except AttributeError:
-            etree._namespace_map[WORKSPACE_NAMESPACE] = 'netzob'
-            etree._namespace_map[COMMON_NAMESPACE] = 'netzob-common'
-
+        
+        # Register the namespace
+        etree.register_namespace('netzob', WORKSPACE_NAMESPACE)
+        etree.register_namespace('netzob-common', COMMON_NAMESPACE)
+            
         # Dump the file
         root = etree.Element("{" + WORKSPACE_NAMESPACE + "}workspace")
         root.set("creation_date", TypeConvertor.pythonDatetime2XSDDatetime(self.getCreationDate()))

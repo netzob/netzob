@@ -40,6 +40,7 @@ import optparse
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common import DepCheck
 from netzob.Common.Menu import Menu
 from netzob.Inference.Vocabulary.UImodelization import UImodelization
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
@@ -64,6 +65,11 @@ class NetzobGui(gtk.Window):
         # Command line commands
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
+
+        (status, version) = DepCheck.test_lxml()
+        if status == False:
+            logging.fatal("Version of python-lxml ({0}) is too old for Netzob. Please install a recent version (>= 2.3)".format(version))
+            sys.exit()
 
         #self.uiThread = threading.Thread(None, self.guiThread, None, (), {})
         # First we initialize and verify all the resources
