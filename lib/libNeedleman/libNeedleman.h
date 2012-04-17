@@ -72,17 +72,9 @@ typedef struct {
 } t_groups;
 
 typedef struct {
-  int i;
-  int j;
-  float score;
-} t_tag;
-
-typedef struct {
   int i;  // group1 number
   int j;  // group2 number
   float score; // score of equivalence between group1 and group2
-  t_tag * tag;
-  int lengthTag;
 } t_equivalentGroup;
 
 // Cost definitions for the alignment
@@ -155,4 +147,3 @@ void hexdump(unsigned char *bug, int dlen);
 //+---------------------------------------------------------------------------+
 void dumpMessage(t_message message);
 
-void serializeTagResult(t_equivalentGroup result,unsigned int nbGroups, char * serial);

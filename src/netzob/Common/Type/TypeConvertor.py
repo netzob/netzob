@@ -401,11 +401,8 @@ class TypeConvertor():
     #|     create a serialization view of the scores
     #| @returns (format)
     #+---------------------------------------------
-    def deserializeScores(symbols, scores):
-        listScores = scores.split(";")
-        listScores.pop()
-        listScores = [i.split(",") for i in listScores]
-        listScores = [[symbols[int(i)].getID(), symbols[int(j)].getID(), float(score)] for (i, j, score) in listScores]
+    def deserializeScores(symbols,scores):
+        listScores = [[symbols[i].getID(), symbols[j].getID(), score] for (i, j, score) in scores]
         return listScores
 
     @staticmethod

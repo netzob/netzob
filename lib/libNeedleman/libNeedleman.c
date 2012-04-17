@@ -101,16 +101,12 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   unsigned char * serialGroups;
   int sizeSerialGroups;
   unsigned int debugMode = 0;
-  int i,j;
+  int i = 0 ,j = 0;
   int nbDeserializedGroups;
-  PyObject * retobj;
   PyObject *temp_cb;
   t_groups groups;
   t_equivalentGroup result;
   Bool bool_debugMode;
-  #if _WIN32
-  char * tagSerial = 0;
-  #endif
 
   // Converts the arguments
   if (!PyArg_ParseTuple(args, "hhs#s#Oh", &doInternalSlick, &nbGroups, &format, &sizeFormat, &serialGroups, &sizeSerialGroups, &temp_cb, &debugMode)) {
@@ -132,7 +128,6 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
 
   groups.len = nbGroups;
   groups.groups = malloc(nbGroups*sizeof(t_group));
-
   for(i=0; i<nbGroups-1; i++){
     groups.groups[i].scores = malloc((nbGroups-i-1)*sizeof(float));
     for(j=0;j<nbGroups-i-1;j++){
@@ -166,23 +161,39 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
  // printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
   result.i = -1;
   result.j= -1;
-  result.score = -1; 
-  result.tag = malloc(((nbGroups*(nbGroups-1))/2)*sizeof(t_tag));
-  //printf("SIZE: %d\n",((nbGroups*(nbGroups-1))/2));
-  result.lengthTag = nbGroups*(nbGroups-1)/2;
-  #ifdef _WIN32
-  tagSerial = _malloca(sizeof("100.000000,100.000000,100.000000;") * result.lengthTag);
-  #else
-  char tagSerial[sizeof("100.000000,100.000000,100.000000;") * result.lengthTag];
-  #endif
+  result.score = -1;
   getHighestEquivalentGroup(&result, doInternalSlick, nbGroups, &groups, debugMode);
 
- // printf("Gethighest Done\n");
 
-  serializeTagResult(result,nbGroups,tagSerial);
+//  printf("Gethighest Done\n");
 
- // printf("SerialTag Done\n");
-  free(result.tag);
+  //Compute the scores recorded in a python list
+  PyObject *recordedScores = PyList_New((nbGroups*(nbGroups-1))/2);
+  if (!recordedScores)
+    return NULL;
+  int i_record = 0;
+  int j_record = 0;
+  int current_index = 0;
+  for (i_record = 0; i_record < nbGroups; i_record++) {
+      for(j_record = i_record + 1; j_record < nbGroups; j_record++){
+	//        printf("Scores : %d %d %f\n",i_record,j_record - i_record - 1,groups.groups[i_record].scores[j_record - i_record - 1]);
+        
+        PyObject *s = PyFloat_FromDouble((double)groups.groups[i_record].scores[j_record - i_record - 1]);
+        PyObject *i_p = PyInt_FromLong((long)i_record);
+        PyObject *j_p = PyInt_FromLong((long)j_record);
+        PyObject *res = PyList_New(3);
+        if (!s || !i_p || !j_p || !res) {
+            Py_XDECREF(recordedScores);
+            return NULL;
+        }
+        PyList_SET_ITEM(res,0,i_p);
+        PyList_SET_ITEM(res,1,j_p);
+        PyList_SET_ITEM(res,2,s);
+        PyList_SET_ITEM(recordedScores, current_index, res);   // reference to num stolen
+        current_index++;
+     }
+  }
+
   if (debugMode) {
     printf("Group 1 i = %d\n", result.i);
     printf("Group 2 j = %d\n", result.j);
@@ -193,13 +204,14 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     printf("Impossible to compute the highest equivalent set of groups.");
   }
 
-  retobj = Py_BuildValue("(iifs)", result.i, result.j, result.score,tagSerial);
-
-  #ifdef _WIN32
-   _freea(tagSerial);
-  #endif
-
-  return retobj;
+  //We need to free the groups. We cannot do this before as we need scores to be recorded
+  for (i = 0; i < nbGroups; ++i) {
+      free( groups.groups[i].messages );
+      if(i < nbGroups-1){
+          free(groups.groups[i].scores);}
+    }
+  free( groups.groups );
+  return Py_BuildValue("(iifS)", result.i, result.j, result.score,recordedScores);
 }
 void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroups, t_groups* groups, Bool debugMode) {
   // Compute the matrix
@@ -211,10 +223,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   // local variable
   int p = 0;
   double status = 0.0;
-/*
-  Bool debugMode_copy = debugMode;
-  Bool doInternalSlick_copy = doInternalSlick;
-*/
+
   // First we fill the matrix with 0s
   if (callbackStatus(status, "Building the scoring matrix for %d groups", nbGroups) == -1) {
     printf("Error, error while executing C callback.\n");
@@ -254,6 +263,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 	}
 	{
           matrix[i][p] = finalScore / (groups->groups[i].len * groups->groups[p].len); 
+	  (&groups->groups[i])->scores[p-i-1] = matrix[i][p];
 	}
       }
       else{
@@ -266,10 +276,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 	j_maximum = p;
       }
       
-      //Record the scores for the next time
-      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
-      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
-      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).score = matrix[i][p];
       if (debugMode) {
 	printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
       }
@@ -281,12 +287,6 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     free( matrix[i] );
   }
   free( matrix );
-  for (i = 0; i < nbGroups; ++i) {
-    free( groups->groups[i].messages );
-    if(i < nbGroups-1){
-      free(groups->groups[i].scores);}
-  }
-  free( groups->groups );
 
   if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
     printf("Error, error while executing C callback.\n");
@@ -1176,30 +1176,6 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
     free(size_group_str);
   }
   return i_group;
-}
-// Serialize the scores between messages
-void serializeTagResult(t_equivalentGroup result,unsigned int nbGroups,char * serial){
-    int i;
-    char sInt[11];
-    char tagser[sizeof("100.000000,100.000000,100.000000;")];
-    
-    for(i = 0; i < result.lengthTag; i++){
-        sprintf(sInt,"%d",result.tag[i].i); // i
-        sprintf(tagser,"%s",sInt);
-        strcat(tagser,",");
-        sprintf(sInt,"%d",result.tag[i].j); // j
-        strcat(tagser,sInt);
-        strcat(tagser,",");
-        sprintf(sInt,"%f",result.tag[i].score); // score
-        strcat(tagser,sInt);
-        strcat(tagser,";");
-        if( i == 0){
-        sprintf(serial,"%s",tagser);
-        }
-        else{
-        strcat(serial,tagser);
-        }
-    }
 }
 
 
