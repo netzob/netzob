@@ -69,6 +69,8 @@ class Field(object):
         self.description = ""
         self.color = "black"
         self.variable = None
+
+        # Interpretation attributes
         self.format = Format.HEX
         self.unitSize = UnitSize.NONE
         self.sign = Sign.UNSIGNED

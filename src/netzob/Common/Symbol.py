@@ -48,6 +48,9 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
@@ -83,6 +86,12 @@ class Symbol(AbstractSymbol):
         self.visualizationFilters = []
         self.pattern=pattern
         self.minEqu=minEqu
+
+        # Interpretation attributes
+        self.format = Format.HEX
+        self.unitSize = UnitSize.NONE
+        self.sign = Sign.UNSIGNED
+        self.endianess = Endianess.BIG
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -976,6 +985,23 @@ class Symbol(AbstractSymbol):
         xmlSymbol.set("alignmentType", str(self.getAlignmentType()))
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
 
+        # Interpretation attributes
+        if self.getFormat() != None:
+            xmlSymbolFormat = etree.SubElement(xmlSymbol, "{" + namespace_project + "}format")
+            xmlSymbolFormat.text = str(self.getFormat())
+
+        if self.getUnitSize() != None:
+            xmlSymbolUnitSize = etree.SubElement(xmlSymbol, "{" + namespace_project + "}unitsize")
+            xmlSymbolUnitSize.text = str(self.getUnitSize())
+
+        if self.getSign() != None:
+            xmlSymbolSign = etree.SubElement(xmlSymbol, "{" + namespace_project + "}sign")
+            xmlSymbolSign.text = str(self.getSign())
+
+        if self.getEndianess() != None:
+            xmlSymbolEndianess = etree.SubElement(xmlSymbol, "{" + namespace_project + "}endianess")
+            xmlSymbolEndianess.text = str(self.getEndianess())
+
         # Save the message references
         xmlMessages = etree.SubElement(xmlSymbol, "{" + namespace_project + "}messages-ref")
         for message in self.messages:
@@ -1006,11 +1032,6 @@ class Symbol(AbstractSymbol):
         tree = ElementTree(root)
         result = etree.tostring(tree, pretty_print=True)
         return result
-#
-#        self.format = Format.HEX
-#        self.unitSize = UnitSize.NONE
-#        self.sign = Sign.UNSIGNED
-#        self.endianess = Endianess.BIG
 
     #+----------------------------------------------
     #| getTextDefinition:
@@ -1209,6 +1230,19 @@ class Symbol(AbstractSymbol):
     
     def getMinEqu(self):
         return self.minEqu
+
+    def getFormat(self):
+        return self.format
+
+    def getUnitSize(self):
+        return self.unitSize
+
+    def getSign(self):
+        return self.sign
+
+    def getEndianess(self):
+        return self.endianess
+
     #+----------------------------------------------
     #| SETTERS
     #+----------------------------------------------
@@ -1229,6 +1263,26 @@ class Symbol(AbstractSymbol):
 
     def setRawDelimiter(self, rawDelimiter):
         self.rawDelimiter = rawDelimiter
+
+    def setFormat(self, aFormat):
+        self.format = aFormat
+        for field in self.getFields():
+            field.setFormat(aFormat)
+
+    def setUnitSize(self, unitSize):
+        self.unitSize = unitSize
+        for field in self.getFields():
+            field.setUnitSize(unitSize)
+
+    def setSign(self, sign):
+        self.sign = sign
+        for field in self.getFields():
+            field.setSign(sign)
+
+    def setEndianess(self, endianess):
+        self.endianess = endianess
+        for field in self.getFields():
+            field.setEndianess(endianess)
 
     def __str__(self):
         return str(self.getName())
@@ -1266,6 +1320,23 @@ class Symbol(AbstractSymbol):
             symbol.setScore(scoreSymbol)
             symbol.setAlignmentType(alignmentType)
             symbol.setRawDelimiter(rawDelimiter)
+
+            # Interpretation attributes
+            if xmlRoot.find("{" + namespace_project + "}format") != None:
+                symbol_format = xmlRoot.find("{" + namespace_project + "}format").text
+                symbol.setFormat(symbol_format)
+
+            if xmlRoot.find("{" + namespace_project + "}unitsize") != None:
+                symbol_unitsize = xmlRoot.find("{" + namespace_project + "}unitsize").text
+                symbol.setUnitSize(symbol_unitsize)
+
+            if xmlRoot.find("{" + namespace_project + "}sign") != None:
+                symbol_sign = xmlRoot.find("{" + namespace_project + "}sign").text
+                symbol.setSign(symbol_sign)
+
+            if xmlRoot.find("{" + namespace_project + "}endianess") != None:
+                symbol_endianess = xmlRoot.find("{" + namespace_project + "}endianess").text
+                symbol.setEndianess(symbol_endianess)
 
             # we parse the messages
             if xmlRoot.find("{" + namespace_project + "}messages-ref") != None:

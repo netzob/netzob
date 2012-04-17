@@ -843,7 +843,7 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the type of a specific column
-            subMenu = self.build_encoding_submenu_for_field(selectedField, message_id)
+            subMenu = self.build_encoding_submenu(selectedField, message_id)
             item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -1002,18 +1002,18 @@ class UImodelization:
         return menu
 
     #+----------------------------------------------
-    #| build_encoding_submenu_for_field:
-    #|   Build a submenu for field data visualization.
+    #| build_encoding_submenu:
+    #|   Build a submenu for field/symbol data visualization.
+    #|   param aObject: either a field or a symbol
     #+----------------------------------------------
-    def build_encoding_submenu_for_field(self, field, message_id):
+    def build_encoding_submenu(self, aObject, message_id):
         menu = gtk.Menu()
 
-        # Retrieve the selected message
+        # Retrieve the selected message and field content
         message = self.selectedSymbol.getMessageByID(message_id)
-
         if message != None:
             # Retrieve content of the field
-            field_content = message.getSplittedData(False)[field.getIndex()]
+            field_content = message.getSplittedData(False)[aObject.getIndex()]
         else:
             field_content = None
 
@@ -1031,7 +1031,7 @@ class UImodelization:
             else:
                 item = gtk.MenuItem(value)
             item.show()
-            item.connect("activate", self.rightClickToChangeFormat, field, value)
+            item.connect("activate", self.rightClickToChangeFormat, aObject, value)
             subMenu.append(item)
         item = gtk.MenuItem("Format")
         item.set_submenu(subMenu)
@@ -1044,7 +1044,7 @@ class UImodelization:
         for value in possible_choices:
             item = gtk.MenuItem(value)
             item.show()
-            item.connect("activate", self.rightClickToChangeUnitSize, field, value)
+            item.connect("activate", self.rightClickToChangeUnitSize, aObject, value)
             subMenu.append(item)
         item = gtk.MenuItem("UnitSize")
         item.set_submenu(subMenu)
@@ -1057,7 +1057,7 @@ class UImodelization:
         for value in possible_choices:
             item = gtk.MenuItem(value)
             item.show()
-            item.connect("activate", self.rightClickToChangeSign, field, value)
+            item.connect("activate", self.rightClickToChangeSign, aObject, value)
             subMenu.append(item)
         item = gtk.MenuItem("Sign")
         item.set_submenu(subMenu)
@@ -1070,7 +1070,7 @@ class UImodelization:
         for value in possible_choices:
             item = gtk.MenuItem(value)
             item.show()
-            item.connect("activate", self.rightClickToChangeEndianess, field, value)
+            item.connect("activate", self.rightClickToChangeEndianess, aObject, value)
             subMenu.append(item)
         item = gtk.MenuItem("Endianess")
         item.set_submenu(subMenu)
@@ -1197,7 +1197,7 @@ class UImodelization:
             menu.append(item)
 
             # Add sub-entries to change the type of a specific field
-            subMenu = self.build_encoding_submenu_for_field(selectedField, None)
+            subMenu = self.build_encoding_submenu(selectedField, None)
             item = gtk.MenuItem("Field visualization")
             item.set_submenu(subMenu)
             item.show()
@@ -1548,38 +1548,38 @@ class UImodelization:
 
     #+----------------------------------------------
     #| rightClickToChangeFormat:
-    #|   Callback to change the field format
+    #|   Callback to change the field/symbol format
     #|   by doing a right click on it.
     #+----------------------------------------------
-    def rightClickToChangeFormat(self, event, field, aFormat):
-        field.setFormat(aFormat)
+    def rightClickToChangeFormat(self, event, aObject, aFormat):
+        aObject.setFormat(aFormat)
         self.update()
 
     #+----------------------------------------------
     #| rightClickToChangeUnitSize:
-    #|   Callback to change the field unitsize
+    #|   Callback to change the field/symbol unitsize
     #|   by doing a right click on it.
     #+----------------------------------------------
-    def rightClickToChangeUnitSize(self, event, field, unitSize):
-        field.setUnitSize(unitSize)
+    def rightClickToChangeUnitSize(self, event, aObject, unitSize):
+        aObject.setUnitSize(unitSize)
         self.update()
 
     #+----------------------------------------------
     #| rightClickToChangeSign:
-    #|   Callback to change the field sign
+    #|   Callback to change the field/symbol sign
     #|   by doing a right click on it.
     #+----------------------------------------------
-    def rightClickToChangeSign(self, event, field, sign):
-        field.setSign(sign)
+    def rightClickToChangeSign(self, event, aObject, sign):
+        aObject.setSign(sign)
         self.update()
 
     #+----------------------------------------------
     #| rightClickToChangeEndianess:
-    #|   Callback to change the field endianess
+    #|   Callback to change the field/symbol endianess
     #|   by doing a right click on it.
     #+----------------------------------------------
-    def rightClickToChangeEndianess(self, event, field, endianess):
-        field.setEndianess(endianess)
+    def rightClickToChangeEndianess(self, event, aObject, endianess):
+        aObject.setEndianess(endianess)
         self.update()
 
     #+----------------------------------------------
@@ -1945,6 +1945,12 @@ class UImodelization:
 
         if (symbol != None):
 
+            # Edit the Symbol
+            itemEditSymbol = gtk.MenuItem("Edit symbol")
+            itemEditSymbol.show()
+            itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
+            menu.append(itemEditSymbol)
+
             # SubMenu : Alignments
             subMenuAlignment = gtk.Menu()
 
@@ -1984,11 +1990,12 @@ class UImodelization:
 
             menu.append(itemMenuAlignment)
 
-            # Edit the Symbol
-            itemEditSymbol = gtk.MenuItem("Edit symbol")
-            itemEditSymbol.show()
-            itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
-            menu.append(itemEditSymbol)
+            # Add sub-entries to change the type of a specific column
+            subMenu = self.build_encoding_submenu(symbol, None)
+            item = gtk.MenuItem("Field visualization")
+            item.set_submenu(subMenu)
+            item.show()
+            menu.append(item)
 
             # Remove a Symbol
             itemRemoveSymbol = gtk.MenuItem("Remove symbol")
@@ -2323,18 +2330,15 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
 
         # Set the format choice as default
         aFormat = combo.get_active_text()
         configuration = self.netzob.getCurrentProject().getConfiguration()
         configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT, aFormat)
 
-        # Apply choice on selected symbol
-        for field in self.selectedSymbol.getFields():
-            field.setFormat(aFormat)
+        # Apply choice on each symbol
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.setFormat(aFormat)
         self.update()
 
     #+----------------------------------------------
@@ -2345,9 +2349,6 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
 
         # Set the unitSize choice as default
         unitSize = combo.get_active_text()
@@ -2355,8 +2356,8 @@ class UImodelization:
         configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE, unitSize)
 
         # Apply choice on selected symbol
-        for field in self.selectedSymbol.getFields():
-            field.setUnitSize(unitSize)
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.setUnitSize(unitSize)
         self.update()
 
     #+----------------------------------------------
@@ -2367,18 +2368,15 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
 
         # Set the sign choice as default
         sign = combo.get_active_text()
         configuration = self.netzob.getCurrentProject().getConfiguration()
         configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN, sign)
 
-        # Apply choice on selected symbol
-        for field in self.selectedSymbol.getFields():
-            field.setSign(sign)
+        # Apply choice on each symbol
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.setSign(sign)
         self.update()
 
     #+----------------------------------------------
@@ -2389,9 +2387,6 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
 
         # Set the endianess choice as default
         endianess = combo.get_active_text()
@@ -2399,8 +2394,8 @@ class UImodelization:
         configuration.setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS, endianess)
 
         # Apply choice on selected symbol
-        for field in self.selectedSymbol.getFields():
-            field.setEndianess(endianess)
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            symbol.setEndianess(endianess)
         self.update()
 
     #+----------------------------------------------

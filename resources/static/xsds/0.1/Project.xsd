@@ -236,6 +236,12 @@
 
 	<complexType name="Symbol">
 		<sequence>
+			<element name="format" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="unitsize" type="string" maxOccurs="1"
+				 minOccurs="0"></element>
+			<element name="sign" type="string" maxOccurs="1" minOccurs="0"></element>
+			<element name="endianess" type="string" maxOccurs="1"
+				 minOccurs="0"></element>
 			<element name="messages-ref" type="netzob-common:Messages-ref"
 				minOccurs="0">
 			</element>
