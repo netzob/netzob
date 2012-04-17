@@ -35,6 +35,7 @@ import gobject
 from netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator import TreeSearchGenerator
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
+from netzob.Inference.Vocabulary.OptionalViews import OptionalViews
 pygtk.require('2.0')
 import logging
 import copy
@@ -126,11 +127,12 @@ class UImodelization:
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
 
     def update(self):
+        self.updateTreeStoreMessage()
         self.updateTreeStoreSearchView()
         self.updateTreeStoreSymbol()
         self.updateTreeStoreTypeStructure()
-        self.updateTreeStoreMessage()
         self.updateTreeStoreProperties()
+        self.optionalViews.update()
 
     def clear(self):
         self.selectedSymbol = None
@@ -154,18 +156,25 @@ class UImodelization:
         # Messages
         self.treeMessageGenerator = TreeMessageGenerator()
         self.treeMessageGenerator.initialization()
-        # Symbol definition
-        self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
-        self.treeTypeStructureGenerator.initialization()
         # Symbols
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
+
+        # Optional views
+        self.optionalViews = OptionalViews()
+        # Register its subviews
+        # Symbol definition
+        self.treeTypeStructureGenerator = TreeTypeStructureGenerator()
+        self.treeTypeStructureGenerator.initialization()
+        self.optionalViews.registerView(self.treeTypeStructureGenerator)
         # Search view
         self.treeSearchGenerator = TreeSearchGenerator(self.netzob)
         self.treeSearchGenerator.initialization()
+        self.optionalViews.registerView(self.treeSearchGenerator)
         # Properties view
         self.treePropertiesGenerator = TreePropertiesGenerator(self.netzob)
         self.treePropertiesGenerator.initialization()
+        self.optionalViews.registerView(self.treePropertiesGenerator)
 
         # Definition of the Sequence Onglet
         # First we create an VBox which hosts the two main children
@@ -349,24 +358,14 @@ class UImodelization:
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+----------------------------------------------
-        #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
+        #| RIGHT PART OF THE GUI :
+        #| includes the messages treeview and the optional views in tabs
         #+----------------------------------------------
         rightPanel = gtk.VPaned()
         rightPanel.show()
         bottomPanel.add(rightPanel)
-        rightPanel.add(self.treeTypeStructureGenerator.getScrollLib())
-        self.treeTypeStructureGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
-        self.log.debug("GUI for sequential part is created")
-
-        #+----------------------------------------------
-        #| RIGHT PART OF THE GUI : MESSAGE TREEVIEW MESSAGE
-        #+----------------------------------------------
-        rightPanelOptions = gtk.VPaned()
-        rightPanelOptions.show()
-        rightPanel.add(rightPanelOptions)
-
-        rightPanelOptions.add(self.treeMessageGenerator.getScrollLib())
-
+        # add the messages in the right panel
+        rightPanel.add(self.treeMessageGenerator.getScrollLib())
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
@@ -374,16 +373,8 @@ class UImodelization:
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect("row-activated", self.dbClickToChangeFormat)
 
-        #+----------------------------------------------
-        #| RIGHT PART OF THE GUI : Search view
-        #+----------------------------------------------
-        rightPanelOptions2 = gtk.VPaned()
-        rightPanelOptions2.show()
-        rightPanelOptions.add(rightPanelOptions2)
-
-        rightPanelOptions2.add(self.treeSearchGenerator.getScrollLib())
-        rightPanelOptions2.add(self.treePropertiesGenerator.getScrollLib())
-#        self.treeSearchGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_typeStructure)
+        # find the optional views
+        rightPanel.add(self.optionalViews.getPanel())
 
     def sequenceAlignmentOnAllSymbols(self, widget):
         # Sanity checks
