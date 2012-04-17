@@ -61,7 +61,7 @@ class ProjectConfiguration(object):
     VOCABULARY_DISPLAY_SYMBOL_STRUCTURE = "display_symbol_structure"
     VOCABULARY_DISPLAY_CONSOLE = "display_console"
     VOCABULARY_DISPLAY_SEARCH = "display_search"
-    VOCABULARY_DISPLAY_PROPERTIES = "display_view"
+    VOCABULARY_DISPLAY_PROPERTIES = "display_properties"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCIES = "environmental_dependencies"
     VOCABULARY_ENVIRONMENTAL_DEPENDENCY = "environmental_dependency"
 

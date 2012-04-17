@@ -86,6 +86,8 @@
 			</element>
 			<element name="display_search" type="boolean" minOccurs="0">
 			</element>
+			<element name="display_properties" type="boolean" minOccurs="0">
+			</element>
 			<element name="global_format" minOccurs="0">
 				<simpleType>
 					<restriction base="string">
