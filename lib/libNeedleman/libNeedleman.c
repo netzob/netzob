@@ -32,6 +32,11 @@
 //| Import Associated Header
 //+---------------------------------------------------------------------------+
 #include "libNeedleman.h"
+#ifdef _WIN32
+#include <stdio.h>
+#include <malloc.h>
+#endif
+
 
 static PyMethodDef libNeedleman_methods[] = {
   {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
@@ -97,6 +102,13 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   int sizeSerialGroups;
   PyObject *temp_cb;
   unsigned int debugMode = 0;
+  int i,j;
+  PyObject * retobj;
+  #if _WIN32
+  char * tagSerial = 0;
+  #else
+  char tagSerial[sizeof("100.000000,100.000000,100.000000;") * result.lengthTag];
+  #endif
 
   // local variables
   t_groups groups;
@@ -124,7 +136,7 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
 
   groups.len = nbGroups;
   groups.groups = malloc(nbGroups*sizeof(t_group));
-  int i,j;
+
   for(i=0; i<nbGroups-1; i++){
     groups.groups[i].scores = malloc((nbGroups-i-1)*sizeof(float));
     for(j=0;j<nbGroups-i-1;j++){
@@ -158,12 +170,14 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
  // printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
   result.i = -1;
   result.j= -1;
-  result.score = -1;
+  result.score = -1; 
   result.tag = malloc(((nbGroups*(nbGroups-1))/2)*sizeof(t_tag));
   //printf("SIZE: %d\n",((nbGroups*(nbGroups-1))/2));
   result.lengthTag = nbGroups*(nbGroups-1)/2;
-  char tagSerial[strlen("100.000000,100.000000,100.000000;")*result.lengthTag];
 
+  #ifdef _WIN32
+  tagSerial = _malloca(sizeof("100.000000,100.000000,100.000000;") * result.lengthTag);
+  #endif
   getHighestEquivalentGroup(&result, doInternalSlick, nbGroups, &groups, debugMode);
 
  // printf("Gethighest Done\n");
@@ -182,8 +196,11 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     printf("Impossible to compute the highest equivalent set of groups.");
   }
 
-  return Py_BuildValue("(iifs)", result.i, result.j, result.score,tagSerial);
+  retobj = Py_BuildValue("(iifs)", result.i, result.j, result.score,tagSerial);
 
+   _freea(tagSerial);
+  
+  return retobj;
 }
 void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroups, t_groups* groups, Bool debugMode) {
   // Compute the matrix
@@ -1181,7 +1198,7 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
 void serializeTagResult(t_equivalentGroup result,unsigned int nbGroups,char * serial){
     int i;
     char sInt[11];
-    char tagser[strlen("100.000000,100.000000,100.000000;")];
+    char tagser[sizeof("100.000000,100.000000,100.000000;")];
     
     for(i = 0; i < result.lengthTag; i++){
         sprintf(sInt,"%d",result.tag[i].i); // i
