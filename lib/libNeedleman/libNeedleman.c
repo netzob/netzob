@@ -237,11 +237,11 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     for (p = i + 1; p < nbGroups; p++) {
       if(groups->groups[i].scores[p-i-1]==-1){//Check if the score has been allready computed 
 	int m, n;
-	float similarityScore = 0.0;
+	float finalScore = 0.0;
 	t_message tmpMessage;
 	t_score score;
 	tmpMessage.score = &score;
-
+	
 	// We loop over each couple of messages
 	for (m = 0; m < groups->groups[i].len; ++m) {
 	  for (n = 0; n < groups->groups[p].len; ++n) {
@@ -249,25 +249,23 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
 	    score.s2 = 0;
 	    score.s3 = 0;
 	    alignTwoMessages(&tmpMessage, doInternalSlick, &groups->groups[i].messages[m], &groups->groups[p].messages[n], debugMode);
-	    similarityScore += computeDistance( tmpMessage.score );
+	    finalScore += computeDistance( tmpMessage.score );
 	  }
 	}
-
 	{
-          matrix[i][p] = similarityScore / (groups->groups[i].len * groups->groups[p].len); 
+          matrix[i][p] = finalScore / (groups->groups[i].len * groups->groups[p].len); 
 	}
-
       }
       else{
 	matrix[i][p] = groups->groups[i].scores[p-i-1];// Put the score allready computed
       }
-
+      
       if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
 	maxScore = matrix[i][p];
 	i_maximum = i;
 	j_maximum = p;
       }
- 
+      
       //Record the scores for the next time
       (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
       (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
@@ -277,7 +275,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
       }
     }
   }
-
+  
   // Room service
   for (i = 0; i < nbGroups; i++) {
     free( matrix[i] );
@@ -585,7 +583,9 @@ int alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * m
 
   // Construction of the matrix
   short int elt1, elt2, elt3, max, eltL, eltD, eltT;
-
+  // Levenshtein distance
+  float levenshtein = 0.0;
+  unsigned int maxLen = 0;
   // Traceback
   unsigned char *contentMessage1;
   unsigned char *contentMessage2;
@@ -613,6 +613,7 @@ int alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * m
   //+------------------------------------------------------------------------+
   // Fullfill the matrix given the two messages
   //+------------------------------------------------------------------------+
+  maxLen = message1->len > message2->len ? message1->len : message2->len;
   for (i = 1; i < (message1->len + 1); i++) {
     for (j = 1; j < (message2->len + 1); j++) {
       /*
@@ -632,9 +633,10 @@ int alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * m
       max = elt1 > elt2 ? elt1 : elt2;
       max = max > elt3 ? max : elt3;
       matrix[i][j] = max;
+      levenshtein = levenshtein < max ? (float)max : levenshtein;
     }
   }
-
+  levenshtein = levenshtein * 10 / maxLen;
 
   //+------------------------------------------------------------------------+
   // Traceback into the matrix
@@ -874,7 +876,7 @@ int alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * m
   // Using the resMessage, we compute the multiple scores
   resMessage->score->s1 = getScoreRatio(resMessage);
   resMessage->score->s2 = getScoreDynSize(nbDynTotal, nbDynCommon);
-  resMessage->score->s3 = getScoreRang(resMessage);
+  resMessage->score->s3 = levenshtein;
 
   if (debugMode) {
     printf("Score ratio : %0.2f.\n", resMessage->score->s1);
@@ -948,7 +950,7 @@ float getScoreRang(t_message * message) {
 }
 float computeDistance(t_score * score) {
   float result = 0;
-  result = sqrt(0.60 * pow(score->s1,2) + 0.40 * pow(score->s2,2) + 0 * pow(score->s3,2));
+  result = sqrt(0.0 * pow(score->s1,2) + 0.0 * pow(score->s2,2) + 1.0 * pow(score->s3,2));
   return result;
 }
   

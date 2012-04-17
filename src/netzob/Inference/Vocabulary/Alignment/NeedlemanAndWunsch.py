@@ -230,7 +230,7 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-        if len(symbol.getFields()) >= 100:
+        if len(symbol.getFields()) >= 50:
             raise NetzobException("This Python version only supports 100 named groups in regex")
         # We look for useless fields
         doLoop = True
@@ -244,7 +244,7 @@ class NeedlemanAndWunsch(object):
                     cells = "".join(cells)
                     if cells == "":
                         symbol.getFields().pop(field.getIndex())  # We remove this useless field
-                        # Adpat index of the following fields
+                        # Adapt index of the following fields
                         for fieldNext in symbol.getFields():
                             if fieldNext.getIndex() > field.getIndex():
                                 fieldNext.setIndex(fieldNext.getIndex() - 1)
@@ -311,25 +311,23 @@ class NeedlemanAndWunsch(object):
         listEqu = []  # list of thresholds recorded
         emptySymbols = []  # list of all empty symbols
          # We try to cluster each symbol
-        for symbol in symbols:
-            if len(symbol.getMessages()) > 1 and symbol.getMinEqu() < minEquivalence:  # If there is more than 1 message and
-                                                                                       # if the requested threshold is higher (we want to split the current cluster)
-                clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-                tmpSymbols.extend(clusteringSolution.executeClustering())
-                self.scores.update(clusteringSolution.getScores())
-                listEqu.append(minEquivalence)
-            elif len(symbol.getMessages()) > 0:
-                listEqu.append(symbol.getMinEqu())
-                tmpSymbols.extend([symbol])
-            else:
-                emptySymbols.append(symbol)
-
-        if len(tmpSymbols) > 1 and max(listEqu) >= minEquivalence:  # If the requested threshold is lower than the highest threshold recorded, then we can try to merge symbols
-            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status, scores=self.scores)
-            self.result = clusteringSolution.executeClustering()
-        else:
-            self.result = tmpSymbols
-
+#        for symbol in symbols:
+#            if len(symbol.getMessages()) > 1:  # If there is more than 1 message
+#                clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+#                tmpSymbols.extend(clusteringSolution.executeClustering())
+#                self.scores.update(clusteringSolution.getScores())
+#            elif len(symbol.getMessages()) > 0:  # if the symbol is not empty
+#                tmpSymbols.extend([symbol])
+#            else:                                # if the symbol is empty
+#                emptySymbols.append(symbol)
+#        
+#        if len(symbols) > 1:
+#            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+#            self.result = clusteringSolution.executeClustering()
+#        else:
+#            self.result = tmpSymbols
+        clusteringSolution = UPGMA(project, symbols, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+        self.result = clusteringSolution.executeClustering()
         if doOrphanReduction:
             self.result = clusteringSolution.executeOrphanReduction()
         self.result.extend(preResults)

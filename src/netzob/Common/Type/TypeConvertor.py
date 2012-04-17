@@ -385,11 +385,13 @@ class TypeConvertor():
     def serializeScores(symbol, scores, symbols):
         format = ""
         iuid = symbol.getID()
+        canAppend = False
         if iuid in scores.keys():
             for j in symbols:
                 juid = j.getID()
-                if juid in scores[iuid].keys():
+                if juid in scores[iuid].keys() and canAppend:
                     format += str(scores[iuid][juid]) + "S"
+                canAppend = (j == symbol)
         format += "E"
         return format
 

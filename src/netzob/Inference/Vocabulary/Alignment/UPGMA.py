@@ -41,6 +41,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 import _libNeedleman
 from netzob.Common.Symbol import Symbol
 import uuid
+import random
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 
@@ -60,6 +61,7 @@ class UPGMA(object):
         self.unitSize = unitSize
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
         self.scores = scores
+        self.path = []
         if explodeSymbols == False:
             self.symbols = symbols
 
@@ -98,8 +100,8 @@ class UPGMA(object):
     #+-----------------------------------------------------------------------+
     def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
-###################################  FIND EQUAL MESSAGES
-###################################  useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
+        # Find equel messages
+        # Useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
         ll = len(self.symbols) - 1
         i_equ = 0
         while(ll > 0):
@@ -113,25 +115,24 @@ class UPGMA(object):
             ll -= 1
             i_equ += 1
 
-########################################
-#################################################################
-
-        for iteration in range(0, self.nbIteration):
-            self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
-            # Create the score matrix for each symbol
-            (i_maximum, j_maximum, maximum) = self.retrieveEffectiveMaxIJ()
-
-            self.log.debug("Searching for the maximum of equivalence.")
-            if (maximum >= self.minEquivalence):
-                self.log.debug("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
-                self.mergeEffectiveRowCol(i_maximum, j_maximum)
-            else:
-                self.log.debug("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
-                break
-
-            if len(self.symbols) <= 1:
-                self.log.debug("Stopping the clustering operation since there is only 1 symbol remaining")
-                break
+#        for iteration in range(0, self.nbIteration):
+#            self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
+#            # Create the score matrix for each symbol
+#            (i_maximum, j_maximum, maximum) = 
+        self.retrieveEffectiveMaxIJ()
+#
+#            self.log.debug("Searching for the maximum of equivalence.")
+#            if (maximum >= self.minEquivalence):
+#                self.log.debug("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
+#                self.mergeEffectiveRowCol(i_maximum, j_maximum)
+#
+#            else:
+#                self.log.debug("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
+#                break
+#
+#            if len(self.symbols) <= 1:
+#                self.log.debug("Stopping the clustering operation since there is only 1 symbol remaining")
+#                break
 
         self.cb_executionStatus(50.0, "Executing last alignment...")
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
@@ -154,6 +155,7 @@ class UPGMA(object):
 
         # Serialize the symbols
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize, self.scores)
+        print formatSymbols
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
         (i_max, j_max, maxScore, scores) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
@@ -162,9 +164,76 @@ class UPGMA(object):
         for (iuid, juid, score) in listScores:
             if iuid not in self.scores.keys():
                 self.scores[iuid] = {}
+            if juid not in self.scores.keys():
+                self.scores[juid] = {}
             self.scores[iuid][juid] = score
-
+            if iuid not in self.scores[juid].keys(): 
+                self.scores[juid][iuid] = score
+        self.computePhylogenicTree()
         return (i_max, j_max, maxScore)
+    
+    #+----------------------------------------------
+    #| computePhylogenicTree:
+    #|     Compute directly the phylogenic tree
+    #| max_i : uid of i_maximum
+    #| max_j : uid of j_maximum
+    #| maxScore : the highest global score
+    #+----------------------------------------------
+    def computePhylogenicTree(self):
+        maxScore = 0
+        if len(self.scores) > 1:
+            max_i = max(self.scores, key = lambda x: self.scores[x][max(self.scores[x], key = lambda y: self.scores[x][y])])
+            max_j = max(self.scores[max_i], key = lambda y: self.scores[max_i][y])
+            maxScore = self.scores[max_i][max_j]
+        while len(self.scores) > 1 and maxScore >= self.minEquivalence:            
+#            self.computePathTree()
+#            juid_maximum = self.path.pop()
+#            iuid_maximum = self.path.pop()
+#            (i_maximum, j_maximum) = (symbols_uid.index(iuid_maximum),symbols_uid.index(juid_maximum))
+#            self.log.debug("Dic {0}: {1}".format(str(iuid_maximum),str(self.scores[iuid_maximum])))
+#            self.log.debug("Dic {0}: {1}".format(str(juid_maximum),str(self.scores[juid_maximum])))
+#            self.log.debug("Mess {0}".format(self.symbols[i_maximum].getMessages()[0].getData()))
+#            self.log.debug("Mess {0}".format(self.symbols[j_maximum].getMessages()[0].getData()))
+##            self.log.debug("Score avant: {0}".format(str(self.scores)))
+            symbols_uid = [s.getID() for s in self.symbols]  #  List of the UID in of symbols
+            (i_maximum, j_maximum) = (symbols_uid.index(max_i),symbols_uid.index(max_j))
+            size_i = len(self.symbols[i_maximum].getMessages())
+            size_j = len(self.symbols[j_maximum].getMessages())
+            self.log.debug("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maxScore)))
+            newuid = self.mergeEffectiveRowCol(i_maximum, j_maximum)
+            self.updateScore(max_i, max_j, newuid, size_i, size_j)
+#            self.log.debug("Score après: {0}".format(str(self.scores)))
+            if len(self.scores) > 1:
+                max_i = max(self.scores, key = lambda x: self.scores[x][max(self.scores[x], key = lambda y: self.scores[x][y])])
+                max_j = max(self.scores[max_i], key = lambda y: self.scores[max_i][y])
+                maxScore = self.scores[max_i][max_j]
+
+    def updateScore(self, iuid, juid, newuid, size_i, size_j):
+        total_size = size_i + size_j
+        del self.scores[iuid]
+        del self.scores[juid]
+        self.scores[newuid] = {}
+        for k in self.scores.keys():
+            if k != newuid:
+                self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid])*1.0/total_size
+                del self.scores[k][iuid]
+                del self.scores[k][juid]
+                self.scores[newuid][k] = self.scores[k][newuid]
+ 
+    def computePathTree(self):
+        if self.path == []:
+            clusterIndex = int(random.random() * len(self.scores.keys()))
+            self.path.append(self.scores.keys()[0])
+        if len(self.path)>1:  # Check if Cl-1,Cl-2 minimum pair
+            lastId = self.path[len(self.path) - 1]
+            if max(self.scores[lastId], key = lambda x: self.scores[lastId][x]) == self.path[len(self.path)-2]:
+                return
+        while True: 
+            lastId = self.path[len(self.path) - 1]
+            juid = max(self.scores[lastId], key = lambda x: self.scores[lastId][x])
+            self.path.append(juid)
+            if max(self.scores[juid], key = lambda x: self.scores[juid][x]) == lastId:
+                break
 
     #+----------------------------------------------
     #| mergeRowCol:
@@ -190,6 +259,8 @@ class UPGMA(object):
 
         # Append th new symbol to the "symbols" structure
         self.symbols.append(newSymbol)
+        
+        return newSymbol.getID()
 
     #+----------------------------------------------
     #| mergeOrphanSymbols:
