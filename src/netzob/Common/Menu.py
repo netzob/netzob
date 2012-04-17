@@ -183,15 +183,12 @@ class Menu(object):
             self.exportRootMenu.set_sensitive(True)
             self.displaySymbolStructure.set_sensitive(True)
             self.displayMessages.set_sensitive(True)
-            self.displayConsole.set_sensitive(False)
             self.displaySearchView.set_sensitive(True)
             self.displayPropertiesView.set_sensitive(True)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             self.displaySymbolStructure.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             self.displayMessages.set_active(isActive)
-            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE)
-            self.displayConsole.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
             self.displaySearchView.set_active(isActive)
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
@@ -212,11 +209,6 @@ class Menu(object):
         self.displayMessages.connect("activate", self.displayMessagesAction)
         self.menuView.append(self.displayMessages)
         self.displayMessages.set_sensitive(False)
-
-        self.displayConsole = gtk.CheckMenuItem("Display console")
-        self.displayConsole.connect("activate", self.displayConsoleAction)
-        self.menuView.append(self.displayConsole)
-        self.displayConsole.set_sensitive(False)
 
         self.displaySearchView = gtk.CheckMenuItem("Display search results")
         self.displaySearchView.connect("activate", self.displaySearchAction)
@@ -552,7 +544,7 @@ class Menu(object):
         projectName = entry.get_text()
 
         # we verify a name has been provided
-        if projectName == None or projectName == "" :
+        if projectName == None or projectName == "":
             logging.warn("Impossible to create a project with an empty name.")
             errorDialog = NetzobErrorMessage("Impossible to create a project with an empty name.")
             return
