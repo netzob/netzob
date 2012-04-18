@@ -123,6 +123,9 @@ setup(
     entry_points="""
         [netzob.plugins]
             pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporter:PCAPImporter
-        """
-
+        """,
+    # Files that should be scanned by Babel (if available)
+    message_extractors = {
+        'src': [('**.py', 'python', None)]
+        },
     )
