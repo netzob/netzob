@@ -58,6 +58,21 @@ dependencies = [
     'lxml',
 ]
 
+try:
+    from babel.messages import frontend as babel
+    from distutils.command.build import build
+
+    CMD_CLASS.update({'compile_catalog': babel.compile_catalog,
+                      'extract_messages': babel.extract_messages,
+                      'init_catalog': babel.init_catalog,
+                      'update_catalog': babel.update_catalog})
+
+
+    build.sub_commands.append(('compile_catalog', None))
+except ImportError:
+    print "Info: Babel support unavailable, translations not available"
+
+
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
