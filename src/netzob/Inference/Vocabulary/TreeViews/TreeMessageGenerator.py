@@ -135,7 +135,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
-    def default(self, symbol):
+    def default(self, symbol, messageToHighlight=None):
         self.treestore.clear()
 
         if symbol == None:
@@ -149,11 +149,14 @@ class TreeMessageGenerator(AbstractViewGenerator):
             self.log.debug("It's an empty symbol so nothing to display")
             return
 
+        # id number of the line to highlight
+        nbLineMessageToHighlight = -1
+
         # Build the next rows from messages after applying the regex
         content_lines = []
         maxNumberOfCol = 0
+        idLineMessage = 0
         for message in self.symbol.getMessages():
-
             # For each message we create a line and computes its cols
             try:
                 messageTable = message.applyAlignment(styled=True, encoded=True)
@@ -161,8 +164,11 @@ class TreeMessageGenerator(AbstractViewGenerator):
             except NetzobException:
                 self.log.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
                 self.log.warn("Message : " + str(message.getStringData()))
-
                 continue  # We don't display the message in error
+
+            if messageToHighlight != None and str(message.getID()) == str(messageToHighlight.getID()):
+                nbLineMessageToHighlight = idLineMessage
+
             line = []
             line.append(message.getID())
             line.append("#ffffff")
@@ -170,6 +176,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
             line.append(False)
             line.extend(messageTable)
             content_lines.append(line)
+            idLineMessage = idLineMessage + 1
             if len(messageTable) > maxNumberOfCol:
                 maxNumberOfCol = len(messageTable)
 
@@ -205,8 +212,13 @@ class TreeMessageGenerator(AbstractViewGenerator):
 
         self.treestore.append(None, regex_row)
         self.treestore.append(None, types_line)
+        idLine = 0
+        messageEntryToHighlight = None
         for line in content_lines:
-            self.treestore.append(None, line)
+            messageEntry = self.treestore.append(None, line)
+            if nbLineMessageToHighlight == idLine:
+                messageEntryToHighlight = messageEntry
+            idLine = idLine + 1
 
         # activate or deactivate the perfect number of columns = nb Field
         for col in self.treeview.get_columns():
@@ -216,6 +228,10 @@ class TreeMessageGenerator(AbstractViewGenerator):
             self.treeview.get_column(i).set_title(self.symbol.getFieldByIndex(i).getName())
 
         self.treeview.set_model(self.treestore)
+
+        # highlight the message entry
+        if messageEntryToHighlight != None:
+            self.treeview.get_selection().select_iter(messageEntryToHighlight)
 
     def updateDefault(self):
         self.default(self.symbol)

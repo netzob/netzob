@@ -94,7 +94,7 @@ class TreeSymbolGenerator(AbstractViewGenerator):
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
-    def default(self):
+    def default(self, selectedSymbol=None):
         self.log.debug("Updating the treestore of the symbol in default mode")
         self.treestore.clear()
 
@@ -111,14 +111,22 @@ class TreeSymbolGenerator(AbstractViewGenerator):
             # We retrieve the symbols declared in (symbol = symbol)
             symbols = vocabulary.getSymbols()
 
+            toSelectEntry = None
             for symbol in symbols:
                 symbolName = symbol.getName()
+
                 for filter in symbol.getVisualizationFilters():
                     symbolName = filter.apply(symbolName)
 
                 symbolName = symbolName + " (" + str(len(symbol.getMessages())) + ")"
                 symbolEntry = [str(symbol.getID()), symbolName, str(symbol.getScore()), '#000000', '#DEEEF0']
-                self.treestore.append(None, symbolEntry)
+                symbolIter = self.treestore.append(None, symbolEntry)
+                if selectedSymbol != None and str(symbol.getID()) == str(selectedSymbol.getID()):
+                    toSelectEntry = symbolIter
+
+            # if a selection entry has been found, we highlight it
+            if toSelectEntry != None:
+                self.treeview.get_selection().select_iter(toSelectEntry)
 
     #+----------------------------------------------
     #| getSymbolAtPosition:
