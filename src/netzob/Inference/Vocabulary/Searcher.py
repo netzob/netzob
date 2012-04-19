@@ -130,6 +130,8 @@ class Searcher(object):
         results = []
         results.extend(self.naturalSearch(data, message))
         results.extend(self.inversedSearch(data, message))
+        results.extend(self.semiInvertedOnNaturalSearch(data, message))
+        results.extend(self.semiInvertedOnInvertedSearch(data, message))
         return results
 
     def naturalSearch(self, data, message):
@@ -150,12 +152,58 @@ class Searcher(object):
     def inversedSearch(self, data, message):
         results = []
         invData = data[::-1]
+
         # Search naturally all the possible places of data in message
         indice = 0
         while indice + len(invData) <= len(message.getStringData()):
             if message.getStringData()[indice:len(invData) + indice] == invData:
                 # We have a match
-                searchResult = SearchResult(message, "Inversed search")
+                searchResult = SearchResult(message, "Inverted search")
+                searchResult.addSegment(indice, len(invData))
+                results.append(searchResult)
+            indice = indice + 1
+
+        return results
+
+    def semiInvertedOnNaturalSearch(self, data, message):
+        results = []
+        invData = ""
+        for i in range(0, len(data), 2):
+            invData = invData + data[i + 1]
+            invData = invData + data[i]
+
+        if len(data) % 2 == 1:
+            invData = invData + data[-1]
+
+        # Search naturally all the possible places of data in message
+        indice = 0
+        while indice + len(invData) <= len(message.getStringData()):
+            if message.getStringData()[indice:len(invData) + indice] == invData:
+                # We have a match
+                searchResult = SearchResult(message, "4bytes inverted on natural search")
+                searchResult.addSegment(indice, len(invData))
+                results.append(searchResult)
+            indice = indice + 1
+
+        return results
+
+    def semiInvertedOnInvertedSearch(self, data, message):
+        results = []
+        tmpData = data[::-1]
+        invData = ""
+        for i in range(0, len(tmpData), 2):
+            invData = invData + tmpData[i + 1]
+            invData = invData + tmpData[i]
+
+        if len(tmpData) % 2 == 1:
+            invData = invData + tmpData[-1]
+
+        # Search naturally all the possible places of data in message
+        indice = 0
+        while indice + len(invData) <= len(message.getStringData()):
+            if message.getStringData()[indice:len(invData) + indice] == invData:
+                # We have a match
+                searchResult = SearchResult(message, "4bytes inverted on inverted search")
                 searchResult.addSegment(indice, len(invData))
                 results.append(searchResult)
             indice = indice + 1
