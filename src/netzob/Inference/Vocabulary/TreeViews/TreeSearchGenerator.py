@@ -73,9 +73,9 @@ class TreeSearchGenerator(AbstractViewGenerator):
 
         cell = gtk.CellRendererText()
         colResult.pack_start(cell, True)
-        colResult.add_attribute(cell, "text", 0)
+        colResult.add_attribute(cell, "text", 2)
 
-        self.treestore = gtk.TreeStore(str)
+        self.treestore = gtk.TreeStore(str, str, str)  # type, id, value
 
         self.tree.append_column(colResult)
         self.tree.set_model(self.treestore)
@@ -126,7 +126,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
                 if str(symbol.getID()) in foundSymbols.keys():
                     treeItemSymbol = foundSymbols[str(symbol.getID())]
                 else:
-                    treeItemSymbol = self.treestore.append(None, [symbol.getName()])
+                    treeItemSymbol = self.treestore.append(None, ["Symbol", symbol.getID(), symbol.getName()])
                     foundSymbols[str(symbol.getID())] = treeItemSymbol
 
                 # Display the tree item for the message
@@ -134,11 +134,11 @@ class TreeSearchGenerator(AbstractViewGenerator):
                 if str(result.getMessage().getID()) in foundMessages.keys():
                     treeItemMessage = foundMessages[str(result.getMessage().getID())]
                 else:
-                    treeItemMessage = self.treestore.append(treeItemSymbol, [result.getMessage().getID()])
+                    treeItemMessage = self.treestore.append(treeItemSymbol, ["Message", str(result.getMessage().getID()), str(result.getMessage().getID())])
                     foundMessages[str(result.getMessage().getID())] = treeItemMessage
 
                 # Add the result
-                self.treestore.append(treeItemMessage, [str(result.getSegments())])
+                self.treestore.append(treeItemMessage, ["Segment", str(result.getMessage().getID()), str(result.getSegments())])
 
         self.colorizeResults(searchTasks)
 

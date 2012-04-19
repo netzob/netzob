@@ -170,6 +170,7 @@ class UImodelization:
         # Search view
         self.treeSearchGenerator = TreeSearchGenerator(self.netzob)
         self.treeSearchGenerator.initialization()
+        self.treeSearchGenerator.getTreeview().connect('button-press-event', self.button_press_on_search_results)
         self.optionalViews.registerView(self.treeSearchGenerator)
         # Properties view
         self.treePropertiesGenerator = TreePropertiesGenerator(self.netzob)
@@ -506,7 +507,7 @@ class UImodelization:
             symbol = new_symbols[0]
             self.selectedSymbol = symbol
             self.treeMessageGenerator.default(self.selectedSymbol)
-            self.treeSymbolGenerator.default()
+            self.treeSymbolGenerator.default(self.selectedSymbol)
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
@@ -1935,6 +1936,47 @@ class UImodelization:
         self.treeTypeStructureGenerator.update()
 
     #+----------------------------------------------
+    #| button_press_on_search_results:
+    #|   operation when the user click on the treeview of the search results.
+    #+----------------------------------------------
+    def button_press_on_search_results(self, treeview, event):
+        elementType = None
+        elementValue = None
+
+        target = treeview.get_path_at_pos(int(event.x), int(event.y))
+        # Retrieve informations on the clicked element
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
+            x = int(event.x)
+            y = int(event.y)
+            try:
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            except:
+                # No element selected
+                pass
+            else:
+                # An element is selected
+                aIter = treeview.get_model().get_iter(path)
+                if aIter:
+                    if treeview.get_model().iter_is_valid(aIter):
+                        elementType = treeview.get_model().get_value(aIter, 0)
+                        elementID = treeview.get_model().get_value(aIter, 1)
+                        elementValue = treeview.get_model().get_value(aIter, 2)
+
+        # Depending of its type, we select it
+        if elementType != None and elementValue != None:
+            if elementType == "Symbol":
+                clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolByID(elementID)
+                self.selectedSymbol = clickedSymbol
+                self.updateTreeStoreSymbol()
+                self.updateTreeStoreMessage()
+            elif elementType == "Message":
+                clickedMessage = self.netzob.getCurrentProject().getVocabulary().getMessageByID(elementID)
+                clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(clickedMessage)
+                self.selectedSymbol = clickedSymbol
+                self.selectedMessage = clickedMessage
+                self.updateTreeStoreMessage()
+
+    #+----------------------------------------------
     #| build_context_menu_for_symbols:
     #|   Create a menu to display available operations
     #|   on the treeview symbols
@@ -1944,7 +1986,6 @@ class UImodelization:
         menu = gtk.Menu()
 
         if (symbol != None):
-
             # Edit the Symbol
             itemEditSymbol = gtk.MenuItem("Edit symbol")
             itemEditSymbol.show()
@@ -2249,11 +2290,11 @@ class UImodelization:
     def updateTreeStoreSymbol(self):
         # Updates the treestore with a selected message
         if (self.selectedMessage != None):
-            self.treeSymbolGenerator.default()
+            self.treeSymbolGenerator.default(self.selectedSymbol)
             self.selectedMessage = None
         else:
             # Default display of the symbols
-            self.treeSymbolGenerator.default()
+            self.treeSymbolGenerator.default(self.selectedSymbol)
 
     #+----------------------------------------------
     #| Update the content of the tree store for messages
@@ -2263,7 +2304,7 @@ class UImodelization:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             if isActive:
                 self.treeMessageGenerator.show()
-                self.treeMessageGenerator.default(self.selectedSymbol)
+                self.treeMessageGenerator.default(self.selectedSymbol, self.selectedMessage)
             else:
                 self.treeMessageGenerator.hide()
 
