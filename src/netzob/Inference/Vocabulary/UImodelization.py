@@ -355,7 +355,7 @@ class UImodelization:
         leftPanel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
         self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
-        self.treeSymbolGenerator.getTreeview().connect("drag_data_received", self.drop_fromDND)
+        self.treeSymbolGenerator.getTreeview().connect("drag-data-received", self.drop_fromDND)
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+----------------------------------------------
@@ -707,8 +707,15 @@ class UImodelization:
         # Retrieve all the symbols
         project = self.netzob.getCurrentProject()
         symbols = project.getVocabulary().getSymbols()
-        # Execute the process of alignment (show the gui...)
-        self.resetPartitioning(symbols)
+        # Add all the messages in a uniq symbol
+        for symbol in symbols[1:]:
+            for message in symbol.getMessages():
+                symbols[0].addMessage(message)
+        vocabulary = self.netzob.getCurrentProject().getVocabulary()
+        vocabulary.setSymbols([symbols[0]])
+        self.selectedSymbol = vocabulary.getSymbols()[0]
+        self.resetPartitioning(vocabulary.getSymbols())
+        self.update()
 
     def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
@@ -835,7 +842,21 @@ class UImodelization:
                 self.log.warn("Impossible to retrieve the clicked field !")
                 return
 
+            # Add entry to move seleted messages
             menu = gtk.Menu()
+            listmessages = []
+            (model, paths) = self.treeMessageGenerator.getTreeview().get_selection().get_selected_rows()
+            for path in paths:
+                aIter = model.get_iter(path)
+                if(model.iter_is_valid(aIter)):
+                    id_message = model.get_value(aIter, 0)
+                    listmessages.append(id_message)
+
+            subMenu = self.build_moveto_submenu(self.selectedSymbol, listmessages)
+            item = gtk.MenuItem("Move to ...")
+            item.set_submenu(subMenu)
+            item.show()
+            menu.append(item)
 
             # Add entry to edit field
             item = gtk.MenuItem("Edit field")
@@ -973,6 +994,27 @@ class UImodelization:
             menu.append(item)
 
             menu.popup(None, None, None, event.button, event.time)
+
+    #+----------------------------------------------
+    #| build_partitioning_submenu_for_field:
+    #|   Build a submenu for field cell partitioning.
+    #+----------------------------------------------
+    def build_moveto_submenu(self, symbol_src, listmessages):
+        project = self.netzob.getCurrentProject()
+
+        # Sanity checks
+        if project == None:
+            NetzobErrorMessage("No project selected.")
+            return
+        menu = gtk.Menu()
+
+        for symbol in project.getVocabulary().getSymbols():
+            item = gtk.MenuItem(symbol.getName())
+            item.show()
+            item.connect("activate", self.moveTo, symbol, symbol_src, listmessages)
+            menu.append(item)
+
+        return menu
 
     #+----------------------------------------------
     #| build_partitioning_submenu_for_field:
@@ -2158,10 +2200,11 @@ class UImodelization:
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
         ids = selection.data
-        for msg_id in ids.split(";"):
 
-            modele = treeview.get_model()
-            info_depot = treeview.get_dest_row_at_pos(x, y)
+        modele = treeview.get_model()
+        info_depot = treeview.get_dest_row_at_pos(x, y)
+
+        for msg_id in ids.split(";"):
 
             # First we search for the message to move
             message = None
@@ -2215,6 +2258,37 @@ class UImodelization:
         #Update Left and Right
         self.update()
         return
+
+    #+--------------------------------------------------------
+    #| moveTo:
+    #|   Move selected messages from symbol_src to symbol_dst
+    #+--------------------------------------------------------
+    def moveTo(self, widget, symbol_dst, symbol_src, listmessages):
+
+        self.log.debug("Move messages from {0} to {1} : {2}".format(symbol_src.getName(), symbol_dst.getName(), ",".join(listmessages)))
+
+        if not listmessages:
+            return
+
+        for id_message in listmessages:
+            message = symbol_src.getMessageByID(id_message)
+            symbol_src.removeMessage(message)
+            symbol_dst.addMessage(message)
+
+        #TODO do a needleman ?
+        # Retrieve default parameters of alignment
+        #doInternalSlick = False
+        #defaultFormat = Format.HEX
+        #global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        #unitSize = UnitSize.getSizeInBits(global_unitsize)
+        #if unitSize == None:
+        #    unitSize = 8
+
+        #alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)
+        #alignmentProcess.alignSymbol(symbol_src, doInternalSlick, defaultFormat)
+        #alignmentProcess.alignSymbol(symbol_dst, doInternalSlick, defaultFormat)
+
+        self.update()
 
     #+----------------------------------------------
     #| fieldPartitioning:

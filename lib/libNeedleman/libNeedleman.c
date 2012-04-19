@@ -32,6 +32,11 @@
 //| Import Associated Header
 //+---------------------------------------------------------------------------+
 #include "libNeedleman.h"
+#ifdef _WIN32
+#include <stdio.h>
+#include <malloc.h>
+#endif
+
 
 static PyMethodDef libNeedleman_methods[] = {
   {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
@@ -95,14 +100,17 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   int sizeFormat;
   unsigned char * serialGroups;
   int sizeSerialGroups;
-  PyObject *temp_cb;
   unsigned int debugMode = 0;
-
-  // local variables
-  t_groups groups;
+  int i,j;
   int nbDeserializedGroups;
+  PyObject * retobj;
+  PyObject *temp_cb;
+  t_groups groups;
   t_equivalentGroup result;
   Bool bool_debugMode;
+  #if _WIN32
+  char * tagSerial = 0;
+  #endif
 
   // Converts the arguments
   if (!PyArg_ParseTuple(args, "hhs#s#Oh", &doInternalSlick, &nbGroups, &format, &sizeFormat, &serialGroups, &sizeSerialGroups, &temp_cb, &debugMode)) {
@@ -124,7 +132,7 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
 
   groups.len = nbGroups;
   groups.groups = malloc(nbGroups*sizeof(t_group));
-  int i,j;
+
   for(i=0; i<nbGroups-1; i++){
     groups.groups[i].scores = malloc((nbGroups-i-1)*sizeof(float));
     for(j=0;j<nbGroups-i-1;j++){
@@ -158,12 +166,15 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
  // printf("A number of %d groups has been deserialized.\n", nbDeserializedGroups);
   result.i = -1;
   result.j= -1;
-  result.score = -1;
+  result.score = -1; 
   result.tag = malloc(((nbGroups*(nbGroups-1))/2)*sizeof(t_tag));
   //printf("SIZE: %d\n",((nbGroups*(nbGroups-1))/2));
   result.lengthTag = nbGroups*(nbGroups-1)/2;
-  char tagSerial[strlen("100.000000,100.000000,100.000000;")*result.lengthTag];
-
+  #ifdef _WIN32
+  tagSerial = _malloca(sizeof("100.000000,100.000000,100.000000;") * result.lengthTag);
+  #else
+  char tagSerial[sizeof("100.000000,100.000000,100.000000;") * result.lengthTag];
+  #endif
   getHighestEquivalentGroup(&result, doInternalSlick, nbGroups, &groups, debugMode);
 
  // printf("Gethighest Done\n");
@@ -182,8 +193,13 @@ static PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     printf("Impossible to compute the highest equivalent set of groups.");
   }
 
-  return Py_BuildValue("(iifs)", result.i, result.j, result.score,tagSerial);
+  retobj = Py_BuildValue("(iifs)", result.i, result.j, result.score,tagSerial);
 
+  #ifdef _WIN32
+   _freea(tagSerial);
+  #endif
+
+  return retobj;
 }
 void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick, int nbGroups, t_groups* groups, Bool debugMode) {
   // Compute the matrix
@@ -215,93 +231,72 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   status = 2.0;
 
 
-    #pragma omp parallel for shared(result,groups, nbGroups, matrix,debugMode,doInternalSlick,maxScore,i_maximum,j_maximum) private(i,p)
-    for (i = 0; i < nbGroups; i++) {
-      p = 0;
-  //   #pragma omp for nowait 
-      for (p = 0; p < nbGroups; p++) {
-		  //status += sizeSteps;
-        if (i < p) {
-          if(groups->groups[i].scores[p-i-1]==-1){//Check if the score has been allready computed 
-            int m, n;
-            t_group p_group;
-            t_regex regex;
-  	    t_regex regex1;
-            t_regex regex2;
-            t_score score;
-            score.s1 = 0;
-            score.s2 = 0;
-            score.s3 = 0;
-            regex.score = &score;
-            p_group.len = groups->groups[i].len + groups->groups[p].len;
-            p_group.messages = malloc(p_group.len * sizeof(t_message));
-            for (m = 0; m < groups->groups[i].len; ++m) {
-              p_group.messages[m] = groups->groups[i].messages[m];
-            }
-            for (m = m, n = 0; n < groups->groups[p].len; ++m, ++n) {
-              p_group.messages[m] = groups->groups[p].messages[n];
-            }
-            // Align the messages of the current group
-            regex1.len = p_group.messages[0].len;
-            regex1.regex = p_group.messages[0].message;
-            regex1.mask = p_group.messages[0].mask;
+  #pragma omp parallel for shared(result,groups, nbGroups, matrix,debugMode,doInternalSlick,maxScore,i_maximum,j_maximum) private(i,p)
+  // We loop over each couple of groups
+  for (i = 0; i < nbGroups; i++) {
+    for (p = i + 1; p < nbGroups; p++) {
+      if(groups->groups[i].scores[p-i-1]==-1){//Check if the score has been allready computed 
+	int m, n;
+	float similarityScore = 0.0;
+	t_message tmpMessage;
+	t_score score;
+	tmpMessage.score = &score;
 
-            for (m = 1; m < p_group.len; ++m) {
-              regex2.len = p_group.messages[m].len;
-              regex2.regex = p_group.messages[m].message;
-              regex2.mask = p_group.messages[m].mask;
-              alignTwoMessages(&regex, doInternalSlick, &regex1, &regex2, debugMode);
-              regex1.len = regex.len;
-              regex1.mask = regex.mask;
-              regex1.regex = regex.regex;
-            }
-	    {
-              matrix[i][p] = computeDistance(regex.score);
-	    }
-            free( regex.regex );
-            free( regex.mask );
-            free( p_group.messages );
+	// We loop over each couple of messages
+	for (m = 0; m < groups->groups[i].len; ++m) {
+	  for (n = 0; n < groups->groups[p].len; ++n) {
+	    score.s1 = 0;
+	    score.s2 = 0;
+	    score.s3 = 0;
+	    alignTwoMessages(&tmpMessage, doInternalSlick, &groups->groups[i].messages[m], &groups->groups[p].messages[n], debugMode);
+	    similarityScore += computeDistance( tmpMessage.score );
 	  }
-	  else{
-            matrix[i][p] = groups->groups[i].scores[p-i-1];// Put the score allready computed
-          }
+	}
 
-          if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
-                maxScore = matrix[i][p];
-                i_maximum = i;
-                j_maximum = p;
-          }
+	{
+          matrix[i][p] = similarityScore / (groups->groups[i].len * groups->groups[p].len); 
+	}
+
+      }
+      else{
+	matrix[i][p] = groups->groups[i].scores[p-i-1];// Put the score allready computed
+      }
+
+      if (((maxScore < matrix[i][p]) || (maxScore == -1))) {
+	maxScore = matrix[i][p];
+	i_maximum = i;
+	j_maximum = p;
+      }
  
-	  //Record the scores for the next time
-          (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
-          (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
-	  (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).score = matrix[i][p];
-	  if (debugMode) {
-	    printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
-	  }
-        }
+      //Record the scores for the next time
+      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).i = i;
+      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).j = p;
+      (result->tag[(i*(2*nbGroups-i-1))/2+(p-1-i)]).score = matrix[i][p];
+      if (debugMode) {
+	printf("matrix %d,%d = %f\n", i, p, matrix[i][p]);
       }
     }
-    // Room service
-    for (i = 0; i < nbGroups; i++) {
-      free( matrix[i] );
-    }
-    free( matrix );
-    for (i = 0; i < nbGroups; ++i) {
-      free( groups->groups[i].messages );
-      if(i < nbGroups-1){
-          free(groups->groups[i].scores);}
-    }
-    free( groups->groups );
-    
-    if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
-      printf("Error, error while executing C callback.\n");
-    }
+  }
 
-    result->i = i_maximum;
-    result->j = j_maximum;
-    result->score = maxScore;   
+  // Room service
+  for (i = 0; i < nbGroups; i++) {
+    free( matrix[i] );
+  }
+  free( matrix );
+  for (i = 0; i < nbGroups; ++i) {
+    free( groups->groups[i].messages );
+    if(i < nbGroups-1){
+      free(groups->groups[i].scores);}
+  }
+  free( groups->groups );
 
+  if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
+    printf("Error, error while executing C callback.\n");
+  }
+
+  result->i = i_maximum;
+  result->j = j_maximum;
+  result->score = maxScore;
 }
 
 //+---------------------------------------------------------------------------+
@@ -320,7 +315,7 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
 
   // local variables
   unsigned int nbDeserializedMessage = 0;
-  t_regex regex;
+  t_message resMessage;
   t_group group;
   t_score score;
   Bool bool_doInternalSlick;
@@ -376,33 +371,33 @@ static PyObject* py_alignMessages(PyObject* self, PyObject* args) {
     bool_doInternalSlick = FALSE;
   }
 
-  // Fix the default values associated with regex
+  // Fix the default values associated with resMessage
   score.s1 = 0;
   score.s2 = 0;
   score.s3 = 0;
-  regex.score = &score;
-  regex.regex = malloc(group.messages[0].len * sizeof(unsigned char));
-  memset(regex.regex, '\0', group.messages[0].len);
-  regex.len = 0;
-  regex.mask = malloc(group.messages[0].len * sizeof(unsigned char));
-  memset(regex.mask, '\0', group.messages[0].len);
+  resMessage.score = &score;
+  resMessage.alignment = malloc(group.messages[0].len * sizeof(unsigned char));
+  memset(resMessage.alignment, '\0', group.messages[0].len);
+  resMessage.len = 0;
+  resMessage.mask = malloc(group.messages[0].len * sizeof(unsigned char));
+  memset(resMessage.mask, '\0', group.messages[0].len);
   //+------------------------------------------------------------------------+
   // Execute the alignment process
   //+------------------------------------------------------------------------+
-  alignMessages(&regex, bool_doInternalSlick, nbMessages, &group, bool_debugMode);
+  alignMessages(&resMessage, bool_doInternalSlick, nbMessages, &group, bool_debugMode);
 
   // Return the results
-  return Py_BuildValue("(fffs#s#)", regex.score->s1, regex.score->s2, regex.score->s3, regex.regex, regex.len, regex.mask, regex.len);
+  return Py_BuildValue("(fffs#s#)", resMessage.score->s1, resMessage.score->s2, resMessage.score->s3, resMessage.alignment, resMessage.len, resMessage.mask, resMessage.len);
 }
-void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned int nbMessages, t_group* group, Bool debugMode) {
+void alignMessages(t_message *resMessage, Bool doInternalSlick, unsigned int nbMessages, t_group* group, Bool debugMode) {
   // local variable
   unsigned int numberOfOperations = 0;
   double costOfOperation;
   double status = 0.0;
   
   // Local variables
-  t_regex current_regex;
-  t_regex new_regex;
+  t_message current_message;
+  t_message new_message;
   t_score score;
   unsigned int i_message = 0;
   
@@ -417,20 +412,20 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned int nbMessages
   numberOfOperations = group->len - 1;
   costOfOperation = 100.0 / numberOfOperations;
 
-  // Create a current regex (using first message)
-  // current regex = Align N+1 message with current regex
-  current_regex.len = group->messages[0].len;
-  current_regex.regex = group->messages[0].message;
-  current_regex.mask = malloc(group->messages[0].len * sizeof(unsigned char));
-  memset(current_regex.mask, 0, group->messages[0].len);
-  current_regex.score = &score;
+  // Create a current message (using first message)
+  // current message = Align N+1 message with current message
+  current_message.len = group->messages[0].len;
+  current_message.alignment = group->messages[0].alignment;
+  current_message.mask = malloc(group->messages[0].len * sizeof(unsigned char));
+  memset(current_message.mask, 0, group->messages[0].len);
+  current_message.score = &score;
 
-  // Prepare for the regex
+  // Prepare for the resMessage
   if (group->len == 1) {
-    regex->len = current_regex.len;
-    regex->mask = current_regex.mask;
-    regex->regex = current_regex.regex;
-    regex->score = current_regex.score;
+    resMessage->len = current_message.len;
+    resMessage->mask = current_message.mask;
+    resMessage->alignment = current_message.alignment;
+    resMessage->score = current_message.score;
   }
   for (i_message=1; i_message < group->len; i_message++) {
     // Update the execution status
@@ -438,20 +433,20 @@ void alignMessages(t_regex *regex, Bool doInternalSlick, unsigned int nbMessages
       printf("Error, error while executing C callback.\n");
     }
 
-    new_regex.len = group->messages[i_message].len;
-    new_regex.regex = group->messages[i_message].message;
-    new_regex.mask = malloc(group->messages[i_message].len * sizeof(unsigned char));
-    memset(new_regex.mask, 0, group->messages[i_message].len);
+    new_message.len = group->messages[i_message].len;
+    new_message.alignment = group->messages[i_message].alignment;
+    new_message.mask = malloc(group->messages[i_message].len * sizeof(unsigned char));
+    memset(new_message.mask, 0, group->messages[i_message].len);
 
-    // Align current_regex with new_regex
-    alignTwoMessages(regex, doInternalSlick, &current_regex, &new_regex, debugMode);
+    // Align current_message with new_message
+    alignTwoMessages(resMessage, doInternalSlick, &current_message, &new_message, debugMode);
 
-    free(current_regex.mask);
-    free(new_regex.mask);
-    // Copy resut in the current regex
-    current_regex.len = regex->len;
-    current_regex.regex = regex->regex;
-    current_regex.mask = regex->mask;
+    free(current_message.mask);
+    free(new_message.mask);
+    // Copy result in the current message
+    current_message.len = resMessage->len;
+    current_message.alignment = resMessage->alignment;
+    current_message.mask = resMessage->mask;
 
     //udpate status
     status += costOfOperation;
@@ -479,11 +474,11 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
 
   // local variables
   unsigned int nbDeserializedMessage = 0;
-  t_regex regexMessage1;
+  t_message message1;
   t_score scoreMessage1;
-  t_regex regexMessage2;
+  t_message message2;
   t_score scoreMessage2;
-  t_regex regex;
+  t_message resMessage;
   t_score score;
   t_group group;
   Bool bool_doInternalSlick;
@@ -536,53 +531,53 @@ static PyObject* py_alignTwoMessages(PyObject* self, PyObject* args) {
     bool_doInternalSlick = FALSE;
   }
 
-  // Establishes regex for message1
-  regexMessage1.len = group.messages[0].len;
+  // Establishes message1
+  message1.len = group.messages[0].len;
   scoreMessage1.s1 = 0;
   scoreMessage1.s2 = 0;
   scoreMessage1.s3 = 0;
-  regexMessage1.score = &scoreMessage1;
-  regexMessage1.regex = group.messages[0].message;
-  regexMessage1.mask  = malloc(group.messages[0].len * sizeof(unsigned char));
-  memset(regexMessage1.mask, 0, group.messages[0].len);
+  message1.score = &scoreMessage1;
+  message1.alignment = group.messages[0].alignment;
+  message1.mask  = malloc(group.messages[0].len * sizeof(unsigned char));
+  memset(message1.mask, 0, group.messages[0].len);
 
-  // Establishes regex for message2
-  regexMessage2.len = group.messages[1].len;
+  // Establishes message2
+  message2.len = group.messages[1].len;
   scoreMessage2.s1 = 0;
   scoreMessage2.s2 = 0;
   scoreMessage2.s3 = 0;
-  regexMessage2.score = &scoreMessage2;
-  regexMessage2.regex = group.messages[1].message;
-  regexMessage2.mask  = malloc(group.messages[1].len * sizeof(unsigned char));
-  memset(regexMessage2.mask, 0, group.messages[1].len);
+  message2.score = &scoreMessage2;
+  message2.alignment = group.messages[1].alignment;
+  message2.mask  = malloc(group.messages[1].len * sizeof(unsigned char));
+  memset(message2.mask, 0, group.messages[1].len);
 
   // Prepare the response
-  regex.len = 0;
+  resMessage.len = 0;
   score.s1 = 0;
   score.s2 = 0;
   score.s3 = 0;
-  regex.score = &score;
-  if (regexMessage1.len >= regexMessage2.len) {
-    regex.mask = malloc(regexMessage1.len * sizeof(unsigned char));
-    memset(regex.mask, 0, regexMessage1.len);
-    regex.regex = malloc(regexMessage1.len * sizeof(unsigned char));
-    memset(regex.regex, 0, regexMessage1.len);
+  resMessage.score = &score;
+  if (message1.len >= message2.len) {
+    resMessage.mask = malloc(message1.len * sizeof(unsigned char));
+    memset(resMessage.mask, 0, message1.len);
+    resMessage.alignment = malloc(message1.len * sizeof(unsigned char));
+    memset(resMessage.alignment, 0, message1.len);
   } else {
-    regex.mask = malloc(regexMessage2.len * sizeof(unsigned char));
-    memset(regex.mask, 0, regexMessage2.len);
-    regex.regex = malloc(regexMessage2.len * sizeof(unsigned char));
-    memset(regex.regex, 0, regexMessage2.len);
+    resMessage.mask = malloc(message2.len * sizeof(unsigned char));
+    memset(resMessage.mask, 0, message2.len);
+    resMessage.alignment = malloc(message2.len * sizeof(unsigned char));
+    memset(resMessage.alignment, 0, message2.len);
   }
   // Execute the C function
-  alignTwoMessages(&regex, bool_doInternalSlick, &regexMessage1, &regexMessage2, bool_debugMode);
+  alignTwoMessages(&resMessage, bool_doInternalSlick, &message1, &message2, bool_debugMode);
 
-  free(regexMessage1.mask);
-  free(regexMessage2.mask);
+  free(message1.mask);
+  free(message2.mask);
 
   // Return the result
-  return Py_BuildValue("(fffs#s#)", regex.score->s1, regex.score->s2, regex.score->s3, regex.regex, regex.len, regex.mask, regex.len);
+  return Py_BuildValue("(fffs#s#)", resMessage.score->s1, resMessage.score->s2, resMessage.score->s3, resMessage.alignment, resMessage.len, resMessage.mask, resMessage.len);
 }
-int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_regex * regex2, Bool debugMode){
+int alignTwoMessages(t_message * resMessage, Bool doInternalSlick, t_message * message1, t_message * message2, Bool debugMode){
   // local variables
   short int **matrix;
   unsigned int i = 0;
@@ -592,16 +587,16 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   short int elt1, elt2, elt3, max, eltL, eltD, eltT;
 
   // Traceback
-  unsigned char *contentRegex1;
-  unsigned char *contentRegex2;
-  unsigned char *maskRegex1;
-  unsigned char *maskRegex2;
+  unsigned char *contentMessage1;
+  unsigned char *contentMessage2;
+  unsigned char *maskMessage1;
+  unsigned char *maskMessage2;
   unsigned int iReg1 = 0;
   unsigned int iReg2 = 0;
 
-  // Computing Regex
-  unsigned char *regexTmp;
-  unsigned char *regexMaskTmp;
+  // Computing resMessage
+  unsigned char *tmpMessage;
+  unsigned char *tmpMessageMask;
 
   // Score computation
   unsigned int nbDynTotal = 0;
@@ -610,16 +605,16 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   //+------------------------------------------------------------------------+
   // Create and initialize the matrix
   //+------------------------------------------------------------------------+
-  matrix = (short int**) malloc( sizeof(short int*) * (regex1->len + 1) );
-  for (i = 0; i < (regex1->len + 1); i++) {
-    matrix[i] = (short int*) calloc( (regex2->len + 1), sizeof(short int) );
+  matrix = (short int**) malloc( sizeof(short int*) * (message1->len + 1) );
+  for (i = 0; i < (message1->len + 1); i++) {
+    matrix[i] = (short int*) calloc( (message2->len + 1), sizeof(short int) );
   }
   
   //+------------------------------------------------------------------------+
   // Fullfill the matrix given the two messages
   //+------------------------------------------------------------------------+
-  for (i = 1; i < (regex1->len + 1); i++) {
-    for (j = 1; j < (regex2->len + 1); j++) {
+  for (i = 1; i < (message1->len + 1); i++) {
+    for (j = 1; j < (message2->len + 1); j++) {
       /*
         # Matrix[i][j] = MAXIMUM (
         # elt1 :         Matrix[i-1][j-1] + match/mismatch(Matrix[i][j]),
@@ -627,7 +622,7 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
         # elt3 :         Matrix[i-1][j]   + gap)
       */
       elt1 = matrix[i - 1][j - 1];
-      if ( (regex1->mask[i - 1] == 0) && (regex2->mask[j - 1] == 0) && (regex1->regex[i - 1] == regex2->regex[j - 1])) {
+      if ( (message1->mask[i - 1] == 0) && (message2->mask[j - 1] == 0) && (message1->alignment[i - 1] == message2->alignment[j - 1])) {
         elt1 += MATCH;
       } else {
         elt1 += MISMATCH;
@@ -645,36 +640,36 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   // Traceback into the matrix
   //+------------------------------------------------------------------------+
   //finish = FALSE;
-  contentRegex1 = calloc( regex1->len + regex2->len, sizeof(unsigned char));
-  contentRegex2 = calloc( regex1->len + regex2->len, sizeof(unsigned char));
-  maskRegex1 = calloc( regex1->len + regex2->len, sizeof(unsigned char));
-  maskRegex2 = calloc( regex1->len + regex2->len, sizeof(unsigned char));
+  contentMessage1 = calloc( message1->len + message2->len, sizeof(unsigned char));
+  contentMessage2 = calloc( message1->len + message2->len, sizeof(unsigned char));
+  maskMessage1 = calloc( message1->len + message2->len, sizeof(unsigned char));
+  maskMessage2 = calloc( message1->len + message2->len, sizeof(unsigned char));
 
-  if (contentRegex1 == NULL) {
-    printf("Error while trying to allocate memory for variable : contentRegex1.\n");
+  if (contentMessage1 == NULL) {
+    printf("Error while trying to allocate memory for variable : contentMessage1.\n");
     return -1;
   }
-  if (contentRegex2 == NULL) {
-    printf("Error while trying to allocate memory for variable : contentRegex2.\n");
+  if (contentMessage2 == NULL) {
+    printf("Error while trying to allocate memory for variable : contentMessage2.\n");
     return -1;
   }
-  if (maskRegex1 == NULL) {
-    printf("Error while trying to allocate memory for variable : maskRegex1.\n");
+  if (maskMessage1 == NULL) {
+    printf("Error while trying to allocate memory for variable : maskMessage1.\n");
     return -1;
   }
-  if (maskRegex2 == NULL) {
-    printf("Error while trying to allocate memory for variable : maskRegex2.\n");
+  if (maskMessage2 == NULL) {
+    printf("Error while trying to allocate memory for variable : maskMessage2.\n");
     return -1;
   }
   // Fullfill the mask with END like filling it with a '\0'
-  memset(maskRegex1, END, (regex1->len + regex2->len) * sizeof(unsigned char));
-  memset(maskRegex2, END, (regex1->len + regex2->len) * sizeof(unsigned char));
+  memset(maskMessage1, END, (message1->len + message2->len) * sizeof(unsigned char));
+  memset(maskMessage2, END, (message1->len + message2->len) * sizeof(unsigned char));
 
   // Prepare variables for the traceback
-  iReg1 = regex1->len + regex2->len - 1;
+  iReg1 = message1->len + message2->len - 1;
   iReg2 = iReg1;
-  i = regex1->len;
-  j = regex2->len;
+  i = message1->len;
+  j = message2->len;
 
   // DIAGONAL (almost) TRACEBACK
   while ((i > 0) && (j > 0)) {
@@ -685,51 +680,51 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     if ((eltL > eltD) && (eltL > eltT)) {
       --j;
 
-      contentRegex1[iReg1] = 0xf1;
-      maskRegex1[iReg1] = DIFFERENT;
+      contentMessage1[iReg1] = 0xf1;
+      maskMessage1[iReg1] = DIFFERENT;
 
-      if( regex2->mask[j] == EQUAL) {
-        contentRegex2[iReg2] = regex2->regex[j];
-        maskRegex2[iReg2] = EQUAL;
+      if( message2->mask[j] == EQUAL) {
+        contentMessage2[iReg2] = message2->alignment[j];
+        maskMessage2[iReg2] = EQUAL;
       }
       else {
-        contentRegex2[iReg2] = 0xf1;
-        maskRegex2[iReg2] = DIFFERENT;
+        contentMessage2[iReg2] = 0xf1;
+        maskMessage2[iReg2] = DIFFERENT;
       }
     } else if ((eltT >= eltL) && (eltT > eltD)) {
       --i;
 
-      contentRegex2[iReg2] = 0xf2;
-      maskRegex2[iReg2] = DIFFERENT;
+      contentMessage2[iReg2] = 0xf2;
+      maskMessage2[iReg2] = DIFFERENT;
 
-      if( regex1->mask[i] == EQUAL) {
-        contentRegex1[iReg1] = regex1->regex[i];
-        maskRegex1[iReg1] = EQUAL;
+      if( message1->mask[i] == EQUAL) {
+        contentMessage1[iReg1] = message1->alignment[i];
+        maskMessage1[iReg1] = EQUAL;
       }
       else {
-        contentRegex1[iReg1] = 0xf2;
-        maskRegex1[iReg1] = DIFFERENT;
+        contentMessage1[iReg1] = 0xf2;
+        maskMessage1[iReg1] = DIFFERENT;
       }
     } else {
       --i;
       --j;
 
-      if(regex1->mask[i] == EQUAL) {
-        contentRegex1[iReg1] = regex1->regex[i];
-        maskRegex1[iReg1] = EQUAL;
+      if(message1->mask[i] == EQUAL) {
+        contentMessage1[iReg1] = message1->alignment[i];
+        maskMessage1[iReg1] = EQUAL;
       }
       else {
-        contentRegex1[iReg1] = 0xf2;
-        maskRegex1[iReg1] = DIFFERENT;
+        contentMessage1[iReg1] = 0xf2;
+        maskMessage1[iReg1] = DIFFERENT;
       }
 
-      if(regex2->mask[j] == EQUAL) {
-        contentRegex2[iReg2] = regex2->regex[j];
-        maskRegex2[iReg2] = EQUAL;
+      if(message2->mask[j] == EQUAL) {
+        contentMessage2[iReg2] = message2->alignment[j];
+        maskMessage2[iReg2] = EQUAL;
       }
       else {
-        contentRegex2[iReg2] = 0xf2;
-        maskRegex2[iReg2] = DIFFERENT;
+        contentMessage2[iReg2] = 0xf2;
+        maskMessage2[iReg2] = DIFFERENT;
       }
     }
     --iReg1;
@@ -742,16 +737,16 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   // TRACEBACK BY GOING TO THE EXTREME TOP
   while (i > 0) {
     --i;
-    contentRegex2[iReg2] = 0xf3;
-    maskRegex2[iReg2] = DIFFERENT;
+    contentMessage2[iReg2] = 0xf3;
+    maskMessage2[iReg2] = DIFFERENT;
 
-    if(regex1->mask[i] == EQUAL) {
-      contentRegex1[iReg1] = regex1->regex[i];
-      maskRegex1[iReg1] = EQUAL;
+    if(message1->mask[i] == EQUAL) {
+      contentMessage1[iReg1] = message1->alignment[i];
+      maskMessage1[iReg1] = EQUAL;
     }
     else {
-      contentRegex1[iReg1] = 0xf3;
-      maskRegex1[iReg1] = DIFFERENT;
+      contentMessage1[iReg1] = 0xf3;
+      maskMessage1[iReg1] = DIFFERENT;
     }
     --iReg1;
     --iReg2;
@@ -761,16 +756,16 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   // TRACEBACK BY GOING TO THE EXTREME LEFT
   while (j > 0) {
     --j;
-    contentRegex1[iReg1] = 0xf4;
-    maskRegex1[iReg1] = DIFFERENT;
+    contentMessage1[iReg1] = 0xf4;
+    maskMessage1[iReg1] = DIFFERENT;
 
-    if(regex2->mask[j] == EQUAL) {
-      contentRegex2[iReg2] = regex2->regex[j];
-      maskRegex2[iReg2] = EQUAL;
+    if(message2->mask[j] == EQUAL) {
+      contentMessage2[iReg2] = message2->alignment[j];
+      maskMessage2[iReg2] = EQUAL;
     }
     else {
-      contentRegex2[iReg2] = 0xf4;
-      maskRegex2[iReg2] = DIFFERENT;
+      contentMessage2[iReg2] = 0xf4;
+      maskMessage2[iReg2] = DIFFERENT;
     }
     --iReg1;
     --iReg2;
@@ -779,22 +774,22 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
   // For debug only
   if (debugMode == TRUE) {
     printf("Message 1 : ");
-    for( i = 0; i < regex1->len + regex2->len; i++) {
-      if(maskRegex1[i] == EQUAL ) {
-        printf("%02x", (unsigned char) contentRegex1[i]);
-      } else if ( maskRegex2[i] == END ) {
-        printf("##");
+    for( i = 0; i < message1->len + message2->len; i++) {
+      if(maskMessage1[i] == EQUAL ) {
+        printf("%02x", (unsigned char) contentMessage1[i]);
+      } else if ( maskMessage2[i] == END ) {
+        //printf("##");
       } else {
         printf("--");
       }
     }
     printf("\n");
     printf("Message 2 : ");
-    for( i = 0; i < regex1->len + regex2->len; i++) {
-      if( maskRegex2[i] == EQUAL ) {
-        printf("%02x", (unsigned char) contentRegex2[i]);
-      } else if ( maskRegex2[i] == END ) {
-        printf("##");
+    for( i = 0; i < message1->len + message2->len; i++) {
+      if( maskMessage2[i] == EQUAL ) {
+        printf("%02x", (unsigned char) contentMessage2[i]);
+      } else if ( maskMessage2[i] == END ) {
+        //printf("##");
       } else {
         printf("--");
       }
@@ -802,71 +797,71 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
     printf("\n");
   }
 
-  // Compute the common regex
-  regexTmp = calloc(regex1->len + regex2->len, sizeof(unsigned char));
-  regexMaskTmp = malloc((regex1->len + regex2->len) * sizeof(unsigned char));
-  memset(regexMaskTmp, END, (regex1->len + regex2->len) * sizeof(unsigned char));
+  // Compute the common alignment
+  tmpMessage = calloc(message1->len + message2->len, sizeof(unsigned char));
+  tmpMessageMask = malloc((message1->len + message2->len) * sizeof(unsigned char));
+  memset(tmpMessageMask, END, (message1->len + message2->len) * sizeof(unsigned char));
 
-  i = regex1->len + regex2->len;
+  i = message1->len + message2->len;
   while (i > 0) {
     --i;
-    if ((maskRegex1[i] == END) || (maskRegex2[i] == END)) {
-      regexTmp[i] = 0xf9;
-      regexMaskTmp[i] = END;
+    if ((maskMessage1[i] == END) || (maskMessage2[i] == END)) {
+      tmpMessage[i] = 0xf9;
+      tmpMessageMask[i] = END;
     }
-    else if ((maskRegex1[i] == EQUAL) && (maskRegex2[i] == EQUAL) && (contentRegex1[i] == contentRegex2[i])) {
-      regexTmp[i] = contentRegex1[i];
-      regexMaskTmp[i] = EQUAL;
+    else if ((maskMessage1[i] == EQUAL) && (maskMessage2[i] == EQUAL) && (contentMessage1[i] == contentMessage2[i])) {
+      tmpMessage[i] = contentMessage1[i];
+      tmpMessageMask[i] = EQUAL;
     }
     else {
-      regexTmp[i] = 0xf5;
-      regexMaskTmp[i] = DIFFERENT;
+      tmpMessage[i] = 0xf5;
+      tmpMessageMask[i] = DIFFERENT;
 
       nbDynTotal += 1;
-      if ((maskRegex1[i] == EQUAL) && (maskRegex2[i] == EQUAL)) {
+      if ((maskMessage1[i] == EQUAL) && (maskMessage2[i] == EQUAL)) {
 	nbDynCommon += 1;
       }      
     }
   }
 
-  // Try to slick the regex
+  // Try to (optionally) slick the alignment
   if(doInternalSlick == TRUE) {
-    for(i = 1; i < regex1->len + regex2->len - 1; i++) {
-      if( regexMaskTmp[i] == EQUAL ) {
-        if( regexMaskTmp[i - 1] == DIFFERENT ) {
-          if( regexMaskTmp[i + 1] == DIFFERENT ) {
-            regexTmp[i] = 0xf6;
-            regexMaskTmp[i] = DIFFERENT;
+    for(i = 1; i < message1->len + message2->len - 1; i++) {
+      if( tmpMessageMask[i] == EQUAL ) {
+        if( tmpMessageMask[i - 1] == DIFFERENT ) {
+          if( tmpMessageMask[i + 1] == DIFFERENT ) {
+            tmpMessage[i] = 0xf6;
+            tmpMessageMask[i] = DIFFERENT;
           }
         }
       }
     }
   }
 
-  // Create the regex based on obtained data
-  // Remove the first # of the regex (where mask = END)
-  // Retrieve the shortest possible regex
+  // Create the alignment based on obtained data
+  // Remove the first # of the alignment (where mask = END)
+  // Retrieve the shortest possible alignment
   i = 0;
-  while( regexMaskTmp[i] == END )
+  while( tmpMessageMask[i] == END )
     i++;
 
   // Store the results
-  regex->len = regex1->len + regex2->len - i;
-  regex->regex = malloc(regex->len * sizeof(unsigned char));
-  regex->mask = malloc(regex->len * sizeof(unsigned char));
-  // TODO: (fgy) free regex.mask and regex.regex
-  memcpy(regex->regex, regexTmp + i, regex->len);
-  memcpy(regex->mask, regexMaskTmp + i, regex->len);
+  resMessage->len = message1->len + message2->len - i;
+  resMessage->alignment = malloc(resMessage->len * sizeof(unsigned char));
+  resMessage->mask = malloc(resMessage->len * sizeof(unsigned char));
+  // TODO: (fgy) free resMessage.mask and resMessage.alignment
+  memcpy(resMessage->alignment, tmpMessage + i, resMessage->len);
+  memcpy(resMessage->mask, tmpMessageMask + i, resMessage->len);
 
 
-  // Compute the scores of similarity, using the regex
+  // Compute the scores of similarity, using the resMessage
   if (debugMode) {
     printf("Result    : ");
-    for( i = 0; i < regex->len; i++) {
-      if(regex->mask[i] == EQUAL ) {
-        printf("%02x", (unsigned char) regex->regex[i]);
-      } else if ( regex->mask[i] == END ) {
-        printf("##");
+    for( i = 0; i < resMessage->len; i++) {
+      if(resMessage->mask[i] == EQUAL ) {
+        printf("%02x", (unsigned char) resMessage->alignment[i]);
+      } else if ( resMessage->mask[i] == END ) {
+        //printf("##");
       } else {
         printf("--");
       }
@@ -876,53 +871,52 @@ int alignTwoMessages(t_regex * regex, Bool doInternalSlick, t_regex * regex1, t_
 
 
   // COMPUTE THE SCORES
-  // Using the regex, we compute the multiple scores
-  regex->score->s1 = getScoreRatio(regex);
-  regex->score->s2 = getScoreDynSize(nbDynTotal, nbDynCommon);
-  regex->score->s3 = getScoreRang(regex);
+  // Using the resMessage, we compute the multiple scores
+  resMessage->score->s1 = getScoreRatio(resMessage);
+  resMessage->score->s2 = getScoreDynSize(nbDynTotal, nbDynCommon);
+  resMessage->score->s3 = getScoreRang(resMessage);
 
   if (debugMode) {
-    printf("Score ratio : %0.2f.\n", regex->score->s1);
-    printf("Score DynSize : %0.2f.\n", regex->score->s2);
-    printf("Score Rang : %0.2f.\n", regex->score->s3);
+    printf("Score ratio : %0.2f.\n", resMessage->score->s1);
+    printf("Score DynSize : %0.2f.\n", resMessage->score->s2);
+    printf("Score Rang : %0.2f.\n", resMessage->score->s3);
   }
 
 
   // Room service
-  for (i = 0; i < (regex1->len + 1); i++) {
+  for (i = 0; i < (message1->len + 1); i++) {
     free( matrix[i] );
   }
   free( matrix );
-  free(contentRegex1);
-  free(contentRegex2);
-  free(maskRegex1);
-  free(maskRegex2);
-  free(regexTmp);
-  free(regexMaskTmp);
+  free(contentMessage1);
+  free(contentMessage2);
+  free(maskMessage1);
+  free(maskMessage2);
+  free(tmpMessage);
+  free(tmpMessageMask);
   return 0;
 }
 
 
-float getScoreRatio(t_regex * regex) {
-  // Computing score of the regex
+float getScoreRatio(t_message * message) {
+  // Computing score of the alignment
   float nbDynamic = 0.0f;
   float nbStatic = 0.0f;
   Bool inDyn = FALSE;
-
   int i=0;
   float result = 0;
-  // Compute the score of the regex
-  for (i = (regex->len - 1); i >= 1; --i) {
-    if (regex->mask[i] == END) {
+
+  for (i = (message->len - 1); i >= 1; --i) {
+    if (message->mask[i] == END) {
       break;
     }
-    if (regex->mask[i] == EQUAL) {
+    if (message->mask[i] == EQUAL) {
       if (inDyn == TRUE) {
         nbDynamic = nbDynamic + 1.0f;
         inDyn = FALSE;
       }
       nbStatic = nbStatic + 1.0f;
-    } else if (regex->mask[i] == DIFFERENT) {
+    } else if (message->mask[i] == DIFFERENT) {
       inDyn = TRUE;
     }
   }
@@ -947,7 +941,7 @@ float getScoreDynSize(unsigned int nbDynTotal, unsigned int nbDynCommon) {
   }
   return result;
 }
-float getScoreRang(t_regex * regex) {
+float getScoreRang(t_message * message) {
   float result = 0;
   
   return result;
@@ -1031,7 +1025,11 @@ unsigned int deserializeMessages(t_group * group, unsigned char *format, int siz
 
     // Register the message
     group->messages[i_message].len = size_message;
-    group->messages[i_message].message = serialMessages + serial_shift;
+    group->messages[i_message].alignment = serialMessages + serial_shift;
+    group->messages[i_message].mask = malloc(size_message * sizeof(unsigned char));
+    memset(group->messages[i_message].mask, '\0', size_message);
+    t_score score;
+    group->messages[i_message].score = &score;
 
     nbDeserializedMessages += 1;
 
@@ -1046,7 +1044,7 @@ unsigned int deserializeMessages(t_group * group, unsigned char *format, int siz
     printf("A number of %d messages has been deserialized.\n", nbDeserializedMessages);
     for (i_message = 0; i_message<nbDeserializedMessages; i_message++) {
       printf("Message %d : \n", i_message);
-      hexdump(group->messages[i_message].message, group->messages[i_message].len);
+      hexdump(group->messages[i_message].alignment, group->messages[i_message].len);
     }
   }
   return nbDeserializedMessages;
@@ -1167,7 +1165,7 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
 
       // Retrieve the data of each message
       groups->groups[i_group].messages[i_message].len = size_message;
-      groups->groups[i_group].messages[i_message].message = serialGroups + l;
+      groups->groups[i_group].messages[i_message].alignment = serialGroups + l;
       groups->groups[i_group].messages[i_message].mask = serialGroups + l + size_message;
 
       l += size_message * 2;
@@ -1181,7 +1179,7 @@ unsigned int deserializeGroups(t_groups * groups, unsigned char * format, int si
 void serializeTagResult(t_equivalentGroup result,unsigned int nbGroups,char * serial){
     int i;
     char sInt[11];
-    char tagser[strlen("100.000000,100.000000,100.000000;")];
+    char tagser[sizeof("100.000000,100.000000,100.000000;")];
     
     for(i = 0; i < result.lengthTag; i++){
         sprintf(sInt,"%d",result.tag[i].i); // i
@@ -1239,13 +1237,13 @@ void hexdump(unsigned char *buf, int dlen) {
 }
 
 
-void dumpRegex(t_regex regex) {
+void dumpMessage(t_message message) {
   int i;
-  printf("%d ", regex.len);
-  for(i = 0; i < regex.len; i++) {
-    if(regex.mask[i] == 0)
-      printf("%02x", (unsigned char) regex.regex[i]);
-    else if(regex.mask[i] == 2)
+  printf("%d ", message.len);
+  for(i = 0; i < message.len; i++) {
+    if(message.mask[i] == 0)
+      printf("%02x", (unsigned char) message.alignment[i]);
+    else if(message.mask[i] == 2)
       printf("##");
     else
       printf("--");
