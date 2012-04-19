@@ -44,14 +44,18 @@ class SearchResult(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, message):
+    def __init__(self, message, description):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Modelization.SearchResult.py')
         self.segments = []
         self.message = message
+        self.description = description
 
     def getMessage(self):
         return self.message
+
+    def getDescription(self):
+        return self.description
 
     def addSegment(self, i_start, i_end):
         self.segments.append([i_start, i_end])
