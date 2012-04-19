@@ -116,8 +116,9 @@ class Searcher(object):
         for task in tasks:
             for symbols in self.project.getVocabulary().getSymbols():
                 for message in symbols.getMessages():
-                    for variation in task.getVariations():
-                        task.registerResults(self.extendedSearch(variation, message))
+                    variations = task.getVariations()
+                    for variation_value in variations.keys():
+                        task.registerResults(self.extendedSearch(variation_value, message), variations[variation_value])
 
         return tasks
 
@@ -154,7 +155,7 @@ class Searcher(object):
         while indice + len(invData) <= len(message.getStringData()):
             if message.getStringData()[indice:len(invData) + indice] == invData:
                 # We have a match
-                searchResult = SearchResult(message, "Inverse search")
+                searchResult = SearchResult(message, "Inversed search")
                 searchResult.addSegment(indice, len(invData))
                 results.append(searchResult)
             indice = indice + 1

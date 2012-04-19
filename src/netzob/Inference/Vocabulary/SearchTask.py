@@ -54,8 +54,10 @@ class SearchTask(object):
         self.searchedDatas = dict()
         self.results = []
 
-    def registerResults(self, r):
-        self.results.extend(r)
+    def registerResults(self, r, v):
+        for result in r:
+            result.setVariationDescription(v)
+            self.results.append(result)
 
     def getResults(self):
         return self.results
@@ -64,4 +66,4 @@ class SearchTask(object):
         self.searchedDatas[data] = description
 
     def getVariations(self):
-        return self.searchedDatas.keys()
+        return self.searchedDatas

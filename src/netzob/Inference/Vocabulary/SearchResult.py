@@ -50,9 +50,13 @@ class SearchResult(object):
         self.segments = []
         self.message = message
         self.description = description
+        self.variationDescription = ""
 
     def getMessage(self):
         return self.message
+
+    def getVariationDescription(self):
+        return self.variationDescription
 
     def getDescription(self):
         return self.description
@@ -62,3 +66,6 @@ class SearchResult(object):
 
     def getSegments(self):
         return self.segments
+
+    def setVariationDescription(self, variationDescription):
+        self.variationDescription = variationDescription

@@ -138,7 +138,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
                     foundMessages[str(result.getMessage().getID())] = treeItemMessage
 
                 # Add the result
-                self.treestore.append(treeItemMessage, ["Segment", str(result.getMessage().getID()), str(result.getSegments())])
+                self.treestore.append(treeItemMessage, ["Segment", str(result.getMessage().getID()), str(result.getSegments()) + " : " + str(result.getVariationDescription()) + " - " + str(result.getDescription())])
 
         self.colorizeResults(searchTasks)
 
