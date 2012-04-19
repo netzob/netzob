@@ -64,10 +64,10 @@ def find_packages(directory, base):
         if os.path.isdir(os.path.join(directory, full_path)):
             ret += find_packages(directory, full_path)
 
-    # transforms directories in packages names ('/' -> '.')
+    # transforms directories in packages names (os.sep -> '.')
     result = []
     for r in ret:
-        result.append(r.replace('/', '.'))
+        result.append(r.replace(os.sep, '.'))
 
     return result
 
@@ -76,8 +76,8 @@ def find_packages(directory, base):
 #+----------------------------------------------------------------------------
 setup(
     name=release.name,
-    packages=find_packages('src/', 'netzob'),
-    package_dir={"netzob": "src/netzob"},
+    packages=find_packages('src', 'netzob'),
+    package_dir={"netzob": "src" + os.sep + "netzob"},
     ext_modules=[moduleLibNeedleman],
     data_files=[
         ('share/netzob', ['resources/static/logo.png']),
