@@ -71,12 +71,12 @@ class InstanciatedNetworkServer(AbstractActor):
             self.log.warn("No need to close the socket since it's not even open")
             return True
         self.log.debug("Shuting down the socket of the instanciated network server")
-        try :
+        try:
             self.socket.shutdown(socket.SHUT_RDWR)
-        except :
+        except:
             self.log.warn("Error while shuting down a socket")
         self.socket.close()
-        
+
         return True
 
     def read(self, timeout):
@@ -97,8 +97,6 @@ class InstanciatedNetworkServer(AbstractActor):
         except:
             self.log.debug("Impossible to read from the network socket")
             return None
-
-        
 
         if (len(chars) == 0):
             return result

@@ -113,10 +113,10 @@ class SemiStochasticTransition(AbstractTransition):
     def setProbabilityForOutputSymbol(self, outputSymbol, newProbability):
         savedSymbols = []
 
-        for (oldSymbol, oldProba, oldTime) in self.getOutputSymbols() :
-            if oldSymbol == outputSymbol :
+        for (oldSymbol, oldProba, oldTime) in self.getOutputSymbols():
+            if oldSymbol == outputSymbol:
                 savedSymbols.append([oldSymbol, newProbability, oldTime])
-            else :
+            else:
                 savedSymbols.append([oldSymbol, oldProba, oldTime])
 
         self.outputSymbols = []
@@ -129,10 +129,10 @@ class SemiStochasticTransition(AbstractTransition):
     def setTimeForOutputSymbol(self, outputSymbol, newTime):
         savedSymbols = []
 
-        for (oldSymbol, oldProba, oldTime) in self.getOutputSymbols() :
-            if oldSymbol == outputSymbol :
+        for (oldSymbol, oldProba, oldTime) in self.getOutputSymbols():
+            if oldSymbol == outputSymbol:
                 savedSymbols.append([oldSymbol, oldProba, newTime])
-            else :
+            else:
                 saved.symbols.append([oldSymbol, oldProba, oldTime])
 
         self.outputSymbols = []

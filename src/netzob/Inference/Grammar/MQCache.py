@@ -40,6 +40,7 @@ import logging
 import time
 from netzob.Inference.Grammar.Queries.MembershipQuery import MembershipQuery
 
+
 #+----------------------------------------------
 #| MQCache:
 #|    A cache for MQs and their results
@@ -52,55 +53,49 @@ class MQCache():
         self.cache = dict()
 
     def getCachedResult(self, mq):
-        for cachedMQ in self.cache.keys() :
-            if cachedMQ == mq :
+        for cachedMQ in self.cache.keys():
+            if cachedMQ == mq:
                 return self.cache.get(cachedMQ)
-        
+
         return None
-        
+
     def cacheResult(self, mq, result):
         self.log.debug("Cache the following : " + str(mq) + " == " + str(result))
-        self.cache[mq] = result 
-        
-        
+        self.cache[mq] = result
+
     def dumpCache(self):
-        for mq in self.cache.keys() :
+        for mq in self.cache.keys():
             result = self.cache[mq]
             self.log.debug(str(mq) + ">" + str(result))
-            
-            
-    def preloadCache(self, datas, vocabulary):        
-        for data in datas :
-            self.preloadCacheEntry(data, vocabulary) 
-            
-        
-        
-    
+
+    def preloadCache(self, datas, vocabulary):
+        for data in datas:
+            self.preloadCacheEntry(data, vocabulary)
+
     def preloadCacheEntry(self, data, vocabulary):
         tab = data.split(" > ")
         msgSymbols = tab[0]
         mqSymbols = msgSymbols.split(",")
         symbols = []
-        for mqSymbol in mqSymbols :
+        for mqSymbol in mqSymbols:
             symbol = vocabulary.getSymbolByName(mqSymbol)
-            if symbol != None :
+            if symbol != None:
                 symbols.append(symbol)
         mq = MembershipQuery(symbols)
-                
+
         msgResult = tab[1]
         tmp = msgResult.split(",")
-        symbolsResult = [] 
-        for t in tmp :
+        symbolsResult = []
+        for t in tmp:
             symbol = vocabulary.getSymbolByName(t)
-            if symbol != None :
+            if symbol != None:
                 symbolsResult.append(symbol)
         self.cacheResult(mq, symbolsResult)
-                
-        
-#        
+
+#
 #        (DOWNLOAD,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
 #        (EXECUTE,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
-#        (LOGOUT,) > [UnknownSymbol, EmptySymbol, EmptySymbol]   
+#        (LOGOUT,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
 #        (LOGOUT, UnknownSymbol,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
 #        (LOGOUT, SYSINFO,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
 #        (DOWNLOAD, SYSINFO,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
@@ -157,8 +152,8 @@ class MQCache():
 #        (STATUS, DOWNLOAD,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
 #        (LOGIN, STATUS,) > [UnknownSymbol, PASSWORD_ACCEPTED, SDBOT]
 #        (DOWNLOAD, UnknownSymbol,) > [UnknownSymbol, EmptySymbol, EmptySymbol]
-#            
-#        
-#        
-#    
-#    
+#
+#
+#
+#
+#

@@ -50,21 +50,20 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 
 #+---------------------------------------------------------------------------+
 #| DecimalWordVariable:
-#|     Definition of a decimal word variable 
+#|     Definition of a decimal word variable
 #| a decimal word is an ASCII set of characters (0-9)*
 #+---------------------------------------------------------------------------+
 class DecimalWordVariable(Variable):
-    
+
     # OriginalValue : must be a decimal ASCII word
     def __init__(self, id, name, originalValue):
         Variable.__init__(self, "DecimalWord", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.DecimalVariable.py')
         self.originalValue = originalValue
-        
+
         # Set the original value (in bitarray)
         self.computeCurrentValue(self.originalValue)
-        
-    
+
     #+-----------------------------------------------------------------------+
     #| computeCurrentValue :
     #|     Transform and save the provided ('toto') as current value
@@ -76,7 +75,7 @@ class DecimalWordVariable(Variable):
             self.currentValue = (binCurrentValue, strCurrentValue)
         else:
             self.currentValue = None
-     
+
     #+-----------------------------------------------------------------------+
     #| generateValue :
     #|     Generate a valid value for the variable ('babar'...)
@@ -90,9 +89,8 @@ class DecimalWordVariable(Variable):
 #        self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
 #        self.binVal = self.string2bin(self.strVal)
 #        self.log.debug("Generated : " + self.strVal)
-#        self.log.debug("Generated -bin)= " + str(self.binVal))    
+#        self.log.debug("Generated -bin)= " + str(self.binVal))
 
-    
     #+-----------------------------------------------------------------------+
     #| getValue :
     #|     Returns the current value of the variable
@@ -108,7 +106,7 @@ class DecimalWordVariable(Variable):
             return memory.recall(self)
 
         return None
-    
+
     #+-----------------------------------------------------------------------+
     #| getValueToSend :
     #|     Returns the current value of the variable
@@ -132,7 +130,7 @@ class DecimalWordVariable(Variable):
 
         # We return the newly generated and memorized value
         return (binValue, strValue)
-    
+
      #+-----------------------------------------------------------------------+
     #| getUncontextualizedDescription :
     #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
@@ -174,6 +172,7 @@ class DecimalWordVariable(Variable):
             else:
                 self.log.info("Compare fail")
                 return -1
+
     #+-----------------------------------------------------------------------+
     #| compareFormat :
     #|     Compute if the provided data is "format-compliant"
@@ -182,20 +181,20 @@ class DecimalWordVariable(Variable):
     def compareFormat(self, value, indice, negative, vocabulary, memory):
         tmp = value[indice:]
         size = len(tmp)
-        if size <= 8 :
+        if size <= 8:
             self.log.debug("Too small, not even 8 bits available (1 number)")
             return -1
-        for i in range(size, 8, -1) :
+        for i in range(size, 8, -1):
             subValue = value[indice:indice + i - 1]
             strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
             typeIdentifier = TypeIdentifier()
-            if typeIdentifier.isAscii(strVal) :
-                if (strVal.isdigit()) :
+            if typeIdentifier.isAscii(strVal):
+                if (strVal.isdigit()):
                     self.log.debug("Its a numeric : (" + str(strVal) + ")")
-                    return i + indice - 1    
+                    return i + indice - 1
         self.log.debug("the value " + str(TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(tmp))) + " cannot be parsed as a decimalWord")
-        return -1    
-    
+        return -1
+
     #+-----------------------------------------------------------------------+
     #| learn :
     #|     Exactly like "compare" but it stores learns from the provided message
@@ -206,18 +205,15 @@ class DecimalWordVariable(Variable):
     def learn(self, value, indice, negative, vocabulary, memory):
         # First we retrieve the size of the value to memorize
         size = self.compare(value, indice, negative, vocabulary, memory)
-        if size > 0 :
-            # memorize 
+        if size > 0:
+            # memorize
             self.log.debug("Memorize : " + str(value[indice:size]))
             memory.memorize(self, (value[indice:size], TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(value[indice:size]))))
             return size
-        else :
+        else:
             self.log.debug("Incompatible for learning")
             return -1
-            
-            
-            
-    
+
     #+-----------------------------------------------------------------------+
     #| restore :
     #|     Restore learnt value from the last execution of the variable
@@ -230,7 +226,7 @@ class DecimalWordVariable(Variable):
 
     def getOriginalValue(self):
         return self.originalValue
-    
+
     #+-----------------------------------------------------------------------+
     #| toXML :
     #|     Returns the XML description of the variable
@@ -246,7 +242,6 @@ class DecimalWordVariable(Variable):
         if self.getOriginalValue() != None:
             xmlHexVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             xmlHexVariableOriginalValue.text = self.getOriginalValue()
-        
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
@@ -260,9 +255,5 @@ class DecimalWordVariable(Variable):
             else:
                 originalValue = None
 
-
             return DecimalWordVariable(varId, varName, originalValue)
         return None
-
-
-

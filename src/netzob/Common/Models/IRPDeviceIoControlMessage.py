@@ -55,9 +55,9 @@ class IRPDeviceIoControlMessage(IRPMessage):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.IRPDeviceIoControlMessage.py')
         #print "CALL Network "+str(self.getPattern())
-        
+
         #print str(self.pattern[0])+" "+str([str(i) for i in self.pattern[1]])+" "+str(TypeConvertor.netzobRawToString(str(self.getData())))
-    
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory
@@ -75,7 +75,7 @@ class IRPDeviceIoControlMessage(IRPMessage):
         properties.append(['ID', Format.STRING, str(self.getID())])
         properties.append(['Type', Format.STRING, self.getType()])
         properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
-        
+
         properties.append(['Direction', Format.STRING, self.getDirection()])
         properties.append(['Major', Format.STRING, self.getMajor()])
         properties.append(['Minor', Format.DECIMAL, self.getMinor()])
@@ -87,7 +87,7 @@ class IRPDeviceIoControlMessage(IRPMessage):
         properties.append(['SizeIn', Format.DECIMAL, self.getSizeIn()])
         properties.append(['SizeOut', Format.DECIMAL, self.getSizeOut()])
         properties.append(['IOCTL', Format.DECIMAL, self.getIOCTL()])
-        
+
         properties.append(['Data', Format.HEX, self.getStringData()])
         properties.append(['Pattern', Format.STRING, self.getPatternString()])
 
@@ -98,7 +98,7 @@ class IRPDeviceIoControlMessage(IRPMessage):
     #+----------------------------------------------
     def getIOCTL(self):
         return self.ioctl
-        
+
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------

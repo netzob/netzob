@@ -52,7 +52,7 @@ class Variable():
         self.idVar = idVar
         self.name = name
         self.typeVariable = typeVariable
-        
+
     def isMutable(self):
         return True
 
@@ -165,7 +165,7 @@ class Variable():
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
                 return WordVariable.loadFromXML(xmlRoot, namespace, version)
-            
+
             # DecimalWord Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DecimalWordVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.DecimalWordVariable import DecimalWordVariable

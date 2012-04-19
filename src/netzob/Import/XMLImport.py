@@ -51,6 +51,7 @@ from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.Common import Project
 from netzob.Common.Workspace import Workspace
 
+
 #+----------------------------------------------
 #| XMLImport:
 #|     GUI for importing XML traces
@@ -90,7 +91,7 @@ class XMLImport(AbstractImporter):
     def init(self):
         # create the environmental dependancy object
         self.envDeps = EnvironmentalDependencies()
-        
+
         # Default line separator is <CR>
         self.fileName = ""
 
@@ -243,20 +244,20 @@ class XMLImport(AbstractImporter):
         self.lineView.get_model().clear()
 
         for file in self.filesToBeImported:
-        
+
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
             # If we find a version which validates the XML, we parse with the associated function
             if not Workspace.isSchemaValidateXML(xmlSchemaPath, file):
-                logging.error("The specified XML file "+ str(file) + " is not valid according to the XSD (" + str(xmlSchemaPath) + ").")
+                logging.error("The specified XML file " + str(file) + " is not valid according to the XSD (" + str(xmlSchemaPath) + ").")
             else:
                 logging.debug("XML file valid according to the XSD schema")
-        
+
                 # Parse the XML Document as 0.1 version
                 tree = ElementTree()
                 tree.parse(file)
                 xmlFile = tree.getroot()
-            
+
                 for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
                     message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
                     logging.debug("XML String data: " + message.getStringData())

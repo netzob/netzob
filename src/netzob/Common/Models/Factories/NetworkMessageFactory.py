@@ -84,10 +84,10 @@ class NetworkMessageFactory():
         subsubDirection.text = str(message.getPattern()[0])
         for t in message.getPattern()[1]:
             subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-            subsubToken.set("format",t.getFormat())
-            subsubToken.set("length",str(t.getLength()))
-            subsubToken.set("type",t.getType())
-            subsubToken.set("value",t.getValue().encode("base-64"))
+            subsubToken.set("format", t.getFormat())
+            subsubToken.set("length", str(t.getLength()))
+            subsubToken.set("type", t.getType())
+            subsubToken.set("value", t.getValue().encode("base-64"))
         return etree.tostring(root)
 
     @staticmethod
@@ -132,31 +132,31 @@ class NetworkMessageFactory():
 
         # Retrieves the l4 target port (default 0)
         msg_l4TargetPort = rootElement.find("{" + namespace + "}l4_destination_port").text
-        
+
         #Retrieve pattern
-        
-        pattern=[]
+
+        pattern = []
         try:
             patTemp = rootElement.find("{" + namespace + "}pattern")
             pattern.append(patTemp.find("{" + namespace + "}direction").text)
-            tokens=patTemp.findall("{" + namespace + "}token")
+            tokens = patTemp.findall("{" + namespace + "}token")
             #print "find "+str(tokens)
-            tokenList=[]
+            tokenList = []
             for t in tokens:
-                t_format=t.get("format")
-                t_length=t.get("length")
-                t_type=t.get("type")
-                t_value=t.get("value").decode("base-64")
-                tokenList.append(Token(t_format,t_length,t_type,t_value))
+                t_format = t.get("format")
+                t_length = t.get("length")
+                t_type = t.get("type")
+                t_value = t.get("value").decode("base-64")
+                tokenList.append(Token(t_format, t_length, t_type, t_value))
             pattern.append(tokenList)
         except:
-            pattern=[]
+            pattern = []
 
         #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
         # TODO : verify this ! Circular imports in python !
         # WARNING : verify this ! Circular imports in python !
         from netzob.Common.Models.NetworkMessage import NetworkMessage
 
-        result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort,pattern)
+        result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort, pattern)
 
         return result

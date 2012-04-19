@@ -96,17 +96,18 @@ class IRPDeviceIoControlMessageFactory():
         # ioctl
         subIoctl = etree.SubElement(root, "{" + namespace + "}ioctl")
         subIoctl.text = str(message.getIOCTL())
-        
+
         #pattern
         subPattern = etree.SubElement(root, "{" + namespace + "}pattern")
         subsubDirection = etree.SubElement(subPattern, "{" + namespace + "}direction")
         subsubDirection.text = str(message.getPattern()[0])
         for t in message.getPattern()[1]:
             subsubToken = etree.SubElement(subPattern, "{" + namespace + "}token")
-            subsubToken.set("format",t.getFormat())
-            subsubToken.set("length",str(t.getLength()))
-            subsubToken.set("type",t.getType())
-            subsubToken.set("value",t.getValue().encode("base-64"))
+            subsubToken.set("format", t.getFormat())
+            subsubToken.set("length", str(t.getLength()))
+            subsubToken.set("type", t.getType())
+            subsubToken.set("value", t.getValue().encode("base-64"))
+
         return etree.tostring(root)
 
     @staticmethod
@@ -138,7 +139,7 @@ class IRPDeviceIoControlMessageFactory():
         msg_timestamp = int(rootElement.get("timestamp"))
 
         # Retrieves the direction
-        msg_direction= rootElement.find("{" + namespace + "}direction").text
+        msg_direction = rootElement.find("{" + namespace + "}direction").text
 
         # Retrieves the major
         msg_major = rootElement.find("{" + namespace + "}major").text
@@ -151,44 +152,43 @@ class IRPDeviceIoControlMessageFactory():
 
         # Retrieves the pid
         msg_pid = int(rootElement.find("{" + namespace + "}pid").text)
-        
+
         # Retrieves the status
         msg_status = int(rootElement.find("{" + namespace + "}status").text)
-        
+
         # Retrieves the information
         msg_information = long(rootElement.find("{" + namespace + "}information").text)
-        
+
         # Retrieves the cancel
         msg_cancel = TypeConvertor.str2bool(rootElement.find("{" + namespace + "}cancel").text)
-        
+
         # Retrieves the sizeIn
         msg_sizeIn = int(rootElement.find("{" + namespace + "}sizeIn").text)
-        
+
         # Retrieves the sizeOut
         msg_sizeOut = int(rootElement.find("{" + namespace + "}sizeOut").text)
-        
+
         # Retrieves the ioctl
         msg_ioctl = int(rootElement.find("{" + namespace + "}ioctl").text)
-        
-        
+
         #Retrieve pattern
-        
-        pattern=[]
+
+        pattern = []
         try:
             patTemp = rootElement.find("{" + namespace + "}pattern")
             pattern.append(patTemp.find("{" + namespace + "}direction").text)
-            tokens=patTemp.findall("{" + namespace + "}token")
+            tokens = patTemp.findall("{" + namespace + "}token")
             #print "find "+str(tokens)
-            tokenList=[]
+            tokenList = []
             for t in tokens:
-                t_format=t.get("format")
-                t_length=t.get("length")
-                t_type=t.get("type")
-                t_value=t.get("value").decode("base-64")
-                tokenList.append(Token(t_format,t_length,t_type,t_value))
+                t_format = t.get("format")
+                t_length = t.get("length")
+                t_type = t.get("type")
+                t_value = t.get("value").decode("base-64")
+                tokenList.append(Token(t_format, t_length, t_type, t_value))
             pattern.append(tokenList)
         except:
-            pattern=[]
+            pattern = []
 
         #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
         # TODO : verify this ! Circular imports in python !

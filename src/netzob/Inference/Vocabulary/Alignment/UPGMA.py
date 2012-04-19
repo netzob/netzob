@@ -98,8 +98,8 @@ class UPGMA(object):
     #+-----------------------------------------------------------------------+
     def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
-	###################################	FIND EQUAL MESSAGES
-	################################### 	useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols) 
+###################################  FIND EQUAL MESSAGES
+###################################  useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
         ll = len(self.symbols) - 1
         i_equ = 0
         while(ll > 0):
@@ -112,8 +112,9 @@ class UPGMA(object):
                     break
             ll -= 1
             i_equ += 1
-	########################################        
-	#################################################################
+
+########################################
+#################################################################
 
         for iteration in range(0, self.nbIteration):
             self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
@@ -156,13 +157,13 @@ class UPGMA(object):
         # Execute the Clustering part in C :) (thx fgy)
         debug = False
         (i_max, j_max, maxScore, scores) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
-        listScores = TypeConvertor.deserializeScores(self.symbols,scores)
+        listScores = TypeConvertor.deserializeScores(self.symbols, scores)
         self.scores = {}
-        for (iuid,juid,score) in listScores:
+        for (iuid, juid, score) in listScores:
             if iuid not in self.scores.keys():
                 self.scores[iuid] = {}
             self.scores[iuid][juid] = score
-            
+
         return (i_max, j_max, maxScore)
 
     #+----------------------------------------------
@@ -183,7 +184,7 @@ class UPGMA(object):
         messages.extend(symbol1.getMessages())
         messages.extend(symbol2.getMessages())
 
-        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project,minEqu=self.minEquivalence)
+        newSymbol = Symbol(str(uuid.uuid4()), symbol1.getName(), self.project, minEqu=self.minEquivalence)
         for message in messages:
             newSymbol.addMessage(message)
 
@@ -225,7 +226,7 @@ class UPGMA(object):
                 # Reduce the size of the messages by 50% from the left
                 for orphan in self.symbols:
                     orphan.getMessages()[0].setLeftReductionFactor(leftReductionFactor)
-                    orphan.getMessages()[0].setRightReductionFactor( 0 )
+                    orphan.getMessages()[0].setRightReductionFactor(0)
 
                 self.log.info("Start to merge orphans reduced by {0}% from the left".format(str(leftReductionFactor)))
                 self.executeClustering()
@@ -236,7 +237,7 @@ class UPGMA(object):
                 # Reduce the size of the messages from the right
                 for orphan in self.symbols:
                     orphan.getMessages()[0].setRightReductionFactor(rightReductionFactor)
-                    orphan.getMessages()[0].setLeftReductionFactor( 0 )
+                    orphan.getMessages()[0].setLeftReductionFactor(0)
 
                 self.log.info("Start to merge orphans reduced by {0}% from the right".format(str(rightReductionFactor)))
                 self.executeClustering()
@@ -244,8 +245,8 @@ class UPGMA(object):
 
             for orphan in self.symbols:
                 for message in orphan.getMessages():
-                    message.setLeftReductionFactor( 0 )
-                    message.setRightReductionFactor( 0 )
+                    message.setLeftReductionFactor(0)
+                    message.setRightReductionFactor(0)
                 tmp_symbols.append(orphan)
             self.symbols = tmp_symbols
 
@@ -268,11 +269,10 @@ class UPGMA(object):
 
         debug = False
         return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
-    
+
     #+-----------------------------------------------------------------------+
     #| getScores
     #|     get the dictionary of scores
     #+-----------------------------------------------------------------------+
     def getScores(self):
         return self.scores
-

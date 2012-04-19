@@ -399,7 +399,7 @@ class TypeConvertor():
     #|     create a serialization view of the scores
     #| @returns (format)
     #+---------------------------------------------
-    def deserializeScores(symbols,scores):
+    def deserializeScores(symbols, scores):
         listScores = scores.split(";")
         listScores.pop()
         listScores = [i.split(",") for i in listScores]

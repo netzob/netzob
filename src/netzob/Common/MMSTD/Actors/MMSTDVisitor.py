@@ -53,9 +53,9 @@ class MMSTDVisitor(threading.Thread):
         self.active = False
 
     def run(self):
-        if self.isMaster :
+        if self.isMaster:
             self.log.debug("Starting the MMSTDVisitor as a Master")
-        else :
+        else:
             self.log.debug("Starting the MMSTDVisitor as a Client")
         self.active = True
         if self.isMaster:

@@ -62,7 +62,7 @@ class NetworkOracle(threading.Thread):
 
     def run(self):
         self.log.info("Start the network oracle based on given MMSTD")
-        
+
         # Create a new and clean memory
         memory = Memory(self.mmstd.getVocabulary().getVariables())
         memory.createMemory()
@@ -91,7 +91,6 @@ class NetworkOracle(threading.Thread):
         for i in abstractionLayer.getGeneratedInputSymbols():
             symbols.append(DictionarySymbol(i))
         return symbols
-
 
     def getGeneratedOutputSymbols(self):
         symbols = []

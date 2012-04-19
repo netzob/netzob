@@ -76,8 +76,7 @@ class MembershipQuery(object):
     def toMMSTD(self, dictionary, isMaster):
         # We create an MMSTD which will submit the following symbols
         generatedStates = []
-        
-        
+
         # Create the transition which opens the connection
         rootState = NormalState(0, "State 0")
         generatedStates.append(rootState)
@@ -88,7 +87,6 @@ class MembershipQuery(object):
         previousState = initialState
         idState = 2
 
-        
         for symbol in self.symbols:
             # we create the current state
             currentState = NormalState(idState, "State " + str(idState))
@@ -100,8 +98,7 @@ class MembershipQuery(object):
             idState = idState + 1
             previousState = currentState
 
-                
-        if not isMaster : 
+        if not isMaster:
             # We create the opening transition to listen for the first entry
             currentState = NormalState(idState, "State " + str(idState))
             generatedStates.append(currentState)
@@ -110,7 +107,6 @@ class MembershipQuery(object):
             previousState = currentState
             idState += 1
 
-
         # Create the transition which close the connection
         endState = NormalState(idState, "State " + str(idState))
         generatedStates.append(endState)
@@ -118,7 +114,7 @@ class MembershipQuery(object):
         currentState.registerTransition(closingTransition)
 
         mmstd = MMSTD(rootState, dictionary)
-        for state in generatedStates :
+        for state in generatedStates:
             mmstd.addState(state)
         return mmstd
 
@@ -147,12 +143,12 @@ class MembershipQuery(object):
         if (len(self.getSymbolsWhichAreNotEmpty()) == len(other.getSymbolsWhichAreNotEmpty())):
             symbols = self.getSymbolsWhichAreNotEmpty()
             symbols2 = other.getSymbolsWhichAreNotEmpty()
-            
+
             nbSymbol = len(symbols)
-            
-            if (nbSymbol == 0) :
+
+            if (nbSymbol == 0):
                 return True
-            
+
 #            if (symbols[len(symbols) - 1].getID() != symbols2[len(symbols2) - 1].getID()) :
 #                return False
 #            else :

@@ -54,7 +54,6 @@ from netzob.Common.MMSTD.MMSTD import MMSTD
 #+----------------------------------------------
 class Angluin(LearningAlgorithm):
 
-
     def __init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache):
         LearningAlgorithm.__init__(self, dictionary, inputDictionary, communicationChannel, resetScript, cb_query, cb_hypotheticalAutomaton, cache)
 
@@ -131,9 +130,8 @@ class Angluin(LearningAlgorithm):
         # Now we add
         for letter in self.D:
             self.addWordInSA(word.getMQSuffixedWithMQ(letter))
-            
+
         self.displayObservationTable()
-        
 
     def addWordInSA(self, word):
         # first we verify the word is not already in SA
@@ -156,13 +154,13 @@ class Angluin(LearningAlgorithm):
                 cel = dict()
             cel[word] = self.submitQuery(mq)
             self.observationTable[letter] = cel
-            
+
         self.displayObservationTable()
 
     def learn(self):
         self.log.info("Learn...")
         self.displayObservationTable()
-        
+
         while (not self.isClosed() or not self.isConsistent()):
             if not self.isClosed():
                 self.log.info("#================================================")
@@ -382,12 +380,12 @@ class Angluin(LearningAlgorithm):
                 self.log.info("Its the starting state")
 
             idState = idState + 1
-        
+
         self.log.debug("Create the transition of the automata")
         # Create the transitions of the automata
         for (word, state) in wordAndStates:
             self.log.debug("Working on state : " + str(state.getName()))
-            
+
             for symbol in self.initialD:
                 # retrieve the value:
                 dicValue = self.observationTable[symbol]
@@ -396,7 +394,7 @@ class Angluin(LearningAlgorithm):
                 mq = word.getMQSuffixedWithMQ(symbol)
                 self.log.debug("> What happen when we send " + str(symbol) + " after " + str(word))
                 self.log.debug(">> " + str(mq))
-                
+
                 for wordSandSA in self.getSandSAWords():
                     self.log.info("IS " + str(wordSandSA) + " eq " + str(mq))
                     if wordSandSA == mq:
@@ -405,7 +403,7 @@ class Angluin(LearningAlgorithm):
                         outputStateName = self.appendValuesInRow(rowOutputState)
                         self.log.debug("rowOutputState = " + str(rowOutputState))
                         self.log.debug("outputStateName = " + str(outputStateName))
-                        
+
                         # search for the state having this name:
                         outputState = None
                         self.log.info("Search for the output state : " + outputStateName)
@@ -434,9 +432,9 @@ class Angluin(LearningAlgorithm):
 
         if startState != None:
             self.log.info("An infered automata has been computed.")
-            
+
             self.inferedAutomata = MMSTD(startState, self.dictionary)
-            for state in states :
+            for state in states:
                 self.inferedAutomata.addState(state)
             self.log.info(self.inferedAutomata.getDotCode())
 

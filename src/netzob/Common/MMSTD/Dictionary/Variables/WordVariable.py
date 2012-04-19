@@ -50,7 +50,7 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 
 #+---------------------------------------------------------------------------+
 #| WordVariable:
-#|     Definition of a word variable 
+#|     Definition of a word variable
 #| a word is an ASCII set of characters (a-zA-Z)(a-zA-Z)*
 #+---------------------------------------------------------------------------+
 class WordVariable(Variable):
@@ -63,7 +63,6 @@ class WordVariable(Variable):
 
         # Set the original value (in bitarray)
         self.computeCurrentValue(self.originalValue)
-
 
     #+-----------------------------------------------------------------------+
     #| computeCurrentValue :
@@ -90,8 +89,7 @@ class WordVariable(Variable):
 #        self.strVal = ''.join(random.choice(string.ascii_letters) for x in range(nb_letter))
 #        self.binVal = self.string2bin(self.strVal)
 #        self.log.debug("Generated : " + self.strVal)
-#        self.log.debug("Generated -bin)= " + str(self.binVal))    
-
+#        self.log.debug("Generated -bin)= " + str(self.binVal))
 
     #+-----------------------------------------------------------------------+
     #| getValue :
@@ -176,6 +174,7 @@ class WordVariable(Variable):
 #            else:
 #                self.log.info("Compare fail")
 #                return -1
+
     #+-----------------------------------------------------------------------+
     #| compareFormat :
     #|     Compute if the provided data is "format-compliant"
@@ -184,22 +183,20 @@ class WordVariable(Variable):
     def compareFormat(self, value, indice, negative, vocabulary, memory):
         tmp = value[indice:]
         size = len(tmp)
-        if size <= 16 :
+        if size <= 16:
             self.log.debug("Too small, not even 16 bits available (2 letters)")
             return -1
-        for i in range(size, 16, -1) :
+        for i in range(size, 16, -1):
             subValue = value[indice:indice + i - 1]
-            if (i - 1) % 8 == 0 :
+            if (i - 1) % 8 == 0:
                 strVal = TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(subValue))
                 typeIdentifier = TypeIdentifier()
-                if typeIdentifier.isAscii(strVal) :
+                if typeIdentifier.isAscii(strVal):
                     self.log.debug("Its an ascii : (" + str(strVal) + ")")
-                    if (not ' ' in strVal and not '\n' in strVal and not '\r' in strVal) :
+                    if (not ' ' in strVal and not '\n' in strVal and not '\r' in strVal):
                         self.log.debug("Its an ascii without space : (" + str(strVal) + ")")
                         self.log.debug("Binary value of the ascii  : %s" % str(TypeConvertor.strBitarray2Bitarray(subValue)))
                         return indice + i - 1
-
-
 
         return -1
 
@@ -213,17 +210,14 @@ class WordVariable(Variable):
     def learn(self, value, indice, negative, vocabulary, memory):
         # First we retrieve the size of the value to memorize
         size = self.compare(value, indice, negative, vocabulary, memory)
-        if size > 0 :
-            # memorize 
+        if size > 0:
+            # memorize
             self.log.debug("Memorize : " + str(value[indice:size]))
             memory.memorize(self, (value[indice:size], TypeConvertor.bin2string(TypeConvertor.strBitarray2Bitarray(value[indice:size]))))
             return size
-        else :
+        else:
             self.log.debug("Incompatible for learning")
             return -1
-
-
-
 
     #+-----------------------------------------------------------------------+
     #| restore :
@@ -254,8 +248,6 @@ class WordVariable(Variable):
             xmlHexVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             xmlHexVariableOriginalValue.text = self.getOriginalValue()
 
-
-
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         if version == "0.1":
@@ -268,9 +260,5 @@ class WordVariable(Variable):
             else:
                 originalValue = None
 
-
             return WordVariable(varId, varName, originalValue)
         return None
-
-
-

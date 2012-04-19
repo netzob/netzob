@@ -96,29 +96,29 @@ class OpenChannelTransition(AbstractTransition):
             while (not finish):
                 self.log.info("No one is connected !")
                 currentTime = datetime.now()
-                if ((currentTime - startTime).microseconds > self.connectionTime) :
+                if ((currentTime - startTime).microseconds > self.connectionTime):
                     finish = True
                     error = True
-                else :
+                else:
                     finish = abstractionLayer.isConnected()
                 time.sleep(1)
 
-            if error :
+            if error:
                 self.log.warn("No client has connect to our oracle.")
                 return None
-            else :
+            else:
                 error = False
                 startTime = datetime.now()
                 finish = not abstractionLayer.isConnected()
                 while (not finish):
                     currentTime = datetime.now()
-                    if ((currentTime - startTime).microseconds > 60000) :
+                    if ((currentTime - startTime).microseconds > 60000):
                         finish = True
                         error = True
-                    else :
+                    else:
                         finish = not abstractionLayer.isConnected()
                     time.sleep(1)
-                if error :
+                if error:
                     self.log.warn("Stop the server even if the client are still up")
 
                 self.log.debug("The openChannelTransition finishes (the generated instance has been closed)!")
@@ -159,17 +159,17 @@ class OpenChannelTransition(AbstractTransition):
             while (not finish):
                 self.log.info("No one is connected !")
                 currentTime = datetime.now()
-                if ((currentTime - startTime).microseconds > self.connectionTime) :
+                if ((currentTime - startTime).microseconds > self.connectionTime):
                     finish = True
                     error = True
-                else :
+                else:
                     finish = abstractionLayer.isConnected()
                 time.sleep(1)
 
-            if error :
+            if error:
                 self.log.warn("No client has connect to our oracle.")
                 return None
-            else :
+            else:
                 return self.outputState
         else:
             self.activate()

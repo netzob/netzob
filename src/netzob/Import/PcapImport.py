@@ -310,10 +310,10 @@ class PcapImport(AbstractImporter):
 
         self.log.info("Starting import from " + pcapFile + " (linktype:" + str(reader.datalink()) + ")")
         self.datalink = reader.datalink()
-        
-        if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL :
+
+        if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
             NetzobErrorMessage("This pcap cannot be imported since the layer 2 is not supported (" + str(self.datalink) + ")")
-        else :
+        else:
             reader.loop(0, self.packetHandler)
         button.set_sensitive(True)
 
@@ -323,10 +323,10 @@ class PcapImport(AbstractImporter):
             layer2_decoder = Decoders.EthDecoder()
         elif self.datalink == pcapy.DLT_LINUX_SLL:
             layer2_decoder = Decoders.LinuxSLLDecoder()
-        else :
+        else:
             layer2_decoder = None
             self.log.warn("Cannot import one of the provided packets since its layer2 cannot be parsed (datalink = " + str(self.datalink) + " has no decoder)")
-            return         
+            return
 
         ip_decoder = Decoders.IPDecoder()
         udp_decoder = Decoders.UDPDecoder()

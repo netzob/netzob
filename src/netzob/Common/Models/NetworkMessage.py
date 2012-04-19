@@ -48,8 +48,8 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #|     Definition of a network message
 #+---------------------------------------------------------------------------+
 class NetworkMessage(AbstractMessage):
-    def __init__(self, id, timestamp, data, ip_source, ip_destination, protocol, l4_source_port, l4_destination_port,pattern=[]):
-        AbstractMessage.__init__(self, id, timestamp, data, "Network",pattern)
+    def __init__(self, id, timestamp, data, ip_source, ip_destination, protocol, l4_source_port, l4_destination_port, pattern=[]):
+        AbstractMessage.__init__(self, id, timestamp, data, "Network", pattern)
         self.ip_source = ip_source
         self.ip_destination = ip_destination
         self.protocol = protocol
@@ -59,13 +59,11 @@ class NetworkMessage(AbstractMessage):
         self.log = logging.getLogger('netzob.Common.Models.NetworkMessage.py')
         #print "CALL Network "+str(self.getPattern())
 
-        if len(self.pattern)==1:
-            self.pattern.insert(0,ip_destination)
+        if len(self.pattern) == 1:
+            self.pattern.insert(0, ip_destination)
 
-            
-        
         #print str(self.pattern[0])+" "+str([str(i) for i in self.pattern[1]])+" "+str(TypeConvertor.netzobRawToString(str(self.getData())))
-    
+
     #+-----------------------------------------------------------------------+
     #| getFactory
     #| @return the associated factory

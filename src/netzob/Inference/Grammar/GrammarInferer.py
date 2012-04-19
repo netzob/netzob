@@ -45,7 +45,6 @@ import gobject
 import time
 
 
-
 #+----------------------------------------------
 #| GrammarInferer:
 #|    Given Angluin's L*a algorithm, it learns
@@ -96,12 +95,12 @@ class GrammarInferer(threading.Thread):
     def infer(self):
         self.active = True
         equivalent = False
-        
+
         startTime = time.time()
-        
+
         # Create a MQ cache
         cache = MQCache()
-        
+
 #        cacheMSG = ["SYSINFO, > UnknownSymbol,EmptySymbol,EmptySymbol"]
 #        cacheMSG.append("LOGIN,DOWNLOAD,SYSINFO,SYSINFO,DOWNLOAD,LOGOUT,SYSINFO > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,CPU,BAD_DNS,CPU,DOWNLOADING,EmptySymbol")
 #        cacheMSG.append("LOGIN,DOWNLOAD,SYSINFO,EXECUTE,UnknownSymbol,EXECUTE > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,CPU,CANTEXECUTE,BAD_DNS,CANTEXECUTE")
@@ -240,7 +239,7 @@ class GrammarInferer(threading.Thread):
 #        cacheMSG.append("LOGOUT,LOGIN,LOGIN > UnknownSymbol,EmptySymbol,EmptySymbol,EmptySymbol")
 #        cacheMSG.append("LOGOUT,LOGOUT,DOWNLOAD,STATUS > UnknownSymbol,EmptySymbol,EmptySymbol,EmptySymbol,EmptySymbol")
 #        cacheMSG.append("LOGIN,DOWNLOAD,SYSINFO,STATUS,DOWNLOAD,SYSINFO > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,CPU,SDBOT,BAD_DNS,BAD_DNS")
-#        
+#
 #        cacheMSG.append("LOGIN,DOWNLOAD,SYSINFO,SYSINFO,DOWNLOAD,SYSINFO,STATUS > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,CPU,BAD_DNS,CPU,DOWNLOADING,CPU")
 #        cacheMSG.append("LOGIN,DOWNLOAD,SYSINFO,STATUS,EXECUTE,DOWNLOAD,EXECUTE,LOGIN > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,CPU,SDBOT,BAD_DNS,CANTEXECUTE,BAD_DNS,CANTEXECUTE")
 #        cacheMSG.append("EXECUTE,STATUS,STATUS > UnknownSymbol,EmptySymbol,EmptySymbol,EmptySymbol")
@@ -919,7 +918,7 @@ class GrammarInferer(threading.Thread):
 #        cacheMSG.append("LOGIN,DOWNLOAD,LOGIN > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,BAD_DNS")
 #        cacheMSG.append("LOGIN,DOWNLOAD,SYSINFO,SYSINFO,DOWNLOAD,UnknownSymbol,DOWNLOAD > UnknownSymbol,PASSWORD_ACCEPTED,DOWNLOADING,CPU,BAD_DNS,CPU,DOWNLOADING,DOWNLOADING")
 #        cache.preloadCache(cacheMSG, self.vocabulary)
-        
+
         # we first initialize the angluin's algo
         self.learner = Angluin(self.vocabulary, self.inputDictionary, self.oracle, self.resetScript, self.cb_submitedQuery, self.cb_hypotheticalAutomaton, cache)
 
@@ -939,7 +938,7 @@ class GrammarInferer(threading.Thread):
             gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary, cache)
-            
+
             if not self.active:
                 break
             if counterExample == None:
@@ -950,26 +949,25 @@ class GrammarInferer(threading.Thread):
                 for s in counterExample.getSymbols():
                     self.log.info("symbol : " + str(s) + " => " + str(s.getID()))
                 self.learner.addCounterExamples([counterExample])
-                
+
         automaton = self.learner.getInferedAutomata()
         self.log.info("The following automaton has been computed : " + str(automaton.getDotCode()))
-        
+
         # Now we apply indeterminism
         i_session = 0
         sessions = self.vocabulary.getSessions()
-        for session in self.sessions :
+        for session in self.sessions:
             self.log.info("Re-inject session (" + str(i_session) + ") in the automata")
-            new_automata = self.applyMessagesOnAutomata(automaton, messages)            
+            new_automata = self.applyMessagesOnAutomata(automaton, messages)
             i_session = i_session + 1
-        
-        endTime = time.time()        
+
+        endTime = time.time()
         self.log.info("The inferring process is finished !")
-        
+
         print "Elapsed time: ", (endTime - startTime) * 1000, " msecs"
         self.inferedAutomaton = automaton
-    
-    def applyMessagesOnAutomata(automaton, messages) :
+
+    def applyMessagesOnAutomata(automaton, messages):
         self.log.info("Apply the messages (" + str(messages) + ") on automata")
         currentState = automaton.getInitialState()
         return automaton
-        

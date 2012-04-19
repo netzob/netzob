@@ -25,8 +25,9 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-
 lxml_required_ver = (2, 3, 0, 0)
+
+
 def test_lxml():
     try:
         from lxml.etree import LXML_VERSION, __version__

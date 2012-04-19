@@ -165,7 +165,7 @@ class VariableView(object):
         itemWord.show()
         itemWord.connect("activate", self.addWord, rootVariable, aIter)
         subElementMenu.append(itemWord)
-        
+
         # Decimal Word Variable
         itemDecimalWord = gtk.MenuItem("Decimal Word")
         itemDecimalWord.show()
@@ -533,7 +533,7 @@ class VariableView(object):
         variableNameEntry.show()
         mainTable.attach(variableNameLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(variableNameEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
+
         # value of the variable
         variableValueLabel = gtk.Label("Value : ")
         variableValueLabel.show()
@@ -553,8 +553,8 @@ class VariableView(object):
         # We retrieve the value of the variable
         varName = variableNameEntry.get_text()
         varValue = variableValueEntry.get_text()
-        
-        if len(varValue) == 0 :
+
+        if len(varValue) == 0:
             varValue = None
 
         # Creation of the word id, name, mutable, value):
@@ -567,7 +567,7 @@ class VariableView(object):
 
         # We close the current dialog
         dialog.destroy()
-    
+
     def addDecimalWord(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)

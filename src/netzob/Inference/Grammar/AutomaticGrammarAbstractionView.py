@@ -107,7 +107,7 @@ class AutomaticGrammarAbstractionView(object):
         transition.addOutputSymbol(symbol, 0, 100)
 
         # Update probabilities
-        for (symbol, proba, time) in transition.getOutputSymbols() :
+        for (symbol, proba, time) in transition.getOutputSymbols():
             transition.setProbabilityForOutputSymbol(symbol, new_probability)
 
     def applySession(self, session):
@@ -131,42 +131,41 @@ class AutomaticGrammarAbstractionView(object):
 
         currentState = automata.getInitialState()
         # We execute the opening transition
-        if len(currentState.getTransitions()) == 1 and currentState.getTransitions()[0].getType() == OpenChannelTransition.TYPE :
+        if len(currentState.getTransitions()) == 1 and currentState.getTransitions()[0].getType() == OpenChannelTransition.TYPE:
             currentState = currentState.getTransitions()[0].getOutputState()
-
 
         isInput = True
         for message in session.getMessages():
             self.log.debug("Inject message : %s" % (message.getData()))
             # we abstract the message
             symbol = abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData())))
-            if isInput :
+            if isInput:
                 # We simulate the reception of the message
                 #  - verify its a valid input symbol
                 #  - find out the associated transition
                 currentTransition = None
                 for transition in currentState.getTransitions():
-                    if transition.getInputSymbol() == symbol :
+                    if transition.getInputSymbol() == symbol:
                         currentTransition = transition
                         break
-                if currentTransition == None :
+                if currentTransition == None:
                     self.log.warn("Input symbol %s doesn't match any existing transition in current state %s" % (symbol.getName(), currentState.getName()))
                     self.log.warn("We forget this message.")
-                else :
+                else:
                     self.log.debug("Input symbol %s matchs the transition %s from state %s" % (symbol.getName(), currentTransition.getName(), currentState.getName()))
                     isInput = False
-            else :
+            else:
                 # We simulate emiting the message
                 #  - we just verify the symbol matches available output message in current transition
                 found = False
-                for (outputSymbol, probability, time) in currentTransition.getOutputSymbols() :
-                    if symbol.getID() == outputSymbol.getID() :
+                for (outputSymbol, probability, time) in currentTransition.getOutputSymbols():
+                    if symbol.getID() == outputSymbol.getID():
                         found = True
                         isInput = True
                         currentState = currentTransition.getOutputState()
                         break
 
-                if not found :
+                if not found:
                     self.log.info("A difference has been found, symbol %s is not an output symbol of transition %s " % (symbol.getName(), currentTransition.getName()))
                     return (currentTransition, symbol)
         return difference
@@ -176,10 +175,8 @@ class AutomaticGrammarAbstractionView(object):
         #  - an abstraction layer
         abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
         symbols = []
-        for message in session.getMessages() :
+        for message in session.getMessages():
             symbols.append(abstractionLayer.abstract(TypeConvertor.netzobRawToBitArray(str(message.getData()))))
 
         for symbol in symbols:
             self.log.debug("- %s" % symbol.getName())
-
-

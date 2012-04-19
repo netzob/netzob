@@ -48,6 +48,7 @@ from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 
+
 #+----------------------------------------------
 #| AutomaticGrammarInferenceView:
 #|     Class dedicated to host the creation of the view for the inference
@@ -70,8 +71,7 @@ class AutomaticGrammarInferenceView(object):
         self.dialog = gtk.Dialog(title="Configuration of the automatic inference", flags=0, buttons=None)
 
         mainTable = gtk.Table(rows=9, columns=2, homogeneous=False)
-        
-        
+
         # Infer a client or a server
         targetOfInferenceLabel = gtk.Label("Target : ")
         targetOfInferenceLabel.show()
@@ -85,7 +85,6 @@ class AutomaticGrammarInferenceView(object):
         self.targetOfInferenceCombo.show()
         mainTable.attach(targetOfInferenceLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(self.targetOfInferenceCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        
 
         # IP of the server
         IPLabel = gtk.Label("IP :")
@@ -271,22 +270,22 @@ class AutomaticGrammarInferenceView(object):
         targetPort = int(self.targetPortEntry.get_text())
         scriptFilename = self.scriptEntry.get_text()
         maxNumberOfState = int(self.MaxStatesEntry.get_text())
-        
+
         inputDictionary = []
-        for symbol in self.project.getVocabulary().getSymbols() :
-            if symbol.getName() == "LOGIN" or symbol.getName() == "EXECUTE" or symbol.getName() == "LOGOUT" or symbol.getName() == "DOWNLOAD" :
+        for symbol in self.project.getVocabulary().getSymbols():
+            if symbol.getName() == "LOGIN" or symbol.getName() == "EXECUTE" or symbol.getName() == "LOGOUT" or symbol.getName() == "DOWNLOAD":
                 inputDictionary.append(symbol)
         inputDictionary.append(UnknownSymbol())
         # Close the current dialog
         self.dialog.destroy()
 
-        if actorType == "CLIENT" :
+        if actorType == "CLIENT":
             # Lets create a simple network oracle
             oracleCommunicationChannel = NetworkServer(actorIP, actorNetworkProtocol, ourPort, targetPort)
-        else :
+        else:
             # Lets create a simple network oracle
             oracleCommunicationChannel = NetworkClient(actorIP, actorNetworkProtocol, targetPort, ourPort)
-                
+
         # Lets create an equivalence oracle
         equivalenceOracle = WMethodNetworkEquivalenceOracle(oracleCommunicationChannel, maxNumberOfState, scriptFilename)
 
