@@ -109,7 +109,7 @@ class Searcher(object):
 
     #+----------------------------------------------
     #| search:
-    #|   Search a set of specified data in the messages
+    #|   Search a set of specified data in all the project
     #| @param tasks the set of "search" task
     #+----------------------------------------------
     def search(self, tasks):
@@ -119,7 +119,33 @@ class Searcher(object):
                     variations = task.getVariations()
                     for variation_value in variations.keys():
                         task.registerResults(self.extendedSearch(variation_value, message), variations[variation_value])
+        return tasks
 
+    #+----------------------------------------------
+    #| searchInSymbol:
+    #|   Search a set of specified data in a the specified symbol
+    #| @param tasks the set of "search" task
+    #| @param symbol the symbol to search in
+    #+----------------------------------------------
+    def searchInSymbol(self, tasks, symbol):
+        for task in tasks:
+            for message in symbols.getMessages():
+                variations = task.getVariations()
+                for variation_value in variations.keys():
+                    task.registerResults(self.extendedSearch(variation_value, message), variations[variation_value])
+        return tasks
+
+    #+----------------------------------------------
+    #| searchInMessage:
+    #|   Search a set of specified data in a the specified message
+    #| @param tasks the set of "search" task
+    #| @param message the message to search in
+    #+----------------------------------------------
+    def searchInMessage(self, tasks, message):
+        for task in tasks:
+            variations = task.getVariations()
+            for variation_value in variations.keys():
+                task.registerResults(self.extendedSearch(variation_value, message), variations[variation_value])
         return tasks
 
     #+----------------------------------------------
