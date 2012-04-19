@@ -93,10 +93,10 @@ class Searcher(object):
     #| @param value the value to search for
     #+----------------------------------------------
     def getSearchedDataForString(self, value):
-        data = TypeConvertor.stringToNetzobRaw(value)
         # Creation of a SearchTask
         task = SearchTask(value, Format.STRING)
-        task.registerVariation(data, "String representation of the value")
+        task.registerVariation(TypeConvertor.stringToNetzobRaw(value), "String representation of the value")
+        task.registerVariation(TypeConvertor.stringToNetzobRaw(value[::-1]), "Inverted string representation of the value")
         return [task]
 
     #+----------------------------------------------
@@ -128,6 +128,7 @@ class Searcher(object):
     def extendedSearch(self, data, message):
         results = []
         results.extend(self.naturalSearch(data, message))
+        results.extend(self.inversedSearch(data, message))
         return results
 
     def naturalSearch(self, data, message):
@@ -138,8 +139,23 @@ class Searcher(object):
         while indice + len(data) <= len(message.getStringData()):
             if message.getStringData()[indice:len(data) + indice] == data:
                 # We have a match
-                searchResult = SearchResult(message)
+                searchResult = SearchResult(message, "Natural search")
                 searchResult.addSegment(indice, len(data))
+                results.append(searchResult)
+            indice = indice + 1
+
+        return results
+
+    def inversedSearch(self, data, message):
+        results = []
+        invData = data[::-1]
+        # Search naturally all the possible places of data in message
+        indice = 0
+        while indice + len(invData) <= len(message.getStringData()):
+            if message.getStringData()[indice:len(invData) + indice] == invData:
+                # We have a match
+                searchResult = SearchResult(message, "Inverse search")
+                searchResult.addSegment(indice, len(invData))
                 results.append(searchResult)
             indice = indice + 1
 
