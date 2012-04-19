@@ -107,6 +107,12 @@ class Vocabulary(object):
                 return UnknownSymbol()
         return None
 
+    def getSymbolByID(self, symbolID):
+        for symbol in self.symbols:
+            if str(symbol.getID()) == str(symbolID):
+                return symbol
+        return None
+
     def getSession(self, sessionID):
         for session in self.sessions:
             if session.getID() == sessionID:
