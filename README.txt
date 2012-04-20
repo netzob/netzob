@@ -40,6 +40,8 @@ Dependencies :
 * python-dev
 * libjs-sphinxdoc
 * python-sphinx
+* python-setuptools
+* graphviz
 
 Linux-specific dependencies :
 
@@ -50,7 +52,7 @@ Or, on Debian-like operating systems :
 
 $ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
   python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
-  python-sphinx
+  python-sphinx python-setuptools graphviz
 
 And then, 
 
