@@ -49,12 +49,14 @@ from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 #+----------------------------------------------
 class TreeSearchGenerator(AbstractViewGenerator):
 
+    treeName = "Search"
+
     #+----------------------------------------------
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self, netzob):
-        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Search")
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), self.treeName)
         self.netzob = netzob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator.py')
@@ -163,7 +165,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
         for symbol in vocabulary.getSymbols():
             filterToRemoveFromSymbol = []
             for filter in symbol.getVisualizationFilters():
-                if filter.getName() == "Search":
+                if filter.getName() == self.treeName:
                     filterToRemoveFromSymbol.append(filter)
 
             for filter in filterToRemoveFromSymbol:
