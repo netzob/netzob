@@ -95,8 +95,8 @@ class Searcher(object):
     def getSearchedDataForString(self, value):
         # Creation of a SearchTask
         task = SearchTask(value, Format.STRING)
-        task.registerVariation(TypeConvertor.stringToNetzobRaw(value), "String representation of the value")
-        task.registerVariation(TypeConvertor.stringToNetzobRaw(value[::-1]), "Inverted string representation of the value")
+        task.registerVariation(TypeConvertor.stringToNetzobRaw(value), "String representation of '%s'" % value)
+        task.registerVariation(TypeConvertor.stringToNetzobRaw(value[::-1]), "Inverted string representation of '%s'" % value[::-1])
         return [task]
 
     #+----------------------------------------------
@@ -105,7 +105,69 @@ class Searcher(object):
     #| @param value the value to search for
     #+----------------------------------------------
     def getSearchedDataForIP(self, value):
-        return []
+        tasks = []
+        # parse the value to get a, b, c and d
+        ipTab = value.split('.')
+        a = ipTab[0]
+        b = ipTab[1]
+        c = ipTab[2]
+        d = ipTab[3]
+
+        a2 = a
+        if a2 < 100:
+            a2 = "0" + a2
+        if a2 < 10:
+            a2 = "0" + a2
+        b2 = b
+        if b2 < 100:
+            b2 = "0" + b2
+        if b2 < 10:
+            b2 = "0" + b2
+        c2 = c
+        if c2 < 100:
+            c2 = "0" + c2
+        if c2 < 10:
+            c2 = "0" + c2
+        d2 = d
+        if d2 < 100:
+            d2 = "0" + d2
+        if d2 < 10:
+            d2 = "0" + d2
+
+        # in String :
+        # - 192.168.0.10
+        val = "%s.%s.%s.%s" % (a, b, c, d)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 192.168.000.010
+        val = "%s.%s.%s.%s" % (a2, b2, c2, d2)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 192168000010
+        val = "%s%s%s%s" % (a2, b2, c2, d2)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 0.10.192.168
+        val = "%s.%s.%s.%s" % (d, c, b, a)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 000.010.192.168
+        val = "%s.%s.%s.%s" % (d2, c2, b2, a2)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 0.10.192.168
+        val = "%s.%s.%s.%s" % (c, d, a, b)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 000.010.192.168
+        val = "%s.%s.%s.%s" % (c2, d2, a2, b2)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        # - 000010192168
+        val = "%s%s%s%s" % (c2, d2, a2, b2)
+        tasks.extend(self.getSearchedDataForString(val))
+
+        return tasks
 
     #+----------------------------------------------
     #| search:
