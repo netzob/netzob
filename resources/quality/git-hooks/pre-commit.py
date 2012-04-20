@@ -105,10 +105,24 @@ def verifyResults(results):
     return result
 
 
-def analyze():
-    # Retrieve all the files to analyze
-    print "[I] Retrieve all the files to analyze."
-    files = getFiles()
+def analyze(filesToAnalyze):
+
+    if filesToAnalyze == None:
+        # Retrieve all the files to analyze
+        print "[I] Retrieve all the files to analyze from the staged area."
+        files = getFiles()
+    else:
+        print "[I] Retrieve all the file to analyze from the command line arguments."
+        files = []
+        for fileToAnalyze in filesToAnalyze:
+            if os.path.isfile(fileToAnalyze):
+                try:
+                    test = open(fileToAnalyze)
+                    test.close()
+                    files.append(fileToAnalyze)
+                except:
+                    print "[E] File %s exists but is not readable." % fileToAnalyze
+
     print "[I] %d files will be analyzed." % (len(files))
     globalResults = dict()
     for file in files:
@@ -124,5 +138,10 @@ def analyze():
 
 
 if __name__ == '__main__':
+
+    filesToAnalyze = None
+    if (len(sys.argv) > 1):
+        filesToAnalyze = sys.argv[1:]
+
     # Execute the analysis
-    analyze()
+    analyze(filesToAnalyze)
