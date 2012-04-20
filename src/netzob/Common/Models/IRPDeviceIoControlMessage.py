@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| Copyright (C) 2011 Georges Bossert and FrÃ©dÃ©ric GuihÃ©ry                   |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -22,7 +22,7 @@
 #| @url      : http://www.netzob.org                                         |
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#|             SupÃ©lec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
