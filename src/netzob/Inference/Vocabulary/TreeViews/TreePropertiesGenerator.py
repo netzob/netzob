@@ -66,7 +66,7 @@ class TreePropertiesGenerator(AbstractViewGenerator):
     def initialization(self):
         self.tree = gtk.TreeView()
         colResult = gtk.TreeViewColumn()
-        colResult.set_title("Properties")
+        colResult.set_title(_("Properties"))
 
         cell = gtk.CellRendererText()
         colResult.pack_start(cell, True)
@@ -104,7 +104,7 @@ class TreePropertiesGenerator(AbstractViewGenerator):
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
-        self.log.warning("The treeview for the properties is in error mode")
+        self.log.warning(_("The treeview for the properties is in error mode"))
         pass
 
     #+----------------------------------------------
