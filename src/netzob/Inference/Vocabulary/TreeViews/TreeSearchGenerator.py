@@ -72,7 +72,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
 
         self.tree = gtk.TreeView()
         colResult = gtk.TreeViewColumn()
-        colResult.set_title("Search results")
+        colResult.set_title(_("Search results"))
 
         cell = gtk.CellRendererText()
         colResult.pack_start(cell, True)
@@ -103,7 +103,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
-        self.log.warning("The treeview for the symbol is in error mode")
+        self.log.warning(_("The treeview for the symbol is in error mode"))
         pass
 
     #+----------------------------------------------
@@ -121,7 +121,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
 
         for task in searchTasks:
             if len(task.getResults()) > 0:
-                treeItemTask = self.treestore.append(None, ["Task", None, task.getDescription()])
+                treeItemTask = self.treestore.append(None, [_("Task"), None, task.getDescription()])
             for result in task.getResults():
                 # retrieve the symbol associated with the message
                 symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
@@ -131,7 +131,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
                 if str(symbol.getID()) in foundSymbols.keys():
                     treeItemSymbol = foundSymbols[str(symbol.getID())]
                 else:
-                    treeItemSymbol = self.treestore.append(treeItemTask, ["Symbol", symbol.getID(), symbol.getName()])
+                    treeItemSymbol = self.treestore.append(treeItemTask, [_("Symbol"), symbol.getID(), symbol.getName()])
                     foundSymbols[str(symbol.getID())] = treeItemSymbol
 
                 # Display the tree item for the message
@@ -139,11 +139,11 @@ class TreeSearchGenerator(AbstractViewGenerator):
                 if str(result.getMessage().getID()) in foundMessages.keys():
                     treeItemMessage = foundMessages[str(result.getMessage().getID())]
                 else:
-                    treeItemMessage = self.treestore.append(treeItemSymbol, ["Message", str(result.getMessage().getID()), str(result.getMessage().getID())])
+                    treeItemMessage = self.treestore.append(treeItemSymbol, [_("Message"), str(result.getMessage().getID()), str(result.getMessage().getID())])
                     foundMessages[str(result.getMessage().getID())] = treeItemMessage
 
                 # Add the result
-                self.treestore.append(treeItemMessage, ["Segment", str(result.getMessage().getID()), str(result.getSegments()) + " : " + str(result.getVariationDescription()) + " - " + str(result.getDescription())])
+                self.treestore.append(treeItemMessage, [_("Segment"), str(result.getMessage().getID()), str(result.getSegments()) + " : " + str(result.getVariationDescription()) + " - " + str(result.getDescription())])
 
         self.colorizeResults(searchTasks)
 
@@ -152,7 +152,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
         for task in searchTasks:
             for result in task.getResults():
                 for (start, length) in result.getSegments():
-                    filter = TextColorFilter("Search", "green")
+                    filter = TextColorFilter(_("Search"), "green")
                     message = result.getMessage()
                     message.addVisualizationFilter(filter, start, start + length)
                     # colorize the associated symbol
