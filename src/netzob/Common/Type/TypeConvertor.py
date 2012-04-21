@@ -446,6 +446,7 @@ class TypeConvertor():
 
             if unitSize == 8:
                 for i in range(0, len(symbol.getAlignment()), 2):
+                    format += str(len(symbol.getAlignment()) / 2) + "M"
                     if symbol.getAlignment()[i:i + 2] == "--":
                         messageTmp += "\xff"
                         alignmentTmp += "\x01"
@@ -453,6 +454,7 @@ class TypeConvertor():
                         messageTmp += TypeConvertor.netzobRawToPythonRaw(symbol.getAlignment()[i:i + 2])
                         alignmentTmp += "\x00"
             elif unitSize == 4:
+                format += str(len(symbol.getAlignment())) + "M"
                 for i in range(0, len(symbol.getAlignment())):
                     if symbol.getAlignment()[i:i + 1] == "-":
                         messageTmp += "\xff"
@@ -463,7 +465,6 @@ class TypeConvertor():
             else:
                 logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
                 return
-            format += str(len(symbol.getAlignment())) + "M"
             serialSymbol += messageTmp
             serialSymbol += alignmentTmp
         else:
@@ -471,13 +472,14 @@ class TypeConvertor():
             for m in symbol.getMessages():
                 data = m.getReducedStringData()
                 if unitSize == 8:
+                    format += str(len(data) / 2) + "M"
                     data = data
                 elif unitSize == 4:
+                    format += str(len(data)) + "M"
                     data = "".join(["0" + i for i in data])
                 else:
                     logging.warn("Serializing at " + str(unitSize) + " unit size not yet implemented")
                     return
-                format += str(len(data) / 2) + "M"
                 serialSymbol += TypeConvertor.netzobRawToPythonRaw(data)  # The message
                 serialSymbol += "".join(['\x00' for x in range(len(data) / 2)])  # The alignement == "\x00" * len(the message), the first time
         return (serialSymbol, format)
