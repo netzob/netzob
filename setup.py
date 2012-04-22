@@ -92,6 +92,7 @@ setup(
         ('share/netzob/xsds/0.1/', ["resources/static/xsds/0.1/Workspace.xsd",
                                     "resources/static/xsds/0.1/Project.xsd",
                                     "resources/static/xsds/0.1/common.xsd"]),
+        ("share/locale/fr/LC_MESSAGES/", ["locales/fr/LC_MESSAGES/netzob.mo"])
         ],
     scripts=["netzob"],
     install_requires=dependencies,
