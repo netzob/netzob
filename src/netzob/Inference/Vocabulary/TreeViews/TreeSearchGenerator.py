@@ -117,6 +117,8 @@ class TreeSearchGenerator(AbstractViewGenerator):
         foundMessages = dict()
 
         for task in searchTasks:
+            if len(task.getResults()) > 0:
+                treeItemTask = self.treestore.append(None, ["Task", None, task.getDescription()])
             for result in task.getResults():
                 # retrieve the symbol associated with the message
                 symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(result.getMessage())
@@ -126,7 +128,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
                 if str(symbol.getID()) in foundSymbols.keys():
                     treeItemSymbol = foundSymbols[str(symbol.getID())]
                 else:
-                    treeItemSymbol = self.treestore.append(None, ["Symbol", symbol.getID(), symbol.getName()])
+                    treeItemSymbol = self.treestore.append(treeItemTask, ["Symbol", symbol.getID(), symbol.getName()])
                     foundSymbols[str(symbol.getID())] = treeItemSymbol
 
                 # Display the tree item for the message
