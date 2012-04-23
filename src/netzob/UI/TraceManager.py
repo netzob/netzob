@@ -267,7 +267,7 @@ class TraceManager():
         percent = 0.0
         inc = 1.0 / len(trace.getMessages())
         # We create a symbol dedicated for the trace
-        symbol = Symbol(uuid.uuid4(), trace.getDataType(), project)
+        symbol = Symbol(uuid.uuid4(), trace.getType(), project)
         for message in trace.getMessages():
             percent += inc
             symbol.addMessage(message)
