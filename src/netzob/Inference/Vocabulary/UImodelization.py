@@ -2036,6 +2036,12 @@ class UImodelization:
             itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
             menu.append(itemEditSymbol)
 
+            # Search in the Symbol
+            itemSearchSymbol = gtk.MenuItem("Search in")
+            itemSearchSymbol.show()
+            itemSearchSymbol.connect("activate", self.displayPopupToSearch, "Symbol", symbol)
+            menu.append(itemSearchSymbol)
+
             # SubMenu : Alignments
             subMenuAlignment = gtk.Menu()
 
@@ -2095,6 +2101,46 @@ class UImodelization:
             menu.append(itemCreateSymbol)
 
         menu.popup(None, None, None, event.button, event.time)
+
+    def displayPopupToSearch(self, event, typeSearch, searchTarget):
+        dialog = gtk.MessageDialog(None,
+                                   gtk.DIALOG_MODAL,
+                                   gtk.MESSAGE_OTHER,
+                                   gtk.BUTTONS_OK,
+                                   "Searching")
+        # Create the main panel
+        panel = gtk.Table(rows=3, columns=2, homogeneous=False)
+        panel.show()
+
+        # Create the header (first row) with the search form
+        # Search entry
+        searchEntry = gtk.Entry()
+        searchEntry.show()
+
+        # Combo to select the type of the input
+        typeCombo = gtk.combo_box_entry_new_text()
+        typeCombo.show()
+        typeStore = gtk.ListStore(str)
+        typeCombo.set_model(typeStore)
+        typeCombo.get_model().append([Format.STRING])
+        typeCombo.get_model().append([Format.HEX])
+        typeCombo.get_model().append([Format.BINARY])
+        typeCombo.get_model().append([Format.OCTAL])
+        typeCombo.get_model().append([Format.DECIMAL])
+        typeCombo.get_model().append([Format.IP])
+        typeCombo.set_active(0)
+
+        panel.attach(searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_end(panel, True, True, 0)
+
+        dialog.run()
+        searchedPattern = searchEntry.get_text()
+        typeOfPattern = typeCombo.get_active_text()
+        self.prepareSearchInSymbol(searchedPattern, typeOfPattern, searchTarget)
+
+        dialog.destroy()
 
     def displayPopupToEditSymbol(self, event, symbol):
         dialog = gtk.MessageDialog(
@@ -2560,12 +2606,13 @@ class UImodelization:
             NetzobErrorMessage("No project selected.")
             return
 
-        searchedPattern = self.searchEntry.get_text()
+        self.prepareSearch(self.searchEntry.get_text(), self.typeCombo.get_active_text())
+
+    def prepareSearch(self, searchedPattern, typeOfPattern):
         if len(searchedPattern) == 0:
             NetzobErrorMessage("Do not start the searching process since no pattern has been provided")
             return
 
-        typeOfPattern = self.typeCombo.get_active_text()
         if len(typeOfPattern) == 0:
             NetzobErrorMessage("Do not start the searching process since no type has been provided")
             return
@@ -2580,8 +2627,26 @@ class UImodelization:
         # We update the different views
         self.update()
 
-    def search(self, pattern, typeOfPattern):
+    def prepareSearchInSymbol(self, searchedPattern, typeOfPattern, symbol):
+        if len(searchedPattern) == 0:
+            NetzobErrorMessage("Do not start the searching process since no pattern has been provided")
+            return
 
+        if len(typeOfPattern) == 0:
+            NetzobErrorMessage("Do not start the searching process since no type has been provided")
+            return
+
+        self.log.debug("User searches for " + searchedPattern + " of type " + typeOfPattern + " in symbol " + str(symbol.getName()))
+        self.search(searchedPattern, typeOfPattern, "Symbol", symbol)
+
+        # Active the messages and the search view
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, True)
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, True)
+        self.netzob.getMenu().setDisplaySearchViewActiveStatus(True)
+        # We update the different views
+        self.update()
+
+    def search(self, pattern, typeOfPattern, type=None, inclusion=None):
         # Initialize the searcher
         searcher = Searcher(self.netzob.getCurrentProject())
 
@@ -2609,7 +2674,10 @@ class UImodelization:
             self.log.debug(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
-        searchTasks = searcher.search(searchedData)
+        if type == None:
+            searchTasks = searcher.search(searchedData)
+        elif type == "Symbol" and inclusion != None:
+            searchTasks = searcher.searchInSymbol(searchedData, inclusion)
 
         # Give the results to the dedicated view
         self.treeSearchGenerator.update(searchTasks)
@@ -2622,17 +2690,25 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
 
-        box = self.selectedSymbol.envDependencies(self.netzob.getCurrentProject())
-        if box == None:
-            NetzobErrorMessage("No environmental dependency found.")
-        else:
-            dialog = gtk.Dialog(title="Environmental dependencies found", flags=0, buttons=None)
-            dialog.vbox.pack_start(box, True, True, 0)
-            dialog.show()
+        # Initialize the searcher
+        searcher = Searcher(self.netzob.getCurrentProject())
+
+        # Display the search view
+        self.netzob.getMenu().setDisplaySearchViewActiveStatus(True)
+        self.update()
+
+        # Generate the different researched data based on message properties
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for message in symbol.getMessages():
+                for property in message.getProperties():
+                    (propertyName, propertyType, propertyValue) = property
+                    if propertyType == Format.STRING:
+                        searchTasks = searcher.searchInMessage(searcher.getSearchedDataForString(str(propertyValue)), message)
+                        self.treeSearchGenerator.update(searchTasks)
+                    elif propertyType == Format.IP:
+                        searchTasks = searcher.searchInMessage(searcher.getSearchedDataForIP(str(propertyValue)), message)
+                        self.treeSearchGenerator.update(searchTasks)
 
     #+----------------------------------------------
     #| Called when user wants to see the distribution of a symbol of messages

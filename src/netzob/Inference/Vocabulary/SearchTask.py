@@ -46,9 +46,10 @@ class SearchTask(object):
     #| @param data: the searched data
     #| @param type: the type of the searched data
     #+----------------------------------------------
-    def __init__(self, data, type):
+    def __init__(self, description, data, type):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.SearchTask.py')
+        self.description = description
         self.data = data
         self.type = type
         self.searchedDatas = dict()
@@ -67,3 +68,6 @@ class SearchTask(object):
 
     def getVariations(self):
         return self.searchedDatas
+
+    def getDescription(self):
+        return self.description

@@ -78,6 +78,7 @@ class SearchView(object):
         self.typeCombo.get_model().append([Format.BINARY])
         self.typeCombo.get_model().append([Format.OCTAL])
         self.typeCombo.get_model().append([Format.DECIMAL])
+        self.typeCombo.get_model().append([Format.IP])
 
         # Search button
         searchButton = gtk.Button("Search")
