@@ -2622,17 +2622,25 @@ class UImodelization:
         if self.netzob.getCurrentProject() == None:
             NetzobErrorMessage("No project selected.")
             return
-        if self.selectedSymbol == None:
-            NetzobErrorMessage("No symbol selected.")
-            return
 
-        box = self.selectedSymbol.envDependencies(self.netzob.getCurrentProject())
-        if box == None:
-            NetzobErrorMessage("No environmental dependency found.")
-        else:
-            dialog = gtk.Dialog(title="Environmental dependencies found", flags=0, buttons=None)
-            dialog.vbox.pack_start(box, True, True, 0)
-            dialog.show()
+        # Initialize the searcher
+        searcher = Searcher(self.netzob.getCurrentProject())
+
+        # Display the search view
+        self.netzob.getMenu().setDisplaySearchViewActiveStatus(True)
+        self.update()
+
+        # Generate the different researched data based on message properties
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            for message in symbol.getMessages():
+                for property in message.getProperties():
+                    (propertyName, propertyType, propertyValue) = property
+                    if propertyType == Format.STRING:
+                        searchTasks = searcher.searchInMessage(searcher.getSearchedDataForString(str(propertyValue)), message)
+                        self.treeSearchGenerator.update(searchTasks)
+                    elif propertyType == Format.IP:
+                        searchTasks = searcher.searchInMessage(searcher.getSearchedDataForIP(str(propertyValue)), message)
+                        self.treeSearchGenerator.update(searchTasks)
 
     #+----------------------------------------------
     #| Called when user wants to see the distribution of a symbol of messages
