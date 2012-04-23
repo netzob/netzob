@@ -69,6 +69,19 @@ def searchForPattern(file, pattern, errorName):
         lineNumber += 1
         if re.search(pattern, line) and not re.search('Thisisnotaconflict', line):
             localResult.append(str(errorName) + " found at line " + str(lineNumber))
+    fileObject.close()
+    return localResult
+
+
+# Verifies only LF ('\n') ended files are committed (no CRLF '\r\n').
+def checkForCRLF(file):
+    localResult = []
+    with open(file, 'rb') as f:
+        lineNumber = 0
+        for line in f:
+            lineNumber += 1
+            if line.endswith(b"\r\n"):
+                localResult.append("A CRLF ending patterns found at line " + str(lineNumber))
     return localResult
 
 
@@ -77,6 +90,9 @@ def checkFile(file):
 
     # Verify no '<<<' and or conflicts info are commited
     results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')  # Thisisnotaconflict
+
+    # Verify no CRLF is used in source
+    results['CRLF'] = checkForCRLF(file)
 
     # Check against PEP8 rules for python files
     if os.path.splitext(file)[-1] == ".py":
