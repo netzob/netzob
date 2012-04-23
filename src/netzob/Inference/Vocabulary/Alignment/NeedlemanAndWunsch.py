@@ -320,7 +320,7 @@ class NeedlemanAndWunsch(object):
 #                tmpSymbols.extend([symbol])
 #            else:                                # if the symbol is empty
 #                emptySymbols.append(symbol)
-#        
+#
 #        if len(symbols) > 1:
 #            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
 #            self.result = clusteringSolution.executeClustering()

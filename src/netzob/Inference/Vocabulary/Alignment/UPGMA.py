@@ -118,7 +118,7 @@ class UPGMA(object):
 #        for iteration in range(0, self.nbIteration):
 #            self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
 #            # Create the score matrix for each symbol
-#            (i_maximum, j_maximum, maximum) = 
+#            (i_maximum, j_maximum, maximum) =
         self.retrieveEffectiveMaxIJ()
 #
 #            self.log.debug("Searching for the maximum of equivalence.")
@@ -167,11 +167,11 @@ class UPGMA(object):
             if juid not in self.scores.keys():
                 self.scores[juid] = {}
             self.scores[iuid][juid] = score
-            if iuid not in self.scores[juid].keys(): 
+            if iuid not in self.scores[juid].keys():
                 self.scores[juid][iuid] = score
         self.computePhylogenicTree()
         return (i_max, j_max, maxScore)
-    
+
     #+----------------------------------------------
     #| computePhylogenicTree:
     #|     Compute directly the phylogenic tree
@@ -182,10 +182,10 @@ class UPGMA(object):
     def computePhylogenicTree(self):
         maxScore = 0
         if len(self.scores) > 1:
-            max_i = max(self.scores, key = lambda x: self.scores[x][max(self.scores[x], key = lambda y: self.scores[x][y])])
-            max_j = max(self.scores[max_i], key = lambda y: self.scores[max_i][y])
+            max_i = max(self.scores, key=lambda x: self.scores[x][max(self.scores[x], key=lambda y: self.scores[x][y])])
+            max_j = max(self.scores[max_i], key=lambda y: self.scores[max_i][y])
             maxScore = self.scores[max_i][max_j]
-        while len(self.scores) > 1 and maxScore >= self.minEquivalence:            
+        while len(self.scores) > 1 and maxScore >= self.minEquivalence:
 #            self.computePathTree()
 #            juid_maximum = self.path.pop()
 #            iuid_maximum = self.path.pop()
@@ -195,8 +195,8 @@ class UPGMA(object):
 #            self.log.debug("Mess {0}".format(self.symbols[i_maximum].getMessages()[0].getData()))
 #            self.log.debug("Mess {0}".format(self.symbols[j_maximum].getMessages()[0].getData()))
 ##            self.log.debug("Score avant: {0}".format(str(self.scores)))
-            symbols_uid = [s.getID() for s in self.symbols]  #  List of the UID in of symbols
-            (i_maximum, j_maximum) = (symbols_uid.index(max_i),symbols_uid.index(max_j))
+            symbols_uid = [s.getID() for s in self.symbols]  # List of the UID in of symbols
+            (i_maximum, j_maximum) = (symbols_uid.index(max_i), symbols_uid.index(max_j))
             size_i = len(self.symbols[i_maximum].getMessages())
             size_j = len(self.symbols[j_maximum].getMessages())
             self.log.debug("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maxScore)))
@@ -204,8 +204,8 @@ class UPGMA(object):
             self.updateScore(max_i, max_j, newuid, size_i, size_j)
 #            self.log.debug("Score après: {0}".format(str(self.scores)))
             if len(self.scores) > 1:
-                max_i = max(self.scores, key = lambda x: self.scores[x][max(self.scores[x], key = lambda y: self.scores[x][y])])
-                max_j = max(self.scores[max_i], key = lambda y: self.scores[max_i][y])
+                max_i = max(self.scores, key=lambda x: self.scores[x][max(self.scores[x], key=lambda y: self.scores[x][y])])
+                max_j = max(self.scores[max_i], key=lambda y: self.scores[max_i][y])
                 maxScore = self.scores[max_i][max_j]
 
     def updateScore(self, iuid, juid, newuid, size_i, size_j):
@@ -215,24 +215,24 @@ class UPGMA(object):
         self.scores[newuid] = {}
         for k in self.scores.keys():
             if k != newuid:
-                self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid])*1.0/total_size
+                self.scores[k][newuid] = (size_i * self.scores[k][iuid] + size_j * self.scores[k][juid]) * 1.0 / total_size
                 del self.scores[k][iuid]
                 del self.scores[k][juid]
                 self.scores[newuid][k] = self.scores[k][newuid]
- 
+
     def computePathTree(self):
         if self.path == []:
             clusterIndex = int(random.random() * len(self.scores.keys()))
             self.path.append(self.scores.keys()[0])
-        if len(self.path)>1:  # Check if Cl-1,Cl-2 minimum pair
+        if len(self.path) > 1:  # Check if Cl-1,Cl-2 minimum pair
             lastId = self.path[len(self.path) - 1]
-            if max(self.scores[lastId], key = lambda x: self.scores[lastId][x]) == self.path[len(self.path)-2]:
+            if max(self.scores[lastId], key=lambda x: self.scores[lastId][x]) == self.path[len(self.path) - 2]:
                 return
-        while True: 
+        while True:
             lastId = self.path[len(self.path) - 1]
-            juid = max(self.scores[lastId], key = lambda x: self.scores[lastId][x])
+            juid = max(self.scores[lastId], key=lambda x: self.scores[lastId][x])
             self.path.append(juid)
-            if max(self.scores[juid], key = lambda x: self.scores[juid][x]) == lastId:
+            if max(self.scores[juid], key=lambda x: self.scores[juid][x]) == lastId:
                 break
 
     #+----------------------------------------------
@@ -259,7 +259,7 @@ class UPGMA(object):
 
         # Append th new symbol to the "symbols" structure
         self.symbols.append(newSymbol)
-        
+
         return newSymbol.getID()
 
     #+----------------------------------------------
