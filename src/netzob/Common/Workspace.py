@@ -81,7 +81,6 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
 
     # Load the already imported traces
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") != None:
-
         xmlTraces = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces")
         for xmlTrace in xmlTraces.findall("{" + WORKSPACE_NAMESPACE + "}trace"):
             trace = ImportedTrace.loadTrace(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
@@ -185,6 +184,7 @@ class Workspace(object):
 
         xmlWorkspaceConfig = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}configuration")
 
+        relTracePath = os.path.relpath(self.getPathOfTraces(), self.path)
         xmlTraces = etree.SubElement(xmlWorkspaceConfig, "{" + WORKSPACE_NAMESPACE + "}traces")
         xmlTraces.text = str(self.getPathOfTraces())
 
@@ -202,6 +202,7 @@ class Workspace(object):
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
+            print self.getPathOfTraces()
             importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, self.getPathOfTraces())
 
         tree = ElementTree(root)
@@ -209,31 +210,31 @@ class Workspace(object):
 
     @staticmethod
     def createWorkspace(name, path):
-        tracesPath = os.path.join(path, "traces")
-        projectsPath = os.path.join(path, "projects")
-        prototypesPath = os.path.join(path, "prototypes")
-        loggingPath = os.path.join(path, "logging")
-        pathOfLogging = os.path.join(path, "logging/logging.conf")
+        tracesPath = "traces"
+        projectsPath = "projects"
+        prototypesPath = "prototypes"
+        loggingPath = "logging"
+        pathOfLogging = "logging/logging.conf"
 
         # we create a "traces" directory if it doesn't yet exist
-        if not os.path.isdir(tracesPath):
-            os.mkdir(tracesPath)
+        if not os.path.isdir(os.path.join(path, tracesPath)):
+            os.mkdir(os.path.join(path, tracesPath))
 
         # we create a "projects" directory if it doesn't yet exist
-        if not os.path.isdir(projectsPath):
-            os.mkdir(projectsPath)
+        if not os.path.isdir(os.path.join(path, projectsPath)):
+            os.mkdir(os.path.join(path, projectsPath))
 
         # we create the "prototypes" directory if it doesn't yet exist
-        if not os.path.isdir(prototypesPath):
-            os.mkdir(prototypesPath)
+        if not os.path.isdir(os.path.join(path, prototypesPath)):
+            os.mkdir(os.path.join(path, prototypesPath))
             # we upload in it the default repository file
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             staticRepositoryPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "repository.xml.default")
             shutil.copy(staticRepositoryPath, os.path.join(prototypesPath, "repository.xml"))
 
         # we create the "logging" directory if it doesn't yet exist
-        if not os.path.isdir(loggingPath):
-            os.mkdir(loggingPath)
+        if not os.path.isdir(os.path.join(path, loggingPath)):
+            os.mkdir(os.path.join(path, loggingPath))
             # we upload in it the default repository file
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             staticLoggingPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "logging.conf.default")
