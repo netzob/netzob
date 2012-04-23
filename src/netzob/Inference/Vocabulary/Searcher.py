@@ -147,7 +147,7 @@ class Searcher(object):
         val = "%s%s%s%s" % (a2, b2, c2, d2)
         tasks.extend(self.getSearchedDataForString(val))
 
-        # - 0.10.192.168
+        # - 10.0.168.192
         val = "%s.%s.%s.%s" % (d, c, b, a)
         tasks.extend(self.getSearchedDataForString(val))
 
