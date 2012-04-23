@@ -94,7 +94,7 @@ class Searcher(object):
     #+----------------------------------------------
     def getSearchedDataForString(self, value):
         # Creation of a SearchTask
-        task = SearchTask(value, Format.STRING)
+        task = SearchTask(value, value, Format.STRING)
         task.registerVariation(TypeConvertor.stringToNetzobRaw(value), "String representation of '%s'" % value)
         task.registerVariation(TypeConvertor.stringToNetzobRaw(value[::-1]), "Inverted string representation of '%s'" % value[::-1])
         return [task]
@@ -191,7 +191,7 @@ class Searcher(object):
     #+----------------------------------------------
     def searchInSymbol(self, tasks, symbol):
         for task in tasks:
-            for message in symbols.getMessages():
+            for message in symbol.getMessages():
                 variations = task.getVariations()
                 for variation_value in variations.keys():
                     task.registerResults(self.extendedSearch(variation_value, message), variations[variation_value])
