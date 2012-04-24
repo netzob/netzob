@@ -195,6 +195,13 @@ class NeedlemanAndWunsch(object):
             i += 1
         return align
 
+    #+-----------------------------------------------------------------------+
+    #| buildRegexFromAlignment
+    #|     Transform the alignment in a regular expression
+    #| @param symbol the associated symbol
+    #| @param align the given alignment
+    #| @param defaultFormat the visualization format
+    #+-----------------------------------------------------------------------+
     def buildRegexFromAlignment(self, symbol, align, defaultFormat):
         # Build regex from alignment
         i = 0
@@ -260,10 +267,9 @@ class NeedlemanAndWunsch(object):
     #+----------------------------------------------
     def alignSymbols(self, symbols, project):
         from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
-
         self.result = []
-
         preResults = []
+
         # First we add in results, the symbols which wont be aligned
         for symbol in project.getVocabulary().getSymbols():
             found = False
@@ -274,65 +280,27 @@ class NeedlemanAndWunsch(object):
                 logging.debug("Symbol " + str(symbol.getName()) + "[" + str(symbol.getID()) + "]] wont be aligned")
                 preResults.append(symbol)
 
-        tmpSymbols = []
-        t1 = time.time()
-        fraction = 0.0
-#        step = 1 / self.estimateNeedlemanWunschNumberOfExecutionStep(project)
-
-        # First we retrieve all the parameters of the CLUSTERING / ALIGNMENT
+        # Then we retrieve all the parameters of the CLUSTERING / ALIGNMENT
         defaultFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         nbIteration = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_NB_ITERATION)
         minEquivalence = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD)
         doInternalSlick = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         doOrphanReduction = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
 
-################################
-#        # We try to cluster each symbol
-#        tmpEqu = symbols[0].getMinEqu()
-#        if tmpEqu != minEquivalence:
-#            if tmpEqu<minEquivalence: #Try to split current symbols only if the threshold wanted is higher
-#                for symbol in symbols:
-#                    clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-#                    tmpSymbols.extend(clusteringSolution.executeClustering())
-#                self.result = tmpSymbols
-#            elif len(symbols)!=1 and tmpEqu>minEquivalence: #Try to merge symbols only if threshold is lower than previously
-#                clusteringSolution = UPGMA(project, symbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-#                self.result = clusteringSolution.executeClustering()
-#            elif len(symbols)==1:  # threshold is lower and there is only 1 symbol ==> do nothing
-#                self.result=symbols
-#
-#            if doOrphanReduction :
-#                self.result = clusteringSolution.executeOrphanReduction()
-#            self.result.extend(preResults)
-#        else:
-#            self.result = symbols
-################################
-
+        # We try to cluster each symbol
         listEqu = []  # list of thresholds recorded
         emptySymbols = []  # list of all empty symbols
-         # We try to cluster each symbol
-#        for symbol in symbols:
-#            if len(symbol.getMessages()) > 1:  # If there is more than 1 message
-#                clusteringSolution = UPGMA(project, [symbol], True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-#                tmpSymbols.extend(clusteringSolution.executeClustering())
-#                self.scores.update(clusteringSolution.getScores())
-#            elif len(symbol.getMessages()) > 0:  # if the symbol is not empty
-#                tmpSymbols.extend([symbol])
-#            else:                                # if the symbol is empty
-#                emptySymbols.append(symbol)
-#
-#        if len(symbols) > 1:
-#            clusteringSolution = UPGMA(project, tmpSymbols, False, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
-#            self.result = clusteringSolution.executeClustering()
-#        else:
-#            self.result = tmpSymbols
         clusteringSolution = UPGMA(project, symbols, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+        t1 = time.time()
         self.result = clusteringSolution.executeClustering()
+
+        # We optionally handle orphans
         if doOrphanReduction:
             self.result = clusteringSolution.executeOrphanReduction()
+
         self.result.extend(preResults)
         self.result.extend(emptySymbols)  # Add the empty symbols (To discuss: can we delete them before?)
-        logging.info("Time of parsing : " + str(time.time() - t1))
+        logging.info("Time of clustering : " + str(time.time() - t1))
 
     def getLastResult(self):
         return self.result
