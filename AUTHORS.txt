@@ -11,3 +11,4 @@ Contributors
   * Goulven Guiheux (Windows package developer and maintainer)
   * Maxime Olivier (Quality enforcer)
   * Alexandre Pigné (Gentoo package maintainer)
+  * Franck Roland (developer)
