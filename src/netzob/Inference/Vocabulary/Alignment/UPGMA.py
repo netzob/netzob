@@ -100,8 +100,8 @@ class UPGMA(object):
     #+-----------------------------------------------------------------------+
     def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
-        # Find equel messages
-        # Useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
+
+        # Find equel messages. Useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
         ll = len(self.symbols) - 1
         i_equ = 0
         while(ll > 0):
@@ -115,28 +115,12 @@ class UPGMA(object):
             ll -= 1
             i_equ += 1
 
-#        for iteration in range(0, self.nbIteration):
-#            self.cb_executionStatus(50.0, "Iteration {0}/{1} started...".format(str(iteration), str(self.nbIteration)))
-#            # Create the score matrix for each symbol
-#            (i_maximum, j_maximum, maximum) =
-        self.retrieveEffectiveMaxIJ()
-#
-#            self.log.debug("Searching for the maximum of equivalence.")
-#            if (maximum >= self.minEquivalence):
-#                self.log.debug("Merge the column/line {0} with the column/line {1} ; score = {2}".format(str(i_maximum), str(j_maximum), str(maximum)))
-#                self.mergeEffectiveRowCol(i_maximum, j_maximum)
-#
-#            else:
-#                self.log.debug("Stopping the clustering operation since the maximum found is {0} (<{1})".format(str(maximum), str(self.minEquivalence)))
-#                break
-#
-#            if len(self.symbols) <= 1:
-#                self.log.debug("Stopping the clustering operation since there is only 1 symbol remaining")
-#                break
+        # Process the UPGMA on symbols
+        self.processUPGMA()
 
+        # Retrieve the alignment of each symbol and the build the associated regular expression
         self.cb_executionStatus(50.0, "Executing last alignment...")
         alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
-        # Compute the regex/alignment of each symbol
         for symbol in self.symbols:
             alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
 
@@ -150,16 +134,19 @@ class UPGMA(object):
     #|                   the symbols to merge
     #|                    max score of the two symbols
     #+----------------------------------------------
-    def retrieveEffectiveMaxIJ(self):
+    def processUPGMA(self):
         self.log.debug("Computing the associated matrix")
 
         # Serialize the symbols
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize, self.scores)
-        print formatSymbols
-        # Execute the Clustering part in C :) (thx fgy)
+        self.log.debug("Clutering input format " + formatSymbols)
+
+        # Execute the Clustering part in C
         debug = False
         (i_max, j_max, maxScore, scores) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
         listScores = TypeConvertor.deserializeScores(self.symbols, scores)
+
+        # Retrieve the scores for each association of symbols
         self.scores = {}
         for (iuid, juid, score) in listScores:
             if iuid not in self.scores.keys():
@@ -169,6 +156,8 @@ class UPGMA(object):
             self.scores[iuid][juid] = score
             if iuid not in self.scores[juid].keys():
                 self.scores[juid][iuid] = score
+
+        # Reduce the UPGMA matrix (merge symbols by similarity)
         self.computePhylogenicTree()
         return (i_max, j_max, maxScore)
 
