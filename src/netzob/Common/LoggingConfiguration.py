@@ -52,7 +52,7 @@ class LoggingConfiguration(object):
     #+----------------------------------------------
     def initializeLogging(workspace):
         # First we extract the normal logging config file
-        loggingFilePath = workspace.getPathOfLogging()
+        loggingFilePath = os.path.join(workspace.getPath(), workspace.getPathOfLogging())
         if (loggingFilePath != "" and os.path.isfile(loggingFilePath)):
             logging.debug("Logging config file : " + loggingFilePath)
             logging.config.fileConfig(loggingFilePath)
