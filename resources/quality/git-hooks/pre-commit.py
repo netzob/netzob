@@ -110,9 +110,11 @@ def checkHeader(file):
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+"""
+    header2 = header.replace("#", "//")  # For C files
+    header3 = header.replace("#", "")     # For other
     with open(file, 'rb') as f:
         data = f.read()
-    if not header in data:
+    if not header in data and not header2 in data and not header3 in data:
         return ["The header has not been found in file"]
     return []
 
