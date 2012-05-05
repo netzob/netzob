@@ -90,7 +90,6 @@ class FilterApplicationTable:
                     toApplyFilter.append((i_col, i_local_start, i_local_end, i_start, i_end, data, filter))
             # Apply filters
             for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in toApplyFilter:
-                logging.debug("Applying encoding filter : '%s' on %s." % (filter.getName(), self.splittedData[col][i_local_start:i_local_end]))
                 tmpData = filter.apply(self.splittedData[col][i_local_start:i_local_end])
                 newData = newData[0:i_local_start] + tmpData + newData[i_local_end:]
                 # update in the conversion addressing table
@@ -164,7 +163,6 @@ class FilterApplicationTable:
                 self.conversionAddressingTable[i] = t
 
             previousOld = currentOld
-        logging.debug(self.conversionAddressingTable)
         return newValue
 
     def registerTag(self, i_col, idTag, i, tag):
@@ -178,7 +176,6 @@ class FilterApplicationTable:
         return tags
 
     def updateConversionAddressingTable(self, old_start, old_end, new_start, new_end):
-        logging.debug(self.conversionAddressingTable)
         sizeSegmentOld = old_end - old_start
         sizeSegment = new_end - new_start
 
@@ -271,5 +268,5 @@ class FilterApplicationTable:
             segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
             return segments
 
-        logging.warn("i_end never reached in the message (i_end=%d, i=%d)" % (i_end, i))
+        #logging.warn("i_end never reached in the message (i_end=%d, i=%d)" % (i_end, i))
         return segments
