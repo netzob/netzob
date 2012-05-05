@@ -202,8 +202,7 @@ class Workspace(object):
 
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
-            print self.getPathOfTraces()
-            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, self.getPathOfTraces())
+            importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, os.path.join(self.path, self.getPathOfTraces()))
 
         tree = ElementTree(root)
         tree.write(workspaceFile)
@@ -230,7 +229,7 @@ class Workspace(object):
             # we upload in it the default repository file
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             staticRepositoryPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "repository.xml.default")
-            shutil.copy(staticRepositoryPath, os.path.join(prototypesPath, "repository.xml"))
+            shutil.copy(staticRepositoryPath, os.path.join(os.path.join(path, prototypesPath), "repository.xml"))
 
         # we create the "logging" directory if it doesn't yet exist
         if not os.path.isdir(os.path.join(path, loggingPath)):
@@ -238,7 +237,7 @@ class Workspace(object):
             # we upload in it the default repository file
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             staticLoggingPath = os.path.join(os.path.join(ResourcesConfiguration.getStaticResources(), "defaults"), "logging.conf.default")
-            shutil.copy(staticLoggingPath, os.path.join(loggingPath, "logging.conf"))
+            shutil.copy(staticLoggingPath, os.path.join(os.path.join(path, loggingPath), "logging.conf"))
 
         workspace = Workspace(name, datetime.datetime.now(), path, tracesPath, pathOfLogging, prototypesPath)
         workspace.saveConfigFile()

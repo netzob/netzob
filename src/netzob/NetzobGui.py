@@ -88,18 +88,17 @@ class NetzobGui(gtk.Window):
 
         # the semi-automatic loading of the workspace has failed (second attempt)
         if self.currentWorkspace == None:
-            sys.exit()
-#            # we force the creation (or specification) of the workspace
-#            if not ResourcesConfiguration.initializeResources(True):
-#                logging.fatal("Error while configuring the resources of Netzob")
-#                sys.exit()
-#            workspace = str(ResourcesConfiguration.getWorkspaceFile())
-#            logging.debug("The workspace : " + str(workspace))
-#            # loading the workspace
-#            self.currentWorkspace = (Workspace.loadWorkspace(workspace))
-#            if self.currentWorkspace == None :
-#                logging.fatal("Stopping the execution (no workspace computed) !")
-#                sys.exit()
+            # we force the creation (or specification) of the workspace
+            if not ResourcesConfiguration.initializeResources(True):
+                logging.fatal("Error while configuring the resources of Netzob")
+                sys.exit()
+            workspace = str(ResourcesConfiguration.getWorkspaceFile())
+            logging.debug("The workspace : " + str(workspace))
+            # loading the workspace
+            self.currentWorkspace = (Workspace.loadWorkspace(workspace))
+            if self.currentWorkspace == None:
+                logging.fatal("Stopping the execution (no workspace computed) !")
+                sys.exit()
 
         self.currentProject = self.currentWorkspace.getLastProject()
 
