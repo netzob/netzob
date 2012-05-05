@@ -120,6 +120,9 @@ def checkHeader(file):
 def checkFile(file):
     results = dict()
 
+    if file.endswith("__init__.py"):
+        return results
+
     # Verify no '<<<' and or conflicts info are commited
     results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')  # Thisisnotaconflict
 
