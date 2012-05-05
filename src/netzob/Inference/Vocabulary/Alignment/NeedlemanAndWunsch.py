@@ -76,7 +76,7 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def alignSymbol(self, symbol, doInternalSlick, defaultFormat):
         messages = symbol.getMessages()
-        if not messages:
+        if messages == None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
             field = Field("Field 0", 0, "(.{,})")
@@ -84,6 +84,7 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
         else:
+            symbol.cleanFields()
             # We execute the alignment
             (alignment, score) = self.align(doInternalSlick, messages)
             symbol.setAlignment(alignment)

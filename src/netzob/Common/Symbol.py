@@ -83,6 +83,7 @@ class Symbol(AbstractSymbol):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.project = project
+        self.encodingFilters = []
         self.visualizationFilters = []
         self.pattern = pattern
         self.minEqu = minEqu
@@ -111,6 +112,19 @@ class Symbol(AbstractSymbol):
     def removeVisualizationFilter(self, filter):
         self.visualizationFilters.remove(filter)
 
+    def addEncodingFilter(self, filter):
+        self.encodingFilters.append(filter)
+
+    def removeEncodingFilter(self, filter):
+        if filter in self.encodingFilters:
+            self.encodingFilters.remove(filter)
+
+    def getEncodingFilters(self):
+        filters = []
+        for field in self.getFields():
+            filters.extend(field.getEncodingFilters())
+        filters.extend(self.encodingFilters)
+
     #+----------------------------------------------
     #| forcePartitioning:
     #|  Specify a delimiter for partitioning
@@ -118,7 +132,7 @@ class Symbol(AbstractSymbol):
     def forcePartitioning(self, projectConfiguration, aFormat, rawDelimiter):
         self.alignmentType = "delimiter"
         self.rawDelimiter = rawDelimiter
-        self.setFields([])
+        self.cleanFields()
 
         minNbSplit = 999999
         maxNbSplit = -1
@@ -157,7 +171,7 @@ class Symbol(AbstractSymbol):
     def simplePartitioning(self, projectConfiguration, unitSize):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
-        self.setFields([])
+        self.cleanFields()
 
         # Retrieve the biggest message
         maxLen = 0
@@ -1178,7 +1192,7 @@ class Symbol(AbstractSymbol):
         # Reset values
         self.alignmentType = "regex"
         self.rawDelimiter = ""
-        self.fields = []
+        self.cleanFields()
 
         # Create a single field
         field = Field.createDefaultField()
@@ -1325,6 +1339,7 @@ class Symbol(AbstractSymbol):
             rawDelimiter = xmlRoot.get("rawDelimiter")
 
             symbol = Symbol(idSymbol, nameSymbol, project)
+            symbol.cleanFields()
             symbol.setAlignment(alignmentSymbol)
             symbol.setScore(scoreSymbol)
             symbol.setAlignmentType(alignmentType)

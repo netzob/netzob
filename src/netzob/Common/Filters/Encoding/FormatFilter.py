@@ -29,7 +29,9 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from netzob.Common.VisualizationFilters.VisualizationFilter import VisualizationFilter
+from netzob.Common.Type.Format import Format
+from netzob.Common.Filters.EncodingFilter import EncodingFilter
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -41,22 +43,17 @@ from netzob.Common.VisualizationFilters.VisualizationFilter import Visualization
 
 
 #+---------------------------------------------------------------------------+
-#| BackgroundColorFilter:
-#|     Definition of a visualization filter wich colorize the background
+#| FormatFilter:
+#|     Definition of an encoding filter which apply a format on a message
 #+---------------------------------------------------------------------------+
-class BackgroundColorFilter(VisualizationFilter):
+class FormatFilter(EncodingFilter):
 
-    TYPE = "BackgroundColorFilter"
+    TYPE = "FormatFilter"
 
-    def __init__(self, id, name, iStart, iEnd, color):
-        VisualizationFilter.__init__(self, id, BackgroundColorFilter.TYPE, name)
-        self.iStart = iStart
-        self.iEnd = iEnd
-        self.color = color
-
-    def isValid(self, i, message, unitSize):
-        factor = (unitSize / 4)
-        return i >= self.iStart / factor and i <= self.iEnd / factor
+    def __init__(self, name, formatType):
+        EncodingFilter.__init__(self, FormatFilter.TYPE, name)
+        self.formatType = formatType
 
     def apply(self, message):
-        return '<span background="' + self.color + '">' + message + '</span>'
+        result = TypeConvertor.encodeNetzobRawToGivenType(message, self.formatType)
+        return result

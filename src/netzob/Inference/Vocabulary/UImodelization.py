@@ -32,10 +32,6 @@ import gtk
 import pango
 import pygtk
 import gobject
-from netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator import TreeSearchGenerator
-from netzob.Inference.Vocabulary.Searcher import Searcher
-from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
-from netzob.Inference.Vocabulary.OptionalViews import OptionalViews
 pygtk.require('2.0')
 import logging
 import copy
@@ -67,6 +63,9 @@ from netzob.Inference.Vocabulary.TreeViews.TreeTypeStructureGenerator import Tre
 from netzob.Inference.Vocabulary.TreeViews.TreePropertiesGenerator import TreePropertiesGenerator
 from netzob.Inference.Vocabulary.VariableView import VariableView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
+from netzob.Inference.Vocabulary.TreeViews.TreeSearchGenerator import TreeSearchGenerator
+from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.Inference.Vocabulary.OptionalViews import OptionalViews
 
 
 #+----------------------------------------------
@@ -1058,7 +1057,7 @@ class UImodelization:
         message = self.selectedSymbol.getMessageByID(message_id)
         if message != None:
             # Retrieve content of the field
-            field_content = message.getSplittedData(False)[aObject.getIndex()]
+            field_content = message.getFields(False)[aObject.getIndex()]
         else:
             field_content = None
 

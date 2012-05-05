@@ -45,9 +45,10 @@ from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
-from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
-from netzob.Common.VisualizationFilters.BackgroundColorFilter import BackgroundColorFilter
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
+from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
+from netzob.Common.Filters.Visualization.BackgroundColorFilter import BackgroundColorFilter
 
 
 #+---------------------------------------------------------------------------+
@@ -128,13 +129,34 @@ class Field(object):
 
         # dynamic fields are in Blue
         if not self.isStatic():
-            filters.append(TextColorFilter(uuid.uuid4(), "Dynamic Field", None, None, "blue"))
-
-            # fields with no variable define are in yellow
+            filters.append(TextColorFilter("Dynamic Field", "blue"))
+#            # fields with no variable define are in yellow
             if self.variable == None:
-                filters.append(BackgroundColorFilter(uuid.uuid4(), "Default variable", None, None, "yellow"))
+                filters.append(BackgroundColorFilter("Default variable", "yellow"))
 
         return filters
+
+    def getEncodingFilters(self):
+        filters = []
+        # Following filters must be considered :
+        filters.append(self.computeFormatEncodingFilter())
+#        filters.append(self.computeUnitSizeEncodingFilter())
+#        filters.append(self.computeSignEncodingFilter())
+#        filters.append(self.computeEndianessEncodingFilter())
+
+        return filters
+
+    def computeFormatEncodingFilter(self):
+        return FormatFilter("Field Format Encoding", self.format)
+
+    def computeUnitSizeEncodingFilter(self):
+        return None
+
+    def computeSignEncodingFilter(self):
+        return None
+
+    def computeEndianessEncodingFilter(self):
+        return None
 
     def save(self, root, namespace):
         xmlField = etree.SubElement(root, "{" + namespace + "}field")

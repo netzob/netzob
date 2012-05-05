@@ -40,10 +40,10 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
-from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
+from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
 
 
 #+---------------------------------------------------------------------------+
@@ -68,7 +68,8 @@ class AbstractMessage():
         self.rightReductionFactor = 0
         self.leftReductionFactor = 0
         self.visualizationFilters = []
-        # self.log.debug("CALL Abstract")
+        self.encodingFilters = []
+
         self.pattern = []
         if not pattern:
             self.compilePattern()
@@ -99,16 +100,51 @@ class AbstractMessage():
     #| addVisualizationFilter
     #|     Add a visualization filter
     #+-----------------------------------------------------------------------+
-    def addVisualizationFilter(self, filter):
-        self.visualizationFilters.append(filter)
+    def addVisualizationFilter(self, filter, start, end):
+        self.visualizationFilters.append((filter, start, end))
 
     #+-----------------------------------------------------------------------+
     #| removeVisualizationFilter
     #|     Remove a visualization filter
     #+-----------------------------------------------------------------------+
     def removeVisualizationFilter(self, filter):
-        if filter in self.visualizationFilters:
-            self.visualizationFilters.remove(filter)
+        savedFilters = []
+        for (f, start, end) in self.visualizationFilters:
+            if filter.getID() != f.getID():
+                savedFilters.append((f, start, end))
+        self.visualizationFilters = []
+        for a in savedFilters:
+            self.visualizationFilters.append(a)
+
+    #+-----------------------------------------------------------------------+
+    #| addEncodingFilter
+    #|     Add an encoding filter
+    #+-----------------------------------------------------------------------+
+    def addEncodingFilter(self, filter):
+        self.encodingFilters.append(filter)
+
+    #+-----------------------------------------------------------------------+
+    #| removeEncodingFilter
+    #|     Remove an encoding filter
+    #+-----------------------------------------------------------------------+
+    def removeEncodingFilter(self, filter):
+        if filter in self.encodingFilters:
+            self.encodingFilters.remove(filter)
+
+    #+-----------------------------------------------------------------------+
+    #| getEncodingFilters
+    #|     Computes the encoding filters associated with current message
+    #+-----------------------------------------------------------------------+
+    def getEncodingFilters(self):
+        filters = []
+
+        # First we add all the encoding filters attached to the symbol
+        filters.extend(self.symbol.getEncodingFilters())
+
+        # We add the locally defined encoding filters
+        filters.extend(self.encodingFilters)
+
+        return filters
 
     #+----------------------------------------------
     #|`getStringData : compute a string representation
@@ -211,20 +247,56 @@ class AbstractMessage():
     #+----------------------------------------------
     def applyAlignment(self, styled=False, encoded=False):
         if self.getSymbol().getAlignmentType() == "regex":
-            return self.getVisualizationData(styled, encoded)
+            return self.getFields(styled, encoded)
         else:
             return self.applyDelimiter(styled, encoded)
+
+    def getFields(self, encoding=False, visualization=False):
+        # Retrieve the data in columns
+        splittedData = self.getSplittedData()
+
+        if len(splittedData) != len(self.symbol.getFields()):
+            self.log.error("Inconsistency problem between number of fields and the regex application")
+            return []
+
+        # Create the locationTable
+        filterTable = FilterApplicationTable(splittedData)
+
+        if encoding == True or visualization == True:
+            i_data = 0
+            for i_field in range(0, len(self.symbol.getFields())):
+                field = self.symbol.getFields()[i_field]
+                dataField = splittedData[i_field]
+                # Add encoding filters
+                if encoding == True:
+                    for filter in field.getEncodingFilters():
+                        filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+                # Add visualization filters
+                if visualization == True:
+                    # Add visualization filters obtained from fields
+                    for filter in field.getVisualizationFilters():
+                        if len(dataField) > 0:
+                            filterTable.applyFilter(filter, i_data, i_data + len(dataField))
+                i_data = i_data + len(dataField)
+
+            # Add visualization filters of our current message
+            if visualization == True:
+                for (filter, start, end) in self.getVisualizationFilters():
+                    filterTable.applyFilter(filter, start, end)
+
+        return filterTable.getResult()
 
     #+-----------------------------------------------------------------------+
     #| getSplittedData
     #|     Split the message using its symbol's regex and return an array of it
     #+-----------------------------------------------------------------------+
-    def getSplittedData(self, encoded=False):
+    def getSplittedData(self):
         regex = []
         dynamicDatas = None
         # First we compute the global regex
         for field in self.symbol.getFields():
             regex.append(field.getRegex())
+
         # Now we apply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
@@ -244,17 +316,19 @@ class AbstractMessage():
         iCol = 1
         for field in self.symbol.getFields():
             if field.isStatic():
-                if encoded:
-                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-                else:
-                    result.append(glib.markup_escape_text(field.getRegex()))
+#                if encoded:
+#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
+#                else:
+#                    result.append(glib.markup_escape_text(field.getRegex()))
+                result.append(field.getRegex())
             else:
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)
-                if encoded:
-                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-                else:
-                    result.append(glib.markup_escape_text(data[start:end]))
+#                if encoded:
+#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
+#                else:
+#                    result.append(glib.markup_escape_text(data[start:end]))
+                result.append(data[start:end])
                 iCol += 1
         return result
 
@@ -270,13 +344,17 @@ class AbstractMessage():
 
         for data in splittedData:
             localResult = ""
-
+            # Retrieve the field associated with this value
             field = self.symbol.getFieldByIndex(iCol)
+            # Retrieve the unit size
+            unitSize = Format.getUnitSize(field.getFormat())
+            # First we apply filters on all the message
+            for filter in self.getVisualizationFilters():
+                if filter.isValid(0, -1, data, unitSize):
+                    localResult += filter.apply(data)
 
             for iLocal in range(0, len(data)):
-                currentLetter = data[iLocal]
-                tmp_result = currentLetter
-                sizeFormat = Format.getUnitSize(field.getFormat())
+                tmp_result = data[iLocal]
                 if sizeFormat != None:
                     for filter in self.getVisualizationFilters():
                         if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):

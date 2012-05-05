@@ -159,7 +159,11 @@ class TreeMessageGenerator(AbstractViewGenerator):
         for message in self.symbol.getMessages():
             # For each message we create a line and computes its cols
             try:
-                messageTable = message.applyAlignment(styled=True, encoded=True)
+#                message.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "test", 0, -1, "red"))
+#                message.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "test2", 20, 30, "blue"))
+                messageTable = message.getFields(encoding=True, visualization=True)
+
+#                messageTable = message.applyAlignment(styled=True, encoded=False)
                 self.log.debug("Computed alignment of message : " + str(messageTable))
             except NetzobException:
                 self.log.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")

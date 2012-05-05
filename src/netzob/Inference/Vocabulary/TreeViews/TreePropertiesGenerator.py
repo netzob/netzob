@@ -37,7 +37,6 @@ import uuid
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Common.Field import Field
 from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
 

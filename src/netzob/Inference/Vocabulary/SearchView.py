@@ -31,7 +31,6 @@
 import logging
 import gtk
 import pygtk
-from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 import uuid
 pygtk.require('2.0')
 

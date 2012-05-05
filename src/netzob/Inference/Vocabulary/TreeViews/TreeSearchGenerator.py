@@ -37,9 +37,9 @@ import uuid
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.VisualizationFilters.TextColorFilter import TextColorFilter
 from netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator import AbstractViewGenerator
 from netzob.Common.Field import Field
+from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 
 
 #+----------------------------------------------
@@ -148,15 +148,15 @@ class TreeSearchGenerator(AbstractViewGenerator):
         colorizedSymbols = []
         for task in searchTasks:
             for result in task.getResults():
-                for (start, end) in result.getSegments():
-                    filter = TextColorFilter(uuid.uuid4(), "Search", start, start + end + 1, "#DD0000")
+                for (start, length) in result.getSegments():
+                    filter = TextColorFilter("Search", "green")
                     message = result.getMessage()
-                    message.addVisualizationFilter(filter)
+                    message.addVisualizationFilter(filter, start, start + length)
                     # colorize the associated symbol
-                    symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(message)
-                    if not symbol in colorizedSymbols:
-                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
-                        colorizedSymbols.append(symbol)
+#                    symbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(message)
+#                    if not symbol in colorizedSymbols:
+#                        symbol.addVisualizationFilter(TextColorFilter(uuid.uuid4(), "Search", None, None, "#DD0000"))
+#                        colorizedSymbols.append(symbol)
 
     def decolorizeAnySearchResult(self):
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
@@ -171,7 +171,7 @@ class TreeSearchGenerator(AbstractViewGenerator):
 
             filterToRemoveFromMessage = []
             for message in symbol.getMessages():
-                for filter in message.getVisualizationFilters():
+                for (filter, start, end) in message.getVisualizationFilters():
                     if filter.getName() == "Search":
                         filterToRemoveFromMessage.append(filter)
 

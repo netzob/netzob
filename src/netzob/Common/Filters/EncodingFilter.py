@@ -29,34 +29,28 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-
+import uuid
+from netzob.Common.Filters.RenderingFilter import RenderingFilter
 #+---------------------------------------------------------------------------+
 #| Local imports
 #+---------------------------------------------------------------------------+
 
 
 #+---------------------------------------------------------------------------+
-#| VisualizationFilter:
-#|     Class definition of a filter for visualization purposes (color, bold, ...)
+#| EncodingFilter :
+#|     Class definition of a filter for encoding purposes (format, unit, ...)
 #+---------------------------------------------------------------------------+
-class VisualizationFilter(object):
+class EncodingFilter(RenderingFilter):
+
+    TYPE = "EncodingFilter"
 
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, id, type, name):
-        self.id = id
+    def __init__(self, type, name):
+        RenderingFilter.__init__(self, EncodingFilter.TYPE)
         self.type = type
         self.name = name
-
-    #+-----------------------------------------------------------------------+
-    #| isValid
-    #|     Abstract method to compute if the provided message should be filtered
-    #|     MUST BE IMPLEMENTED IN SUB CLASSES
-    #+-----------------------------------------------------------------------+
-    def isValid(self, i, message, unitSize):
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
 
     #+-----------------------------------------------------------------------+
     #| apply
@@ -70,9 +64,6 @@ class VisualizationFilter(object):
     #+-----------------------------------------------------------------------+
     #| Getter & Setters
     #+-----------------------------------------------------------------------+
-    def getID(self):
-        return self.id
-
     def getType(self):
         return self.type
 

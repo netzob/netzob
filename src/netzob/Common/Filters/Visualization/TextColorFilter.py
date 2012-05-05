@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-from netzob.Common.VisualizationFilters.VisualizationFilter import VisualizationFilter
+from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
 from netzob.Common.Type.Format import Format
 
 #+---------------------------------------------------------------------------+
@@ -49,15 +49,9 @@ class TextColorFilter(VisualizationFilter):
 
     TYPE = "TextColorFilter"
 
-    def __init__(self, id, name, iStart, iEnd, color):
-        VisualizationFilter.__init__(self, id, TextColorFilter.TYPE, name)
-        self.iStart = iStart
-        self.iEnd = iEnd
+    def __init__(self, name, color):
+        VisualizationFilter.__init__(self, TextColorFilter.TYPE, name)
         self.color = color
 
-    def isValid(self, i, message, unitSize):
-        factor = (unitSize / float(Format.getUnitSize(Format.HEX)))
-        return i >= self.iStart / factor and i <= self.iEnd / factor
-
-    def apply(self, message):
-        return '<span foreground="' + self.color + '">' + message + '</span>'
+    def getTags(self):
+        return ('<span foreground="' + self.color + '">', '</span>')

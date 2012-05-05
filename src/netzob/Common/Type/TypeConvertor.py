@@ -569,7 +569,8 @@ class TypeConvertor():
             tmp = TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
             return tmp
         elif unitSize == UnitSize.BIT:
-            return " ".join(TypeConvertor.netzobRawToBinary(raw))
+            size = 1
+            return TypeConvertor.encodeNetzobRawToGivenType(raw, aFormat)
         elif unitSize == UnitSize.BITS8:
             size = 8
         elif unitSize == UnitSize.BITS16:
