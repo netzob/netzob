@@ -699,10 +699,10 @@ class Symbol(AbstractSymbol):
                     except PyAsn1Error:
                         continue
                     except IndexError:
-                        print "IndexError: " + repr(tmpStr[start:end])
+                        logging.error("IndexError: " + repr(tmpStr[start:end]))
                         continue
                     except:
-                        print "NOK"
+                        logging.error("NOK")
                         continue
 #                    print "PAN: " + repr(res)
 #                        store.append([field.getIndex(), envDependency.getName(), envDependency.getType(), envDependency.getValue()])

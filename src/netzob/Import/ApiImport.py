@@ -386,7 +386,8 @@ class ApiImport:
         self.aSniffThread = None
 
         # now we clean everything
-        print "Reading finish, we close the FIFO."
+        self.log.debug("Reading finish, we close the FIFO.")
+
         # Close and remove fifo
         self.fifo.close()
         os.remove(self.fifoFile)

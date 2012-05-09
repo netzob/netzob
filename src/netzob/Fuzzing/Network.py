@@ -226,7 +226,7 @@ class Network:
             menu.popup(None, None, None, event.button, event.time)
 
     def fuzz_field_cb(self, widget, field):
-        print "Fuzz field : " + str(field)
+        self.log.debug("Fuzz field: {0}".format(str(field)))
 
     #+----------------------------------------------
     #| Called when user select a packet for details
