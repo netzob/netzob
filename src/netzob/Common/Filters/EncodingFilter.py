@@ -62,6 +62,13 @@ class EncodingFilter(RenderingFilter):
         raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
 
     #+-----------------------------------------------------------------------+
+    #| getConversionAddressingTable
+    #|     Retrieve a table which describes the conversion addressing
+    #+-----------------------------------------------------------------------+
+    def getConversionAddressingTable(self, message):
+        return None
+
+    #+-----------------------------------------------------------------------+
     #| Getter & Setters
     #+-----------------------------------------------------------------------+
     def getType(self):

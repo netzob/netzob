@@ -32,6 +32,7 @@ import logging
 from netzob.Common.Type.Format import Format
 from netzob.Common.Filters.EncodingFilter import EncodingFilter
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.UnitSize import UnitSize
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -50,10 +51,43 @@ class FormatFilter(EncodingFilter):
 
     TYPE = "FormatFilter"
 
-    def __init__(self, name, formatType):
+    def __init__(self, name, formatType, unitSize):
         EncodingFilter.__init__(self, FormatFilter.TYPE, name)
         self.formatType = formatType
+        self.unitsize = unitSize
 
     def apply(self, message):
-        result = TypeConvertor.encodeNetzobRawToGivenType(message, self.formatType)
-        return result
+
+        # First we apply the unit size
+        modulo = 1
+        if self.unitsize == UnitSize.BITS4:
+            modulo = 1
+        elif self.unitsize == UnitSize.BITS8:
+            modulo = 2
+        elif self.unitsize == UnitSize.BITS16:
+            modulo = 4
+        elif self.unitsize == UnitSize.BITS32:
+            modulo = 8
+        elif self.unitsize == UnitSize.BITS64:
+            modulo = 16
+
+        splittedData = []
+        tmpResult = ""
+        for i in range(0, len(message)):
+            if i > 0 and i % modulo == 0:
+                splittedData.append(tmpResult)
+                tmpResult = ""
+            tmpResult = tmpResult + message[i]
+        splittedData.append(tmpResult)
+
+        # Now we have the message splitted per unit size
+        # we encode each data
+        encodedSplittedData = []
+        for d in splittedData:
+            encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(d, self.formatType))
+
+        # Before sending back (;D) we join everything
+        return "".join(encodedSplittedData)
+
+    def getConversionAddressingTable(self, message):
+        return None
