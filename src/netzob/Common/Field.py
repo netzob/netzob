@@ -49,7 +49,6 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.Filters.Visualization.BackgroundColorFilter import BackgroundColorFilter
-from netzob.Common.Filters.Encoding.UnitSizeFilter import UnitSizeFilter
 
 
 #+---------------------------------------------------------------------------+

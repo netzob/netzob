@@ -59,7 +59,8 @@ class FormatFilter(EncodingFilter):
     def apply(self, message):
 
         # First we apply the unit size
-        modulo = 1
+        # Default modulo = 2 => 8BITS
+        modulo = 2
         if self.unitsize == UnitSize.BITS4:
             modulo = 1
         elif self.unitsize == UnitSize.BITS8:
@@ -87,7 +88,7 @@ class FormatFilter(EncodingFilter):
             encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(d, self.formatType))
 
         # Before sending back (;D) we join everything
-        return "".join(encodedSplittedData)
+        return " ".join(encodedSplittedData)
 
     def getConversionAddressingTable(self, message):
         return None

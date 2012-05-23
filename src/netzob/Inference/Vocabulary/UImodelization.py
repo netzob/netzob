@@ -93,14 +93,19 @@ class UImodelization:
 
         # Update the combo for choosing the unit size
         # TODO: support of 4BITS
-        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        possible_choices = [UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         self.comboDisplayUnitSize.disconnect(self.comboDisplayUnitSize_handler)
         self.comboDisplayUnitSize.set_model(gtk.ListStore(str))  # Clear the list
+
+        activeUnitSizefound = False
         for i in range(len(possible_choices)):
             self.comboDisplayUnitSize.append_text(possible_choices[i])
             if possible_choices[i] == global_unitsize:
                 self.comboDisplayUnitSize.set_active(i)
+                activeUnitSizefound = True
+        if not activeUnitSizefound:
+            self.comboDisplayUnitSize.set_active(1)
         self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
 
         # Update the combo for choosing the displayed sign

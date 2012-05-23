@@ -91,9 +91,9 @@ class FilterApplicationTable:
 
             # Apply filters
             for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in toApplyFilter:
-                logging.debug("Apply filter {0} on {1}".format(filter.getName(), self.splittedData[col][i_local_start:i_local_end]))
-                logging.debug("Conversion table (before):")
-                logging.debug(self.conversionAddressingTable)
+                #logging.debug("Apply filter {0} on {1}".format(filter.getName(), self.splittedData[col][i_local_start:i_local_end]))
+                #logging.debug("Conversion table (before):")
+                #logging.debug(self.conversionAddressingTable)
 
                 tmpData = filter.apply(self.splittedData[col][i_local_start:i_local_end])
                 newData = newData[0:i_local_start] + tmpData + newData[i_local_end:]
@@ -101,14 +101,14 @@ class FilterApplicationTable:
                 # update in the conversion addressing table
                 filterConversionAddressingTable = filter.getConversionAddressingTable(self.splittedData[col][i_local_start:i_local_end])
                 if filterConversionAddressingTable == None:
-                    logging.debug("Automatic deduction of the filter conversion addressing table")
+                     #logging.debug("Automatic deduction of the filter conversion addressing table")
                     self.updateConversionAddressingTable(i_start, i_end, i_start, i_start + len(tmpData))
                 else:
-                    logging.debug("Apply the filter conversion addressing table")
+                    #logging.debug("Apply the filter conversion addressing table")
                     self.updateConversionAddressingTableWithTable(filterConversionAddressingTable)
 
-                logging.debug("Conversion table (after):")
-                logging.debug(self.conversionAddressingTable)
+                #logging.debug("Conversion table (after):")
+                #logging.debug(self.conversionAddressingTable)
             encodedResult.append(newData)
 
         i_global = 0
