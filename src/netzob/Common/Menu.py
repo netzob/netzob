@@ -115,7 +115,8 @@ class Menu(object):
 
         self.sessionManager = gtk.MenuItem("Session manager")
         self.sessionManager.connect("activate", self.sessionManagerAction)
-        self.menuProject.append(self.sessionManager)
+        # TODO
+        # self.menuProject.append(self.sessionManager)
 
         self.menuImport = gtk.Menu()
         self.importRootMenu = gtk.MenuItem("Import traces")
