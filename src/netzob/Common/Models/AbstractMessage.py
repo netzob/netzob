@@ -44,7 +44,6 @@ from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
 from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
-from netzob.Common.Filters.Visualization.UnitSizeFilter import UnitSizeFilter
 
 
 #+---------------------------------------------------------------------------+
@@ -278,14 +277,6 @@ class AbstractMessage():
                     for filter in field.getVisualizationFilters():
                         if len(dataField) > 0:
                             filterTable.applyFilter(filter, i_data, i_data + len(dataField))
-#                    # Add unit size filters
-#                    fieldUnitSize = field.getUnitSize()
-#                    if fieldUnitSize == UnitSize.BITS4 :
-#                        for a in range(0, len(dataField)) :
-#                            filterTable.applyFilter(UnitSizeFilter("UnitSize 4Bits"), i_data + a, i_data + a)
-#                    if fieldUnitSize == UnitSize.BITS8 :
-#                        for a in range(0, len(dataField), 2) :
-#                            filterTable.applyFilter(UnitSizeFilter("UnitSize 8Bits"), i_data + a, i_data + a)
                 i_data = i_data + len(dataField)
 
             # Add visualization filters of our current message
