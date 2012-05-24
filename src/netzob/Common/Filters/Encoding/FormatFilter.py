@@ -58,28 +58,21 @@ class FormatFilter(EncodingFilter):
 
     def apply(self, message):
 
-        # First we apply the unit size
-        # Default modulo = 2 => 8BITS
-        modulo = 2
-        if self.unitsize == UnitSize.BITS4:
-            modulo = 1
-        elif self.unitsize == UnitSize.BITS8:
-            modulo = 2
-        elif self.unitsize == UnitSize.BITS16:
-            modulo = 4
-        elif self.unitsize == UnitSize.BITS32:
-            modulo = 8
-        elif self.unitsize == UnitSize.BITS64:
-            modulo = 16
+        if self.unitsize != UnitSize.NONE:
+            # First we apply the unit size
+            # Default modulo = 2 => 8BITS
+            modulo = UnitSize.getSizeInBits(self.unitsize) / 4
 
-        splittedData = []
-        tmpResult = ""
-        for i in range(0, len(message)):
-            if i > 0 and i % modulo == 0:
-                splittedData.append(tmpResult)
-                tmpResult = ""
-            tmpResult = tmpResult + message[i]
-        splittedData.append(tmpResult)
+            splittedData = []
+            tmpResult = ""
+            for i in range(0, len(message)):
+                if i > 0 and i % modulo == 0:
+                    splittedData.append(tmpResult)
+                    tmpResult = ""
+                tmpResult = tmpResult + message[i]
+            splittedData.append(tmpResult)
+        else:
+            splittedData = [message]
 
         # Now we have the message splitted per unit size
         # we encode each data
