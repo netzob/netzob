@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+import glib
 from netzob.Common.Type.Format import Format
 from netzob.Common.Filters.EncodingFilter import EncodingFilter
 from netzob.Common.Filters.VisualizationFilter import VisualizationFilter
@@ -109,7 +110,7 @@ class FilterApplicationTable:
 
                 #logging.debug("Conversion table (after):")
                 #logging.debug(self.conversionAddressingTable)
-            encodedResult.append(newData)
+            encodedResult.append(glib.markup_escape_text(newData))
 
         i_global = 0
 
