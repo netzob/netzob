@@ -164,7 +164,6 @@ class TreeMessageGenerator(AbstractViewGenerator):
                 messageTable = message.getFields(encoding=True, visualization=True)
 
 #                messageTable = message.applyAlignment(styled=True, encoded=False)
-                self.log.debug("Computed alignment of message : " + str(messageTable))
             except NetzobException:
                 self.log.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
                 self.log.warn("Message : " + str(message.getStringData()))

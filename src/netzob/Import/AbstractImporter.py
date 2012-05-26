@@ -44,7 +44,7 @@ from netzob.Common.Session import Session
 
 #+---------------------------------------------------------------------------+
 #| AbstractImporter:
-#|     Mother class which provides common methods too any kind of importers
+#|     Abstract class which provides common methods too any kind of importers
 #+---------------------------------------------------------------------------+
 class AbstractImporter:
 

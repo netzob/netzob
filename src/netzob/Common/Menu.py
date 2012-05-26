@@ -44,6 +44,7 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Import.PcapImport import PcapImport
+from netzob.Import.ThirdPartyImport import ThirdPartyImport
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
 from netzob.Import.FileImport import FileImport
@@ -141,6 +142,10 @@ class Menu(object):
         importXMLEntry = gtk.MenuItem("Import from XML File")
         importXMLEntry.connect("activate", self.importXMLAction)
         self.menuImport.append(importXMLEntry)
+
+        importThirdPartyEntry = gtk.MenuItem("Import from Third parties")
+        importThirdPartyEntry.connect("activate", self.importThirdParty)
+        self.menuImport.append(importThirdPartyEntry)
 
         self.menuProject.append(self.importRootMenu)
 
@@ -420,6 +425,12 @@ class Menu(object):
     #+----------------------------------------------
     def importXMLAction(self, widget):
         xmlImportPanel = XMLImport(self.netzob)
+
+    #+----------------------------------------------
+    #| Called when user wants to import from third parties
+    #+----------------------------------------------
+    def importThirdParty(self, widget):
+        thirdPartyImportPanel = ThirdPartyImport(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector
