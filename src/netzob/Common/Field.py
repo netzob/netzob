@@ -144,10 +144,7 @@ class Field(object):
         return filters
 
     def computeFormatEncodingFilter(self):
-        return FormatFilter("Field Format Encoding", self.format, self.unitSize)
-
-    def computeUnitSizeEncodingFilter(self):
-        return UnitSizeFilter("Unit Size Encoding", self.unitSize)
+        return FormatFilter("Field Format Encoding", self.format, self.unitSize, self.endianess)
 
     def computeSignEncodingFilter(self):
         return None

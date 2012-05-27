@@ -33,6 +33,7 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Filters.EncodingFilter import EncodingFilter
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Endianess import Endianess
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -51,10 +52,11 @@ class FormatFilter(EncodingFilter):
 
     TYPE = "FormatFilter"
 
-    def __init__(self, name, formatType, unitSize):
+    def __init__(self, name, formatType, unitSize, endianness):
         EncodingFilter.__init__(self, FormatFilter.TYPE, name)
         self.formatType = formatType
         self.unitsize = unitSize
+        self.endianness = endianness
 
     def apply(self, message):
 
@@ -75,6 +77,22 @@ class FormatFilter(EncodingFilter):
             splittedData = [message]
 
         # Now we have the message splitted per unit size
+        # we apply endianess on it
+        # we consider the normal mode is big-endian
+        if self.endianness == Endianess.LITTLE:
+            # none ou 4 bits : A0B1C2 -> A0B1C2 -> 2C1B0A
+            # 8 bits : A0B1C2 -> A0 B1 C2 -> C2B1A0
+            # 16 bits : A0B1C2 -> A0B1 C2 -> C2 A0B1
+            # 32 bits ...
+            if self.unitsize == UnitSize.NONE:
+                local_value = ""
+                for i in range(0, len(splittedData)):
+                    local_value = splittedData[i][::-1]
+                    splittedData[i] = local_value
+            else:
+                tmpData = splittedData[::-1]
+                splittedData = tmpData
+
         # we encode each data
         encodedSplittedData = []
         for d in splittedData:
