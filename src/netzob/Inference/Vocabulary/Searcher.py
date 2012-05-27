@@ -85,7 +85,11 @@ class Searcher(object):
     #| @param value the value to search for
     #+----------------------------------------------
     def getSearchedDataForHexadecimal(self, value):
-        return []
+        # Creation of a SearchTask
+        task = SearchTask(value, value, Format.HEX)
+        task.registerVariation(value, "Direct representation of '{0}'".format(value))
+        task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
+        return [task]
 
     #+----------------------------------------------
     #| getSearchedDataForString:
