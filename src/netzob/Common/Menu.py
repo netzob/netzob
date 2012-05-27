@@ -293,15 +293,15 @@ class Menu(object):
         for i in self.selectAProject.get_children():
             self.selectAProject.remove(i)
 
-        availableProjects = self.netzob.getCurrentWorkspace().getProjects()
-        for project in availableProjects:
-            projectEntry = gtk.MenuItem(project.getName())
-            projectEntry.connect("activate", self.switchProjectAction, project)
+        availableProjectsName = self.netzob.getCurrentWorkspace().getNameOfProjects()
+        for (projectName, projectFile) in availableProjectsName:
+            projectEntry = gtk.MenuItem(projectName)
+            projectEntry.connect("activate", self.switchProjectAction, projectFile)
             self.selectAProject.append(projectEntry)
         self.selectAProject.show_all()
 
         # Deactivate the global 'switch menu' if no project is available
-        if len(availableProjects) == 0:
+        if len(availableProjectsName) == 0:
             self.selectAProjectRoot.set_sensitive(False)
         else:
             self.selectAProjectRoot.set_sensitive(True)
@@ -325,7 +325,13 @@ class Menu(object):
     def manageTracesAction(self, widget):
         TraceManager(self.netzob.getCurrentWorkspace(), self.netzob.update)
 
-    def switchProjectAction(self, widget, newProject):
+    def switchProjectAction(self, widget, projectPath):
+        newProject = Project.loadProject(self.netzob.getCurrentWorkspace(), projectPath)
+        if newProject == None:
+            logging.error("Impossible to switch to requested project due to an error in the loading process.")
+            return
+
+        # Loading the project based on its name
         self.netzob.switchCurrentProject(newProject)
         self.update()
 

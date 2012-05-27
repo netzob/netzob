@@ -87,7 +87,7 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             if trace != None:
                 workspace.addImportedTrace(trace)
 
-    # Load the projects
+    # Reference the projects
     if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None:
         for xmlProject in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}projects/{" + WORKSPACE_NAMESPACE + "}project"):
             project_path = xmlProject.get("path")
@@ -125,6 +125,15 @@ class Workspace(object):
         self.pathOfPrototypes = pathOfPrototypes
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
+
+    def getNameOfProjects(self):
+        nameOfProjects = []
+        for project_path in self.getProjectsPath():
+            from netzob.Common.Project import Project
+            projectName = Project.getNameOfProject(self, project_path)
+            if projectName != None:
+                nameOfProjects.append((projectName, project_path))
+        return nameOfProjects
 
     def getProjects(self):
         projects = []
