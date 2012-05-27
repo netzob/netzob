@@ -2714,6 +2714,9 @@ class UImodelization:
                     elif propertyType == Format.IP:
                         searchTasks = searcher.searchInMessage(searcher.getSearchedDataForIP(str(propertyValue)), message)
                         self.treeSearchGenerator.update(searchTasks)
+                    elif propertyType == Format.DECIMAL:
+                        searchTasks = searcher.searchInMessage(searcher.getSearchedDataForDecimal(str(propertyValue)), message)
+                        self.treeSearchGenerator.update(searchTasks)
 
     #+----------------------------------------------
     #| Called when user wants to see the distribution of a symbol of messages
