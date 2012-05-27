@@ -281,9 +281,10 @@ class TypeConvertor():
     #| Return the decimal parameter in string
     #+----------------------------------------------
     def decimalToNetzobRaw(raw):
-        logging.error("Not yet implemented")
-        # TODO
-        return raw
+        result = str(int(raw, 16))
+        if len(result) % 2 == 1:
+            result = "0" + result
+        return result
 
     @staticmethod
     #+----------------------------------------------

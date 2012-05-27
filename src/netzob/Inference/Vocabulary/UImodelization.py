@@ -338,7 +338,7 @@ class UImodelization:
         self.typeCombo.get_model().append([Format.HEX])
 #        self.typeCombo.get_model().append([Format.BINARY])
 #        self.typeCombo.get_model().append([Format.OCTAL])
-#        self.typeCombo.get_model().append([Format.DECIMAL])
+        self.typeCombo.get_model().append([Format.DECIMAL])
         self.typeCombo.get_model().append([Format.IP])
         self.typeCombo.set_active(0)
         table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)

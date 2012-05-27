@@ -77,7 +77,11 @@ class Searcher(object):
     #| @param value the value to search for
     #+----------------------------------------------
     def getSearchedDataForDecimal(self, value):
-        return []
+        # Creation of a SearchTask
+        task = SearchTask(value, value, Format.DECIMAL)
+        task.registerVariation(TypeConvertor.decimalToNetzobRaw(value), "Decimal representation of '{0}'".format(TypeConvertor.decimalToNetzobRaw(value)))
+        task.registerVariation(TypeConvertor.decimalToNetzobRaw(value[::-1]), "Inverted decimal representation of '{0}'".format(TypeConvertor.decimalToNetzobRaw(value[::-1])))
+        return [task]
 
     #+----------------------------------------------
     #| getSearchedDataForHexadecimal:
@@ -87,7 +91,7 @@ class Searcher(object):
     def getSearchedDataForHexadecimal(self, value):
         # Creation of a SearchTask
         task = SearchTask(value, value, Format.HEX)
-        task.registerVariation(value, "Direct representation of '{0}'".format(value))
+        task.registerVariation(value, "Hexadecimal representation of '{0}'".format(value))
         task.registerVariation(value[::-1], "Inverted representation of '{0}'".format(value[::-1]))
         return [task]
 
@@ -258,10 +262,12 @@ class Searcher(object):
         return results
 
     def semiInvertedOnNaturalSearch(self, data, message):
+        logging.debug("semi inverted = " + str(data))
         results = []
         invData = ""
         for i in range(0, len(data), 2):
-            invData = invData + data[i + 1]
+            if len(data) > i + 1:
+                invData = invData + data[i + 1]
             invData = invData + data[i]
 
         if len(data) % 2 == 1:
@@ -280,11 +286,13 @@ class Searcher(object):
         return results
 
     def semiInvertedOnInvertedSearch(self, data, message):
+
         results = []
         tmpData = data[::-1]
         invData = ""
         for i in range(0, len(tmpData), 2):
-            invData = invData + tmpData[i + 1]
+            if len(data) > i + 1:
+                invData = invData + tmpData[i + 1]
             invData = invData + tmpData[i]
 
         if len(tmpData) % 2 == 1:
