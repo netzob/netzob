@@ -32,6 +32,7 @@ import gtk
 import pango
 import pygtk
 import gobject
+from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
 pygtk.require('2.0')
 import logging
 import copy
@@ -483,7 +484,7 @@ class UImodelization:
     def sequenceAlignment_cb_cb(self, widget, dialog, symbols, comboUnitSize):
         self.currentExecutionOfAlignmentHasFinished = False
         # Start the progress bar
-        gobject.timeout_add(200, self.do_pulse_for_sequenceAlignment)
+        gobject.timeout_add(100, self.do_pulse_for_sequenceAlignment)
         # Start the alignment JOB
         unitSize = int(comboUnitSize.get_active_text())
         Job(self.startSequenceAlignment(symbols, dialog, unitSize))
@@ -2286,10 +2287,10 @@ class UImodelization:
                 return
 
             self.log.debug("The new symbol of the message is {0}".format(str(new_message_symbol.getID())))
-            #Removing from its old symbol
+            # Removing from its old symbol
             message_symbol.removeMessage(message)
 
-            #Adding to its new symbol
+            # Adding to its new symbol
             new_message_symbol.addMessage(message)
 
             # Retrieve default parameters of alignment
@@ -2766,47 +2767,119 @@ class UImodelization:
         for field in self.selectedSymbol.getFields():
             savedEncapsulationLevel.append(field.getEncapsulationLevel())
 
-        dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
-        ## ListStore format:
-        # int: size field column
-        # int: size field size
-        # int: start column
-        # int: substart column
-        # int: end column
-        # int: subend column
-        # str: message rendered in cell
-        treeview = gtk.TreeView(gtk.ListStore(int, int, int, int, int, int, str))
-        cell = gtk.CellRendererText()
-        treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
-        column = gtk.TreeViewColumn('Size field and related payload')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=6)
-        treeview.append_column(column)
+        sizeFieldIdentifier = SizeFieldIdentifier()
 
-        # Chose button
-        but = NetzobButton("Apply size field")
-        but.connect("clicked", self.applySizeField, dialog, savedEncapsulationLevel)
-        dialog.action_area.pack_start(but, True, True, 0)
+        # Show the progression dialog
+        dialog = gtk.Dialog(title="Size Fields Identifications", flags=0, buttons=None)
+        panel = gtk.Table(rows=2, columns=2, homogeneous=False)
+        panel.show()
 
-        # Text view containing potential size fields
-        treeview.set_size_request(800, 300)
+        # Progress bar
+        self.progressBarSizeField = NetzobProgressBar()
+        panel.attach(self.progressBarSizeField, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        results = []
-        self.selectedSymbol.findSizeFields(results)
-        if len(results) == 0:
-            NetzobErrorMessage("No size field found.")
-        else:
-            for result in results:
-                treeview.get_model().append(result)
+        # Buttons
+        cancelSizeFieldButton = NetzobButton("Cancel")
+        startSizeFieldButton = NetzobButton("Start")
 
-            treeview.show()
-            scroll = gtk.ScrolledWindow()
-            scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-            scroll.show()
-            scroll.add(treeview)
-            dialog.vbox.pack_start(scroll, True, True, 0)
-            dialog.connect("destroy", self.destroyDialogFindSizeFields, savedEncapsulationLevel)
-            dialog.show()
+        cancelSizeFieldButton.set_sensitive(False)
+        cancelSizeFieldButton.connect("clicked", self.cancelfindSizeFields_cb, dialog, startSizeFieldButton, sizeFieldIdentifier)
+        startSizeFieldButton.connect("clicked", self.findSizeFields_cb, dialog, sizeFieldIdentifier, [self.selectedSymbol], cancelSizeFieldButton)
+
+        panel.attach(startSizeFieldButton, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(cancelSizeFieldButton, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+
+        dialog.vbox.pack_start(panel, True, True, 0)
+        dialog.show()
+
+    def findSizeFields_cb(self, button, dialog, sizeFieldIdentifier, symbols, cancelButton):
+        # first we deactivate the start button
+        button.set_sensitive(False)
+        # reactivate the cancel button
+        cancelButton.set_sensitive(True)
+
+        self.currentExecutionOfFindSizeFieldHasFinished = False
+        # Start the progress bar
+        gobject.timeout_add(100, self.do_pulse_for_findSizeField)
+        # Start the findsize field JOB
+        Job(self.startFindSizeField(sizeFieldIdentifier, symbols, dialog))
+
+    def startFindSizeField(self, sizeFieldIdentifier, symbols, dialog):
+        self.currentExecutionOfFindSizeFieldHasFinished = False
+        try:
+            (yield ThreadedTask(sizeFieldIdentifier.search, symbols))
+        except TaskError, e:
+            self.log.error("Error while proceeding to the size field identification : " + str(e))
+
+        sizeFields = sizeFieldIdentifier.getResults()
+        logging.debug(sizeFields)
+
+        self.currentExecutionOfFindSizeFieldHasFinished = True
+
+        dialog.destroy()
+
+    #+----------------------------------------------
+    #| do_pulse_for_findSizeField:
+    #|   Computes if the progress bar must be updated or not
+    #+----------------------------------------------
+    def do_pulse_for_findSizeField(self):
+        if self.currentExecutionOfFindSizeFieldHasFinished == False:
+            self.progressBarSizeField.pulse()
+            return True
+        return False
+
+    def cancelfindSizeFields_cb(self, button, dialog, startButton, sizeFieldIdentifier):
+        # first we deactivate the cancel button
+        button.set_sensitive(False)
+        # deactivate the start button
+        startButton.set_sensitive(True)
+
+        sizeFieldIdentifier.cancel()
+
+        self.currentExecutionOfFindSizeFieldHasFinished = True
+#
+#
+#        dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
+#        ## ListStore format:
+#        # int: size field column
+#        # int: size field size
+#        # int: start column
+#        # int: substart column
+#        # int: end column
+#        # int: subend column
+#        # str: message rendered in cell
+#        treeview = gtk.TreeView(gtk.ListStore(int, int, int, int, int, int, str))
+#        cell = gtk.CellRendererText()
+#        treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
+#        column = gtk.TreeViewColumn('Size field and related payload')
+#        column.pack_start(cell, True)
+#        column.set_attributes(cell, text=6)
+#        treeview.append_column(column)
+#
+#        # Chose button
+#        but = NetzobButton("Apply size field")
+#        but.connect("clicked", self.applySizeField, dialog, savedEncapsulationLevel)
+#        dialog.action_area.pack_start(but, True, True, 0)
+#
+#        # Text view containing potential size fields
+#        treeview.set_size_request(800, 300)
+#
+#        results = []
+#        self.selectedSymbol.findSizeFields(results)
+#        if len(results) == 0:
+#            NetzobErrorMessage("No size field found.")
+#        else:
+#            for result in results:
+#                treeview.get_model().append(result)
+#
+#            treeview.show()
+#            scroll = gtk.ScrolledWindow()
+#            scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+#            scroll.show()
+#            scroll.add(treeview)
+#            dialog.vbox.pack_start(scroll, True, True, 0)
+#            dialog.connect("destroy", self.destroyDialogFindSizeFields, savedEncapsulationLevel)
+#            dialog.show()
 
     def destroyDialogFindSizeFields(self, dialog, savedEncapsulationLevel):
         # Optionaly restore original encapsulation levels if there were no modification
