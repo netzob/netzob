@@ -93,7 +93,6 @@ class UImodelization:
         self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
 
         # Update the combo for choosing the unit size
-        # TODO: support of 4BITS
         possible_choices = [UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         self.comboDisplayUnitSize.disconnect(self.comboDisplayUnitSize_handler)
@@ -434,7 +433,7 @@ class UImodelization:
         label = NetzobLabel("Unit size (in bits):")
         comboUnitSize = gtk.combo_box_entry_new_text()
         comboUnitSize.set_model(gtk.ListStore(str))
-        possible_choices = [4, 8]
+        possible_choices = [8, 4]
 
         for i in range(len(possible_choices)):
             comboUnitSize.append_text(str(possible_choices[i]))
