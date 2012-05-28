@@ -34,6 +34,8 @@ import uuid
 from lxml.etree import ElementTree
 from lxml import etree
 from base64 import *
+import dateutil.parser
+import time
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -83,11 +85,14 @@ class OSpy(AbstractThirdPartyImporter):
         if xmlRoot == None:
             logging.warning("Error while loading the XML.")
             return None
-
+        listOfFunctions = []
         for xmlMessage in xmlRoot.findall("Messages"):
             message = self.extractMessageFromXML(xmlMessage)
             if message != None:
-                messages.append(message)
+                if message.getProtocol() == "EncryptMessage" or message.getProtocol() == "DecryptMessage":
+                    messages.append(message)
+                if not message.getProtocol() in listOfFunctions:
+                    listOfFunctions.append(message.getProtocol())
 
         return messages
 
@@ -125,14 +130,16 @@ class OSpy(AbstractThirdPartyImporter):
         msg_data = None
         msg_ipLocal = None
         msg_ipPeer = None
-        msg_portLocal = None
-        msg_portPeer = None
+        msg_portLocal = 0
+        msg_portPeer = 0
         msg_protocol = None
         data = None
 
         # Retrieves the timestamp
         if rootElement.find("Timestamp") != None:
             msg_timestamp = rootElement.find("Timestamp").text
+            date = dateutil.parser.parse(msg_timestamp)
+            timestamp = int(time.mktime(date.timetuple()))
 
         # Retrieves the data of the message
         if rootElement.find("Data") != None:
@@ -172,7 +179,7 @@ class OSpy(AbstractThirdPartyImporter):
                 l4_destination_port = msg_portLocal
 
         if data != None:
-            message = NetworkMessage(id, msg_timestamp, data, ip_source, ip_destination, msg_protocol, l4_source_port, l4_destination_port)
+            message = NetworkMessage(id, timestamp, data, ip_source, ip_destination, msg_protocol, l4_source_port, l4_destination_port)
             return message
 
     def uncompressFile(self, path):

@@ -43,22 +43,20 @@
 					<element name="protocol">
 						<simpleType>
 							<restriction base="string">
-								<enumeration value="TCP"></enumeration>
-								<enumeration value="UDP"></enumeration>
 							</restriction>
 						</simpleType>
 					</element>
 					<element name="l4_source_port">
 						<simpleType>
 							<restriction base="int">
-								<minExclusive value="1"></minExclusive>
+								<minInclusive value="0"></minInclusive>
 							</restriction>
 						</simpleType>
 					</element>
 					<element name="l4_destination_port">
 						<simpleType>
-							<restriction base="string">
-								<minLength value="1"></minLength>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
 							</restriction>
 						</simpleType>
 					</element>
