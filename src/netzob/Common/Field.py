@@ -49,6 +49,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.Filters.Visualization.BackgroundColorFilter import BackgroundColorFilter
+from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 
 
 #+---------------------------------------------------------------------------+
@@ -143,8 +144,13 @@ class Field(object):
 
         return filters
 
+    def getMathematicFilters(self):
+        filters = []
+#        filters.append(Base64Filter("Base64 test"))
+        return filters
+
     def computeFormatEncodingFilter(self):
-        return FormatFilter("Field Format Encoding", self.format, self.unitSize, self.endianess)
+        return FormatFilter("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
 
     def computeSignEncodingFilter(self):
         return None

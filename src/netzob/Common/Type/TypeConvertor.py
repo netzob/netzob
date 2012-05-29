@@ -124,6 +124,11 @@ class TypeConvertor():
         return str(int)
 
     @staticmethod
+    def encodePythonRawToGivenType(raw, aType):
+        netzobRaw = TypeConvertor.pythonRawToNetzobRaw(raw)
+        return TypeConvertor.encodeNetzobRawToGivenType(netzobRaw, aType)
+
+    @staticmethod
     def encodeNetzobRawToGivenType(raw, aType):
         if aType == Format.STRING:
             return TypeConvertor.netzobRawToString(raw)

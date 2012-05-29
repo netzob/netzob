@@ -41,6 +41,23 @@ class UnitSize():
     unitSizeInBits = {BIT: 1, BITS4: 4, BITS8: 8, BITS16: 16, BITS32: 32, BITS64: 64}
 
     @staticmethod
+    def getPackDefiniton(unitSize):
+        result = "B"
+        size = UnitSize.getSizeInBits(unitSize)
+
+        if size == 8:
+            result = "B"
+        elif size == 16:
+            result = "H"
+        elif size == 32:
+            result = "L"
+        elif size == 64:
+            result = "Q"
+        else:
+            logging.warning("Error, unknown conversion value for provided unitsize {0}".format(unitSize))
+        return result
+
+    @staticmethod
     def getSizeInBits(unitSize):
         if unitSize in UnitSize.unitSizeInBits:
             return UnitSize.unitSizeInBits[unitSize]

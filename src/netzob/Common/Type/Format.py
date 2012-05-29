@@ -25,6 +25,8 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+import logging
+
 
 #+----------------------------------------------
 #| Format representation of data

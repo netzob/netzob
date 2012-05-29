@@ -29,11 +29,13 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
+import struct
 from netzob.Common.Type.Format import Format
 from netzob.Common.Filters.EncodingFilter import EncodingFilter
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Type.Sign import Sign
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -52,11 +54,12 @@ class FormatFilter(EncodingFilter):
 
     TYPE = "FormatFilter"
 
-    def __init__(self, name, formatType, unitSize, endianness):
+    def __init__(self, name, formatType, unitSize, endianness, sign):
         EncodingFilter.__init__(self, FormatFilter.TYPE, name)
         self.formatType = formatType
         self.unitsize = unitSize
         self.endianness = endianness
+        self.sign = sign
 
     def apply(self, message):
 
@@ -76,27 +79,53 @@ class FormatFilter(EncodingFilter):
         else:
             splittedData = [message]
 
+        encodedSplittedData = []
         # Now we have the message splitted per unit size
         # we apply endianess on it
         # we consider the normal mode is big-endian
-        if self.endianness == Endianess.LITTLE:
-            # none ou 4 bits : A0B1C2 -> A0B1C2 -> 2C1B0A
-            # 8 bits : A0B1C2 -> A0 B1 C2 -> C2B1A0
-            # 16 bits : A0B1C2 -> A0B1 C2 -> C2 A0B1
-            # 32 bits ...
-            if self.unitsize == UnitSize.NONE:
-                local_value = ""
-                for i in range(0, len(splittedData)):
-                    local_value = splittedData[i][::-1]
-                    splittedData[i] = local_value
-            else:
-                tmpData = splittedData[::-1]
-                splittedData = tmpData
+        for i in range(0, len(splittedData)):
+            netzobRaw = splittedData[i]
 
-        # we encode each data
-        encodedSplittedData = []
-        for d in splittedData:
-            encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(d, self.formatType))
+            # SPECIAL CASE : ASCII we do not compute endianess neither signed/unsigned
+            if not self.formatType == Format.STRING and UnitSize.getSizeInBits(self.unitsize) >= 8 and not self.formatType == Format.BINARY:
+                tmpVal = UnitSize.getSizeInBits(self.unitsize) / 4 - len(netzobRaw)
+                if self.endianness == Endianess.BIG:
+                    netzobRaw = (tmpVal * "0") + netzobRaw
+                else:
+                    netzobRaw = netzobRaw + (tmpVal * "0")
+
+                # Convert in Python raw
+                pythonraw = TypeConvertor.netzobRawToPythonRaw(netzobRaw)
+
+                # Create transformer
+                # - ENDIANESS
+                transformer = ">"
+                if self.endianness == Endianess.LITTLE:
+                    transformer = "<"
+                # - SIGNED/UNISGNED
+                if self.sign == Sign.SIGNED:
+                    transformer = transformer + (UnitSize.getPackDefiniton(self.unitsize)).lower()
+                else:
+                    transformer = transformer + (UnitSize.getPackDefiniton(self.unitsize)).upper()
+
+                # Apply the transformation
+                (unpackRaw,) = struct.unpack(transformer, pythonraw)
+
+                localResult = ""
+                if self.formatType == Format.OCTAL:
+                    localResult = "%o" % unpackRaw
+                elif self.formatType == Format.DECIMAL:
+                    localResult = "%d" % unpackRaw
+                elif self.formatType == Format.HEX:
+                    fmt = "%" + str(UnitSize.getSizeInBits(self.unitsize) / 4) + "x"
+                    localResult = fmt % unpackRaw
+                encodedSplittedData.append(localResult)
+            elif self.formatType == Format.STRING:
+                encodedSplittedData.append(TypeConvertor.netzobRawToString(netzobRaw))
+            elif self.formatType == Format.BINARY:
+                encodedSplittedData.append(TypeConvertor.netzobRawToBinary(netzobRaw))
+            elif UnitSize.getSizeInBits(self.unitsize) < UnitSize.getSizeInBits(UnitSize.BITS8):
+                encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(netzobRaw, self.formatType))
 
         # Before sending back (;D) we join everything
         return " ".join(encodedSplittedData)

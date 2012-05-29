@@ -256,7 +256,7 @@ class AbstractMessage():
         splittedData = self.getSplittedData()
 
         if len(splittedData) != len(self.symbol.getFields()):
-            self.log.error("Inconsistency problem between number of fields and the regex application")
+            logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
         # Create the locationTable
@@ -267,6 +267,10 @@ class AbstractMessage():
             for i_field in range(0, len(self.symbol.getFields())):
                 field = self.symbol.getFields()[i_field]
                 dataField = splittedData[i_field]
+                # Add Mathematic filters
+                for filter in field.getMathematicFilters():
+                    dataField = filter.apply(dataField)
+
                 # Add encoding filters
                 if encoding == True:
                     for filter in field.getEncodingFilters():
@@ -332,48 +336,48 @@ class AbstractMessage():
                 iCol += 1
         return result
 
-    def getStyledData(self, styled=False, encoded=False):
-        result = []
-        splittedData = self.getSplittedData(encoded)
-
-        if styled == False:
-            return splittedData
-
-        iGlobal = 0
-        iCol = 0
-
-        for data in splittedData:
-            localResult = ""
-            # Retrieve the field associated with this value
-            field = self.symbol.getFieldByIndex(iCol)
-            # Retrieve the unit size
-            unitSize = Format.getUnitSize(field.getFormat())
-            # First we apply filters on all the message
-            for filter in self.getVisualizationFilters():
-                if filter.isValid(0, -1, data, unitSize):
-                    localResult += filter.apply(data)
-
-            for iLocal in range(0, len(data)):
-                tmp_result = data[iLocal]
-                if sizeFormat != None:
-                    for filter in self.getVisualizationFilters():
-                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):
-                            tmp_result = filter.apply(tmp_result)
-
-                localResult += tmp_result
-
-            # Now we apply the color to the fields
-            for filter in field.getVisualizationFilters():
-                localResult = filter.apply(localResult)
-
-            iGlobal = iGlobal + len(data)
-            result.append(localResult)
-            iCol += 1
-        return result
-
-    def getVisualizationData(self, styled=False, encoded=False):
-        result = self.getStyledData(styled, encoded)
-        return result
+#    def getStyledData(self, styled=False, encoded=False):
+#        result = []
+#        splittedData = self.getSplittedData(encoded)
+#
+#        if styled == False:
+#            return splittedData
+#
+#        iGlobal = 0
+#        iCol = 0
+#
+#        for data in splittedData:
+#            localResult = ""
+#            # Retrieve the field associated with this value
+#            field = self.symbol.getFieldByIndex(iCol)
+#            # Retrieve the unit size
+#            unitSize = Format.getUnitSize(field.getFormat())
+#            # First we apply filters on all the message
+#            for filter in self.getVisualizationFilters():
+#                if filter.isValid(0, -1, data, unitSize):
+#                    localResult += filter.apply(data)
+#
+#            for iLocal in range(0, len(data)):
+#                tmp_result = data[iLocal]
+#                if sizeFormat != None:
+#                    for filter in self.getVisualizationFilters():
+#                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):
+#                            tmp_result = filter.apply(tmp_result)
+#
+#                localResult += tmp_result
+#
+#            # Now we apply the color to the fields
+#            for filter in field.getVisualizationFilters():
+#                localResult = filter.apply(localResult)
+#
+#            iGlobal = iGlobal + len(data)
+#            result.append(localResult)
+#            iCol += 1
+#        return result
+#
+#    def getVisualizationData(self, styled=False, encoded=False):
+#        result = self.getStyledData(styled, encoded)
+#        return result
 
     #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message
