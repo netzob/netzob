@@ -50,7 +50,12 @@ class Base64Filter(MathematicFilter):
         MathematicFilter.__init__(self, Base64Filter.TYPE, name)
 
     def apply(self, message):
-        rawContent = TypeConvertor.netzobRawToPythonRaw(message)
-        print rawContent
-        b64Content = base64.b64decode(rawContent)
-        return TypeConvertor.pythonRawToNetzobRaw(b64Content)
+        result = message
+        try:
+            rawContent = TypeConvertor.netzobRawToPythonRaw(message)
+            b64Content = base64.b64decode(rawContent)
+            result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
+        except TypeError as error:
+            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
+            result = ""
+        return result
