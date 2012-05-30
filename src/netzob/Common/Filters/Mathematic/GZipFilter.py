@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import logging
 import gzip
+import StringIO
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -51,12 +52,13 @@ class GZipFilter(MathematicFilter):
 
     def apply(self, message):
         result = message
+        rawData = TypeConvertor.netzobRawToPythonRaw(message)
+        compressedstream = StringIO.StringIO(rawData)
         try:
-            rawData = TypeConvertor.netzobRawToPythonRaw(message)
-            compressedstream = StringIO.StringIO(rawData)
             gzipper = gzip.GzipFile(fileobj=compressedstream)
             data = gzipper.read()
             result = TypeConvertor.pythonRawToNetzobRaw(data)
-        except:
-            logging.info("Impossible to apply GZip filter on provided message")
+        except Exception as e:
+            logging.info("Impossible to apply GZip filter on provided message (error= {0})".format(str(e)))
+            result = ""
         return result
