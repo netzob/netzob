@@ -79,7 +79,7 @@ class NeedlemanAndWunsch(object):
         if messages == None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
-            field = Field("Field 0", 0, "(.{,})")
+            field = Field.createDefaultField()
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
             symbol.addField(field)
@@ -88,14 +88,14 @@ class NeedlemanAndWunsch(object):
             # We execute the alignment
             (alignment, score) = self.align(doInternalSlick, messages)
             symbol.setAlignment(alignment)
-
+            logging.debug("Alignment : {0}".format(alignment))
             # We update the regex based on the results
             try:
                 self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
             except NetzobException:
                 logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
                 symbol.cleanFields()
-                field = Field("Field 0", 0, "(.{,})")
+                field = Field.createDefaultField()
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
                 symbol.addField(field)
@@ -238,8 +238,8 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-        if len(symbol.getFields()) >= 50:
-            raise NetzobException("This Python version only supports 100 named groups in regex")
+#        if len(symbol.getFields()) >= 50:
+#            raise NetzobException("This Python version only supports 100 named groups in regex")
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
