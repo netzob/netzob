@@ -139,10 +139,11 @@ class UPGMA(object):
 
         # Serialize the symbols
         (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize, self.scores)
-        self.log.debug("Clutering input format " + formatSymbols)
+        self.log.debug("Clustering input format " + formatSymbols)
 
         # Execute the Clustering part in C
         debug = False
+        logging.debug("Execute the clustering part in C ...")
         (i_max, j_max, maxScore, scores) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
         listScores = TypeConvertor.deserializeScores(self.symbols, scores)
 
