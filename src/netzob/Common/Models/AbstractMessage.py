@@ -259,6 +259,13 @@ class AbstractMessage():
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
+        # Add Mathematics filters
+        i = 0
+        for field in self.symbol.getFields():
+            for filter in field.getMathematicFilters():
+                splittedData[i] = filter.apply(splittedData[i])
+            i = i + 1
+
         # Create the locationTable
         filterTable = FilterApplicationTable(splittedData)
 
@@ -267,9 +274,6 @@ class AbstractMessage():
             for i_field in range(0, len(self.symbol.getFields())):
                 field = self.symbol.getFields()[i_field]
                 dataField = splittedData[i_field]
-                # Add Mathematic filters
-                for filter in field.getMathematicFilters():
-                    dataField = filter.apply(dataField)
 
                 # Add encoding filters
                 if encoding == True:

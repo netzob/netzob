@@ -79,6 +79,8 @@ class Field(object):
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
 
+        self.mathematicFilters = []
+
     def getEncodedVersionOfTheRegex(self):
         if self.regex == "" or self.regex == None or self.regex == "None":  # TODO: becareful with the fact that XML files may store None as a string...
             return ""
@@ -145,11 +147,17 @@ class Field(object):
 
         return filters
 
-    def getMathematicFilters(self):
-        filters = []
-#        filters.append(Base64Filter("Base64 test"))
-        filters.append(GZipFilter("GZIp filter test"))
-        return filters
+    def removeMathematicFilter(self, filter):
+        fToRemove = None
+        for mFilter in self.mathematicFilters:
+            if mFilter.getName() == filter.getName():
+                fToRemove = mFilter
+                break
+        if fToRemove != None:
+            self.mathematicFilters.remove(fToRemove)
+
+    def addMathematicFilter(self, filter):
+        self.mathematicFilters.append(filter)
 
     def computeFormatEncodingFilter(self):
         return FormatFilter("Field Format Encoding", self.format, self.unitSize, self.endianess, self.sign)
@@ -239,6 +247,9 @@ class Field(object):
 
     def getEndianess(self):
         return self.endianess
+
+    def getMathematicFilters(self):
+        return self.mathematicFilters
 
     #+----------------------------------------------
     #| SETTERS

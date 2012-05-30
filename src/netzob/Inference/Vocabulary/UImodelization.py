@@ -33,6 +33,9 @@ import pango
 import pygtk
 import gobject
 from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
+from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
+from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
+from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 pygtk.require('2.0')
 import logging
 import copy
@@ -877,6 +880,13 @@ class UImodelization:
             item.show()
             menu.append(item)
 
+            # Add sub-entries to add mathematic filters on a  specific column
+            subMenuMathematicFilters = self.build_mathematicFilter_submenu(selectedField)
+            item = gtk.MenuItem("Configure mathematic filters")
+            item.set_submenu(subMenuMathematicFilters)
+            item.show()
+            menu.append(item)
+
             # Add entries to concatenate column
             concatMenu = gtk.Menu()
             if selectedField.getIndex() > 0:
@@ -1049,6 +1059,47 @@ class UImodelization:
         menu.append(item)
 
         return menu
+
+    #+----------------------------------------------
+    #| build_mathematicFilter_submenu:
+    #|   Build a submenu for field/symbol mathematic filters
+    #|   param field: the selected field
+    #+----------------------------------------------
+    def build_mathematicFilter_submenu(self, field):
+        menu = gtk.Menu()
+
+        # Build the list of available filters
+        mathematicalFilters = []
+        mathematicalFilters.append(Base64Filter("Base64 Filter"))
+        mathematicalFilters.append(GZipFilter("GZip Filter"))
+        mathematicalFilters.append(BZ2Filter("BZ2 Filter"))
+
+        for mathFilter in mathematicalFilters:
+
+            operation = "Add"
+            for f in field.getMathematicFilters():
+                if f.getName() == mathFilter.getName():
+                    operation = "Remove"
+
+            mathFilterItem = gtk.MenuItem(operation + " " + mathFilter.getName())
+            mathFilterItem.connect("activate", self.applyMathematicalFilterOnField, mathFilter, field)
+            mathFilterItem.show()
+            menu.append(mathFilterItem)
+
+        return menu
+
+    def applyMathematicalFilterOnField(self, object, filter, field):
+        appliedFilters = field.getMathematicFilters()
+        found = False
+        for appliedFilter in appliedFilters:
+            if appliedFilter.getName() == filter.getName():
+                found = True
+        if found:
+            #deactivate the selected filter
+            field.removeMathematicFilter(filter)
+        else:
+            field.addMathematicFilter(filter)
+        self.update()
 
     #+----------------------------------------------
     #| build_encoding_submenu:
