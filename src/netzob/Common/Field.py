@@ -50,6 +50,7 @@ from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.Filters.Visualization.BackgroundColorFilter import BackgroundColorFilter
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
+from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
 
 
 #+---------------------------------------------------------------------------+
@@ -147,6 +148,7 @@ class Field(object):
     def getMathematicFilters(self):
         filters = []
 #        filters.append(Base64Filter("Base64 test"))
+        filters.append(GZipFilter("GZIp filter test"))
         return filters
 
     def computeFormatEncodingFilter(self):
