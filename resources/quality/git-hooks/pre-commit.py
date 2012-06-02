@@ -128,6 +128,9 @@ def checkFile(file):
     # Verify no '<<<' and or conflicts info are commited
     results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')  # Thisisnotaconflict
 
+    if file.endswith(".txt"):
+        return results
+
     # Verify no CRLF is used in source
     results['CRLF'] = checkForCRLF(file)
 
