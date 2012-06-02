@@ -2,6 +2,7 @@ v0.3.3 -- 2012-05-30
 
     * Graphical interface
         * Visualization and encoding filters
+        * Mathematical filters (Base64, GZIP, BZ2)
         * Dedicated Search View
         * Preview of data rendering in contextual menu
         * Support format visualization at the symbol level
