@@ -320,7 +320,7 @@ class UImodelization:
         table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         ## Semantic inference
-        frame = NetzobFrame(" - Search data")
+        frame = NetzobFrame("5 - Search data")
         topPanel.pack_start(frame, False, False, 0)
         table = gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
