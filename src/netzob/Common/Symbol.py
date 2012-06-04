@@ -521,86 +521,86 @@ class Symbol(AbstractSymbol):
                 tmpTypes[i] = "<span foreground=\"red\">" + field.getFormat() + "</span>"
         return ", ".join(tmpTypes)
 
-    #+----------------------------------------------
-    #| dataCarving:
-    #|  try to find semantic elements in each field
-    #+----------------------------------------------
-    def dataCarving(self):
-        if len(self.fields) == 0:
-            return None
-
-        vbox = gtk.VBox(False, spacing=5)
-        vbox.show()
-        hbox = gtk.HPaned()
-        hbox.show()
-        # Treeview containing potential data carving results  ## ListStore format:
-        # int: iField
-        # str: data type (url, ip, email, etc.)
-        store = gtk.ListStore(int, str)
-        treeviewRes = gtk.TreeView(store)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Column')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
-        treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn('Data type found')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
-        treeviewRes.append_column(column)
-        treeviewRes.set_size_request(200, 300)
-        treeviewRes.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeviewRes)
-        hbox.add(scroll)
-
-        ## Algo : for each column, and then for each cell, try to carve data
-        typer = TypeIdentifier()
-
-        ## TODO: put this things in a dedicated class
-        infoCarvers = {
-            'url': re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-z0-9\-]){2,}\.){1,4}([a-z]){2,6}(\/([a-z\-_\/\.0-9#:?+%=&;,])*)?)"),
-            'email': re.compile("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}"),
-            'ip': re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
-            }
-
-        for field in self.getFields():
-            for (carver, regex) in infoCarvers.items():
-                matchElts = 0
-                for cell in self.getCellsByField(field):
-                    for match in regex.finditer(TypeConvertor.netzobRawToString(cell)):
-                        matchElts += 1
-                if matchElts > 0:
-                    store.append([field.getIndex(), carver])
-
-        # Preview of matching fields in a treeview  ## ListStore format:
-        # str: data
-        treeview = gtk.TreeView(gtk.ListStore(str))
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Data')
-        column.pack_start(cell, True)
-        column.set_attributes(cell, markup=0)
-        treeview.append_column(column)
-        treeview.set_size_request(700, 300)
-        treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        scroll.show()
-        scroll.add(treeview)
-        hbox.add(scroll)
-        vbox.pack_start(hbox, True, True, 0)
-
-        # Apply button
-        but = gtk.Button(label="Apply data type on column")
-        but.show()
-        self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, treeview, but, infoCarvers)
-        vbox.pack_start(but, False, False, 0)
-
-        return vbox
-        # TODO : use hachoir to retrieve subfiles
-        #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
+#    #+----------------------------------------------
+#    #| dataCarving:
+#    #|  try to find semantic elements in each field
+#    #+----------------------------------------------
+#    def dataCarving(self):
+#        if len(self.fields) == 0:
+#            return None
+#
+#        vbox = gtk.VBox(False, spacing=5)
+#        vbox.show()
+#        hbox = gtk.HPaned()
+#        hbox.show()
+#        # Treeview containing potential data carving results  ## ListStore format:
+#        # int: iField
+#        # str: data type (url, ip, email, etc.)
+#        store = gtk.ListStore(int, str)
+#        treeviewRes = gtk.TreeView(store)
+#        cell = gtk.CellRendererText()
+#        column = gtk.TreeViewColumn('Column')
+#        column.pack_start(cell, True)
+#        column.set_attributes(cell, text=0)
+#        treeviewRes.append_column(column)
+#        column = gtk.TreeViewColumn('Data type found')
+#        column.pack_start(cell, True)
+#        column.set_attributes(cell, text=1)
+#        treeviewRes.append_column(column)
+#        treeviewRes.set_size_request(200, 300)
+#        treeviewRes.show()
+#        scroll = gtk.ScrolledWindow()
+#        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+#        scroll.show()
+#        scroll.add(treeviewRes)
+#        hbox.add(scroll)
+#
+#        ## Algo : for each column, and then for each cell, try to carve data
+#        typer = TypeIdentifier()
+#
+#        ## TODO: put this things in a dedicated class
+#        infoCarvers = {
+#            'url': re.compile("((http:\/\/|https:\/\/)?(www\.)?(([a-z0-9\-]){2,}\.){1,4}([a-z]){2,6}(\/([a-z\-_\/\.0-9#:?+%=&;,])*)?)"),
+#            'email': re.compile("[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}"),
+#            'ip': re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
+#            }
+#
+#        for field in self.getFields():
+#            for (carver, regex) in infoCarvers.items():
+#                matchElts = 0
+#                for cell in self.getCellsByField(field):
+#                    for match in regex.finditer(TypeConvertor.netzobRawToString(cell)):
+#                        matchElts += 1
+#                if matchElts > 0:
+#                    store.append([field.getIndex(), carver])
+#
+#        # Preview of matching fields in a treeview  ## ListStore format:
+#        # str: data
+#        treeview = gtk.TreeView(gtk.ListStore(str))
+#        cell = gtk.CellRendererText()
+#        column = gtk.TreeViewColumn('Data')
+#        column.pack_start(cell, True)
+#        column.set_attributes(cell, markup=0)
+#        treeview.append_column(column)
+#        treeview.set_size_request(700, 300)
+#        treeview.show()
+#        scroll = gtk.ScrolledWindow()
+#        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+#        scroll.show()
+#        scroll.add(treeview)
+#        hbox.add(scroll)
+#        vbox.pack_start(hbox, True, True, 0)
+#
+#        # Apply button
+#        but = gtk.Button(label="Apply data type on column")
+#        but.show()
+#        self.butDataCarvingHandle = None
+#        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, treeview, but, infoCarvers)
+#        vbox.pack_start(but, False, False, 0)
+#
+#        return vbox
+#        # TODO : use hachoir to retrieve subfiles
+#        #    lines = os.popen("/usr/bin/hachoir-subfile " + target).readline()
 
     #+----------------------------------------------
     #| applyDataType_cb:
@@ -608,37 +608,37 @@ class Symbol(AbstractSymbol):
     #+----------------------------------------------
     def applyDataType_cb(self, button, iField, dataType):
         self.getFieldByIndex(iField).setDescription(dataType)
-
-    #+----------------------------------------------
-    #| dataCarvingResultSelected_cb:
-    #|  Callback when clicking on a data carving result.
-    #|  It shows a preview of the carved data
-    #+----------------------------------------------
-    def dataCarvingResultSelected_cb(self, treeview, treeviewTarget, but, infoCarvers):
-        typer = TypeIdentifier()
-        treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
-        if(it):
-            if(model.iter_is_valid(it)):
-                fieldIndex = model.get_value(it, 0)
-                dataType = model.get_value(it, 1)
-                treeviewTarget.get_column(0).set_title("Field " + str(fieldIndex))
-                if self.butDataCarvingHandle != None:
-                    but.disconnect(self.butDataCarvingHandle)
-                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
-                for cell in self.getCellsByField(self.getFieldByIndex(fieldIndex)):
-                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
-                    segments = []
-                    for match in infoCarvers[dataType].finditer(cell):
-                        if match == None:
-                            treeviewTarget.get_model().append([cell])
-                        segments.append((match.start(0), match.end(0)))
-
-                    segments.reverse()  # We start from the end to avoid shifting
-                    for (start, end) in segments:
-                        cell = cell[:end] + "</span>" + cell[end:]
-                        cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
-                    treeviewTarget.get_model().append([cell])
+#
+#    #+----------------------------------------------
+#    #| dataCarvingResultSelected_cb:
+#    #|  Callback when clicking on a data carving result.
+#    #|  It shows a preview of the carved data
+#    #+----------------------------------------------
+#    def dataCarvingResultSelected_cb(self, treeview, treeviewTarget, but, infoCarvers):
+#        typer = TypeIdentifier()
+#        treeviewTarget.get_model().clear()
+#        (model, it) = treeview.get_selection().get_selected()
+#        if(it):
+#            if(model.iter_is_valid(it)):
+#                fieldIndex = model.get_value(it, 0)
+#                dataType = model.get_value(it, 1)
+#                treeviewTarget.get_column(0).set_title("Field " + str(fieldIndex))
+#                if self.butDataCarvingHandle != None:
+#                    but.disconnect(self.butDataCarvingHandle)
+#                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
+#                for cell in self.getCellsByField(self.getFieldByIndex(fieldIndex)):
+#                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
+#                    segments = []
+#                    for match in infoCarvers[dataType].finditer(cell):
+#                        if match == None:
+#                            treeviewTarget.get_model().append([cell])
+#                        segments.append((match.start(0), match.end(0)))
+#
+#                    segments.reverse()  # We start from the end to avoid shifting
+#                    for (start, end) in segments:
+#                        cell = cell[:end] + "</span>" + cell[end:]
+#                        cell = cell[:start] + '<span foreground="red" font_family="monospace">' + cell[start:]
+#                    treeviewTarget.get_model().append([cell])
 
     #+----------------------------------------------
     #| findASN1Fields:

@@ -36,6 +36,7 @@ from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
 from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
+from netzob.Inference.Vocabulary.DataCarver import DataCarver
 pygtk.require('2.0')
 import logging
 import copy
@@ -2644,13 +2645,34 @@ class UImodelization:
             NetzobErrorMessage("No symbol selected.")
             return
 
-        box = self.selectedSymbol.dataCarving()
-        if box != None:
-            NetzobErrorMessage("No data found in messages and fields.")
-        else:
-            dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
-            dialog.vbox.pack_start(box, True, True, 0)
-            dialog.show()
+        self.log.info("Execute Data Carving on symbol ${0}".format(self.selectedSymbol.getName()))
+        self.executeDataCarving(self.selectedSymbol)
+
+        # Active the messages and the search view
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, True)
+        self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, True)
+        self.netzob.getMenu().setDisplaySearchViewActiveStatus(True)
+        # We update the different views
+        self.update()
+
+    def executeDataCarving(self, symbol):
+        # Initialize the searcher
+        carver = DataCarver(self.netzob.getCurrentProject())
+
+        # Execute it
+        searchTasks = carver.execute(symbol)
+
+        # Give the results to the dedicated view
+        for task in searchTasks:
+            self.treeSearchGenerator.update(task)
+#
+#        box = self.selectedSymbol.dataCarving()
+#        if box != None:
+#            NetzobErrorMessage("No data found in messages and fields.")
+#        else:
+#            dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
+#            dialog.vbox.pack_start(box, True, True, 0)
+#            dialog.show()
 
     #+----------------------------------------------
     #| Called when user wants to search data in messages
