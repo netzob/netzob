@@ -337,7 +337,7 @@ class IpcImport(AbstractImporter):
         md.destroy()
 
         if resp == gtk.RESPONSE_OK:
-            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages)
+            self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages, False)
         self.dialog.destroy()
 
         # We update the gui
@@ -402,7 +402,7 @@ class IpcImport(AbstractImporter):
     def handle_new_pkt(self, src, event):
         # Retrieve details from the captured paket
         data = src.readline()
-        compiledRegex = re.compile("(read|write)\((\d+), \"(.*)\", \d+\)[]*=[]*(\d+)")
+        compiledRegex = re.compile("(read|write)\((\d+), \"(.*)\", \d+\)[ \t]*=[ \t]*(\d+)")
         m = compiledRegex.match(data)
         if m == None:
             return self.doSniff
