@@ -515,7 +515,10 @@ class Menu(object):
         about.set_program_name(release.appname)
         about.set_version(release.version)
         about.set_copyright(release.copyright)
-        about.set_comments(release.description)
+        if release.versionName != None:
+            about.set_comments("--{0}--\n{1}".format(release.versionName, release.description))
+        else:
+            about.set_comments(release.description)
         about.set_website(release.url)
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
         about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
