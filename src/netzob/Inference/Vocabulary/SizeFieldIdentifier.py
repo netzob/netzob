@@ -62,8 +62,8 @@ class SizeFieldIdentifier(object):
             pass
         logging.debug("message : {0}".format(message))
 
-    def search(self, symbols):
-        self.results = []
+    def search(self, symbols, results):
+        self.results = results
         self.inProgress = True
         logging.debug("Start the identification of size fields among {0} symbols".format(str(len(symbols))))
         # Search in each symbol
@@ -72,34 +72,84 @@ class SizeFieldIdentifier(object):
             self.searchInSymbol(symbol)
             self.updateProgressBar(None, True)
 
-    def searchInSymbol(self, symbol):
-        # First we verify there are at least 2 fields :)
-        if len(symbol.getFields()) <= 1:
-            return
-
-        iField = 0
-        # We cover each field for a potential size field
+    def getPotentialSizeFields(self, symbol):
+        sizeFields = []
         for field in symbol.getFields():
-            if field.isStatic():  # Means the element is static, so we assume it's not a good candidate
-                iField += 1
-                continue
-            cellsSize = symbol.getCellsByField(field)
-            j = 0
-            # We cover each field and aggregate them for a potential payload
-            while j < len(symbol.getFields()):
-                # Initialize the aggregate of messages from fieldJ to fieldK
-                aggregateCellsData = []
-                for l in range(len(cellsSize)):
-                    aggregateCellsData.append("")
+            if not field.isStatic(): # Means the element is static, so we assume it's not a good candidate
+                sizeFields.append(field)
 
-                # Fill the aggregate of messages and try to compare its length with the current expected length
-                k = j
-                while k < len(symbol.getFields()):
+        # We pre-calculate the size values
+        sizeCellsByField = {}
+        for sizeField in sizeFields:
+            sizeCellsByField[ sizeField ] = []
+            cells = symbol.getCellsByField(sizeField)
+            for cell in cells:
+                sizeCellsByField[ sizeField ].append( self.getEncodedSizes( cell ) )
+        return sizeCellsByField
+
+    #+----------------------------------------------
+    #| getEncodedSizes:
+    #|   param cell
+    #|   return A dict that contains tuples (little-endian, big-endian) of encoded size
+    #+----------------------------------------------
+    def getEncodedSizes(self, cell):
+        res = {}
+        # Loop over different possible encoding of size field
+        for n in [4, 2, 1]:
+            # Handle big and little endian for size field of 1, 2 and 4 octets length
+            rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cell[:n * 2])
+
+            # We take the tiniest encoding form
+            if len(rawMsgSize) == 1:
+                expectedSizeType = "B"
+            elif len(rawMsgSize) == 2:
+                expectedSizeType = "H"
+            elif len(rawMsgSize) == 4:
+                expectedSizeType = "I"
+            else:  # Do not consider size field with len > 4
+                break
+
+            # We want both little and big endian version of the size
+            (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
+            (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
+            res[len(rawMsgSize)] = (expectedSizeLE, expectedSizeBE)
+        return res
+
+    def getPotentialPayloads(self, symbol, start, stop):
+        # Initialize the aggregate of messages
+        aggregateCellsData = []
+        for l in range(len( symbol.getMessages() )):
+            aggregateCellsData.append("")
+
+        # Fill the aggregate of messages from fieldStart to fieldStop
+        for iField in range(start, stop):
+            # Retrieve current cells
+            cells = symbol.getCellsByField( symbol.getFieldByIndex( iField ) )
+            for l in range(len( cells )):
+                aggregateCellsData[l] += cells[l]
+        return aggregateCellsData
+
+    """
+    def getPotentialExtendedPayloads(self, symbol):
+        res = []
+        j = 0
+
+        # We cover each field and aggregate them for a potential payload
+        while j < len(symbol.getFields()):
+
+            # Initialize the aggregate of messages from fieldJ to fieldK
+            aggregateCellsData = []
+            for l in range(len( symbol.getMessages() )):
+                aggregateCellsData.append("")
+
+            # Fill the aggregate of messages and try to compare its length with the current expected length
+            k = j
+            while k < len(symbol.getFields()):
                     if k != j:
-                        for l in range(len(cellsSize)):
+                        for l in range(len(sizeCells)):
                             aggregateCellsData[l] += symbol.getCellsByField(symbol.getFieldByIndex(k))[l]
 
-                    # We try to aggregate the successive right sub-parts of j if it's a static column (TODO: handle dynamic column / TODO: handle left subparts of the K column)
+                    # We try to aggregate the successive right sub-parts of j if it's a static column
                     if symbol.getFieldByIndex(j).isStatic():
                         lenJ = len(symbol.getFieldByIndex(j).getRegex())
                         stop = 0
@@ -108,39 +158,64 @@ class SizeFieldIdentifier(object):
                         stop = 0
 
                     for m in range(lenJ, stop, -2):
-                        for n in [4, 2, 1]:  # loop over different possible encoding of size field
-                            res = True
-                            for nbMsg in range(len(cellsSize)):
+
+                            for nbMsg in range(len( symbol.getMessages() )):
                                 if symbol.getFieldByIndex(j).isStatic():
                                     targetData = symbol.getFieldByIndex(j).getRegex()[lenJ - m:] + aggregateCellsData[nbMsg]
                                 else:
                                     targetData = symbol.getCellsByField(symbol.getFieldByIndex(j))[nbMsg] + aggregateCellsData[nbMsg]
 
-                                # Handle big and little endian for size field of 1, 2 and 4 octets length
-                                rawMsgSize = TypeConvertor.netzobRawToPythonRaw(cellsSize[nbMsg][:n * 2])
-                                if len(rawMsgSize) == 1:
-                                    expectedSizeType = "B"
-                                elif len(rawMsgSize) == 2:
-                                    expectedSizeType = "H"
-                                elif len(rawMsgSize) == 4:
-                                    expectedSizeType = "I"
-                                else:  # Do not consider size field with len > 4
-                                    res = False
-                                    break
-                                (expectedSizeLE,) = struct.unpack("<" + expectedSizeType, rawMsgSize)
-                                (expectedSizeBE,) = struct.unpack(">" + expectedSizeType, rawMsgSize)
-                                if (expectedSizeLE != len(targetData) / 2) and (expectedSizeBE != len(targetData) / 2):
-                                    res = False
-                                    break
-                            if res:
-                                if symbol.getFieldByIndex(j).isStatic():  # Means the regex j element is static and a sub-part is concerned
-                                    self.results.append([iField, n * 2, j, lenJ - m, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + "[" + str(lenJ - m) + ":] to col " + str(k) + ")"])
-                                else:
-                                    self.results.append([iField, n * 2, j, -1, k, -1, "Found potential size field (col " + str(iField) + "[:" + str(n * 2) + "]) for an aggregation of data field (col " + str(j) + " to col " + str(k) + ")"])
-                                break
-                    k += 1
-                j += 1
-            iField += 1
+                                    for (encodedSizeLE, encodedSizeBE) in dictEncodedSizes:
+                                        if (expectedSizeLE != len(targetData) / 2) and (expectedSizeBE != len(targetData) / 2):
+                                            res = False
+                                            break
+                k += 1
+            j += 1
+
+        return res
+    """
+
+    def searchInSymbol(self, symbol):
+        # First we verify there are at least 2 fields :)
+        if len(symbol.getFields()) <= 1:
+            return
+
+        # We retrieve the potential size fields
+        sizeCellsByField = self.getPotentialSizeFields(symbol)
+
+        # We loop over each aggregate of fieldStart to fieldEnd to search for associated size
+        start = 0
+        while start < len(symbol.getFields()) - 1:
+
+            for end in range(start + 1, len(symbol.getFields()) + 1):
+                # We retrieve the potential payloads
+                payloads = self.getPotentialPayloads(symbol, start, end)
+
+                # We retrieve the values of the potential size fields
+                for (aField, sizeCells) in sizeCellsByField.items():
+                    # And search for associated payload
+                    res = True
+                    resCnt = 0
+                    for l in range(len(payloads)):
+                        payloadLen = len( payloads[l] )
+                        encodedSizes = sizeCells[l]
+                        for (key, value) in encodedSizes.items():
+                            (le, be) = value
+                            if le == 0:
+                                continue
+
+                            payloadLen = payloadLen / 2
+
+                            if (payloadLen) == le:
+                                resCnt += 1
+                            elif (payloadLen) == be:
+                                resCnt += 1
+                        if resCnt != len(payloads[:l + 1]):
+                            res = False
+                            break
+                    if res == True:
+                        self.results.append([aField.getIndex(), key * 2, start, -1, end - 1, -1, "Found potential size field (col " + str(aField.getIndex()) + "[:" + str(key * 2) + "]) for an aggregation of data field (col " + str(start) + " to col " + str(end - 1) + ")"])
+            start += 1
 
     def getResults(self):
         return self.results

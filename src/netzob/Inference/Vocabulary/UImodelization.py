@@ -2859,7 +2859,7 @@ class UImodelization:
 
         cancelSizeFieldButton.set_sensitive(False)
         cancelSizeFieldButton.connect("clicked", self.cancelfindSizeFields_cb, dialog, startSizeFieldButton, sizeFieldIdentifier)
-        startSizeFieldButton.connect("clicked", self.findSizeFields_cb, dialog, sizeFieldIdentifier, [self.selectedSymbol], cancelSizeFieldButton)
+        startSizeFieldButton.connect("clicked", self.findSizeFields_cb, dialog, sizeFieldIdentifier, [self.selectedSymbol], cancelSizeFieldButton, savedEncapsulationLevel)
 
         panel.attach(startSizeFieldButton, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
         panel.attach(cancelSizeFieldButton, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -2867,7 +2867,7 @@ class UImodelization:
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
 
-    def findSizeFields_cb(self, button, dialog, sizeFieldIdentifier, symbols, cancelButton):
+    def findSizeFields_cb(self, button, dialog, sizeFieldIdentifier, symbols, cancelButton, savedEncapsulationLevel):
         # first we deactivate the start button
         button.set_sensitive(False)
         # reactivate the cancel button
@@ -2877,12 +2877,13 @@ class UImodelization:
         # Start the progress bar
         gobject.timeout_add(100, self.do_pulse_for_findSizeField)
         # Start the findsize field JOB
-        Job(self.startFindSizeField(sizeFieldIdentifier, symbols, dialog))
+        Job(self.startFindSizeField(sizeFieldIdentifier, symbols, dialog, savedEncapsulationLevel))
 
-    def startFindSizeField(self, sizeFieldIdentifier, symbols, dialog):
+    def startFindSizeField(self, sizeFieldIdentifier, symbols, dialog, savedEncapsulationLevel):
+        results = []
         self.currentExecutionOfFindSizeFieldHasFinished = False
         try:
-            (yield ThreadedTask(sizeFieldIdentifier.search, symbols))
+            (yield ThreadedTask(sizeFieldIdentifier.search, symbols, results))
         except TaskError, e:
             self.log.error("Error while proceeding to the size field identification : " + str(e))
 
@@ -2890,8 +2891,8 @@ class UImodelization:
         logging.debug(sizeFields)
 
         self.currentExecutionOfFindSizeFieldHasFinished = True
-
         dialog.destroy()
+        self.findSizeFields_results_cb(results, savedEncapsulationLevel)
 
     #+----------------------------------------------
     #| do_pulse_for_findSizeField:
@@ -2912,49 +2913,47 @@ class UImodelization:
         sizeFieldIdentifier.cancel()
 
         self.currentExecutionOfFindSizeFieldHasFinished = True
-#
-#
-#        dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
-#        ## ListStore format:
-#        # int: size field column
-#        # int: size field size
-#        # int: start column
-#        # int: substart column
-#        # int: end column
-#        # int: subend column
-#        # str: message rendered in cell
-#        treeview = gtk.TreeView(gtk.ListStore(int, int, int, int, int, int, str))
-#        cell = gtk.CellRendererText()
-#        treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
-#        column = gtk.TreeViewColumn('Size field and related payload')
-#        column.pack_start(cell, True)
-#        column.set_attributes(cell, text=6)
-#        treeview.append_column(column)
-#
-#        # Chose button
-#        but = NetzobButton("Apply size field")
-#        but.connect("clicked", self.applySizeField, dialog, savedEncapsulationLevel)
-#        dialog.action_area.pack_start(but, True, True, 0)
-#
-#        # Text view containing potential size fields
-#        treeview.set_size_request(800, 300)
-#
-#        results = []
-#        self.selectedSymbol.findSizeFields(results)
-#        if len(results) == 0:
-#            NetzobErrorMessage("No size field found.")
-#        else:
-#            for result in results:
-#                treeview.get_model().append(result)
-#
-#            treeview.show()
-#            scroll = gtk.ScrolledWindow()
-#            scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-#            scroll.show()
-#            scroll.add(treeview)
-#            dialog.vbox.pack_start(scroll, True, True, 0)
-#            dialog.connect("destroy", self.destroyDialogFindSizeFields, savedEncapsulationLevel)
-#            dialog.show()
+
+    def findSizeFields_results_cb(self, results, savedEncapsulationLevel):
+       dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
+       ## ListStore format:
+       # int: size field column
+       # int: size field size
+       # int: start column
+       # int: substart column
+       # int: end column
+       # int: subend column
+       # str: message rendered in cell
+       treeview = gtk.TreeView(gtk.ListStore(int, int, int, int, int, int, str))
+       cell = gtk.CellRendererText()
+       treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
+       column = gtk.TreeViewColumn('Size field and related payload')
+       column.pack_start(cell, True)
+       column.set_attributes(cell, text=6)
+       treeview.append_column(column)
+
+       # Chose button
+       but = NetzobButton("Apply size field")
+       but.connect("clicked", self.applySizeField, dialog, savedEncapsulationLevel)
+       dialog.action_area.pack_start(but, True, True, 0)
+
+       # Text view containing potential size fields
+       treeview.set_size_request(800, 300)
+
+       if len(results) == 0:
+           NetzobErrorMessage("No size field found.")
+       else:
+           for result in results:
+               treeview.get_model().append(result)
+
+           treeview.show()
+           scroll = gtk.ScrolledWindow()
+           scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+           scroll.show()
+           scroll.add(treeview)
+           dialog.vbox.pack_start(scroll, True, True, 0)
+           dialog.connect("destroy", self.destroyDialogFindSizeFields, savedEncapsulationLevel)
+           dialog.show()
 
     def destroyDialogFindSizeFields(self, dialog, savedEncapsulationLevel):
         # Optionaly restore original encapsulation levels if there were no modification
