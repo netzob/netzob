@@ -114,7 +114,7 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
         for field in self.getSymbol().getFields():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
-                tab += "  "
+                tab += "        "
             if field.getName() == "__sep__":  # Do not show the delimiter fields
                 continue
 
