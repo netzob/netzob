@@ -1,4 +1,5 @@
-v0.3.3 -- 2012-05-30
+v0.3.3 -- 2012-06-06
+Version name : FlyingRazorback
 
     * Graphical interface
         * Visualization and encoding filters
@@ -13,7 +14,7 @@ v0.3.3 -- 2012-05-30
         * Allow the partitioning of messages with specified boundaries
         * Allow partitioning at the project and symbol level
         * Similarity score based on number of common dynamic elements
-        * Optimisation of Needleman : don't repeat the same computation twice
+        * Optimization of Needleman : don't repeat the same computation twice
         * Implement native UPGMA algorithm
     * Grammar inference
         * Infer the grammar of a network client

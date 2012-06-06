@@ -42,7 +42,8 @@ appname = name
 #|    Development version has version number increased and is
 #|    postfixed by ~git
 #+---------------------------------------------------------------------------+
-version = "0.3.3~git"
+version = "0.3.3"
+versionName = "FlyingRazorback"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
