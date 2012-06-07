@@ -117,13 +117,19 @@ class WorkspaceSelector(object):
                     buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                              gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
+        if self.selectedWorkspace != None:
+            chooser.set_filename(self.selectedWorkspace)
         res = chooser.run()
         if res == gtk.RESPONSE_OK:
             self.workEntry.set_text(chooser.get_filename())
         chooser.destroy()
 
     def entryChanged(self, widget, data=None):
-        self._selectedWorkspace = self.workEntry.get_text()
+        textEntry = self.workEntry.get_text()
+        if textEntry != "":
+            self._selectedWorkspace = self.workEntry.get_text()
+        else:
+            self._selectedWorkspace = None
 
     def cancel(self, widget, data=None):
         self._selectedWorkspace = None
