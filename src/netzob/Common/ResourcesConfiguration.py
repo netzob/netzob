@@ -42,6 +42,7 @@ import shutil
 #+----------------------------------------------
 from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
+from netzob.UI.WorkspaceSelector import WorkspaceSelector
 
 
 #+----------------------------------------------
@@ -96,14 +97,9 @@ class ResourcesConfiguration(object):
 
     @staticmethod
     def askForUserDir():
-        workspacePath = None
-        chooser = gtk.FileChooserDialog(title="Select the workspace", action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-
-        res = chooser.run()
-        if res == gtk.RESPONSE_OK:
-            workspacePath = chooser.get_filename()
-        chooser.destroy()
+        workspaceSelector = WorkspaceSelector()
+        workspaceSelector.run()
+        workspacePath = workspaceSelector.selectedWorkspace
 
         if workspacePath != None:
             ResourcesConfiguration.createWorkspace(workspacePath)
