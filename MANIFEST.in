@@ -3,6 +3,7 @@ include COPYING.txt
 include NEWS.txt
 include PKG-INFO.txt
 include README.txt
+exclude doc/netzob.1
 recursive-include doc *
 recursive-include resources *
 recursive-include lib *
