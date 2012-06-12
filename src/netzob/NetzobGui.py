@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import gtk
 import pygtk
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 pygtk.require('2.0')
 import gobject
 import threading
@@ -104,6 +105,9 @@ class NetzobGui(gtk.Window):
 
         # Second we create the logging infrastructure
         LoggingConfiguration().initializeLogging(self.currentWorkspace)
+
+        # Now we load all the available plugins
+        NetzobPlugin.loadPlugins()
 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
@@ -241,17 +245,6 @@ class NetzobGui(gtk.Window):
     def getMenu(self):
         return self.menu
 
-# To be deleted : in few days
-#    def getDictionary(self):
-#        actorGrammar = "example_learning.xml"
-#        grammar_directory = ConfigurationParser().get("automata", "path")
-#        xmlFile = os.path.join(grammar_directory, actorGrammar)
-#        tree = ElementTree()
-#        tree.parse(xmlFile)
-#        # Load the automata based on its XML definition
-#        serverAutomata = MMSTDXmlParser.loadFromXML(tree.getroot())
-#        return serverAutomata.getDictionary()
-
     def getCurrentNotebookPage(self):
         res = None
         nameTab = (self.notebook.get_tab_label_text(self.notebook.get_nth_page(
@@ -260,12 +253,3 @@ class NetzobGui(gtk.Window):
             if page[0] == nameTab:
                 res = page[1]
         return res
-
-
-#+----------------------------------------------
-#| RUNTIME
-#+----------------------------------------------
-if __name__ == "__main__":
-    gobject.threads_init()  # for handling GUI access from threads
-    netZobGUI = NetzobGui()
-    netZobGUI.startGui()
