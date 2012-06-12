@@ -47,7 +47,16 @@ CMD_CLASS = {
              'build_manpage': manpage_command
              }
 
-
+#+----------------------------------------------------------------------------
+#| Definition of the dependencies
+#+----------------------------------------------------------------------------
+dependencies = [
+    'python-ptrace',
+    'matplotlib',
+    'pcapy',
+    'bitarray',
+    'lxml',
+]
 
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
@@ -55,7 +64,7 @@ CMD_CLASS = {
 setup(
     name=release.name,
     packages=find_packages(where='src'),
-    package_dir={"netzob": "src" + os.sep + "netzob"},
+    package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
     ext_modules=[moduleLibNeedleman],
     data_files=[
         ('share/netzob', ['resources/static/logo.png']),
@@ -70,6 +79,7 @@ setup(
                                     "resources/static/xsds/0.1/common.xsd"]),
         ],
     scripts=["netzob"],
+    install_requires=dependencies,
     version=release.version,
     license=release.licenseName,
     description=release.description,
@@ -94,5 +104,10 @@ setup(
         "Topic :: System :: Networking",
         ],
     long_description=release.long_description,
-    cmdclass=CMD_CLASS
+    cmdclass=CMD_CLASS,
+    entry_points="""
+        [netzob.plugins]
+            pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporter:PCAPImporter
+        """
+
     )
