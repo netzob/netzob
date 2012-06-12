@@ -47,7 +47,7 @@ from netzob.Import.PcapImport import PcapImport
 from netzob.Import.ThirdPartyImport import ThirdPartyImport
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
-from netzob.Import.FileImport import FileImport
+from netzob.UI.Import.Controllers.FileImportController import FileImportController
 from netzob.Import.XMLImport import XMLImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.Export.RawExport import RawExport
@@ -424,7 +424,7 @@ class Menu(object):
     #| Called when user wants to import file
     #+----------------------------------------------
     def importFileAction(self, widget):
-        fileImportPanel = FileImport(self.netzob)
+        fileImportPanel = FileImportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import file
