@@ -39,7 +39,7 @@ class WorkspaceSelector(object):
 
     def __init__(self):
             # Set up GTK Window
-        self.dialog = gtk.Dialog(title="Select Workspace", flags=0,
+        self.dialog = gtk.Dialog(title=_("Select Workspace"), flags=0,
             buttons=None)
         self.dialog.set_size_request(600, 220)
         self.dialog.connect("destroy", self.destroy)
@@ -53,23 +53,23 @@ class WorkspaceSelector(object):
         bold_tag = textBuffer.create_tag("bold", weight=pango.WEIGHT_BOLD)
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
-                "Select a workspace\n\n", bold_tag)
+                _("Select a workspace\n\n"), bold_tag)
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
-                "Netzob stores your projects in a folder called a workspace.\n")
+                _("Netzob stores your projects in a folder called a workspace.\n"))
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
-                "Choose a workspace folder to use.")
+                _("Choose a workspace folder to use."))
         #textBuffer.insert_with_tags(pos,
         #        "Choose a workspace folder to use for this session.")
 
         # Input Box
         inputBox = gtk.HBox(spacing=10)
         workLabel = gtk.Label()
-        workLabel.set_text("Workspace: ")
+        workLabel.set_text(_("Workspace: "))
         self.workEntry = gtk.Entry()
         self.workEntry.connect("changed", self.entryChanged)
-        workButton = gtk.Button("Browse...")
+        workButton = gtk.Button(_("Browse..."))
         workButton.connect("clicked", self.openBrowseDialog)
         inputBox.pack_start(workLabel, expand=False)
         inputBox.pack_start(self.workEntry)
@@ -112,7 +112,7 @@ class WorkspaceSelector(object):
     #    return self.defaultCheck.get_active()
 
     def openBrowseDialog(self, widget, data=None):
-        chooser = gtk.FileChooserDialog(title="Select the workspace",
+        chooser = gtk.FileChooserDialog(title=_("Select the workspace"),
                     action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
                     buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                              gtk.STOCK_OPEN, gtk.RESPONSE_OK))
