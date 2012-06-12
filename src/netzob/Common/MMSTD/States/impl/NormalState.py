@@ -85,8 +85,6 @@ class NormalState(AbstractState):
                 if t.getType() == "SemiStochastic" and t.getInputSymbol().getID() == inputSymbol.getID():
                     self.log.warn("Symbol = " + str(inputSymbol) + " == " + str(t.getInputSymbol()))
                     found = True
-                else:
-                    self.log.debug("Symbol = " + str(inputSymbol) + " != " + str(t.getInputSymbol()))
             if not found:
                 self.transitions.append(transition)
             else:
