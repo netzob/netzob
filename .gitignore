@@ -10,3 +10,4 @@
 /doc/netzob.1
 /build/*
 /netzob.bat
+*.egg-info
