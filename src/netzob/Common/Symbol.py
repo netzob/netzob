@@ -319,7 +319,11 @@ class Symbol(AbstractSymbol):
     #|  Return the field with specified index
     #+----------------------------------------------
     def getFieldByIndex(self, index):
-        return self.fields[index]
+        field = None
+        try:
+            field = self.fields[index]
+        finally:
+            return field
 
     #+----------------------------------------------
     #| getCellsByField:
@@ -376,6 +380,10 @@ class Symbol(AbstractSymbol):
                 field1 = field
             elif field.getIndex() == iField + 1:
                 field2 = field
+
+        if field1 == None or field2 == None:
+            return 0
+
         # Build the merged regex
         newRegex = ""
         if field1.getRegex() == "":

@@ -257,9 +257,9 @@ class NeedlemanAndWunsch(object):
                             if fieldNext.getIndex() > field.getIndex():
                                 fieldNext.setIndex(fieldNext.getIndex() - 1)
                         # Concatenate the surrounding fields (because they should be static fields)
-                        symbol.concatFields(field.getIndex() - 1)
-                        doLoop = True
-                        break
+                        if symbol.concatFields(field.getIndex() - 1) == 1:
+                            doLoop = True
+                            break
 
     #+----------------------------------------------
     #| alignWithNeedlemanWunsh:
