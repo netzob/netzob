@@ -51,7 +51,7 @@ if os.name == 'posix':
 from netzob.UI.Import.Controllers.FileImportController import FileImportController
 from netzob.Import.XMLImport import XMLImport
 from netzob.Export.ScapyExport import ScapyExport
-from netzob.Export.RawExport import RawExport
+from netzob.UI.Export.Controllers.RawExportController import RawExportController
 from netzob.Export.TextExport import TextExport
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
@@ -453,7 +453,7 @@ class Menu(object):
     #| Called when user wants to export as raw XML
     #+----------------------------------------------
     def exportXMLAction(self, action):
-        rawExportPanel = RawExport(self.netzob)
+        rawExportPanel = RawExportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to export as text

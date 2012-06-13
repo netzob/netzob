@@ -29,77 +29,77 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import logging
 import gtk
+import pygtk
+import logging
+pygtk.require('2.0')
+
+#+----------------------------------------------
+#| Local Imports
+#+----------------------------------------------
+from netzob.UI.Export.Views.RawExportView import RawExportView
+from netzob.Export.RawExport import RawExport
 
 
 #+----------------------------------------------
-#| TreeSymbolGenerator:
+#| RawExportController:
+#|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class TreeSymbolGenerator():
+class RawExportController:
 
     #+----------------------------------------------
-    #| Constructor:
+    #| Called when user select a new trace
     #+----------------------------------------------
-    def __init__(self, netzob):
-        self.netzob = netzob
-        self.treestore = None
-        self.treeview = None
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Export.TreeViews.TreeSymbolGenerator.py')
+    def new(self):
+        pass
 
-    #+----------------------------------------------
-    #| initialization:
-    #| builds and configures the treeview
-    #+----------------------------------------------
-    def initialization(self):
-        # Tree store contains:
-        # str : text (symbol Name)
-        # str : text (score)
-        # str : color foreground
-        # str : color background
-        self.treestore = gtk.TreeStore(str, str, str, str, str)
-        self.treeview = gtk.TreeView(self.treestore)
+    def update(self):
+        self.view.symbolTreeview.get_model().clear()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
-        # messages list
-        self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.scroll.show()
-        self.scroll.add(self.treeview)
-
-        lvcolumn = gtk.TreeViewColumn(_("Symbols"))
-        lvcolumn.set_sort_column_id(1)
-        cell = gtk.CellRendererText()
-        lvcolumn.pack_start(cell, True)
-        cell.set_property('background-set', True)
-        cell.set_property('foreground-set', True)
-        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
-        self.treeview.append_column(lvcolumn)
-        self.treeview.show()
-
-    #+----------------------------------------------
-    #| clear:
-    #|   Clear the class
-    #+----------------------------------------------
     def clear(self):
         pass
 
-    #+----------------------------------------------
-    #| update:
-    #|   Update the treestore in normal mode
-    #+----------------------------------------------
-    def update(self):
-        self.log.debug(_("Updating the treestore of the symbol in default mode"))
-        self.treestore.clear()
-
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            iter = self.treestore.append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+    def kill(self):
+        pass
 
     #+----------------------------------------------
-    #| GETTERS:
+    #| Constructor:
+    #| @param netzob: the main netzob object
     #+----------------------------------------------
-    def getTreeview(self):
-        return self.treeview
+    def __init__(self, netzob):
+        self.netzob = netzob
+        self.log = logging.getLogger('netzob.UI.Export.Controllers.RawExportController.py')
+        self.model = RawExport(netzob)
+        self.view = RawExportView()
+        self.initCallbacks()
+        self.update()
 
-    def getScrollLib(self):
-        return self.scroll
+    def initCallbacks(self):
+        self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
+
+    def symbolSelected_cb(self, treeview):
+        (model, iter) = treeview.get_selection().get_selected()
+        if(iter):
+            if(model.iter_is_valid(iter)):
+                symbolID = model.get_value(iter, 0)
+                self.showXMLDefinition(symbolID)
+
+    def showXMLDefinition(self, symbolID):
+        if symbolID == None:
+            self.log.debug(_("No selected symbol"))
+            self.view.textarea.get_buffer().set_text(_("Select a symbol to see its XML definition"))
+        else:
+            xmlDefinition = self.model.getXMLDefinition(symbolID)
+            if xmlDefinition != None:
+                self.view.textarea.get_buffer().set_text("")
+                self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), xmlDefinition, "normalTag")
+            else:
+                self.view.textarea.get_buffer().set_text(_("No XML definition found"))
+
+    #+----------------------------------------------
+    #| GETTERS
+    #+----------------------------------------------
+    def getPanel(self):
+        return self.view
