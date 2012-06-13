@@ -37,15 +37,15 @@ pygtk.require('2.0')
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-from netzob.UI.Export.Views.TextExportView import TextExportView
-from netzob.Export.TextExport import TextExport
+from netzob.UI.Export.Views.ScapyExportView import ScapyExportView
+from netzob.Export.ScapyExport import ScapyExport
 
 
 #+----------------------------------------------
-#| TextExport:
-#|     GUI for exporting results in text mode
+#| ScapyExport:
+#|     GUI for exporting results as scapy dissector
 #+----------------------------------------------
-class TextExportController:
+class ScapyExportController:
 
     #+----------------------------------------------
     #| Called when user select a new trace
@@ -70,7 +70,7 @@ class TextExportController:
     #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
-        self.log = logging.getLogger('netzob.UI.Export.Controllers.TextExport.py')
+        self.log = logging.getLogger('netzob.UI.Export.Controllers.ScapyExport.py')
         self.model = TextExport(netzob)
         self.view = TextExportView()
         self.initCallbacks()
@@ -84,19 +84,19 @@ class TextExportController:
         if(iter):
             if(model.iter_is_valid(iter)):
                 symbolID = model.get_value(iter, 0)
-                self.showTextDefinition(symbolID)
+                self.showScapyDefinition(symbolID)
 
-    def showTextDefinition(self, symbolID):
+    def showScapyDefinition(self, symbolID):
         if symbolID == None:
             self.log.debug(_("No selected symbol"))
             self.view.textarea.get_buffer().set_text(_("Select a symbol to see its text definition"))
         else:
-            textDefinition = self.model.getTextDefinition(symbolID)
-            if textDefinition != None:
+            scapyDefinition = self.model.getScapyDefinition(symbolID)
+            if scapyDefinition != None:
                 self.view.textarea.get_buffer().set_text("")
-                self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), textDefinition, "normalTag")
+                self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), scapyDefinition, "normalTag")
             else:
-                self.view.textarea.get_buffer().set_text(_("No text definition found"))
+                self.view.textarea.get_buffer().set_text(_("No scapy definition found"))
 
     #+----------------------------------------------
     #| GETTERS

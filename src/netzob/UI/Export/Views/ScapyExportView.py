@@ -35,10 +35,10 @@ pygtk.require('2.0')
 
 
 #+----------------------------------------------
-#| TextExportView:
-#|     GUI for exporting results in text mode
+#| ScapyExportView:
+#|     GUI for exporting results as scapy dissector
 #+----------------------------------------------
-class TextExportView:
+class ScapyExportView:
 
     #+----------------------------------------------
     #| Constructor:
@@ -100,4 +100,3 @@ class TextExportView:
         lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
         self.symbolTreeview.append_column(lvcolumn)
         self.symbolTreeview.show()
-
