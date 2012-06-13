@@ -29,14 +29,40 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
+import gtk
+import pygtk
 import logging
+pygtk.require('2.0')
+
+#+----------------------------------------------
+#| Local Imports
+#+----------------------------------------------
+from netzob.UI.Export.Views.TextExportView import TextExportView
+from netzob.Export.TextExport import TextExport
 
 
 #+----------------------------------------------
 #| TextExport:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class TextExport:
+class TextExportController:
+
+    #+----------------------------------------------
+    #| Called when user select a new trace
+    #+----------------------------------------------
+    def new(self):
+        pass
+
+    def update(self):
+        self.view.symbolTreeview.get_model().clear()
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+
+    def clear(self):
+        pass
+
+    def kill(self):
+        pass
 
     #+----------------------------------------------
     #| Constructor:
@@ -45,18 +71,35 @@ class TextExport:
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.Export.TextExport.py')
+        self.model = TextExport(netzob)
+        self.view = TextExportView()
+        self.initCallbacks()
+        self.update()
 
-    def getTextDefinition(self, symbolID):
-        project = self.netzob.getCurrentProject()
-        vocabulary = project.getVocabulary()
-        symbols = vocabulary.getSymbols()
-        resSymbol = None
-        for symbol in symbols:
-            if str(symbol.getID()) == symbolID:
-                resSymbol = symbol
-                break
-        if resSymbol == None:
-            self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
-            return None
+    def initCallbacks(self):
+        self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
+
+    def symbolSelected_cb(self, treeview):
+        (model, iter) = treeview.get_selection().get_selected()
+        if(iter):
+            if(model.iter_is_valid(iter)):
+                symbolID = model.get_value(iter, 0)
+                self.showTextDefinition(symbolID)
+
+    def showTextDefinition(self, symbolID):
+        if symbolID == None:
+            self.log.debug(_("No selected symbol"))
+            self.view.textarea.get_buffer().set_text(_("Select a symbol to see its text definition"))
         else:
-            return resSymbol.getTextDefinition()
+            textDefinition = self.model.getTextDefinition(symbolID)
+            if textDefinition != None:
+                self.view.textarea.get_buffer().set_text("")
+                self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), textDefinition, "normalTag")
+            else:
+                self.view.textarea.get_buffer().set_text(_("No text definition found"))
+
+    #+----------------------------------------------
+    #| GETTERS
+    #+----------------------------------------------
+    def getPanel(self):
+        return self.view

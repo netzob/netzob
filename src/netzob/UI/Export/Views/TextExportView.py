@@ -29,34 +29,75 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import logging
+import gtk
+import pygtk
+pygtk.require('2.0')
 
 
 #+----------------------------------------------
-#| TextExport:
+#| TextExportView:
 #|     GUI for exporting results in raw mode
 #+----------------------------------------------
-class TextExport:
+class TextExportView:
 
     #+----------------------------------------------
     #| Constructor:
     #| @param netzob: the main netzob object
     #+----------------------------------------------
-    def __init__(self, netzob):
-        self.netzob = netzob
-        self.log = logging.getLogger('netzob.Export.TextExport.py')
+    def __init__(self):
+        self.buildPanel()
 
-    def getTextDefinition(self, symbolID):
-        project = self.netzob.getCurrentProject()
-        vocabulary = project.getVocabulary()
-        symbols = vocabulary.getSymbols()
-        resSymbol = None
-        for symbol in symbols:
-            if str(symbol.getID()) == symbolID:
-                resSymbol = symbol
-                break
-        if resSymbol == None:
-            self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
-            return None
-        else:
-            return resSymbol.getTextDefinition()
+        self.dialog = gtk.Dialog(title=_("Export project as text"), flags=0, buttons=None)
+        self.dialog.show()
+        self.dialog.vbox.pack_start(self.panel, True, True, 0)
+        self.dialog.set_size_request(600, 400)
+
+    def buildPanel(self):
+        # First we create an VPaned which hosts the two main children
+        self.panel = gtk.HBox()
+        self.panel.show()
+
+        # Create the symbol selection treeview
+        self.buildSymbolTreeview()
+        self.panel.pack_start(self.symbolTreeviewScroll, True, True, 0)
+
+        # Create the hbox content in order to display dissector data
+        bottomFrame = gtk.Frame()
+        bottomFrame.show()
+        bottomFrame.set_size_request(450, -1)
+        self.panel.add(bottomFrame)
+        sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.textarea = gtk.TextView()
+        self.textarea.get_buffer().create_tag("normalTag", family="Courier")
+        self.textarea.show()
+        self.textarea.set_editable(False)
+        sw.add(self.textarea)
+        sw.show()
+        bottomFrame.add(sw)
+
+    def buildSymbolTreeview(self):
+        # Tree store contains:
+        # str : text (symbol Name)
+        # str : text (score)
+        # str : color foreground
+        # str : color background
+        self.treestore = gtk.TreeStore(str, str, str, str, str)
+        self.symbolTreeview = gtk.TreeView(self.treestore)
+
+        # Symbol list
+        self.symbolTreeviewScroll = gtk.ScrolledWindow()
+        self.symbolTreeviewScroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.symbolTreeviewScroll.show()
+        self.symbolTreeviewScroll.add(self.symbolTreeview)
+
+        lvcolumn = gtk.TreeViewColumn(_("Symbols"))
+        lvcolumn.set_sort_column_id(1)
+        cell = gtk.CellRendererText()
+        lvcolumn.pack_start(cell, True)
+        cell.set_property('background-set', True)
+        cell.set_property('foreground-set', True)
+        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
+        self.symbolTreeview.append_column(lvcolumn)
+        self.symbolTreeview.show()
+

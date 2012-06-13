@@ -52,7 +52,7 @@ from netzob.UI.Import.Controllers.FileImportController import FileImportControll
 from netzob.Import.XMLImport import XMLImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.UI.Export.Controllers.RawExportController import RawExportController
-from netzob.Export.TextExport import TextExport
+from netzob.UI.Export.Controllers.TextExportController import TextExportController
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
@@ -459,7 +459,7 @@ class Menu(object):
     #| Called when user wants to export as text
     #+----------------------------------------------
     def exportTextAction(self, action):
-        textExportPanel = TextExport(self.netzob)
+        textExportPanel = TextExportController(self.netzob)
 
 #    #+----------------------------------------------
 #    #| Called when user wants to import API flow
