@@ -58,6 +58,21 @@ dependencies = [
     'lxml',
 ]
 
+try:
+    from babel.messages import frontend as babel
+    from distutils.command.build import build
+
+    CMD_CLASS.update({'compile_catalog': babel.compile_catalog,
+                      'extract_messages': babel.extract_messages,
+                      'init_catalog': babel.init_catalog,
+                      'update_catalog': babel.update_catalog})
+
+
+    build.sub_commands.append(('compile_catalog', None))
+except ImportError:
+    print "Info: Babel support unavailable, translations not available"
+
+
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
@@ -77,6 +92,7 @@ setup(
         ('share/netzob/xsds/0.1/', ["resources/static/xsds/0.1/Workspace.xsd",
                                     "resources/static/xsds/0.1/Project.xsd",
                                     "resources/static/xsds/0.1/common.xsd"]),
+        ("share/locale/fr/LC_MESSAGES/", ["locales/fr/LC_MESSAGES/netzob.mo"])
         ],
     scripts=["netzob"],
     install_requires=dependencies,
@@ -108,6 +124,9 @@ setup(
     entry_points="""
         [netzob.plugins]
             pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporter:PCAPImporter
-        """
-
+        """,
+    # Files that should be scanned by Babel (if available)
+    message_extractors = {
+        'src': [('**.py', 'python', None)]
+        },
     )

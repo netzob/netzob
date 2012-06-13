@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from gettext import gettext as _
 import os.path
 import logging
 import gtk
@@ -71,7 +72,7 @@ class ResourcesConfiguration(object):
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
         if staticPath == None:
-            logging.fatal("The static resources were not found !")
+            logging.fatal(_("The static resources were not found !"))
             return False
 
         if not forceWSCreation:
@@ -113,7 +114,7 @@ class ResourcesConfiguration(object):
         if os.path.isfile(os.path.join(path, Workspace.CONFIGURATION_FILENAME)):
             return
         else:
-            workspace = Workspace.createWorkspace("New Workspace", path)
+            workspace = Workspace.createWorkspace(_("New Workspace"), path)
             return workspace
 
     @staticmethod
@@ -187,3 +188,10 @@ class ResourcesConfiguration(object):
             return ResourcesConfiguration.verifyUserResources()
         else:
             return NetzobResources.WORKSPACE_DIR
+
+    @staticmethod
+    def getLocaleLocation():
+        if (os.path.isdir(NetzobResources.LOCAL_LOCALES_DIR)):
+            return NetzobResources.LOCAL_LOCALES_DIR
+        elif (os.path.isdir(NetzobResources.LOCALES_DIR)):
+            return NetzobResources.LOCALES_DIR

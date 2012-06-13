@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import gtk
 import pygtk
@@ -80,7 +81,7 @@ class SearchView(object):
         self.typeCombo.get_model().append([Format.IP])
 
         # Search button
-        searchButton = gtk.Button("Search")
+        searchButton = gtk.Button(_("Search"))
         searchButton.show()
         searchButton.connect("clicked", self.prepareSearchingOperation)
 
@@ -93,15 +94,15 @@ class SearchView(object):
     def prepareSearchingOperation(self, button):
         searchedPattern = self.searchEntry.get_text()
         if len(searchedPattern) == 0:
-            self.log.info("Do not start the searching process since no pattern was provided by the user")
+            self.log.info(_("Do not start the searching process since no pattern was provided by the user"))
             return
 
         typeOfPattern = self.typeCombo.get_active_text()
         if len(typeOfPattern) == 0:
-            self.log.info("Do not start the searching process since no type was provided by the user")
+            self.log.info(_("Do not start the searching process since no type was provided by the user"))
             return
 
-        self.log.debug("User searches for " + searchedPattern + " of type " + typeOfPattern)
+        self.log.debug(_("User searches for {0} of type {1}".format(searchedPattern, typeOfPattern)))
         self.search(searchedPattern, typeOfPattern)
 
     def search(self, pattern, typeOfPattern):
@@ -125,16 +126,16 @@ class SearchView(object):
             searchedData.extend(searcher.getSearchedDataForString(pattern))
 
         if len(searchedData) == 0:
-            self.log.warn("No data to search after were computed.")
+            self.log.warn(_("No data to search after were computed."))
             return
 
-        self.log.debug("The following data will be searched for :")
+        self.log.debug(_("The following data will be searched for:"))
         for data in searchedData:
             self.log.info(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
         searchTasks = searcher.search(searchedData)
-        self.log.info("A number of " + str(len(searchTasks)) + " results found !")
+        self.log.info(_("A number of {0} results found!").format(str(len(searchTasks))))
 
         # Colorize the segments
         self.colorizeResults(searchTasks)
@@ -164,7 +165,7 @@ class SearchView(object):
 
         self.tree = gtk.TreeView()
         colResult = gtk.TreeViewColumn()
-        colResult.set_title("Search results")
+        colResult.set_title(_("Search results"))
 
         cell = gtk.CellRendererText()
         colResult.pack_start(cell, True)

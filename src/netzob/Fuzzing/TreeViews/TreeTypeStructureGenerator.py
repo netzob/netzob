@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import gtk
 
@@ -66,7 +67,7 @@ class TreeTypeStructureGenerator():
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = gtk.CellRendererText()
-        columns = ["iCol", "Name", "Value", "Description"]
+        columns = [_("iCol"), _("Name"), _("Value"), _("Description")]
         for i in range(1, len(columns)):
             column = gtk.TreeViewColumn(columns[i])
             column.pack_start(cell, True)
@@ -93,7 +94,7 @@ class TreeTypeStructureGenerator():
     #|         Update the treestore in error mode
     #+----------------------------------------------
     def error(self):
-        self.log.warning("The treeview for the messages is in error mode")
+        self.log.warning(_("The treeview for the messages is in error mode"))
         pass
 
     #+----------------------------------------------

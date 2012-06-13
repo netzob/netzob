@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import gtk
 import pygtk
 import logging
@@ -70,7 +71,7 @@ class TextExport:
 
         self.initPanel()
 
-        self.dialog = gtk.Dialog(title="Export project as text", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Export project as text"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(600, 400)
@@ -114,8 +115,8 @@ class TextExport:
 
     def updateTextArea(self):
         if self.selectedSymbol == None:
-            self.log.debug("No selected symbol")
-            self.textarea.get_buffer().set_text("Select a symbol to see its text definition")
+            self.log.debug(_("No selected symbol"))
+            self.textarea.get_buffer().set_text(_("Select a symbol to see its text definition"))
         else:
             found = False
             project = self.netzob.getCurrentProject()
@@ -127,7 +128,7 @@ class TextExport:
                     self.textarea.get_buffer().insert_with_tags_by_name(self.textarea.get_buffer().get_start_iter(), symbol.getTextDefinition(), "normalTag")
                     found = True
             if found == False:
-                self.log.warning("Impossible to retrieve the symbol having the id {0}".format(str(self.selectedSymbol)))
+                self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(self.selectedSymbol)))
 
     #+----------------------------------------------
     #| GETTERS

@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import gtk
 
@@ -66,7 +67,7 @@ class TreeSymbolGenerator():
         self.scroll.show()
         self.scroll.add(self.treeview)
 
-        lvcolumn = gtk.TreeViewColumn('Symbols')
+        lvcolumn = gtk.TreeViewColumn(_("Symbols"))
         lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
         lvcolumn.pack_start(cell, True)
@@ -88,7 +89,7 @@ class TreeSymbolGenerator():
     #|   Update the treestore in normal mode
     #+----------------------------------------------
     def update(self):
-        self.log.debug("Updating the treestore of the symbol in default mode")
+        self.log.debug(_("Updating the treestore of the symbol in default mode"))
         self.treestore.clear()
 
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():

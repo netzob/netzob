@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import time
 from collections import deque
@@ -62,8 +63,8 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
     def canWeDistinguishStates(self, mmstd, mq, state1, state2):
         (traceState1, endStateTrace1) = mmstd.getOutputTrace(state1, mq.getSymbols())
         (traceState2, endStateTrace2) = mmstd.getOutputTrace(state2, mq.getSymbols())
-        self.log.info("Trace 1 = " + str(traceState1))
-        self.log.info("Trace 2 = " + str(traceState2))
+        self.log.info("Trace 1 = {0}".format(str(traceState1)))
+        self.log.info("Trace 2 = {0}".format(str(traceState2)))
         if traceState1 == traceState2:
             self.log.info("Impossible to distinguish the strings")
             return False
@@ -80,7 +81,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         for entry in inputSymbols:
             letter = DictionarySymbol(entry)
             inputDictionary.append(letter)
-            self.log.info("The vocabulary contains : " + str(letter))
+            self.log.info("The vocabulary contains: {0}".format(str(letter)))
 
         # -----------------------------------------------------------------------
         # FIRST WE COMPUTE WHICH WILL WE MAKE !
@@ -145,7 +146,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     distinguishableZ = mq
 
                 i = i + 1
-            self.log.info("FOUND : the following distinguish them : " + str(distinguishableZ) + " last which doesn't is " + str(lastIndiguishableZ))
+            self.log.info("FOUND: the following distinguish them: {0} last which doesn't is {1}".format(str(distinguishableZ), str(lastIndiguishableZ)))
             W.append(distinguishableZ)
         self.log.info("=================================")
         self.log.info("W = " + str(W))
@@ -182,7 +183,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
         # STEP 4 : We compute Z
         # it follows the formula Z= W U (X^1.W) U .... U (X^(m-1-n).W) U (W^(m-n).W)
-        self.log.info("Computing Z :")
+        self.log.info("Computing Z:")
         Z = []
         # First we append W in Z
         for w in W:
@@ -200,9 +201,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
         X[0] = W
 
         for i in range(1, v + 1):
-            self.log.info("Computing X^" + str(i) + " :")
-            self.log.info("MQ INputs : " + str(len(mqInputs)))
-            self.log.info("W : " + str(len(W)))
+            self.log.info("Computing X^{0}: ".format(str(i)))
+            self.log.info("MQ INputs: ".format(str(len(mqInputs))))
+            self.log.info("W: ".format(str(len(W))))
             X[i] = []
             previousX = X[i - 1]
             self.log.info(previousX)
@@ -213,19 +214,19 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                     if not xi in Z:
                         Z.append(xi)
                     else:
-                        self.log.warn("Impossible to add X[" + str(i) + "] = " + str(xi) + " in Z, it already exists")
+                        self.log.warn("Impossible to add X[{0}] = {1} in Z, it already exists".format(str(i), str(xi)))
 
         for z in Z:
-            self.log.info("z = " + str(z))
+            self.log.info("z = {0}".format(str(z)))
 
         # STEP 5 : We have the list of so desired test cases T = P.Z
         T = []
         for p in P:
             T.extend(p.multiply(Z))
 
-        self.log.info("Tests cases are : ")
+        self.log.info("Tests cases are: ")
         for t in T:
-            self.log.info("=> " + str(t))
+            self.log.info("=> {0}".format(str(t)))
 
         testsResults = dict()
         self.log.info("----> Compute the responses to the the tests over our model and compare them with the real one")
@@ -273,9 +274,9 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
                 self.log.info("========================")
                 self.log.info("We found a counter example")
                 self.log.info("========================")
-                self.log.info("TEST : " + str(test))
-                self.log.info("OUR : " + str(mqOur))
-                self.log.info("THEIR : " + str(mqTheir))
+                self.log.info("TEST: {0}".format(str(test)))
+                self.log.info("OUR: {0}".format(str(mqOur)))
+                self.log.info("THEIR: {0}".format(str(mqTheir)))
                 return test
             else:
                 self.log.info("========================")
