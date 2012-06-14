@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import gtk
 
@@ -75,7 +76,7 @@ class TreeProcessesGenerator():
         self.scroll.set_size_request(200, 300)
         self.scroll.add(self.treeview)
 
-        lvcolumn = gtk.TreeViewColumn('Processes')
+        lvcolumn = gtk.TreeViewColumn(_("Processes"))
         lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
         lvcolumn.pack_start(cell, True)
@@ -97,7 +98,7 @@ class TreeProcessesGenerator():
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self):
-        self.log.debug("Updating the treestore of the processes in default mode")
+        self.log.debug(_("Updating the treestore of the processes in default mode"))
         self.treestore.clear()
 
         self.updateProcessesList()
@@ -106,7 +107,7 @@ class TreeProcessesGenerator():
             iter = self.treestore.append(None, [process.getName(), process.getPid(), '#000000', '#FFFFFF'])
 
     def updateProcessesList(self):
-        self.log.debug("Updating the list of executing processes.")
+        self.log.debug(_("Updating the list of executing processes."))
         self.processes = ExecutionContext.getCurrentProcesses()
 
     #+----------------------------------------------

@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 import gtk
 import uuid
@@ -74,7 +75,7 @@ class TreeSymbolGenerator(AbstractViewGenerator):
         self.scroll.set_size_request(200, 300)
         self.scroll.add(self.treeview)
 
-        self.lvcolumn = gtk.TreeViewColumn('Symbols')
+        self.lvcolumn = gtk.TreeViewColumn(_("Symbols"))
         self.lvcolumn.set_sort_column_id(1)
         cell = gtk.CellRendererText()
         cell.set_property('background-set', True)
@@ -95,7 +96,7 @@ class TreeSymbolGenerator(AbstractViewGenerator):
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def default(self, selectedSymbol=None):
-        self.log.debug("Updating the treestore of the symbol in default mode")
+        self.log.debug(_("Updating the treestore of the symbol in default mode"))
         self.treestore.clear()
 
         # We retrieve the current project
@@ -137,7 +138,7 @@ class TreeSymbolGenerator(AbstractViewGenerator):
     #| @return the symbol if it exists (or None)
     #+----------------------------------------------
     def getSymbolAtPosition(self, x, y):
-        self.log.debug("Search for the symbol referenced at position {0};{1}".format(str(x), str(y)))
+        self.log.debug(_("Search for the symbol referenced at position {0};{1}").format(str(x), str(y)))
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
 
         info = self.treeview.get_path_at_pos(x, y)
@@ -146,10 +147,10 @@ class TreeSymbolGenerator(AbstractViewGenerator):
             iter = self.treeview.get_model().get_iter(path)
             idSymbol = str(self.treeview.get_model().get_value(iter, 0))
             if idSymbol is not None:
-                self.log.debug("An entry with the ID {0} has been found.".format(idSymbol))
+                self.log.debug(_("An entry with the ID {0} has been found.").format(idSymbol))
                 for symbol in vocabulary.getSymbols():
                     if (str(symbol.getID()) == idSymbol):
-                        self.log.debug("The requested symbol with ID {0} has been found".format(symbol.getID()))
+                        self.log.debug(_("The requested symbol with ID {0} has been found").format(symbol.getID()))
                         return symbol
         return None
 

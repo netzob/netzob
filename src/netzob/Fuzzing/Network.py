@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import gtk
 import pygtk
 pygtk.require('2.0')
@@ -120,7 +121,7 @@ class Network:
         sniffPanel.show()
 
         # Filter
-        label = gtk.Label("Filter")
+        label = gtk.Label(_("Filter"))
         label.show()
         entry_filter = gtk.Entry()
         entry_filter.set_width_chars(50)
@@ -130,7 +131,7 @@ class Network:
         sniffPanel.attach(entry_filter, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Sniff launching button
-        but = gtk.Button(label="Fuzz traffic")
+        but = gtk.Button(label=_("Fuzz traffic"))
         but.show()
         but.connect("clicked", self.launchFuzz_cb, entry_filter)
         sniffPanel.attach(but, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -143,27 +144,27 @@ class Network:
         treeview.connect("cursor-changed", self.packet_details)
         cell = gtk.CellRendererText()
         # Col proto
-        column = gtk.TreeViewColumn('Proto')
+        column = gtk.TreeViewColumn(_("Proto"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
         # Col IP.src
-        column = gtk.TreeViewColumn('IP source')
+        column = gtk.TreeViewColumn(_("IP source"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeview.append_column(column)
         # Col IP.dst
-        column = gtk.TreeViewColumn('IP dest')
+        column = gtk.TreeViewColumn(_("IP dest"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=3)
         treeview.append_column(column)
         # Col {TCP,UDP}.sport
-        column = gtk.TreeViewColumn('sport')
+        column = gtk.TreeViewColumn(_("sport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=4)
         treeview.append_column(column)
         # Col {TCP,UDP}.dport
-        column = gtk.TreeViewColumn('dport')
+        column = gtk.TreeViewColumn(_("dport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=5)
         treeview.append_column(column)
@@ -219,14 +220,14 @@ class Network:
             aIter = self.treeTypeStructureGenerator.getTreeview().get_model().get_iter(path)
             field = self.treeTypeStructureGenerator.getTreeview().get_model().get_value(aIter, 0)
             menu = gtk.Menu()
-            item = gtk.MenuItem("Fuzz field")
+            item = gtk.MenuItem(_("Fuzz field"))
             item.connect("activate", self.fuzz_field_cb, field)
             item.show()
             menu.append(item)
             menu.popup(None, None, None, event.button, event.time)
 
     def fuzz_field_cb(self, widget, field):
-        print "Fuzz field : " + str(field)
+        self.log.debug(_("Fuzz field: {0}".format(str(field))))
 
     #+----------------------------------------------
     #| Called when user select a packet for details
@@ -255,7 +256,7 @@ class Network:
     #| Thread for fuzzing
     #+----------------------------------------------
     def fuzzThread(self, button, aFilter):
-        self.log.info("Launching fuzzing process with : filter=\"" + aFilter.get_text() + "\"")
+        self.log.info(_("Launching fuzzing process with : filter=\"{0}\"").format(aFilter.get_text()))
 
         ## Set Netfilter NFQUEUE
 #        os.popen("sudo iptables -I OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")

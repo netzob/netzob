@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import gtk
 import pygtk
 import tempfile
@@ -83,7 +84,7 @@ class ApiImport:
         # First we parse the repository
         repositoryFile = self.netzob.getCurrentWorkspace().getPathOfPrototypes() + os.sep + "repository.xml"
         if repositoryFile == "" or not os.path.isfile(repositoryFile):
-            self.log.warn("Unable to find a repository file for API injector.")
+            self.log.warn(_("Unable to find a repository file for API injector."))
         else:
             self.repositoryOfSharedLib = PrototypesRepositoryParser.loadFromXML(repositoryFile)
 
@@ -96,7 +97,7 @@ class ApiImport:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of processes
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        but = gtk.Button("Update processes list")
+        but = gtk.Button(_("Update processes list"))
         but.show()
         but.connect("clicked", self.updateProcessList_cb)
         self.processStore = gtk.combo_box_entry_new_text()
@@ -116,17 +117,17 @@ class ApiImport:
         self.dllTreeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
         cell = gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn('Name')
+        column = gtk.TreeViewColumn(_("Name"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         self.dllTreeview.append_column(column)
         # Col type
-        column = gtk.TreeViewColumn('Version')
+        column = gtk.TreeViewColumn(_("Version"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         self.dllTreeview.append_column(column)
         # Col name
-        column = gtk.TreeViewColumn('Path')
+        column = gtk.TreeViewColumn(_("Path"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         self.dllTreeview.append_column(column)
@@ -152,12 +153,12 @@ class ApiImport:
 
         self.panel.attach(self.dllStore, 0, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.butAddPrototype = gtk.Button("Create prototype")
+        self.butAddPrototype = gtk.Button(_("Create prototype"))
         self.butAddPrototype.show()
         self.butAddPrototype.connect("clicked", self.updateProcessList_cb)
         self.panel.attach(self.butAddPrototype, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.butRemovePrototype = gtk.Button("Delete prototype")
+        self.butRemovePrototype = gtk.Button(_("Delete prototype"))
         self.butRemovePrototype.show()
         self.butRemovePrototype.connect("clicked", self.updateProcessList_cb)
         self.panel.attach(self.butRemovePrototype, 4, 5, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -165,12 +166,12 @@ class ApiImport:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of buttons (start and stop capture)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.startCapture = gtk.Button("Start capture")
+        self.startCapture = gtk.Button(_("Start capture"))
         self.startCapture.show()
         self.startCapture.connect("clicked", self.startCaptureFunction)
         self.panel.attach(self.startCapture, 3, 4, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.stopCapture = gtk.Button("Stop capture")
+        self.stopCapture = gtk.Button(_("Stop capture"))
         self.stopCapture.show()
         self.stopCapture.connect("clicked", self.stopCaptureFunction)
         self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -182,17 +183,17 @@ class ApiImport:
         treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
         cell = gtk.CellRendererText()
         # Col fd
-        column = gtk.TreeViewColumn('Function')
+        column = gtk.TreeViewColumn(_("Function"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
         # Col direction
-        column = gtk.TreeViewColumn('Parameter')
+        column = gtk.TreeViewColumn(_("Parameter"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeview.append_column(column)
         # Col Data
-        column = gtk.TreeViewColumn('Data')
+        column = gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=3)
         treeview.append_column(column)
@@ -238,7 +239,7 @@ class ApiImport:
                 self.dllTreeview.get_model().append(None, [lib.getName(), lib.getVersion(), lib.getPath()])
 
         else:
-            self.log.error("A selected process cannot be found !")
+            self.log.error(_("A selected process cannot be found !"))
 
     #+----------------------------------------------
     #| Called when user select a a DLL
@@ -260,7 +261,7 @@ class ApiImport:
             found = True
 
         if found == False:
-            self.log.error("The selected process cannot be find !")
+            self.log.error(_("The selected process cannot be find !"))
             return
 
         self.dllStore.get_model().clear()
@@ -277,10 +278,10 @@ class ApiImport:
     #+----------------------------------------------
     def prototypeSelected_cb(self, widget):
         if self.selectedProcess == None:
-            self.log.warning("You have to select a process if you want to capture it")
+            self.log.warning(_("You have to select a process if you want to capture it"))
             return
         if self.selectedDLL == None:
-            self.log.warning("You have to select a DLL if you want to capture it")
+            self.log.warning(_("You have to select a DLL if you want to capture it"))
             return
 
         # Updates the list of shared lib
@@ -292,27 +293,27 @@ class ApiImport:
                 self.selectedFunction = function
 
         if self.selectedFunction == None:
-            self.log.error("Impossible to retrieve the selected function")
+            self.log.error(_("Impossible to retrieve the selected function"))
         else:
-            self.log.info("Selected function done!")
+            self.log.info(_("Selected function done!"))
 
     #+----------------------------------------------
     #| Called when launching sniffing process
     #+----------------------------------------------
     def startCaptureFunction(self, button):
         if self.selectedProcess == None:
-            self.log.warning("You have to select a process if you want to capture it")
+            self.log.warning(_("You have to select a process if you want to capture it"))
             return
         if self.selectedDLL == None:
-            self.log.warning("You have to select a DLL if you want to capture it")
+            self.log.warning(_("You have to select a DLL if you want to capture it"))
             return
         if self.selectedFunction == None:
-            self.log.warning("You have to select a function if you want to capture it")
+            self.log.warning(_("You have to select a function if you want to capture it"))
             return
 
         # Create a temporary folder (secure way) <- hihihihi
         tmpFolder = tempfile.mkdtemp()
-        self.log.info("Temporary folder : " + tmpFolder)
+        self.log.info(_("Temporary folder: {0}").format(tmpFolder))
 
         parasiteGenerator = ParasiteGenerator(tmpFolder)
         parasiteGenerator.addAnHijackedFunctions(self.selectedFunction)
@@ -333,29 +334,29 @@ class ApiImport:
         self.aSniffThread = threading.Thread(None, self.sniffThread, None, (), {})
         self.aSniffThread.start()
 
-        self.log.info("Starting the capture of [{0}]".format(self.selectedProcess.getPid()))
-        self.log.info("DLL [{0}]".format(self.selectedDLL.getName()))
-        self.log.info("Function [{0}]".format(self.selectedFunction.getPrototype()))
+        self.log.info(_("Starting the capture of [{0}]").format(self.selectedProcess.getPid()))
+        self.log.info(_("DLL [{0}]").format(self.selectedDLL.getName()))
+        self.log.info(_("Function [{0}]").format(self.selectedFunction.getPrototype()))
 
     def readFromFifo(self):
         self.fifo = open(self.fifoFile, 'r')
         receivedMessage = self.readline(self.fifo)
-        self.log.info("FIFO : " + receivedMessage)
+        self.log.info(_("FIFO: {0}").format(receivedMessage))
         while (receivedMessage != "STOP\n"):
             self.pktTreestore.append(None, [len(self.packets), "NONE", "NC", receivedMessage, int(time.time())])
             receivedMessage = self.readline(self.fifo)
             self.log.info("FIFO : " + receivedMessage)
 
     def createFifo(self):
-        self.log.info("Creating the FIFO file : " + self.fifoFile)
+        self.log.info(_("Creating the FIFO file: {0}").format(self.fifoFile))
         # Create the fifo
         try:
             os.mkfifo(self.fifoFile)
         except OSError, e:
-            self.log.error("Failed to create FIFO: %s" % e)
+            self.log.error(_("Failed to create FIFO: %s") % e)
             return False
         else:
-            self.log.info("The fifo has been created...")
+            self.log.info(_("The fifo has been created..."))
             return True
 
     def readline(self, f):
@@ -368,7 +369,7 @@ class ApiImport:
     def sniffThread(self):
         # Create the receptor (FIFO creation)
         if not self.createFifo():
-            self.log.error("Cannot execute GOT Poisoning since FIFO file was not created !")
+            self.log.error(_("Cannot execute GOT Poisoning since FIFO file was not created !"))
             return
 
         # Read from the fifo
@@ -378,7 +379,7 @@ class ApiImport:
     #| Called when launching sniffing process
     #+----------------------------------------------
     def stopCaptureFunction(self, button):
-        self.log.debug("Stoping the capture...")
+        self.log.debug(_("Stoping the capture..."))
 
         # We first stop the thread
         if self.aSniffThread != None and self.aSniffThread.isAlive():
@@ -386,7 +387,8 @@ class ApiImport:
         self.aSniffThread = None
 
         # now we clean everything
-        print "Reading finish, we close the FIFO."
+        self.log.debug(_("Reading finish, we close the FIFO."))
+
         # Close and remove fifo
         self.fifo.close()
         os.remove(self.fifoFile)

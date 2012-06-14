@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import gtk
 import pygtk
 pygtk.require('2.0')
@@ -140,14 +141,14 @@ class Ipc:
             aIter = self.treeTypeStructureGenerator.getTreeview().get_model().get_iter(path)
             field = self.treeTypeStructureGenerator.getTreeview().get_model().get_value(aIter, 0)
             menu = gtk.Menu()
-            item = gtk.MenuItem("Fuzz field")
+            item = gtk.MenuItem(_("Fuzz field"))
             item.connect("activate", self.fuzz_field_cb, field)
             item.show()
             menu.append(item)
             menu.popup(None, None, None, event.button, event.time)
 
     def fuzz_field_cb(self, widget, field):
-        print "Fuzz field : " + str(field)
+        self.log.debug(_("Fuzz field: {0}").format(str(field)))
 
     #+----------------------------------------------
     #| GETTERS

@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Standard library imports
 #+----------------------------------------------
+from gettext import gettext as _
 import logging
 from lxml.etree import ElementTree
 from lxml import etree

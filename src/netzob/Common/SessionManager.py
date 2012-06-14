@@ -28,6 +28,7 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
+from gettext import gettext as _
 import gtk
 import pygtk
 import logging
@@ -70,7 +71,7 @@ class SessionManager:
 
         self.initPanel()
 
-        self.dialog = gtk.Dialog(title="Session manager", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Session manager"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.update()
@@ -86,7 +87,7 @@ class SessionManager:
         ## Symbol list box
         symbolBox = gtk.VBox()
         symbolBox.show()
-        frame = NetzobFrame("Symbol list")
+        frame = NetzobFrame(_("Symbol list"))
         frame.add(symbolBox)
         self.panel.pack_start(frame, True, True, 0)
 
@@ -102,7 +103,7 @@ class SessionManager:
         treeview.connect('cursor-changed', self.symbolSelected_cb)
 
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Symbols")
+        column = gtk.TreeViewColumn(_("Symbols"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
@@ -131,7 +132,7 @@ class SessionManager:
         self.treeview_symbol_messages.show()
 
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Messages")
+        column = gtk.TreeViewColumn(_("Messages"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         self.treeview_symbol_messages.append_column(column)
@@ -146,7 +147,7 @@ class SessionManager:
         ## Session list
         sessionBox = gtk.VBox()
         sessionBox.show()
-        frame = NetzobFrame("Session list")
+        frame = NetzobFrame(_("Session list"))
         frame.add(sessionBox)
         self.panel.pack_start(frame, True, True, 0)
 
@@ -161,7 +162,7 @@ class SessionManager:
         treeview.connect('cursor-changed', self.sessionSelected_cb)
 
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Sessions")
+        column = gtk.TreeViewColumn(_("Sessions"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
@@ -190,7 +191,7 @@ class SessionManager:
         self.treeview_session_messages.show()
 
         cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn("Messages")
+        column = gtk.TreeViewColumn(_("Messages"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         self.treeview_session_messages.append_column(column)
@@ -215,10 +216,10 @@ class SessionManager:
         # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if project.getVocabulary() == None:
-            NetzobErrorMessage("The current project doesn't have any referenced vocabulary.")
+            NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
         # Show messages contained in selected symbol
@@ -241,10 +242,10 @@ class SessionManager:
         # Sanity checks
         project = self.netzob.getCurrentProject()
         if project == None:
-            NetzobErrorMessage("No project selected.")
+            NetzobErrorMessage(_("No project selected."))
             return
         if project.getVocabulary() == None:
-            NetzobErrorMessage("The current project doesn't have any referenced vocabulary.")
+            NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
         # Show messages contained in selected session

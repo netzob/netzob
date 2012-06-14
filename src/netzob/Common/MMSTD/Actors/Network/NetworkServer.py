@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import logging
 import SocketServer
 SocketServer.TCPServer.allow_reuse_address = True
