@@ -43,6 +43,9 @@ Dependencies :
 * python-setuptools
 * graphviz
 
+Recommends:
+* python-babel (used for translation)
+
 Linux-specific dependencies :
 
 * strace
@@ -52,7 +55,7 @@ Or, on Debian-like operating systems :
 
 $ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
   python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
-  python-sphinx python-setuptools graphviz
+  python-sphinx python-setuptools graphviz python-babel
 
 And then, 
 
