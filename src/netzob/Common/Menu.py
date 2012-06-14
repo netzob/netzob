@@ -520,6 +520,7 @@ class Menu(object):
         else:
             about.set_comments(release.description)
         about.set_website(release.url)
+        about.set_translator_credits(release.translator_credits)
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
         about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
         about.run()

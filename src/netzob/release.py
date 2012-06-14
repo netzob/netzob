@@ -81,6 +81,11 @@ url = "http://www.netzob.org"
 download_url = "http://www.netzob.org/download"
 
 #+---------------------------------------------------------------------------+
+#| Translators
+#+---------------------------------------------------------------------------+
+translator_credits = """Français : Olivier Tétard <olivier.tetard@miskin.fr>"""
+
+#+---------------------------------------------------------------------------+
 #| Keywords to describe the application
 #+---------------------------------------------------------------------------+
 keywords = ["Protocol", "Inference", "Networking", "Reverse Engineering", "Security"]
