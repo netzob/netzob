@@ -29,13 +29,12 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import uuid
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+import inspect
+from netzob.Common.Plugins.PluginDecorators import mandatory_exec
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,10 +42,50 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 
 #+---------------------------------------------------------------------------+
-#| ImporterPlugin:
-#|     Abstract class for all the importer plugins
+#| PluginChecker:
+#|     Checks if plugin is valid
 #+---------------------------------------------------------------------------+
-class ImporterPlugin(NetzobPlugin):
+class PluginChecker(object):
 
-    def __init__(self, netzob):
-        NetzobPlugin.__init__(self, netzob)
+    @staticmethod
+    # The idea behind is "simple", we retrieve all the classes it implements
+    # and verify the mandatory methods
+    def isValidPlugin(pluginClass):
+        logging.debug("Verify the plugin class {0} is a valid plugin".format(pluginClass))
+        # First we retrieve its direct parents
+        parentClasses = pluginClass.__bases__
+
+        # We find which of its parent inherits from NetzobPlugin
+        parentPluginClasses = []
+        from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+        for parentClass in parentClasses:
+            if issubclass(parentClass, NetzobPlugin):
+                parentPluginClasses.append(parentClass)
+
+        # The class doesn't subclass NetzobPlugin
+        if len(parentPluginClasses) == 0:
+            logging.warning("Plugin {0} is not a Netzob Plugin".format(pluginClass))
+            return False
+
+        # We retrieve all the method of the plugin class
+        pluginMethods = inspect.getmembers(pluginClass, predicate=inspect.ismethod)
+
+        # Now we verify if all the plugin parent classes are valid
+        for parentPluginClass in parentPluginClasses:
+            # We retrieve all the methods of our parent
+            parentsMethods = inspect.getmembers(parentPluginClass, predicate=inspect.ismethod)
+
+            # we compare and verify all the required methods are implemented
+            for parentMethod in parentsMethods:
+                found = False
+                # Only methods marked as 'mandatory' are required
+                if parentMethod[1].__func__ == mandatory_exec:
+                    for pluginMethod in pluginMethods:
+                        if parentMethod[0] == pluginMethod[0] and parentMethod[1].__func__ != pluginMethod[1].__func__:
+                            found = True
+                            break
+                    if not found:
+                        logging.debug("Method {0} has not been found in plugin class.".format(parentMethod[0]))
+                        return False
+
+        return True

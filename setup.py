@@ -67,11 +67,9 @@ try:
                       'init_catalog': babel.init_catalog,
                       'update_catalog': babel.update_catalog})
 
-
     build.sub_commands.append(('compile_catalog', None))
 except ImportError:
     print "Info: Babel support unavailable, translations not available"
-
 
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
@@ -123,10 +121,10 @@ setup(
     cmdclass=CMD_CLASS,
     entry_points="""
         [netzob.plugins]
-            pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporter:PCAPImporter
+            fileImporter = netzob_plugins.Importers.FileImporter.FileImporterPlugin:FileImporterPlugin
         """,
     # Files that should be scanned by Babel (if available)
-    message_extractors = {
+    message_extractors={
         'src': [('**.py', 'python', None)]
         },
     )

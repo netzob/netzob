@@ -32,6 +32,7 @@ from gettext import gettext as _
 import gtk
 import pygtk
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 pygtk.require('2.0')
 import gobject
 import threading
@@ -70,7 +71,7 @@ class NetzobGui(gtk.Window):
         # Command line commands
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
-        
+
         gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
         gettext.textdomain("netzob")
 
@@ -120,7 +121,13 @@ class NetzobGui(gtk.Window):
         LoggingConfiguration().initializeLogging(self.currentWorkspace)
 
         # Now we load all the available plugins
-        NetzobPlugin.loadPlugins()
+        NetzobPlugin.loadPlugins(self)
+
+        for plugin in NetzobPlugin.getLoadedPlugins(ImporterPlugin):
+            plugin.setVal(500)
+
+        for plugin in NetzobPlugin.getLoadedPlugins(ImporterPlugin):
+            print plugin.getName()
 
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
@@ -137,20 +144,12 @@ class NetzobGui(gtk.Window):
         self.connect("destroy", self.destroy)
         main_vbox = gtk.VBox(False, spacing=0)
 
-        # Main menu
+        # Create and display the menu
         self.menu = Menu(self)
-        menubar = self.menu.getMenuBar()
-        main_vbox.pack_start(menubar, False, True, 0)
-
+        menubar = self.menu.getMenuBar(self)
+        menubar.show()
         self.menu.update()
-
-        # Progress Bar handling inside UI Header
-#        progressBox = gtk.VBox(False, 0)
-#        progressBox.set_border_width(0)
-#        align = gtk.Alignment(0.5, 0.5, 0, 0)
-#        progressBox.pack_start(align, False, False, 5)
-#        self.progressBar = gtk.ProgressBar()
-#        align.add(self.progressBar)
+        main_vbox.pack_start(menubar, False, True, 0)
 
         # Notebook definition
         self.notebook = gtk.Notebook()
