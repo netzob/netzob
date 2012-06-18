@@ -30,7 +30,10 @@
 #+---------------------------------------------------------------------------+
 import logging
 import uuid
+import random
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
+from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
+from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -42,18 +45,26 @@ from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 
 
 #+---------------------------------------------------------------------------+
-#| PCAPImporter:
+#| FileImporter: Import messages from files
 #+---------------------------------------------------------------------------+
-class PCAPImporter(ImporterPlugin):
+class FileImporterPlugin(ImporterPlugin):
 
-    __plugin_name__ = "PCAPImporter"
+    __plugin_name__ = "FileImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = "This is a PCAP Importer"
+    __plugin_description__ = "This is a File Importer"
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
-    def __init__(self):
-        # Generate a unique ID
-        self.id = uuid.uuid4()
+    def __init__(self, netzob):
+        ImporterPlugin.__init__(self, netzob)
+        self.entryPoints = []
+        # create the menu entry point
+        self.entryPoints.append(GlobalMenuEntryPoint(self.getNetzob()))
 
     def getName(self):
-        return "none"
+        return self.__plugin_name__
+
+    def getEntryPoints(self):
+        return self.entryPoints
+
+    def setVal(self, val):
+        self.val = val

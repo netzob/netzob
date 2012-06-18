@@ -29,8 +29,11 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import uuid
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
+import gtk
+from gettext import gettext as _
+from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
+from netzob.Common.Menu import Menu
+from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -42,18 +45,18 @@ from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 
 
 #+---------------------------------------------------------------------------+
-#| PCAPImporter:
+#| GlobalMenuEntryPoint: Entry points in the menu for plugin importer
 #+---------------------------------------------------------------------------+
-class PCAPImporter(ImporterPlugin):
+class GlobalMenuEntryPoint(GlobalMenuExtension):
 
-    __plugin_name__ = "PCAPImporter"
-    __plugin_version__ = "1.0"
-    __plugin_description__ = "This is a PCAP Importer"
-    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    def __init__(self, netzob):
+        self.netzob = netzob
 
-    def __init__(self):
-        # Generate a unique ID
-        self.id = uuid.uuid4()
+    def getMenuEntries(self):
+        menuEntries = [
+                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
+                       ]
+        return menuEntries
 
-    def getName(self):
-        return "none"
+    def executeAction(self, widget, data):
+        FileImportController(self.netzob)
