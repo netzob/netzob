@@ -49,6 +49,7 @@ from netzob.Import.ThirdPartyImport import ThirdPartyImport
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
+from netzob.UI.Common.AboutDialog import AboutDialog
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
 #from netzob.UI.Import.Controllers.FileImportController import FileImportController
@@ -59,7 +60,6 @@ from netzob.UI.Export.Controllers.TextExportController import TextExportControll
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.TraceManager import TraceManager
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
-from netzob import release
 
 
 #+---------------------------------------------------------------------------+
@@ -161,10 +161,10 @@ class Menu(object):
             (Menu.PATH_PROJECT_EXPORTPROJECT_TEXT, None, self.exportTextAction, 0, None),
             # VIEW
             (Menu.PATH_VIEWS, None, None, 0, "<Branch>"),
-            (Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE, None, self.displaySymbolStructureAction, 0, None),
-            (Menu.PATH_VIEWS_DISPLAYMESSAGES, None, self.displayMessagesAction, 0, None),
-            (Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS, None, self.displaySearchAction, 0, None),
-            (Menu.PATH_VIEWS_DISPLAYPROPERTIES, None, self.displayPropertiesAction, 0, None),
+            (Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE, None, self.displaySymbolStructureAction, 0, "<CheckItem>"),
+            (Menu.PATH_VIEWS_DISPLAYMESSAGES, None, self.displayMessagesAction, 0, "<CheckItem>"),
+            (Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS, None, self.displaySearchAction, 0, "<CheckItem>"),
+            (Menu.PATH_VIEWS_DISPLAYPROPERTIES, None, self.displayPropertiesAction, 0, "<CheckItem>"),
 
             # HELP
             (Menu.PATH_HELP, None, None, 0, "<LastBranch>"),
@@ -267,20 +267,7 @@ class Menu(object):
         self.item_factory = item_factory
 
     def aboutDialogAction(self, widget, data):
-        about = gtk.AboutDialog()
-        about.set_program_name(release.appname)
-        about.set_version(release.version)
-        about.set_copyright(release.copyright)
-        if release.versionName != None:
-            about.set_comments("--{0}--\n{1}".format(release.versionName, release.description))
-        else:
-            about.set_comments(release.description)
-        about.set_website(release.url)
-        about.set_translator_credits(release.translator_credits)
-        logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
-        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
-        about.run()
-        about.destroy()
+        AboutDialog()
 
     #+----------------------------------------------
     #| Called when user save the current project
@@ -445,7 +432,8 @@ class Menu(object):
     #+----------------------------------------------
     def displaySymbolStructureAction(self, widget, data):
         if self.netzob.getCurrentProject() != None:
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, self.displaySymbolStructure.get_active())
+            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE).get_active()
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, isActive)
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
@@ -453,7 +441,8 @@ class Menu(object):
     #+----------------------------------------------
     def displayMessagesAction(self, widget, data):
         if self.netzob.getCurrentProject() != None:
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, self.displayMessages.get_active())
+            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYMESSAGES).get_active()
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, isActive)
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
@@ -461,7 +450,7 @@ class Menu(object):
     #+----------------------------------------------
     def displayConsoleAction(self, widget, data):
         if self.netzob.getCurrentProject() != None:
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_CONSOLE, self.displayConsole.get_active())
+            pass
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
@@ -469,7 +458,8 @@ class Menu(object):
     #+----------------------------------------------
     def displaySearchAction(self, widget, data):
         if self.netzob.getCurrentProject() != None:
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, self.displaySearchView.get_active())
+            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS).get_active()
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, isActive)
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
@@ -477,7 +467,8 @@ class Menu(object):
     #+----------------------------------------------
     def displayPropertiesAction(self, widget, data):
         if self.netzob.getCurrentProject() != None:
-            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, self.displayPropertiesView.get_active())
+            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYPROPERTIES).get_active()
+            self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, isActive)
         self.netzob.updateCurrentPanel()
 
     def createProjectAction(self, widget, data):

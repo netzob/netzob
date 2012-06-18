@@ -145,6 +145,7 @@ class NetzobGui(gtk.Window):
         main_vbox = gtk.VBox(False, spacing=0)
 
         # Create and display the menu
+
         self.menu = Menu(self)
         menubar = self.menu.getMenuBar(self)
         menubar.show()
