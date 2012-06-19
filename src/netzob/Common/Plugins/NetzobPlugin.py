@@ -73,6 +73,18 @@ class NetzobPlugin(object):
         raise NotImplementedError("The plugin class doesn't implement method 'getName'")
 
     @mandatory
+    def getVersion(self):
+        raise NotImplementedError("The plugin class doesn't implement method 'getVersion'")
+
+    @mandatory
+    def getDescription(self):
+        raise NotImplementedError("The plugin class doesn't implement method 'getDescription'")
+
+    @mandatory
+    def getAuthor(self):
+        raise NotImplementedError("The plugin class doesn't implement method 'getAuthor'")
+
+    @mandatory
     def getEntryPoints(self):
         raise NotImplementedError("The plugin class doesn't implement method 'getEntryPoints'")
 
@@ -114,11 +126,12 @@ class NetzobPlugin(object):
         logging.debug("Get plugin by extension")
         for plugin in NetzobPlugin.getLoadedPlugins(NetzobPlugin):
             try:
-                for pluginExtensionClass in plugin.getEntryPoints():
-                    if issubclass(pluginExtensionClass.__class__, extensionClass):
-                        pluginExtensions.append(pluginExtensionClass)
-                    else:
-                        logging.debug("oups not {0}".format(pluginExtensionClass))
+                if plugin.getEntryPoints() != None:
+                    for pluginExtensionClass in plugin.getEntryPoints():
+                        if issubclass(pluginExtensionClass.__class__, extensionClass):
+                            pluginExtensions.append(pluginExtensionClass)
+                        else:
+                            logging.debug("oups not {0}".format(pluginExtensionClass))
             except Exception, e:
                 logging.debug("Error while loading an extension : {0}".format(e))
 
@@ -138,7 +151,7 @@ class NetzobPlugin(object):
                     instanciatedPlugin = plugin_class(netzob)
                     # We add a flag on it
                     setattr(instanciatedPlugin, NetzobPlugin.PLUGIN_FLAG_REJECTED, False)
-                    logging.debug("Plugin {0} loaded.".format(plugin_class.__plugin_name__))
+                    logging.debug("Plugin {0} (v.{1}) loaded.".format(instanciatedPlugin.getName(), instanciatedPlugin.getVersion()))
             except Exception, e:
                 logging.warning("Impossible to load plugin declared in entrypoint {0} ({1}).".format(entrypoint, e))
         logging.debug("Plugins are loaded.")
@@ -146,4 +159,4 @@ class NetzobPlugin(object):
     @staticmethod
     def unloadPlugin(pluginClass):
         logging.debug("Unloading plugin {0}".format(pluginClass))
-        setattr(pluginClass, "rejected", True)
+        setattr(pluginClass, NetzobPlugin.PLUGIN_FLAG_REJECTED, True)

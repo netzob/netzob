@@ -123,12 +123,6 @@ class NetzobGui(gtk.Window):
         # Now we load all the available plugins
         NetzobPlugin.loadPlugins(self)
 
-        for plugin in NetzobPlugin.getLoadedPlugins(ImporterPlugin):
-            plugin.setVal(500)
-
-        for plugin in NetzobPlugin.getLoadedPlugins(ImporterPlugin):
-            print plugin.getName()
-
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.py')
         self.log.info(_("Starting netzob"))
