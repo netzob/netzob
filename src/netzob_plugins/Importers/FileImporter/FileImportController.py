@@ -38,8 +38,8 @@ import os
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Import.FileImport import FileImport
-from netzob.UI.Import.Views.FileImportView import FileImportView
+from netzob_plugins.Importers.FileImporter.FileImport import FileImport
+from netzob_plugins.Importers.FileImporter.FileImportView import FileImportView
 
 
 #+----------------------------------------------

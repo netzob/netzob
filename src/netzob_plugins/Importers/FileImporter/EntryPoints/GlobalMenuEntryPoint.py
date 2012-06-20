@@ -29,13 +29,15 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import uuid
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+import gtk
+from gettext import gettext as _
+from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
+from netzob.Common.Menu import Menu
+from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,10 +45,18 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 
 #+---------------------------------------------------------------------------+
-#| ImporterPlugin:
-#|     Abstract class for all the importer plugins
+#| GlobalMenuEntryPoint: Entry points in the menu for plugin importer
 #+---------------------------------------------------------------------------+
-class ImporterPlugin(NetzobPlugin):
+class GlobalMenuEntryPoint(GlobalMenuExtension):
 
     def __init__(self, netzob):
-        NetzobPlugin.__init__(self, netzob)
+        self.netzob = netzob
+
+    def getMenuEntries(self):
+        menuEntries = [
+                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
+                       ]
+        return menuEntries
+
+    def executeAction(self, widget, data):
+        FileImportController(self.netzob)

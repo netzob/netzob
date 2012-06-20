@@ -25,28 +25,35 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------------------------------------+
-#| Standard library imports
-#+---------------------------------------------------------------------------+
-import logging
-import uuid
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports
-#+---------------------------------------------------------------------------+
-
-
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
+#+----------------------------------------------
+#| Global Imports
+#+----------------------------------------------
+import gtk
+import pygtk
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+pygtk.require('2.0')
+import os
+from netzob import release
 
 
-#+---------------------------------------------------------------------------+
-#| ImporterPlugin:
-#|     Abstract class for all the importer plugins
-#+---------------------------------------------------------------------------+
-class ImporterPlugin(NetzobPlugin):
+#+----------------------------------------------
+#| AboutDialog:
+#|     Shows the about dialog of Netzob
+#+----------------------------------------------
+class AboutDialog:
 
-    def __init__(self, netzob):
-        NetzobPlugin.__init__(self, netzob)
+    def __init__(self):
+        about = gtk.AboutDialog()
+        about.set_program_name(release.appname)
+        about.set_version(release.version)
+        about.set_copyright(release.copyright)
+        if release.versionName != None:
+            about.set_comments("--{0}--\n{1}".format(release.versionName, release.description))
+        else:
+            about.set_comments(release.description)
+        about.set_website(release.url)
+        about.set_translator_credits(release.translator_credits)
+        logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
+        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
+        about.run()
+        about.destroy()

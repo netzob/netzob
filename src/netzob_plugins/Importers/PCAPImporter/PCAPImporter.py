@@ -43,7 +43,6 @@ from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 
 #+---------------------------------------------------------------------------+
 #| PCAPImporter:
-#|     
 #+---------------------------------------------------------------------------+
 class PCAPImporter(ImporterPlugin):
 
@@ -55,3 +54,6 @@ class PCAPImporter(ImporterPlugin):
     def __init__(self):
         # Generate a unique ID
         self.id = uuid.uuid4()
+
+    def getName(self):
+        return "none"

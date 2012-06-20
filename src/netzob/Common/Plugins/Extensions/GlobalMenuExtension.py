@@ -30,12 +30,11 @@
 #+---------------------------------------------------------------------------+
 import logging
 import uuid
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,10 +42,10 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 
 #+---------------------------------------------------------------------------+
-#| ImporterPlugin:
-#|     Abstract class for all the importer plugins
+#| GlobalMenuExtension:
+#|     Every plugin which wants to register as a global menu extension must subclass this
 #+---------------------------------------------------------------------------+
-class ImporterPlugin(NetzobPlugin):
+class GlobalMenuExtension(NetzobExtension):
 
-    def __init__(self, netzob):
-        NetzobPlugin.__init__(self, netzob)
+    def __init__(self):
+        pass

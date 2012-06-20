@@ -28,14 +28,10 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import uuid
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,10 +39,14 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
 
 #+---------------------------------------------------------------------------+
-#| ImporterPlugin:
-#|     Abstract class for all the importer plugins
+#| PluginDecorators:
+#|     Describes the various decorators Netzob's plugins can use
 #+---------------------------------------------------------------------------+
-class ImporterPlugin(NetzobPlugin):
 
-    def __init__(self, netzob):
-        NetzobPlugin.__init__(self, netzob)
+# Should be used to set a method as mandatory
+def mandatory(f):
+    return mandatory_exec
+
+
+def mandatory_exec(*args, **kwargs):
+        f(*args, **kwargs)
