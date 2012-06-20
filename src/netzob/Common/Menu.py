@@ -378,7 +378,7 @@ class Menu(object):
     #+----------------------------------------------
     #| Called when user wants to import PCAP file
     #+----------------------------------------------
-    def importPcapAction(self, widget):
+    def importPcapAction(self, widget, data):
         pcapImportPanel = PcapImportController(self.netzob)
 
     #+----------------------------------------------
