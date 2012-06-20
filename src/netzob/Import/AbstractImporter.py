@@ -51,6 +51,7 @@ class AbstractImporter:
 
     def __init__(self, type):
         self.type = type
+        self.messages = []
 
     #+-----------------------------------------------------------------------+
     #| saveMessagesInProject:
@@ -96,3 +97,16 @@ class AbstractImporter:
 
         # Now we save the workspace
         workspace.saveConfigFile()
+
+    def getMessageByID(self, strID):
+        selectedMessage = None
+        for message in self.messages:
+            if str(message.getID()) == strID:
+                selectedMessage = message
+
+        return selectedMessage
+
+    def saveMessages(self):
+        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(),
+                                   self.netzob.getCurrentProject(),
+                                   self.messages)

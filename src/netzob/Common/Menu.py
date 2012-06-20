@@ -44,7 +44,7 @@ from netzob.Common.Project import Project
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
-from netzob.Import.PcapImport import PcapImport
+from netzob.UI.Import.Controllers.PcapImportController import PcapImportController
 from netzob.Import.ThirdPartyImport import ThirdPartyImport
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
@@ -413,7 +413,7 @@ class Menu(object):
     #| Called when user wants to import PCAP file
     #+----------------------------------------------
     def importPcapAction(self, widget):
-        pcapImportPanel = PcapImport(self.netzob)
+        pcapImportPanel = PcapImportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import IPC flow

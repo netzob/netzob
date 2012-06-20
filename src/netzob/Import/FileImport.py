@@ -59,17 +59,7 @@ class FileImport(AbstractImporter):
 
         # create the environmental dependancy object
         self.envDeps = EnvironmentalDependencies()
-
-        self.messages = []
         self.filesToBeImported = []
-
-    def getMessageByID(self, strID):
-        selectedMessage = None
-        for message in self.messages:
-            if str(message.getID()) == strID:
-                selectedMessage = message
-
-        return selectedMessage
 
     #+----------------------------------------------
     #| Retrieve messages from files
@@ -129,7 +119,3 @@ class FileImport(AbstractImporter):
         self.messages = []
         self.messages.extend(new_messages)
 
-    def saveMessages(self):
-        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(),
-                                   self.netzob.getCurrentProject(),
-                                   self.messages)
