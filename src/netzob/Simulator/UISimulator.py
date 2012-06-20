@@ -121,7 +121,7 @@ class UISimulator:
         # Type of actor
         label_typeOfActor = Gtk.Label(label=_("Type of actor:"))
         label_typeOfActor.show()
-        self.combo_typeOfActor = Gtk.combo_box_entry_new_text()
+        self.combo_typeOfActor = Gtk.ComboBoxText.new_with_entry()
         self.combo_typeOfActor.set_model(Gtk.ListStore(str))
         self.combo_typeOfActor.append_text("CLIENT")
         self.combo_typeOfActor.append_text("MASTER")
@@ -138,7 +138,7 @@ class UISimulator:
         # Network layer actor
         label_typeOfNetworkActor = Gtk.Label(label=_("Network layer:"))
         label_typeOfNetworkActor.show()
-        self.combo_typeOfNetworkActor = Gtk.combo_box_entry_new_text()
+        self.combo_typeOfNetworkActor = Gtk.ComboBoxText.new_with_entry()
         self.combo_typeOfNetworkActor.set_model(Gtk.ListStore(str))
         self.combo_typeOfNetworkActor.append_text("CLIENT")
         self.combo_typeOfNetworkActor.append_text("SERVER")
@@ -155,7 +155,7 @@ class UISimulator:
         # Network protocol
         label_protocolOfNetworkActor = Gtk.Label(label=_("Network Protocol:"))
         label_protocolOfNetworkActor.show()
-        self.combo_protocolOfNetworkActor = Gtk.combo_box_entry_new_text()
+        self.combo_protocolOfNetworkActor = Gtk.ComboBoxText.new_with_entry()
         self.combo_protocolOfNetworkActor.set_model(Gtk.ListStore(str))
         self.combo_protocolOfNetworkActor.append_text(_("TCP"))
         self.combo_protocolOfNetworkActor.append_text(_("UDP"))

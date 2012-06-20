@@ -76,7 +76,7 @@ class AutomaticGrammarInferenceView(object):
         # Infer a client or a server
         targetOfInferenceLabel = Gtk.Label(label=_("Target:"))
         targetOfInferenceLabel.show()
-        self.targetOfInferenceCombo = Gtk.ComboBox()
+        self.targetOfInferenceCombo = Gtk.ComboBoxText()
         self.targetOfInferenceCombo.set_model(Gtk.ListStore(str))
         targetOfInferenceComboCell = Gtk.CellRendererText()
         self.targetOfInferenceCombo.pack_start(targetOfInferenceComboCell, True)
@@ -98,7 +98,7 @@ class AutomaticGrammarInferenceView(object):
         # Protocol of the server
         ProtocolLabel = Gtk.Label(label=_("Protocol:"))
         ProtocolLabel.show()
-        self.combo_protocolOfNetworkActor = Gtk.combo_box_entry_new_text()
+        self.combo_protocolOfNetworkActor = Gtk.ComboBoxText.new_with_entry()
         self.combo_protocolOfNetworkActor.set_model(Gtk.ListStore(str))
         self.combo_protocolOfNetworkActor.append_text(_("TCP"))
         self.combo_protocolOfNetworkActor.append_text(_("UDP"))

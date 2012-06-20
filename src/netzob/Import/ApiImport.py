@@ -100,7 +100,7 @@ class ApiImport:
         but = Gtk.Button(_("Update processes list"))
         but.show()
         but.connect("clicked", self.updateProcessList_cb)
-        self.processStore = Gtk.combo_box_entry_new_text()
+        self.processStore = Gtk.ComboBoxText.new_with_entry()
         self.processStore.show()
         self.processStore.set_size_request(500, -1)
         self.processStore.set_model(Gtk.ListStore(str))
@@ -144,7 +144,7 @@ class ApiImport:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of prototypes
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.dllStore = Gtk.combo_box_entry_new_text()
+        self.dllStore = Gtk.ComboBoxText.new_with_entry()
         self.dllStore.show()
         self.dllStore.set_size_request(300, -1)
         self.dllStore.set_model(Gtk.ListStore(str))

@@ -691,7 +691,7 @@ class VariableView(object):
         # Format Value
         formatValueLabel = Gtk.Label(label=_("Format:"))
         formatValueLabel.show()
-        formatValueCombo = Gtk.combo_box_entry_new_text()
+        formatValueCombo = Gtk.ComboBoxText.new_with_entry()
         formatValueCombo.show()
         formatValueComboStore = Gtk.ListStore(str)  # format name
         formatValueCombo.set_model(formatValueComboStore)
@@ -765,7 +765,7 @@ class VariableView(object):
         # Selection of the variable
         varLabel = Gtk.Label(label=_("Referenced Variable:"))
         varLabel.show()
-        self.varCombo = Gtk.combo_box_entry_new_text()
+        self.varCombo = Gtk.ComboBoxText.new_with_entry()
         self.varCombo.show()
         self.varStore = Gtk.ListStore(str, str)  # description, id,
         self.varCombo.set_model(self.varStore)

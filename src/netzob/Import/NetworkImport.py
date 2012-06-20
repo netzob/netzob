@@ -101,7 +101,7 @@ class NetworkImport(AbstractImporter):
         # Network devices
         label = Gtk.Label(label=_("Network devices"))
         label.show()
-        listNetworkDevice = Gtk.combo_box_entry_new_text()
+        listNetworkDevice = Gtk.ComboBoxText.new_with_entry()
         listNetworkDevice.show()
         listNetworkDevice.set_size_request(300, -1)
         listNetworkDevice.set_model(Gtk.ListStore(str))

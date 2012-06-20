@@ -80,7 +80,7 @@ def NetzobFrame(text):
 #| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
 def NetzobComboBoxEntry():
-    combo = Gtk.combo_box_entry_new_text()
+    combo = Gtk.ComboBoxText.new_with_entry()
     combo.show()
     combo.set_model(Gtk.ListStore(str))
     cell = combo.get_cells()[0]  # Get the cellrenderer

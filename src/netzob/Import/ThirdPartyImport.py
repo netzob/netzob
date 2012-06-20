@@ -132,7 +132,7 @@ class ThirdPartyImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         label_thirdParty = Gtk.Label(label="Select a third party")
         label_thirdParty.show()
-        self.thirdPartyStore = Gtk.combo_box_entry_new_text()
+        self.thirdPartyStore = Gtk.ComboBoxText.new_with_entry()
         self.thirdPartyStore.show()
         self.thirdPartyStore.set_size_request(500, -1)
         self.thirdPartyStore.set_model(Gtk.ListStore(str))

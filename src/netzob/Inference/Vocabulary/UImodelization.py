@@ -334,7 +334,7 @@ class UImodelization:
         table.attach(self.searchEntry, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Combo to select the type of the input
-        self.typeCombo = Gtk.combo_box_entry_new_text()
+        self.typeCombo = Gtk.ComboBoxText.new_with_entry()
         self.typeCombo.show()
         self.typeStore = Gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
@@ -420,7 +420,7 @@ class UImodelization:
 
         ## Similarity threshold
         label = NetzobLabel(_("Similarity threshold:"))
-        combo = Gtk.combo_box_entry_new_text()
+        combo = Gtk.ComboBoxText.new_with_entry()
         combo.set_model(Gtk.ListStore(str))
         combo.connect("changed", self.updateScoreLimit)
         possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
@@ -436,7 +436,7 @@ class UImodelization:
 
         ## UnitSize for alignment
         label = NetzobLabel(_("Unit size (in bits):"))
-        comboUnitSize = Gtk.combo_box_entry_new_text()
+        comboUnitSize = Gtk.ComboBoxText.new_with_entry()
         comboUnitSize.set_model(Gtk.ListStore(str))
         possible_choices = [8, 4]
 
@@ -579,7 +579,7 @@ class UImodelization:
         panel.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
-        typeCombo = Gtk.combo_box_entry_new_text()
+        typeCombo = Gtk.ComboBoxText.new_with_entry()
         typeCombo.show()
         typeStore = Gtk.ListStore(str)
         typeCombo.set_model(typeStore)
@@ -1416,7 +1416,7 @@ class UImodelization:
 
         # Add to an existing trace
         label = NetzobLabel(_("Add to an existing trace"))
-        entry = Gtk.combo_box_entry_new_text()
+        entry = Gtk.ComboBoxText.new_with_entry()
         entry.show()
         entry.set_size_request(300, -1)
         entry.set_model(Gtk.ListStore(str))
@@ -2174,7 +2174,7 @@ class UImodelization:
         searchEntry.show()
 
         # Combo to select the type of the input
-        typeCombo = Gtk.combo_box_entry_new_text()
+        typeCombo = Gtk.ComboBoxText.new_with_entry()
         typeCombo.show()
         typeStore = Gtk.ListStore(str)
         typeCombo.set_model(typeStore)

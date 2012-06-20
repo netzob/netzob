@@ -68,7 +68,7 @@ class SearchView(object):
         self.searchEntry.show()
 
         # Combo to select the type of the input
-        self.typeCombo = Gtk.combo_box_entry_new_text()
+        self.typeCombo = Gtk.ComboBoxText.new_with_entry()
         self.typeCombo.show()
         self.typeStore = Gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
