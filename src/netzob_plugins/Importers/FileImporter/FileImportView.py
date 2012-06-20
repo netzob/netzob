@@ -46,7 +46,7 @@ class FileImportView():
     def __init__(self):
         panel = self.buildPanel()
 
-        self.dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Import file"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(panel, True, True, 0)
         self.dialog.set_size_request(1000, 600)
@@ -61,7 +61,7 @@ class FileImportView():
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a file
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.butSelectFiles = gtk.Button("Select file(s)")
+        self.butSelectFiles = gtk.Button(_("Select file(s)"))
         self.butSelectFiles.show()
         self.entryFilepath = gtk.Entry()
         self.entryFilepath.set_text("")
@@ -72,7 +72,7 @@ class FileImportView():
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Separator
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_separator = gtk.Label("HEX line-separator (ex: 0a) :")
+        label_separator = gtk.Label(_("HEX line-separator (ex: 0a) :"))
         label_separator.show()
         self.entrySeparator = gtk.Entry()
         self.entrySeparator.set_text("")
@@ -102,7 +102,7 @@ class FileImportView():
         self.lineView.get_selection().set_mode(gtk.SELECTION_SINGLE)
         cell = gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn('Message ID')
+        column = gtk.TreeViewColumn(_("Message ID"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         self.lineView.append_column(column)
@@ -114,7 +114,7 @@ class FileImportView():
         panel.attach(scroll2, 6, 8, 0, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
-        self.butValidateMessages = gtk.Button(label="Import")
+        self.butValidateMessages = gtk.Button(label=_("Import"))
         self.butValidateMessages.show()
         panel.attach(self.butValidateMessages, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 

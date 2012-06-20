@@ -51,7 +51,7 @@ class FileImporterPlugin(ImporterPlugin):
 
     __plugin_name__ = "FileImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = "Provide the possibility to import messages from any file binary or ascii."
+    __plugin_description__ = _("Provide the possibility to import messages from any file binary or ascii.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     def __init__(self, netzob):

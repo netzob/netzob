@@ -92,7 +92,7 @@ class FileImportController():
         # Search for the selected message
         selectedMessage = self.model.getMessageByID(idMessage)
         if selectedMessage == None:
-            self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
+            self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum?"))
             return
 
         self.displayMessage(selectedMessage)
@@ -103,10 +103,10 @@ class FileImportController():
     def importFile_cb(self, button):
         # We ask the confirmation
         dialog = gtk.MessageDialog(None,
-                               gtk.DIALOG_DESTROY_WITH_PARENT,
-                               gtk.MESSAGE_QUESTION,
-                               gtk.BUTTONS_OK_CANCEL,
-                               "Are you sure to import the " + str(len(self.model.messages)) + " computed messages in project " + self.netzob.getCurrentProject().getName() + ".")
+                                   gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_QUESTION,
+                                   gtk.BUTTONS_OK_CANCEL,
+                                   _("Are you sure to import the {0} computed messages in project {1}?").format(str(len(self.model.messages)), self.netzob.getCurrentProject().getName()))
 
         # Checkbox for session
         vbox = gtk.VBox()
@@ -114,7 +114,7 @@ class FileImportController():
         hbox = gtk.HBox()
         hbox.show()
         vbox.pack_start(hbox)
-        isSession = gtk.CheckButton("Check if this trace is a session")
+        isSession = gtk.CheckButton(_("Check if this trace is a session"))
         isSession.set_active(False)
         isSession.show()
 #        hbox.pack_start(isSession)
@@ -134,7 +134,7 @@ class FileImportController():
     #+----------------------------------------------
     def selectFiles_cb(self, button):
         aFile = ""
-        chooser = gtk.FileChooserDialog(title="Select one or multiple file", action=gtk.FILE_CHOOSER_ACTION_OPEN,
+        chooser = gtk.FileChooserDialog(title=_("Select one or multiple file"), action=gtk.FILE_CHOOSER_ACTION_OPEN,
                                         buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_select_multiple(True)
 
