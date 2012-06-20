@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
@@ -168,8 +168,7 @@ class NetzobGui(Gtk.Window):
             self.notebook.append_page(page[1].panel, Gtk.Label(label=page[0]))
 
         # Initialize a clipboard object
-        self.clipboard = (Gtk.Clipboard(Gdk.Display.get_default(),
-                                        "CLIPBOARD"))
+        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         # Show every widgets
         self.notebook.show()
