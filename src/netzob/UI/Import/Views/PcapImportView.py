@@ -47,7 +47,7 @@ class PcapImportView():
     def __init__(self):
         panel = self.buildPanel()
 
-        self.dialog = gtk.Dialog(title="Import file", flags=0, buttons=None)
+        self.dialog = gtk.Dialog(title=_("Import file"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(panel, True, True, 0)
         self.dialog.set_size_request(1000, 500)
@@ -60,7 +60,7 @@ class PcapImportView():
         panel.show()
 
         # FIle selection
-        self.butSelectFile = gtk.Button("Import PCAP")
+        self.butSelectFile = gtk.Button(_("Import PCAP"))
         self.butSelectFile.show()
         self.labelFile = gtk.Label("...")
         self.labelFile.show()
@@ -68,7 +68,7 @@ class PcapImportView():
         panel.attach(self.labelFile, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Scapy filter
-        label = gtk.Label("Scapy filter")
+        label = gtk.Label(_("Scapy filter"))
 #        label.show()  # TODO : implement the filter
         self.entryScapyFilter = gtk.Entry()
         self.entryScapyFilter.set_width_chars(50)
@@ -78,7 +78,7 @@ class PcapImportView():
         panel.attach(self.entryScapyFilter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Sniff launching button
-        self.butLaunchSniff = gtk.Button(label="Import traffic")
+        self.butLaunchSniff = gtk.Button(label=_("Import traffic"))
         self.butLaunchSniff.show()
         panel.attach(self.butLaunchSniff, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
@@ -90,27 +90,27 @@ class PcapImportView():
         self.treeviewPackets.set_size_request(500, -1)
         cell = gtk.CellRendererText()
         # Col proto
-        column = gtk.TreeViewColumn('Proto')
+        column = gtk.TreeViewColumn(_("Proto"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         self.treeviewPackets.append_column(column)
         # Col IP.src
-        column = gtk.TreeViewColumn('IP source')
+        column = gtk.TreeViewColumn(_("IP source"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         self.treeviewPackets.append_column(column)
         # Col IP.dst
-        column = gtk.TreeViewColumn('IP dest')
+        column = gtk.TreeViewColumn(_("IP dest"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=3)
         self.treeviewPackets.append_column(column)
         # Col {TCP,UDP}.sport
-        column = gtk.TreeViewColumn('sport')
+        column = gtk.TreeViewColumn(_("sport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=4)
         self.treeviewPackets.append_column(column)
         # Col {TCP,UDP}.dport
-        column = gtk.TreeViewColumn('dport')
+        column = gtk.TreeViewColumn(_("dport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=5)
         self.treeviewPackets.append_column(column)
@@ -120,7 +120,7 @@ class PcapImportView():
         scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         panel.attach(scroll, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
-        self.butSaveSelectedPackets = gtk.Button(label="Save selected packets")
+        self.butSaveSelectedPackets = gtk.Button(label=_("Save selected packets"))
         self.butSaveSelectedPackets.show()
         panel.attach(self.butSaveSelectedPackets, 1, 2, 4, 5, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 

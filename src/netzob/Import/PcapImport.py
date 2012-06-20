@@ -80,9 +80,9 @@ class PcapImport(AbstractImporter):
             fp = open(pcapFile)
             fp.close()
         except IOError, e:
-            errorMessage = "Error while trying to open the file " + pcapFile + "."
+            errorMessage = _("Error while trying to open the file {0}.".format(pcapFile))
             if e.errno == errno.EACCES:
-                errorMessage = "Error while trying to open the file " + pcapFile + ", more permissions are required for reading it."
+                errorMessage = _("Error while trying to open the file {0}, more permissions are required for reading it.".format(pcapFile))
             logging.warn(errorMessage)
             return (False, errorMessage)
 
@@ -94,15 +94,15 @@ class PcapImport(AbstractImporter):
         try:
             reader.setfilter(filter)
         except:
-            errorMessage = "The provided filter is not valid (it should respects the BPF format"
+            errorMessage = _("The provided filter is not valid (it should respects the BPF format")
             self.log.warn(errorMessage)
             return (False, errorMessage)
 
-        self.log.info("Starting import from " + pcapFile + " (linktype:" + str(reader.datalink()) + ")")
+        self.log.info(_("Starting import from {0} (linktype:{0})").format(pcapFile, str(reader.datalink())))
         self.datalink = reader.datalink()
 
         if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
-            errorMessage = "This pcap cannot be imported since the layer 2 is not supported (" + str(self.datalink) + ")"
+            errorMessage = _("This pcap cannot be imported since the layer 2 is not supported ({0})".format(str(self.datalink)))
             return (False, errorMessage)
         else:
             # I don't see a better way to have synchronous rendering of the GUI
@@ -119,7 +119,7 @@ class PcapImport(AbstractImporter):
             layer2_decoder = Decoders.LinuxSLLDecoder()
         else:
             layer2_decoder = None
-            self.log.warn("Cannot import one of the provided packets since its layer2 cannot be parsed (datalink = " + str(self.datalink) + " has no decoder)")
+            self.log.warn(_("Cannot import one of the provided packets since its layer2 cannot be parsed (datalink = {0} has no decoder)").format(str(self.datalink)))
             return
 
         ip_decoder = Decoders.IPDecoder()

@@ -146,7 +146,8 @@ class PcapImportController():
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, "Are you sure to import the " + str(len(packetsToSave)) + " selected packets in project " + currentProject.getName() + ".")
+            gtk.BUTTONS_OK_CANCEL, _("Are you sure to import the {0} selected packets in project {0}.").format(str(len(packetsToSave)), currentProject.getName()))
+
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
