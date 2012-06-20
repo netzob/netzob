@@ -82,7 +82,9 @@ class TreeProcessesGenerator():
         lvcolumn.pack_start(cell, True)
         cell.set_property('background-set', True)
         cell.set_property('foreground-set', True)
-        lvcolumn.set_attributes(cell, text=0, foreground=2, background=3)
+        lvcolumn.add_attribute(cell, "text", 0)
+        lvcolumn.add_attribute(cell, "foreground", 2)
+        lvcolumn.add_attribute(cell, "background", 3)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
 

@@ -119,17 +119,17 @@ class ApiImport:
         # Col file descriptor
         column = Gtk.TreeViewColumn(_("Name"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         self.dllTreeview.append_column(column)
         # Col type
         column = Gtk.TreeViewColumn(_("Version"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.dllTreeview.append_column(column)
         # Col name
         column = Gtk.TreeViewColumn(_("Path"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         self.dllTreeview.append_column(column)
         self.dllTreeview.show()
 
@@ -185,17 +185,17 @@ class ApiImport:
         # Col fd
         column = Gtk.TreeViewColumn(_("Function"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col direction
         column = Gtk.TreeViewColumn(_("Parameter"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col Data
         column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)

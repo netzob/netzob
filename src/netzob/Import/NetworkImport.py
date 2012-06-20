@@ -164,27 +164,27 @@ class NetworkImport(AbstractImporter):
         # Col proto
         column = Gtk.TreeViewColumn(_("Proto"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col IP.src
         column = Gtk.TreeViewColumn(_("IP source"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col IP.dst
         column = Gtk.TreeViewColumn(_("IP dest"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         # Col {TCP,UDP}.sport
         column = Gtk.TreeViewColumn(_("sport"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=4)
+        column.add_attribute(cell, "text", 4)
         treeview.append_column(column)
         # Col {TCP,UDP}.dport
         column = Gtk.TreeViewColumn(_("dport"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=5)
+        column.add_attribute(cell, "text", 5)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)

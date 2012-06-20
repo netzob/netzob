@@ -80,7 +80,8 @@ class TreeSymbolGenerator(AbstractViewGenerator):
         cell = Gtk.CellRendererText()
         cell.set_property('background-set', True)
         self.lvcolumn.pack_start(cell, True)
-        self.lvcolumn.set_attributes(cell, markup=1, background=4)
+        self.lvcolumn.add_attribute(cell, "markup", 1)
+        self.lvcolumn.add_attribute(cell, "background", 4)
         self.treeview.append_column(self.lvcolumn)
         self.treeview.show()
 

@@ -127,15 +127,15 @@ class XMLImport(AbstractImporter):
         # Col file descriptor
         column = Gtk.TreeViewColumn('Message ID')
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         self.lineView.append_column(column)
         column = Gtk.TreeViewColumn('Type')
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.lineView.append_column(column)
         column = Gtk.TreeViewColumn('Content')
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         self.lineView.append_column(column)
         self.lineView.show()
 

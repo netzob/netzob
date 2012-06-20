@@ -96,7 +96,7 @@ class VariableView(object):
         self.lvcolumn.set_sort_column_id(1)
         cell = Gtk.CellRendererText()
         self.lvcolumn.pack_start(cell, True)
-        self.lvcolumn.set_attributes(cell, text=1)
+        self.lvcolumn.add_attribute(cell, "text", 1)
         self.treeview.append_column(self.lvcolumn)
         self.treeview.show()
 

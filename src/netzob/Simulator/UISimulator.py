@@ -234,7 +234,7 @@ class UISimulator:
         # main col
         column_listActiveActors_name = Gtk.TreeViewColumn(_("Active actors"))
         column_listActiveActors_name.pack_start(cell, True)
-        column_listActiveActors_name.set_attributes(cell, text=0)
+        column_listActiveActors_name.add_attribute(cell, "text", 0)
         treeview_listActiveActors.append_column(column_listActiveActors_name)
         treeview_listActiveActors.show()
         scroll_listActiveActors.add(treeview_listActiveActors)
@@ -262,15 +262,15 @@ class UISimulator:
         # col date
         column_inputs_date = Gtk.TreeViewColumn(_("Date"))
         column_inputs_date.pack_start(cell, True)
-        column_inputs_date.set_attributes(cell, text=0)
+        column_inputs_date.add_attribute(cell, "text", 0)
         # col message
         column_inputs_message = Gtk.TreeViewColumn(_("Received message"))
         column_inputs_message.pack_start(cell, True)
-        column_inputs_message.set_attributes(cell, text=1)
+        column_inputs_message.add_attribute(cell, "text", 1)
         # col symbol
         column_inputs_symbol = Gtk.TreeViewColumn(_("Symbol"))
         column_inputs_symbol.pack_start(cell, True)
-        column_inputs_symbol.set_attributes(cell, text=2)
+        column_inputs_symbol.add_attribute(cell, "text", 2)
         treeview_inputs.append_column(column_inputs_date)
         treeview_inputs.append_column(column_inputs_message)
         treeview_inputs.append_column(column_inputs_symbol)
@@ -300,15 +300,15 @@ class UISimulator:
         # col date
         column_outputs_date = Gtk.TreeViewColumn(_("Date"))
         column_outputs_date.pack_start(cell, True)
-        column_outputs_date.set_attributes(cell, text=0)
+        column_outputs_date.add_attribute(cell, "text", 0)
         # col message
         column_outputs_message = Gtk.TreeViewColumn(_("Emitted message"))
         column_outputs_message.pack_start(cell, True)
-        column_outputs_message.set_attributes(cell, text=1)
+        column_outputs_message.add_attribute(cell, "text", 1)
         # col symbol
         column_outputs_symbol = Gtk.TreeViewColumn(_("Emitted message"))
         column_outputs_symbol.pack_start(cell, True)
-        column_outputs_symbol.set_attributes(cell, text=2)
+        column_outputs_symbol.add_attribute(cell, "text", 2)
         treeview_outputs.append_column(column_outputs_date)
         treeview_outputs.append_column(column_outputs_message)
         treeview_outputs.append_column(column_outputs_symbol)
@@ -336,15 +336,15 @@ class UISimulator:
         # col name
         column_memory_name = Gtk.TreeViewColumn(_("Variable"))
         column_memory_name.pack_start(cell, True)
-        column_memory_name.set_attributes(cell, text=0)
+        column_memory_name.add_attribute(cell, "text", 0)
         # col type
         column_memory_type = Gtk.TreeViewColumn(_("Type"))
         column_memory_type.pack_start(cell, True)
-        column_memory_type.set_attributes(cell, text=1)
+        column_memory_type.add_attribute(cell, "text", 1)
         # col Value
         column_memory_value = Gtk.TreeViewColumn(_("Value"))
         column_memory_value.pack_start(cell, True)
-        column_memory_value.set_attributes(cell, text=2)
+        column_memory_value.add_attribute(cell, "text", 2)
 
         treeview_memory.append_column(column_memory_name)
         treeview_memory.append_column(column_memory_type)

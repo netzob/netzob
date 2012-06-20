@@ -105,7 +105,7 @@ class SessionManager:
         cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Symbols"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
 
         for symbol in symbols:
@@ -134,7 +134,7 @@ class SessionManager:
         cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Messages"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.treeview_symbol_messages.append_column(column)
 
         scroll = Gtk.ScrolledWindow()
@@ -164,7 +164,7 @@ class SessionManager:
         cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Sessions"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
 
         for session in sessions:
@@ -193,7 +193,7 @@ class SessionManager:
         cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Messages"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.treeview_session_messages.append_column(column)
 
         scroll = Gtk.ScrolledWindow()

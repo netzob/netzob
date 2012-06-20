@@ -142,12 +142,12 @@ class UIGrammarInference:
         # main col
         column_listStates_name = Gtk.TreeViewColumn(_("State name"))
         column_listStates_name.pack_start(cell, True)
-        column_listStates_name.set_attributes(cell, text=1)
+        column_listStates_name.add_attribute(cell, "text", 1)
         treeview_listStates.append_column(column_listStates_name)
         # main col
         column_listStates_type = Gtk.TreeViewColumn(_("State Type"))
         column_listStates_type.pack_start(cell, True)
-        column_listStates_type.set_attributes(cell, text=2)
+        column_listStates_type.add_attribute(cell, "text", 2)
         treeview_listStates.append_column(column_listStates_type)
         treeview_listStates.show()
         scroll_listStates.add(treeview_listStates)
@@ -174,22 +174,22 @@ class UIGrammarInference:
         # col : name of the transition
         column_listTransitions_name = Gtk.TreeViewColumn(_("Transition name"))
         column_listTransitions_name.pack_start(cell, True)
-        column_listTransitions_name.set_attributes(cell, text=1)
+        column_listTransitions_name.add_attribute(cell, "text", 1)
         treeview_listTransitions.append_column(column_listTransitions_name)
         # col : start state
         column_listTransitions_startState = Gtk.TreeViewColumn(_("Start state"))
         column_listTransitions_startState.pack_start(cell, True)
-        column_listTransitions_startState.set_attributes(cell, text=2)
+        column_listTransitions_startState.add_attribute(cell, "text", 2)
         treeview_listTransitions.append_column(column_listTransitions_startState)
         # col : end state
         column_listTransitions_endState = Gtk.TreeViewColumn(_("End state"))
         column_listTransitions_endState.pack_start(cell, True)
-        column_listTransitions_endState.set_attributes(cell, text=3)
+        column_listTransitions_endState.add_attribute(cell, "text", 3)
         treeview_listTransitions.append_column(column_listTransitions_endState)
         # col : type
         column_listTransitions_type = Gtk.TreeViewColumn(_("Type"))
         column_listTransitions_type.pack_start(cell, True)
-        column_listTransitions_type.set_attributes(cell, text=4)
+        column_listTransitions_type.add_attribute(cell, "text", 4)
         treeview_listTransitions.append_column(column_listTransitions_type)
         treeview_listTransitions.show()
         scroll_listTransitions.add(treeview_listTransitions)
@@ -476,17 +476,17 @@ class UIGrammarInference:
         # col : name of the symbol
         outputSymbolsTreeViewCol_name = Gtk.TreeViewColumn('Symbol name')
         outputSymbolsTreeViewCol_name.pack_start(outputSymbolsTreeViewCell, True)
-        outputSymbolsTreeViewCol_name.set_attributes(outputSymbolsTreeViewCell, text=2)
+        outputSymbolsTreeViewCol_name.add_attribute(outputSymbolsTreeViewCell, "text", 2)
         outputSymbolsTreeView.append_column(outputSymbolsTreeViewCol_name)
         # col : time of the symbol
         outputSymbolsTreeViewCol_time = Gtk.TreeViewColumn('time')
         outputSymbolsTreeViewCol_time.pack_start(outputSymbolsTreeViewCell, True)
-        outputSymbolsTreeViewCol_time.set_attributes(outputSymbolsTreeViewCell, text=3)
+        outputSymbolsTreeViewCol_time.add_attribute(outputSymbolsTreeViewCell, "text", 3)
         outputSymbolsTreeView.append_column(outputSymbolsTreeViewCol_time)
         # col : proba of the symbo2
         outputSymbolsTreeViewCol_proba = Gtk.TreeViewColumn('proba')
         outputSymbolsTreeViewCol_proba.pack_start(outputSymbolsTreeViewCell, True)
-        outputSymbolsTreeViewCol_proba.set_attributes(outputSymbolsTreeViewCell, text=4)
+        outputSymbolsTreeViewCol_proba.add_attribute(outputSymbolsTreeViewCell, "text", 4)
         outputSymbolsTreeView.append_column(outputSymbolsTreeViewCol_proba)
         outputSymbolsTreeView.show()
         outputSymbolsScroll.add(outputSymbolsTreeView)
@@ -830,12 +830,12 @@ class UIGrammarInference:
         # main col
         column_listOfMemOpex_transition = Gtk.TreeViewColumn(_("Transition ID"))
         column_listOfMemOpex_transition.pack_start(cell, True)
-        column_listOfMemOpex_transition.set_attributes(cell, text=1)
+        column_listOfMemOpex_transition.add_attribute(cell, "text", 1)
         treeview_listOfMemOpex.append_column(column_listOfMemOpex_transition)
         # Type col
         column_listOfMemOpex_type = Gtk.TreeViewColumn(_("Type"))
         column_listOfMemOpex_type.pack_start(cell, True)
-        column_listOfMemOpex_type.set_attributes(cell, text=2)
+        column_listOfMemOpex_type.add_attribute(cell, "text", 2)
         treeview_listOfMemOpex.append_column(column_listOfMemOpex_type)
         treeview_listOfMemOpex.show()
 
@@ -943,12 +943,12 @@ class UIGrammarInference:
 #        # main col
 #        column_listOfMemOpex_transition = Gtk.TreeViewColumn('Transition ID')
 #        column_listOfMemOpex_transition.pack_start(cell, True)
-#        column_listOfMemOpex_transition.set_attributes(cell, text=1)
+#        column_listOfMemOpex_transition.add_attribute(cell, "text", 1)
 #        treeview_listOfMemOpex.append_column(column_listOfMemOpex_transition)
 #        # Type col
 #        column_listOfMemOpex_type = Gtk.TreeViewColumn('Type')
 #        column_listOfMemOpex_type.pack_start(cell, True)
-#        column_listOfMemOpex_type.set_attributes(cell, text=2)
+#        column_listOfMemOpex_type.add_attribute(cell, "text", 2)
 #        treeview_listOfMemOpex.append_column(column_listOfMemOpex_type)
 #        treeview_listOfMemOpex.show()
 #

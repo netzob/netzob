@@ -171,12 +171,12 @@ class AutomaticGrammarInferenceView(object):
         # col : membership queries
         col_queries_querie = Gtk.TreeViewColumn(_("Membership queries"))
         col_queries_querie.pack_start(cell, True)
-        col_queries_querie.set_attributes(cell, text=0)
+        col_queries_querie.add_attribute(cell, "text", 0)
         treeview_queries.append_column(col_queries_querie)
         # col : responses to queries
         column_queries_responses = Gtk.TreeViewColumn(_("Responses"))
         column_queries_responses.pack_start(cell, True)
-        column_queries_responses.set_attributes(cell, text=1)
+        column_queries_responses.add_attribute(cell, "text", 1)
         treeview_queries.append_column(column_queries_responses)
         scroll_requests.add(treeview_queries)
         scroll_requests.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)

@@ -1531,7 +1531,7 @@ class UImodelization:
 
         column = Gtk.TreeViewColumn(_("Column ") + str(field.getIndex()))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
 
         treeview.append_column(column)
 
@@ -1590,15 +1590,15 @@ class UImodelization:
 
         columnProperty = Gtk.TreeViewColumn(_("Property"))
         columnProperty.pack_start(cell, True)
-        columnProperty.set_attributes(cell, text=0)
+        columnProperty.add_attribute(cell, "text", 0)
 
         columnType = Gtk.TreeViewColumn(_("Type"))
         columnType.pack_start(cell, True)
-        columnType.set_attributes(cell, text=1)
+        columnType.add_attribute(cell, "text", 1)
 
         columnValue = Gtk.TreeViewColumn(_("Value"))
         columnValue.pack_start(cell, True)
-        columnValue.set_attributes(cell, text=2)
+        columnValue.add_attribute(cell, "text", 2)
 
         treeview.append_column(columnProperty)
         treeview.append_column(columnType)
@@ -2930,7 +2930,7 @@ class UImodelization:
        treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
        column = Gtk.TreeViewColumn('Size field and related payload')
        column.pack_start(cell, True)
-       column.set_attributes(cell, text=6)
+       column.add_attribute(cell, "text", 6)
        treeview.append_column(column)
 
        # Chose button

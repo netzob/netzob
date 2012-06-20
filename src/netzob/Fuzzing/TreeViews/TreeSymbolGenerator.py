@@ -78,7 +78,9 @@ class TreeSymbolGenerator():
         lvcolumn.pack_start(cell, True)
         cell.set_property('background-set', True)
         cell.set_property('foreground-set', True)
-        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
+        lvcolumn.add_attribute(cell, "text", 1)
+        lvcolumn.add_attribute(cell, "foreground", 3)
+        lvcolumn.add_attribute(cell, "background", 4)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
 

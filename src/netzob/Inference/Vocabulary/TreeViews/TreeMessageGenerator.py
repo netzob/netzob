@@ -88,7 +88,10 @@ class TreeMessageGenerator(AbstractViewGenerator):
             lvcolumn.set_sort_column_id(i_col)
             lvcolumn.set_clickable(True)
             lvcolumn.pack_start(textCellRenderer, True)
-            lvcolumn.set_attributes(textCellRenderer, markup=i_col, background=1, weight=2, editable=3)
+            lvcolumn.add_attribute(textCellRenderer, "markup", i_col)
+            lvcolumn.add_attribute(textCellRenderer, "background", 1)
+            lvcolumn.add_attribute(textCellRenderer, "weight", 2)
+            lvcolumn.add_attribute(textCellRenderer, "editable", 3)
 
 #            self.treeview.append_column(lvcolumn)
             self.currentColumns.append(lvcolumn)

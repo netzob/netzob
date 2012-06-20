@@ -84,27 +84,27 @@ class TraceManager():
         # Col Date
         column = Gtk.TreeViewColumn(_("Date"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col Type
         column = Gtk.TreeViewColumn(_("Type"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col project name
         column = Gtk.TreeViewColumn(_("Original project"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         # Col Description
         column = Gtk.TreeViewColumn(_("Description"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=4)
+        column.add_attribute(cell, "text", 4)
         treeview.append_column(column)
         # Col Nb message
         column = Gtk.TreeViewColumn(_("Nb messages"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=5)
+        column.add_attribute(cell, "text", 5)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)
@@ -122,17 +122,17 @@ class TraceManager():
         # Col ID
         column = Gtk.TreeViewColumn(_("ID"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         treeviewMessage.append_column(column)
         # Col Type
         column = Gtk.TreeViewColumn(_("Timestamp"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeviewMessage.append_column(column)
         # Col project name
         column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeviewMessage.append_column(column)
 
         treeviewMessage.show()

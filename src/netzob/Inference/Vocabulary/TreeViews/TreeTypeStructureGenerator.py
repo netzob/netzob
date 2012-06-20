@@ -75,7 +75,7 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
             column = Gtk.TreeViewColumn(columns[i])
             column.set_resizable(True)
             column.pack_start(cell, True)
-            column.set_attributes(cell, markup=i)
+            column.add_attribute(cell, "markup", i)
             self.treeview.append_column(column)
         self.treeview.show()
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
