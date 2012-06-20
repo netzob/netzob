@@ -29,10 +29,10 @@
 #| Global Imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pango
-import pygtk
-pygtk.require('2.0')
+from gi.repository import Gtk
+from gi.repository import Pango
+import gi
+gi.require_version('Gtk', '3.0')
 
 
 #+---------------------------------------------------------------------------+
@@ -40,9 +40,9 @@ pygtk.require('2.0')
 #| @param text: the string of the label
 #+---------------------------------------------------------------------------+
 def NetzobLabel(text):
-    label = gtk.Label(text)
+    label = Gtk.Label(label=text)
     label.show()
-    label.modify_font(pango.FontDescription("sans 9"))
+    label.modify_font(Pango.FontDescription("sans 9"))
     return label
 
 
@@ -51,15 +51,15 @@ def NetzobLabel(text):
 #| @param text: the string of the button
 #+---------------------------------------------------------------------------+
 def NetzobButton(text):
-    but = gtk.Button(gtk.STOCK_OK)
+    but = Gtk.Button(Gtk.STOCK_OK)
     but.set_label(text)
     but.show()
     if but.get_use_stock():
-        label = but.child.get_children()[1]
-        label.modify_font(pango.FontDescription("sans 9"))
-    elif isinstance(but.child, gtk.Label):
-        label = but.child
-        label.modify_font(pango.FontDescription("sans 9"))
+        label = but.get_child().get_children()[1]
+        label.modify_font(Pango.FontDescription("sans 9"))
+    elif isinstance(but.get_child(), Gtk.Label):
+        label = but.get_child()
+        label.modify_font(Pango.FontDescription("sans 9"))
     return but
 
 
@@ -68,11 +68,11 @@ def NetzobButton(text):
 #| @param text: the string of the frame
 #+---------------------------------------------------------------------------+
 def NetzobFrame(text):
-    frame = gtk.Frame()
+    frame = Gtk.Frame()
     frame.set_label(text)
     frame.show()
     label = frame.get_label_widget()
-    label.modify_font(pango.FontDescription("sans 9"))
+    label.modify_font(Pango.FontDescription("sans 9"))
     return frame
 
 
@@ -80,9 +80,9 @@ def NetzobFrame(text):
 #| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
 def NetzobComboBoxEntry():
-    combo = gtk.combo_box_entry_new_text()
+    combo = Gtk.combo_box_entry_new_text()
     combo.show()
-    combo.set_model(gtk.ListStore(str))
+    combo.set_model(Gtk.ListStore(str))
     cell = combo.get_cells()[0]  # Get the cellrenderer
     cell.set_property("size-points", 9)
     return combo
@@ -92,7 +92,7 @@ def NetzobComboBoxEntry():
 #| NetzobProgressBar:
 #+---------------------------------------------------------------------------+
 def NetzobProgressBar(text=None):
-    pb = gtk.ProgressBar(adjustment=None)
+    pb = Gtk.ProgressBar(adjustment=None)
     if text != None:
         pb.set_text(text)
 
@@ -104,10 +104,10 @@ def NetzobProgressBar(text=None):
 #| NetzobErrorMessage:
 #+---------------------------------------------------------------------------+
 def NetzobErrorMessage(text):
-    md = gtk.MessageDialog(None,
-                           gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                           gtk.MESSAGE_ERROR,
-                           gtk.BUTTONS_CLOSE,
+    md = Gtk.MessageDialog(None,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.ERROR,
+                           Gtk.ButtonsType.CLOSE,
                            text)
     md.run()
     md.destroy()
@@ -117,10 +117,10 @@ def NetzobErrorMessage(text):
 #| NetzobInfoMessage:
 #+---------------------------------------------------------------------------+
 def NetzobInfoMessage(text):
-    md = gtk.MessageDialog(None,
-                           gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                           gtk.MESSAGE_INFO,
-                           gtk.BUTTONS_CLOSE,
+    md = Gtk.MessageDialog(None,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.INFO,
+                           Gtk.ButtonsType.CLOSE,
                            text)
     md.run()
     md.destroy()

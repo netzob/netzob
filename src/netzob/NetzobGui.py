@@ -29,12 +29,12 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
-pygtk.require('2.0')
-import gobject
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 import threading
 import sys
 import logging
@@ -61,7 +61,7 @@ from netzob.Common import CommandLine
 #| NetzobGUI:
 #|     Graphical runtime class
 #+----------------------------------------------
-class NetzobGui(gtk.Window):
+class NetzobGui(Gtk.Window):
 
     #+----------------------------------------------
     #| Constructor:
@@ -128,7 +128,7 @@ class NetzobGui(gtk.Window):
         self.log.info(_("Starting netzob"))
 
         # Main window definition
-        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+        Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
         self.set_default_size(800, 600)
         self.set_title(_("Netzob: Inferring communication protocols"))
 
@@ -136,7 +136,7 @@ class NetzobGui(gtk.Window):
                                  ResourcesConfiguration.getStaticResources()))
         self.connect("delete_event", self.evnmtDelete)
         self.connect("destroy", self.destroy)
-        main_vbox = gtk.VBox(False, spacing=0)
+        main_vbox = Gtk.VBox(False, spacing=0)
 
         # Create and display the menu
 
@@ -147,8 +147,8 @@ class NetzobGui(gtk.Window):
         main_vbox.pack_start(menubar, False, True, 0)
 
         # Notebook definition
-        self.notebook = gtk.Notebook()
-        self.notebook.set_tab_pos(gtk.POS_TOP)
+        self.notebook = Gtk.Notebook()
+        self.notebook.set_tab_pos(Gtk.PositionType.TOP)
         self.notebook.connect("switch-page", self.notebookFocus)
         main_vbox.pack_start(self.notebook, True, True, 0)
 
@@ -165,10 +165,10 @@ class NetzobGui(gtk.Window):
         self.pageList.append([_("Simulator"), self.simulator])
 
         for page in self.pageList:
-            self.notebook.append_page(page[1].panel, gtk.Label(page[0]))
+            self.notebook.append_page(page[1].panel, Gtk.Label(label=page[0]))
 
         # Initialize a clipboard object
-        self.clipboard = (gtk.Clipboard(gtk.gdk.display_get_default(),
+        self.clipboard = (Gtk.Clipboard(Gdk.Display.get_default(),
                                         "CLIPBOARD"))
 
         # Show every widgets
@@ -207,17 +207,17 @@ class NetzobGui(gtk.Window):
     def offerToSaveCurrentProject(self):
         questionMsg = (_("Do you want to save the current project (%s)") %
                        self.getCurrentProject().getName())
-        md = (gtk.MessageDialog(
-                None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg))
+        md = (Gtk.MessageDialog(
+                None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg))
         result = md.run()
         md.destroy()
-        if result == gtk.RESPONSE_YES:
+        if result == Gtk.ResponseType.YES:
             logging.info("Saving the current project")
             self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
     def startGui(self):
-        gtk.main()
+        Gtk.main()
 
     def evnmtDelete(self, widget, event, data=None):
         return False
@@ -232,7 +232,7 @@ class NetzobGui(gtk.Window):
 
         for page in self.pageList:
             page[1].kill()
-        gtk.main_quit()
+        Gtk.main_quit()
 
     #+----------------------------------------------
     #| Called when user select a notebook

@@ -28,13 +28,13 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
 import datetime
 from bitarray import bitarray
 from netzob.Import.ThirdParties.OSpy import OSpy
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import logging
 import os
 import random
@@ -94,7 +94,7 @@ class ThirdPartyImport(AbstractImporter):
 
         self.init()
 
-        self.dialog = gtk.Dialog(title="Import data from third parties", flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title="Import data from third parties", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(1000, 600)
@@ -106,72 +106,72 @@ class ThirdPartyImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.panel = gtk.Table(rows=10, columns=8, homogeneous=True)
+        self.panel = Gtk.Table(rows=10, columns=8, homogeneous=True)
         self.panel.show()
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a file
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_selectSource = gtk.Label("Select data source")
+        label_selectSource = Gtk.Label(label="Select data source")
         label_selectSource.show()
 
-        entry_filepath = gtk.Entry()
+        entry_filepath = Gtk.Entry()
         entry_filepath.set_text("")
         entry_filepath.show()
 
-        but_source = gtk.Button("...")
+        but_source = Gtk.Button("...")
         but_source.show()
         but_source.connect("clicked", self.selectFiles, entry_filepath)
 
-        self.panel.attach(label_selectSource, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(entry_filepath, 1, 5, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(but_source, 5, 6, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(label_selectSource, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filepath, 1, 5, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(but_source, 5, 6, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a third party
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_thirdParty = gtk.Label("Select a third party")
+        label_thirdParty = Gtk.Label(label="Select a third party")
         label_thirdParty.show()
-        self.thirdPartyStore = gtk.combo_box_entry_new_text()
+        self.thirdPartyStore = Gtk.combo_box_entry_new_text()
         self.thirdPartyStore.show()
         self.thirdPartyStore.set_size_request(500, -1)
-        self.thirdPartyStore.set_model(gtk.ListStore(str))
+        self.thirdPartyStore.set_model(Gtk.ListStore(str))
 
         # register all the available plugins
         for plugin in self.plugins:
             self.thirdPartyStore.append_text(plugin.getName())
 
-        but_import = gtk.Button("Load")
+        but_import = Gtk.Button("Load")
         but_import.show()
         but_import.connect("clicked", self.load_file, entry_filepath)
 
-        self.panel.attach(label_thirdParty, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(self.thirdPartyStore, 1, 5, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
-        self.panel.attach(but_import, 5, 6, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(label_thirdParty, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(self.thirdPartyStore, 1, 5, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(but_import, 5, 6, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # File details
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll = gtk.ScrolledWindow()
-        self.textview = gtk.TextView()
+        scroll = Gtk.ScrolledWindow()
+        self.textview = Gtk.TextView()
         self.textview.show()
         self.textview.get_buffer().create_tag("normalTag", family="Courier")
 
         scroll.add(self.textview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 6, 2, 10, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 0, 6, 2, 10, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Extracted data
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll2 = gtk.ScrolledWindow()
-        self.lineView = gtk.TreeView(gtk.TreeStore(str, str))  # line number, content
-        self.lineView.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        scroll2 = Gtk.ScrolledWindow()
+        self.lineView = Gtk.TreeView(Gtk.TreeStore(str, str))  # line number, content
+        self.lineView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         self.lineView.connect('button-press-event', self.button_press_on_message)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn('Message ID')
+        column = Gtk.TreeViewColumn('Message ID')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         self.lineView.append_column(column)
@@ -179,11 +179,11 @@ class ThirdPartyImport(AbstractImporter):
 
         scroll2.add(self.lineView)
         scroll2.show()
-        scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll2, 6, 8, 0, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll2.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll2, 6, 8, 0, 10, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
-        but = gtk.Button(label="Import")
+        but = Gtk.Button(label="Import")
         but.show()
         but.connect("clicked", self.import_file)
         self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -254,28 +254,28 @@ class ThirdPartyImport(AbstractImporter):
         currentProject = self.netzob.getCurrentProject()
 
         # We ask the confirmation
-        dialog = gtk.MessageDialog(None,
-                               gtk.DIALOG_DESTROY_WITH_PARENT,
-                               gtk.MESSAGE_QUESTION,
-                               gtk.BUTTONS_OK_CANCEL,
+        dialog = Gtk.MessageDialog(None,
+                               Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                               Gtk.MessageType.QUESTION,
+                               Gtk.ButtonsType.OK_CANCEL,
                                "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
 
         # Checkbox for session
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         vbox.show()
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         hbox.show()
-        vbox.pack_start(hbox)
-        isSession = gtk.CheckButton("Check if this trace is a session")
+        vbox.pack_start(hbox, True, True, 0)
+        isSession = Gtk.CheckButton("Check if this trace is a session")
         isSession.set_active(False)
         isSession.show()
-#        hbox.pack_start(isSession)
+#        hbox.pack_start(isSession, True, True, 0)
 
         dialog.vbox.pack_end(vbox, True, True, 0)
         resp = dialog.run()
         dialog.destroy()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), currentProject, self.messages)
             self.dialog.destroy()
             # We update the gui
@@ -286,15 +286,15 @@ class ThirdPartyImport(AbstractImporter):
     #+----------------------------------------------
     def selectFiles(self, button, label):
         aFile = ""
-        chooser = gtk.FileChooserDialog(title="Select one or multiple file", action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title="Select one or multiple file", action=Gtk.FileChooserAction.OPEN,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         chooser.set_select_multiple(True)
 
         filesToBeImported = []
 
         # Computes the selected file(s)
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             for filename in chooser.get_filenames():
                 filename = unicode(filename, "utf-8")
                 if filename != None and filename != "" and os.path.isfile(filename):

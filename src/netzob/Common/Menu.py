@@ -30,7 +30,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
+from gi.repository import Gtk
 import logging
 import os
 from lxml.etree import ElementTree
@@ -228,7 +228,7 @@ class Menu(object):
 
         availableProjectsName = self.netzob.getCurrentWorkspace().getNameOfProjects()
         for (projectName, projectFile) in availableProjectsName:
-            projectEntry = gtk.MenuItem(projectName)
+            projectEntry = Gtk.MenuItem(projectName)
             projectEntry.connect("activate", self.switchProjectAction, projectFile)
             switchProject.append(projectEntry)
         switchProject.show_all()
@@ -260,8 +260,8 @@ class Menu(object):
         return self.item_factory.get_widget("<main>")
 
     def computeMenuBar(self, window):
-        accel_group = gtk.AccelGroup()
-        item_factory = gtk.ItemFactory(gtk.MenuBar, "<main>", accel_group)
+        accel_group = Gtk.AccelGroup()
+        item_factory = Gtk.ItemFactory(Gtk.MenuBar, "<main>", accel_group)
         item_factory.create_items(self.menu_items)
         window.add_accel_group(accel_group)
         self.item_factory = item_factory
@@ -306,10 +306,10 @@ class Menu(object):
     #| Called when user wants to export a project
     #+----------------------------------------------
     def importProjectAction(self, widget, data):
-        chooser = gtk.FileChooserDialog(title=_("Export as"), action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title=_("Export as"), action=Gtk.FileChooserAction.OPEN,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             fileName = chooser.get_filename()
         chooser.destroy()
 
@@ -343,10 +343,10 @@ class Menu(object):
     #| Called when user wants to export a project
     #+----------------------------------------------
     def exportProjectAction(self, widget, data):
-        chooser = gtk.FileChooserDialog(title=_("Export as (XML)"), action=gtk.FILE_CHOOSER_ACTION_SAVE,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title=_("Export as (XML)"), action=Gtk.FileChooserAction.SAVE,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             fileName = chooser.get_filename()
         chooser.destroy()
 
@@ -355,12 +355,12 @@ class Menu(object):
         if not isFile:
             doCreateFile = True
         else:
-            md = gtk.MessageDialog(None,
-                                   gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-                                   gtk.BUTTONS_OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
+            md = Gtk.MessageDialog(None,
+                                   Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
             resp = md.run()
             md.destroy()
-            if resp == gtk.RESPONSE_OK:
+            if resp == Gtk.ResponseType.OK:
                 doCreateFile = True
 
         if doCreateFile:
@@ -472,16 +472,16 @@ class Menu(object):
         self.netzob.updateCurrentPanel()
 
     def createProjectAction(self, widget, data):
-        dialog = gtk.Dialog(title=_("Create a new project"), flags=0, buttons=None)
+        dialog = Gtk.Dialog(title=_("Create a new project"), flags=0, buttons=None)
         dialog.show()
-        table = gtk.Table(rows=2, columns=3, homogeneous=False)
+        table = Gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
-        label = gtk.Label(_("New project name"))
+        label = Gtk.Label(label=_("New project name"))
         label.show()
-        entry = gtk.Entry()
-        but = gtk.Button(_("Create project"))
+        entry = Gtk.Entry()
+        but = Gtk.Button(_("Create project"))
         but.connect("clicked", self.createProjectAction_cb, entry, dialog)
-        but.set_flags(gtk.CAN_DEFAULT)
+        but.set_can_default(True)
         but.show()
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -489,7 +489,7 @@ class Menu(object):
         dialog.set_default(but)
         dialog.action_area.pack_start(table, True, True, 0)
         # Grab focus must be called after adding the widget to the top level element
-        entry.set_flags(gtk.CAN_FOCUS)
+        entry.set_flags(Gtk.CAN_FOCUS)
         entry.show()
         entry.grab_focus()
 
@@ -511,8 +511,8 @@ class Menu(object):
             if project.getName() == projectName:
                 found = True
         if found:
-            dialogBis = gtk.Dialog(title=_("Error"), flags=0, buttons=None)
-            label = gtk.Label(_("This project name already exists"))
+            dialogBis = Gtk.Dialog(title=_("Error"), flags=0, buttons=None)
+            label = Gtk.Label(label=_("This project name already exists"))
             label.show()
             dialogBis.action_area.pack_start(label, True, True, 0)
             dialogBis.set_size_request(250, 50)

@@ -29,11 +29,11 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
 from netzob.Import.AbstractImporter import AbstractImporter
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import logging
 import threading
 import time
@@ -84,7 +84,7 @@ class NetworkImport(AbstractImporter):
 
         self.init()
 
-        self.dialog = gtk.Dialog(title=_("Capture network trafic"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Capture network trafic"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
@@ -95,16 +95,16 @@ class NetworkImport(AbstractImporter):
         self.envDeps = EnvironmentalDependencies()
 
         # Network Capturing Panel
-        self.panel = gtk.Table(rows=7, columns=4, homogeneous=False)
+        self.panel = Gtk.Table(rows=7, columns=4, homogeneous=False)
         self.panel.show()
 
         # Network devices
-        label = gtk.Label(_("Network devices"))
+        label = Gtk.Label(label=_("Network devices"))
         label.show()
-        listNetworkDevice = gtk.combo_box_entry_new_text()
+        listNetworkDevice = Gtk.combo_box_entry_new_text()
         listNetworkDevice.show()
         listNetworkDevice.set_size_request(300, -1)
-        listNetworkDevice.set_model(gtk.ListStore(str))
+        listNetworkDevice.set_model(Gtk.ListStore(str))
         listNetworkDevice.get_model().clear()
 
         # list of interfaces
@@ -117,95 +117,95 @@ class NetworkImport(AbstractImporter):
         for interface in interfaces:
             listNetworkDevice.append_text(str(interface))
 
-        self.panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(listNetworkDevice, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(listNetworkDevice, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # BPF filter
-        label = gtk.Label(_("BPF filter"))
+        label = Gtk.Label(label=_("BPF filter"))
         label.show()
-        entry_filter = gtk.Entry()
+        entry_filter = Gtk.Entry()
         entry_filter.set_width_chars(50)
         entry_filter.show()
         entry_filter.set_text("tcp port 80")
-        self.panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filter, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Count capturing limit
-        label = gtk.Label(_("Count limit"))
+        label = Gtk.Label(label=_("Count limit"))
         label.show()
-        entry_count = gtk.Entry()
+        entry_count = Gtk.Entry()
         entry_count.show()
         entry_count.set_text("10")
         self.panel.attach(label, 0, 1, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(entry_count, 1, 2, 2, 3, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Time capturing limit
-        label = gtk.Label(_("Timeout"))
+        label = Gtk.Label(label=_("Timeout"))
         label.show()
-        entry_time = gtk.Entry()
+        entry_time = Gtk.Entry()
         entry_time.show()
         entry_time.set_text("10")
         self.panel.attach(label, 0, 1, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         self.panel.attach(entry_time, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Sniff launching button
-        but = gtk.Button(label=_("Sniff traffic"))
+        but = Gtk.Button(label=_("Sniff traffic"))
         but.show()
         but.connect("clicked", self.launch_sniff, listNetworkDevice, entry_filter, entry_count, entry_time)
         self.panel.attach(but, 1, 2, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet list
-        scroll = gtk.ScrolledWindow()
-        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
-        treeview = gtk.TreeView(self.treestore)
-        treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        scroll = Gtk.ScrolledWindow()
+        self.treestore = Gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
+        treeview = Gtk.TreeView(self.treestore)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         treeview.connect("cursor-changed", self.packet_details)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         # Col proto
-        column = gtk.TreeViewColumn(_("Proto"))
+        column = Gtk.TreeViewColumn(_("Proto"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         treeview.append_column(column)
         # Col IP.src
-        column = gtk.TreeViewColumn(_("IP source"))
+        column = Gtk.TreeViewColumn(_("IP source"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         treeview.append_column(column)
         # Col IP.dst
-        column = gtk.TreeViewColumn(_("IP dest"))
+        column = Gtk.TreeViewColumn(_("IP dest"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=3)
         treeview.append_column(column)
         # Col {TCP,UDP}.sport
-        column = gtk.TreeViewColumn(_("sport"))
+        column = Gtk.TreeViewColumn(_("sport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=4)
         treeview.append_column(column)
         # Col {TCP,UDP}.dport
-        column = gtk.TreeViewColumn(_("dport"))
+        column = Gtk.TreeViewColumn(_("dport"))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=5)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
         # Button select packets for further analysis
-        but = gtk.Button(label=_("Save selected packets"))
+        but = Gtk.Button(label=_("Save selected packets"))
         but.show()
         but.connect("clicked", self.save_packets, treeview)
         self.panel.attach(but, 1, 2, 6, 7, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet detail
-        scroll = gtk.ScrolledWindow()
-        self.textview = gtk.TextView()
+        scroll = Gtk.ScrolledWindow()
+        self.textview = Gtk.TextView()
         self.textview.show()
         self.textview.get_buffer().create_tag("normalTag", family="Courier")
         scroll.add(self.textview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 7, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 2, 4, 0, 7, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
     #+----------------------------------------------
     #| Called when user select a list of packet
@@ -258,14 +258,14 @@ class NetworkImport(AbstractImporter):
                 messages.append(message)
 
         # We ask the confirmation
-        md = gtk.MessageDialog(None,
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
-#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        md = Gtk.MessageDialog(None,
+            Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+            Gtk.ButtonsType.OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
+#        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         resp = md.run()
         md.destroy()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages)
         self.dialog.destroy()
 

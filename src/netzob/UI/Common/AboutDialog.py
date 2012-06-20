@@ -28,10 +28,10 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-import gtk
-import pygtk
+from gi.repository import Gtk, GdkPixbuf
+import gi
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import os
 from netzob import release
 
@@ -43,7 +43,7 @@ from netzob import release
 class AboutDialog:
 
     def __init__(self):
-        about = gtk.AboutDialog()
+        about = Gtk.AboutDialog()
         about.set_program_name(release.appname)
         about.set_version(release.version)
         about.set_copyright(release.copyright)
@@ -54,6 +54,6 @@ class AboutDialog:
         about.set_website(release.url)
         about.set_translator_credits(release.translator_credits)
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
-        about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
+        about.set_logo(GdkPixbuf.Pixbuf.new_from_file(logoPath))
         about.run()
         about.destroy()

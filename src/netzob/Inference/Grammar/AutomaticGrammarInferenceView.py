@@ -30,11 +30,11 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import gtk
-import pygtk
-import gobject
+from gi.repository import Gtk
+import gi
+from gi.repository import GObject
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -69,139 +69,139 @@ class AutomaticGrammarInferenceView(object):
 
     def display(self):
         # Display the form for the creation of a word variable
-        self.dialog = gtk.Dialog(title=_("Configuration of the automatic inference"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Configuration of the automatic inference"), flags=0, buttons=None)
 
-        mainTable = gtk.Table(rows=9, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=9, columns=2, homogeneous=False)
 
         # Infer a client or a server
-        targetOfInferenceLabel = gtk.Label(_("Target:"))
+        targetOfInferenceLabel = Gtk.Label(label=_("Target:"))
         targetOfInferenceLabel.show()
-        self.targetOfInferenceCombo = gtk.ComboBox()
-        self.targetOfInferenceCombo.set_model(gtk.ListStore(str))
-        targetOfInferenceComboCell = gtk.CellRendererText()
+        self.targetOfInferenceCombo = Gtk.ComboBox()
+        self.targetOfInferenceCombo.set_model(Gtk.ListStore(str))
+        targetOfInferenceComboCell = Gtk.CellRendererText()
         self.targetOfInferenceCombo.pack_start(targetOfInferenceComboCell, True)
         self.targetOfInferenceCombo.add_attribute(targetOfInferenceComboCell, 'text', 0)
         self.targetOfInferenceCombo.append_text(_("CLIENT"))
         self.targetOfInferenceCombo.append_text(_("SERVER"))
         self.targetOfInferenceCombo.show()
-        mainTable.attach(targetOfInferenceLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.targetOfInferenceCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(targetOfInferenceLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.targetOfInferenceCombo, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # IP of the server
-        IPLabel = gtk.Label(_("IP:"))
+        IPLabel = Gtk.Label(label=_("IP:"))
         IPLabel.show()
-        self.IPEntry = gtk.Entry()
+        self.IPEntry = Gtk.Entry()
         self.IPEntry.show()
-        mainTable.attach(IPLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.IPEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(IPLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.IPEntry, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Protocol of the server
-        ProtocolLabel = gtk.Label(_("Protocol:"))
+        ProtocolLabel = Gtk.Label(label=_("Protocol:"))
         ProtocolLabel.show()
-        self.combo_protocolOfNetworkActor = gtk.combo_box_entry_new_text()
-        self.combo_protocolOfNetworkActor.set_model(gtk.ListStore(str))
+        self.combo_protocolOfNetworkActor = Gtk.combo_box_entry_new_text()
+        self.combo_protocolOfNetworkActor.set_model(Gtk.ListStore(str))
         self.combo_protocolOfNetworkActor.append_text(_("TCP"))
         self.combo_protocolOfNetworkActor.append_text(_("UDP"))
         self.combo_protocolOfNetworkActor.set_active(0)
         self.combo_protocolOfNetworkActor.show()
 
-        mainTable.attach(ProtocolLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.combo_protocolOfNetworkActor, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(ProtocolLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.combo_protocolOfNetworkActor, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Source port
-        SourcePortLabel = gtk.Label(_("Our port:"))
+        SourcePortLabel = Gtk.Label(label=_("Our port:"))
         SourcePortLabel.show()
-        self.ourPortEntry = gtk.Entry()
+        self.ourPortEntry = Gtk.Entry()
         self.ourPortEntry.show()
-        mainTable.attach(SourcePortLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.ourPortEntry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(SourcePortLabel, 0, 1, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.ourPortEntry, 1, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Port of the server
-        PortLabel = gtk.Label(_("Target Port:"))
+        PortLabel = Gtk.Label(label=_("Target Port:"))
         PortLabel.show()
-        self.targetPortEntry = gtk.Entry()
+        self.targetPortEntry = Gtk.Entry()
         self.targetPortEntry.show()
-        mainTable.attach(PortLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.targetPortEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(PortLabel, 0, 1, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.targetPortEntry, 1, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Estimated number of states
-        MaxStatesLabel = gtk.Label(_("Maximum number of states:"))
+        MaxStatesLabel = Gtk.Label(label=_("Maximum number of states:"))
         MaxStatesLabel.show()
-        self.MaxStatesEntry = gtk.Entry()
+        self.MaxStatesEntry = Gtk.Entry()
         self.MaxStatesEntry.show()
-        mainTable.attach(MaxStatesLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.MaxStatesEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(MaxStatesLabel, 0, 1, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.MaxStatesEntry, 1, 2, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Script to execute to reset the implementation
-        scriptLabel = gtk.Label(_("Reseting script:"))
+        scriptLabel = Gtk.Label(label=_("Reseting script:"))
         scriptLabel.show()
-        self.scriptEntry = gtk.Entry()
+        self.scriptEntry = Gtk.Entry()
         self.scriptEntry.show()
-        mainTable.attach(scriptLabel, 0, 1, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.scriptEntry, 1, 2, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(scriptLabel, 0, 1, 6, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.scriptEntry, 1, 2, 6, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Create button
-        startButton = gtk.Button(_("Start inference"))
+        startButton = Gtk.Button(_("Start inference"))
         startButton.show()
         startButton.connect("clicked", self.startInference)
-        mainTable.attach(startButton, 1, 2, 7, 8, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(startButton, 1, 2, 7, 8, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
 
     def createInferringStatusView(self):
-        self.dialog = gtk.Dialog(title=_("Execution of the inferring process"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Execution of the inferring process"), flags=0, buttons=None)
 
-        mainTable = gtk.Table(rows=5, columns=4, homogeneous=False)
+        mainTable = Gtk.Table(rows=5, columns=4, homogeneous=False)
 
         # Insert the current Hypothesis of the automata
         self.xdotWidget = XDotWidget()
         self.xdotWidget.show_all()
         self.xdotWidget.set_size_request(500, 500)
-        mainTable.attach(self.xdotWidget, 0, 2, 0, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.xdotWidget, 0, 2, 0, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Insert the updated list of requests and associated responses
-        scroll_requests = gtk.ScrolledWindow()
-        self.treestore_queries = gtk.TreeStore(str, str, str)  # queries, responses, color
-        treeview_queries = gtk.TreeView(self.treestore_queries)
-        treeview_queries.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        scroll_requests = Gtk.ScrolledWindow()
+        self.treestore_queries = Gtk.TreeStore(str, str, str)  # queries, responses, color
+        treeview_queries = Gtk.TreeView(self.treestore_queries)
+        treeview_queries.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         treeview_queries.set_size_request(500, 500)
 #        treeview_queries.connect('button-press-event', self.button_press_on_transitions)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         # col : membership queries
-        col_queries_querie = gtk.TreeViewColumn(_("Membership queries"))
+        col_queries_querie = Gtk.TreeViewColumn(_("Membership queries"))
         col_queries_querie.pack_start(cell, True)
         col_queries_querie.set_attributes(cell, text=0)
         treeview_queries.append_column(col_queries_querie)
         # col : responses to queries
-        column_queries_responses = gtk.TreeViewColumn(_("Responses"))
+        column_queries_responses = Gtk.TreeViewColumn(_("Responses"))
         column_queries_responses.pack_start(cell, True)
         column_queries_responses.set_attributes(cell, text=1)
         treeview_queries.append_column(column_queries_responses)
         scroll_requests.add(treeview_queries)
-        scroll_requests.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll_requests.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll_requests.show()
-        mainTable.attach(scroll_requests, 2, 4, 0, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(scroll_requests, 2, 4, 0, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
-        self.progressbar = gtk.ProgressBar(adjustment=None)
+        self.progressbar = Gtk.ProgressBar(adjustment=None)
         self.progressbar.show()
 #        # Insert the status message
-#        self.statusLabel = gtk.Label("A number of X states has been created - Current turn contains N MQ")
+#        self.statusLabel = Gtk.Label(label="A number of X states has been created - Current turn contains N MQ")
 #        self.statusLabel.show()
-        mainTable.attach(self.progressbar, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.progressbar, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Insert the stop button
-        self.stopButton = gtk.Button(_("Stop"))
+        self.stopButton = Gtk.Button(_("Stop"))
         self.stopButton.show()
         self.stopButton.connect("clicked", self.stopInference)
-        mainTable.attach(self.stopButton, 2, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.stopButton, 2, 3, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Insert the Save button
-        self.saveButton = gtk.Button(_("Save as Grammar"))
+        self.saveButton = Gtk.Button(_("Save as Grammar"))
         self.saveButton.show()
         self.saveButton.connect("clicked", self.saveGrammar)
-        mainTable.attach(self.saveButton, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.saveButton, 3, 4, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
@@ -297,7 +297,7 @@ class AutomaticGrammarInferenceView(object):
         self.createInferringStatusView()
 
         # Start the progress bar
-        gobject.timeout_add(200, self.do_pulse)
+        GObject.timeout_add(200, self.do_pulse)
 
         # Start the inferer
         self.job = Job(self.startInferer())

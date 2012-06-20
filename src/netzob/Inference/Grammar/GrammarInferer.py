@@ -42,7 +42,7 @@ from netzob.Inference.Grammar.Angluin import Angluin
 from netzob.Inference.Grammar.MQCache import MQCache
 # Replace by previous import statement : from Angluin import Angluin
 import threading
-import gobject
+from gi.repository import GObject
 import time
 
 
@@ -936,7 +936,7 @@ class GrammarInferer(threading.Thread):
             self.log.info("An hypothetical automaton has been computed")
 
             # Execute the call back function for the hypothetial automaton
-            gobject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
+            GObject.idle_add(self.cb_hypotheticalAutomaton, self.hypotheticalAutomaton)
 
             counterExample = self.equivalenceOracle.findCounterExample(self.hypotheticalAutomaton, self.inputDictionary, cache)
 

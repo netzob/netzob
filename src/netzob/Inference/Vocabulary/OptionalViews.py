@@ -30,10 +30,10 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -54,17 +54,17 @@ class OptionalViews(object):
     def __init__(self):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.OptionalViews.py')
-        self.notebook = gtk.Notebook()
+        self.notebook = Gtk.Notebook()
         self.views = []
 
     def registerView(self, view):
         self.views.append(view)
 
     def getPanel(self):
-        self.notebook.set_tab_pos(gtk.POS_TOP)
+        self.notebook.set_tab_pos(Gtk.PositionType.TOP)
 
         for view in self.views:
-            viewLabel = gtk.Label(view.getName())
+            viewLabel = Gtk.Label(label=view.getName())
             self.notebook.prepend_page(view.getWidget(), viewLabel)
         self.notebook.show_all()
         return self.notebook

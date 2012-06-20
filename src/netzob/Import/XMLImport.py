@@ -29,12 +29,12 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
 import datetime
 from bitarray import bitarray
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import logging
 import os
 import random
@@ -84,7 +84,7 @@ class XMLImport(AbstractImporter):
 
         self.init()
 
-        self.dialog = gtk.Dialog(title="Import XML file", flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title="Import XML file", flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(1000, 600)
@@ -99,41 +99,41 @@ class XMLImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.panel = gtk.Table(rows=10, columns=8, homogeneous=True)
+        self.panel = Gtk.Table(rows=10, columns=8, homogeneous=True)
         self.panel.show()
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a file
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        but = gtk.Button("Select file(s)")
+        but = Gtk.Button("Select file(s)")
         but.show()
-        entry_filepath = gtk.Entry()
+        entry_filepath = Gtk.Entry()
 #        entry_filepath.set_width_chars(50)
         entry_filepath.set_text("")
         entry_filepath.show()
         but.connect("clicked", self.selectFiles, entry_filepath)
-        self.panel.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(but, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
-        self.panel.attach(entry_filepath, 2, 6, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        self.panel.attach(entry_filepath, 2, 6, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Extracted data
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll2 = gtk.ScrolledWindow()
-        self.lineView = gtk.TreeView(gtk.TreeStore(str, str, str))  # id message, type, content
-        self.lineView.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        scroll2 = Gtk.ScrolledWindow()
+        self.lineView = Gtk.TreeView(Gtk.TreeStore(str, str, str))  # id message, type, content
+        self.lineView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         #self.lineView.connect('button-press-event', self.button_press_on_message)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn('Message ID')
+        column = Gtk.TreeViewColumn('Message ID')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
         self.lineView.append_column(column)
-        column = gtk.TreeViewColumn('Type')
+        column = Gtk.TreeViewColumn('Type')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=1)
         self.lineView.append_column(column)
-        column = gtk.TreeViewColumn('Content')
+        column = Gtk.TreeViewColumn('Content')
         column.pack_start(cell, True)
         column.set_attributes(cell, text=2)
         self.lineView.append_column(column)
@@ -141,11 +141,11 @@ class XMLImport(AbstractImporter):
 
         scroll2.add(self.lineView)
         scroll2.show()
-        scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll2, 0, 6, 1, 10, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll2.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll2, 0, 6, 1, 10, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
-        but = gtk.Button(label="Import")
+        but = Gtk.Button(label="Import")
         but.show()
         but.connect("clicked", self.import_file)
         self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -183,28 +183,28 @@ class XMLImport(AbstractImporter):
         currentProject = self.netzob.getCurrentProject()
 
         # We ask the confirmation
-        dialog = gtk.MessageDialog(None,
-                               gtk.DIALOG_DESTROY_WITH_PARENT,
-                               gtk.MESSAGE_QUESTION,
-                               gtk.BUTTONS_OK_CANCEL,
+        dialog = Gtk.MessageDialog(None,
+                               Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                               Gtk.MessageType.QUESTION,
+                               Gtk.ButtonsType.OK_CANCEL,
                                "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
 
         # Checkbox for session
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         vbox.show()
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         hbox.show()
-        vbox.pack_start(hbox)
-        isSession = gtk.CheckButton("Check if this trace is a session")
+        vbox.pack_start(hbox, True, True, 0)
+        isSession = Gtk.CheckButton("Check if this trace is a session")
         isSession.set_active(False)
         isSession.show()
-#        hbox.pack_start(isSession)
+#        hbox.pack_start(isSession, True, True, 0)
 
         dialog.vbox.pack_end(vbox, True, True, 0)
         resp = dialog.run()
         dialog.destroy()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), currentProject, self.messages)
             self.dialog.destroy()
             # We update the gui
@@ -215,15 +215,15 @@ class XMLImport(AbstractImporter):
     #+----------------------------------------------
     def selectFiles(self, button, label):
         aFile = ""
-        chooser = gtk.FileChooserDialog(title="Select one or multiple file", action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title="Select one or multiple file", action=Gtk.FileChooserAction.OPEN,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         chooser.set_select_multiple(True)
 
         self.filesToBeImported = []
 
         # Computes the selected file(s)
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             for filename in chooser.get_filenames():
                 filename = unicode(filename, "utf-8")
                 if filename != None and filename != "" and os.path.isfile(filename):

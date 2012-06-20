@@ -29,9 +29,9 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pygtk
-pygtk.require('2.0')
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
 import logging
 
 #+----------------------------------------------
@@ -74,13 +74,13 @@ class File:
         self.symbols = []
         self.selectedSymbol = None
 
-        self.panel = gtk.HPaned()
+        self.panel = Gtk.HPaned()
         self.panel.show()
 
         #+----------------------------------------------
         #| LEFT PART OF THE GUI : TREEVIEW
         #+----------------------------------------------
-        vb_left_panel = gtk.VBox(False, spacing=0)
+        vb_left_panel = Gtk.VBox(False, spacing=0)
         self.panel.add(vb_left_panel)
         vb_left_panel.set_size_request(-1, -1)
         vb_left_panel.show()
@@ -89,14 +89,14 @@ class File:
         # Create the treeview
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
-        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
+        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(, True, True, 0), True, True, 0)
         self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
 #        self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+----------------------------------------------
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
-        vb_right_panel = gtk.VBox(False, spacing=0)
+        vb_right_panel = Gtk.VBox(False, spacing=0)
         vb_right_panel.show()
         # Initialize the treeview for the type structure
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator(self.netzob)
@@ -130,15 +130,15 @@ class File:
     #|   on the treeview symbols
     #+----------------------------------------------
     def button_press_on_field(self, button, event):
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             # Retrieves the symbol on which the user has clicked on
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = self.treeTypeStructureGenerator.getTreeview().get_path_at_pos(x, y)
             aIter = self.treeTypeStructureGenerator.getTreeview().get_model().get_iter(path)
             field = self.treeTypeStructureGenerator.getTreeview().get_model().get_value(aIter, 0)
-            menu = gtk.Menu()
-            item = gtk.MenuItem(_("Fuzz field"))
+            menu = Gtk.Menu()
+            item = Gtk.MenuItem(_("Fuzz field"))
             item.connect("activate", self.fuzz_field_cb, field)
             item.show()
             menu.append(item)

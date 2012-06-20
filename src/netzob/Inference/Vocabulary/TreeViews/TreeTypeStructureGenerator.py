@@ -30,7 +30,7 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-import gtk
+from gi.repository import Gtk
 import uuid
 
 #+----------------------------------------------
@@ -63,25 +63,25 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
     #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(int, str, str, str)  # iCol, Name, Description, Variable
+        self.treestore = Gtk.TreeStore(int, str, str, str)  # iCol, Name, Description, Variable
         # creation of the treeview
-        self.treeview = gtk.TreeView(self.treestore)
+        self.treeview = Gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         cell.set_property("size-points", 9)
         columns = [_("iCol"), _("Name"), _("Description"), _("Variable")]
         for i in range(1, len(columns)):
-            column = gtk.TreeViewColumn(columns[i])
+            column = Gtk.TreeViewColumn(columns[i])
             column.set_resizable(True)
             column.pack_start(cell, True)
             column.set_attributes(cell, markup=i)
             self.treeview.append_column(column)
         self.treeview.show()
-        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        self.scroll = gtk.ScrolledWindow()
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        self.scroll = Gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 250)
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.add(self.treeview)
         self.scroll.show()
 

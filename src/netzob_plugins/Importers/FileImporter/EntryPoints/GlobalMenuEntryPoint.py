@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import gtk
+from gi.repository import Gtk
 from gettext import gettext as _
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 from netzob.Common.Menu import Menu

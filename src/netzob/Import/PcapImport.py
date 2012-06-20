@@ -29,7 +29,7 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
+from gi.repository import Gtk
 import uuid
 import errno
 import logging

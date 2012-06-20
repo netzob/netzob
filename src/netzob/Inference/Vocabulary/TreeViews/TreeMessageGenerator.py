@@ -30,9 +30,9 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-import pango
-import gobject
-import gtk
+from gi.repository import Pango
+from gi.repository import GObject
+from gi.repository import Gtk
 import glib
 import uuid
 import time
@@ -69,21 +69,21 @@ class TreeMessageGenerator(AbstractViewGenerator):
     #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = gtk.TreeStore(str, str, str)
+        self.treestore = Gtk.TreeStore(str, str, str)
         # creation of the treeview
-        self.treeview = gtk.TreeView(self.treestore)
+        self.treeview = Gtk.TreeView(self.treestore)
         self.treeview.set_reorderable(True)
 
         # maximum number of columns = 200
         for i_col in range(4, 204):
             # Define cellRenderer object
-            textCellRenderer = gtk.CellRendererText()
+            textCellRenderer = Gtk.CellRendererText()
             textCellRenderer.set_property("size-points", 9)
             textCellRenderer.set_property('background-set', True)
             textCellRenderer.set_property('family', 'Courier')
 
             # Column Messages
-            lvcolumn = gtk.TreeViewColumn(str("#" + str(i_col - 4)))
+            lvcolumn = Gtk.TreeViewColumn(str("#" + str(i_col - 4)))
             lvcolumn.set_resizable(True)
             lvcolumn.set_sort_column_id(i_col)
             lvcolumn.set_clickable(True)
@@ -95,10 +95,10 @@ class TreeMessageGenerator(AbstractViewGenerator):
 
         self.treeview.show()
         self.treeview.set_reorderable(True)
-        self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        self.scroll = gtk.ScrolledWindow()
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        self.scroll = Gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 200)
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.add(self.treeview)
         self.scroll.show()
 
@@ -175,7 +175,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
             line = []
             line.append(message.getID())
             line.append("#ffffff")
-            line.append(pango.WEIGHT_NORMAL)
+            line.append(Pango.Weight.NORMAL)
             line.append(False)
             line.extend(messageTable)
             content_lines.append(line)
@@ -190,16 +190,16 @@ class TreeMessageGenerator(AbstractViewGenerator):
         # bool : is row editable
         # [str...str] : value of cols
 
-        treeStoreTypes = [str, str, int, gobject.TYPE_BOOLEAN]
+        treeStoreTypes = [str, str, int, GObject.TYPE_BOOLEAN]
         for i in range(0, maxNumberOfCol):
             treeStoreTypes.append(str)
-        self.treestore = gtk.TreeStore(*treeStoreTypes)
+        self.treestore = Gtk.TreeStore(*treeStoreTypes)
 
         # Build the regex row
         regex_row = []
         regex_row.append("HEADER REGEX")
         regex_row.append("#c8c8c8")
-        regex_row.append(pango.WEIGHT_BOLD)
+        regex_row.append(Pango.Weight.BOLD)
         regex_row.append(True)
         for field in self.symbol.getFields():
             regex_row.append(glib.markup_escape_text(field.getEncodedVersionOfTheRegex()))
@@ -208,7 +208,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
         types_line = []
         types_line.append("HEADER TYPE")
         types_line.append("#dedede")
-        types_line.append(pango.WEIGHT_BOLD)
+        types_line.append(Pango.Weight.BOLD)
         types_line.append(True)
         for field in self.symbol.getFields():
             types_line.append(field.getFormat())

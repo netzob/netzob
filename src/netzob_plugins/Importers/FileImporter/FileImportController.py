@@ -28,9 +28,9 @@
 #+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
-import gtk
-import pygtk
-pygtk.require('2.0')
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
 import logging
 import os
 
@@ -102,28 +102,28 @@ class FileImportController():
     #+----------------------------------------------
     def importFile_cb(self, button):
         # We ask the confirmation
-        dialog = gtk.MessageDialog(None,
-                                   gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_QUESTION,
-                                   gtk.BUTTONS_OK_CANCEL,
+        dialog = Gtk.MessageDialog(None,
+                                   Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK_CANCEL,
                                    _("Are you sure to import the {0} computed messages in project {1}?").format(str(len(self.model.messages)), self.netzob.getCurrentProject().getName()))
 
         # Checkbox for session
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         vbox.show()
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         hbox.show()
-        vbox.pack_start(hbox)
-        isSession = gtk.CheckButton(_("Check if this trace is a session"))
+        vbox.pack_start(hbox, True, True, 0)
+        isSession = Gtk.CheckButton(_("Check if this trace is a session"))
         isSession.set_active(False)
         isSession.show()
-#        hbox.pack_start(isSession)
+#        hbox.pack_start(isSession, True, True, 0)
 
         dialog.vbox.pack_end(vbox, True, True, 0)
         resp = dialog.run()
         dialog.destroy()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             self.model.saveMessages()
             self.view.dialog.destroy()
             # We update the gui
@@ -134,15 +134,15 @@ class FileImportController():
     #+----------------------------------------------
     def selectFiles_cb(self, button):
         aFile = ""
-        chooser = gtk.FileChooserDialog(title=_("Select one or multiple file"), action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title=_("Select one or multiple file"), action=Gtk.FileChooserAction.OPEN,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         chooser.set_select_multiple(True)
 
         self.model.filesToBeImported = []
 
         # Computes the selected file(s)
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             for filename in chooser.get_filenames():
                 filename = unicode(filename, "utf-8")
                 if filename != None and filename != "" and os.path.isfile(filename):

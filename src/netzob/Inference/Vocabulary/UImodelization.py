@@ -29,16 +29,16 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pango
-import pygtk
-import gobject
+from gi.repository import Gtk, Gdk
+from gi.repository import Pango
+import gi
+from gi.repository import GObject
 from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
 from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 from netzob.Inference.Vocabulary.DataCarver import DataCarver
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import logging
 import copy
 import os
@@ -90,7 +90,7 @@ class UImodelization:
         possible_choices = Format.getSupportedFormats()
         global_format = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         self.comboDisplayFormat.disconnect(self.comboDisplayFormat_handler)
-        self.comboDisplayFormat.set_model(gtk.ListStore(str))  # Clear the list
+        self.comboDisplayFormat.set_model(Gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayFormat.append_text(possible_choices[i])
             if possible_choices[i] == global_format:
@@ -101,7 +101,7 @@ class UImodelization:
         possible_choices = [UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         self.comboDisplayUnitSize.disconnect(self.comboDisplayUnitSize_handler)
-        self.comboDisplayUnitSize.set_model(gtk.ListStore(str))  # Clear the list
+        self.comboDisplayUnitSize.set_model(Gtk.ListStore(str))  # Clear the list
 
         activeUnitSizefound = False
         for i in range(len(possible_choices)):
@@ -117,7 +117,7 @@ class UImodelization:
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
         global_sign = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
         self.comboDisplaySign.disconnect(self.comboDisplaySign_handler)
-        self.comboDisplaySign.set_model(gtk.ListStore(str))  # Clear the list
+        self.comboDisplaySign.set_model(Gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplaySign.append_text(possible_choices[i])
             if possible_choices[i] == global_sign:
@@ -128,7 +128,7 @@ class UImodelization:
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
         global_endianess = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
         self.comboDisplayEndianess.disconnect(self.comboDisplayEndianess_handler)
-        self.comboDisplayEndianess.set_model(gtk.ListStore(str))  # Clear the list
+        self.comboDisplayEndianess.set_model(Gtk.ListStore(str))  # Clear the list
         for i in range(len(possible_choices)):
             self.comboDisplayEndianess.append_text(possible_choices[i])
             if possible_choices[i] == global_endianess:
@@ -188,21 +188,21 @@ class UImodelization:
 
         # Definition of the Sequence Onglet
         # First we create an VBox which hosts the two main children
-        self.panel = gtk.VBox(False, spacing=0)
+        self.panel = Gtk.VBox(False, spacing=0)
         self.panel.show()
         self.defer_select = False
 
         #+----------------------------------------------
         #| TOP PART OF THE GUI : BUTTONS
         #+----------------------------------------------
-        topPanel = gtk.HBox(False, spacing=2)
+        topPanel = Gtk.HBox(False, spacing=2)
         topPanel.show()
         self.panel.pack_start(topPanel, False, False, 0)
 
         ## Message format inference
         frame = NetzobFrame(_("1 - Message format inference"))
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=5, columns=2, homogeneous=False)
+        table = Gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -211,36 +211,36 @@ class UImodelization:
         but.set_tooltip_text(_("Automatically discover the best alignment of messages"))
         but.connect("clicked", self.sequenceAlignmentOnAllSymbols)
 #        but.show()
-        table.attach(but, 0, 2, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget for forcing partitioning delimiter
         but = NetzobButton(_("Force partitioning"))
         but.connect("clicked", self.forcePartitioningOnAllSymbols)
         but.set_tooltip_text(_("Set a delimiter to force partitioning"))
-        table.attach(but, 0, 2, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget for simple partitioning
         but = NetzobButton(_("Simple partitioning"))
         but.connect("clicked", self.simplePartitioningOnAllSymbols)
         but.set_tooltip_text(_("In order to show the simple differences between messages"))
-        table.attach(but, 0, 2, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget button slick regex
         but = NetzobButton(_("Smooth partitioning"))
         but.connect("clicked", self.smoothPartitioningOnAllSymbols)
         but.set_tooltip_text(_("Merge small static fields with its neighbours"))
-        table.attach(but, 0, 2, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget button reset partitioning
         but = NetzobButton(_("Reset partitioning"))
         but.connect("clicked", self.resetPartitioningOnAllSymbols)
         but.set_tooltip_text(_("Reset the current partitioning"))
-        table.attach(but, 0, 2, 4, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         ## Field type inference
         frame = NetzobFrame(_("2 - Field type inference"))
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=5, columns=2, homogeneous=False)
+        table = Gtk.Table(rows=5, columns=2, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -248,29 +248,29 @@ class UImodelization:
         but = NetzobButton(_("Freeze partitioning"))
         but.connect("clicked", self.freezePartitioning_cb)
         but.set_tooltip_text(_("Automatically find and freeze the boundaries (min/max of cell's size) for each fields"))
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget button to show message distribution
         but = NetzobButton(_("Messages distribution"))
         but.connect("clicked", self.messagesDistribution_cb)
         but.set_tooltip_text(_("Open a graph with messages distribution, separated by fields"))
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget button data carving
         but = NetzobButton(_("Data carving"))
         but.connect("clicked", self.dataCarving_cb)
         but.set_tooltip_text(_("Automatically look for known patterns of data (URL, IP, email, etc.)"))
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget button to analyze for ASN.1 presence
 #        but = NetzobButton("Find ASN.1 fields")
 #        but.connect("clicked", self.findASN1Fields_cb)
-#        table.attach(but, 0, 1, 3, 4, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+#        table.attach(but, 0, 1, 3, 4, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         ## Dependencies inference
         frame = NetzobFrame(_("3 - Dependencies inference"))
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table = Gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -278,18 +278,18 @@ class UImodelization:
         but = NetzobButton(_("Find size fields"))
         but.connect("clicked", self.findSizeFields)
         but.set_tooltip_text(_("Automatically find potential size fields and associated payloads"))
-        table.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Widget button for environment dependencies
         but = NetzobButton(_("Environment dependencies"))
         but.connect("clicked", self.env_dependencies_cb)
         but.set_tooltip_text(_("Automatically look for environmental dependencies (retrieved during capture) in messages"))
-        table.attach(but, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         ## Visualization
         frame = NetzobFrame(_("4 - Visualization"))
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table = Gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
@@ -297,46 +297,46 @@ class UImodelization:
         label = NetzobLabel(_("Format : "))
         self.comboDisplayFormat = NetzobComboBoxEntry()
         self.comboDisplayFormat_handler = self.comboDisplayFormat.connect("changed", self.updateDisplayFormat)
-        table.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the unit size
         label = NetzobLabel(_("Unit size : "))
         self.comboDisplayUnitSize = NetzobComboBoxEntry()
         self.comboDisplayUnitSize_handler = self.comboDisplayUnitSize.connect("changed", self.updateDisplayUnitSize)
-        table.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed sign
         label = NetzobLabel(_("Sign : "))
         self.comboDisplaySign = NetzobComboBoxEntry()
         self.comboDisplaySign_handler = self.comboDisplaySign.connect("changed", self.updateDisplaySign)
-        table.attach(label, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(label, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         # Widget for choosing the displayed endianess
         label = NetzobLabel(_("Endianess : "))
         self.comboDisplayEndianess = NetzobComboBoxEntry()
         self.comboDisplayEndianess_handler = self.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
-        table.attach(label, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(label, 0, 1, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         ## Semantic inference
         frame = NetzobFrame(_("5 - Search data"))
         topPanel.pack_start(frame, False, False, 0)
-        table = gtk.Table(rows=4, columns=4, homogeneous=False)
+        table = Gtk.Table(rows=4, columns=4, homogeneous=False)
         table.show()
         frame.add(table)
 
         # Widget button for search
-        self.searchEntry = gtk.Entry()
+        self.searchEntry = Gtk.Entry()
         self.searchEntry.show()
-        table.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(self.searchEntry, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         # Combo to select the type of the input
-        self.typeCombo = gtk.combo_box_entry_new_text()
+        self.typeCombo = Gtk.combo_box_entry_new_text()
         self.typeCombo.show()
-        self.typeStore = gtk.ListStore(str)
+        self.typeStore = Gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
         self.typeCombo.get_model().append([Format.STRING])
         self.typeCombo.get_model().append([Format.HEX])
@@ -345,27 +345,27 @@ class UImodelization:
         self.typeCombo.get_model().append([Format.DECIMAL])
         self.typeCombo.get_model().append([Format.IP])
         self.typeCombo.set_active(0)
-        table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         but = NetzobButton(_("Search"))
         but.connect("clicked", self.search_cb)
         but.set_tooltip_text(_("A search function available in different encoding format"))
-        table.attach(but, 0, 1, 2, 3, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL, xpadding=2, ypadding=2)
+        table.attach(but, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
 
         #+----------------------------------------------
         #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
         #+----------------------------------------------
-        bottomPanel = gtk.HPaned()
+        bottomPanel = Gtk.HPaned()
         bottomPanel.show()
         self.panel.pack_start(bottomPanel, True, True, 0)
-        leftPanel = gtk.VBox(False, spacing=0)
+        leftPanel = Gtk.VBox(False, spacing=0)
 #        leftPanel.set_size_request(-1, -1)
         leftPanel.show()
         bottomPanel.add(leftPanel)
         # Initialize the treeview generator for the symbols
         leftPanel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+        self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, Gdk.DragAction.DEFAULT | Gdk.DragAction.MOVE)
         self.treeSymbolGenerator.getTreeview().connect("drag-data-received", self.drop_fromDND)
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
@@ -373,13 +373,13 @@ class UImodelization:
         #| RIGHT PART OF THE GUI :
         #| includes the messages treeview and the optional views in tabs
         #+----------------------------------------------
-        rightPanel = gtk.VPaned()
+        rightPanel = Gtk.VPaned()
         rightPanel.show()
         bottomPanel.add(rightPanel)
         # add the messages in the right panel
         rightPanel.add(self.treeMessageGenerator.getScrollLib())
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeMessageGenerator.getTreeview().enable_model_drag_source(gtk.gdk.BUTTON1_MASK, self.TARGETS, gtk.gdk.ACTION_DEFAULT | gtk.gdk.ACTION_MOVE)
+        self.treeMessageGenerator.getTreeview().enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, self.TARGETS, Gdk.DragAction.DEFAULT | Gdk.DragAction.MOVE)
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
@@ -414,14 +414,14 @@ class UImodelization:
         self.treeTypeStructureGenerator.clear()
         self.update()
 
-        dialog = gtk.Dialog(title=_("Sequence alignment"), flags=0, buttons=None)
-        panel = gtk.Table(rows=5, columns=3, homogeneous=False)
+        dialog = Gtk.Dialog(title=_("Sequence alignment"), flags=0, buttons=None)
+        panel = Gtk.Table(rows=5, columns=3, homogeneous=False)
         panel.show()
 
         ## Similarity threshold
         label = NetzobLabel(_("Similarity threshold:"))
-        combo = gtk.combo_box_entry_new_text()
-        combo.set_model(gtk.ListStore(str))
+        combo = Gtk.combo_box_entry_new_text()
+        combo.set_model(Gtk.ListStore(str))
         combo.connect("changed", self.updateScoreLimit)
         possible_choices = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
 
@@ -431,24 +431,24 @@ class UImodelization:
             if str(possible_choices[i]) == str(int(min_equivalence)):
                 combo.set_active(i)
         combo.show()
-        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(combo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(combo, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         ## UnitSize for alignment
         label = NetzobLabel(_("Unit size (in bits):"))
-        comboUnitSize = gtk.combo_box_entry_new_text()
-        comboUnitSize.set_model(gtk.ListStore(str))
+        comboUnitSize = Gtk.combo_box_entry_new_text()
+        comboUnitSize.set_model(Gtk.ListStore(str))
         possible_choices = [8, 4]
 
         for i in range(len(possible_choices)):
             comboUnitSize.append_text(str(possible_choices[i]))
         comboUnitSize.set_active(0)
         comboUnitSize.show()
-        panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(comboUnitSize, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(comboUnitSize, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget button activate orphan reduction
-        butOrphanReduction = gtk.CheckButton(_("Orphan reduction"))
+        butOrphanReduction = Gtk.CheckButton(_("Orphan reduction"))
         doOrphanReduction = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION)
         if doOrphanReduction:
             butOrphanReduction.set_active(True)
@@ -456,10 +456,10 @@ class UImodelization:
             butOrphanReduction.set_active(False)
         butOrphanReduction.connect("toggled", self.activeOrphanReduction)
         butOrphanReduction.show()
-        panel.attach(butOrphanReduction, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(butOrphanReduction, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Widget checkbox for selecting the slickery during alignement process
-        but = gtk.CheckButton(_("Smooth alignment"))
+        but = Gtk.CheckButton(_("Smooth alignment"))
         doInternalSlick = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK)
         if doInternalSlick:
             but.set_active(True)
@@ -467,16 +467,16 @@ class UImodelization:
             but.set_active(False)
         but.connect("toggled", self.activeInternalSlickRegexes)
         but.show()
-        panel.attach(but, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(but, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
         self.progressbarAlignment = NetzobProgressBar()
-        panel.attach(self.progressbarAlignment, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(self.progressbarAlignment, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = NetzobButton(_("Sequence alignment"))
         searchButton.connect("clicked", self.sequenceAlignment_cb_cb, dialog, symbols, comboUnitSize)
-        panel.attach(searchButton, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(searchButton, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -488,7 +488,7 @@ class UImodelization:
     def sequenceAlignment_cb_cb(self, widget, dialog, symbols, comboUnitSize):
         self.currentExecutionOfAlignmentHasFinished = False
         # Start the progress bar
-        gobject.timeout_add(100, self.do_pulse_for_sequenceAlignment)
+        GObject.timeout_add(100, self.do_pulse_for_sequenceAlignment)
         # Start the alignment JOB
         unitSize = int(comboUnitSize.get_active_text())
         Job(self.startSequenceAlignment(symbols, dialog, unitSize))
@@ -521,11 +521,11 @@ class UImodelization:
             self.treeSymbolGenerator.default(self.selectedSymbol)
 
     def percentOfAlignmentProgessBar(self, percent, message):
-#        gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
+#        GObject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
         if message == None:
-            gobject.idle_add(self.progressbarAlignment.set_text, "")
+            GObject.idle_add(self.progressbarAlignment.set_text, "")
         else:
-            gobject.idle_add(self.progressbarAlignment.set_text, message)
+            GObject.idle_add(self.progressbarAlignment.set_text, message)
 
     #+----------------------------------------------
     #| do_pulse_for_sequenceAlignment:
@@ -561,37 +561,37 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title=_("Force partitioning"), flags=0, buttons=None)
-        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        dialog = Gtk.Dialog(title=_("Force partitioning"), flags=0, buttons=None)
+        panel = Gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
         # Label
         label = NetzobLabel(_("Delimiter: "))
-        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Entry for delimiter
-        entry = gtk.Entry(4)
+        entry = Gtk.Entry(4)
         entry.show()
-        panel.attach(entry, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(entry, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Label
         label = NetzobLabel(_("Format type: "))
-        panel.attach(label, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
-        typeCombo = gtk.combo_box_entry_new_text()
+        typeCombo = Gtk.combo_box_entry_new_text()
         typeCombo.show()
-        typeStore = gtk.ListStore(str)
+        typeStore = Gtk.ListStore(str)
         typeCombo.set_model(typeStore)
         typeCombo.get_model().append([Format.STRING])
         typeCombo.get_model().append([Format.HEX])
         typeCombo.set_active(0)
-        panel.attach(typeCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(typeCombo, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = NetzobButton(_("Force partitioning"))
         searchButton.connect("clicked", self.forcePartitioning_cb_cb, dialog, typeCombo, entry, symbols)
-        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(searchButton, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -641,13 +641,13 @@ class UImodelization:
         self.treeSymbolGenerator.clear()
         self.treeTypeStructureGenerator.clear()
         self.update()
-        dialog = gtk.Dialog(title=_("Simple partitioning"), flags=0, buttons=None)
-        panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        dialog = Gtk.Dialog(title=_("Simple partitioning"), flags=0, buttons=None)
+        panel = Gtk.Table(rows=3, columns=3, homogeneous=False)
         panel.show()
 
         # Label
         label = NetzobLabel(_("Minimum unit size: "))
-        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Delimiter type
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
@@ -656,12 +656,12 @@ class UImodelization:
             typeCombo.append_text(possible_choices[i])
             if possible_choices[i] == UnitSize.NONE:
                 typeCombo.set_active(i)
-        panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(typeCombo, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = NetzobButton(_("Simple partitioning"))
         searchButton.connect("clicked", self.simplePartitioning_cb_cb, dialog, typeCombo, symbols)
-        panel.attach(searchButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(searchButton, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -768,13 +768,13 @@ class UImodelization:
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
 
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
             self.selectedSymbol = clickedSymbol
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
             self.updateTreeStoreTypeStructure()
             self.updateTreeStoreMessage()
 
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             self.build_context_menu_for_symbols(event, clickedSymbol)
 
     def button_release_on_treeview_messages(self, treeview, event):
@@ -792,13 +792,13 @@ class UImodelization:
     #+----------------------------------------------
     def button_press_on_treeview_messages(self, treeview, event):
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
-        if (target and event.type == gtk.gdk.BUTTON_PRESS and not (event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK)) and treeview.get_selection().path_is_selected(target[0])):
+        if (target and event.type == Gdk.EventType.BUTTON_PRESS and not (event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)) and treeview.get_selection().path_is_selected(target[0])):
             # disable selection
             treeview.get_selection().set_select_function(lambda * ignore: False)
             self.defer_select = target[0]
 
         # Display the details of a packet
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1:
             x = int(event.x)
             y = int(event.y)
             try:
@@ -825,7 +825,7 @@ class UImodelization:
                         # Do nothing for now
 
         # Popup a menu
-        elif event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        elif event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             self.log.debug(_("User requested a contextual menu (treeview messages)"))
             x = int(event.x)
             y = int(event.y)
@@ -854,7 +854,7 @@ class UImodelization:
                 return
 
             # Add entry to move seleted messages
-            menu = gtk.Menu()
+            menu = Gtk.Menu()
             listmessages = []
             (model, paths) = self.treeMessageGenerator.getTreeview().get_selection().get_selected_rows()
             for path in paths:
@@ -864,149 +864,149 @@ class UImodelization:
                     listmessages.append(id_message)
 
             subMenu = self.build_moveto_submenu(self.selectedSymbol, listmessages)
-            item = gtk.MenuItem(_("Move to..."))
+            item = Gtk.MenuItem(_("Move to..."))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add entry to edit field
-            item = gtk.MenuItem(_("Edit field"))
+            item = Gtk.MenuItem(_("Edit field"))
             item.show()
             item.connect("activate", self.displayPopupToEditField, selectedField)
             menu.append(item)
 
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu(selectedField, message_id)
-            item = gtk.MenuItem(_("Field visualization"))
+            item = Gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add sub-entries to add mathematic filters on a  specific column
             subMenuMathematicFilters = self.build_mathematicFilter_submenu(selectedField)
-            item = gtk.MenuItem("Configure mathematic filters")
+            item = Gtk.MenuItem("Configure mathematic filters")
             item.set_submenu(subMenuMathematicFilters)
             item.show()
             menu.append(item)
 
             # Add entries to concatenate column
-            concatMenu = gtk.Menu()
+            concatMenu = Gtk.Menu()
             if selectedField.getIndex() > 0:
-                item = gtk.MenuItem(_("with precedent field"))
+                item = Gtk.MenuItem(_("with precedent field"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
                 concatMenu.append(item)
 
-                item = gtk.MenuItem(_("with all precedent field"))
+                item = Gtk.MenuItem(_("with all precedent field"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
                 concatMenu.append(item)
 
             if selectedField.getIndex() < len(self.treeMessageGenerator.getSymbol().getFields()) - 1:
-                item = gtk.MenuItem(_("with next field"))
+                item = Gtk.MenuItem(_("with next field"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
                 concatMenu.append(item)
 
-                item = gtk.MenuItem(_("with all next fields"))
+                item = Gtk.MenuItem(_("with all next fields"))
                 item.show()
                 item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
                 concatMenu.append(item)
 
             # Personalize the fields to be concatenated
-            item = gtk.MenuItem(_("personalize selection"))
+            item = Gtk.MenuItem(_("personalize selection"))
             item.show()
             item.connect("activate", self.ConcatChosenColumns)
             concatMenu.append(item)
 
-            item = gtk.MenuItem(_("Concatenate field"))
+            item = Gtk.MenuItem(_("Concatenate field"))
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
 
             # Add entry to split the column
-            item = gtk.MenuItem(_("Split field"))
+            item = Gtk.MenuItem(_("Split field"))
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
 
             # Add sub-entries to do partitioning of field cells
             subMenu = self.build_partitioning_submenu_for_field(selectedField)
-            item = gtk.MenuItem(_("Partitioning"))
+            item = Gtk.MenuItem(_("Partitioning"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add entry to retrieve the field domain of definition
-            item = gtk.MenuItem(_("Field's domain of definition"))
+            item = Gtk.MenuItem(_("Field's domain of definition"))
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
-                typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem(_("Create a variable"))
+                typeMenuVariable = Gtk.Menu()
+                itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
-                typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem(_("Edit variable"))
+                typeMenuVariable = Gtk.Menu()
+                itemVariable = Gtk.MenuItem(_("Edit variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
             if selectedField.getVariable() != None:
-                itemVariable3 = gtk.MenuItem(_("Remove variable"))
+                itemVariable3 = Gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
                 typeMenuVariable.append(itemVariable3)
 
-            item = gtk.MenuItem(_("Configure variation of field"))
+            item = Gtk.MenuItem(_("Configure variation of field"))
             item.set_submenu(typeMenuVariable)
             item.show()
             menu.append(item)
 
-            item = gtk.SeparatorMenuItem()
+            item = Gtk.SeparatorMenuItem()
             item.show()
             menu.append(item)
 
             # Add entries for copy functions
-            copyMenu = gtk.Menu()
-            item = gtk.MenuItem(_("Raw message"))
+            copyMenu = Gtk.Menu()
+            item = Gtk.MenuItem(_("Raw message"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, False, False, None)
             copyMenu.append(item)
-            item = gtk.MenuItem(_("Aligned message"))
+            item = Gtk.MenuItem(_("Aligned message"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, None)
             copyMenu.append(item)
-            item = gtk.MenuItem(_("Aligned formatted message"))
+            item = Gtk.MenuItem(_("Aligned formatted message"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, None)
             copyMenu.append(item)
-            item = gtk.MenuItem(_("Field"))
+            item = Gtk.MenuItem(_("Field"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, False, selectedField)
             copyMenu.append(item)
-            item = gtk.MenuItem(_("Formatted field"))
+            item = Gtk.MenuItem(_("Formatted field"))
             item.show()
             item.connect("activate", self.rightClickToCopyToClipboard, message_id, True, True, selectedField)
             copyMenu.append(item)
-            item = gtk.MenuItem(_("Copy to clipboard"))
+            item = Gtk.MenuItem(_("Copy to clipboard"))
             item.set_submenu(copyMenu)
             item.show()
             menu.append(item)
 
             # Add entry to show properties of the message
-            item = gtk.MenuItem(_("Message properties"))
+            item = Gtk.MenuItem(_("Message properties"))
             item.show()
             item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
             menu.append(item)
 
             # Add entry to delete the message
-            item = gtk.MenuItem(_("Delete message"))
+            item = Gtk.MenuItem(_("Delete message"))
             item.show()
             item.connect("activate", self.rightClickDeleteMessage)
             menu.append(item)
@@ -1024,10 +1024,10 @@ class UImodelization:
         if project == None:
             NetzobErrorMessage(_("No project selected."))
             return
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
 
         for symbol in project.getVocabulary().getSymbols():
-            item = gtk.MenuItem(symbol.getName())
+            item = Gtk.MenuItem(symbol.getName())
             item.show()
             item.connect("activate", self.moveTo, symbol, symbol_src, listmessages)
             menu.append(item)
@@ -1039,23 +1039,23 @@ class UImodelization:
     #|   Build a submenu for field cell partitioning.
     #+----------------------------------------------
     def build_partitioning_submenu_for_field(self, field):
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
 
         # Sequence alignment
-        item = gtk.MenuItem(_("Sequence Alignment"))
+        item = Gtk.MenuItem(_("Sequence Alignment"))
         item.show()
         item.connect("activate", self.fieldPartitioning, field, "alignment")
         menu.append(item)
 
         # Force partitioning
         # TODO
-#        item = gtk.MenuItem("Force Partitioning")
+#        item = Gtk.MenuItem("Force Partitioning")
 #        item.show()
 #        item.connect("activate", self.fieldPartitioning, field, "force")
 #        menu.append(item)
 
         # Simple partitioning
-        item = gtk.MenuItem(_("Simple Partitioning"))
+        item = Gtk.MenuItem(_("Simple Partitioning"))
         item.show()
         item.connect("activate", self.fieldPartitioning, field, "simple")
         menu.append(item)
@@ -1068,7 +1068,7 @@ class UImodelization:
     #|   param field: the selected field
     #+----------------------------------------------
     def build_mathematicFilter_submenu(self, field):
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
 
         # Build the list of available filters
         mathematicalFilters = []
@@ -1083,7 +1083,7 @@ class UImodelization:
                 if f.getName() == mathFilter.getName():
                     operation = "Remove"
 
-            mathFilterItem = gtk.MenuItem(operation + " " + mathFilter.getName())
+            mathFilterItem = Gtk.MenuItem(operation + " " + mathFilter.getName())
             mathFilterItem.connect("activate", self.applyMathematicalFilterOnField, mathFilter, field)
             mathFilterItem.show()
             menu.append(mathFilterItem)
@@ -1109,7 +1109,7 @@ class UImodelization:
     #|   param aObject: either a field or a symbol
     #+----------------------------------------------
     def build_encoding_submenu(self, aObject, message_id):
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
 
         # Retrieve the selected message and field content
         message = self.selectedSymbol.getMessageByID(message_id)
@@ -1121,7 +1121,7 @@ class UImodelization:
 
         # Format submenu
         possible_choices = Format.getSupportedFormats()
-        subMenu = gtk.Menu()
+        subMenu = Gtk.Menu()
         for value in possible_choices:
             if field_content != None:
                 # Get preview of field content
@@ -1129,102 +1129,102 @@ class UImodelization:
                 if len(text_preview) > 10:
                     text_preview = text_preview[:10] + "..."
 
-                item = gtk.MenuItem(value + " (" + text_preview + ")")
+                item = Gtk.MenuItem(value + " (" + text_preview + ")")
             else:
-                item = gtk.MenuItem(value)
+                item = Gtk.MenuItem(value)
             item.show()
             item.connect("activate", self.rightClickToChangeFormat, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem(_("Format"))
+        item = Gtk.MenuItem(_("Format"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
 
         # Unitsize submenu
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
-        subMenu = gtk.Menu()
+        subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = gtk.MenuItem(value)
+            item = Gtk.MenuItem(value)
             item.show()
             item.connect("activate", self.rightClickToChangeUnitSize, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem(_("UnitSize"))
+        item = Gtk.MenuItem(_("UnitSize"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
 
         # Sign submenu
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
-        subMenu = gtk.Menu()
+        subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = gtk.MenuItem(value)
+            item = Gtk.MenuItem(value)
             item.show()
             item.connect("activate", self.rightClickToChangeSign, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem(_("Sign"))
+        item = Gtk.MenuItem(_("Sign"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
 
         # Endianess submenu
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
-        subMenu = gtk.Menu()
+        subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = gtk.MenuItem(value)
+            item = Gtk.MenuItem(value)
             item.show()
             item.connect("activate", self.rightClickToChangeEndianess, aObject, value)
             subMenu.append(item)
-        item = gtk.MenuItem(_("Endianess"))
+        item = Gtk.MenuItem(_("Endianess"))
         item.set_submenu(subMenu)
         item.show()
         menu.append(item)
         return menu
 
     def displayPopupToEditField(self, event, field):
-        dialog = gtk.MessageDialog(None,
-                                   gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_INFO,
-                                   gtk.BUTTONS_CANCEL,
+        dialog = Gtk.MessageDialog(None,
+                                   Gtk.DialogFlags.MODAL,
+                                   Gtk.MessageType.INFO,
+                                   Gtk.ButtonsType.CANCEL,
                                    _("Modify field attributes"))
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
 
         # Create hbox for field name
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Name : ")), False, 5, 5)
-        entryName = gtk.Entry()
+        hbox.pack_start(NetzobLabel(_("Name : ", True, True, 0)), False, 5, 5)
+        entryName = Gtk.Entry()
         entryName.set_text(field.getName())
         # Allow the user to press enter to do ok
-        entryName.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        entryName.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         hbox.pack_end(entryName)
 
         # Create hbox for field description
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Description : ")), False, 5, 5)
-        entryDescr = gtk.Entry()
+        hbox.pack_start(NetzobLabel(_("Description : ", True, True, 0)), False, 5, 5)
+        entryDescr = Gtk.Entry()
         if field.getDescription():
             entryDescr.set_text(field.getDescription())
         else:
             entryDescr.set_text("")
         # Allow the user to press enter to do ok
-        entryDescr.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        entryDescr.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         hbox.pack_end(entryDescr)
 
         # Create hbox for field regex
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Regex (be careful !) : ")), False, 5, 5)
-        entryRegex = gtk.Entry()
+        hbox.pack_start(NetzobLabel(_("Regex (be careful !, True, True, 0) : ")), False, 5, 5)
+        entryRegex = Gtk.Entry()
         entryRegex.set_text(field.getRegex())
         # Allow the user to press enter to do ok
-        entryRegex.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        entryRegex.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         hbox.pack_end(entryRegex)
 
         # Create hbox for field encapsulation level
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Encapsulation level : ")), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Encapsulation level : ", True, True, 0)), False, 5, 5)
         comboEncap = NetzobComboBoxEntry()
         for i in range(10):
             comboEncap.append_text(str(i))
@@ -1235,9 +1235,9 @@ class UImodelization:
         # Run the dialog
         dialog.vbox.pack_end(vbox, True, True, 0)
         dialog.show_all()
-        dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
+        dialog.add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK)
         result = dialog.run()
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -1275,7 +1275,7 @@ class UImodelization:
     #+----------------------------------------------
     def button_press_on_treeview_typeStructure(self, treeview, event):
         # Popup a menu
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             self.log.debug(_("User requested a contextual menu (on treeview typeStructure)"))
             x = int(event.x)
             y = int(event.y)
@@ -1290,90 +1290,90 @@ class UImodelization:
                 self.log.warn(_("Impossible to retrieve the clicked field!"))
                 return
 
-            menu = gtk.Menu()
+            menu = Gtk.Menu()
 
             # Add entry to edit field
-            item = gtk.MenuItem(_("Edit field"))
+            item = Gtk.MenuItem(_("Edit field"))
             item.show()
             item.connect("activate", self.displayPopupToEditField, selectedField)
             menu.append(item)
 
             # Add sub-entries to change the type of a specific field
             subMenu = self.build_encoding_submenu(selectedField, None)
-            item = gtk.MenuItem(_("Field visualization"))
+            item = Gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Add entries to concatenate fields
-            concatMenu = gtk.Menu()
-            item = gtk.MenuItem(_("with precedent field"))
+            concatMenu = Gtk.Menu()
+            item = Gtk.MenuItem(_("with precedent field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "left")
             concatMenu.append(item)
-            item = gtk.MenuItem(_("with all precedent field"))
+            item = Gtk.MenuItem(_("with all precedent field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "allleft")
             concatMenu.append(item)
 
-	    item = gtk.MenuItem(_("with next field"))
+	    item = Gtk.MenuItem(_("with next field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "right")
             concatMenu.append(item)
-            item = gtk.MenuItem(_("with all next field"))
+            item = Gtk.MenuItem(_("with all next field"))
             item.show()
             item.connect("activate", self.rightClickToConcatColumns, selectedField, "allright")
             concatMenu.append(item)
 
-            item = gtk.MenuItem(_("personalize selection"))
+            item = Gtk.MenuItem(_("personalize selection"))
             item.show()
             item.connect("activate", self.ConcatChosenColumns)
             concatMenu.append(item)
 
-            item = gtk.MenuItem(_("Concatenate field"))
+            item = Gtk.MenuItem(_("Concatenate field"))
             item.set_submenu(concatMenu)
             item.show()
             menu.append(item)
 
             # Add entry to split the field
-            item = gtk.MenuItem(_("Split field"))
+            item = Gtk.MenuItem(_("Split field"))
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
             menu.append(item)
 
             # Add entry to retrieve the field domain of definition
-            item = gtk.MenuItem(_("Field's domain of definition"))
+            item = Gtk.MenuItem(_("Field's domain of definition"))
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
-                typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem(_("Create a variable"))
+                typeMenuVariable = Gtk.Menu()
+                itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
-                typeMenuVariable = gtk.Menu()
-                itemVariable = gtk.MenuItem(_("Edit variable"))
+                typeMenuVariable = Gtk.Menu()
+                itemVariable = Gtk.MenuItem(_("Edit variable"))
                 itemVariable.show()
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
             if selectedField.getVariable() != None:
-                itemVariable3 = gtk.MenuItem(_("Remove variable"))
+                itemVariable3 = Gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
                 typeMenuVariable.append(itemVariable3)
 
-            item = gtk.MenuItem(_("Configure variation of field"))
+            item = Gtk.MenuItem(_("Configure variation of field"))
             item.set_submenu(typeMenuVariable)
             item.show()
             menu.append(item)
 
             # Add entry to export fields
-            item = gtk.MenuItem(_("Export selected fields"))
+            item = Gtk.MenuItem(_("Export selected fields"))
             item.show()
             item.connect("activate", self.exportSelectedFields_cb)
             menu.append(item)
@@ -1409,17 +1409,17 @@ class UImodelization:
                     aggregatedCells[i] += str(cells[i])
 
         # Popup a menu to save the data
-        dialog = gtk.Dialog(title=_("Save selected data"), flags=0, buttons=None)
+        dialog = Gtk.Dialog(title=_("Save selected data"), flags=0, buttons=None)
         dialog.show()
-        table = gtk.Table(rows=2, columns=3, homogeneous=False)
+        table = Gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
 
         # Add to an existing trace
         label = NetzobLabel(_("Add to an existing trace"))
-        entry = gtk.combo_box_entry_new_text()
+        entry = Gtk.combo_box_entry_new_text()
         entry.show()
         entry.set_size_request(300, -1)
-        entry.set_model(gtk.ListStore(str))
+        entry.set_model(Gtk.ListStore(str))
         projectsDirectoryPath = self.netzob.getCurrentWorkspace().getPath() + os.sep + "projects" + os.sep + self.netzob.getCurrentProject().getPath()
         for tmpDir in os.listdir(projectsDirectoryPath):
             if tmpDir == '.svn':
@@ -1433,7 +1433,7 @@ class UImodelization:
 
         # Create a new trace
         label = NetzobLabel(_("Create a new trace"))
-        entry = gtk.Entry()
+        entry = Gtk.Entry()
         entry.show()
         but = NetzobButton(_("Save"))
         but.connect("clicked", self.create_new_trace, entry, aggregatedCells, dialog)
@@ -1477,7 +1477,7 @@ class UImodelization:
         #     if tmpDir == '.svn':
         #         continue
         #     if entry.get_text() == tmpDir:
-        #         dialogBis = gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
+        #         dialogBis = Gtk.Dialog(title="This trace already exists", flags=0, buttons=None)
         #         dialogBis.set_size_request(250, 50)
         #         dialogBis.show()
         #         return
@@ -1516,20 +1516,20 @@ class UImodelization:
             tmpDomain.add(TypeConvertor.encodeNetzobRawToGivenType(cell, field.getFormat()))
         domain = sorted(tmpDomain)
 
-        dialog = gtk.Dialog(title=_("Domain of definition for the column ") + field.getName(), flags=0, buttons=None)
+        dialog = Gtk.Dialog(title=_("Domain of definition for the column ") + field.getName(), flags=0, buttons=None)
 
         # Text view containing domain of definition
         ## ListStore format:
         # str: symbol.id
-        treeview = gtk.TreeView(gtk.ListStore(str))
+        treeview = Gtk.TreeView(Gtk.ListStore(str))
         treeview.set_size_request(500, 300)
         treeview.show()
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         cell.set_sensitive(True)
         cell.set_property('editable', True)
 
-        column = gtk.TreeViewColumn(_("Column ") + str(field.getIndex()))
+        column = Gtk.TreeViewColumn(_("Column ") + str(field.getIndex()))
         column.pack_start(cell, True)
         column.set_attributes(cell, text=0)
 
@@ -1538,8 +1538,8 @@ class UImodelization:
         for elt in domain:
             treeview.get_model().append([elt])
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
 
@@ -1580,23 +1580,23 @@ class UImodelization:
             return
 
         # Create the dialog
-        dialog = gtk.Dialog(title=_("Properties of message ") + str(message.getID()), flags=0, buttons=None)
+        dialog = Gtk.Dialog(title=_("Properties of message ") + str(message.getID()), flags=0, buttons=None)
         ## ListStore format : (str=key, str=type, str=value)
-        treeview = gtk.TreeView(gtk.ListStore(str, str, str))
+        treeview = Gtk.TreeView(Gtk.ListStore(str, str, str))
         treeview.set_size_request(500, 300)
         treeview.show()
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
 
-        columnProperty = gtk.TreeViewColumn(_("Property"))
+        columnProperty = Gtk.TreeViewColumn(_("Property"))
         columnProperty.pack_start(cell, True)
         columnProperty.set_attributes(cell, text=0)
 
-        columnType = gtk.TreeViewColumn(_("Type"))
+        columnType = Gtk.TreeViewColumn(_("Type"))
         columnType.pack_start(cell, True)
         columnType.set_attributes(cell, text=1)
 
-        columnValue = gtk.TreeViewColumn(_("Value"))
+        columnValue = Gtk.TreeViewColumn(_("Value"))
         columnValue.pack_start(cell, True)
         columnValue.set_attributes(cell, text=2)
 
@@ -1609,8 +1609,8 @@ class UImodelization:
         for property in message.getProperties():
             treeview.get_model().append(property)
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
 
@@ -1623,10 +1623,10 @@ class UImodelization:
     #+----------------------------------------------
     def rightClickDeleteMessage(self, event):
         questionMsg = _("Click yes to confirm the deletion of the selected messages")
-        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
         result = md.run()
         md.destroy()
-        if result != gtk.RESPONSE_YES:
+        if result != Gtk.ResponseType.YES:
             return
 
         # Else, retrieve the selected messages
@@ -1692,32 +1692,32 @@ class UImodelization:
         nrows = 2
         if(errormessage):
             nrows = 3
-        dialog = gtk.Dialog(title=_("Concatenation of Fields"), flags=0, buttons=None)
-        panel = gtk.Table(rows=nrows, columns=4, homogeneous=False)
+        dialog = Gtk.Dialog(title=_("Concatenation of Fields"), flags=0, buttons=None)
+        panel = Gtk.Table(rows=nrows, columns=4, homogeneous=False)
         panel.show()
 
         ## Label for indexes of the fields
         label = NetzobLabel(_("Fields from:"))
-        index1 = gtk.Entry(4)
+        index1 = Gtk.Entry(4)
         index1.show()
         label2 = NetzobLabel(_("to:"))
-        index2 = gtk.Entry(4)
+        index2 = Gtk.Entry(4)
         index2.show()
         if(errormessage):
             label3 = NetzobLabel(errormessage)
 
-        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(index1, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(label2, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(index2, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(index1, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label2, 2, 3, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(index2, 3, 4, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         if(errormessage):
-            panel.attach(label3, 2, 4, 2, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+            panel.attach(label3, 2, 4, 2, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         searchButton = NetzobButton(_("Concatenate fields"))
         searchButton.connect("clicked", self.clickToConcatChosenColumns, index1, index2, dialog)
-        panel.attach(searchButton, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(searchButton, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -1783,11 +1783,11 @@ class UImodelization:
     #|   Callback to split a column
     #+----------------------------------------------
     def rightClickToSplitColumn(self, event, field):
-        dialog = gtk.Dialog(title=_("Split column ") + str(field.getIndex()), flags=0, buttons=None)
-        textview = gtk.TextView()
+        dialog = Gtk.Dialog(title=_("Split column ") + str(field.getIndex()), flags=0, buttons=None)
+        textview = Gtk.TextView()
         textview.set_editable(False)
-        textview.get_buffer().create_tag("redTag", weight=pango.WEIGHT_BOLD, foreground="red", family="Courier")
-        textview.get_buffer().create_tag("greenTag", weight=pango.WEIGHT_BOLD, foreground="#006400", family="Courier")
+        textview.get_buffer().create_tag("redTag", weight=Pango.Weight.BOLD, foreground="red", family="Courier")
+        textview.get_buffer().create_tag("greenTag", weight=Pango.Weight.BOLD, foreground="#006400", family="Courier")
         self.split_position = 1
         self.split_max_len = 0
 
@@ -1804,18 +1804,18 @@ class UImodelization:
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Left arrow
-        arrow = gtk.Arrow(gtk.ARROW_LEFT, gtk.SHADOW_OUT)
+        arrow = Gtk.Arrow(Gtk.ArrowType.LEFT, Gtk.ShadowType.OUT)
         arrow.show()
-        but = gtk.Button()
+        but = Gtk.Button()
         but.show()
         but.add(arrow)
         but.connect("clicked", self.adjustSplitColumn, textview, "left", field)
         dialog.action_area.pack_start(but, True, True, 0)
 
         # Right arrow
-        arrow = gtk.Arrow(gtk.ARROW_RIGHT, gtk.SHADOW_OUT)
+        arrow = Gtk.Arrow(Gtk.ArrowType.RIGHT, Gtk.ShadowType.OUT)
         arrow.show()
-        but = gtk.Button()
+        but = Gtk.Button()
         but.show()
         but.add(arrow)
         but.connect("clicked", self.adjustSplitColumn, textview, "right", field)
@@ -1835,8 +1835,8 @@ class UImodelization:
             textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[:self.split_position], field.getFormat()) + "  ", "redTag")
             textview.get_buffer().insert_with_tags_by_name(textview.get_buffer().get_end_iter(), TypeConvertor.encodeNetzobRawToGivenType(m[self.split_position:], field.getFormat()) + "\n", "greenTag")
         textview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(textview)
         frame.add(scroll)
@@ -1845,42 +1845,42 @@ class UImodelization:
 
     def rightClickCreateVariable(self, widget, symbol, field):
         self.log.debug(_("Opening the dialog for the creation of a variable"))
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the new variable"))
 
         # Create the ID of the new variable
         variableID = uuid.uuid4()
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # id of the variable
         variableIDLabel = NetzobLabel(_("ID :"))
         variableIDValueLabel = NetzobLabel(str(variableID))
         variableIDValueLabel.set_sensitive(False)
-        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # name of the variable
         variableNameLabel = NetzobLabel(_("Name : "))
-        variableNameEntry = gtk.Entry()
+        variableNameEntry = Gtk.Entry()
         variableNameEntry.show()
-        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Include current binary values
         variableWithCurrentBinariesLabel = NetzobLabel(_("Add current binaries : "))
 
-        variableWithCurrentBinariesButton = gtk.CheckButton(_("Disjunctive inclusion"))
+        variableWithCurrentBinariesButton = Gtk.CheckButton(_("Disjunctive inclusion"))
         variableWithCurrentBinariesButton.set_active(False)
         variableWithCurrentBinariesButton.show()
 
-        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -1905,10 +1905,10 @@ class UImodelization:
 
     def rightClickRemoveVariable(self, widget, field):
         questionMsg = _("Click yes to confirm the removal of the variable {0}").format(field.getVariable().getID())
-        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
         result = md.run()
         md.destroy()
-        if result == gtk.RESPONSE_YES:
+        if result == Gtk.ResponseType.YES:
             field.setVariable(None)
             self.update()
         else:
@@ -2045,7 +2045,7 @@ class UImodelization:
 
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
         # Retrieve informations on the clicked element
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1:
             x = int(event.x)
             y = int(event.y)
             try:
@@ -2083,55 +2083,55 @@ class UImodelization:
     #+----------------------------------------------
     def build_context_menu_for_symbols(self, event, symbol):
         # Build the contextual menu
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
 
         if (symbol != None):
             # Edit the Symbol
-            itemEditSymbol = gtk.MenuItem(_("Edit symbol"))
+            itemEditSymbol = Gtk.MenuItem(_("Edit symbol"))
             itemEditSymbol.show()
             itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
             menu.append(itemEditSymbol)
 
             # Search in the Symbol
-            itemSearchSymbol = gtk.MenuItem(_("Search in"))
+            itemSearchSymbol = Gtk.MenuItem(_("Search in"))
             itemSearchSymbol.show()
             itemSearchSymbol.connect("activate", self.displayPopupToSearch, "Symbol", symbol)
             menu.append(itemSearchSymbol)
 
             # SubMenu : Alignments
-            subMenuAlignment = gtk.Menu()
+            subMenuAlignment = Gtk.Menu()
 
             # Sequence alignment
-            itemSequenceAlignment = gtk.MenuItem(_("Sequence Alignment"))
+            itemSequenceAlignment = Gtk.MenuItem(_("Sequence Alignment"))
             itemSequenceAlignment.show()
             itemSequenceAlignment.connect("activate", self.sequenceAlignmentOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSequenceAlignment)
 
             # Force partitioning
-            itemForcePartitioning = gtk.MenuItem(_("Force Partitioning"))
+            itemForcePartitioning = Gtk.MenuItem(_("Force Partitioning"))
             itemForcePartitioning.show()
             itemForcePartitioning.connect("activate", self.forcePartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemForcePartitioning)
 
             # Simple partitioning
-            itemSimplePartitioning = gtk.MenuItem(_("Simple Partitioning"))
+            itemSimplePartitioning = Gtk.MenuItem(_("Simple Partitioning"))
             itemSimplePartitioning.show()
             itemSimplePartitioning.connect("activate", self.simplePartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSimplePartitioning)
 
             # Smooth partitioning
-            itemSmoothPartitioning = gtk.MenuItem(_("Smooth Partitioning"))
+            itemSmoothPartitioning = Gtk.MenuItem(_("Smooth Partitioning"))
             itemSmoothPartitioning.show()
             itemSmoothPartitioning.connect("activate", self.smoothPartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemSmoothPartitioning)
 
             # Reset partitioning
-            itemResetPartitioning = gtk.MenuItem(_("Reset Partitioning"))
+            itemResetPartitioning = Gtk.MenuItem(_("Reset Partitioning"))
             itemResetPartitioning.show()
             itemResetPartitioning.connect("activate", self.resetPartitioningOnSpecifiedSymbols, [symbol])
             subMenuAlignment.append(itemResetPartitioning)
 
-            itemMenuAlignment = gtk.MenuItem(_("Align the symbol"))
+            itemMenuAlignment = Gtk.MenuItem(_("Align the symbol"))
             itemMenuAlignment.show()
             itemMenuAlignment.set_submenu(subMenuAlignment)
 
@@ -2139,19 +2139,19 @@ class UImodelization:
 
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu(symbol, None)
-            item = gtk.MenuItem(_("Field visualization"))
+            item = Gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
             menu.append(item)
 
             # Remove a Symbol
-            itemRemoveSymbol = gtk.MenuItem(_("Remove symbol"))
+            itemRemoveSymbol = Gtk.MenuItem(_("Remove symbol"))
             itemRemoveSymbol.show()
             itemRemoveSymbol.connect("activate", self.displayPopupToRemoveSymbol, symbol)
             menu.append(itemRemoveSymbol)
         else:
             # Create a Symbol
-            itemCreateSymbol = gtk.MenuItem(_("Create a symbol"))
+            itemCreateSymbol = Gtk.MenuItem(_("Create a symbol"))
             itemCreateSymbol.show()
             itemCreateSymbol.connect("activate", self.displayPopupToCreateSymbol, symbol)
             menu.append(itemCreateSymbol)
@@ -2159,24 +2159,24 @@ class UImodelization:
         menu.popup(None, None, None, event.button, event.time)
 
     def displayPopupToSearch(self, event, typeSearch, searchTarget):
-        dialog = gtk.MessageDialog(None,
-                                   gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_OTHER,
-                                   gtk.BUTTONS_OK,
+        dialog = Gtk.MessageDialog(None,
+                                   Gtk.DialogFlags.MODAL,
+                                   Gtk.MessageType.OTHER,
+                                   Gtk.ButtonsType.OK,
                                    _("Searching"))
         # Create the main panel
-        panel = gtk.Table(rows=3, columns=2, homogeneous=False)
+        panel = Gtk.Table(rows=3, columns=2, homogeneous=False)
         panel.show()
 
         # Create the header (first row) with the search form
         # Search entry
-        searchEntry = gtk.Entry()
+        searchEntry = Gtk.Entry()
         searchEntry.show()
 
         # Combo to select the type of the input
-        typeCombo = gtk.combo_box_entry_new_text()
+        typeCombo = Gtk.combo_box_entry_new_text()
         typeCombo.show()
-        typeStore = gtk.ListStore(str)
+        typeStore = Gtk.ListStore(str)
         typeCombo.set_model(typeStore)
         typeCombo.get_model().append([Format.STRING])
         typeCombo.get_model().append([Format.HEX])
@@ -2186,8 +2186,8 @@ class UImodelization:
         typeCombo.get_model().append([Format.IP])
         typeCombo.set_active(0)
 
-        panel.attach(searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(searchEntry, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(typeCombo, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(panel, True, True, 0)
 
@@ -2199,21 +2199,21 @@ class UImodelization:
         dialog.destroy()
 
     def displayPopupToEditSymbol(self, event, symbol):
-        dialog = gtk.MessageDialog(
+        dialog = Gtk.MessageDialog(
         None,
-        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-        gtk.MESSAGE_QUESTION,
-        gtk.BUTTONS_OK,
+        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+        Gtk.MessageType.QUESTION,
+        Gtk.ButtonsType.OK,
         None)
         dialog.set_markup(_("<b>Please enter the name of the symbol :</b>"))
         #create the text input field
-        entry = gtk.Entry()
+        entry = Gtk.Entry()
         entry.set_text(symbol.getName())
         #allow the user to press enter to do ok
-        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        entry.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         #create a horizontal box to pack the entry and a label
-        hbox = gtk.HBox()
-        hbox.pack_start(NetzobLabel(_("Name : ")), False, 5, 5)
+        hbox = Gtk.HBox()
+        hbox.pack_start(NetzobLabel(_("Name : ", True, True, 0)), False, 5, 5)
         hbox.pack_end(entry)
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
@@ -2240,20 +2240,20 @@ class UImodelization:
     def displayPopupToCreateSymbol(self, event, symbol):
 
         #base this on a message dialog
-        dialog = gtk.MessageDialog(
+        dialog = Gtk.MessageDialog(
                                    None,
-                                   gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_QUESTION,
-                                   gtk.BUTTONS_OK,
+                                   Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK,
                                    None)
         dialog.set_markup(_("<b>Please enter symbol's name</b> :"))
         #create the text input field
-        entry = gtk.Entry()
+        entry = Gtk.Entry()
         #allow the user to press enter to do ok
-        entry.connect("activate", self.responseToDialog, dialog, gtk.RESPONSE_OK)
+        entry.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         #create a horizontal box to pack the entry and a label
-        hbox = gtk.HBox()
-        hbox.pack_start(NetzobLabel(_("Name :")), False, 5, 5)
+        hbox = Gtk.HBox()
+        hbox.pack_start(NetzobLabel(_("Name :", True, True, 0)), False, 5, 5)
         hbox.pack_end(entry)
         #add it and show it
         dialog.vbox.pack_end(hbox, True, True, 0)
@@ -2283,10 +2283,10 @@ class UImodelization:
 
         self.log.debug(_("Can remove the symbol {0} since it's an empty one.").format(symbol.getName()))
         questionMsg = _("Click yes to confirm the removal of the symbol {0}").format(symbol.getName())
-        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
         result = md.run()
         md.destroy()
-        if result == gtk.RESPONSE_YES:
+        if result == Gtk.ResponseType.YES:
             while(symbol.getMessages()):
                 message = symbol.getMessages()[0]
                 symbol.removeMessage(message)
@@ -2669,7 +2669,7 @@ class UImodelization:
 #        if box != None:
 #            NetzobErrorMessage("No data found in messages and fields.")
 #        else:
-#            dialog = gtk.Dialog(title="Data carving results", flags=0, buttons=None)
+#            dialog = Gtk.Dialog(title="Data carving results", flags=0, buttons=None)
 #            dialog.vbox.pack_start(box, True, True, 0)
 #            dialog.show()
 
@@ -2822,7 +2822,7 @@ class UImodelization:
         if box == None:
             NetzobErrorMessage(_("No ASN.1 field found."))
         else:  # Show the results
-            dialog = gtk.Dialog(title=_("Find ASN.1 fields"), flags=0, buttons=None)
+            dialog = Gtk.Dialog(title=_("Find ASN.1 fields"), flags=0, buttons=None)
             dialog.vbox.pack_start(box, True, True, 0)
             dialog.show()
 
@@ -2846,13 +2846,13 @@ class UImodelization:
         sizeFieldIdentifier = SizeFieldIdentifier()
 
         # Show the progression dialog
-        dialog = gtk.Dialog(title=_("Size Fields Identifications"), flags=0, buttons=None)
-        panel = gtk.Table(rows=2, columns=2, homogeneous=False)
+        dialog = Gtk.Dialog(title=_("Size Fields Identifications"), flags=0, buttons=None)
+        panel = Gtk.Table(rows=2, columns=2, homogeneous=False)
         panel.show()
 
         # Progress bar
         self.progressBarSizeField = NetzobProgressBar()
-        panel.attach(self.progressBarSizeField, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(self.progressBarSizeField, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Buttons
         cancelSizeFieldButton = NetzobButton(_("Cancel"))
@@ -2862,8 +2862,8 @@ class UImodelization:
         cancelSizeFieldButton.connect("clicked", self.cancelfindSizeFields_cb, dialog, startSizeFieldButton, sizeFieldIdentifier)
         startSizeFieldButton.connect("clicked", self.findSizeFields_cb, dialog, sizeFieldIdentifier, [self.selectedSymbol], cancelSizeFieldButton, savedEncapsulationLevel)
 
-        panel.attach(startSizeFieldButton, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        panel.attach(cancelSizeFieldButton, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(startSizeFieldButton, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(cancelSizeFieldButton, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_start(panel, True, True, 0)
         dialog.show()
@@ -2876,7 +2876,7 @@ class UImodelization:
 
         self.currentExecutionOfFindSizeFieldHasFinished = False
         # Start the progress bar
-        gobject.timeout_add(100, self.do_pulse_for_findSizeField)
+        GObject.timeout_add(100, self.do_pulse_for_findSizeField)
         # Start the findsize field JOB
         Job(self.startFindSizeField(sizeFieldIdentifier, symbols, dialog, savedEncapsulationLevel))
 
@@ -2916,7 +2916,7 @@ class UImodelization:
         self.currentExecutionOfFindSizeFieldHasFinished = True
 
     def findSizeFields_results_cb(self, results, savedEncapsulationLevel):
-       dialog = gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
+       dialog = Gtk.Dialog(title="Potential size fields and related payload", flags=0, buttons=None)
        ## ListStore format:
        # int: size field column
        # int: size field size
@@ -2925,10 +2925,10 @@ class UImodelization:
        # int: end column
        # int: subend column
        # str: message rendered in cell
-       treeview = gtk.TreeView(gtk.ListStore(int, int, int, int, int, int, str))
-       cell = gtk.CellRendererText()
+       treeview = Gtk.TreeView(Gtk.ListStore(int, int, int, int, int, int, str))
+       cell = Gtk.CellRendererText()
        treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
-       column = gtk.TreeViewColumn('Size field and related payload')
+       column = Gtk.TreeViewColumn('Size field and related payload')
        column.pack_start(cell, True)
        column.set_attributes(cell, text=6)
        treeview.append_column(column)
@@ -2948,8 +2948,8 @@ class UImodelization:
                treeview.get_model().append(result)
 
            treeview.show()
-           scroll = gtk.ScrolledWindow()
-           scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+           scroll = Gtk.ScrolledWindow()
+           scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
            scroll.show()
            scroll.add(treeview)
            dialog.vbox.pack_start(scroll, True, True, 0)

@@ -29,10 +29,10 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import logging
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
 #| Local Imports

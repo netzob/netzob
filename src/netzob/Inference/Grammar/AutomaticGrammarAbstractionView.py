@@ -30,15 +30,15 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import gtk
-import pygtk
-import gobject
+from gi.repository import Gtk
+import gi
+from gi.repository import GObject
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Transitions.impl.OpenChannelTransition import OpenChannelTransition
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -61,14 +61,14 @@ class AutomaticGrammarAbstractionView(object):
 
     def display(self):
         # Display the form for the creation of a word variable
-        self.dialog = gtk.Dialog(title=_("Automatic abstraction of the current grammar"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Automatic abstraction of the current grammar"), flags=0, buttons=None)
 
-        mainTable = gtk.Table(rows=2, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=2, columns=2, homogeneous=False)
         # Insert the Save button
-        self.startButton = gtk.Button(_("Start the abstraction"))
+        self.startButton = Gtk.Button(_("Start the abstraction"))
         self.startButton.show()
         self.startButton.connect("clicked", self.startAbstraction)
-        mainTable.attach(self.startButton, 0, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.startButton, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
 
