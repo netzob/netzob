@@ -262,7 +262,8 @@ class Menu(object):
         self.netzob.destroy(widget)
 
     def setDisplaySearchViewActiveStatus(self, status):
-        self.displaySearchView.set_active(status)
+         self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").\
+            set_active(True)
 
     #+----------------------------------------------
     #| Called when user wants to manage the traces
