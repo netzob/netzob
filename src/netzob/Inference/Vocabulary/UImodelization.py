@@ -570,7 +570,8 @@ class UImodelization:
         panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Entry for delimiter
-        entry = Gtk.Entry(4)
+        entry = Gtk.Entry()
+        entry.set_max_length(4)
         entry.show()
         panel.attach(entry, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
@@ -1698,10 +1699,12 @@ class UImodelization:
 
         ## Label for indexes of the fields
         label = NetzobLabel(_("Fields from:"))
-        index1 = Gtk.Entry(4)
+        index1 = Gtk.Entry()
+        index1.set_max_length(4)
         index1.show()
         label2 = NetzobLabel(_("to:"))
-        index2 = Gtk.Entry(4)
+        index2 = Gtk.Entry()
+        index2.set_max_length(4)
         index2.show()
         if(errormessage):
             label3 = NetzobLabel(errormessage)
