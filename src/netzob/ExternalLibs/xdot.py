@@ -31,12 +31,10 @@ import time
 import re
 
 from gi.repository import GObject
-from gi.repository import Gtk
-import Gtk.gdk
-import Gtk.keysyms
+from gi.repository import Gtk, Gdk
+#import Gtk.keysyms
 import cairo
-from gi.repository import Pango
-import pangocairo
+from gi.repository import Pango, PangoCairo
 
 # See http://www.graphviz.org/pub/scm/graphviz-cairo/plugin/cairo/gvrender_cairo.c
 
@@ -121,7 +119,7 @@ class TextShape(Shape):
             fo.set_hint_style(cairo.HINT_STYLE_NONE)
             fo.set_hint_metrics(cairo.HINT_METRICS_OFF)
             try:
-                pangocairo.context_set_font_options(context, fo)
+                PangoCairo.context_set_font_options(context, fo)
             except TypeError:
                 # XXX: Some broken pangocairo bindings show the error
                 # 'TypeError: font_options must be a cairo.FontOptions or None'
@@ -1405,7 +1403,7 @@ class DotWidget(Gtk.DrawingArea):
     """PyGTK widget that draws dot graphs."""
 
     __gsignals__ = {
-        'expose-event': 'override',
+        'draw': 'override',
         'clicked': (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, Gdk.Event))
     }
 
