@@ -112,7 +112,7 @@ class PcapImportController():
         button.set_sensitive(False)
         (errorCode, errorMessage) = self.model.launchSniff(pcapFile, aFilter, self.packetHandlerCallback_cb)
 
-        if errorCode == False :
+        if errorCode == False:
             button.set_sensitive(True)
             md = gtk.MessageDialog(None,
                 gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR,
@@ -142,7 +142,7 @@ class PcapImportController():
                 timestamp = str(model.get_value(iter, 6))
                 packetPayload = self.model.messages[packetID]
                 packetsToSave.append((packetPayload, proto, timestamp))
- 
+
         # We ask the confirmation
         md = gtk.MessageDialog(None,
             gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,

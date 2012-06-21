@@ -35,6 +35,7 @@ import pango
 import logging
 pygtk.require('2.0')
 
+
 class WorkspaceSelector(object):
     """Workspace selection dialog"""
 
@@ -106,7 +107,7 @@ class WorkspaceSelector(object):
 
     @property
     def selectedWorkspace(self):
-        return self._selectedWorkspace;
+        return self._selectedWorkspace
 
     #@property
     #def makeDefault(self):

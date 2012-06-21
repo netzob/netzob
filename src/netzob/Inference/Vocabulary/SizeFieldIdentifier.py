@@ -75,16 +75,16 @@ class SizeFieldIdentifier(object):
     def getPotentialSizeFields(self, symbol):
         sizeFields = []
         for field in symbol.getFields():
-            if not field.isStatic(): # Means the element is static, so we assume it's not a good candidate
+            if not field.isStatic():  # Means the element is static, so we assume it's not a good candidate
                 sizeFields.append(field)
 
         # We pre-calculate the size values
         sizeCellsByField = {}
         for sizeField in sizeFields:
-            sizeCellsByField[ sizeField ] = []
+            sizeCellsByField[sizeField] = []
             cells = symbol.getCellsByField(sizeField)
             for cell in cells:
-                sizeCellsByField[ sizeField ].append( self.getEncodedSizes( cell ) )
+                sizeCellsByField[sizeField].append(self.getEncodedSizes(cell))
         return sizeCellsByField
 
     #+----------------------------------------------
@@ -118,14 +118,14 @@ class SizeFieldIdentifier(object):
     def getPotentialPayloads(self, symbol, start, stop):
         # Initialize the aggregate of messages
         aggregateCellsData = []
-        for l in range(len( symbol.getMessages() )):
+        for l in range(len(symbol.getMessages())):
             aggregateCellsData.append("")
 
         # Fill the aggregate of messages from fieldStart to fieldStop
         for iField in range(start, stop):
             # Retrieve current cells
-            cells = symbol.getCellsByField( symbol.getFieldByIndex( iField ) )
-            for l in range(len( cells )):
+            cells = symbol.getCellsByField(symbol.getFieldByIndex(iField))
+            for l in range(len(cells)):
                 aggregateCellsData[l] += cells[l]
         return aggregateCellsData
 
@@ -197,7 +197,7 @@ class SizeFieldIdentifier(object):
                     res = True
                     resCnt = 0
                     for l in range(len(payloads)):
-                        payloadLen = len( payloads[l] )
+                        payloadLen = len(payloads[l])
                         encodedSizes = sizeCells[l]
                         for (key, value) in encodedSizes.items():
                             (le, be) = value

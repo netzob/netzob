@@ -118,4 +118,3 @@ class FileImport(AbstractImporter):
         # We save the new messages
         self.messages = []
         self.messages.extend(new_messages)
-
