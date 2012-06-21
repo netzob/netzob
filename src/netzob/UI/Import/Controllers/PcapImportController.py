@@ -140,7 +140,7 @@ class PcapImportController():
                 packetID = model.get_value(iter, 0)
                 proto = model.get_value(iter, 1)
                 timestamp = str(model.get_value(iter, 6))
-                packetPayload = self.model.messages[packetID]
+                packetPayload = self.model.messages[packetID - 1]
                 packetsToSave.append((packetPayload, proto, timestamp))
  
         # We ask the confirmation
@@ -170,7 +170,7 @@ class PcapImportController():
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
                 packetID = model.get_value(iter, 0)
-                payload = self.model.messages[packetID]
+                payload = self.model.messages[packetID - 1]
                 content = str(decoder.decode(payload))
                 self.view.textview.get_buffer().insert_with_tags_by_name(self.view.textview.get_buffer().get_start_iter(), content, "normalTag")
 

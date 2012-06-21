@@ -84,7 +84,7 @@ class PcapImportView():
 
         # Packet list
         scroll = Gtk.ScrolledWindow()
-        self.treestore = Gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
+        self.treestore = Gtk.TreeStore(int, str, str, str, int, int, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         self.treeviewPackets = Gtk.TreeView(self.treestore)
         self.treeviewPackets.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         self.treeviewPackets.set_size_request(500, -1)
