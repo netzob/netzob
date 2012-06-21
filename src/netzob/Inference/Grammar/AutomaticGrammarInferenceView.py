@@ -184,7 +184,7 @@ class AutomaticGrammarInferenceView(object):
         mainTable.attach(scroll_requests, 2, 4, 0, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
-        self.progressbar = Gtk.ProgressBar(adjustment=None)
+        self.progressbar = Gtk.ProgressBar()
         self.progressbar.show()
 #        # Insert the status message
 #        self.statusLabel = Gtk.Label(label="A number of X states has been created - Current turn contains N MQ")

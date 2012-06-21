@@ -92,7 +92,7 @@ def NetzobComboBoxEntry():
 #| NetzobProgressBar:
 #+---------------------------------------------------------------------------+
 def NetzobProgressBar(text=None):
-    pb = Gtk.ProgressBar(adjustment=None)
+    pb = Gtk.ProgressBar()
     if text != None:
         pb.set_text(text)
 
