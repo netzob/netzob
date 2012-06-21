@@ -76,7 +76,7 @@ class AbstractViewGenerator():
     #+-----------------------------------------------------------------------+
     def hide(self):
         self.deactivate()
-        self.getWidget().hide_all()
+        self.getWidget().hide()
 
     #+-----------------------------------------------------------------------+
     #| GETTERS & SETTERS

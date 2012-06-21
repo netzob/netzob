@@ -133,7 +133,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
     #|   Hide the panel
     #+----------------------------------------------
     def hide(self):
-        self.scroll.hide_all()
+        self.scroll.hide()
 
     #+----------------------------------------------
     #| default:
