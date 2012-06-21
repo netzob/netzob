@@ -854,7 +854,7 @@ class UImodelization:
                 return
 
             # Add entry to move seleted messages
-            menu = Gtk.Menu()
+            self.menu = Gtk.Menu()
             listmessages = []
             (model, paths) = self.treeMessageGenerator.getTreeview().get_selection().get_selected_rows()
             for path in paths:
@@ -867,27 +867,27 @@ class UImodelization:
             item = Gtk.MenuItem(_("Move to..."))
             item.set_submenu(subMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to edit field
             item = Gtk.MenuItem(_("Edit field"))
             item.show()
             item.connect("activate", self.displayPopupToEditField, selectedField)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu(selectedField, message_id)
             item = Gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add sub-entries to add mathematic filters on a  specific column
             subMenuMathematicFilters = self.build_mathematicFilter_submenu(selectedField)
             item = Gtk.MenuItem("Configure mathematic filters")
             item.set_submenu(subMenuMathematicFilters)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entries to concatenate column
             concatMenu = Gtk.Menu()
@@ -922,26 +922,26 @@ class UImodelization:
             item = Gtk.MenuItem(_("Concatenate field"))
             item.set_submenu(concatMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to split the column
             item = Gtk.MenuItem(_("Split field"))
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add sub-entries to do partitioning of field cells
             subMenu = self.build_partitioning_submenu_for_field(selectedField)
             item = Gtk.MenuItem(_("Partitioning"))
             item.set_submenu(subMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to retrieve the field domain of definition
             item = Gtk.MenuItem(_("Field's domain of definition"))
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
@@ -966,11 +966,11 @@ class UImodelization:
             item = Gtk.MenuItem(_("Configure variation of field"))
             item.set_submenu(typeMenuVariable)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             item = Gtk.SeparatorMenuItem()
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entries for copy functions
             copyMenu = Gtk.Menu()
@@ -997,21 +997,21 @@ class UImodelization:
             item = Gtk.MenuItem(_("Copy to clipboard"))
             item.set_submenu(copyMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to show properties of the message
             item = Gtk.MenuItem(_("Message properties"))
             item.show()
             item.connect("activate", self.rightClickShowPropertiesOfMessage, message_id)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to delete the message
             item = Gtk.MenuItem(_("Delete message"))
             item.show()
             item.connect("activate", self.rightClickDeleteMessage)
-            menu.append(item)
+            self.menu.append(item)
 
-            menu.popup(None, None, None, event.button, event.time)
+            self.menu.popup(None, None, None, None, event.button, event.time)
 
     #+----------------------------------------------
     #| build_partitioning_submenu_for_field:
@@ -1290,20 +1290,20 @@ class UImodelization:
                 self.log.warn(_("Impossible to retrieve the clicked field!"))
                 return
 
-            menu = Gtk.Menu()
+            self.menu = Gtk.Menu()
 
             # Add entry to edit field
             item = Gtk.MenuItem(_("Edit field"))
             item.show()
             item.connect("activate", self.displayPopupToEditField, selectedField)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add sub-entries to change the type of a specific field
             subMenu = self.build_encoding_submenu(selectedField, None)
             item = Gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entries to concatenate fields
             concatMenu = Gtk.Menu()
@@ -1333,19 +1333,19 @@ class UImodelization:
             item = Gtk.MenuItem(_("Concatenate field"))
             item.set_submenu(concatMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to split the field
             item = Gtk.MenuItem(_("Split field"))
             item.show()
             item.connect("activate", self.rightClickToSplitColumn, selectedField)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to retrieve the field domain of definition
             item = Gtk.MenuItem(_("Field's domain of definition"))
             item.show()
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
-            menu.append(item)
+            self.menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
             if selectedField.getVariable() == None:
@@ -1370,15 +1370,15 @@ class UImodelization:
             item = Gtk.MenuItem(_("Configure variation of field"))
             item.set_submenu(typeMenuVariable)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Add entry to export fields
             item = Gtk.MenuItem(_("Export selected fields"))
             item.show()
             item.connect("activate", self.exportSelectedFields_cb)
-            menu.append(item)
+            self.menu.append(item)
 
-            menu.popup(None, None, None, event.button, event.time)
+            self.menu.popup(None, None, None, None, event.button, event.time)
 
     #+----------------------------------------------
     #| exportSelectedFields_cb:
@@ -2083,20 +2083,20 @@ class UImodelization:
     #+----------------------------------------------
     def build_context_menu_for_symbols(self, event, symbol):
         # Build the contextual menu
-        menu = Gtk.Menu()
+        self.menu = Gtk.Menu()
 
         if (symbol != None):
             # Edit the Symbol
             itemEditSymbol = Gtk.MenuItem(_("Edit symbol"))
             itemEditSymbol.show()
             itemEditSymbol.connect("activate", self.displayPopupToEditSymbol, symbol)
-            menu.append(itemEditSymbol)
+            self.menu.append(itemEditSymbol)
 
             # Search in the Symbol
             itemSearchSymbol = Gtk.MenuItem(_("Search in"))
             itemSearchSymbol.show()
             itemSearchSymbol.connect("activate", self.displayPopupToSearch, "Symbol", symbol)
-            menu.append(itemSearchSymbol)
+            self.menu.append(itemSearchSymbol)
 
             # SubMenu : Alignments
             subMenuAlignment = Gtk.Menu()
@@ -2135,28 +2135,28 @@ class UImodelization:
             itemMenuAlignment.show()
             itemMenuAlignment.set_submenu(subMenuAlignment)
 
-            menu.append(itemMenuAlignment)
+            self.menu.append(itemMenuAlignment)
 
             # Add sub-entries to change the type of a specific column
             subMenu = self.build_encoding_submenu(symbol, None)
             item = Gtk.MenuItem(_("Field visualization"))
             item.set_submenu(subMenu)
             item.show()
-            menu.append(item)
+            self.menu.append(item)
 
             # Remove a Symbol
             itemRemoveSymbol = Gtk.MenuItem(_("Remove symbol"))
             itemRemoveSymbol.show()
             itemRemoveSymbol.connect("activate", self.displayPopupToRemoveSymbol, symbol)
-            menu.append(itemRemoveSymbol)
+            self.menu.append(itemRemoveSymbol)
         else:
             # Create a Symbol
             itemCreateSymbol = Gtk.MenuItem(_("Create a symbol"))
             itemCreateSymbol.show()
             itemCreateSymbol.connect("activate", self.displayPopupToCreateSymbol, symbol)
-            menu.append(itemCreateSymbol)
+            self.menu.append(itemCreateSymbol)
 
-        menu.popup(None, None, None, event.button, event.time)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     def displayPopupToSearch(self, event, typeSearch, searchTarget):
         dialog = Gtk.MessageDialog(None,

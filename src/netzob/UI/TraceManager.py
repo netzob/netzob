@@ -201,15 +201,15 @@ class TraceManager():
                   (Gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
        ]
 
-        menu = Gtk.Menu()
+        self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
             item = Gtk.ImageMenuItem(stock_id)
 
             item.connect("activate", callback, trace)
             item.set_sensitive(sensitive)
             item.show()
-            menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+            self.menu.append(item)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     def importTrace(self, event, trace):
         importDialog = Gtk.Dialog(title=_("Import selected Trace in a project"), flags=0, buttons=None)

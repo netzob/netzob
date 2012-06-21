@@ -742,14 +742,14 @@ class UIGrammarInference:
                   (Gtk.STOCK_REMOVE, self.displayPopupToRemoveTransition, (transition != None))
        ]
 
-        menu = Gtk.Menu()
+        self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
             item = Gtk.ImageMenuItem(stock_id)
             item.connect("activate", callback, transition)
             item.set_sensitive(sensitive)
             item.show()
-            menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+            self.menu.append(item)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     #+----------------------------------------------
     #| build_context_menu_for_states:
@@ -762,14 +762,14 @@ class UIGrammarInference:
                   (Gtk.STOCK_REMOVE, self.displayPopupToRemoveState, (state != None))
        ]
 
-        menu = Gtk.Menu()
+        self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
             item = Gtk.ImageMenuItem(stock_id)
             item.connect("activate", callback, state)
             item.set_sensitive(sensitive)
             item.show()
-            menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+            self.menu.append(item)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     def displayPopupToRemoveTransition(self, event, transition):
         questionMsg = _("Click yes to confirm the removal of the transition {0}.").format(transition.getName())

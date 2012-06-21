@@ -157,7 +157,7 @@ class VariableView(object):
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
-        menu = Gtk.Menu()
+        self.menu = Gtk.Menu()
 
         subElementMenu = Gtk.Menu()
 
@@ -213,8 +213,8 @@ class VariableView(object):
         item.set_submenu(subElementMenu)
         item.show()
 
-        menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+        self.menu.append(item)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     def addBinary(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a Binary variable
