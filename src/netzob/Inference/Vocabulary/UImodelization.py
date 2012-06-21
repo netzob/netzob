@@ -779,7 +779,7 @@ class UImodelization:
 
     def button_release_on_treeview_messages(self, treeview, event):
         # re-enable selection
-        treeview.get_selection().set_select_function(lambda * ignore: True)
+        treeview.get_selection().set_select_function(lambda * ignore: True, None)
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
         if (self.defer_select and target and self.defer_select == target[0] and not (event.x == 0 and event.y == 0)):  # certain drag and drop
             treeview.set_cursor(target[0], target[1], False)
@@ -794,7 +794,7 @@ class UImodelization:
         target = treeview.get_path_at_pos(int(event.x), int(event.y))
         if (target and event.type == Gdk.EventType.BUTTON_PRESS and not (event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)) and treeview.get_selection().path_is_selected(target[0])):
             # disable selection
-            treeview.get_selection().set_select_function(lambda * ignore: False)
+            treeview.get_selection().set_select_function(lambda * ignore: False, None)
             self.defer_select = target[0]
 
         # Display the details of a packet
