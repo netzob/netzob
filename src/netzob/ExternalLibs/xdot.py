@@ -1417,7 +1417,7 @@ class DotWidget(Gtk.DrawingArea):
         self.graph = Graph()
         self.openfilename = None
 
-        self.set_flags(Gtk.CAN_FOCUS)
+        self.set_can_focus(True)
 
         self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK)
         self.connect("button-press-event", self.on_area_button_press)

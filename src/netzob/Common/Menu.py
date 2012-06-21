@@ -467,7 +467,7 @@ class Menu(object):
         dialog.set_default(but)
         dialog.action_area.pack_start(table, True, True, 0)
         # Grab focus must be called after adding the widget to the top level element
-        entry.set_flags(Gtk.CAN_FOCUS)
+        entry.set_can_focus(True)
         entry.show()
         entry.grab_focus()
 
