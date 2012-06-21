@@ -283,8 +283,9 @@ class Menu(object):
     def exitAction(self, widget, data):
         self.netzob.destroy(widget)
 
-    def setDisplaySearchViewActiveStatus(self, status, data):
-        self.displaySearchView.set_active(status)
+    def setDisplaySearchViewActiveStatus(self, status, data=None):
+        self.item_factory.get_widget(self.PATH_VIEWS_DISPLAYSEARCHRESULTS).\
+            set_active(True)
 
     #+----------------------------------------------
     #| Called when user wants to manage the traces
