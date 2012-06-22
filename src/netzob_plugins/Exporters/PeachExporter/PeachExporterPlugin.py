@@ -29,35 +29,49 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import gtk
-from gettext import gettext as _
+import uuid
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
-from netzob.Common.Menu import Menu
-from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
+from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
+from netzob_plugins.Exporters.PeachExporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
+from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachExportController
 
 
 #+---------------------------------------------------------------------------+
-#| GlobalMenuEntryPoint: Entry points in the menu for plugin importer
+#| PeachExporter: Export netzob symbols to Peach pit files
 #+---------------------------------------------------------------------------+
-class GlobalMenuEntryPoint(GlobalMenuExtension):
+class PeachExporterPlugin(ExporterPlugin):
+
+    __plugin_name__ = "PeachExporter"
+    __plugin_version__ = "1.0"
+    __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
+    __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
 
     def __init__(self, netzob):
-        self.netzob = netzob
+        ExporterPlugin.__init__(self, netzob)
+        self.entryPoints = [GlobalMenuEntryPoint(self.getNetzob())]
 
-    def getMenuEntries(self):
-        menuEntries = [
-                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
-                       ]
-        return menuEntries
+    def getName(self):
+        return self.__plugin_name__
 
-    def executeAction(self, widget, data):
-        FileImportController(self.netzob)
+    def getVersion(self):
+        return self.__plugin_version__
+
+    def getDescription(self):
+        return self.__plugin_description__
+
+    def getAuthor(self):
+        return self.__plugin_author__
+
+    def getEntryPoints(self):
+        return self.entryPoints
+
+    def setVal(self, val):
+        self.val = val

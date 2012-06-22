@@ -42,11 +42,11 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 from netzob.Common.Menu import Menu
-from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
+from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachExportController
 
 
 #+---------------------------------------------------------------------------+
-#| GlobalMenuEntryPoint: Entry points in the menu for plugin importer
+#| GlobalMenuEntryPoint: Entry points in the menu for plugin exporter
 #+---------------------------------------------------------------------------+
 class GlobalMenuEntryPoint(GlobalMenuExtension):
 
@@ -55,9 +55,9 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
 
     def getMenuEntries(self):
         menuEntries = [
-                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
+                       (Menu.PATH_PROJECT_EXPORTPROJECT + "/" + _("Export to Peach"), None, self.executeAction, 0, None)
                        ]
         return menuEntries
 
     def executeAction(self, widget, data):
-        FileImportController(self.netzob)
+        PeachExportController(self.netzob)
