@@ -117,9 +117,9 @@ class TreePropertiesGenerator(AbstractViewGenerator):
             return
 
         for property in message.getProperties():
-            propertyName = property[0]
-            propertyFormat = property[1]
-            propertyValue = property[2]
+            propertyName = str(property[0])
+            propertyFormat = str(property[1])
+            propertyValue = str(property[2])
             self.treestore.append(None, [propertyName, propertyValue, propertyFormat])
 
     #+----------------------------------------------
