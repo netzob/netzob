@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import uuid
 
 #+---------------------------------------------------------------------------+
@@ -245,7 +245,7 @@ class UIGrammarInference:
 
         transitionTypeLabel = Gtk.Label(label=_("Type:"))
         transitionTypeLabel.show()
-        transitionTypeCombo = Gtk.ComboBox()
+        transitionTypeCombo = Gtk.ComboBoxText()
         transitionTypeCombo.set_model(Gtk.ListStore(str))
         transitionTypeComboCell = Gtk.CellRendererText()
         transitionTypeCombo.pack_start(transitionTypeComboCell, True)
