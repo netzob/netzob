@@ -1292,7 +1292,7 @@ class DragAction(object):
 
     def on_motion_notify(self, event):
         if event.is_hint:
-            x, y, state = event.window.get_pointer()
+            (win, x, y, state) = event.window.get_pointer()
         else:
             x, y, state = event.x, event.y, event.get_state()
         deltax = self.prevmousex - x
@@ -1326,7 +1326,7 @@ class NullAction(DragAction):
 
     def on_motion_notify(self, event):
         if event.is_hint:
-            x, y, state = event.window.get_pointer()
+            (win, x, y, state) = event.window.get_pointer()
         else:
             x, y, state = event.x, event.y, event.get_state()
         dot_widget = self.dot_widget
