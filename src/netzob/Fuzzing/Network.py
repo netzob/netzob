@@ -97,7 +97,7 @@ class Network:
         # Initialize the treeview generator for the symbols
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
-        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(, True, True, 0), True, True, 0)
+        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
         selection = self.treeSymbolGenerator.getTreeview().get_selection()
         selection.connect("changed", self.symbolSelected)
 

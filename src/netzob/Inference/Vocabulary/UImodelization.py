@@ -1192,17 +1192,17 @@ class UImodelization:
         # Create hbox for field name
         hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Name : ", True, True, 0)), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Name : ")), False, 5, 5)
         entryName = Gtk.Entry()
         entryName.set_text(field.getName())
         # Allow the user to press enter to do ok
         entryName.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
-        hbox.pack_end(entryName)
+        hbox.pack_end(entryName, True, True, 0)
 
         # Create hbox for field description
         hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Description : ", True, True, 0)), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Description : ")), False, 5, 5)
         entryDescr = Gtk.Entry()
         if field.getDescription():
             entryDescr.set_text(field.getDescription())
@@ -1210,28 +1210,28 @@ class UImodelization:
             entryDescr.set_text("")
         # Allow the user to press enter to do ok
         entryDescr.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
-        hbox.pack_end(entryDescr)
+        hbox.pack_end(entryDescr, True, True, 0)
 
         # Create hbox for field regex
         hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Regex (be careful !, True, True, 0) : ")), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Regex (be careful !) : ")), False, 5, 5)
         entryRegex = Gtk.Entry()
         entryRegex.set_text(field.getRegex())
         # Allow the user to press enter to do ok
         entryRegex.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
-        hbox.pack_end(entryRegex)
+        hbox.pack_end(entryRegex, True, True, 0)
 
         # Create hbox for field encapsulation level
         hbox = Gtk.HBox()
         vbox.pack_start(hbox, False, 5, 5)
-        hbox.pack_start(NetzobLabel(_("Encapsulation level : ", True, True, 0)), False, 5, 5)
+        hbox.pack_start(NetzobLabel(_("Encapsulation level : ")), False, 5, 5)
         comboEncap = NetzobComboBoxEntry()
         for i in range(10):
             comboEncap.append_text(str(i))
             if i == field.getEncapsulationLevel():
                 comboEncap.set_active(i)
-        hbox.pack_end(comboEncap)
+        hbox.pack_end(comboEncap, True, True, 0)
 
         # Run the dialog
         dialog.vbox.pack_end(vbox, True, True, 0)
@@ -2216,8 +2216,8 @@ class UImodelization:
         entry.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         #create a horizontal box to pack the entry and a label
         hbox = Gtk.HBox()
-        hbox.pack_start(NetzobLabel(_("Name : ", True, True, 0)), False, 5, 5)
-        hbox.pack_end(entry)
+        hbox.pack_start(NetzobLabel(_("Name : ")), False, 5, 5)
+        hbox.pack_end(entry, True, True, 0)
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()
         #go go go
@@ -2256,8 +2256,8 @@ class UImodelization:
         entry.connect("activate", self.responseToDialog, dialog, Gtk.ResponseType.OK)
         #create a horizontal box to pack the entry and a label
         hbox = Gtk.HBox()
-        hbox.pack_start(NetzobLabel(_("Name :", True, True, 0)), False, 5, 5)
-        hbox.pack_end(entry)
+        hbox.pack_start(NetzobLabel(_("Name :")), False, 5, 5)
+        hbox.pack_end(entry, True, True, 0)
         #add it and show it
         dialog.vbox.pack_end(hbox, True, True, 0)
         dialog.show_all()

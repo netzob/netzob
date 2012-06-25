@@ -92,7 +92,7 @@ class Ipc:
         # Create the treeview
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
-        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(, True, True, 0), True, True, 0)
+        vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
         selection = self.treeSymbolGenerator.getTreeview().get_selection()
         selection.connect("changed", self.symbolSelected)
 #        self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)

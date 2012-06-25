@@ -88,14 +88,14 @@ class WorkspaceSelector(object):
         okButton.connect("clicked", self.destroy)
         cancelButton = Gtk.Button(stock=Gtk.STOCK_CANCEL)
         cancelButton.connect("clicked", self.cancel)
-        self.dialog.action_area.pack_end(cancelButton, expand=False)
-        self.dialog.action_area.pack_end(okButton, expand=False)
+        self.dialog.action_area.pack_end(cancelButton, False, True, 0)
+        self.dialog.action_area.pack_end(okButton, False, True, 0)
         self.dialog.action_area.set_border_width(10)
 
         # Global VBox
         self.dialog.vbox.pack_start(instrTextView, False, True, 0)
         self.dialog.vbox.pack_start(inputBox, False, True, 0)
-        self.dialog.vbox.pack_start(Gtk.Alignment.new(0, 1, 0, 0), expand=True)
+        self.dialog.vbox.pack_start(Gtk.Alignment.new(0, 1, 0, 0), True, True, 0)
         #self.dialog.vbox.pack_start(self.defaultCheck, False, True, 0)
         self.dialog.show_all()
 
