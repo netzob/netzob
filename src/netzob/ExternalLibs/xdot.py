@@ -109,7 +109,7 @@ class TextShape(Shape):
         try:
             layout = self.layout
         except AttributeError:
-            layout = cr.create_layout()
+            layout = PangoCairo.create_layout(cr)
 
             # set font options
             # see http://lists.freedesktop.org/archives/cairo/2007-February/009688.html
@@ -132,12 +132,12 @@ class TextShape(Shape):
             layout.set_font_description(font)
 
             # set text
-            layout.set_text(self.t)
+            layout.set_text(self.t, len(self.t))
 
             # cache it
             self.layout = layout
         else:
-            cr.update_layout(layout)
+            PangoCairo.update_layout(cr, layout)
 
         descent = 2  # XXX get descender from font metrics
 
@@ -171,7 +171,7 @@ class TextShape(Shape):
         cr.save()
         cr.scale(f, f)
         cr.set_source_rgba(*self.select_pen(highlight).color)
-        cr.show_layout(layout)
+        PangoCairo.show_layout(cr, layout)
         cr.restore()
 
         if 0:  # DEBUG
@@ -1403,7 +1403,6 @@ class DotWidget(Gtk.DrawingArea):
     """PyGTK widget that draws dot graphs."""
 
     __gsignals__ = {
-        'draw': 'override',
         'clicked': (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, Gdk.Event))
     }
 
@@ -1496,16 +1495,7 @@ class DotWidget(Gtk.DrawingArea):
             except IOError:
                 pass
 
-    def do_expose_event(self, event):
-        cr = self.window.cairo_create()
-
-        # set a clip region for the expose event
-        cr.rectangle(
-            event.area.x, event.area.y,
-            event.area.width, event.area.height
-        )
-        cr.clip()
-
+    def do_draw(self, cr):
         cr.set_source_rgba(1.0, 1.0, 1.0, 1.0)
         cr.paint()
 
