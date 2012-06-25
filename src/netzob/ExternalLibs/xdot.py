@@ -1334,17 +1334,17 @@ class NullAction(DragAction):
         if item is None:
             item = dot_widget.get_jump(x, y)
         if item is not None:
-            dot_widget.window.set_cursor(Gdk.Cursor.new(Gdk.HAND2))
+            dot_widget.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND2))
             dot_widget.set_highlight(item.highlight)
         else:
-            dot_widget.window.set_cursor(Gdk.Cursor.new(Gdk.ARROW))
+            dot_widget.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
             dot_widget.set_highlight(None)
 
 
 class PanAction(DragAction):
 
     def start(self):
-        self.dot_widget.window.set_cursor(Gdk.Cursor.new(Gdk.FLEUR))
+        self.dot_widget.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.FLEUR))
 
     def drag(self, deltax, deltay):
         self.dot_widget.x += deltax / self.dot_widget.zoom_ratio
@@ -1352,7 +1352,7 @@ class PanAction(DragAction):
         self.dot_widget.queue_draw()
 
     def stop(self):
-        self.dot_widget.window.set_cursor(Gdk.Cursor.new(Gdk.ARROW))
+        self.dot_widget.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.ARROW))
 
     abort = stop
 
