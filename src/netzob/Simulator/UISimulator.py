@@ -229,7 +229,8 @@ class UISimulator:
         treeview_listActiveActors = Gtk.TreeView(self.treestore_listActiveActors)
         treeview_listActiveActors.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         treeview_listActiveActors.set_size_request(300, -1)
-        treeview_listActiveActors.connect("cursor-changed", self.actorDetails)
+        treeview_listActiveActors_selection = treeview_listActiveActors.get_selection()
+        treeview_listActiveActors_selection.connect("changed", self.actorDetails)
         cell = Gtk.CellRendererText()
         # main col
         column_listActiveActors_name = Gtk.TreeViewColumn(_("Active actors"))
@@ -517,10 +518,10 @@ class UISimulator:
                 if not found:
                     self.treestore_listActiveActors.append(treestoreActor, [instance.getName(), "type"])
 
-    def actorDetails(self, treeview):
+    def actorDetails(self, selection):
         self.selectedActor = None
         actorName = ""
-        (model, iter) = treeview.get_selection().get_selected()
+        (model, iter) = selection.get_selected()
 
         if(iter):
             if(model.iter_is_valid(iter)):

@@ -205,9 +205,8 @@ class IpcImport(AbstractImporter):
         self.butStop.set_sensitive(False)
         self.butStop.connect("clicked", self.stopSniff_cb)
         self.panel.attach(self.butStop, 1, 2, 7, 8, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        self.fdTreeview.connect("cursor-changed", self.fdSelected_cb)
-
+        fdSelection = self.fdTreeview.get_selection()
+        fdSelection.connect("changed", self.fdSelected_cb)
         # Packet list
         scroll = Gtk.ScrolledWindow()
         self.pktTreestore = Gtk.TreeStore(int, int, str, str, int)  # pktID, fd, direction (read/write), data, timestamp
@@ -301,7 +300,7 @@ class IpcImport(AbstractImporter):
     #+----------------------------------------------
     #| Called when user select a fd
     #+----------------------------------------------
-    def fdSelected_cb(self, treeview):
+    def fdSelected_cb(self, selection):
         self.butSniffFiltered.set_sensitive(True)
 
     #+----------------------------------------------

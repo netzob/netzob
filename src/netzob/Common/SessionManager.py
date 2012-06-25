@@ -100,8 +100,8 @@ class SessionManager:
         treeview = Gtk.TreeView(Gtk.ListStore(str, str))
         treeview.set_size_request(500, 200)
         treeview.show()
-        treeview.connect('cursor-changed', self.symbolSelected_cb)
-
+        selection = treeview.get_selection()
+        selection.connect("changed", self.symbolSelected_cb)
         cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Symbols"))
         column.pack_start(cell, True)
@@ -159,7 +159,8 @@ class SessionManager:
         treeview = Gtk.TreeView(Gtk.ListStore(str, str))
         treeview.set_size_request(500, 200)
         treeview.show()
-        treeview.connect('cursor-changed', self.sessionSelected_cb)
+        selection = treeview.get_selection()
+        selection.connect("changed", self.sessionSelected_cb)
 
         cell = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Sessions"))
@@ -210,7 +211,7 @@ class SessionManager:
     #| symbolSelected_cb:
     #|   callback when the user select a symbol
     #+----------------------------------------------
-    def symbolSelected_cb(self, treeview):
+    def symbolSelected_cb(self, selection):
         self.treeview_symbol_messages.get_model().clear()
 
         # Sanity checks
@@ -223,7 +224,7 @@ class SessionManager:
             return
 
         # Show messages contained in selected symbol
-        (model, iter) = treeview.get_selection().get_selected()
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 symbol_id = model.get_value(iter, 0)
@@ -236,7 +237,7 @@ class SessionManager:
     #| sessionSelected_cb:
     #|   callback when the user select a session
     #+----------------------------------------------
-    def sessionSelected_cb(self, treeview):
+    def sessionSelected_cb(self, selection):
         self.treeview_session_messages.get_model().clear()
 
         # Sanity checks
@@ -249,7 +250,7 @@ class SessionManager:
             return
 
         # Show messages contained in selected session
-        (model, iter) = treeview.get_selection().get_selected()
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 session_id = model.get_value(iter, 0)

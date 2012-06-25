@@ -2970,7 +2970,7 @@ class UImodelization:
     #+----------------------------------------------
     #| Called when user wants to try to apply a size field on a symbol
     #+----------------------------------------------
-    def sizeField_selected(self, treeview, savedEncapsulationLevel):
+    def sizeField_selected(self, selection, savedEncapsulationLevel):
         # Optionaly restore original encapsulation levels
         i = -1
         for field in self.selectedSymbol.getFields():
@@ -2978,7 +2978,7 @@ class UImodelization:
             field.setEncapsulationLevel(savedEncapsulationLevel[i])
 
         # Apply new encapsulation levels
-        (model, iter) = treeview.get_selection().get_selected()
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 size_field = model.get_value(iter, 0)

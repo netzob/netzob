@@ -132,8 +132,8 @@ class ApiImport:
         column.add_attribute(cell, "text", 2)
         self.dllTreeview.append_column(column)
         self.dllTreeview.show()
-
-        self.dllTreeview.connect("cursor-changed", self.dllSelected_cb)
+        dllSelection = self.dllTreeview.get_selection()
+        dllSelection.connect("changed", self.dllSelected_cb)
 #        self.dllHandlerID = self.dllTreeview.connect("changed", self.dllSelected_cb)
 
         scroll.add(self.dllTreeview)
@@ -244,10 +244,9 @@ class ApiImport:
     #+----------------------------------------------
     #| Called when user select a a DLL
     #+----------------------------------------------
-    def dllSelected_cb(self, treeview):
+    def dllSelected_cb(self, selection):
         # Retrieve the dll selected
-        treeselection = treeview.get_selection()
-        (model, pathlist) = treeselection.get_selected_rows()
+        (model, pathlist) = selection.get_selected_rows()
         iter = model.get_iter(pathlist[0])
 
         found = False

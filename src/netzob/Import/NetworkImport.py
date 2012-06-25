@@ -159,7 +159,8 @@ class NetworkImport(AbstractImporter):
         self.treestore = Gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         treeview = Gtk.TreeView(self.treestore)
         treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        treeview.connect("cursor-changed", self.packet_details)
+        selection = treeview.get_selection()
+        selection.connect("changed", self.packet_details)
         cell = Gtk.CellRendererText()
         # Col proto
         column = Gtk.TreeViewColumn(_("Proto"))
@@ -275,8 +276,8 @@ class NetworkImport(AbstractImporter):
     #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
-    def packet_details(self, treeview):
-        (model, paths) = treeview.get_selection().get_selected_rows()
+    def packet_details(self, selection):
+        (model, paths) = selection.get_selected_rows()
         decoder = Decoders.EthDecoder()
         for path in paths[:1]:
             iter = model.get_iter(path)

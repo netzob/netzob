@@ -729,7 +729,9 @@ class Symbol(AbstractSymbol):
         but = Gtk.Button(label=_("Apply data type on column"))
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.ASN1ResultSelected_cb, treeview, but)
+        treeviewResSelection = treeviewRes.get_selection()
+        treeviewResSelection.connect("changed", self.ASN1ResultSelected_cb,
+                                     treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
@@ -738,9 +740,9 @@ class Symbol(AbstractSymbol):
     #| ASN1ResultSelected_cb:
     #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
-    def ASN1ResultSelected_cb(self, treeview, treeviewTarget, but):
+    def ASN1ResultSelected_cb(self, selection, treeviewTarget, but):
         treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
+        (model, it) = selection.get_selected()
         if(it):
             if(model.iter_is_valid(it)):
                 fieldIndex = model.get_value(it, 0)
@@ -861,7 +863,9 @@ class Symbol(AbstractSymbol):
         but = Gtk.Button(label=_("Apply data type on column"))
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.envDependenciesResultSelected_cb, treeview, but)
+        treeviewResSelection = treeview.get_selection()
+        treeviewResSelection.connect("changed",
+                self.envDependenciesResultSelected_cb, treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
@@ -870,9 +874,9 @@ class Symbol(AbstractSymbol):
     #| envDependenciesResultSelected_cb:
     #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
-    def envDependenciesResultSelected_cb(self, treeview, treeviewTarget, but):
+    def envDependenciesResultSelected_cb(self, selection, treeviewTarget, but):
         treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
+        (model, it) = selection.get_selected()
         if(it):
             if(model.iter_is_valid(it)):
                 fieldIndex = model.get_value(it, 0)

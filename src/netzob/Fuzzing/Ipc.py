@@ -93,7 +93,8 @@ class Ipc:
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
         vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(, True, True, 0), True, True, 0)
-        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
+        selection = self.treeSymbolGenerator.getTreeview().get_selection()
+        selection.connect("changed", self.symbolSelected)
 #        self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
         #+----------------------------------------------
@@ -108,8 +109,8 @@ class Ipc:
         vb_right_panel.add(self.treeTypeStructureGenerator.getScrollLib())
         self.panel.add(vb_right_panel)
 
-    def symbolSelected(self, treeview):
-        (model, iter) = treeview.get_selection().get_selected()
+    def symbolSelected(self, selection):
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 # Retrieve the selected symbol

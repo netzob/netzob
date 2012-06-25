@@ -85,7 +85,8 @@ class PcapImportController():
     def initCallbacks(self):
         self.view.butSelectFile.connect("clicked", self.selectFile_cb, self.view.labelFile)
         self.view.butLaunchSniff.connect("clicked", self.launchSniff_cb, self.view.entryScapyFilter, self.view.labelFile)
-        self.view.treeviewPackets.connect("cursor-changed", self.packetDetails_cb)
+        selection = self.view.treeviewPackets.get_selection()
+        selection.connect("changed", self.packetDetails_cb)
         self.view.butSaveSelectedPackets.connect("clicked", self.savePackets_cb, self.view.treeviewPackets)
 
     #+----------------------------------------------
@@ -163,8 +164,8 @@ class PcapImportController():
     #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
-    def packetDetails_cb(self, treeview):
-        (model, paths) = treeview.get_selection().get_selected_rows()
+    def packetDetails_cb(self, selection):
+        (model, paths) = selection.get_selected_rows()
         decoder = Decoders.EthDecoder()
         for path in paths[:1]:
             iter = model.get_iter(path)

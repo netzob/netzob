@@ -77,10 +77,11 @@ class RawExportController:
         self.update()
 
     def initCallbacks(self):
-        self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
+        selection = self.view.symbolTreeview.get_selection()
+        selection.connect("changed", self.symbolSelected_cb)
 
-    def symbolSelected_cb(self, treeview):
-        (model, iter) = treeview.get_selection().get_selected()
+    def symbolSelected_cb(self, selection):
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 symbolID = model.get_value(iter, 0)

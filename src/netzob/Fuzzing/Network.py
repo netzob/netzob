@@ -98,7 +98,8 @@ class Network:
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
         vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(, True, True, 0), True, True, 0)
-        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
+        selection = self.treeSymbolGenerator.getTreeview().get_selection()
+        selection.connect("changed", self.symbolSelected)
 
         #+----------------------------------------------
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
@@ -140,8 +141,9 @@ class Network:
         scroll = Gtk.ScrolledWindow()
         self.treestore = Gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
         treeview = Gtk.TreeView(self.treestore)
-        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        treeview.connect("cursor-changed", self.packet_details)
+        selection = treeview.get_selection()
+        selection.set_mode(Gtk.SelectionMode.MULTIPLE)
+        selection.connect("changed", self.packet_details)
         cell = Gtk.CellRendererText()
         # Col proto
         column = Gtk.TreeViewColumn(_("Proto"))
@@ -187,8 +189,8 @@ class Network:
     #| update:
     #|   Update the Treestore
     #+----------------------------------------------
-    def symbolSelected(self, treeview):
-        (model, iter) = treeview.get_selection().get_selected()
+    def symbolSelected(self, selection):
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 # Retrieve the selected symbol
@@ -232,8 +234,8 @@ class Network:
     #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
-    def packet_details(self, treeview):
-        (model, paths) = treeview.get_selection().get_selected_rows()
+    def packet_details(self, selection):
+        (model, paths) = selection.get_selected_rows()
         for path in paths[:1]:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
