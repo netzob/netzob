@@ -1608,7 +1608,8 @@ class UImodelization:
         # Retrieves all the properties of current message and
         # insert them in the treeview
         for property in message.getProperties():
-            treeview.get_model().append(property)
+            strProperty = [str(e) for e in property]
+            treeview.get_model().append(strProperty)
 
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
