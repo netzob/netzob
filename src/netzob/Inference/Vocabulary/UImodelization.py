@@ -1561,11 +1561,11 @@ class UImodelization:
             return
 
         if aligned == False:  # Copy the entire raw message
-            self.netzob.clipboard.set_text(message.getStringData())
+            self.netzob.clipboard.set_text(message.getStringData(), -1)
         elif field == None:  # Copy the entire aligned message
-            self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)))
+            self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)), -1)
         else:  # Just copy the selected field
-            self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[field.getIndex()])
+            self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[field.getIndex()], -1)
 
     #+----------------------------------------------
     #| rightClickShowPropertiesOfMessage:
