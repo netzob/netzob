@@ -1747,7 +1747,7 @@ class DotWindow(Gtk.Window):
         vbox = Gtk.VBox()
         window.add(vbox)
 
-        self.widget = DotWidget()
+        self.dotwidget = DotWidget()
 
         # Create a UIManager instance
         uimanager = self.uimanager = Gtk.UIManager()
@@ -1764,10 +1764,10 @@ class DotWindow(Gtk.Window):
         actiongroup.add_actions((
             ('Open', Gtk.STOCK_OPEN, None, None, None, self.on_open),
             ('Reload', Gtk.STOCK_REFRESH, None, None, None, self.on_reload),
-            ('ZoomIn', Gtk.STOCK_ZOOM_IN, None, None, None, self.widget.on_zoom_in),
-            ('ZoomOut', Gtk.STOCK_ZOOM_OUT, None, None, None, self.widget.on_zoom_out),
-            ('ZoomFit', Gtk.STOCK_ZOOM_FIT, None, None, None, self.widget.on_zoom_fit),
-            ('Zoom100', Gtk.STOCK_ZOOM_100, None, None, None, self.widget.on_zoom_100),
+            ('ZoomIn', Gtk.STOCK_ZOOM_IN, None, None, None, self.dotwidget.on_zoom_in),
+            ('ZoomOut', Gtk.STOCK_ZOOM_OUT, None, None, None, self.dotwidget.on_zoom_out),
+            ('ZoomFit', Gtk.STOCK_ZOOM_FIT, None, None, None, self.dotwidget.on_zoom_fit),
+            ('Zoom100', Gtk.STOCK_ZOOM_100, None, None, None, self.dotwidget.on_zoom_100),
         ))
 
         # Add the actiongroup to the uimanager
@@ -1778,11 +1778,11 @@ class DotWindow(Gtk.Window):
 
         # Create a Toolbar
         toolbar = uimanager.get_widget('/ToolBar')
-        vbox.pack_start(toolbar, False)
+        vbox.pack_start(toolbar, False, False, 0)
 
-        vbox.pack_start(self.widget, True, True, 0)
+        vbox.pack_start(self.dotwidget, True, True, 0)
 
-        self.set_focus(self.widget)
+        self.set_focus(self.dotwidget)
 
         self.show_all()
 
@@ -1799,17 +1799,17 @@ class DotWindow(Gtk.Window):
         return True
 
     def set_filter(self, filter):
-        self.widget.set_filter(filter)
+        self.dotwidget.set_filter(filter)
 
     def set_dotcode(self, dotcode, filename='<stdin>'):
-        if self.widget.set_dotcode(dotcode, filename):
+        if self.dotwidget.set_dotcode(dotcode, filename):
             self.set_title(os.path.basename(filename) + ' - Dot Viewer')
-            self.widget.zoom_to_fit()
+            self.dotwidget.zoom_to_fit()
 
     def set_xdotcode(self, xdotcode, filename='<stdin>'):
-        if self.widget.set_xdotcode(xdotcode):
+        if self.dotwidget.set_xdotcode(xdotcode):
             self.set_title(os.path.basename(filename) + ' - Dot Viewer')
-            self.widget.zoom_to_fit()
+            self.dotwidget.zoom_to_fit()
 
     def open_file(self, filename):
         try:
@@ -1848,7 +1848,7 @@ class DotWindow(Gtk.Window):
             chooser.destroy()
 
     def on_reload(self, action):
-        self.widget.reload()
+        self.dotwidget.reload()
 
 
 def main():
