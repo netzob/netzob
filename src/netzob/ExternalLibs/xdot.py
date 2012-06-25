@@ -113,16 +113,21 @@ class TextShape(Shape):
 
             # set font options
             # see http://lists.freedesktop.org/archives/cairo/2007-February/009688.html
-            context = layout.get_context()
-            fo = cairo.FontOptions()
-            fo.set_antialias(cairo.ANTIALIAS_DEFAULT)
-            fo.set_hint_style(cairo.HINT_STYLE_NONE)
-            fo.set_hint_metrics(cairo.HINT_METRICS_OFF)
             try:
+                context = layout.get_context()
+                fo = cairo.FontOptions()
+                fo.set_antialias(cairo.ANTIALIAS_DEFAULT)
+                fo.set_hint_style(cairo.HINT_STYLE_NONE)
+                fo.set_hint_metrics(cairo.HINT_METRICS_OFF)
                 PangoCairo.context_set_font_options(context, fo)
             except TypeError:
                 # XXX: Some broken pangocairo bindings show the error
                 # 'TypeError: font_options must be a cairo.FontOptions or None'
+                pass
+            except KeyError:
+                # https://bugzilla.gnome.org/show_bug.cgi?id=677388
+                # cairo.FontOptions is not defined as a foreign
+                # structs in PyGObject < 2.3.
                 pass
 
             # set font
