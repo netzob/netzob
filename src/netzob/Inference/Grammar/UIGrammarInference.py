@@ -246,13 +246,9 @@ class UIGrammarInference:
         transitionTypeLabel = Gtk.Label(label=_("Type:"))
         transitionTypeLabel.show()
         transitionTypeCombo = Gtk.ComboBoxText()
-        transitionTypeCombo.set_model(Gtk.ListStore(str))
-        transitionTypeComboCell = Gtk.CellRendererText()
-        transitionTypeCombo.pack_start(transitionTypeComboCell, True)
-        transitionTypeCombo.add_attribute(transitionTypeComboCell, 'text', 0)
         possible_choices = ["SemiStochastic", "OpenChannel", "CloseChannel"]
-        for i in range(len(possible_choices)):
-            transitionTypeCombo.append_text(str(possible_choices[i]))
+        for i in possible_choices:
+            transitionTypeCombo.append_text(i)
         transitionTypeCombo.show()
         mainTable.attach(transitionTypeLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         mainTable.attach(transitionTypeCombo, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
