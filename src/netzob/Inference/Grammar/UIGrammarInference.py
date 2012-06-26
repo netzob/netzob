@@ -744,7 +744,7 @@ class UIGrammarInference:
 
         self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
-            item = Gtk.ImageMenuItem(stock_id)
+            item = Gtk.ImageMenuItem.new_from_stock(stock_id, None)
             item.connect("activate", callback, transition)
             item.set_sensitive(sensitive)
             item.show()
@@ -764,7 +764,7 @@ class UIGrammarInference:
 
         self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
-            item = Gtk.ImageMenuItem(stock_id)
+            item = Gtk.ImageMenuItem.new_from_stock(stock_id, None)
             item.connect("activate", callback, state)
             item.set_sensitive(sensitive)
             item.show()

@@ -203,7 +203,7 @@ class TraceManager():
 
         self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
-            item = Gtk.ImageMenuItem(stock_id)
+            item = Gtk.ImageMenuItem.new_from_stock(stock_id, None)
 
             item.connect("activate", callback, trace)
             item.set_sensitive(sensitive)
