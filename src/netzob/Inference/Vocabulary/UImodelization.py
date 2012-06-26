@@ -2931,7 +2931,8 @@ class UImodelization:
        # str: message rendered in cell
        treeview = Gtk.TreeView(Gtk.ListStore(int, int, int, int, int, int, str))
        cell = Gtk.CellRendererText()
-       treeview.connect("cursor-changed", self.sizeField_selected, savedEncapsulationLevel)
+       selection = treeview.get_selection()
+       selection.connect("changed", self.sizeField_selected, savedEncapsulationLevel)
        column = Gtk.TreeViewColumn('Size field and related payload')
        column.pack_start(cell, True)
        column.add_attribute(cell, "text", 6)
