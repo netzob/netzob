@@ -42,8 +42,7 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
-from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
-
+from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 
 #+---------------------------------------------------------------------------+
 #| FileImporter: Import messages from files

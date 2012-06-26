@@ -44,18 +44,17 @@ from netzob.Import.AbstractImporter import AbstractImporter
 
 
 #+----------------------------------------------
-#| FileImport:
+#| FileImporter:
 #|     GUI for capturing messages
 #+----------------------------------------------
-class FileImport(AbstractImporter):
+class FileImporter(AbstractImporter):
 
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, netzob):
+    def __init__(self):
         AbstractImporter.__init__(self, "FILE IMPORT")
-        self.netzob = netzob
-        self.log = logging.getLogger('netzob.Import.FileImport.py')
+        self.log = logging.getLogger('netzob.Import.FileImporter.py')
 
         # create the environmental dependancy object
         self.envDeps = EnvironmentalDependencies()

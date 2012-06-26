@@ -39,15 +39,14 @@ from gettext import gettext as _
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob_plugins.Importers.FileImporter.FileImport import FileImport
-from netzob_plugins.Importers.FileImporter.FileImportView import FileImportView
-
+from netzob_plugins.Importers.FileImporter.FileImporter import FileImporter
+from netzob_plugins.Importers.FileImporter.FileImporterView import FileImporterView
 
 #+----------------------------------------------
-#| FileImport:
+#| FileImporter:
 #|     GUI for capturing messages
 #+----------------------------------------------
-class FileImportController():
+class FileImporterController(object):
 
     def new(self):
         pass
@@ -67,8 +66,8 @@ class FileImportController():
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.Capturing.File.py')
-        self.model = FileImport(netzob)
-        self.view = FileImportView()
+        self.model = FileImporter()
+        self.view = FileImporterView()
         self.initCallbacks()
 
     def initCallbacks(self):

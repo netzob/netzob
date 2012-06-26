@@ -52,7 +52,7 @@ from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExten
 from netzob.UI.Common.AboutDialog import AboutDialog
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
-#from netzob.UI.Import.Controllers.FileImportController import FileImportController
+#from netzob.UI.Import.Controllers.FileImporterController import FileImporterController
 from netzob.Import.XMLImport import XMLImport
 from netzob.Export.ScapyExport import ScapyExport
 from netzob.UI.Export.Controllers.RawExportController import RawExportController
@@ -369,7 +369,7 @@ class Menu(object):
     #| Called when user wants to import file
     #+----------------------------------------------
     def importFileAction(self, widget):
-        fileImportPanel = FileImportController(self.netzob)
+        fileImportPanel = FileImporterController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import file
