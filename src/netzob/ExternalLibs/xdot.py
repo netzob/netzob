@@ -1426,6 +1426,7 @@ class DotWidget(Gtk.DrawingArea):
         self.connect("button-release-event", self.on_area_button_release)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.POINTER_MOTION_HINT_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK)
         self.connect("motion-notify-event", self.on_area_motion_notify)
+        self.add_events(Gdk.EventMask.SCROLL_MASK)
         self.connect("scroll-event", self.on_area_scroll_event)
         self.connect("size-allocate", self.on_area_size_allocate)
 
