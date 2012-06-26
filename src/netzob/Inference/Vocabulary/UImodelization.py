@@ -829,7 +829,11 @@ class UImodelization:
             self.log.debug(_("User requested a contextual menu (treeview messages)"))
             x = int(event.x)
             y = int(event.y)
-            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+
+            try:
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            except:
+                return
 
             # Retrieve the selected message
             message_id = None
