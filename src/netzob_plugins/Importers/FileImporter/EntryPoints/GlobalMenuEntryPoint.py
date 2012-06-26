@@ -33,7 +33,7 @@ from gi.repository import Gtk
 from gettext import gettext as _
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 from netzob.Common.Menu import Menu
-from netzob_plugins.Importers.FileImporter.FileImportController import FileImporterController
+from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 
 
 #+---------------------------------------------------------------------------+
@@ -71,7 +71,7 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
     def getActions(self):
         actions = [
             ("ImportFile", None, _("Import from File"), None,
-             None, self.executeAction)]
+                    None, self.executeAction)]
         return actions
 
     def executeAction(self, widget, data=None):
