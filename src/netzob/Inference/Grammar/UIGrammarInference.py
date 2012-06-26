@@ -106,29 +106,29 @@ class UIGrammarInference:
         self.mainPanel = Gtk.VBox(False, spacing=0)
         self.mainPanel.show()
 
-        # First we add a table
-        leftFormTable = Gtk.Table(rows=7, columns=2, homogeneous=False)
+        # First we add a VBox
+        box = Gtk.VBox(False, 2)
 
         # We add the button for the automatic inference process
         self.grammarAutomaticInferenceButton = Gtk.Button(_("Open wizard for automatic inference"))
         self.grammarAutomaticInferenceButton.connect("clicked", self.showAutomaticInferencePanel)
         self.grammarAutomaticInferenceButton.show()
         self.grammarAutomaticInferenceButton.set_sensitive(True)
-        leftFormTable.attach(self.grammarAutomaticInferenceButton, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        box.pack_start(self.grammarAutomaticInferenceButton, False, False, 0)
 
         # Add the button to abstract the current grammar
         self.grammarAbstractionButton = Gtk.Button(_("Abstract current grammar"))
         self.grammarAbstractionButton.connect("clicked", self.showAbstractionPanel)
         self.grammarAbstractionButton.show()
         self.grammarAbstractionButton.set_sensitive(True)
-        leftFormTable.attach(self.grammarAbstractionButton, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        box.pack_start(self.grammarAbstractionButton, False, False, 0)
 
         # CREATE A STATE
         self.createStateButton = Gtk.Button(_("Create a state"))
         self.createStateButton.show()
         self.createStateButton.connect("clicked", self.createState)
         self.createStateButton.set_sensitive(False)
-        leftFormTable.attach(self.createStateButton, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        box.pack_start(self.createStateButton, False, False, 0)
 
         # The list of current states
         scroll_listStates = Gtk.ScrolledWindow()
@@ -153,14 +153,14 @@ class UIGrammarInference:
         scroll_listStates.add(treeview_listStates)
         scroll_listStates.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll_listStates.show()
-        leftFormTable.attach(scroll_listStates, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        box.pack_start(scroll_listStates, True, True, 0)
 
         # CREATE A TRANSITION
         self.createTransitionButton = Gtk.Button(_("Create a transition"))
         self.createTransitionButton.show()
         self.createTransitionButton.connect("clicked", self.createTransition)
         self.createTransitionButton.set_sensitive(False)
-        leftFormTable.attach(self.createTransitionButton, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        box.pack_start(self.createTransitionButton, False, False, 0)
 
         # The list of current transitions
         scroll_listTransitions = Gtk.ScrolledWindow()
@@ -195,10 +195,10 @@ class UIGrammarInference:
         scroll_listTransitions.add(treeview_listTransitions)
         scroll_listTransitions.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll_listTransitions.show()
-        leftFormTable.attach(scroll_listTransitions, 0, 2, 5, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        box.pack_start(scroll_listTransitions, True, True, 0)
 
-        leftFormTable.show()
-        self.mainPanel.pack_start(leftFormTable, False, False, 0)
+        box.show()
+        self.mainPanel.pack_start(box, True, True, 0)
 
         self.panel.pack_start(self.mainPanel, False, False, 0)
 
