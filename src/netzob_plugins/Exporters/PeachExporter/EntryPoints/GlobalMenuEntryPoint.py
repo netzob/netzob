@@ -55,7 +55,7 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
 
     def getMenuEntries(self):
         menuEntries = [
-                       (Menu.PATH_PROJECT_EXPORTPROJECT + "/" + _("Export to Peach"), None, self.executeAction, 0, None)
+                       (Menu.PATH_PROJECT_EXPORTPROJECT + "/" + _("Peach pit file"), None, self.executeAction, 0, None)
                        ]
         return menuEntries
 

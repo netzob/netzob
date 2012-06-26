@@ -30,11 +30,11 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'src/')
 import os
 import uuid
 from fnmatch import fnmatch
 from glob import glob
+sys.path.insert(0, 'src/')
 from setuptools import setup, Extension, find_packages
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
@@ -54,7 +54,7 @@ netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
 pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 
 #+----------------------------------------------------------------------------
-#| C Extensions
+#| Definition of the extensions
 #+----------------------------------------------------------------------------
 # Includes path
 libPath = "lib"
@@ -267,6 +267,7 @@ setup(
 
          [babel.extractors]
             glade = resources.sdist.babel_extract:extract_glade
+            peachExporter = netzob_plugins.Exporters.PeachExporter.PeachExporterPlugin:PeachExporterPlugin
         """,
     # Files that should be scanned by Babel (if available)
     message_extractors={

@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import logging
 import uuid
 import random
@@ -50,7 +51,7 @@ from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachEx
 class PeachExporterPlugin(ExporterPlugin):
 
     __plugin_name__ = "PeachExporter"
-    __plugin_version__ = "1.0"
+    __plugin_version__ = "0.1"
     __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
     __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
 

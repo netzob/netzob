@@ -42,10 +42,10 @@ from netzob_plugins.Exporters.PeachExporter.PeachExport import PeachExport
 
 
 #+----------------------------------------------
-#| RawExportController:
-#|     GUI for exporting results in raw mode
+#| PeachExportController:
+#|     GUI for exporting results in Peach pit xml
 #+----------------------------------------------
-class RawExportController:
+class PeachExportController:
 
     #+----------------------------------------------
     #| Called when user select a new trace
@@ -55,6 +55,10 @@ class RawExportController:
 
     def update(self):
         self.view.symbolTreeview.get_model().clear()
+
+        # Append an "Entire project" leaf to the tree view.
+        iter = self.view.symbolTreeview.get_model().append(None, ["-1", "{0} [{1}, {2}]".format(_("Entire project"), str(len(self.netzob.getCurrentProject().getVocabulary().getSymbols())), str(len(self.netzob.getCurrentProject().getVocabulary().getMessages()))), "0", '#000000', '#DEEEF0'])
+
         for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
             iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
@@ -86,7 +90,15 @@ class RawExportController:
                 self.showXMLDefinition(symbolID)
 
     def showXMLDefinition(self, symbolID):
-        xmlDefinition = self.model.getXMLDefinition(symbolID)
+
+        # Special case "entire project"
+        if symbolID == "-1":
+            xmlDefinition = self.model.getPeachDefinition(0, True)
+
+        # Usual case with usual symbolID
+        else:
+            xmlDefinition = self.model.getPeachDefinition(symbolID, False)
+
         if xmlDefinition != None:
             self.view.textarea.get_buffer().set_text("")
             self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), xmlDefinition, "normalTag")
