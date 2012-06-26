@@ -234,10 +234,10 @@ class Menu(object):
         for pluginExtension in NetzobPlugin.getLoadedPluginsExtension(GlobalMenuExtension):
             try:
                 logging.debug("Menu available : {0}".format(pluginExtension))
-                for menuEntry in pluginExtension.getMenuEntries():
-                    if not menuEntry in self.menu_items:
-                        self.item_factory.create_items([menuEntry])
-                        self.menu_items.append(menuEntry)
+                uiDefinition = pluginExtension.getUIDefinition()
+                actions = pluginExtension.getActions()
+                self.actiongroup.add_actions(actions)
+                self.uimanager.add_ui_from_string(uiDefinition)
             except Exception, e:
                 logging.warning("An error occurred when computing menu entry for plugin {0} ({1})".format(pluginExtension, e))
 
