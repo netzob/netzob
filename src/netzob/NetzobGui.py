@@ -128,7 +128,11 @@ class NetzobGui(Gtk.Window):
         self.log.info(_("Starting netzob"))
 
         # Main window definition
-        Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
+        try:
+            Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
+        except TypeError:
+            Gtk.Window.__init__(self)
+
         self.set_default_size(800, 600)
         self.set_title(_("Netzob: Inferring communication protocols"))
 
