@@ -33,6 +33,7 @@ import pygtk
 pygtk.require('2.0')
 import logging
 import os
+from gettext import gettext as _
 
 #+----------------------------------------------
 #| Local Imports

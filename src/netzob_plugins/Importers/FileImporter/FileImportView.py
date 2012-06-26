@@ -32,7 +32,7 @@ import gtk
 import pygtk
 from bitarray import bitarray
 pygtk.require('2.0')
-
+from gettext import gettext as _
 
 #+----------------------------------------------
 #| FileImportView:
