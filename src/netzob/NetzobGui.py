@@ -217,7 +217,10 @@ class NetzobGui(gtk.Window):
             self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
     def startGui(self):
-        gtk.main()
+        try:
+            gtk.main()
+        except KeyboardInterrupt:
+            self.connect('event-after', gtk.main_quit)
 
     def evnmtDelete(self, widget, event, data=None):
         return False
