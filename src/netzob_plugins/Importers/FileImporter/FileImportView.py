@@ -32,7 +32,7 @@ from gi.repository import Gtk
 import gi
 from bitarray import bitarray
 gi.require_version('Gtk', '3.0')
-
+from gettext import gettext as _
 
 #+----------------------------------------------
 #| FileImportView:

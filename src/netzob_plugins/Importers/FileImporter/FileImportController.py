@@ -33,7 +33,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 import logging
 import os
-
+from gettext import gettext as _
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
