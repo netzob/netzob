@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 
 #+---------------------------------------------------------------------------+
 #|          01001110 01100101 01110100 01111010 01101111 01100010            |
@@ -28,10 +29,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import uuid
-import random
-from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -40,40 +37,41 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
-from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
-from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
-from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 
-#+---------------------------------------------------------------------------+
-#| FileImporter: Import messages from files
-#+---------------------------------------------------------------------------+
-class FileImporterPlugin(ImporterPlugin):
+class ImportMenuExtension(GlobalMenuExtension):
 
-    __plugin_name__ = "FileImporter"
-    __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages from any file binary or ascii.")
-    __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    def __init__(self, netzob, controller, actionName, menuText, menuStock=None, 
+                 menuAccel=None, menuTooltip=None):
+        super(GlobalMenuExtension, self).__init__()
+        self.netzob = netzob
+        self.actionName = actionName
+        self.menuText = menuText
+        self.menuStock = menuStock 
+        self.menuAccel = menuAccel
+        self.menuTooltip = menuTooltip
+        self.controller = controller
+    
+    def getUIDefinition(self):
+        uiDefinition = \
+        """
+        <ui>
+        <menubar name='MenuBar'>
+            <menu action='Project'>
+                <menu action='ImportTraces'>
+                    <menuitem action='{0}' />
+                </menu>
+            </menu>
+        </menubar>
+        </ui>
+        """.format(self.actionName)
+        return uiDefinition
 
-    def __init__(self, netzob):
-        ImporterPlugin.__init__(self, netzob)
-        self.entryPoints = [ImportMenuExtension(netzob, FileImporterController,
-                                "ImportFile", "Import from file")]
+    def getActions(self):
+        actions = [
+            ("{0}".format(self.actionName), self.menuStock,
+                self.menuText, self.menuAccel, self.menuTooltip, 
+                self.executeAction)]
+        return actions
 
-    def getName(self):
-        return self.__plugin_name__
-
-    def getVersion(self):
-        return self.__plugin_version__
-
-    def getDescription(self):
-        return self.__plugin_description__
-
-    def getAuthor(self):
-        return self.__plugin_author__
-
-    def getEntryPoints(self):
-        return self.entryPoints
-
-    def setVal(self, val):
-        self.val = val
+    def executeAction(self, widget, data=None):
+        self.controller(self.netzob)
