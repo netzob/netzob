@@ -238,7 +238,7 @@ class Menu(object):
                 self.actiongroup.add_actions(actions)
                 self.uimanager.add_ui_from_string(uiDefinition)
             except Exception, e:
-                logging.warning("An error occurred when computing menu entry for plugin {0} ({1})".format(pluginExtension, e))
+                logging.exception("An error occurred when computing menu entry for plugin {0} : {1}".format(pluginExtension, e))
 
     def getMenuBar(self, window):
         return self.uimanager.get_widget("/MenuBar")

@@ -153,7 +153,7 @@ class NetzobPlugin(object):
                     setattr(instanciatedPlugin, NetzobPlugin.PLUGIN_FLAG_REJECTED, False)
                     logging.debug("Plugin {0} (v.{1}) loaded.".format(instanciatedPlugin.getName(), instanciatedPlugin.getVersion()))
             except Exception, e:
-                logging.warning("Impossible to load plugin declared in entrypoint {0} ({1}).".format(entrypoint, e))
+                logging.exception("Impossible to load plugin declared in entrypoint {0} : {1}".format(entrypoint, e))
         logging.debug("Plugins are loaded.")
 
     @staticmethod
