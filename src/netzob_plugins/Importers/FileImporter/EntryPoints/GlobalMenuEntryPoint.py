@@ -74,6 +74,6 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
                     None, self.executeAction)]
         return actions
 
-    def executeAction(self, widget, data):
+    def executeAction(self, widget, data=None):
         FileImportController(self.netzob)
 

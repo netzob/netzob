@@ -165,7 +165,7 @@ class FileImportController():
     def displayMessageList(self):
         self.view.lineView.get_model().clear()
         for message in self.model.messages:
-            self.view.lineView.get_model().append(None, [message.getID(), message.getData()])
+            self.view.lineView.get_model().append(None, [str(message.getID()), str(message.getData())])
         self.view.textview.get_buffer().delete(self.view.textview.get_buffer().get_start_iter(), self.view.textview.get_buffer().get_end_iter())
 
     def displayMessage(self, message):
