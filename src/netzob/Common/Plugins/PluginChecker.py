@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 import logging
 import inspect
-from netzob.Common.Plugins.PluginDecorators import mandatory_exec
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -79,13 +78,17 @@ class PluginChecker(object):
             for parentMethod in parentsMethods:
                 found = False
                 # Only methods marked as 'mandatory' are required
-                if parentMethod[1].__func__ == mandatory_exec:
-                    for pluginMethod in pluginMethods:
-                        if parentMethod[0] == pluginMethod[0] and parentMethod[1].__func__ != pluginMethod[1].__func__:
-                            found = True
-                            break
-                    if not found:
-                        logging.debug("Method {0} has not been found in plugin class.".format(parentMethod[0]))
-                        return False
+                if hasattr(parentMethod[1], "__mandatory__"):
+                    mandatory = getattr(parentMethod[1], "__mandatory__")
+                    if mandatory:
+                        for pluginMethod in pluginMethods:
+                            if parentMethod[0] == pluginMethod[0] and \
+                                    (not hasattr(pluginMethod[1], "__mandatory__" or \
+                                    not getattr(pluginMethod[1], "__mandatory__"))):
+                                found = True
+                                break
+                        if not found:
+                            logging.debug("Mandatory method {0} has not been found in plugin class.".format(parentMethod[0]))
+                            return False
 
         return True

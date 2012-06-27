@@ -45,8 +45,7 @@
 
 # Should be used to set a method as mandatory
 def mandatory(f):
-    return mandatory_exec
+    f.__mandatory__ = True
+    return f
 
 
-def mandatory_exec(*args, **kwargs):
-        f(*args, **kwargs)
