@@ -48,4 +48,5 @@ from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
 class GlobalMenuExtension(NetzobExtension):
 
     def __init__(self):
+        super(GlobalMenuExtension, self).__init__()
         pass
