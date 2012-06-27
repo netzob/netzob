@@ -79,8 +79,6 @@ from netzob.Inference.Vocabulary.OptionalViews import OptionalViews
 #|     GUI for vocabulary inference
 #+----------------------------------------------
 class UImodelization:
-    TARGET_TYPE_TEXT = 80
-    TARGETS = [('text/plain', 0, TARGET_TYPE_TEXT)]
 
     #+----------------------------------------------
     #| Called when user select a new trace
@@ -365,7 +363,9 @@ class UImodelization:
         # Initialize the treeview generator for the symbols
         leftPanel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeSymbolGenerator.getTreeview().enable_model_drag_dest(self.TARGETS, Gdk.DragAction.DEFAULT | Gdk.DragAction.MOVE)
+
+        self.treeSymbolGenerator.getTreeview().enable_model_drag_dest([], Gdk.DragAction.DEFAULT)
+        self.treeSymbolGenerator.getTreeview().drag_dest_add_text_targets()
         self.treeSymbolGenerator.getTreeview().connect("drag-data-received", self.drop_fromDND)
         self.treeSymbolGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_symbols)
 
@@ -379,7 +379,8 @@ class UImodelization:
         # add the messages in the right panel
         rightPanel.add(self.treeMessageGenerator.getScrollLib())
         # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.treeMessageGenerator.getTreeview().enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, self.TARGETS, Gdk.DragAction.DEFAULT | Gdk.DragAction.MOVE)
+        self.treeMessageGenerator.getTreeview().enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [], Gdk.DragAction.DEFAULT | Gdk.DragAction.MOVE)
+        self.treeMessageGenerator.getTreeview().drag_source_add_text_targets()
         self.treeMessageGenerator.getTreeview().connect("drag-data-get", self.drag_fromDND)
         self.treeMessageGenerator.getTreeview().connect('button-press-event', self.button_press_on_treeview_messages)
         self.treeMessageGenerator.getTreeview().connect('button-release-event', self.button_release_on_treeview_messages)
@@ -2307,7 +2308,7 @@ class UImodelization:
     #|   is dropped out current symbol to the selected symbol
     #+----------------------------------------------
     def drop_fromDND(self, treeview, context, x, y, selection, info, etime):
-        ids = selection.data
+        ids = selection.get_text()
 
         modele = treeview.get_model()
         info_depot = treeview.get_dest_row_at_pos(x, y)
@@ -2458,7 +2459,7 @@ class UImodelization:
     def drag_fromDND(self, treeview, contexte, selection, info, dateur):
         ids = []
         treeview.get_selection().selected_foreach(self.foreach_drag_fromDND, ids)
-        selection.set(selection.target, 8, ";".join(ids))
+        selection.set_text(";".join(ids), -1)
 
     def foreach_drag_fromDND(self, model, path, iter, ids):
         texte = str(model.get_value(iter, 0))
