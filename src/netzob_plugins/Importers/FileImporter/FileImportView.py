@@ -104,7 +104,7 @@ class FileImportView():
         # Col file descriptor
         column = Gtk.TreeViewColumn(_("Message ID"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         self.lineView.append_column(column)
         self.lineView.show()
 
