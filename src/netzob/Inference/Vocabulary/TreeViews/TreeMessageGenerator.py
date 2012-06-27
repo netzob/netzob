@@ -176,7 +176,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
                 nbLineMessageToHighlight = idLineMessage
 
             line = []
-            line.append(message.getID())
+            line.append(str(message.getID()))
             line.append("#ffffff")
             line.append(Pango.Weight.NORMAL)
             line.append(False)
