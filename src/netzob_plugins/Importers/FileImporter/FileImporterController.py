@@ -48,24 +48,12 @@ from netzob_plugins.Importers.FileImporter.FileImporterView import FileImporterV
 #+----------------------------------------------
 class FileImporterController(object):
 
-    def new(self):
-        pass
-
-    def update(self):
-        pass
-
-    def clear(self):
-        pass
-
-    def kill(self):
-        pass
-
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
-        self.log = logging.getLogger('netzob.Capturing.File.py')
+        self.log = logging.getLogger('netzob.Import.File.py')
         self.model = FileImporter()
         self.view = FileImporterView()
         self.initCallbacks()
