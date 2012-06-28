@@ -41,39 +41,27 @@ from gettext import gettext as _
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
-from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
+from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
 from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 
 #+---------------------------------------------------------------------------+
 #| FileImporter: Import messages from files
 #+---------------------------------------------------------------------------+
-class FileImporterPlugin(ImporterPlugin):
+class FileImporterPlugin(NetzobPluginProperties):
+    """FileImporter : Provide the possibility to import messages
+       from any binary or ascii file."""
 
     __plugin_name__ = "FileImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages from any file binary or ascii.")
+    __plugin_description__ = _("Provide the possibility to import messages "
+                                    + "from any binary or ascii file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     def __init__(self, netzob):
-        ImporterPlugin.__init__(self, netzob)
+        super(FileImporterPlugin, self).__init__(netzob)
         self.entryPoints = [ImportMenuExtension(netzob, FileImporterController,
                                 "ImportFile", "Import from file")]
 
-    def getName(self):
-        return self.__plugin_name__
-
-    def getVersion(self):
-        return self.__plugin_version__
-
-    def getDescription(self):
-        return self.__plugin_description__
-
-    def getAuthor(self):
-        return self.__plugin_author__
-
     def getEntryPoints(self):
         return self.entryPoints
-
-    def setVal(self, val):
-        self.val = val
