@@ -112,8 +112,7 @@ class PeachExport:
     #    @param dataModelid: A number that identifies the data model.
     #---------------------------------------------------------------------------
     def makeADataModel(self, xmlFather, symbol, dataModelid):
-        # TODO: sharpen the regex analysis.
-        # TODO: allow advanced regex to be found, better resistance of the regex analyzer.
+        # TODO: strengthen the regex analysis.
 
         xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
         for field in symbol.getFields():
@@ -122,7 +121,6 @@ class PeachExport:
             peachType = ""
             variable = field.getVariable()
             if variable is not None:
-                logging.debug(_("The variable of field {0} is of type {1}.").format(field.getName(), variable.getTypeVariable()))
                 # Precision on the variable type.
                 peachType = self.getPeachFieldType(variable)
             else:
@@ -130,7 +128,7 @@ class PeachExport:
                 peachType = "Blob"
 
             if field.isStatic():
-                # Static fields are not mutated, 
+                # Static fields are not mutated.
                 xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), mutable="false", valueType="hex", value=field.getRegex())
             else:
                 # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
@@ -139,11 +137,11 @@ class PeachExport:
                 # We will illustrate our demarch with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
                 regex = field.getRegex()
                 if (regex != "()"):
-                    regex = regex[1:len(regex)-1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
+                    regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
 
                     splittedRegex = []
                     for lterm in string.split(regex, ".{"):
-                            for rterm in string.split(lterm, "}"): 
+                            for rterm in string.split(lterm, "}"):
                                 splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
                                 logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
 
@@ -180,22 +178,35 @@ class PeachExport:
     #    @return peachType: the eventual type of the peach field.
     #---------------------------------------------------------------------------
     def getPeachFieldType(self, variable):
-        # TODO: manage multi Word or INT (or both) type.
-        # TODO: manage all native types of netzob.
-        peachType = ""
+        # TODO: manage all native types of netzob. AlternateVariable and ReferencedVariable remain.
+        logging.debug(_("Getting the type of variable {0}.").format(variable.getName()))
 
-        if variable.getTypeVariable() == "Word":
+        # Default type is Blob. BinaryVariable and HexVariable are transformed in Blob.
+        peachType = "Blob"
+        if variable.getTypeVariable() == "Word" or variable.getTypeVariable() == "IPv4Variable":
             peachType = "String"
-        elif variable.getTypeVariable() == "INT" or variable.getTypeVariable() == "DecimalWord":
+        elif variable.getTypeVariable() == "DecimalWord":
             peachType = "Number"
         elif variable.getTypeVariable() == "Aggregate":
             logging.debug(_("Variable has {0} child(ren).").format(len(variable.getChildren())))
             if len(variable.getChildren()) == 1:
+                # An aggregate field with has the type of its child.
                 peachType = self.getPeachFieldType(variable.getChildren()[0])
             else:
-                peachType = "Blob"
-        else:
-            peachType = "Blob"
+                # An aggregate field with children has the least demanding type of all its children.
+                potentialTypes = []
+                for child in variable.getChildren():
+                    childType = self.getPeachFieldType(child)
+                    if childType not in potentialTypes:
+                        potentialTypes.append(childType)
+                # Hierarchy of Peach type is Blob > String > Number.
+                if "Blob" in potentialTypes:
+                    peachType = "Blob"
+                elif "String" in potentialTypes:
+                    peachType = "String"
+                elif "Number" in potentialTypes:
+                    peachType = "Number"
+        logging.debug(_("Variable {0} is of type {1}.").format(variable.getName(), peachType))
         return peachType
 
     #---------------------------------------------------------------------------
