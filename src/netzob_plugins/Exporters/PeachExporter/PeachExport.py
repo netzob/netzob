@@ -113,47 +113,65 @@ class PeachExport:
     #---------------------------------------------------------------------------
     def makeADataModel(self, xmlFather, symbol, dataModelid):
         # TODO: sharpen the regex analysis.
+        # TODO: allow advanced regex to be found, better resistance of the regex analyzer.
 
         xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
         for field in symbol.getFields():
 
             xmlField = None
+            peachType = ""
             variable = field.getVariable()
             if variable is not None:
-                logging.debug(_("The variable of field {0} is type: {1}").format(field.getName(), variable.getTypeVariable()))
-
+                logging.debug(_("The variable of field {0} is of type {1}.").format(field.getName(), variable.getTypeVariable()))
                 # Precision on the variable type.
                 peachType = self.getPeachFieldType(variable)
-                xmlField = etree.SubElement(xmlDataModel, peachType)
-
-                # Adding attributes
-                xmlField.attrib["name"] = field.getName()
             else:
-                logging.debug(_("Field {0} has not got any variable").format(field.getName()))
-                xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName())
+                logging.debug(_("The field {0} has not got any variable.").format(field.getName()))
+                peachType = "Blob"
 
             if field.isStatic():
-                # Static fields are not mutated, fields not declared static in netzob are assumed to be dynamic, have a random default
-                # value and are mutable.
-                xmlField.attrib["mutable"] = "false"
-                xmlField.attrib["valueType"] = "hex"
-                xmlField.attrib["value"] = field.getRegex()
+                # Static fields are not mutated, 
+                xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), mutable="false", valueType="hex", value=field.getRegex())
             else:
-                # By definition of isStatic() we assume that the regex shapes itself like (.{n,p}) (or (.{n}) if n=p)
+                # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
+                # By definition of the isStatic() function, they have at least one character "{" in their regex.
+                # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subfields .
+                # We will illustrate our demarch with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
                 regex = field.getRegex()
-                regex = string.split(regex, "{")[1]  # regex = n,p})
-                regex = string.split(regex, "}")[0]  # regex = n,p
+                if (regex != "()"):
+                    regex = regex[1:len(regex)-1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
 
-                fieldLength = 0
-                if regex.find(",") == -1:
-                    # The regex was like (.{n}) so fieldlength = n
-                    fieldLength = int(regex)
+                    splittedRegex = []
+                    for lterm in string.split(regex, ".{"):
+                            for rterm in string.split(lterm, "}"): 
+                                splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
+                                logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
+
+                    for i in range(len(splittedRegex)):
+                        # splittedRegex will always contain dynamic subfields in even position.
+                        if (i % 2) == 1:
+                            fieldLength = 0
+                            if splittedRegex[i].find(",") == -1:
+                                # The regex was like (.{n}) so fieldlength = n
+                                fieldLength = int(splittedRegex[i])
+                            elif splittedRegex[i].find(",") == 0:
+                                # The regex was like (.{,n}) so fieldlength = n
+                                fieldLength = int((splittedRegex[i])[1:len(splittedRegex[i])])
+                            else:
+                                # The regex was like (.{n,p}) so fieldlength = (n+p)/2
+                                fieldLength = int(string.split(splittedRegex[i], ",")[0]) + int(string.split(splittedRegex[i], ",")[1])
+                                fieldLength = fieldLength / 2
+                            # The given field length is the length in half-bytes.
+                            fieldLength = (fieldLength + 1) / 2
+                            xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), length=str(fieldLength))
+                            logging.debug(_("The field {0} has a dynamic subfield of size {1}.").format(field.getName(), str(fieldLength)))
+                        else:
+                            if splittedRegex[i] != "":
+                                xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), mutable="false", valueType="hex", value=splittedRegex[i])
+                                logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
+
                 else:
-                    # The regex was like (.{n,p}) so fieldlength = (n+p)/2
-                    fieldLength = int(string.split(regex, ",")[0]) + int(string.split(regex, ",")[0])
-                    fieldLength = fieldLength / 2
-                logging.debug(_("The average length of field {0} is {1}").format(field.getName(), str(fieldLength)))
-                xmlField.attrib["length"] = str(fieldLength)
+                    logging.debug(_("The field {0} is empty.").format(field.getName()))
 
     #---------------------------------------------------------------------------
     # getPeachFieldType
@@ -162,6 +180,8 @@ class PeachExport:
     #    @return peachType: the eventual type of the peach field.
     #---------------------------------------------------------------------------
     def getPeachFieldType(self, variable):
+        # TODO: manage multi Word or INT (or both) type.
+        # TODO: manage all native types of netzob.
         peachType = ""
 
         if variable.getTypeVariable() == "Word":
@@ -169,7 +189,6 @@ class PeachExport:
         elif variable.getTypeVariable() == "INT" or variable.getTypeVariable() == "DecimalWord":
             peachType = "Number"
         elif variable.getTypeVariable() == "Aggregate":
-            #TODO: manage multi Word or INT (or both) type.
             logging.debug(_("Variable has {0} child(ren).").format(len(variable.getChildren())))
             if len(variable.getChildren()) == 1:
                 peachType = self.getPeachFieldType(variable.getChildren()[0])
