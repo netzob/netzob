@@ -40,10 +40,9 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
-from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
+from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 
 #+---------------------------------------------------------------------------+
 #| FileImporter: Import messages from files
