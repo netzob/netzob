@@ -66,8 +66,10 @@ class PluginChecker(object):
             logging.warning("Plugin {0} is not a Netzob Plugin".format(pluginClass))
             return False
 
-        # We retrieve all the method of the plugin class
+        # We retrieve all the methods of the plugin class
         pluginMethods = inspect.getmembers(pluginClass, predicate=inspect.ismethod)
+        for parentClass in pluginClass.__bases__:
+            pluginMethods.extend(inspect.getmembers(parentClass, predicate=inspect.ismethod))
 
         # Now we verify if all the plugin parent classes are valid
         for parentPluginClass in parentPluginClasses:
