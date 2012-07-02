@@ -80,7 +80,6 @@ class PeachExport:
                 logging.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
                 return None
             else:
-                #TODO: Code this function
                 self.makeADataModel(xmlRoot, symbol, 0)
             self.makeAState(xmlRoot, 0)
 
@@ -122,7 +121,7 @@ class PeachExport:
             variable = field.getVariable()
             if variable is not None:
                 # Precision on the variable type.
-                peachType = self.getPeachFieldType(variable)
+                peachType = self.getRecPeachFieldType(variable)
             else:
                 logging.debug(_("The field {0} has not got any variable.").format(field.getName()))
                 peachType = "Blob"
@@ -130,11 +129,15 @@ class PeachExport:
             if field.isStatic():
                 # Static fields are not mutated.
                 xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), mutable="false", valueType="hex", value=field.getRegex())
+
             else:
                 # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
-                # By definition of the isStatic() function, they have at least one character "{" in their regex.
-                # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subfields .
-                # We will illustrate our demarch with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
+
+                # Regex management:
+                #------------------
+
+                # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
+                # We will illustrate it with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
                 regex = field.getRegex()
                 if (regex != "()"):
                     regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
@@ -153,8 +156,9 @@ class PeachExport:
                                 # The regex was like (.{n}) so fieldlength = n
                                 fieldLength = int(splittedRegex[i])
                             elif splittedRegex[i].find(",") == 0:
-                                # The regex was like (.{,n}) so fieldlength = n
+                                # The regex was like (.{,n}) so fieldlength = n/2
                                 fieldLength = int((splittedRegex[i])[1:len(splittedRegex[i])])
+                                fieldLength = fieldLength / 2
                             else:
                                 # The regex was like (.{n,p}) so fieldlength = (n+p)/2
                                 fieldLength = int(string.split(splittedRegex[i], ",")[0]) + int(string.split(splittedRegex[i], ",")[1])
@@ -167,17 +171,59 @@ class PeachExport:
                             if splittedRegex[i] != "":
                                 xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), mutable="false", valueType="hex", value=splittedRegex[i])
                                 logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
-
                 else:
+                    # If the field's regex is (), we add a null-length Peach field type.
+                    fieldLength = 0
+                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=str(fieldLength))
                     logging.debug(_("The field {0} is empty.").format(field.getName()))
 
+                # Variable/Defaultvalue Management:
+                #----------------------------------
+                # TODO: We have a problem if the regex is multiple and if we have a variable. Now we just add values extracted from the variable in the last subfield.
+
+                # If we have a variable, we retrieve its value and use them for fuzzing more precisely.
+                if variable is not None:
+                    # We retrieve the values of the variable in text format.
+                    values = self.getRecVariableValue(variable)
+                    logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(values)))
+
+                    # We add the first value of the variable as the default value of the peach field.
+                    xmlField.attrib["valueType"] = "string"
+                    xmlField.attrib["value"] = values[0]
+
+                    # We add all other values to the field as potential valid values.
+                    values = values[1:]
+                    strValue = ""
+                    for value in values:
+                        strValue = ("{0};{1}").format(strValue, value)  # Each value is separated by a ';' character.
+                    strValue = strValue[1:]  # We withdraw the first character which is a ';'.
+                    xmlHint = etree.SubElement(xmlField, "Hint", name="ValidValues", value=strValue)
+
     #---------------------------------------------------------------------------
-    # getPeachFieldType
+    # getRecVariableValue
+    #    Find the value(s) of a variable, may be recursive.
+    #    @param: the given variable.
+    #    @return: a list of all its values, each in string format.
+    #---------------------------------------------------------------------------
+    def getRecVariableValue(self, variable):
+        values = []
+        if variable.getTypeVariable() == "Aggregate":
+            for child in variable.getChildren():
+                for value in self.getRecVariableValue(child):
+                    values.append(value)
+        else:
+            values.append(variable.getValue(False, self.netzob.getCurrentProject().getVocabulary(), None)[1])
+        return values
+            
+
+    #---------------------------------------------------------------------------
+    # getRecPeachFieldType
     #    Find the appropriate peach type for a field depending on its variable type.
     #    May be recursive.
+    #    @param: the given variable.
     #    @return peachType: the eventual type of the peach field.
     #---------------------------------------------------------------------------
-    def getPeachFieldType(self, variable):
+    def getRecPeachFieldType(self, variable):
         # TODO: manage all native types of netzob. AlternateVariable and ReferencedVariable remain.
         logging.debug(_("Getting the type of variable {0}.").format(variable.getName()))
 
@@ -191,12 +237,12 @@ class PeachExport:
             logging.debug(_("Variable has {0} child(ren).").format(len(variable.getChildren())))
             if len(variable.getChildren()) == 1:
                 # An aggregate field with has the type of its child.
-                peachType = self.getPeachFieldType(variable.getChildren()[0])
+                peachType = self.getRecPeachFieldType(variable.getChildren()[0])
             else:
                 # An aggregate field with children has the least demanding type of all its children.
                 potentialTypes = []
                 for child in variable.getChildren():
-                    childType = self.getPeachFieldType(child)
+                    childType = self.getRecPeachFieldType(child)
                     if childType not in potentialTypes:
                         potentialTypes.append(childType)
                 # Hierarchy of Peach type is Blob > String > Number.
