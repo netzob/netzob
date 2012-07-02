@@ -94,7 +94,7 @@ class PcapImport(AbstractImporter):
         try:
             reader.setfilter(filter)
         except:
-            errorMessage = _("The provided filter is not valid (it should respects the BPF format")
+            errorMessage = _("The provided filter is not valid (it should respects the BPF format)")
             self.log.warn(errorMessage)
             return (False, errorMessage)
 
