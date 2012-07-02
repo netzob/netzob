@@ -128,6 +128,9 @@ class NetzobPlugin(object):
             try:
                 if plugin.getEntryPoints() != None:
                     for pluginExtensionClass in plugin.getEntryPoints():
+                        logging.debug("Plugin {0} has entry point {1}".format(
+                                plugin.__class__.__name__,
+                                pluginExtensionClass.__class__.__name__))
                         if issubclass(pluginExtensionClass.__class__, extensionClass):
                             pluginExtensions.append(pluginExtensionClass)
                         else:

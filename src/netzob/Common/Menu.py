@@ -235,6 +235,7 @@ class Menu(object):
                 logging.debug("Menu available : {0}".format(pluginExtension))
                 uiDefinition = pluginExtension.getUIDefinition()
                 actions = pluginExtension.getActions()
+                logging.debug("Adding actions {0}".format(actions))
                 self.actiongroup.add_actions(actions)
                 self.uimanager.add_ui_from_string(uiDefinition)
             except Exception, e:
