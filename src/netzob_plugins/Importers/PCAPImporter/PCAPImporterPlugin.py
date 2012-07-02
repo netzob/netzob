@@ -28,9 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
-import uuid
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -39,21 +37,24 @@ from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
+from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
+from netzob_plugins.Importers.PCAPImporter.PCAPImporterController import PCAPImporterController
 
-
-#+---------------------------------------------------------------------------+
-#| PCAPImporter:
-#+---------------------------------------------------------------------------+
-class PCAPImporter(ImporterPlugin):
+class PCAPImporterPlugin(NetzobPluginProperties):
+    """PCAPImporter : Provide the possibility to import messages
+       from PCAP network capture files"""
 
     __plugin_name__ = "PCAPImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = "This is a PCAP Importer"
+    __plugin_description__ = _("Provide the possibility to import messages "
+                                    + "from PCAP network capture files")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
-    def __init__(self):
-        # Generate a unique ID
-        self.id = uuid.uuid4()
+    def __init__(self, netzob):
+        super(PCAPImporterPlugin, self).__init__(netzob)
+        self.entryPoints = [ImportMenuExtension(netzob, PCAPImporterController,
+                                "ImportPCAP", "Import PCAP file")]
 
-    def getName(self):
-        return "none"
+    def getEntryPoints(self):
+        return self.entryPoints

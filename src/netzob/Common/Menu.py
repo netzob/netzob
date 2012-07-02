@@ -88,11 +88,10 @@ class Menu(object):
       <menuitem action='Save' />
       <menuitem action='SessionManager' />
       <menu action='ImportTraces'>
-        <menuitem action='ImportNetwork' />
-        <menuitem action='ImportIPCFlows' />
-        <menuitem action='ImportPcap' />
-        <menuitem action='ImportXML' />
-        <menuitem action='Import3p' />
+	    <menuitem action='ImportNetwork' />
+	    <menuitem action='ImportIPCFlows' />
+	    <menuitem action='ImportXML' />
+	    <menuitem action='Import3p' />
       </menu>
       <menu action='Export'>
         <menuitem action='ExportXML' />
@@ -136,7 +135,6 @@ class Menu(object):
             ("ImportTraces", None, _("Import traces")),
             ("ImportNetwork", None, _("Capture network traces"), None, None, self.importNetworkTraficAction),
             ("ImportIPCFlows", None, _("Capture IPC flows"), None, None, self.importIPCFlowsAction),
-            ("ImportPcap", None, _("Import from PCAP"), None, None, self.importPcapAction),
             ("ImportXML", None, _("Import from XML File"), None, None, self.importXMLAction),
             ("Import3p", None, _("Import from third parties"), None, None, self.importThirdParty),
             ("Export", None, _("Export project")),
@@ -355,22 +353,10 @@ class Menu(object):
         networkImportPanel = NetworkImport(self.netzob)
 
     #+----------------------------------------------
-    #| Called when user wants to import PCAP file
-    #+----------------------------------------------
-    def importPcapAction(self, widget):
-        pcapImportPanel = PcapImportController(self.netzob)
-
-    #+----------------------------------------------
     #| Called when user wants to import IPC flow
     #+----------------------------------------------
     def importIPCFlowsAction(self, widget):
         ipcImportPanel = IpcImport(self.netzob)
-
-    #+----------------------------------------------
-    #| Called when user wants to import file
-    #+----------------------------------------------
-    def importFileAction(self, widget):
-        fileImportPanel = FileImporterController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import file
