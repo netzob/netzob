@@ -119,3 +119,6 @@ class FileImporterView(object):
         panel.attach(self.butValidateMessages, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         return panel
+
+    def run(self):
+        self.dialog.show_all()

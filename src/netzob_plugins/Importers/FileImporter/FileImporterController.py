@@ -53,7 +53,7 @@ class FileImporterController(object):
     #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
-        self.log = logging.getLogger('netzob.Import.File.py')
+        self.log = logging.getLogger('netzob.Capturing.File.py')
         self.model = FileImporter()
         self.view = FileImporterView()
         self.initCallbacks()
@@ -63,6 +63,9 @@ class FileImporterController(object):
         self.view.entrySeparator.connect("activate", self.applySeparator_cb)
         self.view.lineView.connect('button-press-event', self.buttonPressOnMessage_cb)
         self.view.butValidateMessages.connect("clicked", self.importFile_cb)
+
+    def run(self):
+        self.view.run()
 
     def buttonPressOnMessage_cb(self, treeview, event):
         x = int(event.x)
