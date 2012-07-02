@@ -88,10 +88,10 @@ class NetzobPlugin(object):
     def getEntryPoints(self):
         raise NotImplementedError("The plugin class doesn't implement method 'getEntryPoints'")
 
-    @staticmethod
-    def getLoadedInstance():
+    @classmethod
+    def getLoadedInstance(cls):
         try:
-            return NetzobPlugin.instances.values()[0]
+            return NetzobPlugin.instances[cls]
         except Exception, e:
             logging.warning("Impossible to retrieve loaded instance of plugin ({0})".format(e))
 
@@ -104,8 +104,8 @@ class NetzobPlugin(object):
         for sub in subs:
             # Retrieve all the subclasses of current class
             subsubs = sub.__subclasses__()
-            # We only consider a plugin if it doesn't have a child
-            if len(subsubs) == 0:
+            # We only consider a plugin if it was loaded
+            if sub in NetzobPlugin.instances:
                 try:
                     # We verify the plugin has not been rejected (by the PluginChecker)
                     if getattr(sub.getLoadedInstance(), NetzobPlugin.PLUGIN_FLAG_REJECTED) == False:
