@@ -47,7 +47,7 @@ from netzob.Common.Session import Session
 #| AbstractImporter:
 #|     Abstract class which provides common methods too any kind of importers
 #+---------------------------------------------------------------------------+
-class AbstractImporter:
+class AbstractImporter(object):
 
     def __init__(self, type):
         self.type = type
