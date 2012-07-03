@@ -75,7 +75,8 @@ class XMLImport(AbstractImporter):
     #| Constructor:
     #+----------------------------------------------
     def __init__(self, netzob):
-        AbstractImporter.__init__(self, "XML IMPORT")
+        AbstractImporter.__init__(self, "XML IMPORT",
+                netzob.getCurrentWorkspace(), netzob.getCurrentProject())
         self.netzob = netzob
 
         # create logger with the given configuration
