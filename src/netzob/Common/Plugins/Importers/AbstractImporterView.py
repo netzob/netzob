@@ -35,50 +35,53 @@ import os
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Pango
 
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
-
-from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
-
-class PCAPImporterView(AbstractImporterView):
-    """View of PCAP importer plugin"""
+class AbstractImporterView(object):
 
     def __init__(self, controller):
-        super(PCAPImporterView, self).__init__(controller)
-
-        # Import and add configuration widget
-        self.builderConfWidget = Gtk.Builder()
+        self._builder = Gtk.Builder()
         curDir = os.path.dirname(__file__)
-        self.builderConfWidget.add_from_file(os.path.join(curDir, "PCAPImportConfigurationWidget.glade"))
-        self._getObjects(self.builderConfWidget, ["pcapConfigurationBox",
-                                                  "filterEntry"])
-        self.builderConfWidget.connect_signals(self.controller)
-        self.setImportConfigurationWidget(self.pcapConfigurationBox)
+        self._builder.add_from_file(os.path.join(curDir, "AbstractImporterView.glade"))
+        self.controller = controller
+        self._getObjects(self._builder, ["dialog", "openFileEntry",
+            "listTreeView", "detailTextView", "cancelButton", "warnAlign",
+            "warnLabel", "displayCountLabel", "selectCountLabel", "importButton",
+            "globalBox"])
+        # Change packet details textview font
+        monoFontDesc = Pango.FontDescription("monospace")
+        self.detailTextView.modify_font(monoFontDesc)
+        self._builder.connect_signals(controller)
+        self.cancelButton.connect_object("clicked", Gtk.Widget.destroy,
+            self.dialog)
 
-        # Create treeview
-        def add_text_column(text, modelColumn):
-            column = Gtk.TreeViewColumn(text)
-            column.pack_start(cell, True)
-            column.add_attribute(cell, "text", modelColumn)
-            column.set_sort_column_id(modelColumn)
-            self.listTreeView.append_column(column)
+    def setImportConfigurationWidget(self, widget):
+        self.globalBox.pack_start(widget, False, False, 0)
+        self.globalBox.reorder_child(widget, 1)
+        widget.show()
 
-        self.listListStore = Gtk.ListStore(
-                str, 'gboolean', str, str, str, str, str, str)
-        self.listTreeView.set_model(self.listListStore)
-        toggleCellRenderer = Gtk.CellRendererToggle()
-        toggleCellRenderer.set_activatable(True)
-        toggleCellRenderer.connect("toggled", self.controller.selectPacket)
-        # Selected column
-        column = Gtk.TreeViewColumn()
-        column.pack_start(toggleCellRenderer, True)
-        column.add_attribute(toggleCellRenderer, "active", 1)
-        self.listTreeView.append_column(column)
-        cell = Gtk.CellRendererText()
-        add_text_column("Protocol", 2)
-        add_text_column("Source IP", 3)
-        add_text_column("Destination IP", 4)
-        add_text_column("Source Port", 5)
-        add_text_column("Destination Port", 6)
-        add_text_column("Payload", 7)
+    def _getObjects(self, builder, objectsList):
+        for object in objectsList:
+            setattr(self, object, builder.get_object(object))
+
+    def run(self):
+        self.dialog.show_all()
+        self.hideWarning()
+
+    def showWarning(self, text):
+        self.warnLabel.set_text(text)
+        self.warnAlign.show_all()
+
+    def hideWarning(self):
+        self.warnAlign.hide()
+
+    def clearPacketView(self):
+        self.listListStore.clear()
+        self.detailTextView.get_buffer().set_text("")
+
+    def updateCounters(self, displayedPackets, selectedPackets):
+        if selectedPackets == 0:
+            self.importButton.set_sensitive(False)
+        else:
+            self.importButton.set_sensitive(True)
+
+        self.displayCountLabel.set_text(str(displayedPackets))
+        self.selectCountLabel.set_text(str(selectedPackets))
