@@ -31,7 +31,6 @@
 from gettext import gettext as _
 import uuid
 from datetime import datetime
-import logging
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -41,25 +40,34 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Symbol import Symbol
 from netzob.Common.Session import Session
+from netzob.Common.NetzobException import NetzobImportException
+from netzob.UI.ModelReturnCodes import ERROR
 
-
-#+---------------------------------------------------------------------------+
-#| AbstractImporter:
-#|     Abstract class which provides common methods too any kind of importers
-#+---------------------------------------------------------------------------+
 class AbstractImporter(object):
+    """Abstract class which provides common methods too any kind of importers"""
 
-    def __init__(self, type):
+    def __init__(self, type, currentWorkspace, currentProject):
         self.type = type
         self.messages = []
+        self.currentWorkspace = currentWorkspace
+        self.currentProject = currentProject
 
-    #+-----------------------------------------------------------------------+
-    #| saveMessagesInProject:
-    #|   Add a selection of messages to an existing project
-    #|   it also saves them in the workspace
-    #+-----------------------------------------------------------------------+
+    def saveMessagesInCurrentProject(self, messageIDList):
+        addMessages = []
+        for messageID in messageIDList:
+            message = self.getMessageByID(str(messageID))
+            if message is not None:
+                addMessages.append(message)
+            else:
+                errorMessage = _("Message ID: {0} not found in importer " +
+                                "message list").format(messageID)
+                raise NetzobImportException("PCAP", errorMessage, ERROR)
+        self.saveMessagesInProject(self.currentWorkspace,
+                self.currentProject, addMessages, False)
+
     def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
-
+        """Add a selection of messages to an existing project
+           it also saves them in the workspace"""
         # We register each message in the vocabulary of the project
         for message in messages:
             project.getVocabulary().addMessage(message)

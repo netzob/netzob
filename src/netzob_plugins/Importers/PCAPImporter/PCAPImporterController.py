@@ -82,7 +82,7 @@ class PCAPImporterController(AbstractImporterController):
         return self.model.getMessageDetails(messageID)
 
     def doImportMessages(self, selectedPackets):
-        self.model.saveMessagesInProject(selectedPackets)
+        self.model.saveMessagesInCurrentProject(selectedPackets)
 
     def clearFilterButton_clicked_cb(self, widget):
         self.view.filterEntry.clear()

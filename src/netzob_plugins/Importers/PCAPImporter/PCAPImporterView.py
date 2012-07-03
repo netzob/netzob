@@ -56,7 +56,7 @@ class PCAPImporterView(AbstractImporterView):
         self.builderConfWidget.connect_signals(self.controller)
         self.setImportConfigurationWidget(self.pcapConfigurationBox)
 
-        # Create treeview
+        # Configure treeview
         def add_text_column(text, modelColumn):
             column = Gtk.TreeViewColumn(text)
             column.pack_start(cell, True)
@@ -69,7 +69,7 @@ class PCAPImporterView(AbstractImporterView):
         self.listTreeView.set_model(self.listListStore)
         toggleCellRenderer = Gtk.CellRendererToggle()
         toggleCellRenderer.set_activatable(True)
-        toggleCellRenderer.connect("toggled", self.controller.selectPacket)
+        toggleCellRenderer.connect("toggled", self.controller.selectMessage)
         # Selected column
         column = Gtk.TreeViewColumn()
         column.pack_start(toggleCellRenderer, True)

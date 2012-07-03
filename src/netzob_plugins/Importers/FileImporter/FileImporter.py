@@ -48,72 +48,59 @@ from netzob.Import.AbstractImporter import AbstractImporter
 #|     GUI for capturing messages
 #+----------------------------------------------
 class FileImporter(AbstractImporter):
+    """Model of file importer plugin"""
 
-    #+----------------------------------------------
-    #| Constructor:
-    #+----------------------------------------------
-    def __init__(self):
-        AbstractImporter.__init__(self, "FILE IMPORT")
+    def __init__(self, currentWorkspace, currentProject):
+        super(FileImporter, self).__init__("FILE IMPORT", currentWorkspace, currentProject)
         self.log = logging.getLogger('netzob.Import.FileImporter.py')
 
         # create the environmental dependancy object
         self.envDeps = EnvironmentalDependencies()
-        self.filesToBeImported = []
+        self.importedFiles = []
+        self.messageSeparator = ""
 
-    #+----------------------------------------------
-    #| Retrieve messages from files
-    #+----------------------------------------------
-    def retrieveMessagesFromFiles(self):
-        # We capture the current environment
-        self.envDeps.captureEnvData()
-
-        # We read each file and create one message for each file
-        fileNumber = 0
-        self.messages = []
-
-        for file in self.filesToBeImported:
-            # Extraction of the metadata
-            fileName = file.strip()
-            size = os.path.getsize(file)
-            creationDate = datetime.datetime.fromtimestamp(os.path.getctime(file))
-            modificationDate = datetime.datetime.fromtimestamp(os.path.getmtime(file))
+    def setSourceFiles(self, filePathList):
+        self.importedFiles = []
+        for filePath in filePathList:
+            size = os.path.getsize(filePath)
+            creationDate = datetime.datetime.fromtimestamp(
+                    os.path.getctime(filePath))
+            modificationDate = datetime.datetime.fromtimestamp(
+                    os.path.getmtime(filePath))
             owner = "none"
-
             # Retrieve the binary content of the file
-            content = self.getNetzobRawContentOfFile(file)
+            content = self._getNetzobRawContentOfFile(filePath)
             if not len(content) > 0:
                 continue
-
             # Create a message
-            message = FileMessage(uuid.uuid4(), 0, content, fileName, creationDate, modificationDate, owner, size, 0)
-            self.messages.append(message)
-            fileNumber += 1
+            message = FileMessage(uuid.uuid4(), 0,
+                    content, filePath, creationDate,
+                    modificationDate, owner, size, 0)
+            self.importedFiles.append(message)
 
-    def getNetzobRawContentOfFile(self, filename):
-        file = open(filename, "rb")
-        content = file.read()
-        file.close()
-        return TypeConvertor.stringToNetzobRaw(content)
+    def setSeparator(self, separator):
+        self.messageSeparator = separator
 
-    def applySeparatorOnFiles(self, lineSeparator):
-        # We read each file and create one message for each file
-        fileNumber = 0
-
-        # We split the content of each message and retrieve new messages
-        self.retrieveMessagesFromFiles()
-        new_messages = []
-        for message in self.messages:
+    def readMessages(self):
+        # Iterate over all imported files and split them
+        # according to the set separator
+        self.messages = []
+        for fileMessage in self.importedFiles:
             lineNumber = 0
-            if len(lineSeparator) > 0:
-                splittedStrHexData = message.getData().split(lineSeparator)
+            if len(self.messageSeparator) > 0:
+                splittedStrHexData = fileMessage.getData().split(self.messageSeparator)
             else:
-                splittedStrHexData = [message.getData()]
+                splittedStrHexData = [fileMessage.getData()]
             for s in splittedStrHexData:
                 if len(s) > 0:
-                    message = FileMessage(uuid.uuid4(), 0, s, message.getFilename(), message.getCreationDate(), message.getModificationDate(), message.getOwner(), message.getSize(), lineNumber)
-                    new_messages.append(message)
-                    lineNumber += 1
+                    message = FileMessage(uuid.uuid4(), 0,
+                            s, fileMessage.getFilename(), fileMessage.getCreationDate(),
+                            fileMessage.getModificationDate(), fileMessage.getOwner(),
+                            fileMessage.getSize(), lineNumber)
+                    self.messages.append(message)
 
-        # We save the new messages
-        self.messages = []
-        self.messages.extend(new_messages)
+    def _getNetzobRawContentOfFile(self, filename):
+        with open(filename, "rb") as file:
+            content = file.read()
+            content = TypeConvertor.stringToNetzobRaw(content)
+        return content

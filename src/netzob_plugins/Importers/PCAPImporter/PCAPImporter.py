@@ -48,7 +48,6 @@ from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
-from twisted.plugins.twisted_qtstub import errorMessage
 
 class PCAPImporter(AbstractImporter):
     """Model of PCAP importer plugin"""
@@ -59,15 +58,13 @@ class PCAPImporter(AbstractImporter):
     INVALID_LAYER4 = 3
 
     def __init__(self, currentWorkspace, currentProject):
-        super(PCAPImporter, self).__init__("PCAP IMPORT")
+        super(PCAPImporter, self).__init__("PCAP IMPORT", currentWorkspace, currentProject)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.PcapImport.py')
-        self.filePathList = []
+        self.filesToBeImported = []
         self.bpfFilter = None
-        self.currentWorkspace = currentWorkspace
-        self.currentProject = currentProject
         self._payloadDict = {}
-    
+
     @property
     def payloadDict(self):
         return self._payloadDict.copy()
@@ -91,7 +88,7 @@ class PCAPImporter(AbstractImporter):
         if errorMessageList != []:
             raise NetzobImportException("PCAP", "\n".join(errorMessageList),
                         ERROR)
-        self.filePathList = filePathList
+        self.filesToBeImported = filePathList
 
     def setBPFFilter(self, bpfFilter):
         self.bpfFilter = bpfFilter
@@ -99,21 +96,8 @@ class PCAPImporter(AbstractImporter):
     def readMessages(self):
         """Read all messages from all opened PCAP files"""
         self.messages = []
-        for filePath in self.filePathList:
+        for filePath in self.filesToBeImported:
             self._readMessagesFromFile(filePath)
-
-    def saveMessagesInProject(self, messageIDList):
-        addMessages = []
-        for messageID in messageIDList:
-            message = self.getMessageByID(str(messageID))
-            if message is not None:
-                addMessages.append(message)
-            else:
-                errorMessage = _("Message ID: {0} not found in importer " +
-                                "message list").format(messageID)
-                raise NetzobImportException("PCAP", errorMessage, ERROR)
-        super(PCAPImporter, self).saveMessagesInProject(self.currentWorkspace, 
-                self.currentProject, addMessages, False)
 
     def _readMessagesFromFile(self, filePath):
         """Read all messages from a given PCAP file"""
@@ -124,7 +108,7 @@ class PCAPImporter(AbstractImporter):
             errorMessage = _("The provided filter is not valid "
                              + "(it should follow the BPF format)")
             self.log.warn(errorMessage)
-            raise NetzobImportException("PCAP", errorMessage, ERROR, 
+            raise NetzobImportException("PCAP", errorMessage, ERROR,
                         self.INVALID_BPF_FILTER)
 
         self.log.info(_("Starting import from {0} (linktype:{0})")\
@@ -190,7 +174,7 @@ class PCAPImporter(AbstractImporter):
             else:
                 warnMessage = _("Cannot import one of the provided packets since " +
                                "its layer 4 is unsupported (Only UDP and TCP " +
-                               "are currently supported, packet IP protocol " + 
+                               "are currently supported, packet IP protocol " +
                                "number = {0})").format(ip.get_ip_p())
                 self.log.warn(warnMessage)
                 raise NetzobImportException("PCAP", warnMessage, WARNING,
@@ -206,7 +190,7 @@ class PCAPImporter(AbstractImporter):
 
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
-            errorMessage = _("Message ID: {0} not found in importer " + 
+            errorMessage = _("Message ID: {0} not found in importer " +
                 "message list").format(messageID)
             self.log.error(errorMessage)
             raise NetzobImportException("PCAP", errorMessage, ERROR)

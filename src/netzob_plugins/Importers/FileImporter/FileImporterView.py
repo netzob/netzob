@@ -25,100 +25,59 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
-from gi.repository import Gtk
-import gi
-from bitarray import bitarray
-gi.require_version('Gtk', '3.0')
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+import os
 from gettext import gettext as _
 
-#+----------------------------------------------
-#| FileImporterView:
-#|     GUI for capturing messages from files
-#+----------------------------------------------
-class FileImporterView(object):
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
 
-    #+----------------------------------------------
-    #| Constructor:
-    #+----------------------------------------------
-    def __init__(self):
-        panel = self.buildPanel()
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
+from netzob.Common.NetzobException import NetzobImportException
 
-        self.dialog = Gtk.Dialog(title=_("Import file"), flags=0, buttons=None)
-        self.dialog.show()
-        self.dialog.vbox.pack_start(panel, True, True, 0)
-        self.dialog.set_size_request(1000, 600)
+class FileImporterView(AbstractImporterView):
+    """View of file importer plugin"""
 
-    def buildPanel(self):
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Main panel
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        panel = Gtk.Table(rows=10, columns=8, homogeneous=True)
-        panel.show()
+    def __init__(self, controller):
+        super(FileImporterView, self).__init__(controller)
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Select a file
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.butSelectFiles = Gtk.Button(_("Select file(s)"))
-        self.butSelectFiles.show()
-        self.entryFilepath = Gtk.Entry()
-        self.entryFilepath.set_text("")
-        self.entryFilepath.show()
-        panel.attach(self.butSelectFiles, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-        panel.attach(self.entryFilepath, 2, 6, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
+        # Import and add configuration widget
+        self.builderConfWidget = Gtk.Builder()
+        curDir = os.path.dirname(__file__)
+        self.builderConfWidget.add_from_file(os.path.join(curDir, "FileImportConfigurationWidget.glade"))
+        self._getObjects(self.builderConfWidget, ["fileConfigurationBox",
+                                                  "separatorEntry"])
+        self.builderConfWidget.connect_signals(self.controller)
+        self.setImportConfigurationWidget(self.fileConfigurationBox)
 
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Separator
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_separator = Gtk.Label(label=_("HEX line-separator (ex: 0a) :"))
-        label_separator.show()
-        self.entrySeparator = Gtk.Entry()
-        self.entrySeparator.set_text("")
-        self.entrySeparator.show()
+        # Configure treeview
+        def add_text_column(text, modelColumn):
+            column = Gtk.TreeViewColumn(text)
+            column.pack_start(cell, True)
+            column.add_attribute(cell, "text", modelColumn)
+            column.set_sort_column_id(modelColumn)
+            self.listTreeView.append_column(column)
 
-        panel.attach(label_separator, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-        panel.attach(self.entrySeparator, 2, 6, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # File details
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll = Gtk.ScrolledWindow()
-        self.textview = Gtk.TextView()
-        self.textview.show()
-        self.textview.get_buffer().create_tag("normalTag", family="Courier")
-
-        scroll.add(self.textview)
-        scroll.show()
-        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        panel.attach(scroll, 0, 6, 2, 10, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Extracted data
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll2 = Gtk.ScrolledWindow()
-        self.lineView = Gtk.TreeView(Gtk.TreeStore(str, str))  # line number, content
-        self.lineView.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        self.listListStore = Gtk.ListStore('gboolean', str, str)
+        self.listTreeView.set_model(self.listListStore)
+        toggleCellRenderer = Gtk.CellRendererToggle()
+        toggleCellRenderer.set_activatable(True)
+        toggleCellRenderer.connect("toggled", self.controller.selectMessage)
+        # Selected column
+        column = Gtk.TreeViewColumn()
+        column.pack_start(toggleCellRenderer, True)
+        column.add_attribute(toggleCellRenderer, "active", 0)
+        self.listTreeView.append_column(column)
         cell = Gtk.CellRendererText()
-        # Col file descriptor
-        column = Gtk.TreeViewColumn(_("Message ID"))
-        column.pack_start(cell, True)
-        column.add_attribute(cell, "text", 0)
-        self.lineView.append_column(column)
-        self.lineView.show()
-
-        scroll2.add(self.lineView)
-        scroll2.show()
-        scroll2.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        panel.attach(scroll2, 6, 8, 0, 10, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
-
-        # Button select packets for further analysis
-        self.butValidateMessages = Gtk.Button(label=_("Import"))
-        self.butValidateMessages.show()
-        panel.attach(self.butValidateMessages, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        return panel
-
-    def run(self):
-        self.dialog.show_all()
+        add_text_column("ID", 1)
+        add_text_column("Contents", 2)
