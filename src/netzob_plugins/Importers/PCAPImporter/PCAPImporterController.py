@@ -84,19 +84,19 @@ class PCAPImporterController(AbstractImporterController):
                 self.view.listListStore.append([str(message.getID()), False,
                     str(message.getL2SourceAddress()),
                     str(message.getL2DestinationAddress()),
-                    str(message.getStringData())])
+                    message.getStringData()])
         elif self.importLayer == 3:
             for message in self.model.messages:
                 self.view.listListStore.append([str(message.getID()), False,
                     str(message.getL3SourceAddress()),
                     str(message.getL3DestinationAddress()),
-                    str(message.getStringData())])
+                    message.getStringData()])
         else:
             for message in self.model.messages:
                 self.view.listListStore.append([str(message.getID()), False,
                     str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()),
                     str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()),
-                    str(message.getStringData())])
+                    message.getStringData()])
 
     def doGetMessageDetails(self, messageID):
         return self.model.getMessageDetails(messageID)

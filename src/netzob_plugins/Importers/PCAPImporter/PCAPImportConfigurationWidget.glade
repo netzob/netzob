@@ -144,6 +144,7 @@
         <property name="can_focus">False</property>
         <property name="xscale">0</property>
         <property name="top_padding">5</property>
+        <property name="bottom_padding">5</property>
         <child>
           <object class="GtkButton" id="applyButton">
             <property name="label">gtk-apply</property>
