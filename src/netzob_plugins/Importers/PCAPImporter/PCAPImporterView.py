@@ -52,21 +52,22 @@ class PCAPImporterView(AbstractImporterView):
         curDir = os.path.dirname(__file__)
         self.builderConfWidget.add_from_file(os.path.join(curDir, "PCAPImportConfigurationWidget.glade"))
         self._getObjects(self.builderConfWidget, ["pcapConfigurationBox",
-                                                  "filterEntry"])
+                "filterEntry", "layerRadioButton2", "layerRadioButton3",
+                "layerRadioButton4"])
+        self.layerRadioButton4.set_active(True)
         self.builderConfWidget.connect_signals(self.controller)
         self.setImportConfigurationWidget(self.pcapConfigurationBox)
+        self._textCell = Gtk.CellRendererText()
+        self.makeL4ImportTreeView()
 
-        # Configure treeview
-        def add_text_column(text, modelColumn):
-            column = Gtk.TreeViewColumn(text)
-            column.pack_start(cell, True)
-            column.add_attribute(cell, "text", modelColumn)
-            column.set_sort_column_id(modelColumn)
-            self.listTreeView.append_column(column)
+    def addTreeViewTextColumn(self, text, modelColumn):
+        column = Gtk.TreeViewColumn(text)
+        column.pack_start(self._textCell, True)
+        column.add_attribute(self._textCell, "text", modelColumn)
+        column.set_sort_column_id(modelColumn)
+        self.listTreeView.append_column(column)
 
-        self.listListStore = Gtk.ListStore(
-                str, 'gboolean', str, str, str, str, str, str)
-        self.listTreeView.set_model(self.listListStore)
+    def addTreeViewSelectedToggleColumn(self):
         toggleCellRenderer = Gtk.CellRendererToggle()
         toggleCellRenderer.set_activatable(True)
         toggleCellRenderer.connect("toggled", self.controller.selectMessage)
@@ -75,10 +76,48 @@ class PCAPImporterView(AbstractImporterView):
         column.pack_start(toggleCellRenderer, True)
         column.add_attribute(toggleCellRenderer, "active", 1)
         self.listTreeView.append_column(column)
-        cell = Gtk.CellRendererText()
-        add_text_column("Protocol", 2)
-        add_text_column("Source IP", 3)
-        add_text_column("Destination IP", 4)
-        add_text_column("Source Port", 5)
-        add_text_column("Destination Port", 6)
-        add_text_column("Payload", 7)
+
+    def removeAllTreeViewColumns(self):
+        columnList = self.listTreeView.get_columns()
+        for column in columnList:
+            self.listTreeView.remove_column(column)
+
+    def makeL2ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to displayer layer 2 packets
+        # ID, Selected, Source Address, Destination Address, Payload
+        self.listListStore = Gtk.ListStore(
+                str, 'gboolean', str, str, str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Source Address", 2)
+        self.addTreeViewTextColumn("Destination Address", 3)
+        self.addTreeViewTextColumn("Payload", 4)
+
+    def makeL3ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to display layer 3 packets
+        # ID, Selected, Source IP, Destination IP, Payload
+        self.listListStore = Gtk.ListStore(
+                str, 'gboolean', str, str, str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Source IP", 2)
+        self.addTreeViewTextColumn("Destination IP", 3)
+        self.addTreeViewTextColumn("Payload", 4)
+
+    def makeL4ImportTreeView(self):
+        self.removeAllTreeViewColumns()
+        # Liststore to display layer 4 packets
+        # ID, Selected, Source IP, Destination IP, Protocol, 
+        # Source Port, Destination Port, Payload
+        self.listListStore = Gtk.ListStore(
+                str, 'gboolean', str, str, str, str, str, str)
+        self.listTreeView.set_model(self.listListStore)
+        self.addTreeViewSelectedToggleColumn()
+        self.addTreeViewTextColumn("Source IP", 2)
+        self.addTreeViewTextColumn("Destination IP", 3)
+        self.addTreeViewTextColumn("Protocol", 4)
+        self.addTreeViewTextColumn("Source Port", 5)
+        self.addTreeViewTextColumn("Destination Port", 6)
+        self.addTreeViewTextColumn("Payload", 7)

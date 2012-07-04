@@ -56,6 +56,14 @@ class PCAPImporterController(AbstractImporterController):
                                   self.currentProject)
         self.view = PCAPImporterView(self)
 
+    def getImportLayer(self):
+        return self.model.importLayer
+
+    def setImportLayer(self, importLayer):
+        self.model.setImportLayer(importLayer)
+
+    importLayer = property(getImportLayer, setImportLayer)
+
     def doSetSourceFiles(self, filePathList):
         self.model.setSourceFiles(filePathList)
 
@@ -71,11 +79,23 @@ class PCAPImporterController(AbstractImporterController):
                 NetzobErrorMessage(importEx.message)
 
         # Display all read messages
-        for message in self.model.messages:
-            self.view.listListStore.append([str(message.getID()), False,
-                    str(message.getProtocol()),
-                    str(message.getIPSource()), str(message.getIPDestination()),
-                    str(message.getL4SourcePort()), str(message.getL4DestinationPort()),
+        if self.importLayer == 2:
+            for message in self.model.messages:
+                self.view.listListStore.append([str(message.getID()), False,
+                    str(message.getL2SourceAddress()),
+                    str(message.getL2DestinationAddress()),
+                    str(message.getStringData())])
+        elif self.importLayer == 3:
+            for message in self.model.messages:
+                self.view.listListStore.append([str(message.getID()), False,
+                    str(message.getL3SourceAddress()),
+                    str(message.getL3DestinationAddress()),
+                    str(message.getStringData())])
+        else:
+            for message in self.model.messages:
+                self.view.listListStore.append([str(message.getID()), False,
+                    str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()),
+                    str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()),
                     str(message.getStringData())])
 
     def doGetMessageDetails(self, messageID):
@@ -86,3 +106,14 @@ class PCAPImporterController(AbstractImporterController):
 
     def clearFilterButton_clicked_cb(self, widget):
         self.view.filterEntry.clear()
+
+    def layerRadioButton_toggled_cb(self, widget):
+        if self.view.layerRadioButton2.get_active():
+            self.importLayer = 2
+            self.view.makeL2ImportTreeView()
+        elif self.view.layerRadioButton3.get_active():
+            self.importLayer = 3
+            self.view.makeL3ImportTreeView()
+        else:
+            self.importLayer = 4
+            self.view.makeL4ImportTreeView()

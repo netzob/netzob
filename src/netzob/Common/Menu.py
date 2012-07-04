@@ -44,7 +44,6 @@ from netzob.Common.Project import Project
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
-from netzob.UI.Import.Controllers.PcapImportController import PcapImportController
 from netzob.Import.ThirdPartyImport import ThirdPartyImport
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin

@@ -51,7 +51,7 @@ from lxml import etree
 #|     <data></data>
 #| </message>
 #+---------------------------------------------------------------------------+
-class RawMessageFactory():
+class RawMessageFactory(object):
 
     @staticmethod
     #+-----------------------------------------------------------------------+

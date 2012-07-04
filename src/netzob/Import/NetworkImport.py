@@ -48,8 +48,7 @@ import impacket.ImpactPacket as Packets
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.NetworkMessage import NetworkMessage
-from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
+from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 from netzob.Common.EnvironmentalDependencies import EnvironmentalDependencies
 
 
@@ -238,6 +237,9 @@ class NetworkImport(AbstractImporter):
                 Data = None
 
                 ethernet = eth_decoder.decode(packetPayload)
+                l2Proto = "Ethernet"
+                EthSrc = ethernet.get_ether_shost()
+                EthDst = ethernet.get_ether.dhost()
                 if ethernet.get_ether_type() == Packets.IP.ethertype:
                     ip = ip_decoder.decode(packetPayload[ethernet.get_header_size():])
                     IPsrc = ip.get_ip_src()
@@ -248,14 +250,18 @@ class NetworkImport(AbstractImporter):
                         Sport = udp.get_uh_sport()
                         Dport = udp.get_uh_dport()
                         Data = udp.get_data_as_string()
+                        proto = "UDP"
                     if ip.get_ip_p() == Packets.TCP.protocol:
                         tcp = tcp_decoder.decode(packetPayload[ethernet.get_header_size() + ip.get_header_size():])
                         Sport = tcp.get_th_sport()
                         Dport = tcp.get_th_dport()
                         Data = tcp.get_data_as_string()
+                        proto = "TCP"
 
                 # Compute the messages
-                message = NetworkMessage(uuid.uuid4(), timestamp, Data.encode("hex"), IPsrc, IPdst, proto, Sport, Dport)
+                message = L4NetworkMessage(uuid.uuid4(), timestamp,
+                        Data.encode("hex"), l2Proto, EthSrc, EthDst, "IP",
+                        IPsrc, IPdst, proto, Sport, Dport)
                 messages.append(message)
 
         # We ask the confirmation

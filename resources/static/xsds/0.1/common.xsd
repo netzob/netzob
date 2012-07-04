@@ -65,6 +65,55 @@
 			</extension>
 		</complexContent>
 	</complexType>
+	
+	<complexType name="L2NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:Message">
+				<sequence>
+					<element name="l2Protocol" type="string"></element>
+					<element name="l2SourceAddress" type="string"></element>
+					<element name="l2DestinationAddress" type="string"></element>
+					<element name="pattern" type="netzob-common:Pattern" minOccurs="0"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="L3NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:L2NetworkMessage">
+				<sequence>
+					<element name="l3Protocol" type="string"></element>
+					<element name="l3SourceAddress" type="string"></element>
+					<element name="l3DestinationAddress" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="L4NetworkMessage">
+		<complexContent>
+			<extension base="netzob-common:L3NetworkMessage">
+				<sequence>
+					<element name="l4Protocol" type="string"></element>
+					<element name="l4SourcePort">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="l4DestinationPort">
+						<simpleType>
+							<restriction base="int">
+								<minInclusive value="0"></minInclusive>
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 
 	<complexType name="FileMessage">
 		<complexContent>

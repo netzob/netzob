@@ -51,7 +51,7 @@ from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
 #| AbstractMessage:
 #|     Definition of a message
 #+---------------------------------------------------------------------------+
-class AbstractMessage():
+class AbstractMessage(object):
 
     def __init__(self, id, timestamp, data, type, pattern=[]):
         # create logger with the given configuration

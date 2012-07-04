@@ -48,7 +48,7 @@ from lxml import etree
 #|     Factory dedicated to the manipulation of IRP messages
 #| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
 #+---------------------------------------------------------------------------+
-class IRPMessageFactory():
+class IRPMessageFactory(object):
 
     @staticmethod
     #+-----------------------------------------------------------------------+

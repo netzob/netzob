@@ -57,7 +57,7 @@ from lxml import etree
 #|     <data></data>
 #| </message>
 #+---------------------------------------------------------------------------+
-class IPCMessageFactory():
+class IPCMessageFactory(object):
 
     @staticmethod
     #+-----------------------------------------------------------------------+

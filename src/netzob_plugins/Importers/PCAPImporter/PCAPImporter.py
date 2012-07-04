@@ -44,10 +44,12 @@ import impacket.ImpactPacket as Packets
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.NetworkMessage import NetworkMessage
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
+from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
+from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
+from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 
 class PCAPImporter(AbstractImporter):
     """Model of PCAP importer plugin"""
@@ -63,6 +65,7 @@ class PCAPImporter(AbstractImporter):
         self.log = logging.getLogger('netzob.Import.PcapImport.py')
         self.filesToBeImported = []
         self.bpfFilter = None
+        self.importLayer = 4
         self._payloadDict = {}
 
     @property
@@ -92,6 +95,11 @@ class PCAPImporter(AbstractImporter):
 
     def setBPFFilter(self, bpfFilter):
         self.bpfFilter = bpfFilter
+
+    def setImportLayer(self, importLayer):
+        if not importLayer in [2, 3, 4]:
+            raise
+        self.importLayer = importLayer
 
     def readMessages(self):
         """Read all messages from all opened PCAP files"""
@@ -126,68 +134,125 @@ class PCAPImporter(AbstractImporter):
 
     def _packetHandler(self, header, payload):
         """Decode a packet"""
+        mUuid = uuid.uuid4()
+        mTimestamp = int(time.time())
+        if self.importLayer == 2:
+            (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
+                    self.decodeLayer2(header, payload)
+            self.messages.append(
+                    L2NetworkMessage(
+                            mUuid,
+                            mTimestamp,
+                            l2Payload.encode("hex"),
+                            l2Proto,
+                            l2SrcAddr,
+                            l2DstAddr))
+            self._payloadDict[mUuid] = payload
+        elif self.importLayer == 3:
+            (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
+                    self.decodeLayer2(header, payload)
+            (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
+                    self.decodeLayer3(etherType, l2Payload)
+            self.messages.append(
+                    L3NetworkMessage(
+                            mUuid,
+                            mTimestamp,
+                            l3Payload.encode("hex"),
+                            l2Proto,
+                            l2SrcAddr,
+                            l2DstAddr,
+                            l3Proto,
+                            l3SrcAddr,
+                            l3DstAddr))
+            self._payloadDict[mUuid] = payload
+        else:
+            (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
+                    self.decodeLayer2(header, payload)
+            (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
+                    self.decodeLayer3(etherType, l2Payload)
+            (l4Proto, l4SrcPort, l4DstPort, l4Payload) = \
+                    self.decodeLayer4(ipProtocolNum, l3Payload)
+            self.messages.append(
+                    L4NetworkMessage(
+                            mUuid,
+                            mTimestamp,
+                            l4Payload.encode("hex"),
+                            l2Proto,
+                            l2SrcAddr,
+                            l2DstAddr,
+                            l3Proto,
+                            l3SrcAddr,
+                            l3DstAddr,
+                            l4Proto,
+                            l4SrcPort,
+                            l4DstPort))
+            self._payloadDict[mUuid] = payload
+
+    def decodeLayer2(self, header, payload):
+        def formatMacAddress(arrayMac):
+            return ":".join("{0:0>2}".format(
+                    hex(b)[2:]) for b in arrayMac.tolist())
 
         if self.datalink == pcapy.DLT_EN10MB:
-            layer2_decoder = Decoders.EthDecoder()
+            l2Decoder = Decoders.EthDecoder()
+            l2Proto = "Ethernet"
+            layer2 = l2Decoder.decode(payload)
+            l2SrcAddr = formatMacAddress(layer2.get_ether_shost())
+            l2DstAddr = formatMacAddress(layer2.get_ether_dhost())
         elif self.datalink == pcapy.DLT_LINUX_SLL:
-            layer2_decoder = Decoders.LinuxSLLDecoder()
-        ip_decoder = Decoders.IPDecoder()
-        udp_decoder = Decoders.UDPDecoder()
-        tcp_decoder = Decoders.TCPDecoder()
+            l2Decoder = Decoders.LinuxSLLDecoder()
+            l2Proto = "Linux SLL"
+            layer2 = l2Decoder.decode(payload)
+            l2SrcAddr = layer2.get_addr()
+            l2DstAddr = None
+        l2Payload = payload[layer2.get_header_size():]
+        etherType = layer2.get_ether_type()
+        return (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType)
 
-        ethernet = layer2_decoder.decode(payload)
-        if ethernet.get_ether_type() == Packets.IP.ethertype:
-            ip = ip_decoder.decode(payload[ethernet.get_header_size():])
-            if ip.get_ip_p() == Packets.UDP.protocol:
-                udp = udp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                udpData = udp.get_data_as_string()
-                mUuid = uuid.uuid4()
-                if len(udpData) > 0:
-                    timestamp = int(time.time())
-                    message = NetworkMessage(
-                        mUuid,
-                        timestamp,
-                        udpData.encode("hex"),
-                        ip.get_ip_src(),
-                        ip.get_ip_dst(),
-                        "UDP",
-                        udp.get_uh_sport(),
-                        udp.get_uh_dport())
-                    self.messages.append(message)
-                    self._payloadDict[mUuid] = payload
-            elif ip.get_ip_p() == Packets.TCP.protocol:
-                tcp = tcp_decoder.decode(payload[ethernet.get_header_size() + ip.get_header_size():])
-                tcpData = tcp.get_data_as_string()
-                if len(tcpData) > 0:
-                    timestamp = int(time.time())
-                    message = NetworkMessage(
-                        mUuid,
-                        timestamp,
-                        tcpData.encode("hex"),
-                        ip.get_ip_src(),
-                        ip.get_ip_dst(),
-                        "TCP",
-                        tcp.get_th_sport(),
-                        tcp.get_th_dport())
-                    self.messages.append(message)
-                    self._payloadDict[mUuid] = payload
+    def decodeLayer3(self, etherType, l2Payload):
+        if etherType == Packets.IP.ethertype:
+            l3Proto = "IP"
+            l3Decoder = Decoders.IPDecoder()
+            layer3 = l3Decoder.decode(l2Payload)
+            l3SrcAddr = layer3.get_ip_src()
+            l3DstAddr = layer3.get_ip_dst()
+            l3Payload = l2Payload[layer3.get_header_size():]
+            ipProtocolNum = layer3.get_ip_p()
+            return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum)
+        else:
+            warnMessage = _("Cannot import one of the provided packets since " +
+              "its layer 3 is unsupported (Only IP is " +
+              "currently supported, packet ethernet " +
+              "type = {0})").format(etherType)
+            self.log.warn(warnMessage)
+            raise NetzobImportException("PCAP", warnMessage, WARNING,
+                        self.INVALID_LAYER3)
+
+    def decodeLayer4(self, ipProtocolNum, l3Payload):
+            if ipProtocolNum == Packets.UDP.protocol:
+                l4Proto = "UDP"
+                l4Decoder = Decoders.UDPDecoder()
+                layer4 = l4Decoder.decode(l3Payload)
+                l4SrcPort = layer4.get_uh_sport()
+                l4DstPort = layer4.get_uh_dport()
+                l4Payload = layer4.get_data_as_string()
+                return (l4Proto, l4SrcPort, l4DstPort, l4Payload)
+            elif ipProtocolNum == Packets.TCP.protocol:
+                l4Proto = "TCP"
+                l4Decoder = Decoders.TCPDecoder()
+                layer4 = l4Decoder.decode(l3Payload)
+                l4SrcPort = layer4.get_th_sport()
+                l4DstPort = layer4.get_th_dport()
+                l4Payload = layer4.get_data_as_string()
+                return (l4Proto, l4SrcPort, l4DstPort, l4Payload)
             else:
                 warnMessage = _("Cannot import one of the provided packets since " +
-                               "its layer 4 is unsupported (Only UDP and TCP " +
-                               "are currently supported, packet IP protocol " +
-                               "number = {0})").format(ip.get_ip_p())
+               "its layer 4 is unsupported (Only UDP and TCP " +
+               "are currently supported, packet IP protocol " +
+               "number = {0})").format(ipProtocolNum.get_ip_p())
                 self.log.warn(warnMessage)
                 raise NetzobImportException("PCAP", warnMessage, WARNING,
                                             self.INVALID_LAYER4)
-        else:
-                warnMessage = _("Cannot import one of the provided packets since " +
-                              "its layer 3 is unsupported (Only IP is " +
-                              "currently supported, packet ethernet " +
-                              "type = {0})").format(ethernet.get_ether_type())
-                self.log.warn(warnMessage)
-                raise NetzobImportException("PCAP", warnMessage, WARNING,
-                                            self.INVALID_LAYER3)
-
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
             errorMessage = _("Message ID: {0} not found in importer " +

@@ -39,29 +39,29 @@ from gettext import gettext as _
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Models.Factories.FileMessageFactory import FileMessageFactory
-from netzob.Common.Models.Factories.NetworkMessageFactory import NetworkMessageFactory
+from netzob.Common.Models.Factories.OldFormatNetworkMessageFactory import OldFormatNetworkMessageFactory
+from netzob.Common.Models.Factories.L2NetworkMessageFactory import L2NetworkMessageFactory
+from netzob.Common.Models.Factories.L3NetworkMessageFactory import L3NetworkMessageFactory
+from netzob.Common.Models.Factories.L4NetworkMessageFactory import L4NetworkMessageFactory
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Models.Factories.IRPMessageFactory import IRPMessageFactory
 from netzob.Common.Models.Factories.IRPDeviceIoControlMessageFactory import IRPDeviceIoControlMessageFactory
 from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 
-
-#+---------------------------------------------------------------------------+
-#| AbstractMessageFactory:
-#|     Factory dedicated to the manipulation of file messages
-#+---------------------------------------------------------------------------+
-class AbstractMessageFactory():
+class AbstractMessageFactory(object):
+    """Factory dedicated to the manipulation of file messages"""
 
     @staticmethod
-    #+-----------------------------------------------------------------------+
-    #| save
-    #|     Generate an XML representation of a message
-    #+-----------------------------------------------------------------------+
     def save(message, root, namespace_project, namespace_common):
+        """Generate an XML representation of a message"""
         if message.getType() == "File":
             return FileMessageFactory.save(message, root, namespace_project, namespace_common)
-        elif message.getType() == "Network":
-            return NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+        elif message.getType() == "L2Network":
+            return L2NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+        elif message.getType() == "L3Network":
+            return L3NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
+        elif message.getType() == "L4Network":
+            return L4NetworkMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "IPC":
             return IPCMessageFactory.save(message, root, namespace_project, namespace_common)
         elif message.getType() == "IRP":
@@ -75,23 +75,29 @@ class AbstractMessageFactory():
             the generation of an xml representation of the message : ''' + str(message))
 
     @staticmethod
-    #+---------------------------------------------------------------------------+
-    #| loadFromXML:
-    #|     Function which parses an XML and extract from it
-    #[    the definition of a file message
-    #| @param rootElement: XML root of the file message
-    #| @return an instance of a message
-    #| @throw NameError if XML invalid
-    #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):
+        """loadFromXML:
+           Function which parses an XML and extract from it
+           the definition of a file message
+           @param rootElement: XML root of the file message
+           @return an instance of a message
+           @throw NameError if XML invalid"""
+
         # Computes which type is it
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
             raise NameError("The parsed xml doesn't represent a valid type message.")
 
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:FileMessage":
             return FileMessageFactory.loadFromXML(rootElement, namespace, version)
+        # Preserve compatibility with former traces
         elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:NetworkMessage":
-            return NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+            return OldFormatNetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L2NetworkMessage":
+            return L2NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L3NetworkMessage":
+            return L3NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:L4NetworkMessage":
+            return L4NetworkMessageFactory.loadFromXML(rootElement, namespace, version)
         elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IPCMessage":
             return IPCMessageFactory.loadFromXML(rootElement, namespace, version)
         elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob-common:IRPMessage":

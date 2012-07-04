@@ -41,9 +41,8 @@ import time
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Import.ThirdParties.AbstractThirdPartyImporter import AbstractThirdPartyImporter
-from netzob.Common.Models.NetworkMessage import NetworkMessage
+from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-
 
 #+---------------------------------------------------------------------------+
 #| AbstractThirdPartyImporter:
@@ -89,10 +88,10 @@ class OSpy(AbstractThirdPartyImporter):
         for xmlMessage in xmlRoot.findall("Messages"):
             message = self.extractMessageFromXML(xmlMessage)
             if message != None:
-                if message.getProtocol() == "EncryptMessage" or message.getProtocol() == "DecryptMessage":
+                if message.getL4Protocol() == "EncryptMessage" or message.getL4Protocol() == "DecryptMessage":
                     messages.append(message)
-                if not message.getProtocol() in listOfFunctions:
-                    listOfFunctions.append(message.getProtocol())
+                if not message.getL4Protocol() in listOfFunctions:
+                    listOfFunctions.append(message.getL4Protocol())
 
         return messages
 
@@ -179,7 +178,10 @@ class OSpy(AbstractThirdPartyImporter):
                 l4_destination_port = msg_portLocal
 
         if data != None:
-            message = NetworkMessage(id, timestamp, data, ip_source, ip_destination, msg_protocol, l4_source_port, l4_destination_port)
+            message = L4NetworkMessage(id, timestamp, data,
+                    None, None, None,
+                    "IP", ip_source, ip_destination,
+                    msg_protocol, l4_source_port, l4_destination_port)
             return message
 
     def uncompressFile(self, path):

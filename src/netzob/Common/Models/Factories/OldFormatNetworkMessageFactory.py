@@ -24,39 +24,28 @@
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
-
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from lxml.etree import ElementTree
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Token import Token
 from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Token import Token
+from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 
-
-#+---------------------------------------------------------------------------+
-#| NetworkMessageFactory:
-#|     Factory dedicated to the manipulation of network messages
-#| ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+
-#+---------------------------------------------------------------------------+
-class NetworkMessageFactory():
+class OldFormatNetworkMessageFactory(object):
+    """Factory dedicated to the manipulation of network messages"""
 
     @staticmethod
-    #+-----------------------------------------------------------------------+
-    #| save
-    #|     Generate the XML representation of a Network message
-    #+-----------------------------------------------------------------------+
     def save(message, xmlMessages, namespace_project, namespace):
+        """Generate the XML representation of a Network message"""
         root = etree.SubElement(xmlMessages, "{" + namespace + "}message")
         root.set("id", str(message.getID()))
         root.set("timestamp", str(message.getTimestamp()))
@@ -92,15 +81,12 @@ class NetworkMessageFactory():
         return etree.tostring(root)
 
     @staticmethod
-    #+---------------------------------------------------------------------------+
-    #| loadFromXML:
-    #|     Function which parses an XML and extract from it
-    #[    the definition of a network message
-    #| @param rootElement: XML root of the network message
-    #| @return an instance of a NetworkMessage
-    #| @throw NameError if XML invalid
-    #+---------------------------------------------------------------------------+
     def loadFromXML(rootElement, namespace, version):
+        """Function which parses an XML and extract from it
+           the definition of a network message
+           @param rootElement: XML root of the network message
+           @return an instance of a NetworkMessage
+           @raise NameError if XML invalid"""
 
         # Then we verify its an IPC Message
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:NetworkMessage":
@@ -135,7 +121,6 @@ class NetworkMessageFactory():
         msg_l4TargetPort = rootElement.find("{" + namespace + "}l4_destination_port").text
 
         #Retrieve pattern
-
         pattern = []
         try:
             patTemp = rootElement.find("{" + namespace + "}pattern")
@@ -153,11 +138,10 @@ class NetworkMessageFactory():
         except:
             pattern = []
 
-        #print "FACTORY "+rootElement.find("{" + namespace + "}pattern").text+" give "+str(pattern[0])+";"+str([str(i) for i in pattern[1]])
-        # TODO : verify this ! Circular imports in python !
-        # WARNING : verify this ! Circular imports in python !
-        from netzob.Common.Models.NetworkMessage import NetworkMessage
-
-        result = NetworkMessage(msg_id, msg_timestamp, msg_data, msg_ipSource, msg_ipDestination, msg_protocol, msg_l4SourcePort, msg_l4TargetPort, pattern)
+        result = L4NetworkMessage(msg_id, msg_timestamp, msg_data,
+                    None, None, None, # Layer 2 Information 
+                    "IP", msg_ipSource, msg_ipDestination,
+                    msg_protocol, msg_l4SourcePort, msg_l4TargetPort,
+                    pattern)
 
         return result
