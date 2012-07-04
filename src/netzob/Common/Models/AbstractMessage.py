@@ -46,7 +46,6 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
 from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
 
-
 #+---------------------------------------------------------------------------+
 #| AbstractMessage:
 #|     Definition of a message

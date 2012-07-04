@@ -44,7 +44,6 @@ from netzob.Common.Project import Project
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
-from netzob.Import.ThirdPartyImport import ThirdPartyImport
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
@@ -87,10 +86,9 @@ class Menu(object):
       <menuitem action='Save' />
       <menuitem action='SessionManager' />
       <menu action='ImportTraces'>
-	    <menuitem action='ImportNetwork' />
-	    <menuitem action='ImportIPCFlows' />
-	    <menuitem action='ImportXML' />
-	    <menuitem action='Import3p' />
+    	<menuitem action='ImportNetwork' />
+    	<menuitem action='ImportIPCFlows' />
+    	<menuitem action='ImportXML' />
       </menu>
       <menu action='Export'>
         <menuitem action='ExportXML' />
@@ -135,7 +133,6 @@ class Menu(object):
             ("ImportNetwork", None, _("Capture network traces"), None, None, self.importNetworkTraficAction),
             ("ImportIPCFlows", None, _("Capture IPC flows"), None, None, self.importIPCFlowsAction),
             ("ImportXML", None, _("Import from XML File"), None, None, self.importXMLAction),
-            ("Import3p", None, _("Import from third parties"), None, None, self.importThirdParty),
             ("Export", None, _("Export project")),
             ("ExportXML", None, _("XML"), None, None, self.exportXMLAction),
             ("ExportText", None, _("Text"), None, None, self.exportTextAction),
