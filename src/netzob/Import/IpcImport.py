@@ -74,7 +74,8 @@ class IpcImport(AbstractImporter):
     #| Constructor:
     #+----------------------------------------------
     def __init__(self, zob):
-        AbstractImporter.__init__(self, "IPC IMPORT")
+        AbstractImporter.__init__(self, "IPC IMPORT", zob.getCurrentWorkspace(),
+                zob.getCurrentProject())
         self.zob = zob
 
         # create logger with the given configuration

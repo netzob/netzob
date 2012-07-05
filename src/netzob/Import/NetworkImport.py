@@ -75,7 +75,8 @@ class NetworkImport(AbstractImporter):
     #| @param zob: a reference to the main netzob.py
     #+-----------------------------------------------------------------------+
     def __init__(self, zob):
-        AbstractImporter.__init__(self, "NETWORK IMPORT")
+        AbstractImporter.__init__(self, "NETWORK IMPORT", zob.getCurrentWorkspace(),
+                zob.getCurrentProject())
         self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.Network.py')
