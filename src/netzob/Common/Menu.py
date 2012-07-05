@@ -132,7 +132,6 @@ class Menu(object):
             ("ImportTraces", None, _("Import traces")),
             ("ImportNetwork", None, _("Capture network traces"), None, None, self.importNetworkTraficAction),
             ("ImportIPCFlows", None, _("Capture IPC flows"), None, None, self.importIPCFlowsAction),
-            ("ImportXML", None, _("Import from XML File"), None, None, self.importXMLAction),
             ("Export", None, _("Export project")),
             ("ExportXML", None, _("XML"), None, None, self.exportXMLAction),
             ("ExportText", None, _("Text"), None, None, self.exportTextAction),
