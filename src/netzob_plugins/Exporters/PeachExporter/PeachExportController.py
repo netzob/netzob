@@ -41,19 +41,27 @@ from netzob_plugins.Exporters.PeachExporter.PeachExportView import PeachExportVi
 from netzob_plugins.Exporters.PeachExporter.PeachExport import PeachExport
 
 
-#+----------------------------------------------
-#| PeachExportController:
-#|     GUI for exporting results in Peach pit xml
-#+----------------------------------------------
 class PeachExportController:
+    """
+        PeachExportController:
+            A controller liking the Peach export and its view in the netzob GUI.
 
-    #+----------------------------------------------
-    #| Called when user select a new trace
-    #+----------------------------------------------
+    """
+
     def new(self):
+        """
+            new:
+                Called when a user select a new trace.
+
+        """
         pass
 
     def update(self):
+        """
+            update:
+                Update the view. More precisely, it sets the symbol tree view which is its left part.
+
+        """
         self.view.symbolTreeview.get_model().clear()
 
         # Append an "Entire project" leaf to the tree view.
@@ -63,9 +71,17 @@ class PeachExportController:
             iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
     def clear(self):
+        """
+            clear:
+
+        """
         pass
 
     def kill(self):
+        """
+            kill:
+
+        """
         pass
 
     #+----------------------------------------------
@@ -73,6 +89,13 @@ class PeachExportController:
     #| @param netzob: the main netzob object
     #+----------------------------------------------
     def __init__(self, netzob):
+        """
+            Constructor of PeachExportController:
+
+                @type netzob: netzob.NetzobGUI.netzob
+                @param netzob: the main netzob project.
+
+        """
         self.netzob = netzob
         self.model = PeachExport(netzob)
         self.view = PeachExportView()
@@ -80,9 +103,22 @@ class PeachExportController:
         self.update()
 
     def initCallbacks(self):
+        """
+            initCallbacks:
+                Link the callbacks.
+
+        """
         self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
 
     def symbolSelected_cb(self, treeview):
+        """
+            symbolSelected_cb:
+                Called when a symbol is selected in the symbol tree view.
+
+                @type treeview: gtk.TreeView
+                @param treeview: the symbol tree view.
+
+        """
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
@@ -90,6 +126,14 @@ class PeachExportController:
                 self.showXMLDefinition(symbolID)
 
     def showXMLDefinition(self, symbolID):
+        """
+            showXMLDefinition:
+                Show the XML Definition of the given symbol in the main subview of the Peachexportview.
+
+                @type symbolID: integer
+                @param symbolID: a number which identifies the symbol which XML Definition is displayed.
+
+        """
 
         # Special case "entire project"
         if symbolID == "-1":
@@ -105,8 +149,12 @@ class PeachExportController:
         else:
             self.view.textarea.get_buffer().set_text(_("No XML definition found"))
 
-    #+----------------------------------------------
-    #| GETTERS
-    #+----------------------------------------------
     def getPanel(self):
+        """
+            getPanel:
+
+                @return type: netzob_plugins.PeachExporter.PeachExportView.PeachExportView
+                @return: the plugin view.
+
+        """
         return self.view

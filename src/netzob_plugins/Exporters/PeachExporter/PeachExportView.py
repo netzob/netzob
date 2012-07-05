@@ -34,16 +34,18 @@ import pygtk
 pygtk.require('2.0')
 
 
-#+----------------------------------------------
-#| PeachExportView:
-#|     GUI for exporting results in Peach pit xml
-#+----------------------------------------------
 class PeachExportView:
+    """
+    PeachExportView:
+        GUI for exporting results in Peach pit XML.
 
-    #+----------------------------------------------
-    #| Constructor:
-    #+----------------------------------------------
+    """
+
     def __init__(self):
+        """
+            Constructor of PeachExportView:
+
+        """
         self.buildPanel()
 
         self.dialog = gtk.Dialog(title=_("Export project as Peach pit XML"), flags=0, buttons=None)
@@ -52,6 +54,11 @@ class PeachExportView:
         self.dialog.set_size_request(600, 400)
 
     def buildPanel(self):
+        """
+            buildPanel:
+                Build and display the Peach exporter GUI.
+
+        """
         # First we create an VPaned which hosts the two main children
         self.panel = gtk.HBox()
         self.panel.show()
@@ -76,6 +83,11 @@ class PeachExportView:
         bottomFrame.add(sw)
 
     def buildSymbolTreeview(self):
+        """
+            builSymbolTreeView:
+                Build and add a symbol tree view in the GUI (left column). This tree view lists all the symbol of the project.
+
+        """
         # Tree store contains:
         # str : text (symbol Name)
         # str : text (score)

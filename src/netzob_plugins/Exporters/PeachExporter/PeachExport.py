@@ -26,42 +26,51 @@
 #+---------------------------------------------------------------------------+
 
 
-#-------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 # Global Imports
-#-------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 from gettext import gettext as _
 import logging
 from lxml import etree
 import string
 
-#+----------------------------------------------
+
+#+----------------------------------------------------------------------------
 #| Local Imports
-#+----------------------------------------------
+#+----------------------------------------------------------------------------
 
 
-#-------------------------------------------------------------------------------
-# PeachExport:
-#    Utility for exporting netzob information
-# in Peach pit file.
-#-------------------------------------------------------------------------------
 class PeachExport:
+    """
+        PeachExport:
+            Utility for exporting netzob information into Peach pit file.
+            Simplify the construction of a fuzzer with Peach.
 
-    #---------------------------------------------------------------------------
-    # Constructor:
-    #---------------------------------------------------------------------------
+    """
+
     def __init__(self, netzob):
+        """
+            Constructor of PeachExport:
+
+                @type netzob: netzob.NetzobGUI.netzob
+                @param netzob: the main netzob project.
+
+        """
         self.netzob = netzob
 
-    #---------------------------------------------------------------------------
-    # getXMLDefinition:
-    #     Returns part of the Peach pit file (XML definition)
-    #     TODO: Return the entire Peach pit file
-    #     @return a string containing the xml def.
-    #---------------------------------------------------------------------------
     def getPeachDefinition(self, symbolID, entireProject):
+        """
+            getXMLDefinition:
+                Returns part of the Peach pit file (XML format).
+
+                @type symbolID: integer
+                @param symbolID: a number which identifies the symbol the xml definition of which we need.
+                @type entireProject: boolean
+                @param entireProject: true if we want to see the Peach definition of the whole project, false elsewhere.
+
+        """
         xmlRoot = etree.Element("root")
         logging.debug(_("Targeted symbolID: {0}").format(str(symbolID)))
-        # TODO(stateful fuzzer): take into account the inferred grammar.
 
         if entireProject:
             self.makeAllDataModels(xmlRoot)
@@ -87,12 +96,15 @@ class PeachExport:
         result = etree.tostring(tree, pretty_print=True)
         return result
 
-    #---------------------------------------------------------------------------
-    # makeAllDataModels:
-    #    Transform every single netzob symbol into Peach data model.
-    #    @param xmlFather: xml tree father of the current element.
-    #---------------------------------------------------------------------------
     def makeAllDataModels(self, xmlFather):
+        """
+            makeAllDataModels:
+                Transform every single netzob symbol into Peach data model.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element
+
+        """
         project = self.netzob.getCurrentProject()
         vocabulary = project.getVocabulary()
 
@@ -102,17 +114,19 @@ class PeachExport:
             self.makeADataModel(xmlFather, symbol, dataModelid)
             dataModelid = dataModelid + 1
 
-    #---------------------------------------------------------------------------
-    # makeADataModel:
-    #    Dissect a netzob symbol in order to extract essential data for the
-    #    making of Peach fields in its data model.
-    #    @param xmlFather: xml tree father of the current element.
-    #    @param symbol: the given symbol that will be dissected.
-    #    @param dataModelid: A number that identifies the data model.
-    #---------------------------------------------------------------------------
     def makeADataModel(self, xmlFather, symbol, dataModelid):
-        # TODO: strengthen the regex analysis.
+        """
+            makeADataModel:
+                Dissect a netzob symbol in order to extract essential data for the making of Peach fields in its data Model
 
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+                @type symbol: netzob.common.Symbol.symbol
+                @param symbol: the given symbol that will be dissected.
+                @type dataModelid: integer
+                @param dataModelid: a number that identifies the data model.
+
+        """
         xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
         for field in symbol.getFields():
 
@@ -133,8 +147,8 @@ class PeachExport:
             else:
                 # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
 
-                # Regex management:
-                #------------------
+                # Regex management: #
+                #-------------------#
 
                 # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
                 # We will illustrate it with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
@@ -177,8 +191,8 @@ class PeachExport:
                     xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=str(fieldLength))
                     logging.debug(_("The field {0} is empty.").format(field.getName()))
 
-                # Variable/Defaultvalue Management:
-                #----------------------------------
+                # Variable/Defaultvalue Management: #
+                #-----------------------------------#
                 # TODO: We have a problem if the regex is multiple and if we have a variable. Now we just add values extracted from the variable in the last subfield.
 
                 # If we have a variable, we retrieve its value and use them for fuzzing more precisely.
@@ -199,13 +213,17 @@ class PeachExport:
                     strValue = strValue[1:]  # We withdraw the first character which is a ';'.
                     xmlHint = etree.SubElement(xmlField, "Hint", name="ValidValues", value=strValue)
 
-    #---------------------------------------------------------------------------
-    # getRecVariableValue
-    #    Find the value(s) of a variable, may be recursive.
-    #    @param: the given variable.
-    #    @return: a list of all its values, each in string format.
-    #---------------------------------------------------------------------------
     def getRecVariableValue(self, variable):
+        """
+            getRecVariableValue:
+                Find the value(s) of a variable. May be recursive.
+
+                @type variable: netzob.common.MMSTD.Dictionary.Variable.variable
+                @param variable: the given variable which values are searched.
+                @return type: string list.
+                @return: the list containing all the values of the given variable, each in string format.
+
+        """
         values = []
         if variable.getTypeVariable() == "Aggregate":
             for child in variable.getChildren():
@@ -214,16 +232,18 @@ class PeachExport:
         else:
             values.append(variable.getValue(False, self.netzob.getCurrentProject().getVocabulary(), None)[1])
         return values
-            
 
-    #---------------------------------------------------------------------------
-    # getRecPeachFieldType
-    #    Find the appropriate peach type for a field depending on its variable type.
-    #    May be recursive.
-    #    @param: the given variable.
-    #    @return peachType: the eventual type of the peach field.
-    #---------------------------------------------------------------------------
     def getRecPeachFieldType(self, variable):
+        """
+            getRecPeachFieldType:
+                Find the appropriate peach type for a field depending on its variable type. May be recursive.
+
+                @type variable: netzob.common.MMSTD.Dictionary.Variable.variable
+                @param variable: the given variable which type is searched
+                @return type: string
+                @return: the eventual Peach type of the variable. It can be String, Number or Blob.
+
+        """
         # TODO: manage all native types of netzob. AlternateVariable and ReferencedVariable remain.
         logging.debug(_("Getting the type of variable {0}.").format(variable.getName()))
 
@@ -255,13 +275,15 @@ class PeachExport:
         logging.debug(_("Variable {0} is of type {1}.").format(variable.getName(), peachType))
         return peachType
 
-    #---------------------------------------------------------------------------
-    # makeAStateModel
-    #    Create one state model by data model and chain it to the previously
-    #    created.
-    #    @param xmlFather: xml tree father of the current element.
-    #---------------------------------------------------------------------------
     def makeAStateModel(self, xmlFather):
+        """
+            makeAStateModel:
+                Create a Peach state model. Create one state by data model and chain it to the previously created one.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+
+        """
         # TODO(stateful fuzzer): Make one state model for each state of the protocol.
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="simpleStateModel", initialState="state0")
         # There is always at least one state, the first state which is naturally called state0 and is the initial state.
@@ -278,15 +300,19 @@ class PeachExport:
             xmlState = self.makeAState(xmlStateModel, stateid)
             stateid = stateid + 1
 
-    #---------------------------------------------------------------------------
-    # makeAState
-    #    Create one state model that will use the previously created data model.
-    #    @param xmlFather: xml tree father of the current element.
-    #    @param stateid: A number that identifies the state in the state model.
-    #    @return xmlState: An xml-shaped Peach-state aiming to output fuzzed data
-    #    of the corresponding data model.
-    #---------------------------------------------------------------------------
     def makeAState(self, xmlFather, stateid):
+        """
+            makeAState:
+                Create one state which will output data formatted according to a previously created data model.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+                @type stateid: integer
+                @param stateid: a number that identifies the state in the state model and links to the proper data model.
+                @return type: lxml.etree.element
+                @return: a Peach state in xml format.
+
+        """
         # We create one state which will output fuzzed data.
         xmlState = etree.SubElement(xmlFather, "State", name=("state{0}").format(str(stateid)))
         xmlAction = etree.SubElement(xmlState, "Action", type="output")
