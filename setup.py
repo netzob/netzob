@@ -122,6 +122,9 @@ setup(
     entry_points="""
         [netzob.plugins]
             fileImporter = netzob_plugins.Importers.FileImporter.FileImporterPlugin:FileImporterPlugin
+            pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
+            ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
+            xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin
         """,
     # Files that should be scanned by Babel (if available)
     message_extractors={
