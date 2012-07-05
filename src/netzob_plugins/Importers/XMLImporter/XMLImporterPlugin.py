@@ -54,7 +54,7 @@ class XMLImporterPlugin(NetzobPluginProperties):
     def __init__(self, netzob):
         super(XMLImporterPlugin, self).__init__(netzob)
         self.entryPoints = [ImportMenuExtension(netzob, XMLImporterController,
-                                "ImportXML", "Import XML file")]
+                                "ImportXML", _("Import from XML file"))]
 
     def getEntryPoints(self):
         return self.entryPoints

@@ -58,6 +58,9 @@ class AbstractImporterView(object):
         self.globalBox.reorder_child(widget, 1)
         widget.show()
 
+    def setDialogTitle(self, title):
+        self.dialog.set_title(title)
+
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
             setattr(self, object, builder.get_object(object))

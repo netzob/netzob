@@ -54,7 +54,7 @@ class FileImporterPlugin(NetzobPluginProperties):
     def __init__(self, netzob):
         super(FileImporterPlugin, self).__init__(netzob)
         self.entryPoints = [ImportMenuExtension(netzob, FileImporterController,
-                                "ImportFile", "Import from file")]
+                                "ImportFile", _("Import from raw file"))]
 
     def getEntryPoints(self):
         return self.entryPoints

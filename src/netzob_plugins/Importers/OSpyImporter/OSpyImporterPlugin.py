@@ -54,7 +54,7 @@ class OSpyImporterPlugin(NetzobPluginProperties):
     def __init__(self, netzob):
         super(OSpyImporterPlugin, self).__init__(netzob)
         self.entryPoints = [ImportMenuExtension(netzob, OSpyImporterController,
-                                "ImportOSpy", "Import oSpy file")]
+                                "ImportOSpy", _("Import from oSpy file"))]
 
     def getEntryPoints(self):
         return self.entryPoints

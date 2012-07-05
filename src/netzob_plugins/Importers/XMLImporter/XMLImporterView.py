@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import os
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -53,6 +54,7 @@ class XMLImporterView(AbstractImporterView):
         self.builderConfWidget.add_from_file(os.path.join(curDir, "XMLImportConfigurationWidget.glade"))
         self._getObjects(self.builderConfWidget, ["applyAlign"])
         self.builderConfWidget.connect_signals(self.controller)
+        self.setDialogTitle(_("Import messages from XML file"))
         self.setImportConfigurationWidget(self.applyAlign)
 
         # Configure treeview

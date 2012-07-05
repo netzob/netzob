@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import os
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -56,6 +57,7 @@ class PCAPImporterView(AbstractImporterView):
                 "layerRadioButton4"])
         self.layerRadioButton4.set_active(True)
         self.builderConfWidget.connect_signals(self.controller)
+        self.setDialogTitle(_("Import messages from PCAP file"))
         self.setImportConfigurationWidget(self.pcapConfigurationBox)
         self._textCell = Gtk.CellRendererText()
         self.makeL4ImportTreeView()

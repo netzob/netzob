@@ -6,7 +6,7 @@
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Import PCAP file</property>
+    <property name="title" translatable="yes">Import file</property>
     <property name="window_position">center-always</property>
     <property name="type_hint">normal</property>
     <child internal-child="vbox">
@@ -39,6 +39,7 @@
                 <property name="label" translatable="yes">Import messages</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
@@ -95,13 +96,13 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="openFileButton">
-                    <property name="label">gtk-open</property>
+                    <property name="label" translatable="yes">Browse...</property>
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_action_appearance">False</property>
-                    <property name="use_stock">True</property>
+                    <property name="image">image1</property>
                     <signal name="clicked" handler="openFile" swapped="no"/>
                   </object>
                   <packing>
@@ -389,6 +390,11 @@
       <action-widget response="0">cancelButton</action-widget>
       <action-widget response="0">importButton</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-open</property>
   </object>
   <object class="GtkImage" id="saveImg">
     <property name="visible">True</property>

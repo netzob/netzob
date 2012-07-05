@@ -58,6 +58,7 @@ class FileImporterView(AbstractImporterView):
         self._getObjects(self.builderConfWidget, ["fileConfigurationBox",
                                                   "separatorEntry"])
         self.builderConfWidget.connect_signals(self.controller)
+        self.setDialogTitle(_("Import messages from raw file"))
         self.setImportConfigurationWidget(self.fileConfigurationBox)
 
         # Configure treeview

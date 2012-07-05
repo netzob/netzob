@@ -54,7 +54,7 @@ class PCAPImporterPlugin(NetzobPluginProperties):
     def __init__(self, netzob):
         super(PCAPImporterPlugin, self).__init__(netzob)
         self.entryPoints = [ImportMenuExtension(netzob, PCAPImporterController,
-                                "ImportPCAP", "Import PCAP file")]
+                                "ImportPCAP", _("Import from PCAP file"))]
 
     def getEntryPoints(self):
         return self.entryPoints
