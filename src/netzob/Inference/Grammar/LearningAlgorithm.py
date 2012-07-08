@@ -31,7 +31,7 @@
 from gettext import gettext as _
 import logging
 import time
-import gobject
+from gi.repository import GObject
 import os
 
 #+----------------------------------------------
@@ -155,7 +155,7 @@ class LearningAlgorithm(object):
         # return only the last result
         if len(resultQuery) > 0:
             # Execute the call back function
-            gobject.idle_add(self.callbackFunction, query, tmpResultQuery)
+            GObject.idle_add(self.callbackFunction, query, tmpResultQuery)
             result = resultQuery[len(resultQuery) - 1]
             self.cache.cacheResult(query, resultQuery)
 
@@ -164,7 +164,7 @@ class LearningAlgorithm(object):
             return result
         else:
             # Execute the call back function
-            gobject.idle_add(self.callbackFunction, query, "OUPS")
+            GObject.idle_add(self.callbackFunction, query, "OUPS")
             self.cache.cacheResult(query, resultQuery)
             return resultQuery
 

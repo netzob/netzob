@@ -29,11 +29,11 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 import re
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
 import logging
 import threading
 import os
@@ -83,7 +83,7 @@ class IpcImport(AbstractImporter):
         self.packets = []
         self.init()
 
-        self.dialog = gtk.Dialog(title=_("Capture IPC flow"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Capture IPC flow"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(900, 700)
@@ -97,26 +97,26 @@ class IpcImport(AbstractImporter):
         self.sniffOption = None
 
         # Network Capturing Panel
-        self.panel = gtk.Table(rows=6, columns=4, homogeneous=False)
+        self.panel = Gtk.Table(rows=6, columns=4, homogeneous=False)
         self.panel.show()
 
         # Processfilter
-        but = gtk.Button(_("Update processes list"))
+        but = Gtk.Button(_("Update processes list"))
         but.show()
         but.connect("clicked", self.updateProcessList_cb)
-        self.processStore = gtk.combo_box_entry_new_text()
+        self.processStore = Gtk.ComboBoxText.new_with_entry()
         self.processStore.show()
         self.processStore.set_size_request(300, -1)
-        self.processStore.set_model(gtk.ListStore(str))
-        self.panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.processStore, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.processStore.set_model(Gtk.ListStore(str))
+        self.panel.attach(but, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.processStore, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # FD filter
-        hbox = gtk.HBox(False, spacing=10)
+        hbox = Gtk.HBox(False, spacing=10)
         hbox.show()
-        self.filter1 = gtk.CheckButton(_("File system"))
-        self.filter2 = gtk.CheckButton(_("Network"))
-        self.filter3 = gtk.CheckButton(_("Interprocess"))
+        self.filter1 = Gtk.CheckButton(_("File system"))
+        self.filter2 = Gtk.CheckButton(_("Network"))
+        self.filter3 = Gtk.CheckButton(_("Interprocess"))
         self.filter1.set_active(True)
         self.filter2.set_active(True)
         self.filter3.set_active(True)
@@ -129,114 +129,113 @@ class IpcImport(AbstractImporter):
         hbox.pack_start(self.filter1, False, False, 0)
         hbox.pack_start(self.filter2, False, False, 0)
         hbox.pack_start(self.filter3, False, False, 0)
-        self.butUpdateFlows = gtk.Button(_("Update flows"))
+        self.butUpdateFlows = Gtk.Button(_("Update flows"))
         self.butUpdateFlows.show()
         self.butUpdateFlows.set_sensitive(False)
         self.butUpdateFlows.connect("clicked", self.processSelected_cb)
         hbox.pack_start(self.butUpdateFlows, False, False, 0)
-        self.panel.attach(hbox, 0, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(hbox, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.handlerID = self.processStore.connect("changed", self.processSelected_cb)
         self.updateProcessList_cb(None)
 
         # File descriptor list
-        scroll = gtk.ScrolledWindow()
-        self.fdTreeview = gtk.TreeView(gtk.TreeStore(str, str, str))  # file descriptor, type, name
-        self.fdTreeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        cell = gtk.CellRendererText()
+        scroll = Gtk.ScrolledWindow()
+        self.fdTreeview = Gtk.TreeView(Gtk.TreeStore(str, str, str))  # file descriptor, type, name
+        self.fdTreeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        cell = Gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn(_("FD"))
+        column = Gtk.TreeViewColumn(_("FD"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         self.fdTreeview.append_column(column)
         # Col type
-        column = gtk.TreeViewColumn(_("Type"))
+        column = Gtk.TreeViewColumn(_("Type"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.fdTreeview.append_column(column)
         # Col name
-        column = gtk.TreeViewColumn(_("Name"))
+        column = Gtk.TreeViewColumn(_("Name"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         self.fdTreeview.append_column(column)
         self.fdTreeview.show()
         scroll.add(self.fdTreeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Sniff launching button : all sniff
-        self.butSniffAll = gtk.Button(label=_("Sniff on every flows"))
+        self.butSniffAll = Gtk.Button(label=_("Sniff on every flows"))
         self.butSniffAll.show()
         self.butSniffAll.set_sensitive(False)
-        self.panel.attach(self.butSniffAll, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.butSniffAll, 0, 1, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.butSniffAll.connect("clicked", self.startSniff_cb, "all")
 
         # Sniff launching button : FS sniff
-        self.butSniffFS = gtk.Button(label=_("Sniff on FS flows"))
+        self.butSniffFS = Gtk.Button(label=_("Sniff on FS flows"))
         self.butSniffFS.show()
         self.butSniffFS.set_sensitive(False)
-        self.panel.attach(self.butSniffFS, 0, 1, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.butSniffFS, 0, 1, 6, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.butSniffFS.connect("clicked", self.startSniff_cb, "fs")
 
         # Sniff launching button : network sniff
-        self.butSniffNetwork = gtk.Button(label=_("Sniff on network flows"))
+        self.butSniffNetwork = Gtk.Button(label=_("Sniff on network flows"))
         self.butSniffNetwork.show()
         self.butSniffNetwork.set_sensitive(False)
-        self.panel.attach(self.butSniffNetwork, 0, 1, 7, 8, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.butSniffNetwork, 0, 1, 7, 8, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.butSniffNetwork.connect("clicked", self.startSniff_cb, "network")
 
         # Sniff launching button ; interprocess sniff
-        self.butSniffIPC = gtk.Button(label=_("Sniff on IPC flows"))
+        self.butSniffIPC = Gtk.Button(label=_("Sniff on IPC flows"))
         self.butSniffIPC.show()
         self.butSniffIPC.set_sensitive(False)
-        self.panel.attach(self.butSniffIPC, 0, 1, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.butSniffIPC, 0, 1, 8, 9, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.butSniffIPC.connect("clicked", self.startSniff_cb, "ipc")
 
         # Sniff launching button ; filtered sniff
-        self.butSniffFiltered = gtk.Button(label=_("Sniff on selected flows"))
+        self.butSniffFiltered = Gtk.Button(label=_("Sniff on selected flows"))
         self.butSniffFiltered.show()
         self.butSniffFiltered.set_sensitive(False)
         self.panel.attach(self.butSniffFiltered, 0, 1, 9, 10, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         self.butSniffFiltered.connect("clicked", self.startSniff_cb, "filtered")
 
         # Sniff stopping button
-        self.butStop = gtk.Button(label=_("Stop sniffing"))
+        self.butStop = Gtk.Button(label=_("Stop sniffing"))
         self.butStop.show()
         self.butStop.set_sensitive(False)
         self.butStop.connect("clicked", self.stopSniff_cb)
         self.panel.attach(self.butStop, 1, 2, 7, 8, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
-
-        self.fdTreeview.connect("cursor-changed", self.fdSelected_cb)
-
+        fdSelection = self.fdTreeview.get_selection()
+        fdSelection.connect("changed", self.fdSelected_cb)
         # Packet list
-        scroll = gtk.ScrolledWindow()
-        self.pktTreestore = gtk.TreeStore(int, int, str, str, int)  # pktID, fd, direction (read/write), data, timestamp
-        treeview = gtk.TreeView(self.pktTreestore)
-        treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        cell = gtk.CellRendererText()
+        scroll = Gtk.ScrolledWindow()
+        self.pktTreestore = Gtk.TreeStore(int, int, str, str, int)  # pktID, fd, direction (read/write), data, timestamp
+        treeview = Gtk.TreeView(self.pktTreestore)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        cell = Gtk.CellRendererText()
         # Col fd
-        column = gtk.TreeViewColumn(_("FD"))
+        column = Gtk.TreeViewColumn(_("FD"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col direction
-        column = gtk.TreeViewColumn(_("Direction"))
+        column = Gtk.TreeViewColumn(_("Direction"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col Data
-        column = gtk.TreeViewColumn(_("Data"))
+        column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 2, 4, 0, 5, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Button save selected packets
-        but = gtk.Button(label=_("Save selected packets"))
+        but = Gtk.Button(label=_("Save selected packets"))
         but.show()
         but.connect("clicked", self.save_packets, treeview)
         self.panel.attach(but, 2, 4, 5, 6, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -301,7 +300,7 @@ class IpcImport(AbstractImporter):
     #+----------------------------------------------
     #| Called when user select a fd
     #+----------------------------------------------
-    def fdSelected_cb(self, treeview):
+    def fdSelected_cb(self, selection):
         self.butSniffFiltered.set_sensitive(True)
 
     #+----------------------------------------------
@@ -330,14 +329,14 @@ class IpcImport(AbstractImporter):
                 messages.append(message)
 
         # We ask the confirmation
-        md = gtk.MessageDialog(None,
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
-#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        md = Gtk.MessageDialog(None,
+            Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+            Gtk.ButtonsType.OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
+#        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         resp = md.run()
         md.destroy()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             self.saveMessagesInProject(self.zob.getCurrentWorkspace(), currentProject, messages, False)
         self.dialog.destroy()
 
@@ -395,7 +394,7 @@ class IpcImport(AbstractImporter):
     def sniffThread(self):
         self.log.info(_("Launching sniff process"))
         self.stracePid = subprocess.Popen(["/usr/bin/strace", "-xx", "-s", "65536", "-e", "read,write", "-p", str(self.pid)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        gobject.io_add_watch(self.stracePid.stderr, gobject.IO_IN | gobject.IO_HUP, self.handle_new_pkt)
+        GObject.io_add_watch(self.stracePid.stderr, GObject.IO_IN | GObject.IO_HUP, self.handle_new_pkt)
 
     #+----------------------------------------------
     #| Handle new packet received by strace

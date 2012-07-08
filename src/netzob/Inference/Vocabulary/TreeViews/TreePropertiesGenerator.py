@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import gtk
+from gi.repository import Gtk
 import uuid
 
 #+---------------------------------------------------------------------------+
@@ -64,31 +64,31 @@ class TreePropertiesGenerator(AbstractViewGenerator):
     #| builds and configures the treeview
     #+----------------------------------------------
     def initialization(self):
-        self.tree = gtk.TreeView()
-        colResult = gtk.TreeViewColumn()
+        self.tree = Gtk.TreeView()
+        colResult = Gtk.TreeViewColumn()
         colResult.set_title(_("Properties"))
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         colResult.pack_start(cell, True)
         colResult.add_attribute(cell, "text", 0)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         colResult.pack_start(cell, True)
         colResult.add_attribute(cell, "text", 1)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         colResult.pack_start(cell, True)
         colResult.add_attribute(cell, "text", 2)
 
-        self.treestore = gtk.TreeStore(str, str, str)  # name, value, format
+        self.treestore = Gtk.TreeStore(str, str, str)  # name, value, format
 
         self.tree.append_column(colResult)
         self.tree.set_model(self.treestore)
         self.tree.show()
 
-        self.scroll = gtk.ScrolledWindow()
+        self.scroll = Gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 100)
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.add(self.tree)
         self.scroll.show()
 
@@ -117,9 +117,9 @@ class TreePropertiesGenerator(AbstractViewGenerator):
             return
 
         for property in message.getProperties():
-            propertyName = property[0]
-            propertyFormat = property[1]
-            propertyValue = property[2]
+            propertyName = str(property[0])
+            propertyFormat = str(property[1])
+            propertyValue = str(property[2])
             self.treestore.append(None, [propertyName, propertyValue, propertyFormat])
 
     #+----------------------------------------------

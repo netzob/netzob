@@ -29,10 +29,10 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import tempfile
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import logging
 import os
 import time
@@ -91,117 +91,117 @@ class ApiImport:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Main panel
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.panel = gtk.Table(rows=6, columns=5, homogeneous=False)
+        self.panel = Gtk.Table(rows=6, columns=5, homogeneous=False)
         self.panel.show()
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of processes
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        but = gtk.Button(_("Update processes list"))
+        but = Gtk.Button(_("Update processes list"))
         but.show()
         but.connect("clicked", self.updateProcessList_cb)
-        self.processStore = gtk.combo_box_entry_new_text()
+        self.processStore = Gtk.ComboBoxText.new_with_entry()
         self.processStore.show()
         self.processStore.set_size_request(500, -1)
-        self.processStore.set_model(gtk.ListStore(str))
-        self.panel.attach(but, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.processStore, 1, 5, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.processStore.set_model(Gtk.ListStore(str))
+        self.panel.attach(but, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.processStore, 1, 5, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         self.handlerID = self.processStore.connect("changed", self.processSelected_cb)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of DLL
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        scroll = gtk.ScrolledWindow()
-        self.dllTreeview = gtk.TreeView(gtk.TreeStore(str, str, str))  # file descriptor, type, name
-        self.dllTreeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
-        cell = gtk.CellRendererText()
+        scroll = Gtk.ScrolledWindow()
+        self.dllTreeview = Gtk.TreeView(Gtk.TreeStore(str, str, str))  # file descriptor, type, name
+        self.dllTreeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        cell = Gtk.CellRendererText()
         # Col file descriptor
-        column = gtk.TreeViewColumn(_("Name"))
+        column = Gtk.TreeViewColumn(_("Name"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         self.dllTreeview.append_column(column)
         # Col type
-        column = gtk.TreeViewColumn(_("Version"))
+        column = Gtk.TreeViewColumn(_("Version"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.dllTreeview.append_column(column)
         # Col name
-        column = gtk.TreeViewColumn(_("Path"))
+        column = Gtk.TreeViewColumn(_("Path"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         self.dllTreeview.append_column(column)
         self.dllTreeview.show()
-
-        self.dllTreeview.connect("cursor-changed", self.dllSelected_cb)
+        dllSelection = self.dllTreeview.get_selection()
+        dllSelection.connect("changed", self.dllSelected_cb)
 #        self.dllHandlerID = self.dllTreeview.connect("changed", self.dllSelected_cb)
 
         scroll.add(self.dllTreeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 0, 5, 2, 3, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 0, 5, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of prototypes
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.dllStore = gtk.combo_box_entry_new_text()
+        self.dllStore = Gtk.ComboBoxText.new_with_entry()
         self.dllStore.show()
         self.dllStore.set_size_request(300, -1)
-        self.dllStore.set_model(gtk.ListStore(str))
+        self.dllStore.set_model(Gtk.ListStore(str))
 
         self.dllStore.connect("changed", self.prototypeSelected_cb)
 
-        self.panel.attach(self.dllStore, 0, 3, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.dllStore, 0, 3, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.butAddPrototype = gtk.Button(_("Create prototype"))
+        self.butAddPrototype = Gtk.Button(_("Create prototype"))
         self.butAddPrototype.show()
         self.butAddPrototype.connect("clicked", self.updateProcessList_cb)
-        self.panel.attach(self.butAddPrototype, 3, 4, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.butAddPrototype, 3, 4, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.butRemovePrototype = gtk.Button(_("Delete prototype"))
+        self.butRemovePrototype = Gtk.Button(_("Delete prototype"))
         self.butRemovePrototype.show()
         self.butRemovePrototype.connect("clicked", self.updateProcessList_cb)
-        self.panel.attach(self.butRemovePrototype, 4, 5, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.butRemovePrototype, 4, 5, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # List of buttons (start and stop capture)
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        self.startCapture = gtk.Button(_("Start capture"))
+        self.startCapture = Gtk.Button(_("Start capture"))
         self.startCapture.show()
         self.startCapture.connect("clicked", self.startCaptureFunction)
-        self.panel.attach(self.startCapture, 3, 4, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.startCapture, 3, 4, 6, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
-        self.stopCapture = gtk.Button(_("Stop capture"))
+        self.stopCapture = Gtk.Button(_("Stop capture"))
         self.stopCapture.show()
         self.stopCapture.connect("clicked", self.stopCaptureFunction)
-        self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.stopCapture, 4, 5, 6, 7, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet list
-        scroll = gtk.ScrolledWindow()
-        self.pktTreestore = gtk.TreeStore(int, str, str, str, int)  # pktID, Function, Parameter, data, timestamp
-        treeview = gtk.TreeView(self.pktTreestore)
-        treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        cell = gtk.CellRendererText()
+        scroll = Gtk.ScrolledWindow()
+        self.pktTreestore = Gtk.TreeStore(int, str, str, str, int)  # pktID, Function, Parameter, data, timestamp
+        treeview = Gtk.TreeView(self.pktTreestore)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        cell = Gtk.CellRendererText()
         # Col fd
-        column = gtk.TreeViewColumn(_("Function"))
+        column = Gtk.TreeViewColumn(_("Function"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col direction
-        column = gtk.TreeViewColumn(_("Parameter"))
+        column = Gtk.TreeViewColumn(_("Parameter"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col Data
-        column = gtk.TreeViewColumn(_("Data"))
+        column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.panel.attach(scroll, 6, 7, 0, 5, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.panel.attach(scroll, 6, 7, 0, 5, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
     #+----------------------------------------------
     #| Called when user wants to update the process list
@@ -244,10 +244,9 @@ class ApiImport:
     #+----------------------------------------------
     #| Called when user select a a DLL
     #+----------------------------------------------
-    def dllSelected_cb(self, treeview):
+    def dllSelected_cb(self, selection):
         # Retrieve the dll selected
-        treeselection = treeview.get_selection()
-        (model, pathlist) = treeselection.get_selected_rows()
+        (model, pathlist) = selection.get_selected_rows()
         iter = model.get_iter(pathlist[0])
 
         found = False

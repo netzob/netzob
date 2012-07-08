@@ -30,10 +30,10 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
 #| Local Imports
@@ -60,18 +60,18 @@ class SearchView(object):
 
     def getPanel(self):
         # Create the main panel
-        self.panel = gtk.Table(rows=3, columns=3, homogeneous=False)
+        self.panel = Gtk.Table(rows=3, columns=3, homogeneous=False)
         self.panel.show()
 
         # Create the header (first row) with the search form
         # Search entry
-        self.searchEntry = gtk.Entry()
+        self.searchEntry = Gtk.Entry()
         self.searchEntry.show()
 
         # Combo to select the type of the input
-        self.typeCombo = gtk.combo_box_entry_new_text()
+        self.typeCombo = Gtk.ComboBoxText.new_with_entry()
         self.typeCombo.show()
-        self.typeStore = gtk.ListStore(str)
+        self.typeStore = Gtk.ListStore(str)
         self.typeCombo.set_model(self.typeStore)
         self.typeCombo.get_model().append([Format.STRING])
         self.typeCombo.get_model().append([Format.HEX])
@@ -81,13 +81,13 @@ class SearchView(object):
         self.typeCombo.get_model().append([Format.IP])
 
         # Search button
-        searchButton = gtk.Button(_("Search"))
+        searchButton = Gtk.Button(_("Search"))
         searchButton.show()
         searchButton.connect("clicked", self.prepareSearchingOperation)
 
-        self.panel.attach(self.searchEntry, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(self.typeCombo, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        self.panel.attach(searchButton, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.searchEntry, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.typeCombo, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(searchButton, 2, 3, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         return self.panel
 
@@ -163,15 +163,15 @@ class SearchView(object):
 
     def updateView(self, tasks):
 
-        self.tree = gtk.TreeView()
-        colResult = gtk.TreeViewColumn()
+        self.tree = Gtk.TreeView()
+        colResult = Gtk.TreeViewColumn()
         colResult.set_title(_("Search results"))
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         colResult.pack_start(cell, True)
         colResult.add_attribute(cell, "text", 0)
 
-        treestore = gtk.TreeStore(str)
+        treestore = Gtk.TreeStore(str)
 
         foundSymbols = dict()
         foundMessages = dict()
@@ -203,4 +203,4 @@ class SearchView(object):
         self.tree.set_model(treestore)
         self.tree.show()
 
-        self.panel.attach(self.tree, 0, 3, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.tree, 0, 3, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)

@@ -29,12 +29,12 @@
 #| Global Imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import logging
 import uuid
-import gobject
-pygtk.require('2.0')
+from gi.repository import GObject
+gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -70,76 +70,76 @@ class TraceManager():
         self.cb_update()
 
     def createDialog(self):
-        self.dialog = gtk.Dialog(title=_("Trace Manager"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Trace Manager"), flags=0, buttons=None)
         self.dialog.set_default_size(800, 600)
-        mainTable = gtk.Table(rows=2, columns=1, homogeneous=False)
+        mainTable = Gtk.Table(rows=2, columns=1, homogeneous=False)
 
-        scroll = gtk.ScrolledWindow()
-        self.treestoreTraces = gtk.TreeStore(str, str, str, str, str, int)  # id, date, type, project name, description, nb message,
-        treeview = gtk.TreeView(self.treestoreTraces)
-        treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+        scroll = Gtk.ScrolledWindow()
+        self.treestoreTraces = Gtk.TreeStore(str, str, str, str, str, int)  # id, date, type, project name, description, nb message,
+        treeview = Gtk.TreeView(self.treestoreTraces)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
         treeview.connect('button-press-event', self.button_press_on_treeview_traces)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         # Col Date
-        column = gtk.TreeViewColumn(_("Date"))
+        column = Gtk.TreeViewColumn(_("Date"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col Type
-        column = gtk.TreeViewColumn(_("Type"))
+        column = Gtk.TreeViewColumn(_("Type"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col project name
-        column = gtk.TreeViewColumn(_("Original project"))
+        column = Gtk.TreeViewColumn(_("Original project"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         # Col Description
-        column = gtk.TreeViewColumn(_("Description"))
+        column = Gtk.TreeViewColumn(_("Description"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=4)
+        column.add_attribute(cell, "text", 4)
         treeview.append_column(column)
         # Col Nb message
-        column = gtk.TreeViewColumn(_("Nb messages"))
+        column = Gtk.TreeViewColumn(_("Nb messages"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=5)
+        column.add_attribute(cell, "text", 5)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        mainTable.attach(scroll, 0, 1, 0, 1, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        mainTable.attach(scroll, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
-        scroll2 = gtk.ScrolledWindow()
-        self.treestoreMessages = gtk.TreeStore(str, str, str)  # id, timestamp, data,
-        treeviewMessage = gtk.TreeView(self.treestoreMessages)
-        treeviewMessage.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        scroll2 = Gtk.ScrolledWindow()
+        self.treestoreMessages = Gtk.TreeStore(str, str, str)  # id, timestamp, data,
+        treeviewMessage = Gtk.TreeView(self.treestoreMessages)
+        treeviewMessage.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
 #        treeview.connect("cursor-changed", self.packet_details)
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         # Col ID
-        column = gtk.TreeViewColumn(_("ID"))
+        column = Gtk.TreeViewColumn(_("ID"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         treeviewMessage.append_column(column)
         # Col Type
-        column = gtk.TreeViewColumn(_("Timestamp"))
+        column = Gtk.TreeViewColumn(_("Timestamp"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeviewMessage.append_column(column)
         # Col project name
-        column = gtk.TreeViewColumn(_("Data"))
+        column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeviewMessage.append_column(column)
 
         treeviewMessage.show()
         scroll2.add(treeviewMessage)
         scroll2.show()
-        scroll2.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        mainTable.attach(scroll2, 0, 1, 1, 2, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll2.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        mainTable.attach(scroll2, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         self.dialog.vbox.pack_end(mainTable, True, True, 0)
         self.dialog.show_all()
@@ -185,10 +185,10 @@ class TraceManager():
             logging.warn("The provided ID do not match any trace.")
             return
 
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1 and selectedTrace != None:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and selectedTrace != None:
             self.updateContentMessage(selectedTrace)
 
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             self.show_menu_trace(event, selectedTrace)
 
     #+----------------------------------------------
@@ -197,48 +197,48 @@ class TraceManager():
     #+----------------------------------------------
     def show_menu_trace(self, event, trace):
         entries = [
-                  (gtk.STOCK_ADD, self.importTrace, (trace != None)),
-                  (gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
+                  (Gtk.STOCK_ADD, self.importTrace, (trace != None)),
+                  (Gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
        ]
 
-        menu = gtk.Menu()
+        self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
-            item = gtk.ImageMenuItem(stock_id)
+            item = Gtk.ImageMenuItem.new_from_stock(stock_id, None)
 
             item.connect("activate", callback, trace)
             item.set_sensitive(sensitive)
             item.show()
-            menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+            self.menu.append(item)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     def importTrace(self, event, trace):
-        importDialog = gtk.Dialog(title=_("Import selected Trace in a project"), flags=0, buttons=None)
-        panel = gtk.Table(rows=4, columns=2, homogeneous=False)
+        importDialog = Gtk.Dialog(title=_("Import selected Trace in a project"), flags=0, buttons=None)
+        panel = Gtk.Table(rows=4, columns=2, homogeneous=False)
         panel.show()
 
         # Label
         label = NetzobLabel(_("Trace ID"))
-        panel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         label2 = NetzobLabel(trace.getID())
-        panel.attach(label2, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label2, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         label3 = NetzobLabel(_("Select project"))
-        panel.attach(label3, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(label3, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         # Delimiter type
         projectCombo = NetzobComboBoxEntry()
         for project in self.workspace.getProjects():
             projectCombo.append_text(project.getName())
 
-        panel.attach(projectCombo, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(projectCombo, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
         self.progressbarAlignment = NetzobProgressBar()
-        panel.attach(self.progressbarAlignment, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(self.progressbarAlignment, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Button
         importButton = NetzobButton(_("Import"))
         importButton.connect("clicked", self.importTraceAction, trace, projectCombo, importDialog)
-        panel.attach(importButton, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(importButton, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         importDialog.vbox.pack_start(panel, True, True, 0)
         importDialog.show()
@@ -272,7 +272,7 @@ class TraceManager():
         for message in trace.getMessages():
             percent += inc
             symbol.addMessage(message)
-            gobject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
+            GObject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
 
         # We create a default field for the symbol
         symbol.addField(Field.createDefaultField())
@@ -282,10 +282,10 @@ class TraceManager():
 
     def deleteTrace(self, event, trace):
         questionMsg = _("Click yes to remove selected trace {0} from the Trace Manager").format(trace.getID())
-        md = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg)
+        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
         result = md.run()
         md.destroy()
-        if result == gtk.RESPONSE_YES:
+        if result == Gtk.ResponseType.YES:
             self.workspace.removeImportedTrace(trace)
             self.updateContent()
             self.updateContentMessage()

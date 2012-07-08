@@ -31,9 +31,9 @@
 #+---------------------------------------------------------------------------+
 import sys
 import logging.config
-import gobject
 import os
 import optparse
+from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Prepare, load and import the required modules
@@ -61,7 +61,7 @@ from netzob import release
 
 
 if __name__ == "__main__":
-    gobject.threads_init() # for handling concurrent GUI access from threads
+    GObject.threads_init() # for handling concurrent GUI access from threads
 
     
     netzob = NetzobGui.NetzobGui()

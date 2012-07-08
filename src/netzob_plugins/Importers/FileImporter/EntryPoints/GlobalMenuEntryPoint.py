@@ -29,11 +29,12 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import gtk
+from gi.repository import Gtk
 from gettext import gettext as _
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 from netzob.Common.Menu import Menu
 from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -52,11 +53,27 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
     def __init__(self, netzob):
         self.netzob = netzob
 
-    def getMenuEntries(self):
-        menuEntries = [
-                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
-                       ]
-        return menuEntries
+    def getUIDefinition(self):
+        uiDefinition = \
+        """
+        <ui>
+        <menubar name='MenuBar'>
+            <menu action='Project'>
+                <menu action='ImportTraces'>
+                    <menuitem action='ImportFile' />
+                </menu>
+            </menu>
+        </menubar>
+        </ui>
+        """
+        return uiDefinition
+    
+    def getActions(self):
+        actions = [
+            ("ImportFile", None, _("Import from File"), None,
+                    None, self.executeAction)]
+        return actions
 
-    def executeAction(self, widget, data):
+    def executeAction(self, widget, data=None):
         FileImportController(self.netzob)
+

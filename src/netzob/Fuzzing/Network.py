@@ -29,10 +29,10 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
-pygtk.require('2.0')
-import gobject
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
 import logging
 import threading
 import nfqueue
@@ -80,16 +80,16 @@ class Network:
         self.selectedSymbol = None
         self.aFuzzThread = None
         self.packets = []
-        self.panel = gtk.VPaned()
+        self.panel = Gtk.VPaned()
         self.panel.show()
 
         #+----------------------------------------------
         #| LEFT PART OF THE GUI : TREEVIEW
         #+----------------------------------------------
-        topPanel = gtk.HPaned()
+        topPanel = Gtk.HPaned()
         topPanel.show()
         self.panel.add(topPanel)
-        vb_left_panel = gtk.VBox(False, spacing=0)
+        vb_left_panel = Gtk.VBox(False, spacing=0)
         topPanel.add(vb_left_panel)
         vb_left_panel.set_size_request(-1, -1)
         vb_left_panel.show()
@@ -98,12 +98,13 @@ class Network:
         self.treeSymbolGenerator = TreeSymbolGenerator(self.netzob)
         self.treeSymbolGenerator.initialization()
         vb_left_panel.pack_start(self.treeSymbolGenerator.getScrollLib(), True, True, 0)
-        self.treeSymbolGenerator.getTreeview().connect("cursor-changed", self.symbolSelected)
+        selection = self.treeSymbolGenerator.getTreeview().get_selection()
+        selection.connect("changed", self.symbolSelected)
 
         #+----------------------------------------------
         #| RIGHT PART OF THE GUI : TYPE STRUCTURE OUTPUT
         #+----------------------------------------------
-        vb_right_panel = gtk.VBox(False, spacing=0)
+        vb_right_panel = Gtk.VBox(False, spacing=0)
         vb_right_panel.show()
         # Initialize the treeview for the type structure
         self.treeTypeStructureGenerator = TreeTypeStructureGenerator(self.netzob)
@@ -116,79 +117,80 @@ class Network:
         #| BOTTOM PART OF THE GUI : PACKET CAPTURING
         #+----------------------------------------------
         # Network Capturing Panel
-        sniffPanel = gtk.Table(rows=6, columns=4, homogeneous=False)
+        sniffPanel = Gtk.Table(rows=6, columns=4, homogeneous=False)
         self.panel.add(sniffPanel)
         sniffPanel.show()
 
         # Filter
-        label = gtk.Label(_("Filter"))
+        label = Gtk.Label(label=_("Filter"))
         label.show()
-        entry_filter = gtk.Entry()
+        entry_filter = Gtk.Entry()
         entry_filter.set_width_chars(50)
         entry_filter.show()
         entry_filter.set_text("tcp port 80")
-        sniffPanel.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        sniffPanel.attach(entry_filter, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        sniffPanel.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        sniffPanel.attach(entry_filter, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Sniff launching button
-        but = gtk.Button(label=_("Fuzz traffic"))
+        but = Gtk.Button(label=_("Fuzz traffic"))
         but.show()
         but.connect("clicked", self.launchFuzz_cb, entry_filter)
         sniffPanel.attach(but, 1, 2, 3, 4, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
 
         # Packet list
-        scroll = gtk.ScrolledWindow()
-        self.treestore = gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
-        treeview = gtk.TreeView(self.treestore)
-        treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
-        treeview.connect("cursor-changed", self.packet_details)
-        cell = gtk.CellRendererText()
+        scroll = Gtk.ScrolledWindow()
+        self.treestore = Gtk.TreeStore(int, str, str, str, str, str, int)  # pktID, proto (udp/tcp), IP.src, IP.dst, sport, dport, timestamp
+        treeview = Gtk.TreeView(self.treestore)
+        selection = treeview.get_selection()
+        selection.set_mode(Gtk.SelectionMode.MULTIPLE)
+        selection.connect("changed", self.packet_details)
+        cell = Gtk.CellRendererText()
         # Col proto
-        column = gtk.TreeViewColumn(_("Proto"))
+        column = Gtk.TreeViewColumn(_("Proto"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
         # Col IP.src
-        column = gtk.TreeViewColumn(_("IP source"))
+        column = Gtk.TreeViewColumn(_("IP source"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=2)
+        column.add_attribute(cell, "text", 2)
         treeview.append_column(column)
         # Col IP.dst
-        column = gtk.TreeViewColumn(_("IP dest"))
+        column = Gtk.TreeViewColumn(_("IP dest"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=3)
+        column.add_attribute(cell, "text", 3)
         treeview.append_column(column)
         # Col {TCP,UDP}.sport
-        column = gtk.TreeViewColumn(_("sport"))
+        column = Gtk.TreeViewColumn(_("sport"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=4)
+        column.add_attribute(cell, "text", 4)
         treeview.append_column(column)
         # Col {TCP,UDP}.dport
-        column = gtk.TreeViewColumn(_("dport"))
+        column = Gtk.TreeViewColumn(_("dport"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=5)
+        column.add_attribute(cell, "text", 5)
         treeview.append_column(column)
         treeview.show()
         scroll.add(treeview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sniffPanel.attach(scroll, 0, 2, 4, 5, xoptions=gtk.FILL, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sniffPanel.attach(scroll, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Packet detail
-        scroll = gtk.ScrolledWindow()
-        self.textview = gtk.TextView()
+        scroll = Gtk.ScrolledWindow()
+        self.textview = Gtk.TextView()
         self.textview.show()
         scroll.add(self.textview)
         scroll.show()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sniffPanel.attach(scroll, 2, 4, 0, 6, xoptions=gtk.FILL | gtk.EXPAND, yoptions=gtk.FILL | gtk.EXPAND, xpadding=5, ypadding=5)
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sniffPanel.attach(scroll, 2, 4, 0, 6, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
     #+----------------------------------------------
     #| update:
     #|   Update the Treestore
     #+----------------------------------------------
-    def symbolSelected(self, treeview):
-        (model, iter) = treeview.get_selection().get_selected()
+    def symbolSelected(self, selection):
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 # Retrieve the selected symbol
@@ -212,19 +214,19 @@ class Network:
     #|   on the treeview symbols
     #+----------------------------------------------
     def button_press_on_field(self, button, event):
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             # Retrieves the symbol on which the user has clicked on
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = self.treeTypeStructureGenerator.getTreeview().get_path_at_pos(x, y)
             aIter = self.treeTypeStructureGenerator.getTreeview().get_model().get_iter(path)
             field = self.treeTypeStructureGenerator.getTreeview().get_model().get_value(aIter, 0)
-            menu = gtk.Menu()
-            item = gtk.MenuItem(_("Fuzz field"))
+            self.menu = Gtk.Menu()
+            item = Gtk.MenuItem(_("Fuzz field"))
             item.connect("activate", self.fuzz_field_cb, field)
             item.show()
-            menu.append(item)
-            menu.popup(None, None, None, event.button, event.time)
+            self.menu.append(item)
+            self.menu.popup(None, None, None, None, event.button, event.time)
 
     def fuzz_field_cb(self, widget, field):
         self.log.debug(_("Fuzz field: {0}".format(str(field))))
@@ -232,8 +234,8 @@ class Network:
     #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
-    def packet_details(self, treeview):
-        (model, paths) = treeview.get_selection().get_selected_rows()
+    def packet_details(self, selection):
+        (model, paths) = selection.get_selected_rows()
         for path in paths[:1]:
             iter = model.get_iter(path)
             if(model.iter_is_valid(iter)):
@@ -282,7 +284,7 @@ class Network:
 
 #        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
 #        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
-        gobject.idle_add(button.set_sensitive, True)
+        GObject.idle_add(button.set_sensitive, True)
 
     #+----------------------------------------------
     #| Called when we reiceve a corresponding packet to fuzz
@@ -294,7 +296,7 @@ class Network:
         ip_pkt = ip.IP(data)
         if ip_pkt.p == ip.IP_PROTO_TCP:
             proto_pkt = tcp.TCP(str(ip_pkt.data))
-            gobject.idle_add(self.treestore.append,
+            GObject.idle_add(self.treestore.append,
                              None,
                              [len(self.packets),
                               "TCP",
@@ -306,7 +308,7 @@ class Network:
                             )
         elif ip_pkt.p == ip.IP_PROTO_UDP:
             proto_pkt = udp.UDP(str(ip_pkt.data))
-            gobject.idle_add(self.treestore.append,
+            GObject.idle_add(self.treestore.append,
                              None,
                              [len(self.packets),
                               "UDP",

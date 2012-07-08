@@ -30,7 +30,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
+from gi.repository import Gtk
 import logging
 import os
 from lxml.etree import ElementTree
@@ -68,41 +68,49 @@ from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 #+---------------------------------------------------------------------------+
 class Menu(object):
 
-    # Static entries in the menu
-    PATH_WORKSPACE = "/" + _("Workspace")
-    PATH_WORKSPACE_CREATEPROJECT = "/" + _("Workspace") + "/" + _("Create a project")
-    PATH_WORKSPACE_SWITCHPROJECT = "/" + _("Workspace") + "/" + _("Switch project")
-    PATH_WORKSPACE_IMPORTPROJECT = "/" + _("Workspace") + "/" + _("Import a project")
-    PATH_WORKSPACE_EXPORTPROJECT = "/" + _("Workspace") + "/" + _("Export a project")
-    PATH_WORKSPACE_MANAGEPROJECT = "/" + _("Workspace") + "/" + _("Manage project")
-    PATH_WORKSPACE_MANAGETRACES = "/" + _("Workspace") + "/" + _("Manage traces")
-    PATH_WORKSPACE_OPTIONS = "/" + _("Workspace") + "/" + _("Options")
-    PATH_WORKSPACE_SWITCHWORKSPACE = "/" + _("Workspace") + "/" + _("Switch Workspace")
-    PATH_WORKSPACE_QUIT = "/" + _("Workspace") + "/Quit"
+    ui_desc = """
+<ui>
+  <menubar name='MenuBar'>
+    <menu action='Workspace'>
+      <menuitem action='Create' />
+      <menu action='SwitchProject'/>
+      <menuitem action='ImportProject' />
+      <menuitem action='ExportProject' />
+      <menuitem action='ManageProject' />
+    <separator/>
+      <menuitem action='ManageTraces' />
+      <menuitem action='Options' />
+      <menuitem action='SwitchWorkspace'/>
+      <menuitem action='Quit' />
 
-    PATH_PROJECT = "/_" + _("Project")
-    PATH_PROJECT_SAVEPROJECT = "/" + _("Project") + "/" + _("Save project")
-    PATH_PROJECT_SESSIONMANAGER = "/" + _("Project") + "/" + _("Session manager")
-    PATH_PROJECT_IMPORTTRACES = "/" + _("Project") + "/" + _("Import traces")
-    PATH_PROJECT_IMPORTTRACES_CAPTURENETWORKTRACES = PATH_PROJECT_IMPORTTRACES + "/" + _("Capture network traces")
-    PATH_PROJECT_IMPORTTRACES_CAPTUREIPCFLOWS = PATH_PROJECT_IMPORTTRACES + "/" + _("Capture IPC flows")
-    PATH_PROJECT_IMPORTTRACES_IMPORTPCAP = PATH_PROJECT_IMPORTTRACES + "/" + _("Import from PCAP")
-    PATH_PROJECT_IMPORTTRACES_IMPORTXMLFILE = PATH_PROJECT_IMPORTTRACES + "/" + _("Import from XML File")
-    PATH_PROJECT_IMPORTTRACES_IMPORTTHIRDPARTIES = PATH_PROJECT_IMPORTTRACES + "/" + _("Import from Third parties")
-
-    PATH_PROJECT_EXPORTPROJECT = "/" + _("Project") + "/" + _("Export project")
-    PATH_PROJECT_EXPORTPROJECT_XML = "/" + _("Project") + "/" + _("Export project") + "/" + _("XML")
-    PATH_PROJECT_EXPORTPROJECT_TEXT = "/" + _("Project") + "/" + _("Export project") + "/" + _("Text")
-
-    PATH_VIEWS = "/" + _("Views")
-    PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE = "/" + _("Views") + "/" + _("Display symbol structure")
-    PATH_VIEWS_DISPLAYMESSAGES = "/" + _("Views") + "/" + _("Display messages")
-    PATH_VIEWS_DISPLAYSEARCHRESULTS = "/" + _("Views") + "/" + _("Display search results")
-    PATH_VIEWS_DISPLAYPROPERTIES = "/" + _("Views") + "/" + _("Display properties")
-
-    PATH_HELP = "/_" + _("Help")
-    PATH_HELP_HELPCONTENT = "/" + _("Help") + "/" + _("Help Contents")
-    PATH_HELP_ABOUT = "/" + _("Help") + "/" + _("About Netzob")
+    </menu>
+    <menu action='Project'>
+      <menuitem action='Save' />
+      <menuitem action='SessionManager' />
+      <menu action='ImportTraces'>
+	<menuitem action='ImportNetwork' />
+	<menuitem action='ImportIPCFlows' />
+	<menuitem action='ImportPcap' />
+	<menuitem action='ImportXML' />
+	<menuitem action='Import3p' />
+      </menu>
+      <menu action='Export'>
+	<menuitem action='ExportXML' />
+	<menuitem action='ExportText' />
+      </menu>
+    </menu>
+    <menu action='View'>
+      <menuitem action='DisplaySymbolStructure'/>
+      <menuitem action='DisplayMessages'/>
+      <menuitem action='DisplaySearchResults'/>
+      <menuitem action='DisplayProperties'/>
+    </menu>
+    <menu action='Help'>
+      <menuitem action='Content'/>
+      <menuitem action='About'/>
+    </menu>
+  </menubar>
+</ui>"""
 
     #+-----------------------------------------------------------------------+
     #| Constructor
@@ -111,186 +119,156 @@ class Menu(object):
     def __init__(self, netzob):
         self.netzob = netzob
 
-        # This is the structure used to generate new menus.
-        # Item 1: The menu path. The letter after the underscore indicates an
-        #         accelerator key once the menu is open.
-        # Item 2: The accelerator key for the entry
-        # Item 3: The callback.
-        # Item 4: The callback action.  This changes the parameters with
-        #         which the callback is called.  The default is 0.
-        # Item 5: The item type, used to define what kind of an item it is.
-        #       Here are the possible values:
+        self.actiongroup = Gtk.ActionGroup("MenuAction")
+        self.actiongroup.add_actions([
+            ("Workspace", None, _("Workspace")),
+            ("Create", Gtk.STOCK_NEW, _("Create a project"), None, None, self.createProjectAction),
+            ("ImportProject", None, _("Import a project"), None, None, self.importProjectAction),
+            ("ExportProject", None, _("Export a project"), None, None, self.exportProjectAction),
+            ("ManageProject", None, _("Manage project")),
+            ("ManageTraces", None, _("Manage traces"), None, None, self.manageTracesAction),
+            ("Options", None, _("Options")),
+            ("SwitchWorkspace", None, _("Switch Workspace")),
+            ("Quit", Gtk.STOCK_QUIT, _("Quit"), "<control>Q", None, self.exitAction),
+            ("Project", None, _("Project")),
+            ("Save", Gtk.STOCK_SAVE, _("Save project"), None, None, self.saveProjectAction),
+            ("SessionManager", None, _("Session Manager"), None, None, self.sessionManagerAction),
+            ("ImportTraces", None, _("Import traces")),
+            ("ImportNetwork", None, _("Capture network traces"), None, None, self.importNetworkTraficAction),
+            ("ImportIPCFlows", None, _("Capture IPC flows"), None, None, self.importIPCFlowsAction),
+            ("ImportPcap", None, _("Import from PCAP"), None, None, self.importPcapAction),
+            ("ImportXML", None, _("Import from XML File"), None, None, self.importXMLAction),
+            ("Import3p", None, _("Import from Third parties"), None, None, self.importThirdParty),
+            ("Export", None, _("Export project")),
+            ("ExportXML", None, _("XML"), None, None, self.exportXMLAction),
+            ("ExportText", None, _("Text"), None, None, self.exportTextAction),
+            ("View", None, _("View")),
+            ("Help", None, _("Help")),
+            ("Content", Gtk.STOCK_HELP, _("Help Contents"), None, None, None),
+            ("About", Gtk.STOCK_ABOUT, _("About Netzob"), None, None, self.aboutDialogAction)
+        ])
 
-        #       NULL               -> "<Item>"
-        #       ""                 -> "<Item>"
-        #       "<Title>"          -> create a title item
-        #       "<Item>"           -> create a simple item
-        #       "<CheckItem>"      -> create a check item
-        #       "<ToggleItem>"     -> create a toggle item
-        #       "<RadioItem>"      -> create a radio item
-        #       <path>             -> path of a radio item to link against
-        #       "<Separator>"      -> create a separator
-        #       "<Branch>"         -> create an item to hold sub items (optional)
-        #       "<LastBranch>"     -> create a right justified branch
-        self.menu_items = [
-            # WORKSPACE
-            (Menu.PATH_WORKSPACE, None, None, 0, "<Branch>"),
-            (Menu.PATH_WORKSPACE_CREATEPROJECT, None, self.createProjectAction, 0, None),
-            (Menu.PATH_WORKSPACE_SWITCHPROJECT, None, None, 0, "<Branch>"),
-            (Menu.PATH_WORKSPACE_IMPORTPROJECT, None, self.importProjectAction, 0, None),
-            (Menu.PATH_WORKSPACE_EXPORTPROJECT, None, self.exportProjectAction, 0, None),
-            (Menu.PATH_WORKSPACE_MANAGEPROJECT, None, None, 0, None),
-            (Menu.PATH_WORKSPACE_MANAGETRACES, None, self.manageTracesAction, 0, None),
-            (Menu.PATH_WORKSPACE_OPTIONS, None, None, 0, None),
-            (Menu.PATH_WORKSPACE_SWITCHWORKSPACE, None, None, 0, None),
-            (Menu.PATH_WORKSPACE_QUIT, "<control>Q", self.exitAction, 0, None),
-            # PROJECT
-            (Menu.PATH_PROJECT, None, None, 0, "<Branch>"),
-            (Menu.PATH_PROJECT_SAVEPROJECT, None, self.saveProjectAction, 0, None),
-            (Menu.PATH_PROJECT_SESSIONMANAGER, None, self.sessionManagerAction, 0, None),
-            # PROJECT / IMPORT TRACES
-            (Menu.PATH_PROJECT_IMPORTTRACES, None, None, 0, "<Branch>"),
-            (Menu.PATH_PROJECT_IMPORTTRACES_CAPTURENETWORKTRACES, None, self.importNetworkTraficAction, 0, None),
-            (Menu.PATH_PROJECT_IMPORTTRACES_CAPTUREIPCFLOWS, None, self.importIPCFlowsAction, 0, None),
-            (Menu.PATH_PROJECT_IMPORTTRACES_IMPORTPCAP, None, self.importPcapAction, 0, None),
-            (Menu.PATH_PROJECT_IMPORTTRACES_IMPORTXMLFILE, None, self.importXMLAction, 0, None),
-            (Menu.PATH_PROJECT_IMPORTTRACES_IMPORTTHIRDPARTIES, None, self.importThirdParty, 0, None),
-            # PROJECT / EXPORT PROJECT
-            (Menu.PATH_PROJECT_EXPORTPROJECT, None, None, 0, "<Branch>"),
-            (Menu.PATH_PROJECT_EXPORTPROJECT_XML, None, self.exportXMLAction, 0, None),
-            (Menu.PATH_PROJECT_EXPORTPROJECT_TEXT, None, self.exportTextAction, 0, None),
-            # VIEW
-            (Menu.PATH_VIEWS, None, None, 0, "<Branch>"),
-            (Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE, None, self.displaySymbolStructureAction, 0, "<CheckItem>"),
-            (Menu.PATH_VIEWS_DISPLAYMESSAGES, None, self.displayMessagesAction, 0, "<CheckItem>"),
-            (Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS, None, self.displaySearchAction, 0, "<CheckItem>"),
-            (Menu.PATH_VIEWS_DISPLAYPROPERTIES, None, self.displayPropertiesAction, 0, "<CheckItem>"),
+        item = Gtk.Action("SwitchProject", _("Switch project"), None, None)
+        item.set_property('hide-if-empty', False)
+        self.actiongroup.add_action(item)
 
-            # HELP
-            (Menu.PATH_HELP, None, None, 0, "<LastBranch>"),
-            (Menu.PATH_HELP_HELPCONTENT, None, None, 0, None),
-            (Menu.PATH_HELP_ABOUT, None, self.aboutDialogAction, 0, None),
-            ]
-        self.computeMenuBar(self.netzob)
 
+        self.actiongroup.add_toggle_actions([
+            ("DisplaySymbolStructure", None, _("Display symbol structure"), None, None, self.displaySymbolStructureAction),
+            ("DisplayMessages", None, _("Display messages"), None, None, self.displayMessagesAction),
+            ("DisplaySearchResults", None, _("Display search results"), None, None, self.displaySearchAction),
+            ("DisplayProperties", None, _("Display properties"), None, None, self.displayPropertiesAction),
+        ])
+
+        self.uimanager = Gtk.UIManager()
+        self.uimanager.insert_action_group(self.actiongroup, 0)
+        self.uimanager.add_ui_from_string(self.ui_desc)
+        
     def update(self):
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_CREATEPROJECT).set_sensitive(True)
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_IMPORTPROJECT).set_sensitive(True)
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_MANAGEPROJECT).set_sensitive(True)
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_MANAGETRACES).set_sensitive(True)
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_OPTIONS).set_sensitive(False)
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_SWITCHWORKSPACE).set_sensitive(False)
-        self.item_factory.get_widget(Menu.PATH_WORKSPACE_QUIT).set_sensitive(True)
+        self.uimanager.get_widget("/MenuBar/Workspace/Create").set_sensitive(True)
+        self.uimanager.get_widget("/MenuBar/Workspace/ImportProject").set_sensitive(True)
+        self.uimanager.get_widget("/MenuBar/Workspace/ManageProject").set_sensitive(True)
+        self.uimanager.get_widget("/MenuBar/Workspace/ManageTraces").set_sensitive(True)
+        self.uimanager.get_widget("/MenuBar/Workspace/Options").set_sensitive(False)
+        self.uimanager.get_widget("/MenuBar/Workspace/SwitchWorkspace").set_sensitive(False)
+        self.uimanager.get_widget("/MenuBar/Workspace/SwitchProject").set_sensitive(True)
+        self.uimanager.get_widget("/MenuBar/Workspace/Quit").set_sensitive(True)
 
         if self.netzob.getCurrentProject() == None:
             # Deactivate almost everything
-            self.item_factory.get_widget(Menu.PATH_WORKSPACE_SWITCHPROJECT).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_PROJECT_SESSIONMANAGER).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_PROJECT_IMPORTTRACES).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_PROJECT_EXPORTPROJECT).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_HELP_HELPCONTENT).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_WORKSPACE_EXPORTPROJECT).set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Workspace/SwitchWorkspace").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Project/SessionManager").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Project/ImportTraces").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Project/Export").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Help/Content").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Workspace/ExportProject").set_sensitive(False)
 
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYMESSAGES).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYPROPERTIES).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS).set_sensitive(False)
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE).set_sensitive(False)
-
+            self.uimanager.get_widget("/MenuBar/View/DisplayMessages").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/View/DisplayProperties").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/View/DisplaySymbolStructure").set_sensitive(False)
+            
         else:
             # Activate everything
-            self.item_factory.get_widget(Menu.PATH_PROJECT_SAVEPROJECT).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_PROJECT_SESSIONMANAGER).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_PROJECT_IMPORTTRACES).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_PROJECT_EXPORTPROJECT).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_WORKSPACE_EXPORTPROJECT).set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/Project/Save").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/Project/SessionManager").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/Project/ImportTraces").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/Project/Export").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/Workspace/ExportProject").set_sensitive(True)
 
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYMESSAGES).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYPROPERTIES).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS).set_sensitive(True)
-            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE).set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/View/DisplayMessages").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/View/DisplayProperties").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/View/DisplaySymbolStructure").set_sensitive(True)
 
-#            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
-#            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE).set_active(True)
-#
-#            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
-#            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS).set_active(True)
-#
-#            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
-#            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS).set_active(True)
-#
-#            isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
-#            self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYPROPERTIES).set_active(True)
+        switchProject = self.uimanager.get_widget("/MenuBar/Workspace/SwitchProject").get_submenu()
 
-        switchProject = self.item_factory.get_widget(Menu.PATH_WORKSPACE_SWITCHPROJECT)
         # Update the list of project
         for i in switchProject.get_children():
             switchProject.remove(i)
-
+        
         availableProjectsName = self.netzob.getCurrentWorkspace().getNameOfProjects()
         for (projectName, projectFile) in availableProjectsName:
-            projectEntry = gtk.MenuItem(projectName)
+            projectEntry = Gtk.MenuItem(projectName)
             projectEntry.connect("activate", self.switchProjectAction, projectFile)
             switchProject.append(projectEntry)
         switchProject.show_all()
 
+        self.uimanager.get_widget("/MenuBar/Workspace/SwitchProject").set_sensitive(True)
+
         # Deactivate the global 'switch menu' if no project is available
         if len(availableProjectsName) == 0:
-            self.item_factory.get_widget(Menu.PATH_WORKSPACE_SWITCHPROJECT).set_sensitive(False)
+            self.uimanager.get_widget("/MenuBar/Workspace/SwitchProject").set_sensitive(False)
         else:
-            self.item_factory.get_widget(Menu.PATH_WORKSPACE_SWITCHPROJECT).set_sensitive(True)
+            self.uimanager.get_widget("/MenuBar/Workspace/SwitchProject").set_sensitive(True)
 
         # Retrieve and activate the menu entries associated with plugins
         self.updateMenuWithPlugins()
 
+    """
+    TODO: Port to UIManager!
+    """
     def updateMenuWithPlugins(self):
         # Show plugins
         logging.debug("Retrieve plugins for Menu")
         for pluginExtension in NetzobPlugin.getLoadedPluginsExtension(GlobalMenuExtension):
             try:
                 logging.debug("Menu available : {0}".format(pluginExtension))
-                for menuEntry in pluginExtension.getMenuEntries():
-                    if not menuEntry in self.menu_items:
-                        self.item_factory.create_items([menuEntry])
-                        self.menu_items.append(menuEntry)
+                uiDefinition = pluginExtension.getUIDefinition()
+                actions = pluginExtension.getActions()
+                self.actiongroup.add_actions(actions)
+                self.uimanager.add_ui_from_string(uiDefinition)
             except Exception, e:
                 logging.warning("An error occurred when computing menu entry for plugin {0} ({1})".format(pluginExtension, e))
 
     def getMenuBar(self, window):
-        self.computeMenuBar(window)
-        return self.item_factory.get_widget("<main>")
+        return self.uimanager.get_widget("/MenuBar")
 
-    def computeMenuBar(self, window):
-        accel_group = gtk.AccelGroup()
-        item_factory = gtk.ItemFactory(gtk.MenuBar, "<main>", accel_group)
-        item_factory.create_items(self.menu_items)
-        window.add_accel_group(accel_group)
-        self.item_factory = item_factory
-
-    def aboutDialogAction(self, widget, data):
+    def aboutDialogAction(self, widget):
         AboutDialog()
 
     #+----------------------------------------------
     #| Called when user save the current project
     #+----------------------------------------------
-    def saveProjectAction(self, widget, data):
+    def saveProjectAction(self, widget):
         logging.info(_("Starting the saving of the current project: %s") % str(self.netzob.getCurrentProject().getName()))
         self.netzob.getCurrentProject().saveConfigFile(self.netzob.getCurrentWorkspace())
 
-    def sessionManagerAction(self, widget, data):
+    def sessionManagerAction(self, widget):
         logging.info("Starting the session manager")
         sessionManagerPanel = SessionManager(self.netzob)
 
-    def exitAction(self, widget, data):
+    def exitAction(self, widget):
         self.netzob.destroy(widget)
 
-    def setDisplaySearchViewActiveStatus(self, status, data=None):
-        self.item_factory.get_widget(self.PATH_VIEWS_DISPLAYSEARCHRESULTS).\
+    def setDisplaySearchViewActiveStatus(self, status):
+         self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").\
             set_active(True)
 
     #+----------------------------------------------
     #| Called when user wants to manage the traces
     #+----------------------------------------------
-    def manageTracesAction(self, widget, data):
+    def manageTracesAction(self, widget):
         TraceManager(self.netzob.getCurrentWorkspace(), self.netzob.update)
 
     def switchProjectAction(self, widget, projectPath):
@@ -306,11 +284,11 @@ class Menu(object):
     #+----------------------------------------------
     #| Called when user wants to export a project
     #+----------------------------------------------
-    def importProjectAction(self, widget, data):
-        chooser = gtk.FileChooserDialog(title=_("Export as"), action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+    def importProjectAction(self, widget):
+        chooser = Gtk.FileChooserDialog(title=_("Export as"), action=Gtk.FileChooserAction.OPEN,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             fileName = chooser.get_filename()
         chooser.destroy()
 
@@ -343,11 +321,11 @@ class Menu(object):
     #+----------------------------------------------
     #| Called when user wants to export a project
     #+----------------------------------------------
-    def exportProjectAction(self, widget, data):
-        chooser = gtk.FileChooserDialog(title=_("Export as (XML)"), action=gtk.FILE_CHOOSER_ACTION_SAVE,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+    def exportProjectAction(self, widget):
+        chooser = Gtk.FileChooserDialog(title=_("Export as (XML)"), action=Gtk.FileChooserAction.SAVE,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             fileName = chooser.get_filename()
         chooser.destroy()
 
@@ -356,12 +334,12 @@ class Menu(object):
         if not isFile:
             doCreateFile = True
         else:
-            md = gtk.MessageDialog(None,
-                                   gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-                                   gtk.BUTTONS_OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
+            md = Gtk.MessageDialog(None,
+                                   Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
             resp = md.run()
             md.destroy()
-            if resp == gtk.RESPONSE_OK:
+            if resp == Gtk.ResponseType.OK:
                 doCreateFile = True
 
         if doCreateFile:
@@ -373,83 +351,83 @@ class Menu(object):
     #+----------------------------------------------
     #| Called when user wants to import network trafic
     #+----------------------------------------------
-    def importNetworkTraficAction(self, widget, data):
+    def importNetworkTraficAction(self, widget):
         networkImportPanel = NetworkImport(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import PCAP file
     #+----------------------------------------------
-    def importPcapAction(self, widget, data):
+    def importPcapAction(self, widget):
         pcapImportPanel = PcapImportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import IPC flow
     #+----------------------------------------------
-    def importIPCFlowsAction(self, widget, data):
+    def importIPCFlowsAction(self, widget):
         ipcImportPanel = IpcImport(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import file
     #+----------------------------------------------
-    def importFileAction(self, widget, data):
+    def importFileAction(self, widget):
         fileImportPanel = FileImportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import file
     #+----------------------------------------------
-    def importXMLAction(self, widget, data):
+    def importXMLAction(self, widget):
         xmlImportPanel = XMLImport(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to import from third parties
     #+----------------------------------------------
-    def importThirdParty(self, widget, data):
+    def importThirdParty(self, widget):
         thirdPartyImportPanel = ThirdPartyImport(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector
     #+----------------------------------------------
-    def exportScapyAction(self, widget, data):
+    def exportScapyAction(self, widget):
         scapyPanel = ScapyExport(self.netzob)
 
-    def exportWiresharkAction(self, widget, data):
+    def exportWiresharkAction(self, widget):
 #        wiresharkPanel = WireS(self.netzob)
         pass
 
     #+----------------------------------------------
     #| Called when user wants to export as raw XML
     #+----------------------------------------------
-    def exportXMLAction(self, action, data):
+    def exportXMLAction(self, action):
         rawExportPanel = RawExportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to export as text
     #+----------------------------------------------
-    def exportTextAction(self, action, data):
+    def exportTextAction(self, action):
         textExportPanel = TextExportController(self.netzob)
 
     #+----------------------------------------------
     #| Called when user wants to display symbol structure panel
     #+----------------------------------------------
-    def displaySymbolStructureAction(self, widget, data):
+    def displaySymbolStructureAction(self, widget):
         if self.netzob.getCurrentProject() != None:
-            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSYMBOLSTRUCTURE).get_active()
+            isActive = self.uimanager.get_widget("/MenuBar/View/DisplaySymbolStructure").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, isActive)
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
     #| Called when user wants to display messages panel
     #+----------------------------------------------
-    def displayMessagesAction(self, widget, data):
+    def displayMessagesAction(self, widget):
         if self.netzob.getCurrentProject() != None:
-            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYMESSAGES).get_active()
+            isActive = self.uimanager.get_widget("/MenuBar/View/DisplayMessages").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, isActive)
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
     #| Called when user wants to display the console
     #+----------------------------------------------
-    def displayConsoleAction(self, widget, data):
+    def displayConsoleAction(self, widget):
         if self.netzob.getCurrentProject() != None:
             pass
         self.netzob.updateCurrentPanel()
@@ -457,32 +435,32 @@ class Menu(object):
     #+----------------------------------------------
     #| Called when user wants to display search results panel
     #+----------------------------------------------
-    def displaySearchAction(self, widget, data):
+    def displaySearchAction(self, widget):
         if self.netzob.getCurrentProject() != None:
-            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYSEARCHRESULTS).get_active()
+            isActive = self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, isActive)
         self.netzob.updateCurrentPanel()
 
     #+----------------------------------------------
     #| Called when user wants to display properties results panel
     #+----------------------------------------------
-    def displayPropertiesAction(self, widget, data):
+    def displayPropertiesAction(self, widget):
         if self.netzob.getCurrentProject() != None:
-            isActive = self.item_factory.get_widget(Menu.PATH_VIEWS_DISPLAYPROPERTIES).get_active()
+            isActive = self.uimanager.get_widget("/MenuBar/View/DisplayProperties").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, isActive)
         self.netzob.updateCurrentPanel()
 
-    def createProjectAction(self, widget, data):
-        dialog = gtk.Dialog(title=_("Create a new project"), flags=0, buttons=None)
+    def createProjectAction(self, widget):
+        dialog = Gtk.Dialog(title=_("Create a new project"), flags=0, buttons=None)
         dialog.show()
-        table = gtk.Table(rows=2, columns=3, homogeneous=False)
+        table = Gtk.Table(rows=2, columns=3, homogeneous=False)
         table.show()
-        label = gtk.Label(_("New project name"))
+        label = Gtk.Label(label=_("New project name"))
         label.show()
-        entry = gtk.Entry()
-        but = gtk.Button(_("Create project"))
+        entry = Gtk.Entry()
+        but = Gtk.Button(_("Create project"))
         but.connect("clicked", self.createProjectAction_cb, entry, dialog)
-        but.set_flags(gtk.CAN_DEFAULT)
+        but.set_can_default(True)
         but.show()
         table.attach(label, 0, 1, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
         table.attach(entry, 1, 2, 0, 1, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -490,7 +468,7 @@ class Menu(object):
         dialog.set_default(but)
         dialog.action_area.pack_start(table, True, True, 0)
         # Grab focus must be called after adding the widget to the top level element
-        entry.set_flags(gtk.CAN_FOCUS)
+        entry.set_can_focus(True)
         entry.show()
         entry.grab_focus()
 
@@ -512,8 +490,8 @@ class Menu(object):
             if project.getName() == projectName:
                 found = True
         if found:
-            dialogBis = gtk.Dialog(title=_("Error"), flags=0, buttons=None)
-            label = gtk.Label(_("This project name already exists"))
+            dialogBis = Gtk.Dialog(title=_("Error"), flags=0, buttons=None)
+            label = Gtk.Label(label=_("This project name already exists"))
             label.show()
             dialogBis.action_area.pack_start(label, True, True, 0)
             dialogBis.set_size_request(250, 50)

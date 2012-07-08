@@ -30,8 +30,8 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
@@ -42,7 +42,7 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
 from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DecimalWordVariable import DecimalWordVariable
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
 #| Local Imports
@@ -76,39 +76,39 @@ class VariableView(object):
 
     def display(self):
         # We display the dedicated dialog for the creation of a variable
-        self.dialog = gtk.Dialog(title=_("Creation of a variable"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Creation of a variable"), flags=0, buttons=None)
 
         # Create the main panel
-        self.panel = gtk.Table(rows=2, columns=3, homogeneous=False)
+        self.panel = Gtk.Table(rows=2, columns=3, homogeneous=False)
 
-        self.treestore = gtk.TreeStore(str, str)  # id of the data, description
-        self.treeview = gtk.TreeView(self.treestore)
+        self.treestore = Gtk.TreeStore(str, str)  # id of the data, description
+        self.treeview = Gtk.TreeView(self.treestore)
         self.treeview.connect('button-press-event', self.showMenu)
         # messages list
-        self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll = Gtk.ScrolledWindow()
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.show()
         self.scroll.set_size_request(200, 300)
         self.scroll.add(self.treeview)
         self.scroll.show()
 
-        self.lvcolumn = gtk.TreeViewColumn(_("Description of the variable"))
+        self.lvcolumn = Gtk.TreeViewColumn(_("Description of the variable"))
         self.lvcolumn.set_sort_column_id(1)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.lvcolumn.pack_start(cell, True)
-        self.lvcolumn.set_attributes(cell, text=1)
+        self.lvcolumn.add_attribute(cell, "text", 1)
         self.treeview.append_column(self.lvcolumn)
         self.treeview.show()
 
-        self.panel.attach(self.scroll, 0, 2, 0, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(self.scroll, 0, 2, 0, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         self.panel.show()
 
         # Create button
-        createButton = gtk.Button(_("Create"))
+        createButton = Gtk.Button(_("Create"))
         createButton.show()
         createButton.connect("clicked", self.createVariable)
 
-        self.panel.attach(createButton, 0, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        self.panel.attach(createButton, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # We register the default values
         self.registerVariable(None, self.rootVariable, "Root")
@@ -136,7 +136,7 @@ class VariableView(object):
 
     def showMenu(self, treeview, event):
         rootVariable = None
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
@@ -157,127 +157,127 @@ class VariableView(object):
             return
 
         # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
-        menu = gtk.Menu()
+        self.menu = Gtk.Menu()
 
-        subElementMenu = gtk.Menu()
+        subElementMenu = Gtk.Menu()
 
         # Word Variable
-        itemWord = gtk.MenuItem(_("Word"))
+        itemWord = Gtk.MenuItem(_("Word"))
         itemWord.show()
         itemWord.connect("activate", self.addWord, rootVariable, aIter)
         subElementMenu.append(itemWord)
 
         # Decimal Word Variable
-        itemDecimalWord = gtk.MenuItem(_("Decimal Word"))
+        itemDecimalWord = Gtk.MenuItem(_("Decimal Word"))
         itemDecimalWord.show()
         itemDecimalWord.connect("activate", self.addDecimalWord, rootVariable, aIter)
         subElementMenu.append(itemDecimalWord)
 
         # IPv4 Variable
-        itemIPv4 = gtk.MenuItem(_("IPv4"))
+        itemIPv4 = Gtk.MenuItem(_("IPv4"))
         itemIPv4.show()
         itemIPv4.connect("activate", self.addIPv4, rootVariable, aIter)
         subElementMenu.append(itemIPv4)
 
         # Binary Variable
-        itemBinary = gtk.MenuItem(_("Binary"))
+        itemBinary = Gtk.MenuItem(_("Binary"))
         itemBinary.show()
         itemBinary.connect("activate", self.addBinary, rootVariable, aIter)
         subElementMenu.append(itemBinary)
 
         # Hexadecimal Variable
-        itemBinary = gtk.MenuItem(_("Hexadecimal"))
+        itemBinary = Gtk.MenuItem(_("Hexadecimal"))
         itemBinary.show()
         itemBinary.connect("activate", self.addHexadecimal, rootVariable, aIter)
         subElementMenu.append(itemBinary)
 
         # Aggregate Variable
-        itemAggregate = gtk.MenuItem(_("Aggregate"))
+        itemAggregate = Gtk.MenuItem(_("Aggregate"))
         itemAggregate.show()
         itemAggregate.connect("activate", self.addAggregate, rootVariable, aIter)
         subElementMenu.append(itemAggregate)
 
         # Alternate Variable
-        itemAlternate = gtk.MenuItem(_("Alternative"))
+        itemAlternate = Gtk.MenuItem(_("Alternative"))
         itemAlternate.show()
         itemAlternate.connect("activate", self.addAlternate, rootVariable, aIter)
         subElementMenu.append(itemAlternate)
 
         # Referenced Variable
-        itemAlternate = gtk.MenuItem(_("Referenced Variable"))
+        itemAlternate = Gtk.MenuItem(_("Referenced Variable"))
         itemAlternate.show()
         itemAlternate.connect("activate", self.addReferencedVariable, rootVariable, aIter)
         subElementMenu.append(itemAlternate)
 
-        item = gtk.MenuItem(_("Add a sub-element"))
+        item = Gtk.MenuItem(_("Add a sub-element"))
         item.set_submenu(subElementMenu)
         item.show()
 
-        menu.append(item)
-        menu.popup(None, None, None, event.button, event.time)
+        self.menu.append(item)
+        self.menu.popup(None, None, None, None, event.button, event.time)
 
     def addBinary(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a Binary variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the Binary Variable"))
 
         # Create the ID of the new variable
         varID = uuid.uuid4()
         variableID = str(varID)
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Original Value
-        originalValueLabel = gtk.Label(_("Original value:"))
+        originalValueLabel = Gtk.Label(label=_("Original value:"))
         originalValueLabel.show()
-        originalValueEntry = gtk.Entry()
+        originalValueEntry = Gtk.Entry()
         originalValueEntry.show()
-        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Constraints label
-        constraintsLabel = gtk.Label(_("Constraints when parsing / generating"))
+        constraintsLabel = Gtk.Label(label=_("Constraints when parsing / generating"))
         constraintsLabel.show()
-        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # start Value
-        minBitsLabel = gtk.Label(_("Minimum number of bits:"))
+        minBitsLabel = Gtk.Label(label=_("Minimum number of bits:"))
         minBitsLabel.show()
-        minBitsEntry = gtk.Entry()
+        minBitsEntry = Gtk.Entry()
         minBitsEntry.show()
-        mainTable.attach(minBitsLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(minBitsEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(minBitsLabel, 0, 1, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(minBitsEntry, 1, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # end Value
-        maxBitsLabel = gtk.Label(_("Maximum number of bits:"))
+        maxBitsLabel = Gtk.Label(label=_("Maximum number of bits:"))
         maxBitsLabel.show()
-        maxBitsEntry = gtk.Entry()
+        maxBitsEntry = Gtk.Entry()
         maxBitsEntry.show()
-        mainTable.attach(maxBitsLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(maxBitsEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(maxBitsLabel, 0, 1, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(maxBitsEntry, 1, 2, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -303,66 +303,66 @@ class VariableView(object):
 
     def addHexadecimal(self, event, rootVariable, rootEntry):
         # Display the form for the creation of an Hexadecimal variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the Hexadecimal Variable"))
 
         # Create the ID of the new variable
         varID = uuid.uuid4()
         variableID = str(varID)
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Original Value
-        originalValueLabel = gtk.Label(_("Original value:"))
+        originalValueLabel = Gtk.Label(label=_("Original value:"))
         originalValueLabel.show()
-        originalValueEntry = gtk.Entry()
+        originalValueEntry = Gtk.Entry()
         originalValueEntry.show()
-        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Constraints label
-        constraintsLabel = gtk.Label(_("Constraints when parsing / generating"))
+        constraintsLabel = Gtk.Label(label=_("Constraints when parsing / generating"))
         constraintsLabel.show()
-        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # start Value
-        minBitsLabel = gtk.Label(_("Minimum number of hex (0xf=1):"))
+        minBitsLabel = Gtk.Label(label=_("Minimum number of hex (0xf=1):"))
         minBitsLabel.show()
-        minBitsEntry = gtk.Entry()
+        minBitsEntry = Gtk.Entry()
         minBitsEntry.show()
-        mainTable.attach(minBitsLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(minBitsEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(minBitsLabel, 0, 1, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(minBitsEntry, 1, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # end Value
-        maxBitsLabel = gtk.Label(_("Maximum number of hex:"))
+        maxBitsLabel = Gtk.Label(label=_("Maximum number of hex:"))
         maxBitsLabel.show()
-        maxBitsEntry = gtk.Entry()
+        maxBitsEntry = Gtk.Entry()
         maxBitsEntry.show()
-        mainTable.attach(maxBitsLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(maxBitsEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(maxBitsLabel, 0, 1, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(maxBitsEntry, 1, 2, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -388,44 +388,44 @@ class VariableView(object):
 
     def addAlternate(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the Alternative"))
 
         # Create the ID of the new variable
         variableID = str(uuid.uuid4())
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # name of the variable
-        variableValueLabel = gtk.Label(_("Name:"))
+        variableValueLabel = Gtk.Label(label=_("Name:"))
         variableValueLabel.show()
-        variableValueEntry = gtk.Entry()
+        variableValueEntry = Gtk.Entry()
         variableValueEntry.show()
-        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -445,44 +445,44 @@ class VariableView(object):
 
     def addAggregate(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the Aggregate"))
 
         # Create the ID of the new variable
         variableID = str(uuid.uuid4())
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # name of the variable
-        variableValueLabel = gtk.Label(_("Name:"))
+        variableValueLabel = Gtk.Label(label=_("Name:"))
         variableValueLabel.show()
-        variableValueEntry = gtk.Entry()
+        variableValueEntry = Gtk.Entry()
         variableValueEntry.show()
-        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -502,52 +502,52 @@ class VariableView(object):
 
     def addWord(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the WORD"))
 
         # Create the ID of the new variable
         variableID = str(uuid.uuid4())
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # name of the variable
-        variableNameLabel = gtk.Label(_("Name:"))
+        variableNameLabel = Gtk.Label(label=_("Name:"))
         variableNameLabel.show()
-        variableNameEntry = gtk.Entry()
+        variableNameEntry = Gtk.Entry()
         variableNameEntry.show()
-        mainTable.attach(variableNameLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableNameEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableNameLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableNameEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # value of the variable
-        variableValueLabel = gtk.Label(_("Value:"))
+        variableValueLabel = Gtk.Label(label=_("Value:"))
         variableValueLabel.show()
-        variableValueEntry = gtk.Entry()
+        variableValueEntry = Gtk.Entry()
         variableValueEntry.show()
-        mainTable.attach(variableValueLabel, 0, 1, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableValueEntry, 1, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueLabel, 0, 1, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -571,44 +571,44 @@ class VariableView(object):
 
     def addDecimalWord(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the Decimal WORD"))
 
         # Create the ID of the new variable
         variableID = str(uuid.uuid4())
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # value of the variable
-        variableValueLabel = gtk.Label(_("Value:"))
+        variableValueLabel = Gtk.Label(label=_("Value:"))
         variableValueLabel.show()
-        variableValueEntry = gtk.Entry()
+        variableValueEntry = Gtk.Entry()
         variableValueEntry.show()
-        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableValueEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -628,84 +628,84 @@ class VariableView(object):
 
     def addIPv4(self, event, rootVariable, rootEntry):
         # Display the form for the creation of an IPv4 variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the IPv4 Variable"))
 
         # Create the ID of the new variable
         varID = uuid.uuid4()
         variableID = str(varID)
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Original Value
-        originalValueLabel = gtk.Label(_("Original value:"))
+        originalValueLabel = Gtk.Label(label=_("Original value:"))
         originalValueLabel.show()
-        originalValueEntry = gtk.Entry()
+        originalValueEntry = Gtk.Entry()
         originalValueEntry.show()
-        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(originalValueEntry, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Constraints label
-        constraintsLabel = gtk.Label(_("Constraints when parsing / generating"))
+        constraintsLabel = Gtk.Label(label=_("Constraints when parsing / generating"))
         constraintsLabel.show()
-        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(constraintsLabel, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # start Value
-        startValueLabel = gtk.Label(_("Start:"))
+        startValueLabel = Gtk.Label(label=_("Start:"))
         startValueLabel.show()
-        startValueEntry = gtk.Entry()
+        startValueEntry = Gtk.Entry()
         startValueEntry.show()
-        mainTable.attach(startValueLabel, 0, 1, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(startValueEntry, 1, 2, 4, 5, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(startValueLabel, 0, 1, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(startValueEntry, 1, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # end Value
-        endValueLabel = gtk.Label(_("End:"))
+        endValueLabel = Gtk.Label(label=_("End:"))
         endValueLabel.show()
-        endValueEntry = gtk.Entry()
+        endValueEntry = Gtk.Entry()
         endValueEntry.show()
-        mainTable.attach(endValueLabel, 0, 1, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(endValueEntry, 1, 2, 5, 6, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(endValueLabel, 0, 1, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(endValueEntry, 1, 2, 5, 6, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Format label
-        hdrFormatLabel = gtk.Label(_("Representation"))
+        hdrFormatLabel = Gtk.Label(label=_("Representation"))
         hdrFormatLabel.show()
-        mainTable.attach(hdrFormatLabel, 0, 2, 7, 8, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(hdrFormatLabel, 0, 2, 7, 8, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Format Value
-        formatValueLabel = gtk.Label(_("Format:"))
+        formatValueLabel = Gtk.Label(label=_("Format:"))
         formatValueLabel.show()
-        formatValueCombo = gtk.combo_box_entry_new_text()
+        formatValueCombo = Gtk.ComboBoxText.new_with_entry()
         formatValueCombo.show()
-        formatValueComboStore = gtk.ListStore(str)  # format name
+        formatValueComboStore = Gtk.ListStore(str)  # format name
         formatValueCombo.set_model(formatValueComboStore)
         # We retrieve all the existing variables in the project
         formatValueCombo.get_model().append([Format.HEX])
         formatValueCombo.get_model().append([Format.ASCII])
-        mainTable.attach(formatValueLabel, 0, 1, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(formatValueCombo, 1, 2, 8, 9, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(formatValueLabel, 0, 1, 8, 9, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(formatValueCombo, 1, 2, 8, 9, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 
@@ -737,37 +737,37 @@ class VariableView(object):
 
     def addReferencedVariable(self, event, rootVariable, rootEntry):
         # Display the form for the creation of a word variable
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
         dialog.set_markup(_("Definition of the ReferencedVariable"))
 
         # Create the ID of the new variable
         variableID = str(uuid.uuid4())
 
-        mainTable = gtk.Table(rows=3, columns=2, homogeneous=False)
+        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
         # parent id of the variable
-        variablePIDLabel = gtk.Label(_("Parent ID:"))
+        variablePIDLabel = Gtk.Label(label=_("Parent ID:"))
         variablePIDLabel.show()
-        variablePIDValueLabel = gtk.Label(str(rootVariable.getID()))
+        variablePIDValueLabel = Gtk.Label(label=str(rootVariable.getID()))
         variablePIDValueLabel.set_sensitive(False)
         variablePIDValueLabel.show()
-        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variablePIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # id of the variable
-        variableIDLabel = gtk.Label(_("ID:"))
+        variableIDLabel = Gtk.Label(label=_("ID:"))
         variableIDLabel.show()
-        variableIDValueLabel = gtk.Label(variableID)
+        variableIDValueLabel = Gtk.Label(label=variableID)
         variableIDValueLabel.set_sensitive(False)
         variableIDValueLabel.show()
-        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(variableIDValueLabel, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Selection of the variable
-        varLabel = gtk.Label(_("Referenced Variable:"))
+        varLabel = Gtk.Label(label=_("Referenced Variable:"))
         varLabel.show()
-        self.varCombo = gtk.combo_box_entry_new_text()
+        self.varCombo = Gtk.ComboBoxText.new_with_entry()
         self.varCombo.show()
-        self.varStore = gtk.ListStore(str, str)  # description, id,
+        self.varStore = Gtk.ListStore(str, str)  # description, id,
         self.varCombo.set_model(self.varStore)
 
         # We retrieve all the existing variables in the project
@@ -775,14 +775,14 @@ class VariableView(object):
         for existingVariable in existingVariables:
             self.varCombo.get_model().append([existingVariable.getUncontextualizedDescription(), existingVariable.getID()])
 
-        mainTable.attach(varLabel, 0, 1, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(self.varCombo, 1, 2, 2, 3, xoptions=gtk.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(varLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        mainTable.attach(self.varCombo, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         dialog.vbox.pack_end(mainTable, True, True, 0)
         dialog.show_all()
         result = dialog.run()
 
-        if result != gtk.RESPONSE_OK:
+        if result != Gtk.ResponseType.OK:
             dialog.destroy()
             return
 

@@ -29,12 +29,12 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import uuid
 import errno
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 import logging
 import time
 
@@ -85,17 +85,18 @@ class PcapImportController():
     def initCallbacks(self):
         self.view.butSelectFile.connect("clicked", self.selectFile_cb, self.view.labelFile)
         self.view.butLaunchSniff.connect("clicked", self.launchSniff_cb, self.view.entryScapyFilter, self.view.labelFile)
-        self.view.treeviewPackets.connect("cursor-changed", self.packetDetails_cb)
+        selection = self.view.treeviewPackets.get_selection()
+        selection.connect("changed", self.packetDetails_cb)
         self.view.butSaveSelectedPackets.connect("clicked", self.savePackets_cb, self.view.treeviewPackets)
 
     #+----------------------------------------------
     #| Called when user import a pcap file
     #+----------------------------------------------
     def selectFile_cb(self, button, label):
-        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = Gtk.FileChooserDialog(title=None, action=Gtk.FileChooserAction.OPEN,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         res = chooser.run()
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             label.set_text(chooser.get_filename())
         chooser.destroy()
 
@@ -114,9 +115,9 @@ class PcapImportController():
 
         if errorCode == False:
             button.set_sensitive(True)
-            md = gtk.MessageDialog(None,
-                gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR,
-                gtk.BUTTONS_CLOSE, errorMessage)
+            md = Gtk.MessageDialog(None,
+                Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR,
+                Gtk.ButtonsType.CLOSE, errorMessage)
             md.run()
             md.destroy()
             return
@@ -144,15 +145,15 @@ class PcapImportController():
                 packetsToSave.append((packetPayload, proto, timestamp))
 
         # We ask the confirmation
-        md = gtk.MessageDialog(None,
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, _("Are you sure to import the {0} selected packets in project {0}.").format(str(len(packetsToSave)), currentProject.getName()))
+        md = Gtk.MessageDialog(None,
+            Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+            Gtk.ButtonsType.OK_CANCEL, _("Are you sure to import the {0} selected packets in project {0}.").format(str(len(packetsToSave)), currentProject.getName()))
 
-#        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+#        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         resp = md.run()
         md.destroy()
 
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             messages = self.model.buildMessages(packetsToSave)
             self.model.saveMessagesInProject(self.netzob.getCurrentWorkspace(), currentProject, messages, False)
         self.view.dialog.destroy()
@@ -163,8 +164,8 @@ class PcapImportController():
     #+----------------------------------------------
     #| Called when user select a packet for details
     #+----------------------------------------------
-    def packetDetails_cb(self, treeview):
-        (model, paths) = treeview.get_selection().get_selected_rows()
+    def packetDetails_cb(self, selection):
+        (model, paths) = selection.get_selected_rows()
         decoder = Decoders.EthDecoder()
         for path in paths[:1]:
             iter = model.get_iter(path)

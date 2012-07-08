@@ -29,9 +29,9 @@
 #| Standard library imports
 #+----------------------------------------------
 from gettext import gettext as _
-import pygtk
-pygtk.require('2.0')
-import gtk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 import os
 
 #+----------------------------------------------
@@ -50,34 +50,34 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 #+----------------------------------------------
 class SplashScreen(object):
     def __init__(self):
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
         self.window.set_title(_("Netzob"))
-        self.window.set_position(gtk.WIN_POS_CENTER)
+        self.window.set_position(Gtk.WindowPosition.CENTER)
         self.window.set_decorated(False)
         self.window.set_default_size(268, 501)
-        self.window.set_events(gtk.gdk.ALL_EVENTS_MASK)
+        self.window.set_events(Gdk.EventMask.ALL_EVENTS_MASK)
 
         # Retrieve static resources
         staticPath = ResourcesConfiguration.getStaticResources()
         logoPath = os.path.abspath(os.path.join(staticPath, "logo.png"))
 
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         hbox.show()
         self.window.add(hbox)
 
-        self.image = gtk.Image()
+        self.image = Gtk.Image()
         self.image.set_from_file(logoPath)
         self.image.show()
 
-        main_vbox = gtk.VBox(False, 1)
+        main_vbox = Gtk.VBox(False, 1)
 
 #        main_vbox.pack_start(self.image, True, True)
 
         workspace = ResourcesConfiguration.getWorkspace()
         if workspace != None:
-            self.lbl = gtk.Label(_("Current workspace : ") + workspace)
+            self.lbl = Gtk.Label(label=_("Current workspace : ") + workspace)
         else:
-            self.lbl = gtk.Label(_("Current workspace : NO WORKSPACE COMPUTED !"))
+            self.lbl = Gtk.Label(label=_("Current workspace : NO WORKSPACE COMPUTED !"))
         self.lbl.set_alignment(0, 0.5)
 
         main_vbox.pack_start(self.image, True, True, 2)

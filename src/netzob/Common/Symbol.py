@@ -30,7 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import gtk
+from gi.repository import Gtk
 from operator import attrgetter
 import re
 import glib
@@ -538,28 +538,28 @@ class Symbol(AbstractSymbol):
 #        if len(self.fields) == 0:
 #            return None
 #
-#        vbox = gtk.VBox(False, spacing=5)
+#        vbox = Gtk.VBox(False, spacing=5)
 #        vbox.show()
-#        hbox = gtk.HPaned()
+#        hbox = Gtk.HPaned()
 #        hbox.show()
 #        # Treeview containing potential data carving results  ## ListStore format:
 #        # int: iField
 #        # str: data type (url, ip, email, etc.)
-#        store = gtk.ListStore(int, str)
-#        treeviewRes = gtk.TreeView(store)
-#        cell = gtk.CellRendererText()
-#        column = gtk.TreeViewColumn('Column')
+#        store = Gtk.ListStore(int, str)
+#        treeviewRes = Gtk.TreeView(store)
+#        cell = Gtk.CellRendererText()
+#        column = Gtk.TreeViewColumn('Column')
 #        column.pack_start(cell, True)
-#        column.set_attributes(cell, text=0)
+#        column.add_attribute(cell, "text", 0)
 #        treeviewRes.append_column(column)
-#        column = gtk.TreeViewColumn('Data type found')
+#        column = Gtk.TreeViewColumn('Data type found')
 #        column.pack_start(cell, True)
-#        column.set_attributes(cell, text=1)
+#        column.add_attribute(cell, "text", 1)
 #        treeviewRes.append_column(column)
 #        treeviewRes.set_size_request(200, 300)
 #        treeviewRes.show()
-#        scroll = gtk.ScrolledWindow()
-#        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+#        scroll = Gtk.ScrolledWindow()
+#        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 #        scroll.show()
 #        scroll.add(treeviewRes)
 #        hbox.add(scroll)
@@ -585,23 +585,23 @@ class Symbol(AbstractSymbol):
 #
 #        # Preview of matching fields in a treeview  ## ListStore format:
 #        # str: data
-#        treeview = gtk.TreeView(gtk.ListStore(str))
-#        cell = gtk.CellRendererText()
-#        column = gtk.TreeViewColumn('Data')
+#        treeview = Gtk.TreeView(Gtk.ListStore(str))
+#        cell = Gtk.CellRendererText()
+#        column = Gtk.TreeViewColumn('Data')
 #        column.pack_start(cell, True)
-#        column.set_attributes(cell, markup=0)
+#        column.add_attribute(cell, "markup", 0)
 #        treeview.append_column(column)
 #        treeview.set_size_request(700, 300)
 #        treeview.show()
-#        scroll = gtk.ScrolledWindow()
-#        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+#        scroll = Gtk.ScrolledWindow()
+#        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
 #        scroll.show()
 #        scroll.add(treeview)
 #        hbox.add(scroll)
 #        vbox.pack_start(hbox, True, True, 0)
 #
 #        # Apply button
-#        but = gtk.Button(label="Apply data type on column")
+#        but = Gtk.Button(label="Apply data type on column")
 #        but.show()
 #        self.butDataCarvingHandle = None
 #        treeviewRes.connect("cursor-changed", self.dataCarvingResultSelected_cb, treeview, but, infoCarvers)
@@ -657,30 +657,30 @@ class Symbol(AbstractSymbol):
         if len(self.fields) == 0:
             return None
 
-        vbox = gtk.VBox(False, spacing=5)
+        vbox = Gtk.VBox(False, spacing=5)
         vbox.show()
-        hbox = gtk.HPaned()
+        hbox = Gtk.HPaned()
         hbox.show()
         # Treeview containing ASN.1 results  ## ListStore format:
         # int: iField
         # str: env. dependancy name (ip, os, username, etc.)
         # str: type
         # str: env. dependancy value (127.0.0.1, Linux, john, etc.)
-        store = gtk.ListStore(int, str, str, str)
-        treeviewRes = gtk.TreeView(store)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Column"))
+        store = Gtk.ListStore(int, str, str, str)
+        treeviewRes = Gtk.TreeView(store)
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Column"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn(_("Results"))
+        column = Gtk.TreeViewColumn(_("Results"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeviewRes.append_column(column)
         treeviewRes.set_size_request(250, 300)
         treeviewRes.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeviewRes)
         hbox.add(scroll)
@@ -710,26 +710,28 @@ class Symbol(AbstractSymbol):
 
         # Preview of matching fields in a treeview  ## ListStore format:
         # str: data
-        treeview = gtk.TreeView(gtk.ListStore(str))
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Data"))
+        treeview = Gtk.TreeView(Gtk.ListStore(str))
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, markup=0)
+        column.add_attribute(cell, "markup", 0)
         treeview.append_column(column)
         treeview.set_size_request(700, 300)
         treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
         hbox.add(scroll)
         vbox.pack_start(hbox, True, True, 0)
 
         # Apply button
-        but = gtk.Button(label=_("Apply data type on column"))
+        but = Gtk.Button(label=_("Apply data type on column"))
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.ASN1ResultSelected_cb, treeview, but)
+        treeviewResSelection = treeviewRes.get_selection()
+        treeviewResSelection.connect("changed", self.ASN1ResultSelected_cb,
+                                     treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
@@ -738,9 +740,9 @@ class Symbol(AbstractSymbol):
     #| ASN1ResultSelected_cb:
     #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
-    def ASN1ResultSelected_cb(self, treeview, treeviewTarget, but):
+    def ASN1ResultSelected_cb(self, selection, treeviewTarget, but):
         treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
+        (model, it) = selection.get_selected()
         if(it):
             if(model.iter_is_valid(it)):
                 fieldIndex = model.get_value(it, 0)
@@ -774,30 +776,30 @@ class Symbol(AbstractSymbol):
         if len(self.fields) == 0:
             return None
 
-        vbox = gtk.VBox(False, spacing=5)
+        vbox = Gtk.VBox(False, spacing=5)
         vbox.show()
-        hbox = gtk.HPaned()
+        hbox = Gtk.HPaned()
         hbox.show()
         # Treeview containing potential data carving results  ## ListStore format:
         #   int: iField
         #   str: env. dependancy name (ip, os, username, etc.)
         #   str: type
         #   str: env. dependancy value (127.0.0.1, Linux, john, etc.)
-        store = gtk.ListStore(int, str, str, str)
-        treeviewRes = gtk.TreeView(store)
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Column"))
+        store = Gtk.ListStore(int, str, str, str)
+        treeviewRes = Gtk.TreeView(store)
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Column"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=0)
+        column.add_attribute(cell, "text", 0)
         treeviewRes.append_column(column)
-        column = gtk.TreeViewColumn(_("Env. dependancy"))
+        column = Gtk.TreeViewColumn(_("Env. dependancy"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeviewRes.append_column(column)
         treeviewRes.set_size_request(250, 300)
         treeviewRes.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeviewRes)
         hbox.add(scroll)
@@ -842,26 +844,28 @@ class Symbol(AbstractSymbol):
         # Preview of matching fields in a treeview
         ## ListStore format:
         # str: data
-        treeview = gtk.TreeView(gtk.ListStore(str))
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Data"))
+        treeview = Gtk.TreeView(Gtk.ListStore(str))
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Data"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, markup=0)
+        column.add_attribute(cell, "markup", 0)
         treeview.append_column(column)
         treeview.set_size_request(700, 300)
         treeview.show()
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
         hbox.add(scroll)
         vbox.pack_start(hbox, True, True, 0)
 
         # Apply button
-        but = gtk.Button(label=_("Apply data type on column"))
+        but = Gtk.Button(label=_("Apply data type on column"))
         but.show()
         self.butDataCarvingHandle = None
-        treeviewRes.connect("cursor-changed", self.envDependenciesResultSelected_cb, treeview, but)
+        treeviewResSelection = treeview.get_selection()
+        treeviewResSelection.connect("changed",
+                self.envDependenciesResultSelected_cb, treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox
@@ -870,9 +874,9 @@ class Symbol(AbstractSymbol):
     #| envDependenciesResultSelected_cb:
     #|  Callback when clicking on a environmental dependency result.
     #+----------------------------------------------
-    def envDependenciesResultSelected_cb(self, treeview, treeviewTarget, but):
+    def envDependenciesResultSelected_cb(self, selection, treeviewTarget, but):
         treeviewTarget.get_model().clear()
-        (model, it) = treeview.get_selection().get_selected()
+        (model, it) = selection.get_selected()
         if(it):
             if(model.iter_is_valid(it)):
                 fieldIndex = model.get_value(it, 0)

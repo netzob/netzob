@@ -30,7 +30,7 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-import gtk
+from gi.repository import Gtk
 import uuid
 
 #+----------------------------------------------
@@ -70,23 +70,23 @@ class TreeSearchGenerator(AbstractViewGenerator):
     #+----------------------------------------------
     def initialization(self):
 
-        self.tree = gtk.TreeView()
-        colResult = gtk.TreeViewColumn()
+        self.tree = Gtk.TreeView()
+        colResult = Gtk.TreeViewColumn()
         colResult.set_title(_("Search results"))
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         colResult.pack_start(cell, True)
         colResult.add_attribute(cell, "text", 2)
 
-        self.treestore = gtk.TreeStore(str, str, str)  # type, id, value
+        self.treestore = Gtk.TreeStore(str, str, str)  # type, id, value
 
         self.tree.append_column(colResult)
         self.tree.set_model(self.treestore)
         self.tree.show()
 
-        self.scroll = gtk.ScrolledWindow()
+        self.scroll = Gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 250)
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.add(self.tree)
         self.scroll.show()
 

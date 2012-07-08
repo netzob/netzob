@@ -31,7 +31,7 @@
 from gettext import gettext as _
 import os.path
 import logging
-import gtk
+from gi.repository import Gtk
 import shutil
 
 #+----------------------------------------------

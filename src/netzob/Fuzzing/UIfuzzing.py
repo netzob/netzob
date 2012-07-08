@@ -29,9 +29,9 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pygtk
-pygtk.require('2.0')
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
 import logging
 
 #+----------------------------------------------
@@ -77,25 +77,25 @@ class UIfuzzing:
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Fuzzing.UIfuzzing.py')
         self.netzob = netzob
-        self.panel = gtk.HPaned()
+        self.panel = Gtk.HPaned()
         self.panel.show()
 
         #+----------------------------------------------
         #| LEFT PART OF THE GUI : Capturing panels
         #+----------------------------------------------
-        notebook = gtk.Notebook()
+        notebook = Gtk.Notebook()
         notebook.show()
-        notebook.set_tab_pos(gtk.POS_LEFT)
+        notebook.set_tab_pos(Gtk.PositionType.LEFT)
         self.panel.add(notebook)
 
         # Network Capturing Panel
         self.netPanel = Network(self.netzob)
-        notebook.append_page(self.netPanel.getPanel(), gtk.Label(_("Network fuzzing")))
+        notebook.append_page(self.netPanel.getPanel(), Gtk.Label(label=_("Network fuzzing")))
 
         # IPC Capturing Panel
         self.ipcPanel = Ipc(self.netzob)
-        notebook.append_page(self.ipcPanel.getPanel(), gtk.Label(_("IPC fuzzing")))
+        notebook.append_page(self.ipcPanel.getPanel(), Gtk.Label(label=_("IPC fuzzing")))
 
         # File Panel
         self.filePanel = File(self.netzob)
-        notebook.append_page(self.filePanel.getPanel(), gtk.Label(_("File fuzzing")))
+        notebook.append_page(self.filePanel.getPanel(), Gtk.Label(label=_("File fuzzing")))

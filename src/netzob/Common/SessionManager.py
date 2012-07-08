@@ -29,10 +29,10 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 import logging
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
 #| Local Imports
@@ -71,13 +71,13 @@ class SessionManager:
 
         self.initPanel()
 
-        self.dialog = gtk.Dialog(title=_("Session manager"), flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Session manager"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.update()
 
     def initPanel(self):
-        self.panel = gtk.HBox(False, spacing=0)
+        self.panel = Gtk.HBox(False, spacing=0)
         self.panel.show()
 
         self.initPanelSymbol()
@@ -85,7 +85,7 @@ class SessionManager:
 
     def initPanelSymbol(self):
         ## Symbol list box
-        symbolBox = gtk.VBox()
+        symbolBox = Gtk.VBox()
         symbolBox.show()
         frame = NetzobFrame(_("Symbol list"))
         frame.add(symbolBox)
@@ -97,55 +97,55 @@ class SessionManager:
         # ListStore format:
         #   str: symbol.id
         #   str: symbol.name
-        treeview = gtk.TreeView(gtk.ListStore(str, str))
+        treeview = Gtk.TreeView(Gtk.ListStore(str, str))
         treeview.set_size_request(500, 200)
         treeview.show()
-        treeview.connect('cursor-changed', self.symbolSelected_cb)
-
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Symbols"))
+        selection = treeview.get_selection()
+        selection.connect("changed", self.symbolSelected_cb)
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Symbols"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
 
         for symbol in symbols:
             treeview.get_model().append([symbol.getID(), symbol.getName()])
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
-        symbolBox.pack_start(scroll)
+        symbolBox.pack_start(scroll, True, True, 0)
 
 #        label = NetzobLabel("Symbol name: ")
-#        symbolBox.pack_start(label)
+#        symbolBox.pack_start(label, True, True, 0)
 #        label = NetzobLabel("Description: ")
-#        symbolBox.pack_start(label)
+#        symbolBox.pack_start(label, True, True, 0)
 
         ## Symbol box messages content
         messages = self.netzob.getCurrentProject().getVocabulary().getMessages()
         # ListStore format:
         #   str: message.id
         #   str: message.data
-        self.treeview_symbol_messages = gtk.TreeView(gtk.ListStore(str, str))
+        self.treeview_symbol_messages = Gtk.TreeView(Gtk.ListStore(str, str))
         self.treeview_symbol_messages.set_size_request(-1, 300)
         self.treeview_symbol_messages.show()
 
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Messages"))
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Messages"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.treeview_symbol_messages.append_column(column)
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(self.treeview_symbol_messages)
-        symbolBox.pack_start(scroll)
+        symbolBox.pack_start(scroll, True, True, 0)
 
     def initPanelSession(self):
         ## Session list
-        sessionBox = gtk.VBox()
+        sessionBox = Gtk.VBox()
         sessionBox.show()
         frame = NetzobFrame(_("Session list"))
         frame.add(sessionBox)
@@ -156,51 +156,52 @@ class SessionManager:
         # ListStore format:
         #   str: session.id
         #   str: session.name
-        treeview = gtk.TreeView(gtk.ListStore(str, str))
+        treeview = Gtk.TreeView(Gtk.ListStore(str, str))
         treeview.set_size_request(500, 200)
         treeview.show()
-        treeview.connect('cursor-changed', self.sessionSelected_cb)
+        selection = treeview.get_selection()
+        selection.connect("changed", self.sessionSelected_cb)
 
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Sessions"))
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Sessions"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         treeview.append_column(column)
 
         for session in sessions:
             treeview.get_model().append([session.getID(), session.getName()])
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(treeview)
-        sessionBox.pack_start(scroll)
+        sessionBox.pack_start(scroll, True, True, 0)
 
 #        label = NetzobLabel("Session name: ")
-#        sessionBox.pack_start(label)
+#        sessionBox.pack_start(label, True, True, 0)
 #        label = NetzobLabel("Description: ")
-#        sessionBox.pack_start(label)
+#        sessionBox.pack_start(label, True, True, 0)
 
         ## Session content messages
         messages = self.netzob.getCurrentProject().getVocabulary().getMessages()
         # ListStore format:
         #   str: message.id
         #   str: message.data
-        self.treeview_session_messages = gtk.TreeView(gtk.ListStore(str, str))
+        self.treeview_session_messages = Gtk.TreeView(Gtk.ListStore(str, str))
         self.treeview_session_messages.set_size_request(-1, 300)
         self.treeview_session_messages.show()
 
-        cell = gtk.CellRendererText()
-        column = gtk.TreeViewColumn(_("Messages"))
+        cell = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn(_("Messages"))
         column.pack_start(cell, True)
-        column.set_attributes(cell, text=1)
+        column.add_attribute(cell, "text", 1)
         self.treeview_session_messages.append_column(column)
 
-        scroll = gtk.ScrolledWindow()
-        scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.show()
         scroll.add(self.treeview_session_messages)
-        sessionBox.pack_start(scroll)
+        sessionBox.pack_start(scroll, True, True, 0)
 
     #+----------------------------------------------
     #| CALLBACKS
@@ -210,7 +211,7 @@ class SessionManager:
     #| symbolSelected_cb:
     #|   callback when the user select a symbol
     #+----------------------------------------------
-    def symbolSelected_cb(self, treeview):
+    def symbolSelected_cb(self, selection):
         self.treeview_symbol_messages.get_model().clear()
 
         # Sanity checks
@@ -223,7 +224,7 @@ class SessionManager:
             return
 
         # Show messages contained in selected symbol
-        (model, iter) = treeview.get_selection().get_selected()
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 symbol_id = model.get_value(iter, 0)
@@ -236,7 +237,7 @@ class SessionManager:
     #| sessionSelected_cb:
     #|   callback when the user select a session
     #+----------------------------------------------
-    def sessionSelected_cb(self, treeview):
+    def sessionSelected_cb(self, selection):
         self.treeview_session_messages.get_model().clear()
 
         # Sanity checks
@@ -249,7 +250,7 @@ class SessionManager:
             return
 
         # Show messages contained in selected session
-        (model, iter) = treeview.get_selection().get_selected()
+        (model, iter) = selection.get_selected()
         if(iter):
             if(model.iter_is_valid(iter)):
                 session_id = model.get_value(iter, 0)

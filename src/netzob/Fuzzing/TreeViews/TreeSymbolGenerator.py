@@ -30,7 +30,7 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-import gtk
+from gi.repository import Gtk
 
 #+----------------------------------------------
 #| Local Imports
@@ -62,23 +62,25 @@ class TreeSymbolGenerator():
         # str : text (score)
         # str : color foreground
         # str : color background
-        self.treestore = gtk.TreeStore(str, str, str, str, str)
-        self.treeview = gtk.TreeView(self.treestore)
+        self.treestore = Gtk.TreeStore(str, str, str, str, str)
+        self.treeview = Gtk.TreeView(self.treestore)
 
         # messages list
-        self.scroll = gtk.ScrolledWindow()
-        self.scroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.scroll = Gtk.ScrolledWindow()
+        self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scroll.show()
         self.scroll.set_size_request(200, 200)
         self.scroll.add(self.treeview)
 
-        lvcolumn = gtk.TreeViewColumn(_("Symbols"))
+        lvcolumn = Gtk.TreeViewColumn(_("Symbols"))
         lvcolumn.set_sort_column_id(1)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         lvcolumn.pack_start(cell, True)
         cell.set_property('background-set', True)
         cell.set_property('foreground-set', True)
-        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
+        lvcolumn.add_attribute(cell, "text", 1)
+        lvcolumn.add_attribute(cell, "foreground", 3)
+        lvcolumn.add_attribute(cell, "background", 4)
         self.treeview.append_column(lvcolumn)
         self.treeview.show()
 

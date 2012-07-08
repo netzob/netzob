@@ -31,9 +31,6 @@
 import logging
 import uuid
 import random
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
-from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
-from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
@@ -43,7 +40,9 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
+from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
+from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
+from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 
 #+---------------------------------------------------------------------------+
 #| FileImporter: Import messages from files
