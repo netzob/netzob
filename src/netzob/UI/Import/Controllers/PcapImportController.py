@@ -116,8 +116,8 @@ class PcapImportController():
         if errorCode == False:
             button.set_sensitive(True)
             md = Gtk.MessageDialog(None,
-                Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR,
-                Gtk.ButtonsType.CLOSE, errorMessage)
+                                   Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR,
+                                   Gtk.ButtonsType.CLOSE, errorMessage)
             md.run()
             md.destroy()
             return
@@ -146,8 +146,8 @@ class PcapImportController():
 
         # We ask the confirmation
         md = Gtk.MessageDialog(None,
-            Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
-            Gtk.ButtonsType.OK_CANCEL, _("Are you sure to import the {0} selected packets in project {0}.").format(str(len(packetsToSave)), currentProject.getName()))
+                               Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+                               Gtk.ButtonsType.OK_CANCEL, _("Are you sure to import the {0} selected packets in project {0}.").format(str(len(packetsToSave)), currentProject.getName()))
 
 #        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         resp = md.run()

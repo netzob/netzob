@@ -187,7 +187,7 @@ class FilterApplicationTable:
     def getTags(self, col, i_local):
         tags = []
         for (i_col, idTag, i, tag) in self.tags:
-            if i_col == col  and i == i_local:
+            if i_col == col and i == i_local:
                 tags.append(tag)
         return tags
 

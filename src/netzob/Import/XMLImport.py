@@ -84,7 +84,7 @@ class XMLImport(AbstractImporter):
 
         self.init()
 
-        self.dialog = Gtk.Dialog(title="Import XML file", flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=("Import XML file"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(1000, 600)
@@ -105,7 +105,7 @@ class XMLImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a file
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        but = Gtk.Button("Select file(s)")
+        but = Gtk.Button(_("Select file(s)"))
         but.show()
         entry_filepath = Gtk.Entry()
 #        entry_filepath.set_width_chars(50)
@@ -125,15 +125,15 @@ class XMLImport(AbstractImporter):
         #self.lineView.connect('button-press-event', self.button_press_on_message)
         cell = Gtk.CellRendererText()
         # Col file descriptor
-        column = Gtk.TreeViewColumn('Message ID')
+        column = Gtk.TreeViewColumn(_("Message ID"))
         column.pack_start(cell, True)
         column.add_attribute(cell, "text", 0)
         self.lineView.append_column(column)
-        column = Gtk.TreeViewColumn('Type')
+        column = Gtk.TreeViewColumn(_("Type"))
         column.pack_start(cell, True)
         column.add_attribute(cell, "text", 1)
         self.lineView.append_column(column)
-        column = Gtk.TreeViewColumn('Content')
+        column = Gtk.TreeViewColumn(_("Content"))
         column.pack_start(cell, True)
         column.add_attribute(cell, "text", 2)
         self.lineView.append_column(column)
@@ -145,7 +145,7 @@ class XMLImport(AbstractImporter):
         self.panel.attach(scroll2, 0, 6, 1, 10, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
-        but = Gtk.Button(label="Import")
+        but = Gtk.Button(label=_("Import"))
         but.show()
         but.connect("clicked", self.import_file)
         self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -171,7 +171,7 @@ class XMLImport(AbstractImporter):
                 selectedMessage = message
 
         if selectedMessage == None:
-            self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
+            self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum ?"))
             return
 
         self.displayMessage(selectedMessage)
@@ -184,10 +184,10 @@ class XMLImport(AbstractImporter):
 
         # We ask the confirmation
         dialog = Gtk.MessageDialog(None,
-                               Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                               Gtk.MessageType.QUESTION,
-                               Gtk.ButtonsType.OK_CANCEL,
-                               "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
+                                   Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK_CANCEL,
+                                   _("Are you sure to import the {0} computed messages in project {1}?").format(str(len(self.messages)), currentProject.getName()))
 
         # Checkbox for session
         vbox = Gtk.VBox()
@@ -195,7 +195,7 @@ class XMLImport(AbstractImporter):
         hbox = Gtk.HBox()
         hbox.show()
         vbox.pack_start(hbox, True, True, 0)
-        isSession = Gtk.CheckButton("Check if this trace is a session")
+        isSession = Gtk.CheckButton(_("Check if this trace is a session"))
         isSession.set_active(False)
         isSession.show()
 #        hbox.pack_start(isSession, True, True, 0)
@@ -215,7 +215,7 @@ class XMLImport(AbstractImporter):
     #+----------------------------------------------
     def selectFiles(self, button, label):
         aFile = ""
-        chooser = Gtk.FileChooserDialog(title="Select one or multiple file", action=Gtk.FileChooserAction.OPEN,
+        chooser = Gtk.FileChooserDialog(title=_("Select one or multiple file"), action=Gtk.FileChooserAction.OPEN,
                                         buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         chooser.set_select_multiple(True)
 
@@ -250,9 +250,9 @@ class XMLImport(AbstractImporter):
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), "xsds/0.1/common.xsd")
             # If we find a version which validates the XML, we parse with the associated function
             if not Workspace.isSchemaValidateXML(xmlSchemaPath, file):
-                logging.error("The specified XML file " + str(file) + " is not valid according to the XSD (" + str(xmlSchemaPath) + ").")
+                logging.error(_("The specified XML file {0} is not valid according to the XSD ({1}).").format(str(file), str(xmlSchemaPath)))
             else:
-                logging.debug("XML file valid according to the XSD schema")
+                logging.debug(_("XML file valid according to the XSD schema"))
 
                 # Parse the XML Document as 0.1 version
                 tree = ElementTree()
@@ -261,7 +261,7 @@ class XMLImport(AbstractImporter):
 
                 for xmlMessage in xmlFile.findall("{" + Project.COMMON_NAMESPACE + "}message"):
                     message = AbstractMessageFactory.loadFromXML(xmlMessage, Project.COMMON_NAMESPACE, "0.1")
-                    logging.debug("XML String data: " + message.getStringData())
+                    logging.debug(_("XML String data: {0}").format(message.getStringData()))
                     self.messages.append(message)
                     self.lineView.get_model().append(None, [str(message.getID()), message.getType(), message.getStringData()])
 

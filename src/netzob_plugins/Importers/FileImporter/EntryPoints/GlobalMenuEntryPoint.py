@@ -40,6 +40,7 @@ from netzob_plugins.Importers.FileImporter.FileImportController import FileImpor
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+

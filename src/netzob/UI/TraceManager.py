@@ -197,9 +197,9 @@ class TraceManager():
     #+----------------------------------------------
     def show_menu_trace(self, event, trace):
         entries = [
-                  (Gtk.STOCK_ADD, self.importTrace, (trace != None)),
-                  (Gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
-       ]
+            (Gtk.STOCK_ADD, self.importTrace, (trace != None)),
+            (Gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
+        ]
 
         self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:

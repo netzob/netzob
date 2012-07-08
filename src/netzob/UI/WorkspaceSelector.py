@@ -42,7 +42,7 @@ class WorkspaceSelector(object):
     def __init__(self):
             # Set up GTK Window
         self.dialog = Gtk.Dialog(title=_("Select Workspace"), flags=0,
-            buttons=None)
+                                 buttons=None)
         self.dialog.set_size_request(600, 220)
         self.dialog.connect("destroy", self.destroy)
 
@@ -55,13 +55,13 @@ class WorkspaceSelector(object):
         bold_tag = textBuffer.create_tag("bold", weight=Pango.Weight.BOLD)
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
-                _("Select a workspace\n\n"), bold_tag)
+                                    _("Select a workspace\n\n"), bold_tag)
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
-                _("Netzob stores your projects in a folder called a workspace.\n"))
+                                    _("Netzob stores your projects in a folder called a workspace.\n"))
         pos = textBuffer.get_end_iter()
         textBuffer.insert_with_tags(pos,
-                _("Choose a workspace folder to use."))
+                                    _("Choose a workspace folder to use."))
         #textBuffer.insert_with_tags(pos,
         #        "Choose a workspace folder to use for this session.")
 
@@ -115,9 +115,9 @@ class WorkspaceSelector(object):
 
     def openBrowseDialog(self, widget, data=None):
         chooser = Gtk.FileChooserDialog(title=_("Select the workspace"),
-                    action=Gtk.FileChooserAction.SELECT_FOLDER,
-                    buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+                                        action=Gtk.FileChooserAction.SELECT_FOLDER,
+                                        buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                                 Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
         if self.selectedWorkspace != None:
             chooser.set_filename(self.selectedWorkspace)

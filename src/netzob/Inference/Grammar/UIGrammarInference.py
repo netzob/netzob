@@ -735,8 +735,8 @@ class UIGrammarInference:
     #+----------------------------------------------
     def build_context_menu_for_transitions(self, event, transition):
         entries = [
-                  (Gtk.STOCK_REMOVE, self.displayPopupToRemoveTransition, (transition != None))
-       ]
+            (Gtk.STOCK_REMOVE, self.displayPopupToRemoveTransition, (transition != None))
+        ]
 
         self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:
@@ -754,9 +754,9 @@ class UIGrammarInference:
     #+----------------------------------------------
     def build_context_menu_for_states(self, event, state):
         entries = [
-                  (Gtk.STOCK_EDIT, self.displayPopupToEditState, (state != None)),
-                  (Gtk.STOCK_REMOVE, self.displayPopupToRemoveState, (state != None))
-       ]
+            (Gtk.STOCK_EDIT, self.displayPopupToEditState, (state != None)),
+            (Gtk.STOCK_REMOVE, self.displayPopupToRemoveState, (state != None))
+        ]
 
         self.menu = Gtk.Menu()
         for stock_id, callback, sensitive in entries:

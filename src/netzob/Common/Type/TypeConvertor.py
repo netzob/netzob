@@ -204,7 +204,7 @@ class TypeConvertor():
                 values["microsecond"] = values["microsecond"][1:]
                 values["microsecond"] += "0" * (6 - len(values["microsecond"]))
             values = dict((k, int(v)) for k, v in values.iteritems()
-                              if not k.startswith("tz"))
+                          if not k.startswith("tz"))
             try:
                 return datetime.datetime(**values)
             except ValueError:

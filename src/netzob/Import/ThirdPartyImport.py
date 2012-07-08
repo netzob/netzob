@@ -94,7 +94,7 @@ class ThirdPartyImport(AbstractImporter):
 
         self.init()
 
-        self.dialog = Gtk.Dialog(title="Import data from third parties", flags=0, buttons=None)
+        self.dialog = Gtk.Dialog(title=_("Import data from third parties"), flags=0, buttons=None)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.dialog.set_size_request(1000, 600)
@@ -112,7 +112,7 @@ class ThirdPartyImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a file
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_selectSource = Gtk.Label(label="Select data source")
+        label_selectSource = Gtk.Label(label=_("Select data source"))
         label_selectSource.show()
 
         entry_filepath = Gtk.Entry()
@@ -130,7 +130,7 @@ class ThirdPartyImport(AbstractImporter):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Select a third party
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        label_thirdParty = Gtk.Label(label="Select a third party")
+        label_thirdParty = Gtk.Label(label=_("Select a third party"))
         label_thirdParty.show()
         self.thirdPartyStore = Gtk.ComboBoxText.new_with_entry()
         self.thirdPartyStore.show()
@@ -141,7 +141,7 @@ class ThirdPartyImport(AbstractImporter):
         for plugin in self.plugins:
             self.thirdPartyStore.append_text(plugin.getName())
 
-        but_import = Gtk.Button("Load")
+        but_import = Gtk.Button(_("Load"))
         but_import.show()
         but_import.connect("clicked", self.load_file, entry_filepath)
 
@@ -171,7 +171,7 @@ class ThirdPartyImport(AbstractImporter):
         self.lineView.connect('button-press-event', self.button_press_on_message)
         cell = Gtk.CellRendererText()
         # Col file descriptor
-        column = Gtk.TreeViewColumn('Message ID')
+        column = Gtk.TreeViewColumn(_("Message ID"))
         column.pack_start(cell, True)
         column.add_attribute(cell, "text", 0)
         self.lineView.append_column(column)
@@ -183,7 +183,7 @@ class ThirdPartyImport(AbstractImporter):
         self.panel.attach(scroll2, 6, 8, 0, 10, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, xpadding=5, ypadding=5)
 
         # Button select packets for further analysis
-        but = Gtk.Button(label="Import")
+        but = Gtk.Button(label=_("Import"))
         but.show()
         but.connect("clicked", self.import_file)
         self.panel.attach(but, 2, 3, 10, 11, xoptions=0, yoptions=0, xpadding=5, ypadding=5)
@@ -209,7 +209,7 @@ class ThirdPartyImport(AbstractImporter):
                 selectedMessage = message
 
         if selectedMessage == None:
-            self.log.warn("Impossible to retrieve the message the user clicked on. Hum ?")
+            self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum ?"))
             return
 
         self.displayMessage(selectedMessage)
@@ -226,15 +226,15 @@ class ThirdPartyImport(AbstractImporter):
                 filesToBeImported.append(filename)
             else:
                 logging.warning(
-                    "Cannot load file {0}, its not a file.".format(filename))
+                    _("Cannot load file {0}, its not a file.").format(filename))
 
         # Start to load
         parsedMessages = self.loadMessagesFromPlugin(self.thirdPartyStore.get_active_text(), filesToBeImported)
 
         if parsedMessages == None:
-            logging.warning("Impossible to find a plugin to import data from.")
+            logging.warning(_("Impossible to find a plugin to import data from."))
         else:
-            logging.debug("A number of {0} messages were extracted.".format(len(parsedMessages)))
+            logging.debug(_("A number of {0} messages were extracted.").format(len(parsedMessages)))
             for message in parsedMessages:
                 self.messages.append(message)
                 self.lineView.get_model().append(None, [message.getID(), message.getData()])
@@ -256,10 +256,10 @@ class ThirdPartyImport(AbstractImporter):
 
         # We ask the confirmation
         dialog = Gtk.MessageDialog(None,
-                               Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                               Gtk.MessageType.QUESTION,
-                               Gtk.ButtonsType.OK_CANCEL,
-                               "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
+                                   Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.QUESTION,
+                                   Gtk.ButtonsType.OK_CANCEL,
+                                   "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
 
         # Checkbox for session
         vbox = Gtk.VBox()
@@ -267,7 +267,7 @@ class ThirdPartyImport(AbstractImporter):
         hbox = Gtk.HBox()
         hbox.show()
         vbox.pack_start(hbox, True, True, 0)
-        isSession = Gtk.CheckButton("Check if this trace is a session")
+        isSession = Gtk.CheckButton(_("Check if this trace is a session"))
         isSession.set_active(False)
         isSession.show()
 #        hbox.pack_start(isSession, True, True, 0)
@@ -287,7 +287,7 @@ class ThirdPartyImport(AbstractImporter):
     #+----------------------------------------------
     def selectFiles(self, button, label):
         aFile = ""
-        chooser = Gtk.FileChooserDialog(title="Select one or multiple file", action=Gtk.FileChooserAction.OPEN,
+        chooser = Gtk.FileChooserDialog(title=_("Select one or multiple file"), action=Gtk.FileChooserAction.OPEN,
                                         buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         chooser.set_select_multiple(True)
 

@@ -486,7 +486,7 @@ class Menu(object):
 
         # We verify the project name doesn't already exist
         found = False
-        for project in  self.netzob.getCurrentWorkspace().getProjects():
+        for project in self.netzob.getCurrentWorkspace().getProjects():
             if project.getName() == projectName:
                 found = True
         if found:

@@ -192,7 +192,7 @@ class OpenChannelTransition(AbstractTransition):
 
         i = self.maxNumberOfAttempt
         j = 1
-        while (not abstractionLayer.isConnected()  and i > 0):
+        while (not abstractionLayer.isConnected() and i > 0):
             time.sleep(int(self.connectionTime) / 1000)
             abstractionLayer.connect()
             if abstractionLayer.isConnected():

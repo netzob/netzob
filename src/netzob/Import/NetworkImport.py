@@ -260,8 +260,8 @@ class NetworkImport(AbstractImporter):
 
         # We ask the confirmation
         md = Gtk.MessageDialog(None,
-            Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
-            Gtk.ButtonsType.OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
+                               Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION,
+                               Gtk.ButtonsType.OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
 #        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
         resp = md.run()
         md.destroy()
