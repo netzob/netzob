@@ -39,6 +39,7 @@ from netzob_plugins.Importers.FileImporter.FileImportController import FileImpor
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -54,8 +55,8 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
 
     def getMenuEntries(self):
         menuEntries = [
-                       (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
-                       ]
+            (Menu.PATH_PROJECT_IMPORTTRACES + "/" + _("Import from File"), None, self.executeAction, 0, None)
+        ]
         return menuEntries
 
     def executeAction(self, widget, data):

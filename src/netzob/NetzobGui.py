@@ -190,7 +190,7 @@ class NetzobGui(gtk.Window):
     #+----------------------------------------------
     def updateCurrentPanel(self):
         nameTab = (self.notebook.get_tab_label_text(
-                self.notebook.get_nth_page(self.notebook.get_current_page())))
+            self.notebook.get_nth_page(self.notebook.get_current_page())))
         for page in self.pageList:
             if page[0] == nameTab:
                 page[1].update()
@@ -208,8 +208,8 @@ class NetzobGui(gtk.Window):
         questionMsg = (_("Do you want to save the current project (%s)") %
                        self.getCurrentProject().getName())
         md = (gtk.MessageDialog(
-                None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg))
+            None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, questionMsg))
         result = md.run()
         md.destroy()
         if result == gtk.RESPONSE_YES:
@@ -258,7 +258,7 @@ class NetzobGui(gtk.Window):
     def getCurrentNotebookPage(self):
         res = None
         nameTab = (self.notebook.get_tab_label_text(self.notebook.get_nth_page(
-                    self.notebook.get_current_page())))
+            self.notebook.get_current_page())))
         for page in self.pageList:
             if page[0] == nameTab:
                 res = page[1]

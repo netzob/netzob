@@ -183,7 +183,7 @@ class AbstractionLayer():
             return (symbol, receivedData)
         else:
             if len(self.manipulatedSymbols) > nbMaxAttempts:
-                if  self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == EmptySymbol.TYPE or self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == UnknownSymbol.TYPE:
+                if self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == EmptySymbol.TYPE or self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == UnknownSymbol.TYPE:
                     self.log.warn("Consider client has disconnected since no valid symbol received after " + str(nbMaxAttempts) + " attempts")
                     return (None, None)
 

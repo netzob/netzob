@@ -2204,11 +2204,11 @@ class UImodelization:
 
     def displayPopupToEditSymbol(self, event, symbol):
         dialog = gtk.MessageDialog(
-        None,
-        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-        gtk.MESSAGE_QUESTION,
-        gtk.BUTTONS_OK,
-        None)
+            None,
+            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_OK,
+            None)
         dialog.set_markup(_("<b>Please enter the name of the symbol :</b>"))
         #create the text input field
         entry = gtk.Entry()
@@ -2244,8 +2244,7 @@ class UImodelization:
     def displayPopupToCreateSymbol(self, event, symbol):
 
         #base this on a message dialog
-        dialog = gtk.MessageDialog(
-                                   None,
+        dialog = gtk.MessageDialog(None,
                                    gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                                    gtk.MESSAGE_QUESTION,
                                    gtk.BUTTONS_OK,

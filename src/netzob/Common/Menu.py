@@ -170,7 +170,7 @@ class Menu(object):
             (Menu.PATH_HELP, None, None, 0, "<LastBranch>"),
             (Menu.PATH_HELP_HELPCONTENT, None, None, 0, None),
             (Menu.PATH_HELP_ABOUT, None, self.aboutDialogAction, 0, None),
-            ]
+        ]
         self.computeMenuBar(self.netzob)
 
     def update(self):
@@ -508,7 +508,7 @@ class Menu(object):
 
         # We verify the project name doesn't already exist
         found = False
-        for project in  self.netzob.getCurrentWorkspace().getProjects():
+        for project in self.netzob.getCurrentWorkspace().getProjects():
             if project.getName() == projectName:
                 found = True
         if found:

@@ -256,10 +256,10 @@ class ThirdPartyImport(AbstractImporter):
 
         # We ask the confirmation
         dialog = gtk.MessageDialog(None,
-                               gtk.DIALOG_DESTROY_WITH_PARENT,
-                               gtk.MESSAGE_QUESTION,
-                               gtk.BUTTONS_OK_CANCEL,
-                               "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
+                                   gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_QUESTION,
+                                   gtk.BUTTONS_OK_CANCEL,
+                                   "Are you sure to import the " + str(len(self.messages)) + " computed messages in project " + currentProject.getName() + ".")
 
         # Checkbox for session
         vbox = gtk.VBox()

@@ -331,8 +331,8 @@ class IpcImport(AbstractImporter):
 
         # We ask the confirmation
         md = gtk.MessageDialog(None,
-            gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
+                               gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION,
+                               gtk.BUTTONS_OK_CANCEL, (_("Are you sure to import the %s selected packets in project %s?") % (str(len(messages)), currentProject.getName())))
 #        md.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         resp = md.run()
         md.destroy()
