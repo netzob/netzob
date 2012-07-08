@@ -88,15 +88,15 @@ class Menu(object):
       <menuitem action='Save' />
       <menuitem action='SessionManager' />
       <menu action='ImportTraces'>
-	<menuitem action='ImportNetwork' />
-	<menuitem action='ImportIPCFlows' />
-	<menuitem action='ImportPcap' />
-	<menuitem action='ImportXML' />
-	<menuitem action='Import3p' />
+        <menuitem action='ImportNetwork' />
+        <menuitem action='ImportIPCFlows' />
+        <menuitem action='ImportPcap' />
+        <menuitem action='ImportXML' />
+        <menuitem action='Import3p' />
       </menu>
       <menu action='Export'>
-	<menuitem action='ExportXML' />
-	<menuitem action='ExportText' />
+        <menuitem action='ExportXML' />
+        <menuitem action='ExportText' />
       </menu>
     </menu>
     <menu action='View'>
@@ -152,7 +152,6 @@ class Menu(object):
         item.set_property('hide-if-empty', False)
         self.actiongroup.add_action(item)
 
-
         self.actiongroup.add_toggle_actions([
             ("DisplaySymbolStructure", None, _("Display symbol structure"), None, None, self.displaySymbolStructureAction),
             ("DisplayMessages", None, _("Display messages"), None, None, self.displayMessagesAction),
@@ -163,7 +162,7 @@ class Menu(object):
         self.uimanager = Gtk.UIManager()
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_string(self.ui_desc)
-        
+
     def update(self):
         self.uimanager.get_widget("/MenuBar/Workspace/Create").set_sensitive(True)
         self.uimanager.get_widget("/MenuBar/Workspace/ImportProject").set_sensitive(True)
@@ -187,7 +186,7 @@ class Menu(object):
             self.uimanager.get_widget("/MenuBar/View/DisplayProperties").set_sensitive(False)
             self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").set_sensitive(False)
             self.uimanager.get_widget("/MenuBar/View/DisplaySymbolStructure").set_sensitive(False)
-            
+
         else:
             # Activate everything
             self.uimanager.get_widget("/MenuBar/Project/Save").set_sensitive(True)
@@ -206,7 +205,7 @@ class Menu(object):
         # Update the list of project
         for i in switchProject.get_children():
             switchProject.remove(i)
-        
+
         availableProjectsName = self.netzob.getCurrentWorkspace().getNameOfProjects()
         for (projectName, projectFile) in availableProjectsName:
             projectEntry = Gtk.MenuItem(projectName)
@@ -262,7 +261,7 @@ class Menu(object):
         self.netzob.destroy(widget)
 
     def setDisplaySearchViewActiveStatus(self, status):
-         self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").\
+        self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").\
             set_active(True)
 
     #+----------------------------------------------

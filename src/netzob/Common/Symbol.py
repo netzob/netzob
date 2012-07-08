@@ -865,7 +865,7 @@ class Symbol(AbstractSymbol):
         self.butDataCarvingHandle = None
         treeviewResSelection = treeview.get_selection()
         treeviewResSelection.connect("changed",
-                self.envDependenciesResultSelected_cb, treeview, but)
+                                     self.envDependenciesResultSelected_cb, treeview, but)
         vbox.pack_start(but, False, False, 0)
 
         return vbox

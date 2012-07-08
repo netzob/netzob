@@ -55,8 +55,7 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
         self.netzob = netzob
 
     def getUIDefinition(self):
-        uiDefinition = \
-        """
+        uiDefinition = """
         <ui>
         <menubar name='MenuBar'>
             <menu action='Project'>
@@ -68,13 +67,12 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
         </ui>
         """
         return uiDefinition
-    
+
     def getActions(self):
         actions = [
             ("ImportFile", None, _("Import from File"), None,
-                    None, self.executeAction)]
+             None, self.executeAction)]
         return actions
 
     def executeAction(self, widget, data=None):
         FileImportController(self.netzob)
-

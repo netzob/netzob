@@ -44,6 +44,7 @@ from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob_plugins.Importers.FileImporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
 from netzob_plugins.Importers.FileImporter.FileImportController import FileImportController
 
+
 #+---------------------------------------------------------------------------+
 #| FileImporter: Import messages from files
 #+---------------------------------------------------------------------------+
