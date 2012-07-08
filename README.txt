@@ -42,6 +42,10 @@ Dependencies:
 * python-sphinx
 * python-setuptools
 * graphviz
+* gir1.2-gtk-3.0
+* gir1.2-glib-2.0
+* python-gobject
+* python-gi
 
 Recommends:
 
@@ -56,7 +60,8 @@ Or, on Debian-like operating systems:
 
 $ sudo apt-get install python python-ptrace python-matplotlib strace lsof \
   python-pcapy python-bitarray python-dev python-lxml libjs-sphinxdoc     \
-  python-sphinx python-setuptools graphviz python-babel
+  python-sphinx python-setuptools graphviz python-babel gir1.2-gtk-3.0 \
+  gir1.2-glib-2.0 python-gobject python-gi
 
 And then, 
 
