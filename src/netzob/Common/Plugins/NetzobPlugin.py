@@ -103,6 +103,7 @@ class NetzobPlugin(object):
         if os.path.isdir(pluginPath):
             return pluginPath
         else:
+            logging.warning("The computed path ({0}) is not a valid directory.".format(pluginPath))
             return None
 
     @classmethod
