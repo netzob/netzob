@@ -41,19 +41,21 @@ from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.OSpyImporter.OSpyImporterController import OSpyImporterController
 
-class OSpyImporterPlugin(NetzobPluginProperties):
-    """OSPyImporter : Provide the possibility to import messages
-       from any binary or ascii file."""
 
-    __plugin_name__ = "FileImporter"
+class OSpyImporterPlugin(NetzobPluginProperties):
+    """OSpyImporter : Provides the possibility to import messages
+       from OSpy project file."""
+
+    __plugin_name__ = "OSpyImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages "
-                                    + "from any binary or ascii file.")
+    __plugin_description__ = _("Provides the possibility to import messages "
+                                    + "from OSpy project file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     def __init__(self, netzob):
         super(OSpyImporterPlugin, self).__init__(netzob)
-        self.entryPoints = [ImportMenuExtension(netzob, OSpyImporterController,
+        self.controller = OSpyImporterController(netzob, self)
+        self.entryPoints = [ImportMenuExtension(netzob, self.controller,
                                 "ImportOSpy", _("Import from oSpy file"))]
 
     def getEntryPoints(self):

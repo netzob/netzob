@@ -41,15 +41,16 @@ from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractI
 from netzob_plugins.Importers.OSpyImporter.OSpyImporter import OSpyImporter
 from netzob_plugins.Importers.OSpyImporter.OSpyImporterView import OSpyImporterView
 
+
 class OSpyImporterController(AbstractImporterController):
     COLUMN_ID = 1
     COLUMN_SELECTED = 0
 
-    def __init__(self, netzob):
-        super(OSpyImporterController, self).__init__(netzob)
+    def __init__(self, netzob, plugin):
+        super(OSpyImporterController, self).__init__(netzob, plugin)
         self.model = OSpyImporter(self.netzob.getCurrentWorkspace(),
-                                  self.currentProject)
-        self.view = OSpyImporterView(self)
+                                  self.getCurrentProject())
+        self.view = OSpyImporterView(plugin, self)
 
     def run(self):
         self.view.run()
