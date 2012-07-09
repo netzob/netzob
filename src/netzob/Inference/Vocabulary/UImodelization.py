@@ -1587,6 +1587,8 @@ class UImodelization:
 
         # Create the dialog
         dialog = Gtk.Dialog(title=_("Properties of message ") + str(message.getID()), flags=0, buttons=None)
+        dialog.set_default_size(500, 300)
+
         ## ListStore format : (str=key, str=type, str=value)
         treeview = Gtk.TreeView(Gtk.ListStore(str, str, str))
         treeview.set_size_request(500, 300)

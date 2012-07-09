@@ -72,6 +72,7 @@ class SessionManager:
         self.initPanel()
 
         self.dialog = Gtk.Dialog(title=_("Session manager"), flags=0, buttons=None)
+        self.dialog.set_default_size(800, 600)
         self.dialog.show()
         self.dialog.vbox.pack_start(self.getPanel(), True, True, 0)
         self.update()
