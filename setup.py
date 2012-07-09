@@ -36,6 +36,13 @@ from setuptools import setup, Extension, find_packages
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
 
+#+----------------------------------------------------------------------------
+#| Definition of variables
+#+----------------------------------------------------------------------------
+# Path to the resources
+staticResourcesPath = os.path.join("resources", "static")
+netzobStaticResourcesPath = os.path.join(staticResourcesPath, "netzob")
+pluginsStaticResourcesPath = os.path.join(staticResourcesPath, "plugins")
 
 #+----------------------------------------------------------------------------
 #| Definition of the extensions
@@ -80,17 +87,17 @@ setup(
     package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
     ext_modules=[moduleLibNeedleman],
     data_files=[
-        ('share/netzob', ['resources/static/logo.png']),
-        ('share/applications/', ['resources/static/netzob.desktop']),
-        ('share/icons/hicolor/22x22/apps/', ["resources/static/icons/22x22/netzob.png"]),
-        ('share/icons/hicolor/48x48/apps/', ["resources/static/icons/48x48/netzob.png"]),
-        ('share/icons/hicolor/64x64/apps/', ["resources/static/icons/64x64/netzob.png"]),
-        ('share/netzob/defaults', ["resources/static/defaults/repository.xml.default"]),
-        ('share/netzob/defaults', ["resources/static/defaults/logging.conf.default"]),
-        ('share/netzob/xsds/0.1/', ["resources/static/xsds/0.1/Workspace.xsd",
-                                    "resources/static/xsds/0.1/Project.xsd",
-                                    "resources/static/xsds/0.1/common.xsd"]),
-        ("share/locale/fr/LC_MESSAGES/", ["locales/fr/LC_MESSAGES/netzob.mo"])
+        (os.path.join("share", "netzob"), [os.path.join(netzobStaticResourcesPath, "logo.png")]),
+        (os.path.join("share", "applications"), [os.path.join(netzobStaticResourcesPath, "netzob.desktop")]),
+        (os.path.join("share", "icons", "hicolor", "22x22", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "22x22", "netzob.png")]),
+        (os.path.join("share", "icons", "hicolor", "48x48", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "48x48", "netzob.png")]),
+        (os.path.join("share", "icons", "hicolor", "64x64", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "64x64", "netzob.png")]),
+        (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "repository.xml.default")]),
+        (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "logging.conf.default")]),
+        (os.path.join("share", "netzob", "xsds", "0.1"), [os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Workspace.xsd"),
+                                             os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Project.xsd"),
+                                             os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "common.xsd")]),
+        (os.path.join("share", "locale", "fr", "LC_MESSAGES"), [os.path.join(netzobStaticResourcesPath, "locales", "fr", "LC_MESSAGES", "netzob.mo")])
         ],
     scripts=["netzob"],
     install_requires=dependencies,

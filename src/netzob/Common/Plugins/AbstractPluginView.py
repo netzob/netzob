@@ -28,61 +28,30 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import os
-from gettext import gettext as _
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
-import gi
-gi.require_version('Gtk', '3.0')
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
-from netzob.Common.NetzobException import NetzobImportException
 
 
-class FileImporterView(AbstractImporterView):
-    """View of file importer plugin"""
-
-    # Name of the associated glade file
-    GLADE_FILENAME = "FileImportConfigurationWidget.glade"
-
+class AbstractPluginView(object):
+    """Regroup methods any plugins' view must be able to access"""
     def __init__(self, plugin, controller):
-        super(FileImporterView, self).__init__(plugin, controller)
+        self.plugin = plugin
+        self.controller = controller
 
-        # Import and add configuration widget
-        self.builderConfWidget = Gtk.Builder()
-        curDir = os.path.dirname(__file__)
-        self.builderConfWidget.add_from_file(os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", FileImporterView.GLADE_FILENAME))
-        self._getObjects(self.builderConfWidget, ["fileConfigurationBox",
-                                                  "separatorEntry"])
-        self.builderConfWidget.connect_signals(self.controller)
-        self.setDialogTitle(_("Import messages from raw file"))
-        self.setImportConfigurationWidget(self.fileConfigurationBox)
+    def getPlugin(self):
+        """Returns the current plugin definition class
+        @return: the plugin definition"""
+        return self.plugin
 
-        # Configure treeview
-        def add_text_column(text, modelColumn):
-            column = Gtk.TreeViewColumn(text)
-            column.pack_start(cell, True)
-            column.add_attribute(cell, "text", modelColumn)
-            column.set_sort_column_id(modelColumn)
-            self.listTreeView.append_column(column)
-
-        self.listListStore = Gtk.ListStore('gboolean', str, str)
-        self.listTreeView.set_model(self.listListStore)
-        toggleCellRenderer = Gtk.CellRendererToggle()
-        toggleCellRenderer.set_activatable(True)
-        toggleCellRenderer.connect("toggled", self.controller.selectMessage)
-        # Selected column
-        column = Gtk.TreeViewColumn()
-        column.pack_start(toggleCellRenderer, True)
-        column.add_attribute(toggleCellRenderer, "active", 0)
-        self.listTreeView.append_column(column)
-        cell = Gtk.CellRendererText()
-        add_text_column("ID", 1)
-        add_text_column("Contents", 2)
+    def getController(self):
+        """Returns the controller attached to the current plugin
+        @return: the controller"""
+        return self.controller

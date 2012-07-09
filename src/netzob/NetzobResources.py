@@ -31,7 +31,10 @@ import sys
 #| Establishes the path for static resources
 #+---------------------------------------------------------------------------+
 STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob")
-LOCAL_STATIC_DIR = "./resources/static"
+LOCAL_STATIC_DIR = "./resources/static/netzob"
+
+PLUGINS_STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob_plugins")
+LOCAL_PLUGINS_STATIC_DIR = "./resources/static/netzob_plugins"
 
 #+---------------------------------------------------------------------------+
 #| Establishes the path for workspace resources (only used by testing)
@@ -42,4 +45,4 @@ WORKSPACE_DIR = None
 #| Locale's directory
 #+---------------------------------------------------------------------------+
 LOCALES_DIR = os.path.join(sys.exec_prefix, "share/locale")
-LOCAL_LOCALES_DIR = "./locales/"
+LOCAL_LOCALES_DIR = "./resources/static/netzob/locales/"

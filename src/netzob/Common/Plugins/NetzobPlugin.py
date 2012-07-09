@@ -31,6 +31,7 @@
 import logging
 import uuid
 import sys
+import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -43,6 +44,7 @@ import pkg_resources
 from netzob.Common.Plugins.PluginChecker import PluginChecker
 from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
 from netzob.Common.Plugins.PluginDecorators import mandatory
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
 #+---------------------------------------------------------------------------+
@@ -87,6 +89,21 @@ class NetzobPlugin(object):
     @mandatory
     def getEntryPoints(self):
         raise NotImplementedError("The plugin class doesn't implement method 'getEntryPoints'")
+
+    def getNetzobStaticResourcesPath(self):
+        """Computes and returns the path to the static
+        resources associated with netzob"""
+        return ResourcesConfiguration.getStaticResources()
+
+    def getPluginStaticResourcesPath(self):
+        """Computes and returns the path to the static
+        resources associated with the current plugin"""
+        pluginsPath = ResourcesConfiguration.getPluginsStaticResources()
+        pluginPath = os.path.join(pluginsPath, self.getName())
+        if os.path.isdir(pluginPath):
+            return pluginPath
+        else:
+            return None
 
     @classmethod
     def getLoadedInstance(cls):

@@ -28,61 +28,35 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import os
-from gettext import gettext as _
+import logging
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
-import gi
-gi.require_version('Gtk', '3.0')
+
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
-from netzob.Common.NetzobException import NetzobImportException
 
 
-class FileImporterView(AbstractImporterView):
-    """View of file importer plugin"""
+#+---------------------------------------------------------------------------+
+#| AbstractPluginController:
+#|     Regroup methods any plugins' controllers must be able to access
+#+---------------------------------------------------------------------------+
+class AbstractPluginController(object):
 
-    # Name of the associated glade file
-    GLADE_FILENAME = "FileImportConfigurationWidget.glade"
+    def __init__(self, netzob, plugin):
+        self.netzob = netzob
+        self.plugin = plugin
 
-    def __init__(self, plugin, controller):
-        super(FileImporterView, self).__init__(plugin, controller)
+    def getCurrentProject(self):
+        """Computes the current project. It may returns None if no
+        current project is yet loaded.
+        @return: the current project L{netzob.Common.Project:Project}
+        """
+        return self.netzob.getCurrentProject()
 
-        # Import and add configuration widget
-        self.builderConfWidget = Gtk.Builder()
-        curDir = os.path.dirname(__file__)
-        self.builderConfWidget.add_from_file(os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", FileImporterView.GLADE_FILENAME))
-        self._getObjects(self.builderConfWidget, ["fileConfigurationBox",
-                                                  "separatorEntry"])
-        self.builderConfWidget.connect_signals(self.controller)
-        self.setDialogTitle(_("Import messages from raw file"))
-        self.setImportConfigurationWidget(self.fileConfigurationBox)
-
-        # Configure treeview
-        def add_text_column(text, modelColumn):
-            column = Gtk.TreeViewColumn(text)
-            column.pack_start(cell, True)
-            column.add_attribute(cell, "text", modelColumn)
-            column.set_sort_column_id(modelColumn)
-            self.listTreeView.append_column(column)
-
-        self.listListStore = Gtk.ListStore('gboolean', str, str)
-        self.listTreeView.set_model(self.listListStore)
-        toggleCellRenderer = Gtk.CellRendererToggle()
-        toggleCellRenderer.set_activatable(True)
-        toggleCellRenderer.connect("toggled", self.controller.selectMessage)
-        # Selected column
-        column = Gtk.TreeViewColumn()
-        column.pack_start(toggleCellRenderer, True)
-        column.add_attribute(toggleCellRenderer, "active", 0)
-        self.listTreeView.append_column(column)
-        cell = Gtk.CellRendererText()
-        add_text_column("ID", 1)
-        add_text_column("Contents", 2)
+    def getPlugin(self):
+        return self.plugin

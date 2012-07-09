@@ -183,6 +183,13 @@ class ResourcesConfiguration(object):
             return NetzobResources.STATIC_DIR
 
     @staticmethod
+    def getPluginsStaticResources():
+        if (os.path.isdir(NetzobResources.LOCAL_PLUGINS_STATIC_DIR)):
+            return NetzobResources.LOCAL_PLUGINS_STATIC_DIR
+        elif (os.path.isdir(NetzobResources.PLUGINS_STATIC_DIR)):
+            return NetzobResources.PLUGINS_STATIC_DIR
+
+    @staticmethod
     def getWorkspaceFile():
         if NetzobResources.WORKSPACE_DIR == None:
             return ResourcesConfiguration.verifyUserResources()

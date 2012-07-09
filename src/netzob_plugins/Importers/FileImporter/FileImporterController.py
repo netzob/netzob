@@ -50,17 +50,18 @@ from netzob.Common.NetzobException import NetzobImportException
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
 
+
 class FileImporterController(AbstractImporterController):
     """Controller of file importer plugin"""
 
     COLUMN_ID = 1
     COLUMN_SELECTED = 0
 
-    def __init__(self, netzob):
-        super(FileImporterController, self).__init__(netzob)
+    def __init__(self, netzob, plugin):
+        super(FileImporterController, self).__init__(netzob, plugin)
         self.model = FileImporter(self.netzob.getCurrentWorkspace(),
-                                  self.currentProject)
-        self.view = FileImporterView(self)
+                                  self.getCurrentProject())
+        self.view = FileImporterView(plugin, self)
 
     def run(self):
         self.view.run()

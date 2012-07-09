@@ -41,6 +41,7 @@ from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 
+
 class FileImporterPlugin(NetzobPluginProperties):
     """FileImporter : Provide the possibility to import messages
        from any binary or ascii file."""
@@ -53,7 +54,8 @@ class FileImporterPlugin(NetzobPluginProperties):
 
     def __init__(self, netzob):
         super(FileImporterPlugin, self).__init__(netzob)
-        self.entryPoints = [ImportMenuExtension(netzob, FileImporterController,
+        self.controller = FileImporterController(netzob, self)
+        self.entryPoints = [ImportMenuExtension(netzob, self.controller,
                                 "ImportFile", _("Import from raw file"))]
 
     def getEntryPoints(self):

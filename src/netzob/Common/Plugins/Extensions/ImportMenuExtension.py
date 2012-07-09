@@ -38,9 +38,10 @@ from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExten
 #| Local application imports
 #+---------------------------------------------------------------------------+
 
+
 class ImportMenuExtension(GlobalMenuExtension):
 
-    def __init__(self, netzob, controllerClass, actionName, menuText, menuStock=None,
+    def __init__(self, netzob, controller, actionName, menuText, menuStock=None,
                  menuAccel=None, menuTooltip=None):
         super(GlobalMenuExtension, self).__init__()
         self.netzob = netzob
@@ -49,7 +50,7 @@ class ImportMenuExtension(GlobalMenuExtension):
         self.menuStock = menuStock
         self.menuAccel = menuAccel
         self.menuTooltip = menuTooltip
-        self.controllerClass = controllerClass
+        self.controller = controller
 
     def getUIDefinition(self):
         uiDefinition = \
@@ -74,6 +75,4 @@ class ImportMenuExtension(GlobalMenuExtension):
         return actions
 
     def executeAction(self, widget, data=None):
-        controller = self.controllerClass(self.netzob)
-        controller.run()
-
+        self.controller.run()

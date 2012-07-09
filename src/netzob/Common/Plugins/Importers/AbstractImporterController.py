@@ -41,14 +41,15 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
+from netzob.Common.Plugins.AbstractPluginController import AbstractPluginController
 
-class AbstractImporterController(object):
-    """Controller of PCAP importer plugin"""
 
-    def __init__(self, netzob):
-        self.netzob = netzob
+class AbstractImporterController(AbstractPluginController):
+    """Abstract controller for importers plugins"""
+
+    def __init__(self, netzob, plugin):
+        super(AbstractImporterController, self).__init__(netzob, plugin)
         self.log = logging.getLogger(__name__)
-        self.currentProject = self.netzob.getCurrentProject()
         self.selectedPacketCount = 0
 
     def run(self):
@@ -153,7 +154,7 @@ class AbstractImporterController(object):
         selectedMessages = self.selectedMessages
         selectedCount = len(selectedMessages)
         if selectedCount != 0:
-            currentProjectName = self.currentProject.getName()
+            currentProjectName = self.getCurrentProject().getName()
             md = Gtk.MessageDialog(
                     self.view.dialog, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                     Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
