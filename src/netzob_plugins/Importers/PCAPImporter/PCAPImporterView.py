@@ -39,19 +39,23 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
 from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
+
 
 class PCAPImporterView(AbstractImporterView):
     """View of PCAP importer plugin"""
 
-    def __init__(self, controller):
-        super(PCAPImporterView, self).__init__(controller)
+    GLADE_FILENAME = "PCAPImportConfigurationWidget.glade"
+
+    def __init__(self, plugin, controller):
+        super(PCAPImporterView, self).__init__(plugin, controller)
 
         # Import and add configuration widget
         self.builderConfWidget = Gtk.Builder()
         curDir = os.path.dirname(__file__)
-        self.builderConfWidget.add_from_file(os.path.join(curDir, "PCAPImportConfigurationWidget.glade"))
+        gladePath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", PCAPImporterView.GLADE_FILENAME)
+
+        self.builderConfWidget.add_from_file(gladePath)
         self._getObjects(self.builderConfWidget, ["pcapConfigurationBox",
                 "filterEntry", "layerRadioButton2", "layerRadioButton3",
                 "layerRadioButton4"])
@@ -111,7 +115,7 @@ class PCAPImporterView(AbstractImporterView):
     def makeL4ImportTreeView(self):
         self.removeAllTreeViewColumns()
         # Liststore to display layer 4 packets
-        # ID, Selected, Source IP, Destination IP, Protocol, 
+        # ID, Selected, Source IP, Destination IP, Protocol,
         # Source Port, Destination Port, Payload
         self.listListStore = Gtk.ListStore(
                 str, 'gboolean', str, str, str, str, str, str)

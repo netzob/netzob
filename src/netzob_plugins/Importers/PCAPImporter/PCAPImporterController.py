@@ -44,17 +44,18 @@ from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractI
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
 
+
 class PCAPImporterController(AbstractImporterController):
     """Controller of PCAP importer plugin"""
 
     COLUMN_ID = 0
     COLUMN_SELECTED = 1
 
-    def __init__(self, netzob):
-        super(PCAPImporterController, self).__init__(netzob)
+    def __init__(self, netzob, plugin):
+        super(PCAPImporterController, self).__init__(netzob, plugin)
         self.model = PCAPImporter(self.netzob.getCurrentWorkspace(),
-                                  self.currentProject)
-        self.view = PCAPImporterView(self)
+                                  self.getCurrentProject())
+        self.view = PCAPImporterView(plugin, self)
 
     def getImportLayer(self):
         return self.model.importLayer

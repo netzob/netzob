@@ -41,6 +41,7 @@ from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.PCAPImporter.PCAPImporterController import PCAPImporterController
 
+
 class PCAPImporterPlugin(NetzobPluginProperties):
     """PCAPImporter : Provide the possibility to import messages
        from PCAP network capture files"""
@@ -53,7 +54,8 @@ class PCAPImporterPlugin(NetzobPluginProperties):
 
     def __init__(self, netzob):
         super(PCAPImporterPlugin, self).__init__(netzob)
-        self.entryPoints = [ImportMenuExtension(netzob, PCAPImporterController,
+        self.controller = PCAPImporterController(netzob, self)
+        self.entryPoints = [ImportMenuExtension(netzob, self.controller,
                                 "ImportPCAP", _("Import from PCAP file"))]
 
     def getEntryPoints(self):
