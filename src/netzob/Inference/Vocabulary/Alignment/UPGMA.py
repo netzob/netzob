@@ -35,11 +35,14 @@ import logging
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from  netzob.Common.WrapperArgsFactory import WrapperArgsFactory
 
 #+---------------------------------------------------------------------------+
 #| C Imports
 #+---------------------------------------------------------------------------+
-import _libNeedleman
+import _libScoreComputation
+import _libInterface
+
 from netzob.Common.Symbol import Symbol
 import uuid
 import random
@@ -65,7 +68,6 @@ class UPGMA(object):
         self.path = []
         if explodeSymbols == False:
             self.symbols = symbols
-
         else:
             # Create a symbol for each message
             self.symbols = []
@@ -102,21 +104,22 @@ class UPGMA(object):
     def executeClustering(self):
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
 
-        # Find equel messages. Useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
-        ll = len(self.symbols) - 1
-        i_equ = 0
-        while(ll > 0):
-            currentMess = self.symbols[i_equ].getMessages()[0].getReducedStringData()
-            for j in range(ll):
-                if(currentMess == self.symbols[i_equ + j + 1].getMessages()[0].getReducedStringData()):
-                    self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
-                    self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
-                    i_equ -= 1
-                    break
-            ll -= 1
-            i_equ += 1
+#        # Find equel messages. Useful for redundant protocols before doing heavy computations with Needleman (complexity=O(N²) where N is #Symbols)
+#        ll = len(self.symbols) - 1
+#        i_equ = 0
+#        while(ll > 0):
+#            currentMess = self.symbols[i_equ].getMessages()[0].getReducedStringData()
+#            for j in range(ll):
+#                if(currentMess == self.symbols[i_equ + j + 1].getMessages()[0].getReducedStringData()):
+#                    self.mergeEffectiveRowCol(i_equ, i_equ + j + 1)
+#                    self.log.debug("Merge the equal column/line {0} with the column/line {1}".format(str(i_equ), str(j + 1)))
+#                    i_equ -= 1
+#                    break
+#            ll -= 1
+#            i_equ += 1
 
         # Process the UPGMA on symbols
+        self.cb_status(0.0, "Executing Clustering...")
         self.processUPGMA()
 
         # Retrieve the alignment of each symbol and the build the associated regular expression
@@ -139,14 +142,14 @@ class UPGMA(object):
         self.log.debug("Computing the associated matrix")
 
         # Serialize the symbols
-        (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize, self.scores)
-        self.log.debug("Clustering input format " + formatSymbols)
+#        (serialSymbols, formatSymbols) = TypeConvertor.serializeSymbols(self.symbols, self.unitSize, self.scores)
+#        self.log.debug("Clustering input format " + formatSymbols)
 
         # Execute the Clustering part in C
         debug = False
-        logging.debug("Execute the clustering part in C ...")
-        (i_max, j_max, maxScore, scores) = _libNeedleman.getHighestEquivalentGroup(self.doInternalSlick, len(self.symbols), formatSymbols, serialSymbols, self.cb_executionStatus, debug)
-        listScores = TypeConvertor.deserializeScores(self.symbols, scores)
+        wrapper = WrapperArgsFactory("_libScoreComputation.getHighestEquivalentGroup")
+        wrapper.typeList[wrapper.function](self.symbols)
+        (i_max, j_max, maxScore, listScores) = _libScoreComputation.getHighestEquivalentGroup(self.doInternalSlick, self.cb_status, debug, wrapper)
 
         # Retrieve the scores for each association of symbols
         self.scores = {}
@@ -270,8 +273,10 @@ class UPGMA(object):
             orphans = []
             tmp_symbols = []
             # extract orphans
-            for symbol in self.symbols:
+            for i, symbol in zip(range(len(self.symbols)), self.symbols):
                 if len(symbol.getMessages()) == 1:
+                    symbol.emptyScores()  # We reset the scores
+                    symbol.setPos(i)
                     orphans.append(symbol)
             # create a tmp symbols array where symbols will be added once computed
             for symbol in self.symbols:
@@ -330,7 +335,7 @@ class UPGMA(object):
         (serialSymbols, format) = TypeConvertor.serializeSymbols(symbols, self.unitSize, self.scores)
 
         debug = False
-        return _libNeedleman.deserializeGroups(len(symbols), format, serialSymbols, debug)
+        return _libInterface.deserializeGroups(len(symbols), format, serialSymbols, debug)
 
     #+-----------------------------------------------------------------------+
     #| getScores

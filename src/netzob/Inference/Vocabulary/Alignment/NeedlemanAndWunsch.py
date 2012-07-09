@@ -44,6 +44,7 @@ from netzob.Common.NetzobException import NetzobException
 #| C Imports
 #+---------------------------------------------------------------------------+
 import _libNeedleman
+import _libInterface
 
 
 #+---------------------------------------------------------------------------+
@@ -148,7 +149,7 @@ class NeedlemanAndWunsch(object):
         (serialMessages, format) = TypeConvertor.serializeMessages(messages, self.unitSize)
 
         debug = False
-        return _libNeedleman.deserializeMessages(len(messages), format, serialMessages, debug)
+        return _libInterface.deserializeMessages(len(messages), format, serialMessages, debug)
 
     #+-----------------------------------------------------------------------+
     #| smoothAlignment:
@@ -239,8 +240,8 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-#        if len(symbol.getFields()) >= 50:
-#            raise NetzobException("This Python version only supports 100 named groups in regex")
+        if len(symbol.getFields()) >= 100:
+            raise NetzobException("This Python version only supports 100 named groups in regex")
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
@@ -292,17 +293,26 @@ class NeedlemanAndWunsch(object):
         # We try to cluster each symbol
         listEqu = []  # list of thresholds recorded
         emptySymbols = []  # list of all empty symbols
-        clusteringSolution = UPGMA(project, symbols, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+
+        symbolsToCluster = []
+        for s in symbols:
+            if len(s.getMessages()) == 0:
+                emptySymbols.append(s)
+            else:
+                symbolsToCluster.append(s)
+
+        clusteringSolution = UPGMA(project, symbolsToCluster, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
         t1 = time.time()
         self.result = clusteringSolution.executeClustering()
 
         # We optionally handle orphans
         if doOrphanReduction:
             self.result = clusteringSolution.executeOrphanReduction()
+        t2 = time.time()
 
         self.result.extend(preResults)
         self.result.extend(emptySymbols)  # Add the empty symbols (To discuss: can we delete them before?)
-        logging.info("Time of clustering : " + str(time.time() - t1))
+        logging.info("Time of clustering : " + str(t2 - t1))
 
     def getLastResult(self):
         return self.result

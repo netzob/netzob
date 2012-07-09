@@ -30,8 +30,8 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 import sys
-import os
 sys.path.insert(0, 'src/')
+import os
 from setuptools import setup, Extension, find_packages
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
@@ -45,14 +45,69 @@ netzobStaticResourcesPath = os.path.join(staticResourcesPath, "netzob")
 pluginsStaticResourcesPath = os.path.join(staticResourcesPath, "plugins")
 
 #+----------------------------------------------------------------------------
-#| Definition of the extensions
+#| C Extensions
 #+----------------------------------------------------------------------------
-moduleLibNeedleman = Extension('_libNeedleman',
-                               sources=['lib/libNeedleman/libNeedleman.c'])
+# Includes path
+libPath = "lib"
+includesPath = os.path.join(libPath, "includes")
+pyIncludesPath = os.path.join(includesPath, "Py_lib")
+includes = [includesPath, pyIncludesPath]
 
-CMD_CLASS = {
-             'build_manpage': manpage_command
-             }
+# Interface path
+interfacePath = os.path.join(libPath, "interface")
+pyInterfacePath = os.path.join(interfacePath, "Py_lib")
+
+# Needleman path
+needlemanPath = os.path.join(libPath, "libNeedleman")
+pyNeedlemanPath = os.path.join(needlemanPath, "Py_lib")
+
+# ArgsFactories path
+argsFactoriesPath = os.path.join(libPath, "argsFactories")
+
+# Regex path
+regexPath = os.path.join(libPath, "libRegex")
+pyRegexPath = os.path.join(regexPath, "Py_lib")
+
+# Module Needleman
+moduleLibNeedleman = Extension('_libNeedleman',
+#                               extra_compile_args=["-fopenmp"],
+#                               extra_link_args=["-fopenmp"],
+                               sources=[os.path.join(interfacePath, "Interface.c"),
+                                        os.path.join(pyInterfacePath, "libInterface.c"),
+                                        os.path.join(pyNeedlemanPath, "libNeedleman.c"),
+                                        os.path.join(needlemanPath, "Needleman.c"),
+                                        os.path.join(needlemanPath, "scoreComputation.c"),
+                                        os.path.join(argsFactoriesPath, "factory.c"),
+                                        os.path.join(regexPath, "regex.c"),
+                                        os.path.join(regexPath, "manipulate.c")],
+                               include_dirs=includes)
+
+# Module ScoreComputation
+moduleLibScoreComputation = Extension('_libScoreComputation',
+#                               extra_compile_args=["-fopenmp"],
+#                               extra_link_args=["-fopenmp"],
+                               sources=[os.path.join(needlemanPath, "scoreComputation.c"),
+                                        os.path.join(pyNeedlemanPath, "libScoreComputation.c"),
+                                        os.path.join(needlemanPath, "Needleman.c"),
+                                        os.path.join(interfacePath, "Interface.c"),
+                                        os.path.join(pyInterfacePath, "libInterface.c"),
+                                        os.path.join(argsFactoriesPath, "factory.c"),
+                                        os.path.join(regexPath, "regex.c"),
+                                        os.path.join(regexPath, "manipulate.c")],
+                               include_dirs=includes)
+
+# Module Interface
+moduleLibInterface = Extension('_libInterface',
+                               sources=[os.path.join(interfacePath, "Interface.c"),
+                                        os.path.join(pyInterfacePath, "libInterface.c")],
+                               include_dirs=includes)
+
+# Module Regex
+moduleLibRegex = Extension('_libRegex',
+                               sources=[os.path.join(regexPath, "regex.c"),
+                                        os.path.join(pyRegexPath, "libRegex.c"),
+                                        os.path.join(regexPath, "manipulate.c")],
+                               include_dirs=includes)
 
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
@@ -65,6 +120,16 @@ dependencies = [
     'lxml',
 ]
 
+#+----------------------------------------------------------------------------
+#| Extensions in the build operations (create manpage, i18n, ...)
+#+----------------------------------------------------------------------------
+CMD_CLASS = {
+             'build_manpage': manpage_command
+             }
+
+#+----------------------------------------------------------------------------
+#| Activate Babel (i18n) if available
+#+----------------------------------------------------------------------------
 try:
     from babel.messages import frontend as babel
     from distutils.command.build import build
@@ -85,7 +150,7 @@ setup(
     name=release.name,
     packages=find_packages(where='src'),
     package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
-    ext_modules=[moduleLibNeedleman],
+    ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
     data_files=[
         (os.path.join("share", "netzob"), [os.path.join(netzobStaticResourcesPath, "logo.png")]),
         (os.path.join("share", "applications"), [os.path.join(netzobStaticResourcesPath, "netzob.desktop")]),
