@@ -34,6 +34,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 pygtk.require('2.0')
 import os
 from netzob import release
+from gettext import gettext as _
 
 
 #+----------------------------------------------
@@ -51,8 +52,11 @@ class AboutDialog:
             about.set_comments("--{0}--\n{1}".format(release.versionName, release.description))
         else:
             about.set_comments(release.description)
+        about.set_license(_("Netzob is released under the terms of the {0} license.\n\n{1}").format(release.licenseName, release.license))
         about.set_website(release.url)
         about.set_translator_credits(release.translator_credits)
+        about.set_authors(release.contributors)
+
         logoPath = os.path.join(ResourcesConfiguration.getStaticResources(), "logo.png")
         about.set_logo(gtk.gdk.pixbuf_new_from_file(logoPath))
         about.run()
