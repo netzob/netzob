@@ -66,6 +66,17 @@ platforms = "Linux_x86, Linux_x64"
 author = "Georges Bossert, Frédéric Guihéry"
 
 #+---------------------------------------------------------------------------+
+#| Contributor names
+#+---------------------------------------------------------------------------+
+contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
+                "Frédéric Guihéry <frederic.guihery@amossys.fr>",
+                "Olivier Tétard <olivier.tetard@amossys.fr>",
+                "Goulven Guiheux <goulven.guiheux@amossys.fr>",
+                "Maxime Olivier <maxime@miskin.fr>",
+                "Alexandre Pigné <alex@freesenses.net>",
+                "Franck Roland <franck.l.roland@gmail.com>"]
+
+#+---------------------------------------------------------------------------+
 #| Email to contact authors
 #+---------------------------------------------------------------------------+
 author_email = "contact@netzob.org"
@@ -83,7 +94,7 @@ download_url = "http://www.netzob.org/download"
 #+---------------------------------------------------------------------------+
 #| Translators
 #+---------------------------------------------------------------------------+
-translator_credits = """Français : Olivier Tétard <olivier.tetard@miskin.fr>"""
+translator_credits = """Français : Olivier Tétard <olivier.tetard@amossys.fr>"""
 
 #+---------------------------------------------------------------------------+
 #| Keywords to describe the application
