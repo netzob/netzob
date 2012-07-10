@@ -38,6 +38,7 @@ import uuid
 #+----------------------------------------------
 from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
+
 #+----------------------------------------------
 #| TreeTypeStructureView:
 #|     update and generates the treeview and its
@@ -106,4 +107,3 @@ class TreeTypeStructureView(AbstractViewGenerator):
 
     def setScrollLib(self, scroll):
         self.scroll = scroll
-

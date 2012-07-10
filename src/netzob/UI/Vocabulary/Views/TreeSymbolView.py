@@ -38,6 +38,7 @@ import uuid
 #+----------------------------------------------
 from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
+
 #+----------------------------------------------
 #| TreeSymbolView:
 #+----------------------------------------------

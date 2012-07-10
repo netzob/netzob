@@ -42,6 +42,7 @@ import uuid
 from netzob.Common.NetzobException import NetzobException
 from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
+
 #+----------------------------------------------
 #| TreeMessageView:
 #|     update and generates the treeview and its

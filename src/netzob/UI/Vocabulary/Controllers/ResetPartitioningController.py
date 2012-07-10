@@ -80,4 +80,3 @@ class ResetPartitioningController:
         for symbol in symbols:
             symbol.resetPartitioning(self.netzob.getCurrentProject())
         self.vocabularyController.update()
-

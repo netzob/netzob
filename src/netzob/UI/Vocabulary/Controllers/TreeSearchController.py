@@ -43,6 +43,7 @@ from netzob.Common.Field import Field
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
+
 #+----------------------------------------------
 #| TreeSearchController:
 #|     update and generates the treeview and its

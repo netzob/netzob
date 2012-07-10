@@ -58,6 +58,7 @@ from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
 from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
+
 #+----------------------------------------------
 #| TreeMessageController:
 #|     update and generates the treeview and its

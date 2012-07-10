@@ -49,6 +49,7 @@ from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Symbol import Symbol
 
+
 #+----------------------------------------------
 #| TreeSymbolController:
 #+----------------------------------------------

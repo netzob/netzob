@@ -38,6 +38,7 @@ import uuid
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
+
 #+---------------------------------------------------------------------------+
 #| TreePropertiesView:
 #|     update and generates the treeview and its

@@ -75,6 +75,7 @@ from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.UI.Vocabulary.Views.OptionalViews import OptionalViews
 from netzob.Inference.Vocabulary.DataCarver import DataCarver
 
+
 #+----------------------------------------------
 #| VocabularyController:
 #|     GUI for vocabulary inference
