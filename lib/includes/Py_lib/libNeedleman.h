@@ -36,6 +36,11 @@
 #include "Needleman.h"
 
 //+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg);
+
+//+---------------------------------------------------------------------------+
 //| py_alignMessages : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
 PyObject* py_alignMessages(PyObject* self, PyObject* args);

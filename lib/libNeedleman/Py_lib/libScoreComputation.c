@@ -37,11 +37,10 @@
 #include <malloc.h>
 #endif
 
-
-
 static PyMethodDef libScoreComputation_methods[] = {
-  {"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
-  {NULL, NULL}
+		{"getBID", py_getBID, METH_NOARGS},
+		{"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
+		{NULL, NULL}
 };
 
 //+---------------------------------------------------------------------------+
@@ -50,6 +49,21 @@ static PyMethodDef libScoreComputation_methods[] = {
 PyMODINIT_FUNC init_libScoreComputation(void) {
   (void) Py_InitModule("_libScoreComputation", libScoreComputation_methods);
 }
+
+//+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg) {
+#ifdef BID
+#define STR(x) x
+	char str_bid[32];
+	strcpy(str_bid,STR(BID));
+	return Py_BuildValue("s", str_bid);
+#endif
+	printf("The macro which established the BID has not been defined when compiling the lib, default one will be returned.");
+	return Py_BuildValue("s", "0000000000");
+}
+
 //+---------------------------------------------------------------------------+
 //| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
 //+---------------------------------------------------------------------------+

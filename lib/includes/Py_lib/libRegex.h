@@ -31,6 +31,12 @@
 #include "regex.h"
 #include "manipulate.h"
 
+
+//+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg);
+
 /*
 *   Initializes the module for python
 *

@@ -24,33 +24,53 @@
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
-import os.path
-import sys
 
-#+---------------------------------------------------------------------------+
-#| Establishes the path for static resources
-#+---------------------------------------------------------------------------+
-STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob")
-LOCAL_STATIC_DIR = "./resources/static/netzob"
+#+----------------------------------------------------------------------------
+#| Global Imports
+#+----------------------------------------------------------------------------
+import os
+import fileinput
 
-PLUGINS_STATIC_DIR = os.path.join(sys.exec_prefix, "share/netzob_plugins")
-LOCAL_PLUGINS_STATIC_DIR = "./resources/static/netzob_plugins"
-
-#+---------------------------------------------------------------------------+
-#| Establishes the path for workspace resources (only used by testing)
-#+---------------------------------------------------------------------------+
-WORKSPACE_DIR = None
-
-#+---------------------------------------------------------------------------+
-#| Locale's directory
-#+---------------------------------------------------------------------------+
-LOCALES_DIR = os.path.join(sys.exec_prefix, "share/locale")
-LOCAL_LOCALES_DIR = "./resources/static/netzob/locales/"
+from distutils.command.build_py import build_py
 
 
-#+---------------------------------------------------------------------------+
-#| Unique Binary Identifier (DO NOT EDIT ITS VALUE)
-#| Warning, this variable is automatically updated in the building process.
-#| None : It's the copied version of this file which will be edited not this one.
-#+---------------------------------------------------------------------- -----+
-BID = "$BID"
+class pybuild_command(build_py):
+    """Specialized builder for Netzob's python source file"""
+
+    def getBID(self):
+        """Retrieves from the definition of the C building process,
+        the macros which include the definition of the BID.
+        @return the BID is it exists (or None if not)"""
+
+        for ext in self.distribution.ext_modules:
+            for macro in ext.define_macros:
+                if macro[0] != None and macro[0] == "BID" and macro[1] != None:
+                    return macro[1]
+        return None
+
+    def build_module(self, module, module_file, package):
+        result = build_py.build_module(self, module, module_file, package)
+
+        if module_file == os.path.join("src", "netzob", "NetzobResources.py"):
+            # Re-compute the path to the output file
+            if isinstance(package, str):
+                package = package.split('.')
+            elif not isinstance(package, (list, tuple)):
+                raise TypeError(
+                      "'package' must be a string (dot-separated), list, or tuple")
+            outfile = self.get_module_outfile(self.build_lib, package, module)
+            self.updateFileWithBID(outfile, self.getBID())
+
+        return result
+
+    def updateFileWithBID(self, file, bid):
+        """Read the given file and rewrite it
+        with the provided BID."""
+        print "Update {0} with BID = {1}".format(file, bid)
+        rFile = open(file, "r")
+        initialContent = rFile.read()
+        rFile.close()
+
+        wFile = open(file, "w")
+        wFile.write(initialContent.replace('BID = "$BID"', 'BID = {0}'.format(bid)))
+        wFile.close()

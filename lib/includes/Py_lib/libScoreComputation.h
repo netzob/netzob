@@ -37,6 +37,11 @@
 #include "scoreComputation.h"
 
 //+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg);
+
+//+---------------------------------------------------------------------------+
 //| py_getHighestEquivalentGroup : Python wrapper for getHighestEquivalentGroup
 //+---------------------------------------------------------------------------+
 PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args);

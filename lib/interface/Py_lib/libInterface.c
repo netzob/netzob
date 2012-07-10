@@ -43,10 +43,10 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *symbols, Bool debug
 PyObject* py_deserializeSymbols(PyObject* self, PyObject* args);
 
 static PyMethodDef libInterface_methods[] = {
-  {"deserializeMessages", py_deserializeMessages, METH_VARARGS},
-  {"deserializeGroups", py_deserializeGroups, METH_VARARGS},
-  {"deserializeSymbols",py_deserializeSymbols, METH_VARARGS},
-  {NULL, NULL}
+		{"deserializeMessages", py_deserializeMessages, METH_VARARGS},
+		{"deserializeGroups", py_deserializeGroups, METH_VARARGS},
+		{"deserializeSymbols",py_deserializeSymbols, METH_VARARGS},
+		{NULL, NULL}
 };
 //+---------------------------------------------------------------------------+
 //| initlibInterface : Python will use this function to init the module
@@ -54,6 +54,8 @@ static PyMethodDef libInterface_methods[] = {
 PyMODINIT_FUNC init_libInterface(void) {
   (void) Py_InitModule("_libInterface", libInterface_methods);
 }
+
+
 //+---------------------------------------------------------------------------+
 //| callbackStatus : displays the status or call python wrapper is available
 //+---------------------------------------------------------------------------+

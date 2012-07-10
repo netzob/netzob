@@ -40,9 +40,10 @@
 
 
 static PyMethodDef libNeedleman_methods[] = {
-  {"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
-  {"alignMessages", py_alignMessages, METH_VARARGS},
-  {NULL, NULL}
+		{"getBID", py_getBID, METH_NOARGS},
+		{"alignTwoMessages", py_alignTwoMessages, METH_VARARGS},
+		{"alignMessages", py_alignMessages, METH_VARARGS},
+		{NULL, NULL}
 };
 
 //+---------------------------------------------------------------------------+
@@ -50,6 +51,20 @@ static PyMethodDef libNeedleman_methods[] = {
 //+---------------------------------------------------------------------------+
 PyMODINIT_FUNC init_libNeedleman(void) {
   (void) Py_InitModule("_libNeedleman", libNeedleman_methods);
+}
+
+//+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg) {
+#ifdef BID
+#define STR(x) x
+	char str_bid[32];
+	strcpy(str_bid,STR(BID));
+	return Py_BuildValue("s", str_bid);
+#endif
+	printf("The macro which established the BID has not been defined when compiling the lib, default one will be returned.");
+	return Py_BuildValue("s", "0000000000");
 }
 
 //+---------------------------------------------------------------------------+

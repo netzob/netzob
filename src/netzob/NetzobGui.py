@@ -81,11 +81,6 @@ class NetzobGui(Gtk.Window):
             logging.exception("setlocale failed, resetting to C")
             locale.setlocale(locale.LC_ALL, "C")
 
-        (status, version) = DepCheck.test_lxml()
-        if status == False:
-            logging.fatal("Version of python-lxml ({0}) is too old for Netzob. Please install a recent version (>= 2.3)".format(version))
-            sys.exit()
-
         # First we initialize and verify all the resources
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")

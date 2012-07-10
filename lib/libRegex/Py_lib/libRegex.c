@@ -31,8 +31,9 @@
 PyObject *exception = NULL;
 
 static PyMethodDef regex_methods[] = {
-  {"match", py_match, METH_VARARGS},
-  {NULL, NULL}
+		{"getBID", py_getBID, METH_NOARGS},
+		{"match", py_match, METH_VARARGS},
+		{NULL, NULL}
 };
 //+---------------------------------------------------------------------------+
 //| initlibRegex : Python will use this function to init the module
@@ -46,6 +47,20 @@ PyMODINIT_FUNC init_libRegex(void) {
         exception = Py_BuildValue("s", "_libRegex.error");
     #endif
         PyDict_SetItemString(d, "error", exception);
+}
+
+//+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg) {
+#ifdef BID
+#define STR(x) x
+	char str_bid[32];
+	strcpy(str_bid,STR(BID));
+	return Py_BuildValue("s", str_bid);
+#endif
+	printf("The macro which established the BID has not been defined when compiling the lib, default one will be returned.");
+	return Py_BuildValue("s", "0000000000");
 }
 
 

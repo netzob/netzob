@@ -60,8 +60,15 @@ except:
 
 import netzob.NetzobGui as NetzobGui
 from netzob import release
+from netzob.Common.DepCheck import DepCheck
 
 if __name__ == "__main__":
+
+    # Starting the dependency checker
+    if not DepCheck.checkRequiredDependency():
+        logging.fatal("Some required dependency are not available and prevent netzob from starting.")
+        sys.exit()
+
     GObject.threads_init() # for handling concurrent GUI access from threads
 
     netzob = NetzobGui.NetzobGui()
