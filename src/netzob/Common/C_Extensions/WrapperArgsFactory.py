@@ -48,8 +48,5 @@ class WrapperArgsFactory:
 
     def getHighestEquivalentGroup(self, symbols):
         self.args = []
-#        Symbols must contain identical message
         for s in symbols:
-            for m in s.getMessages():
-                self.args.append(WrapperMessage(m, s))
-                break
+            self.args.append(WrapperMessages(s.getMessages()[0], s))
