@@ -74,7 +74,7 @@ class DepCheck(object):
                     logging.error("The loaded libNeedleman library is deprecated, please rebuild it.")
                     return False
         except AttributeError:
-            logging.error("The _libNeedleman imported ({0}) is not the expected one and do not provide all the required methods.", pathToImportedLib)
+            logging.error("The _libNeedleman imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
 
         # Verify we can load the lib ScoreComputation
@@ -98,7 +98,7 @@ class DepCheck(object):
                     logging.error("The loaded libScoreComputation library is deprecated, please rebuild it.")
                     return False
         except AttributeError:
-            logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.", pathToImportedLib)
+            logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
 #
 #        # Verify we can load the lib Interface
@@ -141,7 +141,7 @@ class DepCheck(object):
                     return False
             return True
         except AttributeError:
-            logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.", pathToImportedLib)
+            logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
 
     @staticmethod
