@@ -68,17 +68,13 @@ class SequenceAlignmentController:
     def initCallbacks(self):
         pass
 
-    def sequenceAlignmentOnSpecifiedSymbols(self, widget, symbols):
-        # Execute the process of alignment (show the gui...)
-        self.sequenceAlignment(symbols)
-
     #+----------------------------------------------
     #| sequenceAlignment:
     #|   Parse the traces and store the results
     #+----------------------------------------------
     def sequenceAlignment(self, symbols):
-        self.vocabularyController.clear()
-        self.vocabularyController.update()
+#        self.vocabularyController.clear()
+#        self.vocabularyController.update()
 
         dialog = Gtk.Dialog(title=_("Sequence alignment"), flags=0, buttons=None)
         panel = Gtk.Table(rows=5, columns=3, homogeneous=False)
@@ -133,7 +129,7 @@ class SequenceAlignmentController:
             butdoInternalSlick.set_active(False)
         butdoInternalSlick.connect("toggled", self.activeInternalSlickRegexes)
         butdoInternalSlick.show()
-        panel.attach(but, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+        panel.attach(butdoInternalSlick, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 
         # Progress bar
         self.progressbarAlignment = NetzobProgressBar()
@@ -183,8 +179,8 @@ class SequenceAlignmentController:
         if len(new_symbols) > 0:
             symbol = new_symbols[0]
             self.selectedSymbol = symbol
-            self.treeMessageGenerator.default(self.selectedSymbol)
-            self.treeSymbolGenerator.default(self.selectedSymbol)
+            self.vocabularyController.treeMessageController.default(self.selectedSymbol)
+            self.vocabularyController.treeSymbolController.default(self.selectedSymbol)
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        GObject.idle_add(self.progressbarAlignment.set_fraction, float(percent))

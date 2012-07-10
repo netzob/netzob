@@ -31,16 +31,17 @@
 from gettext import gettext as _
 import logging
 from gi.repository import Gtk
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-
+from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
 #+----------------------------------------------
 #| TreeSymbolView:
 #+----------------------------------------------
-class TreeSymbolView(object):
+class TreeSymbolView(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
@@ -51,6 +52,7 @@ class TreeSymbolView(object):
         self.treestore = None
         self.scroll = None
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.TreeSymbolView.py')
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Symbols")
         self.buildPanel()
 
     #+----------------------------------------------

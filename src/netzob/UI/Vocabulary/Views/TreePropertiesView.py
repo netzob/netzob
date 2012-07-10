@@ -31,18 +31,19 @@
 from gettext import gettext as _
 import logging
 from gi.repository import Gtk
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-
+from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
 #+---------------------------------------------------------------------------+
 #| TreePropertiesView:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the properties
 #+---------------------------------------------------------------------------+
-class TreePropertiesView(object):
+class TreePropertiesView(AbstractViewGenerator):
 
     #+-----------------------------------------------------------------------+
     #| Constructor:
@@ -50,6 +51,7 @@ class TreePropertiesView(object):
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.TreePropertiesView.py')
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Properties")
         self.treeview = None
         self.treestore = None
         self.scroll = None

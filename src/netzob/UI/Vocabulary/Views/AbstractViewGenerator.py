@@ -51,7 +51,7 @@ class AbstractViewGenerator():
         self.name = name
         self.active = False
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator.py')
+        self.log = logging.getLogger('netzob.UI.Vocabulary.Views.AbstractViewGenerator.py')
 
     #+-----------------------------------------------------------------------+
     #| getWidget

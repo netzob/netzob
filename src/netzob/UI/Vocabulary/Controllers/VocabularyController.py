@@ -33,11 +33,6 @@ from gi.repository import Gtk, Gdk
 from gi.repository import Pango
 import gi
 from gi.repository import GObject
-from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
-from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
-from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
-from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
-from netzob.Inference.Vocabulary.DataCarver import DataCarver
 gi.require_version('Gtk', '3.0')
 import logging
 import copy
@@ -78,7 +73,7 @@ from netzob.Inference.Vocabulary.VariableView import VariableView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Inference.Vocabulary.Searcher import Searcher
 from netzob.UI.Vocabulary.Views.OptionalViews import OptionalViews
-
+from netzob.Inference.Vocabulary.DataCarver import DataCarver
 
 #+----------------------------------------------
 #| VocabularyController:
@@ -90,9 +85,9 @@ class VocabularyController:
     #| Called when user select a new trace
     #+----------------------------------------------
     def new(self):
-        self.treeMessageController.update()
-        self.treeSymbolController.update()
-        self.optionalViews.update()
+        self.treeMessageController.clear()
+        self.treeSymbolController.clear()
+        self.optionalViews.clear()
 
         # Update the combo for choosing the format
         possible_choices = Format.getSupportedFormats()
@@ -183,9 +178,9 @@ class VocabularyController:
         self.treePropertiesController = TreePropertiesController(self.netzob)
 
         # Register its subviews
-        self.optionalViews.registerView(self.treeTypeStructureController)
-        self.optionalViews.registerView(self.treeSearchController)
-        self.optionalViews.registerView(self.treePropertiesController)
+        self.optionalViews.registerView(self.treeTypeStructureController.view)
+        self.optionalViews.registerView(self.treeSearchController.view)
+        self.optionalViews.registerView(self.treePropertiesController.view)
 
         self.view = VocabularyView(self.netzob, self)
         self.initCallbacks()
@@ -206,42 +201,6 @@ class VocabularyController:
         self.comboDisplaySign_handler = self.view.comboDisplaySign.connect("changed", self.updateDisplaySign)
         self.comboDisplayEndianess_handler = self.view.comboDisplayEndianess.connect("changed", self.updateDisplayEndianess)
         self.view.butSearch.connect("clicked", self.search_cb)
-
-    #+----------------------------------------------
-    #| rightClickToChangeFormat:
-    #|   Callback to change the field/symbol format
-    #|   by doing a right click on it.
-    #+----------------------------------------------
-    def rightClickToChangeFormat(self, event, aObject, aFormat):
-        aObject.setFormat(aFormat)
-        self.update()
-
-    #+----------------------------------------------
-    #| rightClickToChangeUnitSize:
-    #|   Callback to change the field/symbol unitsize
-    #|   by doing a right click on it.
-    #+----------------------------------------------
-    def rightClickToChangeUnitSize(self, event, aObject, unitSize):
-        aObject.setUnitSize(unitSize)
-        self.update()
-
-    #+----------------------------------------------
-    #| rightClickToChangeSign:
-    #|   Callback to change the field/symbol sign
-    #|   by doing a right click on it.
-    #+----------------------------------------------
-    def rightClickToChangeSign(self, event, aObject, sign):
-        aObject.setSign(sign)
-        self.update()
-
-    #+----------------------------------------------
-    #| rightClickToChangeEndianess:
-    #|   Callback to change the field/symbol endianess
-    #|   by doing a right click on it.
-    #+----------------------------------------------
-    def rightClickToChangeEndianess(self, event, aObject, endianess):
-        aObject.setEndianess(endianess)
-        self.update()
 
     #+----------------------------------------------
     #| Called when user wants to modify the format displayed

@@ -41,17 +41,29 @@ import time
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Field import Field
+from netzob.Common.Symbol import Symbol
+from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.NetzobException import NetzobException
-from netzob.UI.Vocabulary.Controllers.AbstractViewGenerator import AbstractViewGenerator
+from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel, NetzobComboBoxEntry, NetzobButton, NetzobFrame
 from netzob.UI.Vocabulary.Views.TreeMessageView import TreeMessageView
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
+from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
+from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
+from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 #+----------------------------------------------
 #| TreeMessageController:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the messages
 #+----------------------------------------------
-class TreeMessageController(AbstractViewGenerator):
+class TreeMessageController(object):
 
     #+----------------------------------------------
     #| Constructor:
@@ -61,7 +73,6 @@ class TreeMessageController(AbstractViewGenerator):
         self.netzob = netzob
         self.vocabularyController = vocabularyController
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeMessageController.py')
-        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Messages")
         self.symbol = None
         self.selectedMessage = None
         self.defer_select = False
@@ -262,9 +273,6 @@ class TreeMessageController(AbstractViewGenerator):
                         # search for the message in the vocabulary
                         message = self.netzob.getCurrentProject().getVocabulary().getMessageByID(message_id)
                         self.selectedMessage = message
-
-                        # update
-                        self.updateTreeStoreProperties()
 
                         # Following line commented because of unused variable symbol
                         #symbol = self.getSymbol()
@@ -554,6 +562,42 @@ class TreeMessageController(AbstractViewGenerator):
         self.update()
 
     #+----------------------------------------------
+    #| rightClickToChangeFormat:
+    #|   Callback to change the field/symbol format
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeFormat(self, event, aObject, aFormat):
+        aObject.setFormat(aFormat)
+        self.update()
+
+    #+----------------------------------------------
+    #| rightClickToChangeUnitSize:
+    #|   Callback to change the field/symbol unitsize
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeUnitSize(self, event, aObject, unitSize):
+        aObject.setUnitSize(unitSize)
+        self.update()
+
+    #+----------------------------------------------
+    #| rightClickToChangeSign:
+    #|   Callback to change the field/symbol sign
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeSign(self, event, aObject, sign):
+        aObject.setSign(sign)
+        self.update()
+
+    #+----------------------------------------------
+    #| rightClickToChangeEndianess:
+    #|   Callback to change the field/symbol endianess
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeEndianess(self, event, aObject, endianess):
+        aObject.setEndianess(endianess)
+        self.update()
+
+    #+----------------------------------------------
     #| build_encoding_submenu:
     #|   Build a submenu for field/symbol data visualization.
     #|   param aObject: either a field or a symbol
@@ -717,6 +761,13 @@ class TreeMessageController(AbstractViewGenerator):
             if encapLevel >= 0:
                 field.setEncapsulationLevel(encapLevel)
         self.update()
+
+    #+----------------------------------------------
+    #| responseToDialog:
+    #|   pygtk is so good ! arf :(<-- clap clap :D
+    #+----------------------------------------------
+    def responseToDialog(self, entry, dialog, response):
+        dialog.response(response)
 
     #+----------------------------------------------
     #| rightClickDomainOfDefinition:

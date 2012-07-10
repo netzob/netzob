@@ -31,18 +31,19 @@
 from gettext import gettext as _
 import logging
 from gi.repository import Gtk
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-
+from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
 #+----------------------------------------------
 #| TreeTypeStructureView:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the type structure
 #+----------------------------------------------
-class TreeTypeStructureView(object):
+class TreeTypeStructureView(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
@@ -51,6 +52,7 @@ class TreeTypeStructureView(object):
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.TreeTypeStructureView.py')
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Type Structure")
         self.treeview = None
         self.treestore = None
         self.scroll = None

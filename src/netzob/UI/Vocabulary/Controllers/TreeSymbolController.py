@@ -36,15 +36,23 @@ import uuid
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
-from netzob.UI.Vocabulary.Controllers.AbstractViewGenerator import AbstractViewGenerator
+from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel
 from netzob.UI.Vocabulary.Views.TreeSymbolView import TreeSymbolView
-
+from netzob.UI.Vocabulary.Controllers.SequenceAlignmentController import SequenceAlignmentController
+from netzob.UI.Vocabulary.Controllers.ForcePartitioningController import ForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.SimplePartitioningController import SimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.SmoothPartitioningController import SmoothPartitioningController
+from netzob.UI.Vocabulary.Controllers.ResetPartitioningController import ResetPartitioningController
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Symbol import Symbol
 
 #+----------------------------------------------
 #| TreeSymbolController:
 #+----------------------------------------------
-class TreeSymbolController(AbstractViewGenerator):
+class TreeSymbolController(object):
 
     #+----------------------------------------------
     #| Constructor:
@@ -52,7 +60,6 @@ class TreeSymbolController(AbstractViewGenerator):
     def __init__(self, netzob, vocabularyController):
         self.netzob = netzob
         self.vocabularyController = vocabularyController
-        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Symbols")
         self.selectedSymbol = None
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeSymbolController.py')
         self.view = TreeSymbolView(self.netzob)
@@ -251,6 +258,158 @@ class TreeSymbolController(AbstractViewGenerator):
             self.menu.append(itemCreateSymbol)
 
         self.menu.popup(None, None, None, None, event.button, event.time)
+
+    def sequenceAlignmentOnSpecifiedSymbols(self, widget, symbols):
+        # Execute the process of alignment (show the gui...)
+        sequenceAlignment = SequenceAlignmentController(self.netzob, self.vocabularyController)
+        sequenceAlignment.sequenceAlignment(symbols)
+
+    def forcePartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Execute the process of alignment (show the gui...)
+        forcePartitioning = ForcePartitioningController(self.netzob, self.vocabularyController)
+        forcePartitioning.forcePartitioning(symbols)
+
+    def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        # Retrieve all the symbols
+        project = self.netzob.getCurrentProject()
+        # Execute the process of alignment (show the gui...)
+        simplePartitioning = SimplePartitioningController(self.netzob, self.vocabularyController)
+        simplePartitioning.simplePartitioning(symbols)
+
+    def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        # Execute the process of alignment (show the gui...)
+        smoothPartitioning = SmoothPartitioningController(self.netzob, self.vocabularyController)
+        smoothPartitioning.smoothPartitioning(symbols)
+
+    def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
+        # Sanity checks
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        # Execute the process of alignment (show the gui...)
+        resetPartitioning = ResetPartitioningController(self.netzob, self.vocabularyController)
+        resetPartitioning.resetPartitioning(symbols)
+
+    #+----------------------------------------------
+    #| build_encoding_submenu:
+    #|   Build a submenu for field/symbol data visualization.
+    #|   param aObject: either a field or a symbol
+    #+----------------------------------------------
+    def build_encoding_submenu(self, aObject, message_id):
+        menu = Gtk.Menu()
+
+        # Retrieve the selected message and field content
+        message = self.vocabularyController.treeSymbolController.selectedSymbol.getMessageByID(message_id)
+        if message != None:
+            # Retrieve content of the field
+            field_content = message.getFields(False)[aObject.getIndex()]
+        else:
+            field_content = None
+
+        # Format submenu
+        possible_choices = Format.getSupportedFormats()
+        subMenu = Gtk.Menu()
+        for value in possible_choices:
+            if field_content != None:
+                # Get preview of field content
+                text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
+                if len(text_preview) > 10:
+                    text_preview = text_preview[:10] + "..."
+
+                item = Gtk.MenuItem(value + " (" + text_preview + ")")
+            else:
+                item = Gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeFormat, aObject, value)
+            subMenu.append(item)
+        item = Gtk.MenuItem(_("Format"))
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Unitsize submenu
+        possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
+        subMenu = Gtk.Menu()
+        for value in possible_choices:
+            item = Gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeUnitSize, aObject, value)
+            subMenu.append(item)
+        item = Gtk.MenuItem(_("UnitSize"))
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Sign submenu
+        possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
+        subMenu = Gtk.Menu()
+        for value in possible_choices:
+            item = Gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeSign, aObject, value)
+            subMenu.append(item)
+        item = Gtk.MenuItem(_("Sign"))
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+
+        # Endianess submenu
+        possible_choices = [Endianess.BIG, Endianess.LITTLE]
+        subMenu = Gtk.Menu()
+        for value in possible_choices:
+            item = Gtk.MenuItem(value)
+            item.show()
+            item.connect("activate", self.rightClickToChangeEndianess, aObject, value)
+            subMenu.append(item)
+        item = Gtk.MenuItem(_("Endianess"))
+        item.set_submenu(subMenu)
+        item.show()
+        menu.append(item)
+        return menu
+
+    #+----------------------------------------------
+    #| rightClickToChangeFormat:
+    #|   Callback to change the field/symbol format
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeFormat(self, event, aObject, aFormat):
+        aObject.setFormat(aFormat)
+        self.vocabularyController.update()
+
+    #+----------------------------------------------
+    #| rightClickToChangeUnitSize:
+    #|   Callback to change the field/symbol unitsize
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeUnitSize(self, event, aObject, unitSize):
+        aObject.setUnitSize(unitSize)
+        self.vocabularyController.update()
+
+    #+----------------------------------------------
+    #| rightClickToChangeSign:
+    #|   Callback to change the field/symbol sign
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeSign(self, event, aObject, sign):
+        aObject.setSign(sign)
+        self.vocabularyController.update()
+
+    #+----------------------------------------------
+    #| rightClickToChangeEndianess:
+    #|   Callback to change the field/symbol endianess
+    #|   by doing a right click on it.
+    #+----------------------------------------------
+    def rightClickToChangeEndianess(self, event, aObject, endianess):
+        aObject.setEndianess(endianess)
+        self.vocabularyController.update()
 
     def displayPopupToSearch(self, event, typeSearch, searchTarget):
         dialog = Gtk.MessageDialog(None,

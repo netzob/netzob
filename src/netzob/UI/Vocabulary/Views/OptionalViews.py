@@ -32,14 +32,11 @@ from gettext import gettext as _
 import logging
 from gi.repository import Gtk
 import gi
-import uuid
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Inference.Vocabulary.Searcher import Searcher
-from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+

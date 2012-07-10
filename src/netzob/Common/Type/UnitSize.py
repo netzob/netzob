@@ -62,4 +62,4 @@ class UnitSize():
         if unitSize in UnitSize.unitSizeInBits:
             return UnitSize.unitSizeInBits[unitSize]
         else:
-            return None
+            return 4 # Default value

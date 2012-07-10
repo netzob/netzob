@@ -47,7 +47,10 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
-
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 
 #+----------------------------------------------
 #| SimplePartitioningController:
@@ -68,23 +71,13 @@ class SimplePartitioningController:
     def initCallbacks(self):
         pass
 
-    def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        # Retrieve all the symbols
-        project = self.netzob.getCurrentProject()
-        # Execute the process of alignment (show the gui...)
-        self.simplePartitioning(symbols)
-
     #+----------------------------------------------
     #| simplePartitioning:
     #|   Apply a simple partitioning
     #+----------------------------------------------
     def simplePartitioning(self, symbols):
-        self.vocabularyController.clear()
-        self.vocabularyController.update()
+#        self.vocabularyController.clear()
+#        self.vocabularyController.update()
 
         dialog = Gtk.Dialog(title=_("Simple partitioning"), flags=0, buttons=None)
         panel = Gtk.Table(rows=3, columns=3, homogeneous=False)
@@ -120,5 +113,5 @@ class SimplePartitioningController:
         for symbol in symbols:
             symbol.simplePartitioning(self.netzob.getCurrentProject().getConfiguration(), unitSize)
         dialog.destroy()
-        self.update()
+        self.vocabularyController.update()
 

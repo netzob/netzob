@@ -34,19 +34,20 @@ from gi.repository import Pango
 from gi.repository import GObject
 from gi.repository import Gtk
 import glib
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.NetzobException import NetzobException
-
+from netzob.UI.Vocabulary.Views.AbstractViewGenerator import AbstractViewGenerator
 
 #+----------------------------------------------
 #| TreeMessageView:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the messages
 #+----------------------------------------------
-class TreeMessageView(object):
+class TreeMessageView(AbstractViewGenerator):
 
     #+----------------------------------------------
     #| Constructor:
@@ -55,6 +56,7 @@ class TreeMessageView(object):
     def __init__(self, netzob):
         self.netzob = netzob
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.TreeMessageView.py')
+        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Messages")
         self.treeview = None
         self.treestore = None
         self.scroll = None

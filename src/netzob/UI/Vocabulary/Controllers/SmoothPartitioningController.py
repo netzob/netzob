@@ -68,14 +68,6 @@ class SmoothPartitioningController:
     def initCallbacks(self):
         pass
 
-    def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        # Execute the process of alignment (show the gui...)
-        self.smoothPartitioning(symbols)
-
     #+----------------------------------------------
     #| Called when user wants to slick the current regexes
     #+----------------------------------------------
@@ -88,4 +80,4 @@ class SmoothPartitioningController:
         for symbol in symbols:
             symbol.slickRegex(self.netzob.getCurrentProject())
 
-        self.update()
+        self.vocabularyController.update()

@@ -37,7 +37,6 @@ import uuid
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
-from netzob.UI.Vocabulary.Controllers.AbstractViewGenerator import AbstractViewGenerator
 from netzob.UI.Vocabulary.Views.TreeTypeStructureView import TreeTypeStructureView
 
 
@@ -46,7 +45,7 @@ from netzob.UI.Vocabulary.Views.TreeTypeStructureView import TreeTypeStructureVi
 #|     update and generates the treeview and its
 #|     treestore dedicated to the type structure
 #+----------------------------------------------
-class TreeTypeStructureController(AbstractViewGenerator):
+class TreeTypeStructureController(object):
 
     #+----------------------------------------------
     #| Constructor:
@@ -54,7 +53,6 @@ class TreeTypeStructureController(AbstractViewGenerator):
     #+----------------------------------------------
     def __init__(self, netzob):
         self.netzob = netzob
-        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Type Structure")
         self.symbol = None
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeTypeStructureController.py')
         self.view = TreeTypeStructureView(self.netzob)

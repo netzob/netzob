@@ -38,27 +38,23 @@ import uuid
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.UI.Vocabulary.Controllers.AbstractViewGenerator import AbstractViewGenerator
 from netzob.UI.Vocabulary.Views.TreeSearchView import TreeSearchView
 from netzob.Common.Field import Field
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
-
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
 #+----------------------------------------------
 #| TreeSearchController:
 #|     update and generates the treeview and its
 #|     treestore dedicated to the search process
 #+----------------------------------------------
-class TreeSearchController(AbstractViewGenerator):
-
-    treeName = "Search"
+class TreeSearchController(object):
 
     #+----------------------------------------------
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
     def __init__(self, netzob):
-        AbstractViewGenerator.__init__(self, uuid.uuid4(), self.treeName)
         self.netzob = netzob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeSearchController.py')
@@ -77,10 +73,10 @@ class TreeSearchController(AbstractViewGenerator):
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
             if isActive:
-                self.treeSearchGenerator.show()
+                self.show()
                 return
             else:
-                self.treeSearchGenerator.hide()
+                self.hide()
 
         if len(searchTasks) == 0:
             self.decolorizeAnySearchResult()
@@ -153,7 +149,7 @@ class TreeSearchController(AbstractViewGenerator):
         for symbol in vocabulary.getSymbols():
             filterToRemoveFromSymbol = []
             for filter in symbol.getVisualizationFilters():
-                if filter.getName() == self.treeName:
+                if filter.getName() == self.view.treeName:
                     filterToRemoveFromSymbol.append(filter)
 
             for filter in filterToRemoveFromSymbol:
@@ -200,14 +196,14 @@ class TreeSearchController(AbstractViewGenerator):
             if elementType == "Symbol":
                 clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolByID(elementID)
                 self.selectedSymbol = clickedSymbol
-                self.updateTreeStoreSymbol()
-                self.updateTreeStoreMessage()
+                self.vocabularyController.treeSymbolController.update()
+                self.vocabularyController.treeMessageController.update()
             elif elementType == "Message":
                 clickedMessage = self.netzob.getCurrentProject().getVocabulary().getMessageByID(elementID)
                 clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(clickedMessage)
                 self.selectedSymbol = clickedSymbol
                 self.selectedMessage = clickedMessage
-                self.updateTreeStoreMessage()
+                self.vocabularyController.treeMessageController.update()
 
     #+----------------------------------------------
     #| GETTERS:

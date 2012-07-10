@@ -39,7 +39,6 @@ import uuid
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Field import Field
-from netzob.UI.Vocabulary.Controllers.AbstractViewGenerator import AbstractViewGenerator
 from netzob.UI.Vocabulary.Views.TreePropertiesView import TreePropertiesView
 
 
@@ -48,14 +47,13 @@ from netzob.UI.Vocabulary.Views.TreePropertiesView import TreePropertiesView
 #|     update and generates the treeview and its
 #|     treestore dedicated to the properties
 #+---------------------------------------------------------------------------+
-class TreePropertiesController(AbstractViewGenerator):
+class TreePropertiesController(object):
 
     #+-----------------------------------------------------------------------+
     #| Constructor:
     #+-----------------------------------------------------------------------+
     def __init__(self, netzob):
         self.netzob = netzob
-        AbstractViewGenerator.__init__(self, uuid.uuid4(), "Properties")
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreePropertiesController.py')
         self.treeview = None
         self.view = TreePropertiesView(self.netzob)

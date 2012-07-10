@@ -68,14 +68,6 @@ class ResetPartitioningController:
     def initCallbacks(self):
         pass
 
-    def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
-        # Sanity checks
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-        # Execute the process of alignment (show the gui...)
-        self.resetPartitioning(symbols)
-
     #+----------------------------------------------
     #| resetPartitioning_cb:
     #|   Called when user wants to reset the current alignment
@@ -87,5 +79,5 @@ class ResetPartitioningController:
             return
         for symbol in symbols:
             symbol.resetPartitioning(self.netzob.getCurrentProject())
-        self.update()
+        self.vocabularyController.update()
 

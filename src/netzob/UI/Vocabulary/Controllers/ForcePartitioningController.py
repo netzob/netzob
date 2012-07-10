@@ -47,6 +47,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
+from netzob.Common.Type.Format import Format
 
 
 #+----------------------------------------------
@@ -68,17 +69,13 @@ class ForcePartitioningController:
     def initCallbacks(self):
         pass
 
-    def forcePartitioningOnSpecifiedSymbols(self, widget, symbols):
-        # Execute the process of alignment (show the gui...)
-        self.forcePartitioning(symbols)
-
     #+----------------------------------------------
     #| forcePartitioning_cb:
     #|   Force the delimiter for partitioning
     #+----------------------------------------------
     def forcePartitioning(self, symbols):
-        self.vocabularyController.clear()
-        self.vocabularyController.update()
+#        self.vocabularyController.clear()
+#        self.vocabularyController.update()
 
         dialog = Gtk.Dialog(title=_("Force partitioning"), flags=0, buttons=None)
         panel = Gtk.Table(rows=3, columns=3, homogeneous=False)
@@ -128,5 +125,5 @@ class ForcePartitioningController:
         for symbol in symbols:
             symbol.forcePartitioning(self.netzob.getCurrentProject().getConfiguration(), aFormat, delimiter)
 
-        self.update()
+        self.vocabularyController.update()
         dialog.destroy()
