@@ -28,51 +28,70 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
 import logging
-from gi.repository import Gtk
-import gi
-import uuid
-gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
 #+---------------------------------------------------------------------------+
-from netzob.Inference.Vocabulary.Searcher import Searcher
-from netzob.Common.Type.Format import Format
 
 
 #+---------------------------------------------------------------------------+
-#| OptionalViews:
-#|     Class dedicated to host the notebook of optional views
+#| AbstractTreeViewgenerator:
+#|   abstract treeview
 #+---------------------------------------------------------------------------+
-class OptionalViews(object):
+class AbstractViewGenerator():
 
     #+-----------------------------------------------------------------------+
     #| Constructor:
+    #| @param id : id of the view
+    #| @param name : name of the view
     #+-----------------------------------------------------------------------+
-    def __init__(self):
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+        self.active = False
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Inference.Vocabulary.OptionalViews.py')
-        self.notebook = Gtk.Notebook()
-        self.views = []
+        self.log = logging.getLogger('netzob.Inference.Vocabulary.TreeViews.AbstractViewGenerator.py')
 
-    def registerView(self, view):
-        self.views.append(view)
+    #+-----------------------------------------------------------------------+
+    #| getWidget
+    #|     Abstract method to retrieve the associated widget
+    #|     MUST BE IMPLEMENTED IN SUB CLASSES
+    #+-----------------------------------------------------------------------+
+    def getWidget(self):
+        self.log.error("The view class doesn't have an associated getWidget !")
+        raise NotImplementedError("The view class doesn't have an associated getWidget !")
 
-    def getPanel(self):
-        self.notebook.set_tab_pos(Gtk.PositionType.TOP)
+    #+-----------------------------------------------------------------------+
+    #| show
+    #|   Display the widget
+    #+-----------------------------------------------------------------------+
+    def show(self):
+        self.activate()
+        self.getWidget().show_all()
 
-        for view in self.views:
-            viewLabel = Gtk.Label(label=view.getName())
-            self.notebook.prepend_page(view.getWidget(), viewLabel)
-        self.notebook.show_all()
-        return self.notebook
+    #+-----------------------------------------------------------------------+
+    #| hide
+    #|   Hide the widget
+    #+-----------------------------------------------------------------------+
+    def hide(self):
+        self.deactivate()
+        self.getWidget().hide()
 
-    def update(self):
-        isActive = False
-        for view in self.views:
-            if view.isActive():
-                self.notebook.show()
-                return
-        self.notebook.hide()
+    #+-----------------------------------------------------------------------+
+    #| GETTERS & SETTERS
+    #+-----------------------------------------------------------------------+
+    def getID(self):
+        return self.id
+
+    def getName(self):
+        return self.name
+
+    def isActive(self):
+        return self.active
+
+    def activate(self):
+        self.active = True
+
+    def deactivate(self):
+        self.active = False

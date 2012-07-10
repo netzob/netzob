@@ -25,57 +25,57 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-from pylab import figure, show
+from gi.repository import Gtk
+import gi
+import uuid
+gi.require_version('Gtk', '3.0')
 
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
 #| Local Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.Common.Type.Format import Format
 
 
-#+----------------------------------------------
-#| Entropy:
-#|     Class for calculating and viewing entropy information
-#+----------------------------------------------
-class Entropy(object):
-    #+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| OptionalViews:
+#|     Class dedicated to host the notebook of optional views
+#+---------------------------------------------------------------------------+
+class OptionalViews(object):
+
+    #+-----------------------------------------------------------------------+
     #| Constructor:
-    #+----------------------------------------------
-    def __init__(self, symbol):
+    #+-----------------------------------------------------------------------+
+    def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Modelization.Entropy.py')
-        self.symbol = symbol
+        self.log = logging.getLogger('netzob.UI.Vocabulary.Views.OptionalViews.py')
+        self.notebook = Gtk.Notebook()
+        self.views = []
 
-    #+----------------------------------------------
-    #| buildDistributionView:
-    #|   show messages distribution
-    #+----------------------------------------------
-    def buildDistributionView(self):
-        resX = []
-        resY = []
-        segments = []
-        i = 0
-        for field in self.symbol.getFields():
-            maxCell = -1
-            for cell in self.symbol.getUniqValuesByField(field):
-                for j in range(len(cell) / 2):
-                    resX.append(i + j)
-                    resY.append(int(cell[j * 2:j * 2 + 2], 16))
-                if len(cell) / 2 > maxCell:
-                    maxCell = len(cell) / 2
-            i += maxCell
-            segments.append(i)
+    def registerView(self, view):
+        self.views.append(view)
 
-        fig = figure()  # figsize=(800, 500))#, dpi=75)
-        axis = fig.add_subplot(111, frame_on=False)
-        axis.hold(True)
-        axis.plot(resX, resY, '.')
-        for segment in segments:
-            axis.plot([segment, segment], [0, 255], 'k-')
-        axis.set_xlim(0, 255)
-        axis.set_ylim(0, 255)
-        show()
+    def clear(self):
+        pass
+
+    def getPanel(self):
+        self.notebook.set_tab_pos(Gtk.PositionType.TOP)
+
+        for view in self.views:
+            viewLabel = Gtk.Label(label=view.getName())
+            self.notebook.prepend_page(view.getWidget(), viewLabel)
+        self.notebook.show_all()
+        return self.notebook
+
+    def update(self):
+        isActive = False
+        for view in self.views:
+            if view.isActive():
+                self.notebook.show()
+                return
+        self.notebook.hide()

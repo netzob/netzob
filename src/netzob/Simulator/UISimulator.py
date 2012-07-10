@@ -576,3 +576,6 @@ class UISimulator:
 #            self.updateListOfActors()
 #            self.updateGUIForActor()
         pass
+
+    def getPanel(self):
+        return self.panel

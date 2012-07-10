@@ -31,22 +31,22 @@
 from gettext import gettext as _
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 import threading
 import sys
 import logging
 import optparse
-
 import locale
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob.Common import DepCheck
 from netzob.Common.Menu import Menu
-from netzob.Inference.Vocabulary.UImodelization import UImodelization
+from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
 from netzob.Inference.Grammar.UIGrammarInference import UIGrammarInference
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
@@ -147,18 +147,18 @@ class NetzobGui(Gtk.Window):
 
         self.pageList = []
         # Adding the different notebook
-        self.modelization = UImodelization(self)
+        self.vocabularyInference = VocabularyController(self)
         self.grammarInference = UIGrammarInference(self)
 #        self.fuzzing = UIfuzzing(self)
         self.simulator = UISimulator(self)
 
-        self.pageList.append([_("Vocabulary inference"), self.modelization])
+        self.pageList.append([_("Vocabulary inference"), self.vocabularyInference])
         self.pageList.append([_("Grammar inference"), self.grammarInference])
 #        self.pageList.append(["Fuzzing", self.fuzzing])
         self.pageList.append([_("Simulator"), self.simulator])
 
         for page in self.pageList:
-            self.notebook.append_page(page[1].panel, Gtk.Label(label=page[0]))
+            self.notebook.append_page(page[1].getPanel(), Gtk.Label(label=page[0]))
 
         # Initialize a clipboard object
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)

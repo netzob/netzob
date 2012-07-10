@@ -1005,3 +1005,6 @@ class UIGrammarInference:
             return None
         else:
             return self.netzob.getCurrentProject().getVocabulary()
+
+    def getPanel(self):
+        return self.panel
