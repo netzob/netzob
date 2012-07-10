@@ -41,12 +41,16 @@ from gi.repository import GObject
 sys.path.insert(0, 'src/')
 
 # Insert in the path the directory where _libNeedleman.pyd is
+# TODO here !
 if os.name == 'nt':
     sys.path.insert(0, 'lib/libNeedleman/')
 
 try:
-    # Verify that libNeedleman is in the path
+    # Verify that required C extensions are available
     import _libNeedleman
+    import _libScoreComputation
+    import _libInterface
+    import _libRegex
 except:
     # Else, assume the path is gotten from the 'python setup.py build' command
     arch = os.uname()[-1]
@@ -57,12 +61,8 @@ except:
 import netzob.NetzobGui as NetzobGui
 from netzob import release
 
-
-
-
 if __name__ == "__main__":
     GObject.threads_init() # for handling concurrent GUI access from threads
 
-    
     netzob = NetzobGui.NetzobGui()
     netzob.startGui()
