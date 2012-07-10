@@ -25,39 +25,19 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-import _libScoreComputation
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Standard library imports
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-#+---------------------------------------------------------------------------+
-#| WrapperArgsFactory:
-#|     Factory dedicated to the manipulation of arguments passed to C wrapper
-#+---------------------------------------------------------------------------+
-class WrapperArgsFactory:
+class WrapperMessage(object):
+    """Definition of a wrapped message ready to be sent to any C extension"""
 
-    def __init__(self, function):
-        self.typeList = {"_libScoreComputation.getHighestEquivalentGroup": self.getHighestEquivalentGroup}
-        if(function in self.typeList.keys()):
-            self.function = function
-        else:
-            raise NetzobException("Function " + str(function) + " not implemented")
-
-    def __str__(self):
-        return str(self.args)
-
-    def getHighestEquivalentGroup(self, symbols):
-        self.args = []
-#        Symbols must contain identical message
-        for s in symbols:
-            for m in s.getMessages():
-                self.args.append(WrapperMessages(m, s))
-                break
-
-
-class WrapperMessages:
     def __init__(self, message, symbol):
         data = message.getReducedStringData()
         self.alignment = TypeConvertor.netzobRawToPythonRaw(data)

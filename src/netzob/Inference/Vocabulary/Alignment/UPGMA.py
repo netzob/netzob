@@ -37,7 +37,7 @@ import random
 #| Local Imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.WrapperArgsFactory import WrapperArgsFactory
+from netzob.Common.C_Extensions.WrapperArgsFactory import WrapperArgsFactory
 from netzob.Common.Symbol import Symbol
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
