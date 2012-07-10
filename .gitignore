@@ -11,5 +11,5 @@
 /build/*
 /netzob.bat
 *.egg-info
-/locales/netzob.pot
+/resources/static/netzob/locales/netzob.pot
 *.mo
