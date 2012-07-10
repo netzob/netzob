@@ -37,12 +37,12 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.OSpyImporter.OSpyImporterController import OSpyImporterController
 
 
-class OSpyImporterPlugin(NetzobPluginProperties):
+class OSpyImporterPlugin(NetzobPlugin):
     """OSpyImporter : Provides the possibility to import messages
        from OSpy project file."""
 

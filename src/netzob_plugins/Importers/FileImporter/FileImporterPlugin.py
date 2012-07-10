@@ -37,12 +37,12 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
 
 
-class FileImporterPlugin(NetzobPluginProperties):
+class FileImporterPlugin(NetzobPlugin):
     """FileImporter : Provide the possibility to import messages
        from any binary or ascii file."""
 

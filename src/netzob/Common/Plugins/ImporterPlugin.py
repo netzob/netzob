@@ -31,7 +31,6 @@
 import logging
 import uuid
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-from netzob.Common.Plugins.PluginDecorators import mandatory
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+

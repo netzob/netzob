@@ -32,7 +32,7 @@ import logging
 import uuid
 import sys
 import os
-
+from abc import ABCMeta, abstractmethod, abstractproperty
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -41,9 +41,7 @@ import pkg_resources
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.PluginChecker import PluginChecker
 from netzob.Common.Plugins.Extensions.NetzobExtension import NetzobExtension
-from netzob.Common.Plugins.PluginDecorators import mandatory
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
@@ -52,7 +50,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 #|     Abstract class every Netzob's plugin must subclass to be registered
 #+---------------------------------------------------------------------------+
 class NetzobPlugin(object):
-
+    __metaclass__ = ABCMeta
     PLUGIN_FLAG_REJECTED = "rejected"
     instances = {}
 
@@ -70,23 +68,24 @@ class NetzobPlugin(object):
     def getNetzob(self):
         return self.netzob
 
-    @mandatory
+    __plugin_name__ = abstractproperty()
+    __plugin_version__ = abstractproperty()
+    __plugin_description__ = abstractproperty()
+    __plugin_author__ = abstractproperty()
+
     def getName(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getName'")
+        return self.__plugin_name__
 
-    @mandatory
     def getVersion(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getVersion'")
+        return self.__plugin_version__
 
-    @mandatory
     def getDescription(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getDescription'")
+        return self.__plugin_description__
 
-    @mandatory
     def getAuthor(self):
-        raise NotImplementedError("The plugin class doesn't implement method 'getAuthor'")
+        return self.__plugin_author__
 
-    @mandatory
+    @abstractmethod
     def getEntryPoints(self):
         raise NotImplementedError("The plugin class doesn't implement method 'getEntryPoints'")
 
@@ -160,6 +159,7 @@ class NetzobPlugin(object):
 
     @staticmethod
     def loadPlugins(netzob):
+        from netzob.Common.Plugins.PluginChecker import PluginChecker
         logging.debug("Loading plugins:")
         for entrypoint in pkg_resources.iter_entry_points('netzob.plugins'):
             try:

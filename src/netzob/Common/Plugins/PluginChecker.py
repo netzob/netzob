@@ -29,7 +29,6 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import logging
-import inspect
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -38,59 +37,44 @@ import inspect
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
-
-#+---------------------------------------------------------------------------+
-#| PluginChecker:
-#|     Checks if plugin is valid
-#+---------------------------------------------------------------------------+
 class PluginChecker(object):
 
     @staticmethod
-    # The idea behind is "simple", we retrieve all the classes it implements
-    # and verify the mandatory methods
     def isValidPlugin(pluginClass):
-        logging.debug("Verify the plugin class {0} is a valid plugin".format(pluginClass))
-        # First we retrieve its direct parents
-        parentClasses = pluginClass.__bases__
+        """Checks if pluginClass is a valid Netzob plugin"""
+        # We only have to check here that pluginClass inherits
+        # from NetzobPlugin. We CANNOT use issubclass() here.
+        # Indeed, as NetzobPlugin is an Abstract Base Class (abc), plugin
+        # developers can register their class as a subclass of NetzobPlugin by
+        # calling NetzobPlugin.register(MyPluginClass). Once a class is
+        # registered (ie it was passed as first argument of the register
+        # method), issubclass(MyPluginClass, NetzobPlugin) will return True.
+        # When MyPluginClass is registered (by calling
+        # NetzobPlugin.register(MyPluginClass)), python checks that all
+        # abstract methods and abstract properties are implemented. However,
+        # MyPluginClass does NOT inherits any method from NetzobPlugin.
+        #
+        # Here we want to make sure that pluginClass inherits from NetzobPlugin
+        # and that it was not registered, that's why we cannot use issubclass here.
+        #
+        # See http://docs.python.org/library/abc.html
+        # See http://www.doughellmann.com/PyMOTW/abc/index.html#module-abc
+        if PluginChecker._inheritsFromNetzobPlugin(pluginClass):
+            return True
+        logging.error(("Plugin implemented in class {0} rejected because it "
+                       "does not inherit from NetzobPlugin").format(pluginClass))
+        return False
 
-        # We find which of its parent inherits from NetzobPlugin
-        parentPluginClasses = []
-        from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-        for parentClass in parentClasses:
-            if issubclass(parentClass, NetzobPlugin):
-                parentPluginClasses.append(parentClass)
+    @staticmethod
+    def _inheritsFromNetzobPlugin(klass):
+        parentClassList = klass.__bases__
+        if NetzobPlugin in parentClassList:
+            return True
+        for parentClass in parentClassList:
+            if PluginChecker._inheritsFromNetzobPlugin(parentClass):
+                return True
+        return False
 
-        # The class doesn't subclass NetzobPlugin
-        if len(parentPluginClasses) == 0:
-            logging.warning("Plugin {0} is not a Netzob Plugin".format(pluginClass))
-            return False
 
-        # We retrieve all the methods of the plugin class
-        pluginMethods = inspect.getmembers(pluginClass, predicate=inspect.ismethod)
-        for parentClass in pluginClass.__bases__:
-            pluginMethods.extend(inspect.getmembers(parentClass, predicate=inspect.ismethod))
-
-        # Now we verify if all the plugin parent classes are valid
-        for parentPluginClass in parentPluginClasses:
-            # We retrieve all the methods of our parent
-            parentsMethods = inspect.getmembers(parentPluginClass, predicate=inspect.ismethod)
-
-            # we compare and verify all the required methods are implemented
-            for parentMethod in parentsMethods:
-                found = False
-                # Only methods marked as 'mandatory' are required
-                if hasattr(parentMethod[1], "__mandatory__"):
-                    mandatory = getattr(parentMethod[1], "__mandatory__")
-                    if mandatory:
-                        for pluginMethod in pluginMethods:
-                            if parentMethod[0] == pluginMethod[0] and \
-                                    (not hasattr(pluginMethod[1], "__mandatory__" or \
-                                    not getattr(pluginMethod[1], "__mandatory__"))):
-                                found = True
-                                break
-                        if not found:
-                            logging.debug("Mandatory method {0} has not been found in plugin class.".format(parentMethod[0]))
-                            return False
-
-        return True
