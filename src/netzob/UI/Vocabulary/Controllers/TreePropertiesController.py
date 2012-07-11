@@ -64,12 +64,15 @@ class TreePropertiesController(object):
     def initCallbacks(self):
         pass
 
+    def getView(self):
+        return self.view
+
     #+----------------------------------------------
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def update(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
             if isActive:
                 self.view.show()
@@ -79,11 +82,10 @@ class TreePropertiesController(object):
 
         self.view.treestore.clear()
 
-        print self.vocabularyController.treeMessageController.selectedMessage
-        if self.vocabularyController.treeMessageController.selectedMessage == None:
+        if self.getSelectedMessage() is None:
             return
 
-        for property in self.vocabularyController.treeMessageController.selectedMessage.getProperties():
+        for property in self.getSelectedMessage().getProperties():
             propertyName = str(property[0])
             propertyFormat = str(property[1])
             propertyValue = str(property[2])
@@ -107,6 +109,9 @@ class TreePropertiesController(object):
     #+----------------------------------------------
     #| GETTERS:
     #+----------------------------------------------
+    def getSelectedMessage(self):
+        return self.vocabularyController.treeMessageController.selectedMessage
+
     def getTreeview(self):
         return self.view.treeview
 

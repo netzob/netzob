@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 from gi.repository import Gtk
 import gi
+from netzob.UI.Vocabulary.Views.OptionalPanelsView import OptionalPanelsView
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -40,39 +41,33 @@ gi.require_version('Gtk', '3.0')
 
 
 #+---------------------------------------------------------------------------+
-#| OptionalViews:
-#|     Class dedicated to host the notebook of optional views
+#| OptionalPanelsController:
+#|     Class dedicated to host the notebook of optional panels
 #+---------------------------------------------------------------------------+
-class OptionalViews(object):
+class OptionalPanelsController(object):
 
     #+-----------------------------------------------------------------------+
     #| Constructor:
     #+-----------------------------------------------------------------------+
-    def __init__(self):
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.UI.Vocabulary.Views.OptionalViews.py')
-        self.notebook = Gtk.Notebook()
-        self.views = []
+    def __init__(self, netzob, vocabularyController):
+        self.netzob = netzob
+        self.vocabularyController = vocabularyController
+        self.optionalPanelsView = OptionalPanelsView()
+        self.panelControllers = []
 
-    def registerView(self, view):
-        self.views.append(view)
-
-    def clear(self):
-        pass
-
-    def getPanel(self):
-        self.notebook.set_tab_pos(Gtk.PositionType.TOP)
-
-        for view in self.views:
-            viewLabel = Gtk.Label(label=view.getName())
-            self.notebook.prepend_page(view.getWidget(), viewLabel)
-        self.notebook.show_all()
-        return self.notebook
+    def registerOptionalPanel(self, panelController):
+        if panelController not in self.panelControllers:
+            self.panelControllers.append(panelController)
+            self.optionalPanelsView.registerView(panelController.getView())
 
     def update(self):
-        isActive = False
-        for view in self.views:
-            if view.isActive():
-                self.notebook.show()
-                return
-        self.notebook.hide()
+        for panelController in self.panelControllers:
+            panelController.update()
+        self.optionalPanelsView.update()
+
+    def clear(self):
+        for panelController in self.panelControllers:
+            panelController.clear()
+
+    def getView(self):
+        return self.optionalPanelsView

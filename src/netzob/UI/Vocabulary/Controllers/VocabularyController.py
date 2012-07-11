@@ -33,6 +33,7 @@ from gi.repository import Gtk, Gdk
 from gi.repository import Pango
 import gi
 from gi.repository import GObject
+from netzob.UI.Vocabulary.Controllers.OptionalPanelsController import OptionalPanelsController
 gi.require_version('Gtk', '3.0')
 import logging
 import copy
@@ -73,7 +74,7 @@ from netzob.UI.Vocabulary.Controllers.FindSizeFieldsController import FindSizeFi
 from netzob.Inference.Vocabulary.VariableView import VariableView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Inference.Vocabulary.Searcher import Searcher
-from netzob.UI.Vocabulary.Views.OptionalViews import OptionalViews
+
 from netzob.Inference.Vocabulary.DataCarver import DataCarver
 
 
@@ -89,7 +90,7 @@ class VocabularyController:
     def new(self):
         self.treeMessageController.clear()
         self.treeSymbolController.clear()
-        self.optionalViews.clear()
+        self.optionalPanelsController.clear()
 
         # Update the combo for choosing the format
         possible_choices = Format.getSupportedFormats()
@@ -143,7 +144,7 @@ class VocabularyController:
     def update(self):
         self.treeMessageController.update()
         self.treeSymbolController.update()
-        self.optionalViews.update()
+        self.optionalPanelsController.update()
         self.treePropertiesController.update()
         self.treeSearchController.update()
         self.treeTypeStructureController.update()
@@ -151,7 +152,7 @@ class VocabularyController:
     def clear(self):
         self.treeMessageController.clear()
         self.treeSymbolController.clear()
-        self.optionalViews.clear()
+        self.optionalPanelsController.clear()
 
     def kill(self):
         pass
@@ -173,19 +174,18 @@ class VocabularyController:
         # Symbols view
         self.treeSymbolController = TreeSymbolController(self.netzob, self)
 
-        ## Optional views
-        self.optionalViews = OptionalViews()
+        ## Optional panels
+        self.optionalPanelsController = OptionalPanelsController(self.netzob, self)
+
         # Symbol definition view
         self.treeTypeStructureController = TreeTypeStructureController(self.netzob, self)
+        self.optionalPanelsController.registerOptionalPanel(self.treeTypeStructureController)
         # Search view
         self.treeSearchController = TreeSearchController(self.netzob, self)
+        self.optionalPanelsController.registerOptionalPanel(self.treeSearchController)
         # Properties view
         self.treePropertiesController = TreePropertiesController(self.netzob, self)
-
-        # Register its subviews
-        self.optionalViews.registerView(self.treeTypeStructureController.view)
-        self.optionalViews.registerView(self.treeSearchController.view)
-        self.optionalViews.registerView(self.treePropertiesController.view)
+        self.optionalPanelsController.registerOptionalPanel(self.treePropertiesController)
 
         self.view = VocabularyView(self.netzob, self)
         self.initCallbacks()
@@ -212,7 +212,7 @@ class VocabularyController:
     #+----------------------------------------------
     def updateDisplayFormat(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -231,7 +231,7 @@ class VocabularyController:
     #+----------------------------------------------
     def updateDisplayUnitSize(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -250,7 +250,7 @@ class VocabularyController:
     #+----------------------------------------------
     def updateDisplaySign(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -269,7 +269,7 @@ class VocabularyController:
     #+----------------------------------------------
     def updateDisplayEndianess(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -285,7 +285,7 @@ class VocabularyController:
 
     def sequenceAlignmentOnAllSymbols_cb(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -297,7 +297,7 @@ class VocabularyController:
 
     def forcePartitioningOnAllSymbols_cb(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -309,7 +309,7 @@ class VocabularyController:
 
     def simplePartitioningOnAllSymbols_cb(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -321,7 +321,7 @@ class VocabularyController:
 
     def smoothPartitioningOnAllSymbols_cb(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -333,7 +333,7 @@ class VocabularyController:
 
     def resetPartitioningOnAllSymbols_cb(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -355,10 +355,10 @@ class VocabularyController:
     #+----------------------------------------------
     def freezePartitioning_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.treeSymbolController.selectedSymbol == None:
+        if self.treeSymbolController.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -371,10 +371,10 @@ class VocabularyController:
     #+----------------------------------------------
     def dataCarving_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.treeSymbolController.selectedSymbol == None:
+        if self.treeSymbolController.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -400,7 +400,7 @@ class VocabularyController:
             self.treeSearchController.update(task)
 #
 #        box = self.treeSymbolController.selectedSymbol.dataCarving()
-#        if box != None:
+#        if box is not None:
 #            NetzobErrorMessage("No data found in messages and fields.")
 #        else:
 #            dialog = Gtk.Dialog(title="Data carving results", flags=0, buttons=None)
@@ -412,11 +412,11 @@ class VocabularyController:
     #+----------------------------------------------
     def search_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-
-        self.prepareSearch(self.searchEntry.get_text(), self.typeCombo.get_active_text())
+        # HUM HUM, not very nice I know !!!! TODO
+        self.prepareSearch(self.view.searchEntry.get_text(), self.view.typeCombo.get_active_text())
 
     def prepareSearch(self, searchedPattern, typeOfPattern):
         if len(searchedPattern) == 0:
@@ -485,9 +485,9 @@ class VocabularyController:
             self.log.debug(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
-        if type == None:
+        if type is None:
             searchTasks = searcher.search(searchedData)
-        elif type == "Symbol" and inclusion != None:
+        elif type == "Symbol" and inclusion is not None:
             searchTasks = searcher.searchInSymbol(searchedData, inclusion)
 
         # Give the results to the dedicated view
@@ -498,10 +498,10 @@ class VocabularyController:
     #+----------------------------------------------
     def findSizeFields_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.treeSymbolController.selectedSymbol == None:
+        if self.treeSymbolController.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -513,7 +513,7 @@ class VocabularyController:
     #+----------------------------------------------
     def env_dependencies_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -544,10 +544,10 @@ class VocabularyController:
     #+----------------------------------------------
     def messagesDistribution_cb(self, but):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.treeSymbolController.selectedSymbol == None:
+        if self.treeSymbolController.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -559,15 +559,15 @@ class VocabularyController:
     #+----------------------------------------------
     def findASN1Fields_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.treeSymbolController.selectedSymbol == None:
+        if self.treeSymbolController.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
         box = self.treeSymbolController.selectedSymbol.findASN1Fields(self.netzob.getCurrentProject())
-        if box == None:
+        if box is None:
             NetzobErrorMessage(_("No ASN.1 field found."))
         else:  # Show the results
             dialog = Gtk.Dialog(title=_("Find ASN.1 fields"), flags=0, buttons=None)

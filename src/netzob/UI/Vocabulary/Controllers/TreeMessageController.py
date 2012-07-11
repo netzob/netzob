@@ -90,7 +90,7 @@ class TreeMessageController(object):
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def update(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             if isActive:
                 self.view.show()
@@ -135,7 +135,7 @@ class TreeMessageController(object):
     def default(self, symbol, messageToHighlight=None):
         self.view.treestore.clear()
 
-        if symbol == None:
+        if symbol is None:
             return
 
         self.symbol = symbol
@@ -165,7 +165,7 @@ class TreeMessageController(object):
                 self.log.warn("Message : " + str(message.getStringData()))
                 continue  # We don't display the message in error
 
-            if messageToHighlight != None and str(message.getID()) == str(messageToHighlight.getID()):
+            if messageToHighlight is not None and str(message.getID()) == str(messageToHighlight.getID()):
                 nbLineMessageToHighlight = idLineMessage
 
             line = []
@@ -229,7 +229,7 @@ class TreeMessageController(object):
         self.view.treeview.set_model(self.view.treestore)
 
         # highlight the message entry
-        if messageEntryToHighlight != None:
+        if messageEntryToHighlight is not None:
             self.view.treeview.get_selection().select_iter(messageEntryToHighlight)
 
     def updateDefault(self):
@@ -273,11 +273,10 @@ class TreeMessageController(object):
 
                         # search for the message in the vocabulary
                         message = self.netzob.getCurrentProject().getVocabulary().getMessageByID(message_id)
+                        logging.debug("Selected message found :  {0}".format(message))
                         self.selectedMessage = message
-
-                        # Following line commented because of unused variable symbol
-                        #symbol = self.getSymbol()
-                        # Do nothing for now
+                        self.vocabularyController.update()
+                        return
 
         # Popup a menu
         elif event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
@@ -308,7 +307,7 @@ class TreeMessageController(object):
             for field in self.getSymbol().getFields():
                 if field.getIndex() == iField:
                     selectedField = field
-            if selectedField == None:
+            if selectedField is None:
                 self.log.warn(_("Impossible to retrieve the clicked field !"))
                 return
 
@@ -403,7 +402,7 @@ class TreeMessageController(object):
             self.menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None:
+            if selectedField.getVariable() is None:
                 typeMenuVariable = Gtk.Menu()
                 itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
@@ -416,7 +415,7 @@ class TreeMessageController(object):
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None:
+            if selectedField.getVariable() is not None:
                 itemVariable3 = Gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
@@ -480,7 +479,7 @@ class TreeMessageController(object):
         project = self.netzob.getCurrentProject()
 
         # Sanity checks
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
         menu = Gtk.Menu()
@@ -608,7 +607,7 @@ class TreeMessageController(object):
 
         # Retrieve the selected message and field content
         message = self.vocabularyController.treeSymbolController.selectedSymbol.getMessageByID(message_id)
-        if message != None:
+        if message is not None:
             # Retrieve content of the field
             field_content = message.getFields(False)[aObject.getIndex()]
         else:
@@ -618,7 +617,7 @@ class TreeMessageController(object):
         possible_choices = Format.getSupportedFormats()
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            if field_content != None:
+            if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
                 if len(text_preview) > 10:
@@ -777,7 +776,7 @@ class TreeMessageController(object):
     def rightClickDomainOfDefinition(self, event, field):
         # Sanity checks
         project = self.netzob.getCurrentProject()
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -826,13 +825,13 @@ class TreeMessageController(object):
 
         # Retrieve the selected message
         message = self.vocabularyController.treeSymbolController.selectedSymbol.getMessageByID(id_message)
-        if message == None:
+        if message is None:
             self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]".format(id_message)))
             return
 
-        if aligned == False:  # Copy the entire raw message
+        if not aligned:  # Copy the entire raw message
             self.netzob.clipboard.set_text(message.getStringData(), -1)
-        elif field == None:  # Copy the entire aligned message
+        elif field is None:  # Copy the entire aligned message
             self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)), -1)
         else:  # Just copy the selected field
             self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[field.getIndex()], -1)
@@ -846,7 +845,7 @@ class TreeMessageController(object):
 
         # Retrieve the selected message
         message = self.vocabularyController.treeSymbolController.selectedSymbol.getMessageByID(id_message)
-        if message == None:
+        if message is None:
             self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]").format(id_message))
             return
 
@@ -913,7 +912,7 @@ class TreeMessageController(object):
                 message = self.vocabularyController.treeSymbolController.selectedSymbol.getMessageByID(id_message)
 
                 # Break if the message to move was not found
-                if message == None:
+                if message is None:
                     self.log.warning(_("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message)))
                     return
                 message_symbol.removeMessage(message)
@@ -1254,7 +1253,7 @@ class TreeMessageController(object):
             if field.getIndex() == iField:
                 selectedField = field
 
-        if selectedField == None:
+        if selectedField is None:
             self.log.warn(_("Impossible to retrieve the clicked field !"))
             return
 
@@ -1294,7 +1293,7 @@ class TreeMessageController(object):
         #defaultFormat = Format.HEX
         #global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         #unitSize = UnitSize.getSizeInBits(global_unitsize)
-        #if unitSize == None:
+        #if unitSize is None:
         #    unitSize = 8
 
         #alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)
@@ -1321,7 +1320,7 @@ class TreeMessageController(object):
         defaultFormat = Format.HEX
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         unitSize = UnitSize.getSizeInBits(global_unitsize)
-        if unitSize == None:
+        if unitSize is None:
             unitSize = 4
 
         # Process the partitioning

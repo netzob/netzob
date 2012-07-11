@@ -75,9 +75,9 @@ class TreeSymbolController(object):
     #+----------------------------------------------
     def update(self):
         # Updates the treestore with a selected message
-        if (self.vocabularyController.treeMessageController.selectedMessage != None):
+        if (self.vocabularyController.treeMessageController.selectedMessage is not None):
             self.default(self.selectedSymbol)
-            self.vocabularyController.treeMessageController.selectedMessage = None
+#            self.vocabularyController.treeMessageController.selectedMessage = None
         else:
             # Default display of the symbols
             self.default(self.selectedSymbol)
@@ -100,7 +100,7 @@ class TreeSymbolController(object):
         # We retrieve the current project
         project = self.netzob.getCurrentProject()
 
-        if project != None:
+        if project is not None:
             # We retrieve the vocabulary of the project
             vocabulary = project.getVocabulary()
 
@@ -120,11 +120,11 @@ class TreeSymbolController(object):
                 symbolName = symbolName + " (" + str(len(symbol.getMessages())) + ")"
                 symbolEntry = [str(symbol.getID()), symbolName, str(symbol.getScore()), '#000000', '#DEEEF0']
                 symbolIter = self.view.treestore.append(None, symbolEntry)
-                if selectedSymbol != None and str(symbol.getID()) == str(selectedSymbol.getID()):
+                if selectedSymbol is not None and str(symbol.getID()) == str(selectedSymbol.getID()):
                     toSelectEntry = symbolIter
 
             # if a selection entry has been found, we highlight it
-            if toSelectEntry != None:
+            if toSelectEntry is not None:
                 self.view.treeview.get_selection().select_iter(toSelectEntry)
 
     #+----------------------------------------------
@@ -135,10 +135,10 @@ class TreeSymbolController(object):
     def button_press_on_treeview_symbols(self, treeview, event):
         # Sanity checks
         project = self.netzob.getCurrentProject()
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if project.getVocabulary() == None:
+        if project.getVocabulary() is None:
             NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
@@ -146,7 +146,7 @@ class TreeSymbolController(object):
         y = int(event.y)
         clickedSymbol = self.getSymbolAtPosition(x, y)
 
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and clickedSymbol is not None:
             self.selectedSymbol = clickedSymbol
             self.vocabularyController.update()
 
@@ -187,7 +187,7 @@ class TreeSymbolController(object):
         # Build the contextual menu
         self.menu = Gtk.Menu()
 
-        if (symbol != None):
+        if (symbol is not None):
             # Edit the Symbol
             itemEditSymbol = Gtk.MenuItem(_("Edit symbol"))
             itemEditSymbol.show()
@@ -272,7 +272,7 @@ class TreeSymbolController(object):
 
     def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -283,7 +283,7 @@ class TreeSymbolController(object):
 
     def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Execute the process of alignment (show the gui...)
@@ -292,7 +292,7 @@ class TreeSymbolController(object):
 
     def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Execute the process of alignment (show the gui...)
@@ -309,7 +309,7 @@ class TreeSymbolController(object):
 
         # Retrieve the selected message and field content
         message = self.vocabularyController.treeSymbolController.selectedSymbol.getMessageByID(message_id)
-        if message != None:
+        if message is not None:
             # Retrieve content of the field
             field_content = message.getFields(False)[aObject.getIndex()]
         else:
@@ -319,7 +319,7 @@ class TreeSymbolController(object):
         possible_choices = Format.getSupportedFormats()
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            if field_content != None:
+            if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
                 if len(text_preview) > 10:
@@ -571,7 +571,7 @@ class TreeSymbolController(object):
                     message = msg
 
             # Break if the message to move was not found
-            if message == None:
+            if message is None:
                 self.log.warning(_("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id)))
                 return
 
@@ -586,7 +586,7 @@ class TreeSymbolController(object):
 
                 new_message_symbol = self.netzob.getCurrentProject().getVocabulary().getSymbol(new_symbol_id)
 
-            if new_message_symbol == None:
+            if new_message_symbol is None:
                 self.log.warning(_("Impossible to retrieve the symbol in which the selected message must be moved out."))
                 return
 
@@ -601,7 +601,7 @@ class TreeSymbolController(object):
             defaultFormat = Format.HEX
             global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
             unitSize = UnitSize.getSizeInBits(global_unitsize)
-            if unitSize == None:
+            if unitSize is None:
                 unitSize = 8
 
             alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)

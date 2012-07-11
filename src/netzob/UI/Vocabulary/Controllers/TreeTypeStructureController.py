@@ -55,7 +55,7 @@ class TreeTypeStructureController(object):
     def __init__(self, netzob, vocabularyController):
         self.netzob = netzob
         self.vocabularyController = vocabularyController
-        self.symbol = None
+        self.symbol = self.getSelectedSymbol()
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeTypeStructureController.py')
         self.view = TreeTypeStructureView(self.netzob)
         self.initCallbacks()
@@ -63,12 +63,15 @@ class TreeTypeStructureController(object):
     def initCallbacks(self):
         pass
 
+    def getView(self):
+        return self.view
+
     #+----------------------------------------------
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def update(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             if isActive:
                 self.view.show()
@@ -76,12 +79,13 @@ class TreeTypeStructureController(object):
                 self.view.hide()
                 return
 
-        if self.getSymbol() == None:
+        if self.getSelectedSymbol() is None:
+            logging.debug("No symbol provided")
             self.clear()
             return
 
         self.view.treestore.clear()
-        for field in self.getSymbol().getFields():
+        for field in self.getSelectedSymbol().getFields():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
                 tab += "        "
@@ -89,17 +93,17 @@ class TreeTypeStructureController(object):
                 continue
 
             # Define the background color
-            if field.getBackgroundColor() != None:
+            if field.getBackgroundColor() is not None:
                 backgroundColor = 'background="' + field.getBackgroundColor() + '"'
             else:
                 backgroundColor = ""
 
             # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
-            if field.getVariable() != None:
+            if field.getVariable() is not None:
                 variableDescription = field.getVariable().getUncontextualizedDescription()
-            elif field.getDefaultVariable(self.getSymbol()) != None:
-                variableDescription = field.getDefaultVariable(self.getSymbol()).getUncontextualizedDescription()
+            elif field.getDefaultVariable(self.getSelectedSymbol()) is not None:
+                variableDescription = field.getDefaultVariable(self.getSelectedSymbol()).getUncontextualizedDescription()
 
             self.view.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
 
@@ -166,7 +170,7 @@ class TreeTypeStructureController(object):
             for field in self.vocabularyController.treeMessageController.getSymbol().getFields():
                 if field.getIndex() == iField:
                     selectedField = field
-            if selectedField == None:
+            if selectedField is None:
                 self.log.warn(_("Impossible to retrieve the clicked field!"))
                 return
 
@@ -228,7 +232,7 @@ class TreeTypeStructureController(object):
             self.menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None:
+            if selectedField.getVariable() is None:
                 typeMenuVariable = Gtk.Menu()
                 itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
@@ -241,7 +245,7 @@ class TreeTypeStructureController(object):
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None:
+            if selectedField.getVariable() is not None:
                 itemVariable3 = Gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
@@ -278,11 +282,11 @@ class TreeTypeStructureController(object):
                 for field in self.vocabularyController.treeMessageController.getSymbol().getFields():
                     if field.getIndex() == iField:
                         selectedField = field
-                if selectedField == None:
+                if selectedField is None:
                     self.log.warn(_("Impossible to retrieve the clicked field !"))
                     return
 
-                cells = self.getSymbol().getCellsByField(selectedField)
+                cells = self.getSelectedSymbol().getCellsByField(selectedField)
                 for i in range(len(cells)):
                     if not i in aggregatedCells:
                         aggregatedCells[i] = ""
@@ -391,8 +395,8 @@ class TreeTypeStructureController(object):
     def getWidget(self):
         return self.view.scroll
 
-    def getSymbol(self):
-        return self.symbol
+    def getSelectedSymbol(self):
+        return self.vocabularyController.treeSymbolController.selectedSymbol
 
     #+----------------------------------------------
     #| SETTERS:

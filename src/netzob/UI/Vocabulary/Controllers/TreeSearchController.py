@@ -67,12 +67,15 @@ class TreeSearchController(object):
     def initCallbacks(self):
         self.getTreeview().connect('button-press-event', self.buttonPressOnSearchResults_cb)
 
+    def getView(self):
+        return self.view
+
     #+----------------------------------------------
     #| default:
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def update(self, searchTasks=[]):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
             if isActive:
                 self.view.show()
@@ -147,7 +150,7 @@ class TreeSearchController(object):
 #                        colorizedSymbols.append(symbol)
 
     def decolorizeAnySearchResult(self):
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             return
 
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
@@ -174,7 +177,7 @@ class TreeSearchController(object):
     #|   operation when the user click on the treeview of the search results.
     #+----------------------------------------------
     def buttonPressOnSearchResults_cb(self, treeview, event):
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             return
 
         elementType = None
@@ -200,17 +203,17 @@ class TreeSearchController(object):
                         elementValue = treeview.get_model().get_value(aIter, 2)
 
         # Depending of its type, we select it
-        if elementType != None and elementValue != None:
+        if elementType is not None and elementValue is not None:
             if elementType == "Symbol":
                 clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolByID(elementID)
-                self.selectedSymbol = clickedSymbol
+                self.vocabularyController.treeSymbolController.selectedSymbol = clickedSymbol
                 self.vocabularyController.treeSymbolController.update()
                 self.vocabularyController.treeMessageController.update()
             elif elementType == "Message":
                 clickedMessage = self.netzob.getCurrentProject().getVocabulary().getMessageByID(elementID)
                 clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolWhichContainsMessage(clickedMessage)
-                self.selectedSymbol = clickedSymbol
-                self.selectedMessage = clickedMessage
+                self.vocabularyController.treeSymbolController.selectedSymbol = clickedSymbol
+                self.vocabularyController.treeMessageController.selectedMessage = clickedMessage
                 self.vocabularyController.treeMessageController.update()
 
     #+----------------------------------------------

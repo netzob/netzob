@@ -259,4 +259,4 @@ class VocabularyView:
         self.controller.treeMessageController.getTreeview().drag_source_add_text_targets()
 
         # find the optional views
-        rightPanel.add(self.controller.optionalViews.getPanel())
+        rightPanel.add(self.controller.optionalPanelsController.getView().getPanel())
