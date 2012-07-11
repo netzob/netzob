@@ -51,6 +51,7 @@ from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 
+
 class PCAPImporter(AbstractImporter):
     """Model of PCAP importer plugin"""
 
@@ -59,8 +60,8 @@ class PCAPImporter(AbstractImporter):
     INVALID_LAYER3 = 2
     INVALID_LAYER4 = 3
 
-    def __init__(self, currentWorkspace, currentProject):
-        super(PCAPImporter, self).__init__("PCAP IMPORT", currentWorkspace, currentProject)
+    def __init__(self, netzob):
+        super(PCAPImporter, self).__init__("PCAP IMPORT", netzob)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.PcapImport.py')
         self.filesToBeImported = []
@@ -119,8 +120,7 @@ class PCAPImporter(AbstractImporter):
             raise NetzobImportException("PCAP", errorMessage, ERROR,
                         self.INVALID_BPF_FILTER)
 
-        self.log.info(_("Starting import from {0} (linktype:{0})")\
-                            .format(filePath, str(packetReader.datalink())))
+        self.log.info(_("Starting import from {0} (linktype:{0})").format(filePath, str(packetReader.datalink())))
         self.datalink = packetReader.datalink()
 
         if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
@@ -253,6 +253,7 @@ class PCAPImporter(AbstractImporter):
                 self.log.warn(warnMessage)
                 raise NetzobImportException("PCAP", warnMessage, WARNING,
                                             self.INVALID_LAYER4)
+
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
             errorMessage = _("Message ID: {0} not found in importer " +

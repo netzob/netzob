@@ -46,10 +46,11 @@ from base64 import b64decode
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 
+
 class OSpyImporter(AbstractImporter):
 
-    def __init__(self, currentWorkspace, currentProject):
-        super(OSpyImporter, self).__init__("OSPY IMPORT", currentWorkspace, currentProject)
+    def __init__(self, netzob):
+        super(OSpyImporter, self).__init__("OSPY IMPORT", netzob)
         self.log = logging.getLogger(__name__)
         self.filesToBeImported = []
 
@@ -66,7 +67,7 @@ class OSpyImporter(AbstractImporter):
         xmlFileContents = self._readBZ2CompressedFile(filePath)
         self.log.debug("Loading XML structure in memory")
         xmlRoot = etree.fromstring(xmlFileContents)
-        if xmlRoot == None:
+        if xmlRoot is None:
             logging.error("Error while loading XML structure in memory")
             return None
         # Parse all found messages in the XML structure
@@ -74,9 +75,7 @@ class OSpyImporter(AbstractImporter):
         functionList = []
         for xmlMessage in xmlRoot.findall("Messages"):
             message = self._parseMessage(xmlMessage)
-            if message != None and \
-                    (message.getL4Protocol() == "EncryptMessage" \
-                    or message.getL4Protocol() == "DecryptMessage"):
+            if message is not None and (message.getL4Protocol() == "EncryptMessage" or message.getL4Protocol() == "DecryptMessage"):
                 messageList.append(message)
                 if not message.getL4Protocol() in functionList:
                     functionList.append(message.getL4Protocol())
@@ -93,33 +92,33 @@ class OSpyImporter(AbstractImporter):
         l4Protocol = None
 
         # Retrieves the timestamp
-        if rootElement.find("Timestamp") != None:
+        if rootElement.find("Timestamp") is not None:
             mTimestamp = rootElement.find("Timestamp").text
             date = dateutil.parser.parse(mTimestamp)
             mTimestamp = int(time.mktime(date.timetuple()))
 
         # Retrieves the data of the message
-        if rootElement.find("Data") != None:
+        if rootElement.find("Data") is not None:
             mData = rootElement.find("Data").text
             mData = b64decode(mData).encode('hex')
 
         # Retrieves the local address
-        if rootElement.find("LocalAddress") != None:
+        if rootElement.find("LocalAddress") is not None:
             localAddress = rootElement.find("LocalAddress").text
 
         # Retrieves the peer address
-        if rootElement.find("PeerAddress") != None:
+        if rootElement.find("PeerAddress") is not None:
             peerAddress = rootElement.find("PeerAddress").text
 
         # Retrieves the local port
-        if rootElement.find("LocalPort") != None:
+        if rootElement.find("LocalPort") is not None:
             localPort = rootElement.find("LocalPort").text
 
         # Retrieves the peer port
-        if rootElement.find("PeerPort") != None:
+        if rootElement.find("PeerPort") is not None:
             peerPort = rootElement.find("PeerPort").text
 
-        if rootElement.find("FunctionName") != None:
+        if rootElement.find("FunctionName") is not None:
             l4Protocol = rootElement.find("FunctionName").text
 
         # Set source and destination port and address
@@ -128,7 +127,7 @@ class OSpyImporter(AbstractImporter):
         l3DestinationAddress = peerAddress
         l4SourcePort = localPort
         l4DestinationPort = peerPort
-        if rootElement.find("Direction") != None:
+        if rootElement.find("Direction") is not None:
             msg_direction = rootElement.find("Direction").text
             if msg_direction == 2:
                 l3SourceAddress = peerAddress
@@ -137,7 +136,7 @@ class OSpyImporter(AbstractImporter):
                 l4DestinationPort = localPort
 
         # Create message
-        if mData != None:
+        if mData is not None:
             message = L4NetworkMessage(mUuid, mTimestamp, mData,
                     None, None, None,
                     "IP", l3SourceAddress, l3DestinationAddress,
@@ -150,5 +149,3 @@ class OSpyImporter(AbstractImporter):
             compressedData = fileObj.read()
             data = bz2.decompress(compressedData)
             return data
-
-

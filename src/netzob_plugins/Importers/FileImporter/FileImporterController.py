@@ -59,8 +59,7 @@ class FileImporterController(AbstractImporterController):
 
     def __init__(self, netzob, plugin):
         super(FileImporterController, self).__init__(netzob, plugin)
-        self.model = FileImporter(self.netzob.getCurrentWorkspace(),
-                                  self.getCurrentProject())
+        self.model = FileImporter(self.netzob)
         self.view = FileImporterView(plugin, self)
 
     def run(self):
@@ -73,8 +72,7 @@ class FileImporterController(AbstractImporterController):
         self.model.setSeparator(self.view.separatorEntry.get_text().strip())
         self.model.readMessages()
         for message in self.model.messages:
-            self.view.listListStore.append(
-                    [False, str(message.getID()), message.getStringData()])
+            self.view.listListStore.append([False, str(message.getID()), message.getStringData()])
 
     def doGetMessageDetails(self, messageID):
         message = self.model.getMessageByID(str(messageID))

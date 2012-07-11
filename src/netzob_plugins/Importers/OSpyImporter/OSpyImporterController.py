@@ -48,8 +48,7 @@ class OSpyImporterController(AbstractImporterController):
 
     def __init__(self, netzob, plugin):
         super(OSpyImporterController, self).__init__(netzob, plugin)
-        self.model = OSpyImporter(self.netzob.getCurrentWorkspace(),
-                                  self.getCurrentProject())
+        self.model = OSpyImporter(netzob)
         self.view = OSpyImporterView(plugin, self)
 
     def run(self):
@@ -61,14 +60,7 @@ class OSpyImporterController(AbstractImporterController):
     def doReadMessages(self):
         self.model.readMessages()
         for message in self.model.messages:
-            self.view.listListStore.append(
-                    [False, str(message.getID()),
-                     str(message.getL3SourceAddress()),
-                     str(message.getL3DestinationAddress()),
-                     str(message.getL4Protocol()),
-                     str(message.getL4SourcePort()),
-                     str(message.getL4DestinationPort()),
-                     message.getStringData()])
+            self.view.listListStore.append([False, str(message.getID()), str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()), str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()), message.getStringData()])
 
     def doGetMessageDetails(self, messageID):
         message = self.model.getMessageByID(str(messageID))

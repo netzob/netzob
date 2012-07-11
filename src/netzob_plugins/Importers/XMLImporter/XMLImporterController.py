@@ -48,7 +48,7 @@ class XMLImporterController(AbstractImporterController):
 
     def __init__(self, netzob, plugin):
         super(XMLImporterController, self).__init__(netzob, plugin)
-        self.model = XMLImporter(self.netzob.getCurrentWorkspace(), self.getCurrentProject())
+        self.model = XMLImporter(netzob)
         self.view = XMLImporterView(plugin, self)
 
     def run(self):

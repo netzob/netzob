@@ -43,14 +43,14 @@ from netzob.Common.Session import Session
 from netzob.Common.NetzobException import NetzobImportException
 from netzob.UI.ModelReturnCodes import ERROR
 
+
 class AbstractImporter(object):
     """Abstract class which provides common methods too any kind of importers"""
 
-    def __init__(self, type, currentWorkspace, currentProject):
+    def __init__(self, type, netzob):
         self.type = type
         self.messages = []
-        self.currentWorkspace = currentWorkspace
-        self.currentProject = currentProject
+        self.netzob = netzob
 
     def saveMessagesInCurrentProject(self, messageIDList):
         addMessages = []
@@ -59,11 +59,9 @@ class AbstractImporter(object):
             if message is not None:
                 addMessages.append(message)
             else:
-                errorMessage = _("Message ID: {0} not found in importer " +
-                                "message list").format(messageID)
+                errorMessage = _("Message ID: {0} not found in importer message list").format(messageID)
                 raise NetzobImportException("PCAP", errorMessage, ERROR)
-        self.saveMessagesInProject(self.currentWorkspace,
-                self.currentProject, addMessages, False)
+        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), self.netzob.getCurrentProject(), addMessages, False)
 
     def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
         """Add a selection of messages to an existing project

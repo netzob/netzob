@@ -53,8 +53,7 @@ class PCAPImporterController(AbstractImporterController):
 
     def __init__(self, netzob, plugin):
         super(PCAPImporterController, self).__init__(netzob, plugin)
-        self.model = PCAPImporter(self.netzob.getCurrentWorkspace(),
-                                  self.getCurrentProject())
+        self.model = PCAPImporter(netzob)
         self.view = PCAPImporterView(plugin, self)
 
     def getImportLayer(self):

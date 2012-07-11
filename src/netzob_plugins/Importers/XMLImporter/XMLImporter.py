@@ -54,11 +54,12 @@ from netzob.Common.NetzobException import NetzobImportException
 from netzob.Import.AbstractImporter import AbstractImporter
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
 
+
 class XMLImporter(AbstractImporter):
     """Model of XML importer plugin"""
 
-    def __init__(self, currentWorkspace, currentProject):
-        super(XMLImporter, self).__init__("PCAP IMPORT", currentWorkspace, currentProject)
+    def __init__(self, netzob):
+        super(XMLImporter, self).__init__("XML IMPORT", netzob)
         self.log = logging.getLogger('netzob.Import.XMLImport.py')
         self.filesToBeImported = []
 
