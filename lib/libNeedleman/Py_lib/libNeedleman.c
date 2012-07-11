@@ -62,9 +62,10 @@ PyObject * py_getBID(PyObject* self, PyObject *noarg) {
 	char str_bid[32];
 	strcpy(str_bid,STR(BID));
 	return Py_BuildValue("s", str_bid);
-#endif
-	printf("The macro which established the BID has not been defined when compiling the lib, default one will be returned.");
+#else
+	printf("libNeedleman : The macro which established the BID has not been defined when compiling the lib, default one will be returned.\n");
 	return Py_BuildValue("s", "0000000000");
+#endif
 }
 
 //+---------------------------------------------------------------------------+
