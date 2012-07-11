@@ -39,19 +39,21 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-
 from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
+
 
 class XMLImporterView(AbstractImporterView):
     """View of the XML importer plugin"""
 
-    def __init__(self, controller):
-        super(XMLImporterView, self).__init__(controller)
+    GLADE_FILENAME = "XMLImportConfigurationWidget.glade"
+
+    def __init__(self, plugin, controller):
+        super(XMLImporterView, self).__init__(plugin, controller)
 
         # Import and add configuration widget
         self.builderConfWidget = Gtk.Builder()
-        curDir = os.path.dirname(__file__)
-        self.builderConfWidget.add_from_file(os.path.join(curDir, "XMLImportConfigurationWidget.glade"))
+        gladePath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", XMLImporterView.GLADE_FILENAME)
+        self.builderConfWidget.add_from_file(gladePath)
         self._getObjects(self.builderConfWidget, ["applyAlign"])
         self.builderConfWidget.connect_signals(self.controller)
         self.setDialogTitle(_("Import messages from XML file"))

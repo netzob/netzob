@@ -41,15 +41,15 @@ from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractI
 from netzob_plugins.Importers.XMLImporter.XMLImporter import XMLImporter
 from netzob_plugins.Importers.XMLImporter.XMLImporterView import XMLImporterView
 
+
 class XMLImporterController(AbstractImporterController):
     COLUMN_ID = 1
     COLUMN_SELECTED = 0
 
-    def __init__(self, netzob):
-        super(XMLImporterController, self).__init__(netzob)
-        self.model = XMLImporter(self.netzob.getCurrentWorkspace(),
-                                  self.currentProject)
-        self.view = XMLImporterView(self)
+    def __init__(self, netzob, plugin):
+        super(XMLImporterController, self).__init__(netzob, plugin)
+        self.model = XMLImporter(self.netzob.getCurrentWorkspace(), self.getCurrentProject())
+        self.view = XMLImporterView(plugin, self)
 
     def run(self):
         self.view.run()
@@ -60,10 +60,7 @@ class XMLImporterController(AbstractImporterController):
     def doReadMessages(self):
         self.model.readMessages()
         for message in self.model.messages:
-            self.view.listListStore.append(
-                    [False, str(message.getID()),
-                     str(message.getType()),
-                     message.getStringData()])
+            self.view.listListStore.append([False, str(message.getID()), str(message.getType()), message.getStringData()])
 
     def doGetMessageDetails(self, messageID):
         message = self.model.getMessageByID(str(messageID))
@@ -71,8 +68,7 @@ class XMLImporterController(AbstractImporterController):
                       if name != 'Data']
         messageDetails = "\n".join(["{0} : {1}".format(*prop)
                                     for prop in properties])
-        messageDetails += "\n\n" + TypeConvertor.hexdump(
-                TypeConvertor.netzobRawToPythonRaw(message.getStringData()))
+        messageDetails += "\n\n" + TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getStringData()))
         return messageDetails
 
     def doImportMessages(self, selectedMessages):

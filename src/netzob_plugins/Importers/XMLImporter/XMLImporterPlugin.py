@@ -41,20 +41,20 @@ from netzob.Common.Plugins.NetzobPluginProperties import NetzobPluginProperties
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.XMLImporter.XMLImporterController import XMLImporterController
 
+
 class XMLImporterPlugin(NetzobPluginProperties):
     """XMLImporter : Provide the possibility to import messages
        from netzob XML message files"""
 
     __plugin_name__ = "XMLImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages "
-                                    + "from netzob XML message files")
+    __plugin_description__ = _("Provide the possibility to import messages from netzob XML message files")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     def __init__(self, netzob):
         super(XMLImporterPlugin, self).__init__(netzob)
-        self.entryPoints = [ImportMenuExtension(netzob, XMLImporterController,
-                                "ImportXML", _("Import from XML file"))]
+        self.controller = XMLImporterController(netzob, self)
+        self.entryPoints = [ImportMenuExtension(netzob, self.controller, "ImportXML", _("Import from XML file"))]
 
     def getEntryPoints(self):
         return self.entryPoints
