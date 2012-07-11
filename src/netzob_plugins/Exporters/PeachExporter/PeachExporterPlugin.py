@@ -61,7 +61,7 @@ class PeachExporterPlugin(ExporterPlugin):
         """
             Constructor of PeachExporterPlugin:
 
-                @type netzob: netzob.NetzobGUI.netzob
+                @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
 
         """

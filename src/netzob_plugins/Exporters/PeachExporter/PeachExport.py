@@ -26,18 +26,19 @@
 #+---------------------------------------------------------------------------+
 
 
-#-----------------------------------------------------------------------------
-# Global Imports
-#-----------------------------------------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Global Imports                                                            |
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
 from lxml import etree
 import string
+from bitarray import bitarray
 
-
-#+----------------------------------------------------------------------------
-#| Local Imports
-#+----------------------------------------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Local Imports                                                             |
+#+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 class PeachExport:
@@ -52,29 +53,36 @@ class PeachExport:
         """
             Constructor of PeachExport:
 
-                @type netzob: netzob.NetzobGUI.netzob
+                @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
 
         """
         self.netzob = netzob
+        self.variableOverRegex = True
 
     def getPeachDefinition(self, symbolID, entireProject):
         """
             getXMLDefinition:
-                Returns part of the Peach pit file (XML format).
+                Returns the Peach pit file (XML format) made on the  netzob information.
 
                 @type symbolID: integer
                 @param symbolID: a number which identifies the symbol the xml definition of which we need.
                 @type entireProject: boolean
                 @param entireProject: true if we want to see the Peach definition of the whole project, false elsewhere.
+                @return type: string
+                @return: the string representation of the generated Peach xml pit file.
 
         """
-        xmlRoot = etree.Element("root")
         logging.debug(_("Targeted symbolID: {0}").format(str(symbolID)))
+        # TODO(stateful fuzzer): Make one state model for each state of the protocol.
+        xmlRoot = etree.Element("Peach")
+        xmlInclude = etree.SubElement(xmlRoot, "Include", ns="default", src="file:defaults.xml")
+        xmlImport = etree.SubElement(xmlRoot, "Import")
+        xmlImport.attrib["import"] = "PeachzobAddons"
 
         if entireProject:
             self.makeAllDataModels(xmlRoot)
-            self.makeAStateModel(xmlRoot)
+            self.makeAllStateModels(xmlRoot)
 
         else:
             project = self.netzob.getCurrentProject()
@@ -90,10 +98,42 @@ class PeachExport:
                 return None
             else:
                 self.makeADataModel(xmlRoot, symbol, 0)
-            self.makeAState(xmlRoot, 0)
+                self.makeAStateModel(xmlRoot)
+
+        xmlAgent = etree.SubElement(xmlRoot, "Agent", name="DefaultAgent")
+        xmlCommentAgent = etree.Comment("TODO: Configure the Agents.")
+        xmlAgent.append(xmlCommentAgent)
+
+        xmlTest = etree.SubElement(xmlRoot, "Test", name="DefaultTest")
+        xmlCommentTest1 = etree.Comment('TODO: Enable Agent <Agent ref="TheAgent"/> ')
+        xmlCommentTest2 = etree.Comment("TODO: Configure the test.")
+        xmlTest.append(xmlCommentTest1)
+        xmlTest.append(xmlCommentTest2)
+        xmlTestStateModel = etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
+        xmlPublisher = etree.SubElement(xmlTest, "Publisher")
+        xmlPublisher.attrib["class"] = "udp.Udp"
+        xmlParamHost = etree.SubElement(xmlPublisher, "Param", name="host", value="127.0.0.1")
+        xmlParamPort = etree.SubElement(xmlPublisher, "Param", name="port", value="4242")
+
+        xmlRun = etree.SubElement(xmlRoot, "Run", name="DefaultRun")
+        xmlCommentRun = etree.Comment("TODO: Configure the run.")
+        xmlRun.append(xmlCommentRun)
+        xmlLogger = etree.SubElement(xmlRun, "Logger")
+        xmlLogger.attrib["class"] = "logger.Filesystem"
+        xmlParamLogger = etree.SubElement(xmlLogger, "Param", name="path", value="logs")
+        xmlTestRed = etree.SubElement(xmlRun, "Test", ref="DefaultTest")
 
         tree = etree.ElementTree(xmlRoot)
-        result = etree.tostring(tree, pretty_print=True)
+        toStringedTree = etree.tostring(tree, pretty_print=True)
+
+        # We remove the first line:
+        splittedToStringedTree = toStringedTree.split("\n")
+        splittedToStringedTree = splittedToStringedTree[1:]
+        toStringedTree = "\n".join(splittedToStringedTree)
+        # Add strings not well managed by lxml.
+        result = '<?xml version="1.0" encoding="utf-8"?>\n'
+        result = result + '<Peach xmlns="http://phed.org/2008/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://phed.org/2008/Peach /peach/peach.xsd">\n'
+        result = result + toStringedTree + "\n</Peach"
         return result
 
     def makeAllDataModels(self, xmlFather):
@@ -129,163 +169,227 @@ class PeachExport:
         """
         xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
         for field in symbol.getFields():
-
             xmlField = None
-            peachType = ""
-            variable = field.getVariable()
-            if variable is not None:
-                # Precision on the variable type.
-                peachType = self.getRecPeachFieldType(variable)
+
+            #-----------------------------------#
+            # Variable/Defaultvalue Management: #
+            #-----------------------------------#
+            if self.variableOverRegex:
+                logging.debug(_("The fuzzing is based on variables."))
+                variable = field.getVariable()
+                if variable is None:
+                    variable = field.getDefaultVariable(symbol)
+
+                # We retrieve the values of the variable in text format.
+                typedValueLists = self.getRecVariableTypedValueLists(variable)
+                logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(typedValueLists)))
+        
+                # We count the subfields for the selected field. Aggregate variable can cause multiple subfields.
+                subLength = 0
+                for typedValueList in typedValueLists:
+                    subLength = max(subLength, len(typedValueList))
+
+                logging.debug(_("Sublength : {0}.").format(str(subLength)))
+                # We create one Peach subfield for each netzob subfield.
+                xmlFields = []
+                # For each subfield.
+                for i in range(subLength):
+                    peachType = self.getPeachFieldType(typedValueLists, i)
+                    xmlFields.append(etree.SubElement(xmlDataModel, peachType, valueType="hex", name=("{0}_{1}").format(field.getName(), i)))
+                    # We write down all possible values the subfield can have.
+                    paramValues = []
+                    for typedValueList in typedValueLists:
+                        # If we have such a field. (The double list typedValueLists is lacunar)
+                        if len(typedValueList) > i:
+                            paramValues.append(typedValueList[i][1])
+                    if len(paramValues) > 1:
+                        # If there is several possible values, we use a fixup.
+                        xmlOrFixup = etree.SubElement(xmlFields[i], "Fixup")
+                        xmlOrFixup.attrib["class"] = "PeachzobAddons.Or"
+                        # We transform the bitarray list into an hex string understandable by Peach.
+                        formattedValue = ""
+                        for paramValue in paramValues:
+                            formattedValue = ("{0};{1}").format(formattedValue, self.bitarray2hex(paramValue))
+                        formattedValue = formattedValue[1:]  # Remove the ';' prefix.
+                        xmlOrFixupValueParam = etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
+                    elif len(paramValues) == 1:
+                        formattedValue = self.bitarray2hex(paramValues[0])
+                        xmlFields[i].attrib["value"] = formattedValue
+
+            #-------------------#
+            # Regex management: #
+            #-------------------#   
             else:
-                logging.debug(_("The field {0} has not got any variable.").format(field.getName()))
-                peachType = "Blob"
-
-            if field.isStatic():
-                # Static fields are not mutated.
-                xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), mutable="false", valueType="hex", value=field.getRegex())
-
-            else:
-                # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
-
-                # Regex management: #
-                #-------------------#
-
-                # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
-                # We will illustrate it with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
-                regex = field.getRegex()
-                if (regex != "()"):
-                    regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
-
-                    splittedRegex = []
-                    for lterm in string.split(regex, ".{"):
-                            for rterm in string.split(lterm, "}"):
-                                splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
-                                logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
-
-                    for i in range(len(splittedRegex)):
-                        # splittedRegex will always contain dynamic subfields in even position.
-                        if (i % 2) == 1:
-                            fieldLength = 0
-                            if splittedRegex[i].find(",") == -1:
-                                # The regex was like (.{n}) so fieldlength = n
-                                fieldLength = int(splittedRegex[i])
-                            elif splittedRegex[i].find(",") == 0:
-                                # The regex was like (.{,n}) so fieldlength = n/2
-                                fieldLength = int((splittedRegex[i])[1:len(splittedRegex[i])])
-                                fieldLength = fieldLength / 2
-                            else:
-                                # The regex was like (.{n,p}) so fieldlength = (n+p)/2
-                                fieldLength = int(string.split(splittedRegex[i], ",")[0]) + int(string.split(splittedRegex[i], ",")[1])
-                                fieldLength = fieldLength / 2
-                            # The given field length is the length in half-bytes.
-                            fieldLength = (fieldLength + 1) / 2
-                            xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), length=str(fieldLength))
-                            logging.debug(_("The field {0} has a dynamic subfield of size {1}.").format(field.getName(), str(fieldLength)))
-                        else:
-                            if splittedRegex[i] != "":
-                                xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), mutable="false", valueType="hex", value=splittedRegex[i])
-                                logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
+                logging.debug(_("The fuzzing is based on regexes."))
+                if field.isStatic():
+                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), valueType="hex", value=field.getRegex())
                 else:
-                    # If the field's regex is (), we add a null-length Peach field type.
-                    fieldLength = 0
-                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=str(fieldLength))
-                    logging.debug(_("The field {0} is empty.").format(field.getName()))
+                    # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
+                    # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
+                    # We will illustrate it with the following example "(abcd.{m,n}efg.{,o}.{p}hij)"
+                    regex = field.getRegex()
+                    if (regex != "()"):
+                        regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
+    
+                        splittedRegex = []
+                        for lterm in string.split(regex, ".{"):
+                                for rterm in string.split(lterm, "}"):
+                                    splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
+                                    logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
+    
+                        for i in range(len(splittedRegex)):
+                            # splittedRegex will always contain dynamic subfields in even position.
+                            if (i % 2) == 1:
+                                fieldLength = 0
+                                if splittedRegex[i].find(",") == -1:  # regex = {n}
+                                    fieldMaxLength = int(splittedRegex[i])
+                                    fieldMinLength = fieldMaxLength
+                                elif splittedRegex[i].find(",") == 0:  # regex = {,p}
+                                    fieldMaxLength = int((splittedRegex[i])[1:len(splittedRegex[i])])
+                                    fieldMinLength = 0
+                                else:  # regex = {n,p}
+                                    fieldMaxLength = int(string.split(splittedRegex[i], ",")[1])
+                                    fieldMinLength = int(string.split(splittedRegex[i], ",")[0])
+                                # The given field length is the length in half-bytes.
+                                fieldLength = (fieldMaxLength + 1) / 2
+                                xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), length=str(fieldLength))
+                                logging.debug(_("The field {0} has a dynamic subfield of size {1}.").format(field.getName(), str(fieldLength)))
+                                xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
+                                xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomString"
+                                xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
+                                xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
+                            else:
+                                if splittedRegex[i] != "":
+                                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), mutable="false", valueType="hex", value=splittedRegex[i])
+                                    logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
+                    else:
+                        # If the field's regex is (), we add a null-length Peach field type.
+                        fieldLength = 0
+                        xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=str(fieldLength))
+                        logging.debug(_("The field {0} is empty.").format(field.getName()))
 
-                # Variable/Defaultvalue Management: #
-                #-----------------------------------#
-                # TODO: We have a problem if the regex is multiple and if we have a variable. Now we just add values extracted from the variable in the last subfield.
-
-                # If we have a variable, we retrieve its value and use them for fuzzing more precisely.
-                if variable is not None:
-                    # We retrieve the values of the variable in text format.
-                    values = self.getRecVariableValue(variable)
-                    logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(values)))
-
-                    # We add the first value of the variable as the default value of the peach field.
-                    xmlField.attrib["valueType"] = "string"
-                    xmlField.attrib["value"] = values[0]
-
-                    # We add all other values to the field as potential valid values.
-                    values = values[1:]
-                    strValue = ""
-                    for value in values:
-                        strValue = ("{0};{1}").format(strValue, value)  # Each value is separated by a ';' character.
-                    strValue = strValue[1:]  # We withdraw the first character which is a ';'.
-                    xmlHint = etree.SubElement(xmlField, "Hint", name="ValidValues", value=strValue)
-
-    def getRecVariableValue(self, variable):
+    def bitarray2hex(self, abitarray):
         """
-            getRecVariableValue:
-                Find the value(s) of a variable. May be recursive.
+            bitarray2hex:
+                Transform a bitarray in a pure hex string.
+                
+                @type abitarray: bitarray.bitarray
+                @param abitarray: the given bitarray which is transformed.
+                @return type: string
+                @return: the hex translation of the bitarray.
 
+        """
+        return (abitarray.tobytes()).encode('hex')
+
+    def getRecVariableTypedValueLists(self, variable):
+        """
+            getRecVariableTypedValueLists:
+                Find the value(s) and its(their) type of a variable. May be recursive.
+                
                 @type variable: netzob.common.MMSTD.Dictionary.Variable.variable
                 @param variable: the given variable which values are searched.
-                @return type: string list.
-                @return: the list containing all the values of the given variable, each in string format.
+                @return type: (string, bitarray.bitarray) list list.
+                @return: the list, representing aggregations, of lists, representing alternations, of couple (type of a leaf variable, value (in bitarray) of leaf variable).
 
         """
-        values = []
-        if variable.getTypeVariable() == "Aggregate":
+        logging.debug(_("<[ variable  : {0}.").format(str(variable.getName())))
+        variableType = variable.getTypeVariable()
+        typedValueLists = [] # List of list of couple type-value.
+        if variableType == "Aggregate":
             for child in variable.getChildren():
-                for value in self.getRecVariableValue(child):
-                    values.append(value)
+                # We concatenate the double lists at the lower level (inner list).
+                logging.debug(_("fatherValueLists : {0}.").format(str(typedValueLists)))
+                typedValueLists = self.concatVariableValues(typedValueLists, self.getRecVariableTypedValueLists(child))
+
+        elif variableType == "Alternate":
+            for child in variable.getChildren():
+                # We simply concatenate the two double lists as simple list.
+                for value in self.getRecVariableTypedValueLists(child):
+                    typedValueLists.append(value)
+        elif variableType == "ReferencedVariable":
+            #TODO: complete this.
+            pass
         else:
-            values.append(variable.getValue(False, self.netzob.getCurrentProject().getVocabulary(), None)[1])
-        return values
+            # We add the variable type and its binary value as a singleton list in the higher list.
+            vocabulary = self.netzob.getCurrentProject().getVocabulary()
+            memory = Memory(vocabulary.getVariables())
+            value = variable.getValue(False, vocabulary, memory)
+            if value is not None:
+                typedValueLists.append([(variableType, value[0])])
+        # typedValueLists = [[("Word", "a")], [("Word", "b"), ("Word", "c"), ("Word", "e")], [("Word", "d"), ("Word", "e")]]
+        # <=> variable = a + bce + de
+        logging.debug(_("typedValueLists  : {0}.").format(str(typedValueLists)))
+        logging.debug(_("variable  : {0}. ]>").format(str(variable.getName())))
+        return typedValueLists
 
-    def getRecPeachFieldType(self, variable):
+    def concatVariableValues(self, fatherValueLists, sonValueLists):
         """
-            getRecPeachFieldType:
-                Find the appropriate peach type for a field depending on its variable type. May be recursive.
+            concatVariableValues:
+                Insert the values of a son to its father's in such a way that the global form (aggregation of alternation) is respected.
+                From an aerial point of view, we concatenate both father and son's inner list in a double list. This concatenation stays in the inner list.
+                
+                @type fatherValueLists: (string, bitarray.bitarray) list list.
+                @param fatherValueLists: the preexisting father double list.
+                @type fatherValueLists: (string, bitarray.bitarray) list list.
+                @param fatherValueLists: the son double list to be inserted.
+                @return type: (string, bitarray.bitarray) list list.
+                @return: the double list resulting of the concatenation.          
 
-                @type variable: netzob.common.MMSTD.Dictionary.Variable.variable
-                @param variable: the given variable which type is searched
+        """
+        finalValueLists = []
+        if len(fatherValueLists) == 0:
+            #initialization
+            finalValueLists = sonValueLists
+        for fvl in fatherValueLists:
+            for svl in sonValueLists:
+                midvl = fvl + svl
+                logging.debug(_("concatVariableValues : midvl before : {0}.").format(str(midvl)))
+                finalValueLists.append(midvl)
+                logging.debug(_("concatVariableValues : midvl after : {0}.").format(str(finalValueLists)))
+
+        return finalValueLists
+
+    def getPeachFieldType(self, typedValueLists, index):
+        """
+            getPeachFieldType:
+                Get the peach type (Blob, String or Number) of the current field. This type is determined through the majority of the type of an alternation.
+
+                @type typedValueLists: (string, bitarray.bitarray) list list.
+                @param typedValueLists: a double list composed of aggregation of alternation, we search transversely among an alternation the majority type.
+                @type index: integer
+                @param index: an index pointing to the targeted alternation. 
                 @return type: string
-                @return: the eventual Peach type of the variable. It can be String, Number or Blob.
+                @return: the majority type of the targeted alternation.
 
         """
-        # TODO: manage all native types of netzob. AlternateVariable and ReferencedVariable remain.
-        logging.debug(_("Getting the type of variable {0}.").format(variable.getName()))
-
-        # Default type is Blob. BinaryVariable and HexVariable are transformed in Blob.
-        peachType = "Blob"
-        if variable.getTypeVariable() == "Word" or variable.getTypeVariable() == "IPv4Variable":
-            peachType = "String"
-        elif variable.getTypeVariable() == "DecimalWord":
-            peachType = "Number"
-        elif variable.getTypeVariable() == "Aggregate":
-            logging.debug(_("Variable has {0} child(ren).").format(len(variable.getChildren())))
-            if len(variable.getChildren()) == 1:
-                # An aggregate field with has the type of its child.
-                peachType = self.getRecPeachFieldType(variable.getChildren()[0])
-            else:
-                # An aggregate field with children has the least demanding type of all its children.
-                potentialTypes = []
-                for child in variable.getChildren():
-                    childType = self.getRecPeachFieldType(child)
-                    if childType not in potentialTypes:
-                        potentialTypes.append(childType)
-                # Hierarchy of Peach type is Blob > String > Number.
-                if "Blob" in potentialTypes:
-                    peachType = "Blob"
-                elif "String" in potentialTypes:
-                    peachType = "String"
-                elif "Number" in potentialTypes:
+        peachType = ""
+        for typedValueList in typedValueLists:
+            # The hierarchy is Blob > String > Number
+            if typedValueList[index][0] == "DecimalWord":
+                if peachType != "Blob" and peachType != "String" and peachType != "Number":
                     peachType = "Number"
-        logging.debug(_("Variable {0} is of type {1}.").format(variable.getName(), peachType))
+            elif typedValueList[index][0] == "Word" or typedValueList[index][0] == "IPv4Variable":
+                if peachType != "Blob" and peachType != "String":
+                    peachType = "String"
+            else:
+                if peachType != "Blob":
+                    peachType = "Blob"
+                    break
+        if peachType == "":
+            # Eventual default value.
+            peachType = "Blob"
         return peachType
 
-    def makeAStateModel(self, xmlFather):
+    def makeAllStateModels(self, xmlFather):
         """
-            makeAStateModel:
+            makeAllStateModels:
                 Create a Peach state model. Create one state by data model and chain it to the previously created one.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
 
         """
-        # TODO(stateful fuzzer): Make one state model for each state of the protocol.
-        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="simpleStateModel", initialState="state0")
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
         # There is always at least one state, the first state which is naturally called state0 and is the initial state.
 
         project = self.netzob.getCurrentProject()
@@ -299,6 +403,20 @@ class PeachExport:
                 xmlAction = etree.SubElement(xmlState, "Action", type="changeState", ref=("state{0}").format(stateid))
             xmlState = self.makeAState(xmlStateModel, stateid)
             stateid = stateid + 1
+
+    def makeAStateModel(self, xmlFather):
+        """
+            makeAStateModel:
+                Create a Peach state model with only one state.
+
+                @type xmlFather: lxml.etree.element
+                @param xmlFather: the xml tree father of the current element.
+
+        """
+        xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
+        project = self.netzob.getCurrentProject()
+        vocabulary = project.getVocabulary()
+        xmlState = self.makeAState(xmlStateModel, 0)
 
     def makeAState(self, xmlFather, stateid):
         """

@@ -92,7 +92,7 @@ class PeachExportController:
         """
             Constructor of PeachExportController:
 
-                @type netzob: netzob.NetzobGUI.netzob
+                @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
 
         """

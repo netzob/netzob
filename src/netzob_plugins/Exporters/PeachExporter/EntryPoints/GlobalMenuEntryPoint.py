@@ -56,7 +56,7 @@ class GlobalMenuEntryPoint(GlobalMenuExtension):
         """
             Constructor of GlobalMenuEntryPoint:
 
-                @type netzob: netzob.NetzobGUI.netzob
+                @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
 
         """
