@@ -1,32 +1,6 @@
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
-#+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
-
-
-#+---------------------------------------------------------------------------+
 #| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
@@ -126,14 +100,14 @@ class PeachExport:
         tree = etree.ElementTree(xmlRoot)
         toStringedTree = etree.tostring(tree, pretty_print=True)
 
-        # We remove the first line:
+        # Remove the first line:
         splittedToStringedTree = toStringedTree.split("\n")
         splittedToStringedTree = splittedToStringedTree[1:]
         toStringedTree = "\n".join(splittedToStringedTree)
         # Add strings not well managed by lxml.
         result = '<?xml version="1.0" encoding="utf-8"?>\n'
         result = result + '<Peach xmlns="http://phed.org/2008/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://phed.org/2008/Peach /peach/peach.xsd">\n'
-        result = result + toStringedTree + "\n</Peach"
+        result = result + toStringedTree
         return result
 
     def makeAllDataModels(self, xmlFather):
@@ -183,7 +157,7 @@ class PeachExport:
                 # We retrieve the values of the variable in text format.
                 typedValueLists = self.getRecVariableTypedValueLists(variable)
                 logging.debug(_("The field {0} has the value {1}.").format(field.getName(), str(typedValueLists)))
-        
+
                 # We count the subfields for the selected field. Aggregate variable can cause multiple subfields.
                 subLength = 0
                 for typedValueList in typedValueLists:
@@ -218,7 +192,7 @@ class PeachExport:
 
             #-------------------#
             # Regex management: #
-            #-------------------#   
+            #-------------------#
             else:
                 logging.debug(_("The fuzzing is based on regexes."))
                 if field.isStatic():
@@ -230,13 +204,13 @@ class PeachExport:
                     regex = field.getRegex()
                     if (regex != "()"):
                         regex = regex[1:len(regex) - 1]  # regex = "abcd.{m,n}efg.{,o}.{p}hij"
-    
+
                         splittedRegex = []
                         for lterm in string.split(regex, ".{"):
                                 for rterm in string.split(lterm, "}"):
                                     splittedRegex.append(rterm)  # splittedRegex = ["abcd", "m,n", "efg", ",o", "", "p", "hij"]
                                     logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
-    
+
                         for i in range(len(splittedRegex)):
                             # splittedRegex will always contain dynamic subfields in even position.
                             if (i % 2) == 1:
@@ -272,7 +246,7 @@ class PeachExport:
         """
             bitarray2hex:
                 Transform a bitarray in a pure hex string.
-                
+
                 @type abitarray: bitarray.bitarray
                 @param abitarray: the given bitarray which is transformed.
                 @return type: string
@@ -285,7 +259,7 @@ class PeachExport:
         """
             getRecVariableTypedValueLists:
                 Find the value(s) and its(their) type of a variable. May be recursive.
-                
+
                 @type variable: netzob.common.MMSTD.Dictionary.Variable.variable
                 @param variable: the given variable which values are searched.
                 @return type: (string, bitarray.bitarray) list list.
@@ -294,7 +268,7 @@ class PeachExport:
         """
         logging.debug(_("<[ variable  : {0}.").format(str(variable.getName())))
         variableType = variable.getTypeVariable()
-        typedValueLists = [] # List of list of couple type-value.
+        typedValueLists = []  # List of list of couple type-value.
         if variableType == "Aggregate":
             for child in variable.getChildren():
                 # We concatenate the double lists at the lower level (inner list).
@@ -327,13 +301,13 @@ class PeachExport:
             concatVariableValues:
                 Insert the values of a son to its father's in such a way that the global form (aggregation of alternation) is respected.
                 From an aerial point of view, we concatenate both father and son's inner list in a double list. This concatenation stays in the inner list.
-                
+
                 @type fatherValueLists: (string, bitarray.bitarray) list list.
                 @param fatherValueLists: the preexisting father double list.
                 @type fatherValueLists: (string, bitarray.bitarray) list list.
                 @param fatherValueLists: the son double list to be inserted.
                 @return type: (string, bitarray.bitarray) list list.
-                @return: the double list resulting of the concatenation.          
+                @return: the double list resulting of the concatenation.
 
         """
         finalValueLists = []
@@ -357,7 +331,7 @@ class PeachExport:
                 @type typedValueLists: (string, bitarray.bitarray) list list.
                 @param typedValueLists: a double list composed of aggregation of alternation, we search transversely among an alternation the majority type.
                 @type index: integer
-                @param index: an index pointing to the targeted alternation. 
+                @param index: an index pointing to the targeted alternation.
                 @return type: string
                 @return: the majority type of the targeted alternation.
 
@@ -439,3 +413,14 @@ class PeachExport:
         xmlDataModel = etree.SubElement(xmlAction, "DataModel", ref=("dataModel{0}").format(str(stateid)))
         xmlData = etree.SubElement(xmlAction, "Data", name="data")
         return xmlState
+    
+    def setVariableOverRegex(self, value):
+        """
+            setVariableOverRegex:
+                Setter for variableOverRegex.
+
+            @type value: boolean
+            @param value: the new value of variableOverRegex.
+
+        """
+        self.variableOverRegex = value

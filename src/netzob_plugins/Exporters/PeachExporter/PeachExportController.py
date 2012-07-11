@@ -1,42 +1,19 @@
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
-#|          01001110 01100101 01110100 01111010 01101111 01100010            |
-#|                                                                           |
-#|               Netzob : Inferring communication protocols                  |
+#| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
-#| This program is free software: you can redistribute it and/or modify      |
-#| it under the terms of the GNU General Public License as published by      |
-#| the Free Software Foundation, either version 3 of the License, or         |
-#| (at your option) any later version.                                       |
-#|                                                                           |
-#| This program is distributed in the hope that it will be useful,           |
-#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
-#| GNU General Public License for more details.                              |
-#|                                                                           |
-#| You should have received a copy of the GNU General Public License         |
-#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
-#+---------------------------------------------------------------------------+
-#| @url      : http://www.netzob.org                                         |
-#| @contact  : contact@netzob.org                                            |
-#| @sponsors : Amossys, http://www.amossys.fr                                |
-#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+
-
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
 from gettext import gettext as _
 import gtk
 import pygtk
 import logging
+import os
 pygtk.require('2.0')
 
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Local Imports                                                             |
+#+---------------------------------------------------------------------------+
+from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
 from netzob_plugins.Exporters.PeachExporter.PeachExportView import PeachExportView
 from netzob_plugins.Exporters.PeachExporter.PeachExport import PeachExport
 
@@ -84,10 +61,6 @@ class PeachExportController:
         """
         pass
 
-    #+----------------------------------------------
-    #| Constructor:
-    #| @param netzob: the main netzob object
-    #+----------------------------------------------
     def __init__(self, netzob):
         """
             Constructor of PeachExportController:
@@ -101,6 +74,7 @@ class PeachExportController:
         self.view = PeachExportView()
         self.initCallbacks()
         self.update()
+        self.selectedSymbolID = -2
 
     def initCallbacks(self):
         """
@@ -109,6 +83,8 @@ class PeachExportController:
 
         """
         self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
+        self.view.comboFuzzingBase.connect("changed", self.changeFuzzingBase)
+        self.view.exportButton.connect("clicked", self.exportFuzzer)
 
     def symbolSelected_cb(self, treeview):
         """
@@ -125,6 +101,31 @@ class PeachExportController:
                 symbolID = model.get_value(iter, 0)
                 self.showXMLDefinition(symbolID)
 
+    def changeFuzzingBase(self, combo):
+        """
+            changeFuzzingBase:
+                Change the fuzzing base between "based on regex" and "based on variable".
+
+                @type combo: netzob.UI.NetzobWidgets.NetzobComboBoxEntry
+                @param combo: the combobox which modification causes the call of this functions.
+
+        """
+        if self.netzob.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+
+        # Set the format choice as default
+        fuzzingBase = combo.get_active_text()
+        if fuzzingBase == "Variable":
+            self.model.variableOverRegex = True
+        elif fuzzingBase == "Regex":
+            self.model.variableOverRegex = False
+            
+        # If nothing is currently displayed, nothing is updated.
+        if self.selectedSymbolID > -2:
+            self.showXMLDefinition(self.selectedSymbolID)
+        
+
     def showXMLDefinition(self, symbolID):
         """
             showXMLDefinition:
@@ -134,11 +135,10 @@ class PeachExportController:
                 @param symbolID: a number which identifies the symbol which XML Definition is displayed.
 
         """
-
+        self.selectedSymbolID = symbolID
         # Special case "entire project"
         if symbolID == "-1":
             xmlDefinition = self.model.getPeachDefinition(0, True)
-
         # Usual case with usual symbolID
         else:
             xmlDefinition = self.model.getPeachDefinition(symbolID, False)
@@ -148,6 +148,49 @@ class PeachExportController:
             self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), xmlDefinition, "normalTag")
         else:
             self.view.textarea.get_buffer().set_text(_("No XML definition found"))
+
+    def exportFuzzer(self, button):
+        """
+            exportFuzzer:
+                Export one or all netzob symbols in a Peach Fuzzer.
+
+                @type button: gtk.Button
+                @param button: the button which was clicked and caused the call of this function.
+
+        """
+        if self.selectedSymbolID != "-2":
+            chooser = gtk.FileChooserDialog(title=_("Export as Peach Fuzzer (XML)"), action=gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+            res = chooser.run()
+            if res == gtk.RESPONSE_OK:
+                fileName = chooser.get_filename()
+            chooser.destroy()
+    
+            doCreateFile = False
+            isFile = os.path.isfile(fileName)
+            if not isFile:
+                doCreateFile = True
+            else:
+                md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
+                resp = md.run()
+                md.destroy()
+                if resp == gtk.RESPONSE_OK:
+                    doCreateFile = True
+    
+            if doCreateFile:
+                # Special case "entire project"
+                if self.selectedSymbolID == "-1":
+                    xmlDefinition = self.model.getPeachDefinition(0, True)
+                # Usual case with usual symbolID
+                else:
+                    xmlDefinition = self.model.getPeachDefinition(self.selectedSymbolID, False)
+                try:
+                    file = open(fileName, 'w')
+                    file.write(xmlDefinition)
+                    file.close()
+                    # TODO: maybe copy the plugin file with shutil
+                    NetzobInfoMessage(_("The project has been correctly exported as a Peach Fuzzer to '{0}'.\nDo not forget to copy in the targeted directory our Peach plugin netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py.").format(fileName))
+                except Exception,e:
+                    NetzobInfoMessage(_("The following error occurred while exporting the project as a Peach Fuzzer to '{0}': {1}").format(fileName, e))
 
     def getPanel(self):
         """
