@@ -44,7 +44,7 @@ class pybuild_command(build_py):
 
         for ext in self.distribution.ext_modules:
             for macro in ext.define_macros:
-                if macro[0] != None and macro[0] == "BID" and macro[1] != None:
+                if macro[0] is not None and macro[0] == "BID" and macro[1] is not None:
                     return macro[1]
         return None
 
@@ -56,11 +56,10 @@ class pybuild_command(build_py):
             if isinstance(package, str):
                 package = package.split('.')
             elif not isinstance(package, (list, tuple)):
-                raise TypeError(
-                      "'package' must be a string (dot-separated), list, or tuple")
+                raise TypeError("'package' must be a string (dot-separated), list, or tuple")
             outfile = self.get_module_outfile(self.build_lib, package, module)
-            self.updateFileWithBID(outfile, self.getBID())
-
+            if self.getBID() is not None:
+                self.updateFileWithBID(outfile, self.getBID())
         return result
 
     def updateFileWithBID(self, file, bid):
