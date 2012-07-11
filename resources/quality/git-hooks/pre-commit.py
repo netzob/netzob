@@ -112,9 +112,10 @@ def checkHeader(file):
 #+---------------------------------------------------------------------------+"""
     header2 = header.replace("#", "//")  # For C files
     header3 = header.replace("#", "")     # For other
+    headerGlade = header3.replace("---------------------------------------------------------------------------", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")     # For other
     with open(file, 'rb') as f:
         data = f.read()
-    if not header in data and not header2 in data and not header3 in data:
+    if not header in data and not header2 in data and not header3 in data and not headerGlade in data:
         return ["The header has not been found in file"]
     return []
 
@@ -154,7 +155,7 @@ def verifyResults(results):
             localResult = 0
             for ruleName in ruleNames:
                 ruleErrors = resultFile[ruleName]
-                if ruleErrors != None and len(ruleErrors) > 0:
+                if ruleErrors is not None and len(ruleErrors) > 0:
                     for ruleError in ruleErrors:
                         print "[E]\t %s : %s" % (ruleName, ruleError)
                     result = 1
@@ -166,7 +167,7 @@ def verifyResults(results):
 
 def analyze(filesToAnalyze):
 
-    if filesToAnalyze == None:
+    if filesToAnalyze is None:
         # Retrieve all the files to analyze
         print "[I] Retrieve all the files to analyze from the staged area."
         files = getFiles()
