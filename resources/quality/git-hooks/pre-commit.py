@@ -31,6 +31,15 @@ import sys
 import subprocess
 from git import *
 
+ignore_files = ["src/netzob/ExternalLibs/xdot.py",
+                ".*\.txt",
+                ".*\.png", ".*\.ico"
+                ".*\.xsd",
+                "resources/*",
+                "__init__.py",
+                "\.git/*",
+                ".*\.pyc"
+                ]
 
 def getFiles():
     currentPath = os.getcwd()
@@ -54,7 +63,7 @@ def getFiles():
 
 def checkPEP8(file):
     localResult = []
-    p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501', file], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['pep8', '--repeat', '--ignore=E501,E711,E712', file], stdout=subprocess.PIPE)
     out, err = p.communicate()
     for line in out.splitlines():
         localResult.append(line)
@@ -129,8 +138,9 @@ def checkFile(file):
     # Verify no '<<<' and or conflicts info are commited
     results['Conflicts'] = searchForPattern(file, '<<<<<<', 'hints of untreated conflicts')  # Thisisnotaconflict
 
-    if file.endswith(".txt"):
-        return results
+    for ignore in ignore_files:
+        if re.match(ignore, file):
+            return results
 
     # Verify no CRLF is used in source
     results['CRLF'] = checkForCRLF(file)
