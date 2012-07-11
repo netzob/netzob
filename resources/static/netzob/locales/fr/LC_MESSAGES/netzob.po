@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-10 09:49+0200\n"
+"POT-Creation-Date: 2012-06-13 16:32+0200\n"
 "PO-Revision-Date: 2012-06-13 16:34+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: French\n"
@@ -18,193 +18,209 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: src/netzob/NetzobGui.py:128
+#: src/netzob/NetzobGui.py:127
 msgid "Starting netzob"
 msgstr "Démarrage de Netzob"
 
-#: src/netzob/NetzobGui.py:137
+#: src/netzob/NetzobGui.py:132
 msgid "Netzob: Inferring communication protocols"
 msgstr "Netzob : Inférence de protocole de communication "
 
-#: src/netzob/NetzobGui.py:166
+#: src/netzob/NetzobGui.py:168
 msgid "Vocabulary inference"
 msgstr "Inférence de vocabulaire"
 
-#: src/netzob/NetzobGui.py:167
+#: src/netzob/NetzobGui.py:169
 msgid "Grammar inference"
 msgstr "Inférence de grammaire"
 
-#: src/netzob/NetzobGui.py:169
+#: src/netzob/NetzobGui.py:171
 msgid "Simulator"
 msgstr "Simulateur"
 
-#: src/netzob/NetzobGui.py:202
+#: src/netzob/NetzobGui.py:205
 msgid "The current project is: {0}"
 msgstr ""
 
-#: src/netzob/NetzobGui.py:211
+#: src/netzob/NetzobGui.py:214
 #, python-format
 msgid "Do you want to save the current project (%s)"
 msgstr "Voulez-vous sauvegarder le projet courant (%s) ?"
 
-#: src/netzob/Common/Menu.py:120
-msgid "Workspace"
-msgstr "Espace de travail"
+#: src/netzob/Common/Menu.py:95
+msgid "Help"
+msgstr "Aide"
 
-#: src/netzob/Common/Menu.py:121
-msgid "Create a project"
-msgstr "Créer un projet"
+#: src/netzob/Common/Menu.py:98
+msgid "Help Contents"
+msgstr "Contenu de l'aide"
 
-#: src/netzob/Common/Menu.py:122
-msgid "Import a project"
-msgstr "Importer un projet"
+#: src/netzob/Common/Menu.py:101
+msgid "About Netzob"
+msgstr "À propos de Netzob"
 
-#: src/netzob/Common/Menu.py:123
-msgid "Export a project"
-msgstr "Exporter un projet"
-
-#: src/netzob/Common/Menu.py:124
-msgid "Manage projects"
-msgstr "Gérer les projets"
-
-#: src/netzob/Common/Menu.py:125
-msgid "Manage traces"
-msgstr "Gérer les traces"
-
-#: src/netzob/Common/Menu.py:126
-msgid "Options"
-msgstr "Options"
-
-#: src/netzob/Common/Menu.py:127
-msgid "Switch workspace"
-msgstr "Changer d'espace de travail"
-
-#: src/netzob/Common/Menu.py:128
-msgid "Quit"
-msgstr ""
-
-#: src/netzob/Common/Menu.py:129
+#: src/netzob/Common/Menu.py:111
 msgid "Project"
 msgstr "Projet"
 
-#: src/netzob/Common/Menu.py:130
+#: src/netzob/Common/Menu.py:114
 msgid "Save project"
 msgstr "Enregistrer le projet"
 
-#: src/netzob/Common/Menu.py:131 src/netzob/Common/SessionManager.py:74
+#: src/netzob/Common/Menu.py:118 src/netzob/Common/SessionManager.py:74
 msgid "Session manager"
 msgstr "Gestionnaire de sessions"
 
-#: src/netzob/Common/Menu.py:132
+#: src/netzob/Common/Menu.py:124
 msgid "Import traces"
 msgstr "Importer des traces"
 
-#: src/netzob/Common/Menu.py:133
+#: src/netzob/Common/Menu.py:127
 msgid "Capture network traces"
 msgstr "Capturer le trafic réseau"
 
-#: src/netzob/Common/Menu.py:134
+#: src/netzob/Common/Menu.py:131
 msgid "Capture IPC flows"
 msgstr "Capturer un flux IPC"
 
 #: src/netzob/Common/Menu.py:135
+msgid "Import from PCAP"
+msgstr "Importer depuis un fichier Pcap"
+
+#: src/netzob/Common/Menu.py:139
+msgid "Import from File"
+msgstr "Importer depuis un fichier"
+
+#: src/netzob/Common/Menu.py:143
+msgid "Import from XML File"
+msgstr "Importer depuis un fichier XML"
+
+#: src/netzob/Common/Menu.py:154
 msgid "Export project"
 msgstr "Exporter le projet"
 
-#: src/netzob/Common/Menu.py:136
+#: src/netzob/Common/Menu.py:157
+msgid "Scapy dissector"
+msgstr "Dissecteur Scapy"
+
+#: src/netzob/Common/Menu.py:161
+msgid "Wireshark dissector"
+msgstr "Dissecteur Wireshark"
+
+#: src/netzob/Common/Menu.py:165
 msgid "XML"
 msgstr "XML"
 
-#: src/netzob/Common/Menu.py:137
+#: src/netzob/Common/Menu.py:169
 msgid "Text"
 msgstr "Texte"
 
-#: src/netzob/Common/Menu.py:138
+#: src/netzob/Common/Menu.py:207
 msgid "View"
 msgstr "Vue"
 
-#: src/netzob/Common/Menu.py:139
-msgid "Help"
-msgstr "Aide"
-
-#: src/netzob/Common/Menu.py:140
-msgid "Help Contents"
-msgstr "Contenu de l'aide"
-
-#: src/netzob/Common/Menu.py:141
-msgid "About Netzob"
-msgstr "À propos de Netzob"
-
-#: src/netzob/Common/Menu.py:144
-msgid "Switch project"
-msgstr "Changer de projet"
-
-#: src/netzob/Common/Menu.py:149
+#: src/netzob/Common/Menu.py:210
 msgid "Display symbol structure"
 msgstr "Afficher les symboles de structures"
 
-#: src/netzob/Common/Menu.py:150
+#: src/netzob/Common/Menu.py:215
 msgid "Display messages"
 msgstr "Afficher les messages"
 
-#: src/netzob/Common/Menu.py:151
+#: src/netzob/Common/Menu.py:220
 msgid "Display search results"
 msgstr "Afficher les résultats de la recherche"
 
-#: src/netzob/Common/Menu.py:152
+#: src/netzob/Common/Menu.py:225
 msgid "Display properties"
 msgstr "Afficher les propriétés"
 
+#: src/netzob/Common/Menu.py:239
+msgid "Workspace"
+msgstr "Espace de travail"
+
+#: src/netzob/Common/Menu.py:242
+msgid "Create a project"
+msgstr "Créer un projet"
+
 #: src/netzob/Common/Menu.py:247
+msgid "Switch project"
+msgstr "Changer de projet"
+
+#: src/netzob/Common/Menu.py:251
+msgid "Import a project"
+msgstr "Importer un projet"
+
+#: src/netzob/Common/Menu.py:255
+msgid "Export a project"
+msgstr "Exporter un projet"
+
+#: src/netzob/Common/Menu.py:259
+msgid "Manage projects"
+msgstr "Gérer les projets"
+
+#: src/netzob/Common/Menu.py:262
+msgid "Manage traces"
+msgstr "Gérer les traces"
+
+#: src/netzob/Common/Menu.py:266
+msgid "Options"
+msgstr "Options"
+
+#: src/netzob/Common/Menu.py:269
+msgid "Switch workspace"
+msgstr "Changer d'espace de travail"
+
+#: src/netzob/Common/Menu.py:343
+msgid "Export as"
+msgstr "Exporter comme"
+
+#: src/netzob/Common/Menu.py:368
+msgid "Copy of {0}"
+msgstr "Copie de {0}"
+
+#: src/netzob/Common/Menu.py:373
+msgid "Project '{0}' correctly imported"
+msgstr "Projet '{0}' correctement importé"
+
+#: src/netzob/Common/Menu.py:380
+msgid "Export as (XML)"
+msgstr "Exporter au format XML"
+
+#: src/netzob/Common/Menu.py:394
+msgid "Are you sure to override the file '{0}'?"
+msgstr "Êtes-vous sur de remplacer le fichire '{0}' ?"
+
+#: src/netzob/Common/Menu.py:404
+msgid "Project correctly exported to '{0}'"
+msgstr "Project correctemt exportée vers '{0}'"
+
+#: src/netzob/Common/Menu.py:533
 #, python-format
 msgid "Starting the saving of the current project: %s"
 msgstr "Début de la sauvegarde du projet courant: %s"
 
-#: src/netzob/Common/Menu.py:281
-msgid "Export as"
-msgstr "Exporter comme"
-
-#: src/netzob/Common/Menu.py:306
-msgid "Copy of {0}"
-msgstr "Copie de {0}"
-
-#: src/netzob/Common/Menu.py:311
-msgid "Project '{0}' correctly imported"
-msgstr "Projet '{0}' correctement importé"
-
-#: src/netzob/Common/Menu.py:318
-msgid "Export as (XML)"
-msgstr "Exporter au format XML"
-
-#: src/netzob/Common/Menu.py:332
-msgid "Are you sure to override the file '{0}'?"
-msgstr "Êtes-vous sur de remplacer le fichire '{0}' ?"
-
-#: src/netzob/Common/Menu.py:342
-msgid "Project correctly exported to '{0}'"
-msgstr "Project correctemt exportée vers '{0}'"
-
-#: src/netzob/Common/Menu.py:435
+#: src/netzob/Common/Menu.py:541
 msgid "Create a new project"
 msgstr "Créer un nouveau projet"
 
-#: src/netzob/Common/Menu.py:439
+#: src/netzob/Common/Menu.py:545
 msgid "New project name"
 msgstr "Nom du nouveau projet"
 
-#: src/netzob/Common/Menu.py:442
+#: src/netzob/Common/Menu.py:548
 msgid "Create project"
 msgstr "Créer un projet"
 
-#: src/netzob/Common/Menu.py:464 src/netzob/Common/Menu.py:465
+#: src/netzob/Common/Menu.py:570 src/netzob/Common/Menu.py:571
 msgid "Unable to create a project with an empty name."
 msgstr ""
 
-#: src/netzob/Common/Menu.py:474
+#: src/netzob/Common/Menu.py:580
 msgid "Error"
 msgstr "Erreur"
 
-#: src/netzob/Common/Menu.py:475
+#: src/netzob/Common/Menu.py:581
 msgid "This project name already exists"
 msgstr "Ce nom de projet existe déjà"
 
@@ -216,64 +232,62 @@ msgstr "Les ressources statiques n'ont pas été trouvées !"
 msgid "New Workspace"
 msgstr "Nouvel espace de travail"
 
-#: src/netzob/Common/SessionManager.py:91
+#: src/netzob/Common/SessionManager.py:90
 msgid "Symbol list"
 msgstr "Liste des symboles"
 
-#: src/netzob/Common/SessionManager.py:107
+#: src/netzob/Common/SessionManager.py:106
+#: src/netzob/Export/TreeViews/TreeSymbolGenerator.py:70
 #: src/netzob/Fuzzing/TreeViews/TreeSymbolGenerator.py:75
 #: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:78
-#: src/netzob/UI/Export/Views/RawExportView.py:94
-#: src/netzob/UI/Export/Views/ScapyExportView.py:94
-#: src/netzob/UI/Export/Views/TextExportView.py:94
 msgid "Symbols"
 msgstr "Symboles"
 
-#: src/netzob/Common/SessionManager.py:136
-#: src/netzob/Common/SessionManager.py:196
+#: src/netzob/Common/SessionManager.py:135
+#: src/netzob/Common/SessionManager.py:194
 msgid "Messages"
 msgstr "Messages"
 
-#: src/netzob/Common/SessionManager.py:151
+#: src/netzob/Common/SessionManager.py:150
 msgid "Session list"
 msgstr "Liste des sessions"
 
-#: src/netzob/Common/SessionManager.py:167
+#: src/netzob/Common/SessionManager.py:165
 msgid "Sessions"
 msgstr "Sessions"
 
-#: src/netzob/Common/SessionManager.py:221
-#: src/netzob/Common/SessionManager.py:247
-#: src/netzob/Inference/Vocabulary/UImodelization.py:395
-#: src/netzob/Inference/Vocabulary/UImodelization.py:544
-#: src/netzob/Inference/Vocabulary/UImodelization.py:619
-#: src/netzob/Inference/Vocabulary/UImodelization.py:630
-#: src/netzob/Inference/Vocabulary/UImodelization.py:685
-#: src/netzob/Inference/Vocabulary/UImodelization.py:696
-#: src/netzob/Inference/Vocabulary/UImodelization.py:707
-#: src/netzob/Inference/Vocabulary/UImodelization.py:718
-#: src/netzob/Inference/Vocabulary/UImodelization.py:736
-#: src/netzob/Inference/Vocabulary/UImodelization.py:748
-#: src/netzob/Inference/Vocabulary/UImodelization.py:763
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1031
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1516
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2559
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2578
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2597
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2616
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2635
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2651
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2692
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2778
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2809
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2824
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2844
+#: src/netzob/Common/SessionManager.py:219
+#: src/netzob/Common/SessionManager.py:245
+#: src/netzob/Inference/Vocabulary/UImodelization.py:394
+#: src/netzob/Inference/Vocabulary/UImodelization.py:543
+#: src/netzob/Inference/Vocabulary/UImodelization.py:617
+#: src/netzob/Inference/Vocabulary/UImodelization.py:628
+#: src/netzob/Inference/Vocabulary/UImodelization.py:683
+#: src/netzob/Inference/Vocabulary/UImodelization.py:694
+#: src/netzob/Inference/Vocabulary/UImodelization.py:705
+#: src/netzob/Inference/Vocabulary/UImodelization.py:716
+#: src/netzob/Inference/Vocabulary/UImodelization.py:734
+#: src/netzob/Inference/Vocabulary/UImodelization.py:746
+#: src/netzob/Inference/Vocabulary/UImodelization.py:761
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1025
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1510
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2549
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2568
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2587
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2606
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2625
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2641
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2682
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2769
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2800
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2815
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2835
 msgid "No project selected."
 msgstr "Aucun projet sélectionné"
 
-#: src/netzob/Common/SessionManager.py:224
-#: src/netzob/Common/SessionManager.py:250
-#: src/netzob/Inference/Vocabulary/UImodelization.py:766
+#: src/netzob/Common/SessionManager.py:222
+#: src/netzob/Common/SessionManager.py:248
+#: src/netzob/Inference/Vocabulary/UImodelization.py:764
 msgid "The current project doesn't have any referenced vocabulary."
 msgstr "Le projet courant ne dispose pas de vocabulaire référencé"
 
@@ -293,7 +307,7 @@ msgstr "Espace de travail courrant : AUCUN ESPACE DE TRAVAIL GÉNÉRÉ !"
 #: src/netzob/Common/Symbol.py:247 src/netzob/Common/Symbol.py:257
 #: src/netzob/Common/Symbol.py:271 src/netzob/Common/Symbol.py:274
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
-#: src/netzob/Import/ApiImport.py:120 src/netzob/Import/IpcImport.py:158
+#: src/netzob/Import/ApiImport.py:120 src/netzob/Import/IpcImport.py:157
 #: src/netzob/Inference/Vocabulary/TreeViews/TreeTypeStructureGenerator.py:73
 msgid "Name"
 msgstr "Nom"
@@ -302,7 +316,7 @@ msgstr "Nom"
 msgid "The computing field is not part of the current symbol"
 msgstr ""
 
-#: src/netzob/Common/Symbol.py:672 src/netzob/Common/Symbol.py:791
+#: src/netzob/Common/Symbol.py:672 src/netzob/Common/Symbol.py:789
 msgid "Column"
 msgstr "Colonne"
 
@@ -310,89 +324,109 @@ msgstr "Colonne"
 msgid "Results"
 msgstr "Résultats"
 
-#: src/netzob/Common/Symbol.py:715 src/netzob/Common/Symbol.py:849
+#: src/netzob/Common/Symbol.py:715 src/netzob/Common/Symbol.py:847
 #: src/netzob/Import/ApiImport.py:196 src/netzob/Import/IpcImport.py:228
 #: src/netzob/UI/TraceManager.py:133
 msgid "Data"
 msgstr "Données"
 
-#: src/netzob/Common/Symbol.py:729 src/netzob/Common/Symbol.py:863
+#: src/netzob/Common/Symbol.py:729 src/netzob/Common/Symbol.py:861
 msgid "Apply data type on column"
 msgstr "Appliquer le type de donnée sur la colonne"
 
-#: src/netzob/Common/Symbol.py:753 src/netzob/Common/Symbol.py:887
+#: src/netzob/Common/Symbol.py:751 src/netzob/Common/Symbol.py:883
 msgid "Field {0}"
 msgstr "Champ {0}"
 
-#: src/netzob/Common/Symbol.py:795
+#: src/netzob/Common/Symbol.py:793
 msgid "Env. dependancy"
 msgstr ""
 
-#: src/netzob/Common/Symbol.py:1266
+#: src/netzob/Common/Symbol.py:1262
 msgid "Tried to compare a Symbol with {0}"
 msgstr ""
 
-#: src/netzob/Common/Plugins/Importers/AbstractImporterController.py:85
-msgid "Open PCAP file"
-msgstr ""
+#: src/netzob/Export/RawExport.py:74
+msgid "Export project as raw XML"
+msgstr "Exporter le projet au format XML brut"
 
-#: src/netzob/Common/Plugins/Importers/AbstractImporterController.py:161
-#, fuzzy, python-format
-msgid "Are you sure to you want to import the {0} selected packets in project {1}"
-msgstr "Êtes-vous sur d'importer les %s paquets sélectionnés dans le projet %s ?"
+#: src/netzob/Export/RawExport.py:118 src/netzob/Export/TextExport.py:118
+msgid "No selected symbol"
+msgstr "Aucun symbole sélectionné"
 
-#: src/netzob/Export/RawExport.py:59 src/netzob/Export/ScapyExport.py:59
-#: src/netzob/Export/TextExport.py:59
+#: src/netzob/Export/RawExport.py:119
+msgid "Select a symbol to see its XML definition"
+msgstr "Sélectionner un symbole pour voir sa définition XML"
+
+#: src/netzob/Export/RawExport.py:131 src/netzob/Export/ScapyExport.py:128
+#: src/netzob/Export/TextExport.py:131
 msgid "Impossible to retrieve the symbol having the id {0}"
 msgstr ""
 
-#: src/netzob/Fuzzing/File.py:142 src/netzob/Fuzzing/Ipc.py:145
-#: src/netzob/Fuzzing/Network.py:225
+#: src/netzob/Export/ScapyExport.py:74
+msgid "Export project as Scapy dissector"
+msgstr "Exporter le projet en tant que dissecteur Scapy"
+
+#: src/netzob/Export/ScapyExport.py:119
+msgid "Select a symbol to see its Scapy dissector"
+msgstr "Sélectionner un message pour voir son dissecteur Scapy"
+
+#: src/netzob/Export/TextExport.py:74
+msgid "Export project as text"
+msgstr "Exporter le projet au format texte"
+
+#: src/netzob/Export/TextExport.py:119
+msgid "Select a symbol to see its text definition"
+msgstr "Sélectionner un symbol pour voir sa définition textuelle"
+
+#: src/netzob/Export/TreeViews/TreeSymbolGenerator.py:92
+#: src/netzob/Fuzzing/TreeViews/TreeSymbolGenerator.py:97
+#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:99
+msgid "Updating the treestore of the symbol in default mode"
+msgstr ""
+
+#: src/netzob/Fuzzing/File.py:141 src/netzob/Fuzzing/Ipc.py:144
+#: src/netzob/Fuzzing/Network.py:223
 msgid "Fuzz field"
 msgstr "Fuzzer les champs"
 
-#: src/netzob/Fuzzing/File.py:149
+#: src/netzob/Fuzzing/File.py:148
 msgid "Fuzz field : {0}"
 msgstr "Fuzzer le champ : {0}"
 
-#: src/netzob/Fuzzing/Ipc.py:152 src/netzob/Fuzzing/Network.py:232
+#: src/netzob/Fuzzing/Ipc.py:151 src/netzob/Fuzzing/Network.py:230
 msgid "Fuzz field: {0}"
 msgstr "Fuzzer le champ : {0}"
 
-#: src/netzob/Fuzzing/Network.py:125
+#: src/netzob/Fuzzing/Network.py:124
 msgid "Filter"
 msgstr "Filtre"
 
-#: src/netzob/Fuzzing/Network.py:135
+#: src/netzob/Fuzzing/Network.py:134
 msgid "Fuzz traffic"
 msgstr "Fuzzer le trafic"
 
-#: src/netzob/Fuzzing/Network.py:149 src/netzob/Import/NetworkImport.py:166
-#: src/netzob/UI/Import/Views/PcapImportView.py:93
+#: src/netzob/Fuzzing/Network.py:147 src/netzob/Import/NetworkImport.py:165
 msgid "Proto"
 msgstr "Protocole"
 
-#: src/netzob/Fuzzing/Network.py:154 src/netzob/Import/NetworkImport.py:171
-#: src/netzob/UI/Import/Views/PcapImportView.py:98
+#: src/netzob/Fuzzing/Network.py:152 src/netzob/Import/NetworkImport.py:170
 msgid "IP source"
 msgstr "IP source"
 
-#: src/netzob/Fuzzing/Network.py:159 src/netzob/Import/NetworkImport.py:176
-#: src/netzob/UI/Import/Views/PcapImportView.py:103
+#: src/netzob/Fuzzing/Network.py:157 src/netzob/Import/NetworkImport.py:175
 msgid "IP dest"
 msgstr "IP destination"
 
-#: src/netzob/Fuzzing/Network.py:164 src/netzob/Import/NetworkImport.py:181
-#: src/netzob/UI/Import/Views/PcapImportView.py:108
+#: src/netzob/Fuzzing/Network.py:162 src/netzob/Import/NetworkImport.py:180
 msgid "sport"
 msgstr "sport"
 
-#: src/netzob/Fuzzing/Network.py:169 src/netzob/Import/NetworkImport.py:186
-#: src/netzob/UI/Import/Views/PcapImportView.py:113
+#: src/netzob/Fuzzing/Network.py:167 src/netzob/Import/NetworkImport.py:185
 msgid "dport"
 msgstr "dport"
 
-#: src/netzob/Fuzzing/Network.py:261
+#: src/netzob/Fuzzing/Network.py:259
 msgid "Launching fuzzing process with : filter=\"{0}\""
 msgstr "Lancement du processus de fuzzing avec : filter=\"{0}\""
 
@@ -408,19 +442,14 @@ msgstr "Fuzzing d'IPC"
 msgid "File fuzzing"
 msgstr "Fuzzing de fichier"
 
-#: src/netzob/Fuzzing/TreeViews/TreeSymbolGenerator.py:99
-#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:100
-msgid "Updating the treestore of the symbol in default mode"
-msgstr ""
-
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
 #: src/netzob/Inference/Vocabulary/TreeViews/TreeTypeStructureGenerator.py:73
 msgid "iCol"
 msgstr ""
 
 #: src/netzob/Fuzzing/TreeViews/TreeTypeStructureGenerator.py:70
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1607
-#: src/netzob/Simulator/UISimulator.py:346
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1599
+#: src/netzob/Simulator/UISimulator.py:345
 msgid "Value"
 msgstr "Valeur"
 
@@ -434,16 +463,11 @@ msgstr "Description"
 msgid "The treeview for the messages is in error mode"
 msgstr ""
 
-#: src/netzob/Import/AbstractImporter.py:62
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:258
-msgid "Message ID: {0} not found in importer message list"
-msgstr ""
-
 #: src/netzob/Import/ApiImport.py:87
 msgid "Unable to find a repository file for API injector."
 msgstr "Impossible de trouver un dépôt de fichier pour l'injecteur d'API"
 
-#: src/netzob/Import/ApiImport.py:100 src/netzob/Import/IpcImport.py:105
+#: src/netzob/Import/ApiImport.py:100 src/netzob/Import/IpcImport.py:104
 msgid "Update processes list"
 msgstr "Mettre à jour la liste des processus"
 
@@ -483,128 +507,128 @@ msgstr "Paramètre"
 msgid "A selected process cannot be found !"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:263
+#: src/netzob/Import/ApiImport.py:264
 msgid "The selected process cannot be find !"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:280 src/netzob/Import/ApiImport.py:304
+#: src/netzob/Import/ApiImport.py:281 src/netzob/Import/ApiImport.py:305
 msgid "You have to select a process if you want to capture it"
 msgstr "Vous devez sélectionner un processus si vous voulez le capturer"
 
-#: src/netzob/Import/ApiImport.py:283 src/netzob/Import/ApiImport.py:307
+#: src/netzob/Import/ApiImport.py:284 src/netzob/Import/ApiImport.py:308
 msgid "You have to select a DLL if you want to capture it"
 msgstr "Vous devez sélectionner une DLL si vous voulez la capturer"
 
-#: src/netzob/Import/ApiImport.py:295
+#: src/netzob/Import/ApiImport.py:296
 msgid "Impossible to retrieve the selected function"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:297
+#: src/netzob/Import/ApiImport.py:298
 msgid "Selected function done!"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:310
+#: src/netzob/Import/ApiImport.py:311
 msgid "You have to select a function if you want to capture it"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:315
+#: src/netzob/Import/ApiImport.py:316
 msgid "Temporary folder: {0}"
 msgstr "Répertoire temporaire : {0}"
 
-#: src/netzob/Import/ApiImport.py:336
+#: src/netzob/Import/ApiImport.py:337
 msgid "Starting the capture of [{0}]"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:337
+#: src/netzob/Import/ApiImport.py:338
 msgid "DLL [{0}]"
 msgstr "DLL [{0}]"
 
-#: src/netzob/Import/ApiImport.py:338
+#: src/netzob/Import/ApiImport.py:339
 msgid "Function [{0}]"
 msgstr "Fonction [{0}]"
 
-#: src/netzob/Import/ApiImport.py:343
+#: src/netzob/Import/ApiImport.py:344
 msgid "FIFO: {0}"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:350
+#: src/netzob/Import/ApiImport.py:351
 msgid "Creating the FIFO file: {0}"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:355
+#: src/netzob/Import/ApiImport.py:356
 #, python-format
 msgid "Failed to create FIFO: %s"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:358
+#: src/netzob/Import/ApiImport.py:359
 msgid "The fifo has been created..."
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:371
+#: src/netzob/Import/ApiImport.py:372
 msgid "Cannot execute GOT Poisoning since FIFO file was not created !"
 msgstr ""
 
-#: src/netzob/Import/ApiImport.py:381
+#: src/netzob/Import/ApiImport.py:382
 msgid "Stoping the capture..."
 msgstr "Arrêter la capture"
 
-#: src/netzob/Import/ApiImport.py:389
+#: src/netzob/Import/ApiImport.py:390
 msgid "Reading finish, we close the FIFO."
 msgstr ""
 
-#: src/netzob/Import/IpcImport.py:87
+#: src/netzob/Import/IpcImport.py:86
 msgid "Capture IPC flow"
 msgstr "Capturer un flux IPC"
 
-#: src/netzob/Import/IpcImport.py:118
+#: src/netzob/Import/IpcImport.py:117
 msgid "File system"
 msgstr "Système de fichiers"
 
-#: src/netzob/Import/IpcImport.py:119
+#: src/netzob/Import/IpcImport.py:118
 msgid "Network"
 msgstr "Réseau"
 
-#: src/netzob/Import/IpcImport.py:120
+#: src/netzob/Import/IpcImport.py:119
 msgid "Interprocess"
 msgstr "Inter-processus"
 
-#: src/netzob/Import/IpcImport.py:133
+#: src/netzob/Import/IpcImport.py:132
 msgid "Update flows"
 msgstr "Mettre à jour les flux"
 
-#: src/netzob/Import/IpcImport.py:148 src/netzob/Import/IpcImport.py:218
+#: src/netzob/Import/IpcImport.py:147 src/netzob/Import/IpcImport.py:218
 msgid "FD"
 msgstr ""
 
-#: src/netzob/Import/IpcImport.py:153 src/netzob/Import/XMLImport.py:133
+#: src/netzob/Import/IpcImport.py:152
 #: src/netzob/Inference/Grammar/UIGrammarInference.py:190
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:832
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1603
-#: src/netzob/Simulator/UISimulator.py:342 src/netzob/UI/TraceManager.py:90
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:836
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1595
+#: src/netzob/Simulator/UISimulator.py:341 src/netzob/UI/TraceManager.py:90
 msgid "Type"
 msgstr "Type"
 
-#: src/netzob/Import/IpcImport.py:169
+#: src/netzob/Import/IpcImport.py:168
 msgid "Sniff on every flows"
 msgstr "Écouter sur tous les flux"
 
-#: src/netzob/Import/IpcImport.py:176
+#: src/netzob/Import/IpcImport.py:175
 msgid "Sniff on FS flows"
 msgstr "Écouter sur les flux « systèmes de fichier »"
 
-#: src/netzob/Import/IpcImport.py:183
+#: src/netzob/Import/IpcImport.py:182
 msgid "Sniff on network flows"
 msgstr "Écouter sur les flux réseau"
 
-#: src/netzob/Import/IpcImport.py:190
+#: src/netzob/Import/IpcImport.py:189
 msgid "Sniff on IPC flows"
 msgstr "Écouter sur les flux IPC"
 
-#: src/netzob/Import/IpcImport.py:197
+#: src/netzob/Import/IpcImport.py:196
 msgid "Sniff on selected flows"
 msgstr "Écouter sur les flux sélectionnés"
 
-#: src/netzob/Import/IpcImport.py:204
+#: src/netzob/Import/IpcImport.py:203
 msgid "Stop sniffing"
 msgstr "Stopper l'écoute"
 
@@ -612,12 +636,11 @@ msgstr "Stopper l'écoute"
 msgid "Direction"
 msgstr "Direction"
 
-#: src/netzob/Import/IpcImport.py:239 src/netzob/Import/NetworkImport.py:196
-#: src/netzob/UI/Import/Views/PcapImportView.py:123
+#: src/netzob/Import/IpcImport.py:239 src/netzob/Import/NetworkImport.py:195
 msgid "Save selected packets"
 msgstr "Sauvegarder les paquets sélectionnés"
 
-#: src/netzob/Import/IpcImport.py:335 src/netzob/Import/NetworkImport.py:271
+#: src/netzob/Import/IpcImport.py:335 src/netzob/Import/NetworkImport.py:263
 #, python-format
 msgid "Are you sure to import the %s selected packets in project %s?"
 msgstr "Êtes-vous sur d'importer les %s paquets sélectionnés dans le projet %s ?"
@@ -658,103 +681,25 @@ msgstr ""
 msgid "Sniff traffic"
 msgstr "Écouter le trafic"
 
-#: src/netzob/Import/NetworkImport.py:320
+#: src/netzob/Import/NetworkImport.py:312
 msgid ""
 "Launching sniff process on dev {0} with : count={1}, timeout={2}, "
 "filter=\"{3}\""
 msgstr ""
 
-#: src/netzob/Import/NetworkImport.py:327
+#: src/netzob/Import/NetworkImport.py:319
 msgid "The provided filter is not valid (it should respects the BPF format"
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:97
-msgid "Import data from third parties"
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:115
-#, fuzzy
-msgid "Select data source"
-msgstr "Sélectionner l'espace de travail"
-
-#: src/netzob/Import/ThirdPartyImport.py:133
-msgid "Select a third party"
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:144
-msgid "Load"
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:174 src/netzob/Import/XMLImport.py:129
-#, fuzzy
-msgid "Message ID"
-msgstr "Message"
-
-#: src/netzob/Import/ThirdPartyImport.py:186 src/netzob/Import/XMLImport.py:149
-#: src/netzob/UI/TraceManager.py:239
-msgid "Import"
-msgstr "Importer"
-
-#: src/netzob/Import/ThirdPartyImport.py:212 src/netzob/Import/XMLImport.py:175
-msgid "Impossible to retrieve the message the user clicked on. Hum ?"
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:229
-msgid "Cannot load file {0}, its not a file."
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:235
-msgid "Impossible to find a plugin to import data from."
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:237
-msgid "A number of {0} messages were extracted."
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:270 src/netzob/Import/XMLImport.py:199
-msgid "Check if this trace is a session"
-msgstr ""
-
-#: src/netzob/Import/ThirdPartyImport.py:290 src/netzob/Import/XMLImport.py:219
-msgid "Select one or multiple file"
-msgstr ""
-
-#: src/netzob/Import/XMLImport.py:109
-#, fuzzy
-msgid "Select file(s)"
-msgstr "Exporter les champs sélectionnés"
-
-#: src/netzob/Import/XMLImport.py:137
-#, fuzzy
-msgid "Content"
-msgstr "Contenu de l'aide"
-
-#: src/netzob/Import/XMLImport.py:191
-#, fuzzy, python-format
-msgid "Are you sure to import the {0} computed messages in project {1}?"
-msgstr "Êtes-vous sur d'importer les %s paquets sélectionnés dans le projet %s ?"
-
-#: src/netzob/Import/XMLImport.py:254
-msgid "The specified XML file {0} is not valid according to the XSD ({1})."
-msgstr ""
-
-#: src/netzob/Import/XMLImport.py:256
-msgid "XML file valid according to the XSD schema"
-msgstr ""
-
-#: src/netzob/Import/XMLImport.py:265
-msgid "XML String data: {0}"
 msgstr ""
 
 #: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:79
 msgid "Processes"
 msgstr "Processus"
 
-#: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:103
+#: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:101
 msgid "Updating the treestore of the processes in default mode"
 msgstr ""
 
-#: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:112
+#: src/netzob/Import/TreeViews/TreeProcessesGenerator.py:110
 msgid "Updating the list of executing processes."
 msgstr ""
 
@@ -961,9 +906,9 @@ msgid "Definition of the new transition"
 msgstr "Définition de la nouvelle transition"
 
 #: src/netzob/Inference/Grammar/UIGrammarInference.py:232
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:593
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:796
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:870
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:597
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:800
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:874
 #: src/netzob/Inference/Vocabulary/VariableView.py:239
 #: src/netzob/Inference/Vocabulary/VariableView.py:324
 #: src/netzob/Inference/Vocabulary/VariableView.py:408
@@ -976,8 +921,8 @@ msgid "ID:"
 msgstr ""
 
 #: src/netzob/Inference/Grammar/UIGrammarInference.py:239
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:600
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:804
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:604
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:808
 #: src/netzob/Inference/Vocabulary/VariableView.py:417
 #: src/netzob/Inference/Vocabulary/VariableView.py:474
 #: src/netzob/Inference/Vocabulary/VariableView.py:531
@@ -988,152 +933,152 @@ msgstr "Nom :"
 msgid "Type:"
 msgstr "Type :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:256
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:260
 msgid "Start State:"
 msgstr "État de démarrage :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:270
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:274
 msgid "Stop State:"
 msgstr "État terminal :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:305
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:309
 msgid "The states of the transition are not valid."
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:317
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:321
 msgid "Impossible to create the requested transition since the type is unknown"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:326
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:330
 msgid "Definition of an OpenChannel Transition"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:329
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:333
 msgid "Connection time (ms):"
 msgstr "Durée de la connexion (ms) : "
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:336
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:340
 msgid "Maximum number of connection attempts:"
 msgstr "Nombre maximum de tentatives de connexions :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:360
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:364
 msgid "Definition of an CloseChannel Transition"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:363
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:367
 msgid "Disconnection time (ms):"
 msgstr "Durée de la déconnexion (ms) : "
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:388
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:392
 msgid "Definition of a SemiStochastic Transition"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:392
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:396
 msgid "Define input symbol"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:396
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:418
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:400
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:422
 msgid "Dictionary entry:"
 msgstr "Entrée du dictionnaire :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:414
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:418
 msgid "Define output symbols"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:436
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:440
 msgid "Time:"
 msgstr "Temps :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:443
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:447
 msgid "Probability ([0;100]):"
 msgstr "Probabilité ([0;100]) : "
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:450
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:454
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:457
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:461
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:513
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:517
 msgid "Impossible to retrieve the selected input dictionary entry"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:543
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:547
 msgid "Impossible to retrieve the selected output dictionary entry"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:575
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:579
 msgid "Impossible to retrieve the selected dictionary entry"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:585
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:589
 msgid "Opening the dialog for the creation of a new state"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:587
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:591
 msgid "Definition of the new state"
 msgstr "Définition du nouvel état"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:607
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:611
 msgid "Is it the initial state:"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:629
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:633
 msgid "Create a state {0} ({1})"
 msgstr "Créer un état {0} ({1})"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:771
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:775
 msgid "Click yes to confirm the removal of the transition {0}."
 msgstr "Cliquez sur oui pour confirmer la suppression de la transition {0}."
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:779
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:783
 msgid "The user didn't confirm the deletion of the transition {0}"
 msgstr "L'utilisateur n'a pas confirmé la suppression de la transition {0}"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:786
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:790
 msgid "Opening the dialog for the edition of a state"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:788
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:792
 msgid "Edition of a state"
 msgstr "Édition d'un état"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:813
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:817
 msgid "Add a MemOpex"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:827
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:831
 msgid "Transition ID"
 msgstr "ID de la transition"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:860
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:864
 msgid "Opening the dialog for the creation of MemOpex of a state"
 msgstr ""
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:862
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:866
 msgid "Creation of a MemOpex"
 msgstr "Création d'une MemOpex"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:878
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:882
 msgid "Transition:"
 msgstr "Transition :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:894
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:898
 msgid "Operation:"
 msgstr "Opération :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:903
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:907
 msgid "FORGET"
 msgstr "OUBLIER"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:909
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:913
 msgid "Variable:"
 msgstr "Variable :"
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:981
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:985
 msgid ""
 "Click yes to confirm the removal of the state {0}. All its associated "
 "transitions will also be deleted."
@@ -1141,12 +1086,12 @@ msgstr ""
 "Cliquer sur oui pour confirmer la suppression de l'état {0}. Toute les\n"
 "transitions associées vont aussi être supprimées."
 
-#: src/netzob/Inference/Grammar/UIGrammarInference.py:989
+#: src/netzob/Inference/Grammar/UIGrammarInference.py:993
 msgid "The user didn't confirm the deletion of the state {0}"
 msgstr "L'utilisateur n'a pas confirmé la suppresion de l'état {0}"
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:84
-#: src/netzob/Inference/Vocabulary/UImodelization.py:348
+#: src/netzob/Inference/Vocabulary/UImodelization.py:350
 #: src/netzob/Inference/Vocabulary/TreeViews/TreeSearchGenerator.py:155
 msgid "Search"
 msgstr "Rechercher"
@@ -1162,17 +1107,17 @@ msgid "Do not start the searching process since no type was provided by the user
 msgstr ""
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:105
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2706
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2696
 msgid "User searches for {0} of type {1}"
 msgstr ""
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:129
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2756
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2747
 msgid "No data to search after were computed."
 msgstr ""
 
 #: src/netzob/Inference/Vocabulary/SearchView.py:132
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2759
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2750
 msgid "The following data will be searched for:"
 msgstr ""
 
@@ -1185,660 +1130,660 @@ msgstr ""
 msgid "Search results"
 msgstr "Résultats de la recherche"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:201
+#: src/netzob/Inference/Vocabulary/UImodelization.py:203
 msgid "1 - Message format inference"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:208
-#: src/netzob/Inference/Vocabulary/UImodelization.py:418
-#: src/netzob/Inference/Vocabulary/UImodelization.py:478
+#: src/netzob/Inference/Vocabulary/UImodelization.py:210
+#: src/netzob/Inference/Vocabulary/UImodelization.py:417
+#: src/netzob/Inference/Vocabulary/UImodelization.py:477
 msgid "Sequence alignment"
 msgstr "Alignement de séquence"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:209
+#: src/netzob/Inference/Vocabulary/UImodelization.py:211
 msgid "Automatically discover the best alignment of messages"
 msgstr "Découvrir automatiquement le meilleur alignement des messages"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:215
-#: src/netzob/Inference/Vocabulary/UImodelization.py:565
-#: src/netzob/Inference/Vocabulary/UImodelization.py:594
+#: src/netzob/Inference/Vocabulary/UImodelization.py:217
+#: src/netzob/Inference/Vocabulary/UImodelization.py:564
+#: src/netzob/Inference/Vocabulary/UImodelization.py:592
 msgid "Force partitioning"
 msgstr "Forcer le partitionnement"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:217
+#: src/netzob/Inference/Vocabulary/UImodelization.py:219
 msgid "Set a delimiter to force partitioning"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:221
-#: src/netzob/Inference/Vocabulary/UImodelization.py:646
-#: src/netzob/Inference/Vocabulary/UImodelization.py:664
+#: src/netzob/Inference/Vocabulary/UImodelization.py:223
+#: src/netzob/Inference/Vocabulary/UImodelization.py:644
+#: src/netzob/Inference/Vocabulary/UImodelization.py:662
 msgid "Simple partitioning"
 msgstr "Partitionnement simple"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:223
+#: src/netzob/Inference/Vocabulary/UImodelization.py:225
 msgid "In order to show the simple differences between messages"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:227
+#: src/netzob/Inference/Vocabulary/UImodelization.py:229
 msgid "Smooth partitioning"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:229
+#: src/netzob/Inference/Vocabulary/UImodelization.py:231
 msgid "Merge small static fields with its neighbours"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:233
+#: src/netzob/Inference/Vocabulary/UImodelization.py:235
 msgid "Reset partitioning"
 msgstr "Annuler le partitionnement"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:235
+#: src/netzob/Inference/Vocabulary/UImodelization.py:237
 msgid "Reset the current partitioning"
 msgstr "Réinitialiser le partitionnement courant"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:239
+#: src/netzob/Inference/Vocabulary/UImodelization.py:241
 msgid "2 - Field type inference"
 msgstr "2 - Inférence de type de champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:246
+#: src/netzob/Inference/Vocabulary/UImodelization.py:248
 msgid "Freeze partitioning"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:248
+#: src/netzob/Inference/Vocabulary/UImodelization.py:250
 msgid ""
 "Automatically find and freeze the boundaries (min/max of cell's size) for"
 " each fields"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:252
+#: src/netzob/Inference/Vocabulary/UImodelization.py:254
 msgid "Messages distribution"
 msgstr "Distribution des messages"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:254
+#: src/netzob/Inference/Vocabulary/UImodelization.py:256
 msgid "Open a graph with messages distribution, separated by fields"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:258
+#: src/netzob/Inference/Vocabulary/UImodelization.py:260
 msgid "Data carving"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:260
+#: src/netzob/Inference/Vocabulary/UImodelization.py:262
 msgid "Automatically look for known patterns of data (URL, IP, email, etc.)"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:269
+#: src/netzob/Inference/Vocabulary/UImodelization.py:271
 msgid "3 - Dependencies inference"
 msgstr "3 - Inférence des dépendances"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:276
+#: src/netzob/Inference/Vocabulary/UImodelization.py:278
 msgid "Find size fields"
 msgstr "Identifier la taille des champs"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:278
+#: src/netzob/Inference/Vocabulary/UImodelization.py:280
 msgid "Automatically find potential size fields and associated payloads"
 msgstr ""
 "Trouver automatiquement la taille potentielle des champs et les\n"
 "payloads associées"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:282
+#: src/netzob/Inference/Vocabulary/UImodelization.py:284
 msgid "Environment dependencies"
 msgstr "Dépendances d'environnement"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:284
+#: src/netzob/Inference/Vocabulary/UImodelization.py:286
 msgid ""
 "Automatically look for environmental dependencies (retrieved during "
 "capture) in messages"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:288
+#: src/netzob/Inference/Vocabulary/UImodelization.py:290
 msgid "4 - Visualization"
 msgstr "4 - Visualisation"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:295
+#: src/netzob/Inference/Vocabulary/UImodelization.py:297
 msgid "Format : "
 msgstr "Format :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:302
+#: src/netzob/Inference/Vocabulary/UImodelization.py:304
 msgid "Unit size : "
 msgstr "Taille de l'unité"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:309
+#: src/netzob/Inference/Vocabulary/UImodelization.py:311
 msgid "Sign : "
 msgstr "Signe :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:316
+#: src/netzob/Inference/Vocabulary/UImodelization.py:318
 msgid "Endianess : "
 msgstr "Boutisme :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:323
+#: src/netzob/Inference/Vocabulary/UImodelization.py:325
 msgid "5 - Search data"
 msgstr "5 - Rechercher des données"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:350
+#: src/netzob/Inference/Vocabulary/UImodelization.py:352
 msgid "A search function available in different encoding format"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:423
+#: src/netzob/Inference/Vocabulary/UImodelization.py:422
 msgid "Similarity threshold:"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:439
+#: src/netzob/Inference/Vocabulary/UImodelization.py:438
 msgid "Unit size (in bits):"
 msgstr "Taille de l'unité (en bits)"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:452
+#: src/netzob/Inference/Vocabulary/UImodelization.py:451
 msgid "Orphan reduction"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:463
+#: src/netzob/Inference/Vocabulary/UImodelization.py:462
 msgid "Smooth alignment"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:509
+#: src/netzob/Inference/Vocabulary/UImodelization.py:508
 msgid "Error while proceeding to the alignment: {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:570
+#: src/netzob/Inference/Vocabulary/UImodelization.py:569
 msgid "Delimiter: "
 msgstr "Délimiteur :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:580
+#: src/netzob/Inference/Vocabulary/UImodelization.py:578
 msgid "Format type: "
 msgstr "Type de format :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:651
+#: src/netzob/Inference/Vocabulary/UImodelization.py:649
 msgid "Minimum unit size: "
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:831
+#: src/netzob/Inference/Vocabulary/UImodelization.py:829
 msgid "User requested a contextual menu (treeview messages)"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:859
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1408
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2031
+#: src/netzob/Inference/Vocabulary/UImodelization.py:853
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1402
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2020
 msgid "Impossible to retrieve the clicked field !"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:873
+#: src/netzob/Inference/Vocabulary/UImodelization.py:867
 msgid "Move to..."
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:879
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1302
+#: src/netzob/Inference/Vocabulary/UImodelization.py:873
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1296
 msgid "Edit field"
 msgstr "Éditer le champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:886
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1309
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2153
+#: src/netzob/Inference/Vocabulary/UImodelization.py:880
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1303
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2142
 msgid "Field visualization"
 msgstr "Visualisation du champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:901
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1316
+#: src/netzob/Inference/Vocabulary/UImodelization.py:895
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1310
 msgid "with precedent field"
 msgstr "avec le champs précédent"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:906
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1320
+#: src/netzob/Inference/Vocabulary/UImodelization.py:900
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1314
 msgid "with all precedent field"
 msgstr "avec tous les champs précédents"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:912
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1325
+#: src/netzob/Inference/Vocabulary/UImodelization.py:906
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1319
 msgid "with next field"
 msgstr "avec le champ suivant"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:917
+#: src/netzob/Inference/Vocabulary/UImodelization.py:911
 msgid "with all next fields"
 msgstr "avec tous les champs suivants"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:923
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1334
+#: src/netzob/Inference/Vocabulary/UImodelization.py:917
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1328
 msgid "personalize selection"
 msgstr "personnaliser la sélection"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:928
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1339
+#: src/netzob/Inference/Vocabulary/UImodelization.py:922
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1333
 msgid "Concatenate field"
 msgstr "Concaténer les champs"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:934
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1345
+#: src/netzob/Inference/Vocabulary/UImodelization.py:928
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1339
 msgid "Split field"
 msgstr "Séparer le champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:941
+#: src/netzob/Inference/Vocabulary/UImodelization.py:935
 #, fuzzy
 msgid "Partitioning"
 msgstr "Annuler le partitionnement"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:947
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1351
+#: src/netzob/Inference/Vocabulary/UImodelization.py:941
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1345
 msgid "Field's domain of definition"
 msgstr "Domaine de définiton du champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:955
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1359
+#: src/netzob/Inference/Vocabulary/UImodelization.py:949
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1353
 msgid "Create a variable"
 msgstr "Créer une variable"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:961
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1365
+#: src/netzob/Inference/Vocabulary/UImodelization.py:955
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1359
 msgid "Edit variable"
 msgstr "Éditer la variable"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:967
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1371
+#: src/netzob/Inference/Vocabulary/UImodelization.py:961
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1365
 msgid "Remove variable"
 msgstr "Supprimer la variable"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:972
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1376
+#: src/netzob/Inference/Vocabulary/UImodelization.py:966
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1370
 msgid "Configure variation of field"
 msgstr "Confiuger la variation du champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:983
+#: src/netzob/Inference/Vocabulary/UImodelization.py:977
 msgid "Raw message"
 msgstr "Message brut"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:987
+#: src/netzob/Inference/Vocabulary/UImodelization.py:981
 msgid "Aligned message"
 msgstr "Message aligné"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:991
+#: src/netzob/Inference/Vocabulary/UImodelization.py:985
 msgid "Aligned formatted message"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:995
+#: src/netzob/Inference/Vocabulary/UImodelization.py:989
 msgid "Field"
 msgstr "Champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:999
+#: src/netzob/Inference/Vocabulary/UImodelization.py:993
 msgid "Formatted field"
 msgstr "Champ formaté"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1003
+#: src/netzob/Inference/Vocabulary/UImodelization.py:997
 msgid "Copy to clipboard"
 msgstr "Copier dans le presse papier"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1009
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1003
 msgid "Message properties"
 msgstr "Propriétés du message"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1015
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1009
 msgid "Delete message"
 msgstr "Supprimer le message"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1051
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2116
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1045
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2105
 msgid "Sequence Alignment"
 msgstr "Alignement de séquences"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1064
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2128
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1058
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2117
 msgid "Simple Partitioning"
 msgstr "Partitionnement simple"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1144
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1138
 msgid "Format"
 msgstr "Format"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1157
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1151
 msgid "UnitSize"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1170
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1164
 msgid "Sign"
 msgstr "Signe"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1183
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1177
 msgid "Endianess"
 msgstr "Boutisme"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1194
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1188
 msgid "Modify field attributes"
 msgstr "Modifier les attributs du champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1200
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1874
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2227
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1194
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1863
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2216
 msgid "Name : "
 msgstr "Nom : "
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1210
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1204
 msgid "Description : "
 msgstr "Description : "
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1223
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1217
 msgid "Regex (be careful !) : "
 msgstr "Expression rationnelle (faire attention !) :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1233
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1227
 msgid "Encapsulation level : "
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1285
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1279
 msgid "User requested a contextual menu (on treeview typeStructure)"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1296
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1290
 msgid "Impossible to retrieve the clicked field!"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1329
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1323
 msgid "with all next field"
 msgstr "avec tous les champs suivants"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1382
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1376
 msgid "Export selected fields"
 msgstr "Exporter les champs sélectionnés"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1418
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1412
 msgid "Save selected data"
 msgstr "Sauvegarder les données sélectionnés"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1424
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1418
 msgid "Add to an existing trace"
 msgstr "Ajouter à une trace existante"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1434
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1444
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1428
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1438
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1441
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1435
 msgid "Create a new trace"
 msgstr "Créer une nouvelle trace"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1478
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1472
 msgid "Not yet implemented"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1525
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1519
 msgid "Domain of definition for the column "
 msgstr "Domaine de définition pour la colonne"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1538
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1532
 msgid "Column "
 msgstr "Colonne "
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1560
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1554
 msgid "The user wants to copy the following message to the clipboard: {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1565
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1585
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1559
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1579
 msgid "Impossible to retrieve the message based on its ID [{0}]"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1580
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1574
 msgid "The user wants to see the properties of message {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1589
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1583
 msgid "Properties of message "
 msgstr "Propriétés du message"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1599
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1591
 msgid "Property"
 msgstr "Propriété"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1634
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1625
 msgid "Click yes to confirm the deletion of the selected messages"
 msgstr "Cliquez sur oui pour valider la suppression du message sélectionné"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1647
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1638
 msgid "The user wants to delete the message {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1654
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1645
 msgid "Impossible to retrieve the message to remove based on its ID [{0}]"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1704
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1695
 msgid "Concatenation of Fields"
 msgstr "Concaténation de champs"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1709
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1700
 msgid "Fields from:"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1713
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1703
 msgid "to:"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1729
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1718
 msgid "Concatenate fields"
 msgstr "Concaténer les champs"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1744
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1733
 msgid "Concatenate from {0} to the column {1}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1747
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1736
 msgid "Error: {0} > Last field index"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1762
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1751
 msgid "Error: You must put integers in forms"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1769
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1758
 msgid "Concatenate the column {0} with the {1} column"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1771
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1760
 msgid "Can't concatenate the first column with its left column"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1775
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1764
 msgid "Can't concatenate the last column with its right column"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1797
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1786
 msgid "Split column "
 msgstr "Séparer la colonne "
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1813
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1992
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1802
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1981
 msgid "Align to right"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1836
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1825
 msgid "Split column"
 msgstr "Séparer la colonne"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1841
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1830
 msgid "Content of the column to split"
 msgstr "Contenu de la colonne à séparer"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1858
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1847
 msgid "Opening the dialog for the creation of a variable"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1860
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1849
 msgid "Definition of the new variable"
 msgstr "Définition de la nouvelle variable"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1867
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1856
 msgid "ID :"
 msgstr "ID :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1881
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1870
 msgid "Add current binaries : "
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1883
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1872
 msgid "Disjunctive inclusion"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1918
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1907
 msgid "Click yes to confirm the removal of the variable {0}"
 msgstr "Cliquez sur oui pour confirmer la suppression de la variable {0}"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1926
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1915
 msgid "The user didn't confirm the deletion of the variable {0}"
 msgstr "L'utilisateur n'a pas confirmé la suppression de la variable {0}"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1929
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1918
 msgid "The edition of an existing variable is not yet implemented"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:1989
+#: src/netzob/Inference/Vocabulary/UImodelization.py:1978
 msgid "Align to left"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2101
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2090
 msgid "Edit symbol"
 msgstr "Éditer le symbole"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2107
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2096
 #, fuzzy
 msgid "Search in"
 msgstr "Rechercher"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2122
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2111
 msgid "Force Partitioning"
 msgstr "Forcer le partitionnement"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2134
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2123
 msgid "Smooth Partitioning"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2140
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2129
 msgid "Reset Partitioning"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2145
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2134
 msgid "Align the symbol"
 msgstr "Aligner le symbole"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2159
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2148
 msgid "Remove symbol"
 msgstr "Supprimer le symbole"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2165
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2154
 msgid "Create a symbol"
 msgstr "Créer un symbole"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2177
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2166
 msgid "Searching"
 msgstr "Recherche"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2219
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2208
 msgid "<b>Please enter the name of the symbol :</b>"
 msgstr "<b>Merci d'entrer le nom du symbole :</b>"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2259
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2249
 msgid "<b>Please enter symbol's name</b> :"
 msgstr "<b>Merci d'entrer le nom du symbole</b> :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2266
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2256
 msgid "Name :"
 msgstr "Nom :"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2278
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2268
 msgid "a new symbol will be created with the given name : {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2294
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2284
 msgid "Can remove the symbol {0} since it's an empty one."
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2295
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2285
 msgid "Click yes to confirm the removal of the symbol {0}"
 msgstr "Cliquez sur oui pour confirmer la suppression du symbole {0}"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2308
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2298
 msgid "The user didn't confirm the deletion of the symbol {0}"
 msgstr "L'utilisateur n'a pas confirmé la suppression du symbole {0}"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2332
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2322
 msgid "Impossible to retrieve the message to move based on its ID [{0}]"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2335
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2325
 msgid "The message having the ID [{0}] has been found !"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2347
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2337
 msgid ""
 "Impossible to retrieve the symbol in which the selected message must be "
 "moved out."
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2350
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2340
 msgid "The new symbol of the message is {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2381
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2371
 msgid "Move messages from {0} to {1} : {2}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2457
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2447
 msgid "Status = {0}: {1}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2638
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2654
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2812
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2827
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2847
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2628
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2644
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2803
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2818
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2838
 msgid "No symbol selected."
 msgstr "Aucun symbole sélectionné"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2643
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2633
 msgid "Freezing done."
 msgstr "Gel terminé."
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2657
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2647
 msgid "Execute Data Carving on symbol ${0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2699
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2718
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2689
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2708
 msgid "Do not start the searching process since no pattern has been provided"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2703
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2722
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2693
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2712
 msgid "Do not start the searching process since no type has been provided"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2725
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2715
 msgid "User searches for {0} of type {1} in symbol {2}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2832
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2823
 msgid "No ASN.1 field found."
 msgstr "Aucun champ ASN.1 trouvé"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2834
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2825
 msgid "Find ASN.1 fields"
 msgstr "Trouver les champs ASN.1"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2858
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2849
 msgid "Size Fields Identifications"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2867
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2858
 msgid "Cancel"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2868
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2859
 msgid "Start"
 msgstr "Démarrer"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:2898
+#: src/netzob/Inference/Vocabulary/UImodelization.py:2889
 msgid "Error while proceeding to the size field identification: {0}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:3010
+#: src/netzob/Inference/Vocabulary/UImodelization.py:3000
 msgid "size field"
 msgstr "taille du champ"
 
-#: src/netzob/Inference/Vocabulary/UImodelization.py:3011
+#: src/netzob/Inference/Vocabulary/UImodelization.py:3001
 msgid "start of payload"
 msgstr ""
 
@@ -2021,7 +1966,7 @@ msgid "Task"
 msgstr ""
 
 #: src/netzob/Inference/Vocabulary/TreeViews/TreeSearchGenerator.py:134
-#: src/netzob/Simulator/UISimulator.py:272
+#: src/netzob/Simulator/UISimulator.py:271
 msgid "Symbol"
 msgstr "Symbole"
 
@@ -2033,20 +1978,20 @@ msgstr "Message"
 msgid "Segment"
 msgstr "Ségmenter"
 
-#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:142
+#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:141
 msgid "Search for the symbol referenced at position {0};{1}"
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:151
+#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:150
 msgid "An entry with the ID {0} has been found."
 msgstr ""
 
-#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:154
+#: src/netzob/Inference/Vocabulary/TreeViews/TreeSymbolGenerator.py:153
 msgid "The requested symbol with ID {0} has been found"
 msgstr ""
 
 #: src/netzob/Inference/Vocabulary/TreeViews/TreeTypeStructureGenerator.py:73
-#: src/netzob/Simulator/UISimulator.py:338
+#: src/netzob/Simulator/UISimulator.py:337
 msgid "Variable"
 msgstr "Variable"
 
@@ -2082,63 +2027,63 @@ msgstr "Port destination :"
 msgid "Add actor"
 msgstr "Ajouter un acteur"
 
-#: src/netzob/Simulator/UISimulator.py:236
+#: src/netzob/Simulator/UISimulator.py:235
 msgid "Active actors"
 msgstr ""
 
-#: src/netzob/Simulator/UISimulator.py:264
-#: src/netzob/Simulator/UISimulator.py:302 src/netzob/UI/TraceManager.py:85
+#: src/netzob/Simulator/UISimulator.py:263
+#: src/netzob/Simulator/UISimulator.py:301 src/netzob/UI/TraceManager.py:85
 msgid "Date"
 msgstr "Date"
 
-#: src/netzob/Simulator/UISimulator.py:268
+#: src/netzob/Simulator/UISimulator.py:267
 msgid "Received message"
 msgstr "Message reçu"
 
-#: src/netzob/Simulator/UISimulator.py:306
-#: src/netzob/Simulator/UISimulator.py:310
+#: src/netzob/Simulator/UISimulator.py:305
+#: src/netzob/Simulator/UISimulator.py:309
 msgid "Emitted message"
 msgstr "Message émis"
 
-#: src/netzob/Simulator/UISimulator.py:374
+#: src/netzob/Simulator/UISimulator.py:373
 msgid "START"
 msgstr "DÉMARRER"
 
-#: src/netzob/Simulator/UISimulator.py:381
+#: src/netzob/Simulator/UISimulator.py:380
 msgid "STOP"
 msgstr "ARRÊTER"
 
-#: src/netzob/Simulator/UISimulator.py:388
+#: src/netzob/Simulator/UISimulator.py:387
 msgid "DELETE"
 msgstr "SUPPRIMER"
 
-#: src/netzob/Simulator/UISimulator.py:407
+#: src/netzob/Simulator/UISimulator.py:406
 msgid "Start the actor {0}"
 msgstr "Démarrer l'acteur {0}"
 
-#: src/netzob/Simulator/UISimulator.py:418
+#: src/netzob/Simulator/UISimulator.py:417
 msgid "Stop the actor {0}"
 msgstr ""
 
-#: src/netzob/Simulator/UISimulator.py:430
+#: src/netzob/Simulator/UISimulator.py:429
 msgid "Impossible to delete an active actor. It must be stopped before"
 msgstr ""
 
-#: src/netzob/Simulator/UISimulator.py:433
+#: src/netzob/Simulator/UISimulator.py:432
 msgid "Delete the actor {0}"
 msgstr ""
 
-#: src/netzob/Simulator/UISimulator.py:455
+#: src/netzob/Simulator/UISimulator.py:454
 msgid ""
 "Impossible to create the requested actor since another one has the same "
 "name"
 msgstr ""
 
-#: src/netzob/Simulator/UISimulator.py:458
+#: src/netzob/Simulator/UISimulator.py:457
 msgid "Will add an actor named {0}"
 msgstr ""
 
-#: src/netzob/Simulator/UISimulator.py:542
+#: src/netzob/Simulator/UISimulator.py:541
 msgid "Impossible to retrieve the requested actor"
 msgstr ""
 
@@ -2174,6 +2119,10 @@ msgstr "Identifiant de trace"
 msgid "Select project"
 msgstr "Sélectionner un projet"
 
+#: src/netzob/UI/TraceManager.py:239
+msgid "Import"
+msgstr "Importer"
+
 #: src/netzob/UI/TraceManager.py:284
 msgid "Click yes to remove selected trace {0} from the Trace Manager"
 msgstr "Cliquez sur oui pour supprimer la trace {0} du gestionnaire de traces"
@@ -2182,11 +2131,11 @@ msgstr "Cliquez sur oui pour supprimer la trace {0} du gestionnaire de traces"
 msgid "The user didn't confirm the deletion of the trace {0}"
 msgstr ""
 
-#: src/netzob/UI/WorkspaceSelector.py:44
+#: src/netzob/UI/WorkspaceSelector.py:42
 msgid "Select Workspace"
 msgstr "Sélectionner l'espace de travail"
 
-#: src/netzob/UI/WorkspaceSelector.py:58
+#: src/netzob/UI/WorkspaceSelector.py:56
 msgid ""
 "Select a workspace\n"
 "\n"
@@ -2194,197 +2143,47 @@ msgstr ""
 "Sélectionner un espace de travail\n"
 "\n"
 
-#: src/netzob/UI/WorkspaceSelector.py:61
+#: src/netzob/UI/WorkspaceSelector.py:59
 msgid "Netzob stores your projects in a folder called a workspace.\n"
 msgstr ""
 
-#: src/netzob/UI/WorkspaceSelector.py:64
+#: src/netzob/UI/WorkspaceSelector.py:62
 msgid "Choose a workspace folder to use."
 msgstr ""
 
-#: src/netzob/UI/WorkspaceSelector.py:71
+#: src/netzob/UI/WorkspaceSelector.py:69
 msgid "Workspace: "
 msgstr "Espace de travail :"
 
-#: src/netzob/UI/WorkspaceSelector.py:74
+#: src/netzob/UI/WorkspaceSelector.py:72
 msgid "Browse..."
 msgstr ""
 
-#: src/netzob/UI/WorkspaceSelector.py:117
+#: src/netzob/UI/WorkspaceSelector.py:115
 msgid "Select the workspace"
 msgstr "Sélectionner l'espace de travail"
 
-#: src/netzob/UI/Common/AboutDialog.py:55
-msgid ""
-"Netzob is released under the terms of the {0} license.\n"
-"\n"
-"{1}"
-msgstr ""
+#~ msgid "Import file"
+#~ msgstr "Importer le fichier"
 
-#: src/netzob/UI/Export/Controllers/RawExportController.py:92
-#: src/netzob/UI/Export/Controllers/ScapyExportController.py:92
-#: src/netzob/UI/Export/Controllers/TextExportController.py:91
-msgid "No selected symbol"
-msgstr "Aucun symbole sélectionné"
+#~ msgid "Select file(s)"
+#~ msgstr "Sélectionner les fichier(s)"
 
-#: src/netzob/UI/Export/Controllers/RawExportController.py:93
-msgid "Select a symbol to see its XML definition"
-msgstr "Sélectionner un symbole pour voir sa définition XML"
+#~ msgid "HEX line-separator (ex: 0a) :"
+#~ msgstr ""
 
-#: src/netzob/UI/Export/Controllers/RawExportController.py:100
-#, fuzzy
-msgid "No XML definition found"
-msgstr "Domaine de définition pour la colonne"
+#~ msgid "Message ID"
+#~ msgstr "ID Message"
 
-#: src/netzob/UI/Export/Controllers/ScapyExportController.py:93
-#: src/netzob/UI/Export/Controllers/TextExportController.py:92
-msgid "Select a symbol to see its text definition"
-msgstr "Sélectionner un symbol pour voir sa définition textuelle"
+#~ msgid "Unable to retrieve the message the user clicked on. Hum ?"
+#~ msgstr ""
 
-#: src/netzob/UI/Export/Controllers/ScapyExportController.py:100
-msgid "No scapy definition found"
-msgstr ""
+#~ msgid "Are you sure to import the %s computed messages in project %s?"
+#~ msgstr "Êtes-vous sur d'importer les %s paquets générés dans le projet %s ?"
 
-#: src/netzob/UI/Export/Controllers/TextExportController.py:99
-#, fuzzy
-msgid "No text definition found"
-msgstr "Domaine de définition pour la colonne"
+#~ msgid "Check if this trace is a session"
+#~ msgstr "Vérifier si cette trace est une session"
 
-#: src/netzob/UI/Export/Views/RawExportView.py:50
-msgid "Export project as raw XML"
-msgstr "Exporter le projet au format XML brut"
-
-#: src/netzob/UI/Export/Views/ScapyExportView.py:50
-#: src/netzob/UI/Export/Views/TextExportView.py:50
-msgid "Export project as text"
-msgstr "Exporter le projet au format texte"
-
-#: src/netzob/UI/Import/Views/PcapImportView.py:50
-#, fuzzy
-msgid "Import file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob/UI/Import/Views/PcapImportView.py:63
-#, fuzzy
-msgid "Import PCAP"
-msgstr "Exporter comme"
-
-#: src/netzob/UI/Import/Views/PcapImportView.py:71
-#, fuzzy
-msgid "Scapy filter"
-msgstr "Filtre BPF"
-
-#: src/netzob/UI/Import/Views/PcapImportView.py:81
-#, fuzzy
-msgid "Import traffic"
-msgstr "Importer des traces"
-
-#: src/netzob_plugins/Importers/FileImporter/FileImporterPlugin.py:51
-msgid "Provide the possibility to import messages from any binary or ascii file."
-msgstr ""
-
-#: src/netzob_plugins/Importers/FileImporter/FileImporterPlugin.py:59
-#, fuzzy
-msgid "Import from raw file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/FileImporter/FileImporterView.py:65
-#, fuzzy
-msgid "Import messages from raw file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/OSpyImporter/OSpyImporterPlugin.py:51
-msgid "Provides the possibility to import messages from OSpy project file."
-msgstr ""
-
-#: src/netzob_plugins/Importers/OSpyImporter/OSpyImporterPlugin.py:59
-#, fuzzy
-msgid "Import from oSpy file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/OSpyImporter/OSpyImporterView.py:62
-#, fuzzy
-msgid "Import messages from oSpy file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:82
-msgid "Error while trying to open the file {0}."
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:85
-msgid ""
-"Error while trying to open the file {0}, more permissions are required "
-"for reading it."
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:116
-msgid "The provided filter is not valid (it should follow the BPF format)"
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:122
-msgid "Starting import from {0} (linktype:{0})"
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:127
-msgid "This pcap cannot be imported since the layer 2 is not supported ({0})"
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:223
-msgid ""
-"Cannot import one of the provided packets since its layer 3 is "
-"unsupported (Only IP is currently supported, packet ethernet type = {0})"
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporter.py:249
-msgid ""
-"Cannot import one of the provided packets since its layer 4 is "
-"unsupported (Only UDP and TCP are currently supported, packet IP protocol"
-" number = {0})"
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporterPlugin.py:51
-msgid "Provide the possibility to import messages from PCAP network capture files"
-msgstr ""
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporterPlugin.py:59
-#, fuzzy
-msgid "Import from PCAP file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/PCAPImporter/PCAPImporterView.py:64
-#, fuzzy
-msgid "Import messages from PCAP file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/XMLImporter/XMLImporterPlugin.py:50
-msgid "Provide the possibility to import messages from netzob XML message files"
-msgstr ""
-
-#: src/netzob_plugins/Importers/XMLImporter/XMLImporterPlugin.py:57
-#, fuzzy
-msgid "Import from XML file"
-msgstr "Importer depuis un fichier"
-
-#: src/netzob_plugins/Importers/XMLImporter/XMLImporterView.py:57
-#, fuzzy
-msgid "Import messages from XML file"
-msgstr "Importer depuis un fichier"
-
-#~ msgid "Import from PCAP"
-#~ msgstr "Importer depuis un fichier Pcap"
-
-#~ msgid "Import from XML File"
-#~ msgstr "Importer depuis un fichier XML"
-
-#~ msgid "Scapy dissector"
-#~ msgstr "Dissecteur Scapy"
-
-#~ msgid "Wireshark dissector"
-#~ msgstr "Dissecteur Wireshark"
-
-#~ msgid "Export project as Scapy dissector"
-#~ msgstr "Exporter le projet en tant que dissecteur Scapy"
-
-#~ msgid "Select a symbol to see its Scapy dissector"
-#~ msgstr "Sélectionner un message pour voir son dissecteur Scapy"
+#~ msgid "Select one or multiple file"
+#~ msgstr "Sélectionner un ou plusieur fichier"
 
