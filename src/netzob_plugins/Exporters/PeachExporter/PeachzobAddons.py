@@ -28,99 +28,93 @@
 #+---------------------------------------------------------------------------+
 #| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
-import uuid
 import random
+import string
 
 #+---------------------------------------------------------------------------+
 #| Local Imports                                                             |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
-from netzob_plugins.Exporters.PeachExporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
-from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachExportController
+from Peach.fixup import Fixup
+from Peach.Engine.common import *
+# Peach needs to be in the Python path.
 
 
-class PeachExporterPlugin(ExporterPlugin):
+class Or(Fixup):
     """
-        PeachExporterPlugin:
-            Export netzob symbols into Peach pit files.
-            Simplify the construction of a fuzzer with Peach.
+        Or:
+            Replace field's value with a logical OR of values in Param "values" (separated by ';' characters).
 
     """
-    __plugin_name__ = "PeachExporter"
-    __plugin_version__ = "0.1"
-    __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
-    __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
 
-    def __init__(self, netzob):
+    def __init__(self, values):
         """
-            Constructor of PeachExporterPlugin:
+            Constructor of Or:
 
-                @type netzob: netzob.NetzobGUI.NetzobGUI
-                @param netzob: the main netzob project.
+            @type values: string
+            @param values: a list of values (separated by ';' characters) allowed by the user to be set in the father field.
 
         """
-        ExporterPlugin.__init__(self, netzob)
-        self.entryPoints = [GlobalMenuEntryPoint(self.getNetzob())]
+        Fixup.__init__(self)
+        self.values = values
 
-    def getName(self):
+    def fixup(self):
         """
-            getName:
+            fixup:
+                Called by the Peach engine. Replace the father field value by one of the value given (randomly chosen).
 
                 @return type: string
-                @return: the plugin name.
+                @return: the new value of the father field.
 
         """
-        return self.__plugin_name__
+        values = string.split(self.values, ";")
+        values.append("")  # We append an empty value for having empty fields sometimes.
+        if values == None:
+            raise Exception("Error: Or was unable to locate its values.")
+        ran = random.randint(0, len(values) - 1)
+        return values[ran]
 
-    def getVersion(self):
+
+class RandomString(Fixup):
+    """
+        RandomString:
+            Replace field's value with a random string which size is in a given range.
+
+    """
+
+    def __init__(self, minlen, maxlen):
         """
-            getVersion:
+            Constructor of RandomString:
 
-            @return type: string
-            @return: the plugin version.
-
-        """
-        return self.__plugin_version__
-
-    def getDescription(self):
-        """
-            getDescription:
-
-            @return type: string
-            @return: a plugin description.
-
-        """
-        return self.__plugin_description__
-
-    def getAuthor(self):
-        """
-            getAuthor:
-
-            @return type: string
-            @return: the plugin author.
+                @type minlen: string
+                @param minlen: the minimum length of the random string we will create.
+                @type maxlen: string
+                @param maxlen: the maximum length of the random string we will create.
 
         """
-        return self.__plugin_author__
+        Fixup.__init__(self)
+        self.minlen = minlen
+        self.maxlen = maxlen
 
-    def getEntryPoints(self):
+    def fixup(self):
         """
-            getEntryPoints:
+            fixup:
+                Called by the Peach engine. Replace the father field value by a random value which size is between minlen and maxlen.
 
-            @return type: netzob_plugins.Exporters.PeachExporter.EntryPoints.GlobalMenuEntryPoint.GlobalMenuEntryPoint
-            @return: the plugin entry point, so it can be linked to the netzob project.
-
-        """
-        return self.entryPoints
-
-    def setVal(self, val):
-        """
-            setVal:
-                Useless function.
-
-            @type val:
-            @param val:
+                @return type: string
+                @return: the new value of the father field.
 
         """
-        self.val = val
+        minlen = self.minlen
+        maxlen = self.maxlen
+        if minlen == None:
+            raise Exception("Error: RandomString was unable to locate minlen.")
+        if maxlen == None:
+            raise Exception("Error: RandomString was unable to locate maxlen.")
+        if minlen > maxlen:
+            raise Exception("Error: minlen > maxlen.")
+        value = ""
+        length = random.randint(int(minlen), int(maxlen))
+        # We potentially add all printable characters
+        for i in range(length):
+            value = value + random.choice(string.printable)
+        return value

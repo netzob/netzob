@@ -1,6 +1,31 @@
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
+#|          01001110 01100101 01110100 01111010 01101111 01100010            |
+#|                                                                           |
+#|               Netzob : Inferring communication protocols                  |
+#+---------------------------------------------------------------------------+
+#| Copyright (C) 2011 Georges Bossert and Frédéric Guihéry                   |
+#| This program is free software: you can redistribute it and/or modify      |
+#| it under the terms of the GNU General Public License as published by      |
+#| the Free Software Foundation, either version 3 of the License, or         |
+#| (at your option) any later version.                                       |
+#|                                                                           |
+#| This program is distributed in the hope that it will be useful,           |
+#| but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+#| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
+#| GNU General Public License for more details.                              |
+#|                                                                           |
+#| You should have received a copy of the GNU General Public License         |
+#| along with this program. If not, see <http://www.gnu.org/licenses/>.      |
+#+---------------------------------------------------------------------------+
+#| @url      : http://www.netzob.org                                         |
+#| @contact  : contact@netzob.org                                            |
+#| @sponsors : Amossys, http://www.amossys.fr                                |
+#|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
 #| Global Imports                                                            |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
@@ -120,11 +145,10 @@ class PeachExportController:
             self.model.variableOverRegex = True
         elif fuzzingBase == "Regex":
             self.model.variableOverRegex = False
-            
+
         # If nothing is currently displayed, nothing is updated.
         if self.selectedSymbolID > -2:
             self.showXMLDefinition(self.selectedSymbolID)
-        
 
     def showXMLDefinition(self, symbolID):
         """
@@ -164,7 +188,7 @@ class PeachExportController:
             if res == gtk.RESPONSE_OK:
                 fileName = chooser.get_filename()
             chooser.destroy()
-    
+
             doCreateFile = False
             isFile = os.path.isfile(fileName)
             if not isFile:
@@ -175,7 +199,7 @@ class PeachExportController:
                 md.destroy()
                 if resp == gtk.RESPONSE_OK:
                     doCreateFile = True
-    
+
             if doCreateFile:
                 # Special case "entire project"
                 if self.selectedSymbolID == "-1":
@@ -189,7 +213,7 @@ class PeachExportController:
                     file.close()
                     # TODO: maybe copy the plugin file with shutil
                     NetzobInfoMessage(_("The project has been correctly exported as a Peach Fuzzer to '{0}'.\nDo not forget to copy in the targeted directory our Peach plugin netzob_plugins/Exporters/PeachExporter/PeachzobAddons.py.").format(fileName))
-                except Exception,e:
+                except Exception, e:
                     NetzobInfoMessage(_("The following error occurred while exporting the project as a Peach Fuzzer to '{0}': {1}").format(fileName, e))
 
     def getPanel(self):
