@@ -38,6 +38,7 @@ import uuid
 #+----------------------------------------------
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.UI.Vocabulary.Views.TreeTypeStructureView import TreeTypeStructureView
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
 
 #+----------------------------------------------
@@ -51,8 +52,9 @@ class TreeTypeStructureController(object):
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
-    def __init__(self, netzob):
+    def __init__(self, netzob, vocabularyController):
         self.netzob = netzob
+        self.vocabularyController = vocabularyController
         self.symbol = None
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeTypeStructureController.py')
         self.view = TreeTypeStructureView(self.netzob)
@@ -69,16 +71,16 @@ class TreeTypeStructureController(object):
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             if isActive:
-                self.treeTypeStructureGenerator.show()
+                self.view.show()
             else:
-                self.treeTypeStructureGenerator.hide()
+                self.view.hide()
                 return
 
         if self.getSymbol() == None:
             self.clear()
             return
 
-        self.treestore.clear()
+        self.view.treestore.clear()
         for field in self.getSymbol().getFields():
             tab = ""
             for k in range(field.getEncapsulationLevel()):
@@ -99,7 +101,7 @@ class TreeTypeStructureController(object):
             elif field.getDefaultVariable(self.getSymbol()) != None:
                 variableDescription = field.getDefaultVariable(self.getSymbol()).getUncontextualizedDescription()
 
-            self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
+            self.view.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])
 
     #+----------------------------------------------
     #| initialization:
@@ -107,10 +109,10 @@ class TreeTypeStructureController(object):
     #+----------------------------------------------
     def initialization(self):
         # creation of the treestore
-        self.treestore = Gtk.TreeStore(int, str, str, str)  # iCol, Name, Description, Variable
+        self.view.treestore = Gtk.TreeStore(int, str, str, str)  # iCol, Name, Description, Variable
         # creation of the treeview
-        self.treeview = Gtk.TreeView(self.treestore)
-        self.treeview.set_reorderable(True)
+        self.view.treeview = Gtk.TreeView(self.view.treestore)
+        self.view.treeview.set_reorderable(True)
         # Creation of a cell rendered and of a column
         cell = Gtk.CellRendererText()
         cell.set_property("size-points", 9)
@@ -120,13 +122,13 @@ class TreeTypeStructureController(object):
             column.set_resizable(True)
             column.pack_start(cell, True)
             column.add_attribute(cell, "markup", i)
-            self.treeview.append_column(column)
-        self.treeview.show()
-        self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+            self.view.treeview.append_column(column)
+        self.view.treeview.show()
+        self.view.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         self.scroll = Gtk.ScrolledWindow()
         self.scroll.set_size_request(-1, 250)
         self.scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        self.scroll.add(self.treeview)
+        self.scroll.add(self.view.treeview)
         self.scroll.show()
 
     #+----------------------------------------------
@@ -135,7 +137,7 @@ class TreeTypeStructureController(object):
     #+----------------------------------------------
     def clear(self):
         self.symbol = None
-        self.treestore.clear()
+        self.view.treestore.clear()
 
     #+----------------------------------------------
     #| error:
@@ -161,7 +163,7 @@ class TreeTypeStructureController(object):
             (iField,) = path
 
             selectedField = None
-            for field in self.treeMessageGenerator.getSymbol().getFields():
+            for field in self.vocabularyController.treeMessageController.getSymbol().getFields():
                 if field.getIndex() == iField:
                     selectedField = field
             if selectedField == None:
@@ -230,7 +232,7 @@ class TreeTypeStructureController(object):
                 typeMenuVariable = Gtk.Menu()
                 itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
-                itemVariable.connect("activate", self.rightClickCreateVariable, self.treeMessageGenerator.getSymbol(), selectedField)
+                itemVariable.connect("activate", self.rightClickCreateVariable, self.vocabularyController.treeMessageController.getSymbol(), selectedField)
                 typeMenuVariable.append(itemVariable)
             else:
                 typeMenuVariable = Gtk.Menu()
@@ -266,21 +268,21 @@ class TreeTypeStructureController(object):
     def exportSelectedFields_cb(self, event):
         # Retrieve associated messages of selected fields
         aggregatedCells = {}
-        (model, paths) = self.treeTypeStructureGenerator.getTreeview().get_selection().get_selected_rows()
+        (model, paths) = self.getTreeview().get_selection().get_selected_rows()
         for path in paths:
             aIter = model.get_iter(path)
             if(model.iter_is_valid(aIter)):
                 iField = model.get_value(aIter, 0)
 
                 selectedField = None
-                for field in self.treeMessageGenerator.getSymbol().getFields():
+                for field in self.vocabularyController.treeMessageController.getSymbol().getFields():
                     if field.getIndex() == iField:
                         selectedField = field
                 if selectedField == None:
                     self.log.warn(_("Impossible to retrieve the clicked field !"))
                     return
 
-                cells = self.treeTypeStructureGenerator.getSymbol().getCellsByField(selectedField)
+                cells = self.getSymbol().getCellsByField(selectedField)
                 for i in range(len(cells)):
                     if not i in aggregatedCells:
                         aggregatedCells[i] = ""

@@ -47,6 +47,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
+from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
 
 
 #+----------------------------------------------
@@ -58,10 +59,11 @@ class FindSizeFieldsController:
     #| Constructor:
     #| @param netzob: the netzob main class
     #+----------------------------------------------
-    def __init__(self, netzob):
+    def __init__(self, netzob, vocabularyController):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.FindSizeFieldsController.py')
         self.netzob = netzob
+        self.vocabularyController = vocabularyController
         self.initCallbacks()
 
     def initCallbacks(self):
@@ -73,7 +75,7 @@ class FindSizeFieldsController:
     def findSizeFields(self):
         # Save the current encapsulation level of each field
         savedEncapsulationLevel = []
-        for field in self.selectedSymbol.getFields():
+        for field in self.vocabularyController.treeSymbolController.selectedSymbol.getFields():
             savedEncapsulationLevel.append(field.getEncapsulationLevel())
 
         sizeFieldIdentifier = SizeFieldIdentifier()
@@ -93,7 +95,7 @@ class FindSizeFieldsController:
 
         cancelSizeFieldButton.set_sensitive(False)
         cancelSizeFieldButton.connect("clicked", self.cancelfindSizeFields_cb, dialog, startSizeFieldButton, sizeFieldIdentifier)
-        startSizeFieldButton.connect("clicked", self.findSizeFields_cb, dialog, sizeFieldIdentifier, [self.selectedSymbol], cancelSizeFieldButton, savedEncapsulationLevel)
+        startSizeFieldButton.connect("clicked", self.findSizeFields_cb, dialog, sizeFieldIdentifier, [self.vocabularyController.treeSymbolController.selectedSymbol], cancelSizeFieldButton, savedEncapsulationLevel)
 
         panel.attach(startSizeFieldButton, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
         panel.attach(cancelSizeFieldButton, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
@@ -193,7 +195,7 @@ class FindSizeFieldsController:
     def destroyDialogFindSizeFields(self, dialog, savedEncapsulationLevel):
         # Optionaly restore original encapsulation levels if there were no modification
         i = -1
-        for field in self.selectedSymbol.getFields():
+        for field in self.vocabularyController.treeSymbolController.selectedSymbol.getFields():
             i += 1
             field.setEncapsulationLevel(savedEncapsulationLevel[i])
         self.update()
@@ -204,7 +206,7 @@ class FindSizeFieldsController:
     def sizeField_selected(self, selection, savedEncapsulationLevel):
         # Optionaly restore original encapsulation levels
         i = -1
-        for field in self.selectedSymbol.getFields():
+        for field in self.vocabularyController.treeSymbolController.selectedSymbol.getFields():
             i += 1
             field.setEncapsulationLevel(savedEncapsulationLevel[i])
 
@@ -219,22 +221,22 @@ class FindSizeFieldsController:
                 end_field = model.get_value(iter, 4)
                 end_field_len = model.get_value(iter, 5)
 
-                sizeField = self.selectedSymbol.getFieldByIndex(size_field)
-                startField = self.selectedSymbol.getFieldByIndex(start_field)
-                endField = self.selectedSymbol.getFieldByIndex(end_field)
+                sizeField = self.vocabularyController.treeSymbolController.selectedSymbol.getFieldByIndex(size_field)
+                startField = self.vocabularyController.treeSymbolController.selectedSymbol.getFieldByIndex(start_field)
+                endField = self.vocabularyController.treeSymbolController.selectedSymbol.getFieldByIndex(end_field)
 
 #                # We check if some values of the size field are longer than the expected size field length
-#                cells = self.selectedSymbol.getCellsByField(sizeField)
+#                cells = self.vocabularyController.treeSymbolController.selectedSymbol.getCellsByField(sizeField)
 #                for cell in cells:
 #                    if len(cell) > size_field_len:
 #                        print "SPLIT"
 #                        # Then we split the field
-#                        self.selectedSymbol.splitField(sizeField, size_field_len)
+#                        self.vocabularyController.treeSymbolController.selectedSymbol.splitField(sizeField, size_field_len)
 
                 sizeField.setDescription(_("size field"))
                 startField.setDescription(_("start of payload"))
                 for i in range(start_field, end_field + 1):
-                    field = self.selectedSymbol.getFieldByIndex(i)
+                    field = self.vocabularyController.treeSymbolController.selectedSymbol.getFieldByIndex(i)
                     field.setEncapsulationLevel(field.getEncapsulationLevel() + 1)
 
                 self.update()
@@ -245,5 +247,5 @@ class FindSizeFieldsController:
     def applySizeField(self, button, dialog, savedEncapsulationLevel):
         # Apply the new encapsulation levels on original fields
         del savedEncapsulationLevel[:]
-        for field in self.selectedSymbol.getFields():
+        for field in self.vocabularyController.treeSymbolController.selectedSymbol.getFields():
             savedEncapsulationLevel.append(field.getEncapsulationLevel())

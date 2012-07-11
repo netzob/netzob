@@ -30,7 +30,7 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import uuid
 
 #+----------------------------------------------
@@ -55,8 +55,9 @@ class TreeSearchController(object):
     #| Constructor:
     #| @param vbox : where the treeview will be hold
     #+----------------------------------------------
-    def __init__(self, netzob):
+    def __init__(self, netzob, vocabularyController):
         self.netzob = netzob
+        self.vocabularyController = vocabularyController
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreeSearchController.py')
         self.searchTasks = []
@@ -74,10 +75,10 @@ class TreeSearchController(object):
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
             if isActive:
-                self.show()
+                self.view.show()
                 return
             else:
-                self.hide()
+                self.view.hide()
 
         if len(searchTasks) == 0:
             self.decolorizeAnySearchResult()
@@ -146,6 +147,9 @@ class TreeSearchController(object):
 #                        colorizedSymbols.append(symbol)
 
     def decolorizeAnySearchResult(self):
+        if self.netzob.getCurrentProject() == None:
+            return
+
         vocabulary = self.netzob.getCurrentProject().getVocabulary()
         for symbol in vocabulary.getSymbols():
             filterToRemoveFromSymbol = []
@@ -170,6 +174,9 @@ class TreeSearchController(object):
     #|   operation when the user click on the treeview of the search results.
     #+----------------------------------------------
     def buttonPressOnSearchResults_cb(self, treeview, event):
+        if self.netzob.getCurrentProject() == None:
+            return
+
         elementType = None
         elementValue = None
 

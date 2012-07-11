@@ -69,6 +69,7 @@ from netzob.UI.Vocabulary.Controllers.ForcePartitioningController import ForcePa
 from netzob.UI.Vocabulary.Controllers.SimplePartitioningController import SimplePartitioningController
 from netzob.UI.Vocabulary.Controllers.SmoothPartitioningController import SmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.ResetPartitioningController import ResetPartitioningController
+from netzob.UI.Vocabulary.Controllers.FindSizeFieldsController import FindSizeFieldsController
 from netzob.Inference.Vocabulary.VariableView import VariableView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Inference.Vocabulary.Searcher import Searcher
@@ -143,6 +144,9 @@ class VocabularyController:
         self.treeMessageController.update()
         self.treeSymbolController.update()
         self.optionalViews.update()
+        self.treePropertiesController.update()
+        self.treeSearchController.update()
+        self.treeTypeStructureController.update()
 
     def clear(self):
         self.treeMessageController.clear()
@@ -172,11 +176,11 @@ class VocabularyController:
         ## Optional views
         self.optionalViews = OptionalViews()
         # Symbol definition view
-        self.treeTypeStructureController = TreeTypeStructureController(self.netzob)
+        self.treeTypeStructureController = TreeTypeStructureController(self.netzob, self)
         # Search view
-        self.treeSearchController = TreeSearchController(self.netzob)
+        self.treeSearchController = TreeSearchController(self.netzob, self)
         # Properties view
-        self.treePropertiesController = TreePropertiesController(self.netzob)
+        self.treePropertiesController = TreePropertiesController(self.netzob, self)
 
         # Register its subviews
         self.optionalViews.registerView(self.treeTypeStructureController.view)
@@ -501,8 +505,8 @@ class VocabularyController:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
-        findSizeField = findSizeFieldController(self.netzob)
-        findSizeField.findSizeFields()
+        findSizeFields = FindSizeFieldsController(self.netzob, self)
+        findSizeFields.findSizeFields()
 
     #+----------------------------------------------
     #| Called when user wants to identifies environment dependencies

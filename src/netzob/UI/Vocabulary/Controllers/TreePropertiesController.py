@@ -40,6 +40,7 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Field import Field
 from netzob.UI.Vocabulary.Views.TreePropertiesView import TreePropertiesView
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 
 
 #+---------------------------------------------------------------------------+
@@ -52,8 +53,9 @@ class TreePropertiesController(object):
     #+-----------------------------------------------------------------------+
     #| Constructor:
     #+-----------------------------------------------------------------------+
-    def __init__(self, netzob):
+    def __init__(self, netzob, vocabularyController):
         self.netzob = netzob
+        self.vocabularyController = vocabularyController
         self.log = logging.getLogger('netzob.UI.Vocabulary.Controllers.TreePropertiesController.py')
         self.treeview = None
         self.view = TreePropertiesView(self.netzob)
@@ -70,16 +72,18 @@ class TreePropertiesController(object):
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
             if isActive:
-                self.treePropertiesGenerator.show()
+                self.view.show()
             else:
-                self.treePropertiesGenerator.hide()
+                self.view.hide()
                 return
 
         self.view.treestore.clear()
-        if self.selectedMessage == None:
+
+        print self.vocabularyController.treeMessageController.selectedMessage
+        if self.vocabularyController.treeMessageController.selectedMessage == None:
             return
 
-        for property in self.selectedMessage.getProperties():
+        for property in self.vocabularyController.treeMessageController.selectedMessage.getProperties():
             propertyName = str(property[0])
             propertyFormat = str(property[1])
             propertyValue = str(property[2])

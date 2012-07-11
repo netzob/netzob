@@ -93,10 +93,10 @@ class TreeMessageController(object):
         if self.netzob.getCurrentProject() != None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             if isActive:
-                self.show()
+                self.view.show()
                 self.default(self.vocabularyController.treeSymbolController.selectedSymbol, self.selectedMessage)
             else:
-                self.hide()
+                self.view.hide()
 
     #+----------------------------------------------
     #| clear:
