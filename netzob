@@ -59,8 +59,6 @@ except:
     build_lib_path = "build/lib.linux-" + arch + "-" + python_version
     sys.path.append(build_lib_path)
 
-import netzob.NetzobGui as NetzobGui
-from netzob import release
 from netzob.Common.DepCheck import DepCheck
 
 if __name__ == "__main__":
@@ -71,6 +69,9 @@ if __name__ == "__main__":
         sys.exit()
 
     GObject.threads_init() # for handling concurrent GUI access from threads
+
+    import netzob.NetzobGui as NetzobGui
+    from netzob import release
 
     netzob = NetzobGui.NetzobGui()
     netzob.startGui()
