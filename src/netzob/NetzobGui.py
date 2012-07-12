@@ -54,11 +54,17 @@ from netzob.Common.Workspace import Workspace
 from netzob.Common import CommandLine
 
 
+actualview="vocabulary"    #default view when load netzob
+
 #+----------------------------------------------
 #| NetzobGUI:
 #|     Graphical runtime class
 #+----------------------------------------------
-class NetzobGui(Gtk.Window):
+class NetzobGui(object):
+    
+    
+    
+
 
     #+----------------------------------------------
     #| Constructor:
@@ -117,56 +123,89 @@ class NetzobGui(Gtk.Window):
 
         # Main window definition
         try:
-            Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
+            #create window
+            
+                self.ressourceglade = str( ResourcesConfiguration.getStaticResources())
+                self.builder = Gtk.Builder()
+                self.builder.add_from_file(self.ressourceglade+"/ui/gtk3-2.3.glade")
+                window = self.builder.get_object("window")
+                window.show_all()
         except TypeError:
             Gtk.Window.__init__(self)
 
-        self.set_default_size(800, 600)
-        self.set_title(_("Netzob: Inferring communication protocols"))
+        #add menu
+        self.addElement("box1","menu-vocabulary",0,False,False,True)
+        self.addElement("box1","menu-grammar",0,False,False,False)
+        self.addElement("box1","menu-traffic",0,False,False,False)
+        
+        #add toolbar
+        self.addElement("box4","toolbar-vocabulary",0,True,True,True)
+        self.addElement("box4","toolbar-grammar",0,True,True,False)
+        self.addElement("box4","toolbar-traffic",0,True,True,False)
+        
+        #add toolbar style
+        self.addToolbarStyle("toolbar-vocabulary")
+        self.addToolbarStyle("toolbar-grammar")
+        self.addToolbarStyle("toolbar-traffic")
+        
+        #add interface
+        self.addElement("box1","interface-vocabulary",4,True,True,True)
+        self.addElement("box1","interface-grammar",4,True,True,False)
+        self.addElement("box1","interface-traffic",4,True,True,False)
+                
+        #combobox switch view
+        combobox = self.builder.get_object("combobox1")
+        combobox.set_active(0)    #see the default view "vocabulary" on the button
+        combobox.connect("changed",self.combobox_changed_cb)
+        
+        #add element symbol list
+        self.addRowSymbolList(True, "ManualAjoutSymbol", 4, 2, "gtk-add")
 
-        self.set_icon_from_file(("%s/logo.png" %
-                                 ResourcesConfiguration.getStaticResources()))
-        self.connect("delete_event", self.evnmtDelete)
-        self.connect("destroy", self.destroy)
-        main_vbox = Gtk.VBox(False, spacing=0)
+        #add 2 spreadsheet
+        self.addSpreadSheet("Hello", 0)
+        self.addSpreadSheet("ManualAjoutSymbol", 1)
+
+        #project symbol
+        print"workspace :%s"%self.getCurrentWorkspace()
+        
+        #loadProject(self.getCurrentWorkspace(), projectDirectory)
+        
+        """
+        pliste2 = self.getCurrentWorkspace().getNameOfProjects
+
+        for p in pliste2:
+            print "project : %s " % str(p)
+        
+        print "projet0 : %s"% str(pliste2[0])
+        """
+        
+        #[test] give the image in the real ressource container
+        #imgCapture = builder.get_object("Capture")
+        #imgSequence = builder.get_object("Sequence")
+        
+        #print "dir %s" % dir(imgSequence)
+        #imgCapture.pixbuf = ressourceglade+"/icons/22x22/capture.png"
+        #imgCapture.set_from_pixbuf( ressourceglade+"/icons/22x22/capture.png")
+        
+        #print "Capture.pixbuf new : %s"% imgCapture.pixbuf
+        
+        
+        #run
+        Gtk.main()
 
         # Create and display the menu
 
-        self.menu = Menu(self)
-        menubar = self.menu.getMenuBar(self)
-        menubar.show()
-        self.menu.update()
-        main_vbox.pack_start(menubar, False, True, 0)
 
         # Notebook definition
-        self.notebook = Gtk.Notebook()
-        self.notebook.set_tab_pos(Gtk.PositionType.TOP)
-        self.notebook.connect("switch-page", self.notebookFocus)
-        main_vbox.pack_start(self.notebook, True, True, 0)
-
-        self.pageList = []
+    
+      
         # Adding the different notebook
-        self.vocabularyInference = VocabularyController(self)
-        self.grammarInference = UIGrammarInference(self)
+       
 #        self.fuzzing = UIfuzzing(self)
-        self.simulator = UISimulator(self)
-
-        self.pageList.append([_("Vocabulary inference"), self.vocabularyInference])
-        self.pageList.append([_("Grammar inference"), self.grammarInference])
-#        self.pageList.append(["Fuzzing", self.fuzzing])
-        self.pageList.append([_("Simulator"), self.simulator])
-
-        for page in self.pageList:
-            self.notebook.append_page(page[1].getPanel(), Gtk.Label(label=page[0]))
-
+ 
         # Initialize a clipboard object
-        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         # Show every widgets
-        self.notebook.show()
-        main_vbox.show()
-        self.add(main_vbox)
-        self.show()
 
     #+----------------------------------------------
     #| Update each panels
@@ -251,3 +290,117 @@ class NetzobGui(Gtk.Window):
             if page[0] == nameTab:
                 res = page[1]
         return res
+    
+    def addElement(self,box,widget,position,expand,fill,visible):
+        """
+        Add an external widget on the builder 
+        @type  box: string
+        @param box: The hbox/vbox where add the widget
+        @type  widget: string
+        @param widget: The widget to add 
+        @type  position: number
+        @param position: The position to add the widget on the hbox/vbox
+        @type  expand: gboolean
+        @param expand: Set the expand properties
+        """
+        box = self.builder.get_object(box)
+        widget = self.builder.get_object(widget)
+        box.pack_start(widget, expand, fill, 0)
+        box.reorder_child(widget, position) 
+        if not visible:
+            widget.hide()
+            
+    def addSpreadSheet(self,symbolname,position):
+        """
+        Add an external spreadsheet on the builder 
+        @type  box: string
+        @param box: The hbox/vbox where add the widget
+        @type  widget: string
+        @param widget: The widget to add 
+        @type  position: number
+        @param position: The position to add the widget on the hbox/vbox
+        @type  expand: gboolean
+        @param expand: Set the expand properties
+        """
+        #create a new builder to extract the widget
+        builder2 = Gtk.Builder()
+        builder2.add_from_file(self.ressourceglade+"/ui/gtk3-2.3.glade")
+        #set the name of the symbol
+        label = builder2.get_object("label1")
+        label.set_text(symbolname)
+        #add the spreadsheet to the main builder
+        spreadsheet = builder2.get_object("spreadsheet")
+        box = self.builder.get_object("box5")
+        box.pack_start(spreadsheet, True, True, 0)
+        box.reorder_child(spreadsheet, position) 
+        #add the message for the treeview
+        #add the close button
+        #todo
+
+    def switchWidget(self,widget,newwidget):
+        """
+        @type  widget: string
+        @param widget: The widget actual to switch
+        @type  newwidget: string
+        @param newwidget: The new widget
+        """
+        widget= self.builder.get_object(widget)
+        widget.hide()
+        newwidget= self.builder.get_object(newwidget)
+        newwidget.show()
+    
+    def addToolbarStyle(self,toolbar) :
+        """
+        @type  toolbar: string
+        @param toolbar: The toolbar name
+        """
+        toolbar = self.builder.get_object(toolbar)
+        styleContext = toolbar.get_style_context()
+        styleContext.add_class("primary-toolbar")
+    
+    
+    def switchView(self,newview):
+        """
+        @type  newview: string
+        @param newview: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
+        """
+        global actualview
+        self.switchWidget("menu-"+actualview,"menu-"+newview)
+        self.switchWidget("toolbar-"+actualview,"toolbar-"+newview)
+        self.switchWidget("interface-"+actualview,"interface-"+newview)
+        actualview=newview
+    
+    def combobox_changed_cb(self,combobox):
+        """
+        callback to change the view
+        @type  combobox: string
+        @param combobox: self
+        """
+        index = combobox.get_active()
+        if (index == 0):
+            self.switchView("vocabulary")
+        if (index == 1):
+            self.switchView("grammar")
+        if (index == 2):
+            self.switchView("traffic")
+            
+    def addRowSymbolList(self,selection,name,message,field,image):
+        """
+        @type  selection: string
+        @param selection: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
+        @type  name: string
+        @param name: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
+        @type  message: string
+        @param message: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
+        @type  field: string
+        @param field: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"   
+        @type  image: string
+        @param image: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
+        """
+        model = self.builder.get_object("liststore1")
+        iter = model.append()
+        model.set(iter, 0, selection)
+        model.set(iter, 1, name)
+        model.set(iter, 2, message)
+        model.set(iter, 3, field)
+        model.set(iter, 4, image)
