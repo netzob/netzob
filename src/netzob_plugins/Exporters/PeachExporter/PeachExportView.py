@@ -130,7 +130,7 @@ class PeachExportView:
             buildOptionsView:
                 Build the options view (bottom of the main view). This view proposes some options to sharpen the fuzzing.
         """
-        self.optionsTable = gtk.Table(rows=1, columns=3, homogeneous=False)
+        self.optionsTable = gtk.Table(rows=1, columns=4, homogeneous=False)
         self.optionsTable.show()
 
         label = NetzobLabel(_("Fuzzing based on : "))
@@ -141,6 +141,10 @@ class PeachExportView:
         self.optionsTable.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
         self.optionsTable.attach(self.comboFuzzingBase, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
+        self.checkMutateStaticFields = gtk.CheckButton("Mutate static fields")
+        self.checkMutateStaticFields.show()
+        self.optionsTable.attach(self.checkMutateStaticFields, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+
         self.exportButton = gtk.Button("Export")
         self.exportButton.show()
-        self.optionsTable.attach(self.exportButton, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        self.optionsTable.attach(self.exportButton, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)

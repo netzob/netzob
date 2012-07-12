@@ -58,6 +58,7 @@ class PeachExport:
         """
         self.netzob = netzob
         self.variableOverRegex = True
+        self.mutateStaticFields = True
 
     def getPeachDefinition(self, symbolID, entireProject):
         """
@@ -212,8 +213,11 @@ class PeachExport:
                         formattedValue = formattedValue[1:]  # Remove the ';' prefix.
                         xmlOrFixupValueParam = etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
                     elif len(paramValues) == 1:
+                        # We assume that fields that has only one value are "static".
                         formattedValue = self.bitarray2hex(paramValues[0])
                         xmlFields[i].attrib["value"] = formattedValue
+                        if not self.mutateStaticFields:
+                            xmlFields[i].attrib["mutable"] = "false"
 
             #-------------------#
             # Regex management: #
@@ -222,6 +226,8 @@ class PeachExport:
                 logging.debug(_("The fuzzing is based on regexes."))
                 if field.isStatic():
                     xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), valueType="hex", value=field.getRegex())
+                    if not self.mutateStaticFields:
+                        xmlField.attrib["mutable"] = "false"
                 else:
                     # Fields not declared static in netzob are assumed to be dynamic, have a random default value and are mutable.
                     # We assume that the regex is composed of a random number of fixed and dynamic (.{n,p}, .{,n} and .{n}) subregexs. Each subregex will have its own peach subfield.
@@ -237,7 +243,7 @@ class PeachExport:
                                     logging.debug(_("The field {0} has the splitted Regex = {1}").format(field.getName(), str(splittedRegex)))
 
                         for i in range(len(splittedRegex)):
-                            # splittedRegex will always contain dynamic subfields in even position.
+                            # Dynamic subfield (splittedRegex will always contain dynamic subfields in even position).
                             if (i % 2) == 1:
                                 fieldLength = 0
                                 if splittedRegex[i].find(",") == -1:  # regex = {n}
@@ -258,9 +264,12 @@ class PeachExport:
                                 xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
                                 xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
                             else:
+                                # Static subfield.
                                 if splittedRegex[i] != "":
                                     xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
                                     logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
+                                    if not self.mutateStaticFields:
+                                        xmlField.attrib["mutable"] = "false"
                     else:
                         # If the field's regex is (), we add a null-length Peach field type.
                         fieldLength = 0
@@ -464,3 +473,14 @@ class PeachExport:
 
         """
         self.variableOverRegex = value
+
+    def setMutateStaticFields(self, value):
+        """
+            setMutateStaticFields:
+                Setter for mutateStaticFields.
+
+            @type value: boolean
+            @param value: the new value of mutateStaticFields.
+
+        """
+        self.mutateStaticFields = value

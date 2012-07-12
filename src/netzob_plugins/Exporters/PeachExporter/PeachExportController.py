@@ -110,6 +110,7 @@ class PeachExportController:
         self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
         self.view.comboFuzzingBase.connect("changed", self.changeFuzzingBase)
         self.view.exportButton.connect("clicked", self.exportFuzzer)
+        self.view.checkMutateStaticFields.connect("toggled", self.toggleStaticFieldsMutation)
 
     def symbolSelected_cb(self, treeview):
         """
@@ -135,10 +136,6 @@ class PeachExportController:
                 @param combo: the combobox which modification causes the call of this functions.
 
         """
-        if self.netzob.getCurrentProject() == None:
-            NetzobErrorMessage(_("No project selected."))
-            return
-
         # Set the format choice as default
         fuzzingBase = combo.get_active_text()
         if fuzzingBase == "Variable":
@@ -146,6 +143,20 @@ class PeachExportController:
         elif fuzzingBase == "Regex":
             self.model.setVariableOverRegex(False)
 
+        # If nothing is currently displayed, nothing is updated.
+        if self.selectedSymbolID > -2:
+            self.showXMLDefinition(self.selectedSymbolID)
+
+    def toggleStaticFieldsMutation(self, check):
+        """
+            toggleStaticFieldsMutation:
+            Allow or not netzob static fields to be mutated.
+
+            @type check: gtk.ToggleButton
+            @param check: the checkButton which toggling causes the call of this function.
+
+        """
+        self.model.setMutateStaticFields(check.get_active())
         # If nothing is currently displayed, nothing is updated.
         if self.selectedSymbolID > -2:
             self.showXMLDefinition(self.selectedSymbolID)
