@@ -37,12 +37,12 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
-from netzob_plugins.Importers.FileImporter.FileImporterController import FileImporterController
+from netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporterController import DelimiterSeparatedImporterController
 
 
-class FileImporterPlugin(NetzobPlugin):
+class DelimiterSeparatedImporterPlugin(FileImporterPlugin):
     """FileImporter : Provide the possibility to import messages
        from any binary or ascii file."""
 
@@ -52,11 +52,23 @@ class FileImporterPlugin(NetzobPlugin):
                                     + "from any binary or ascii file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
+    PLUGIN_PRIORITY = 0
+    FILE_TYPE_DESCRIPTION = "Delimiter Separated File"
+
     def __init__(self, netzob):
-        super(FileImporterPlugin, self).__init__(netzob)
-        self.controller = FileImporterController(netzob, self)
-        self.entryPoints = [ImportMenuExtension(netzob, self.controller,
-                                "ImportFile", _("Import from raw file"))]
+        super(DelimiterSeparatedImporterPlugin, self).__init__(netzob)
+        self.controller = DelimiterSeparatedImporterController(netzob, self)
+        self.entryPoints = []
 
     def getEntryPoints(self):
         return self.entryPoints
+
+    def canHandleFile(self, filePath):
+        return True
+
+    def getFileTypeDescription(self):
+        return self.FILE_TYPE_DESCRIPTION
+
+    def importFile(self, filePathList):
+        self.controller.setSourceFiles(filePathList)
+        self.controller.run()

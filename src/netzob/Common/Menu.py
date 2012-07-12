@@ -45,9 +45,10 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.SessionManager import SessionManager
 from netzob.Import.NetworkImport import NetworkImport
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
+from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.Extensions.GlobalMenuExtension import GlobalMenuExtension
 from netzob.UI.Common.AboutDialog import AboutDialog
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 if os.name == 'posix':
     from netzob.Import.IpcImport import IpcImport
 #from netzob.UI.Import.Controllers.FileImporterController import FileImporterController
@@ -88,7 +89,7 @@ class Menu(object):
       <menu action='ImportTraces'>
     	<menuitem action='ImportNetwork' />
     	<menuitem action='ImportIPCFlows' />
-    	<menuitem action='ImportXML' />
+    	<menuitem action='ImportFromFile' />
       </menu>
       <menu action='Export'>
         <menuitem action='ExportXML' />
@@ -132,6 +133,7 @@ class Menu(object):
             ("ImportTraces", None, _("Import traces")),
             ("ImportNetwork", None, _("Capture network traces"), None, None, self.importNetworkTraficAction),
             ("ImportIPCFlows", None, _("Capture IPC flows"), None, None, self.importIPCFlowsAction),
+            ("ImportFromFile", None, _("Import from file"), None, None, self.importFromFile),
             ("Export", None, _("Export project")),
             ("ExportXML", None, _("XML"), None, None, self.exportXMLAction),
             ("ExportText", None, _("Text"), None, None, self.exportTextAction),
@@ -364,6 +366,16 @@ class Menu(object):
     #+----------------------------------------------
     def importThirdParty(self, widget):
         thirdPartyImportPanel = ThirdPartyImport(self.netzob)
+
+    def importFromFile(self, widget):
+        chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+        res = chooser.run()
+        plugin = None
+        if res == chooser.RESPONSE_OK:
+            (filePathList, plugin) = chooser.getFilenameListAndPlugin()
+        chooser.destroy()
+        if plugin is not None:
+            plugin.importFile(filePathList)
 
     #+----------------------------------------------
     #| Called when user wants to export as Scapy dissector

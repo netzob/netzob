@@ -32,7 +32,6 @@ from gettext import gettext as _
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 import threading

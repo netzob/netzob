@@ -28,58 +28,30 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import logging
 import os
-from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
-import gi
-gi.require_version('Gtk', '3.0')
-
-#+---------------------------------------------------------------------------+
-#| Local application imports
-#+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob_plugins.Importers.FileImporter.FileImporter import FileImporter
-from netzob_plugins.Importers.FileImporter.FileImporterView import FileImporterView
-from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractImporterController
-from netzob.Common.NetzobException import NetzobImportException
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
-from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
+from gi.repository import Gtk, Pango
+from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
 
 
-class FileImporterController(AbstractImporterController):
-    """Controller of file importer plugin"""
+class AbstractFileImporterView(AbstractImporterView):
 
-    COLUMN_ID = 1
-    COLUMN_SELECTED = 0
+    SOURCE_WIDGET_GLADE_FILENAME = "FileListSourceWidget.glade"
 
-    def __init__(self, netzob, plugin):
-        super(FileImporterController, self).__init__(netzob, plugin)
-        self.model = FileImporter(self.netzob)
-        self.view = FileImporterView(plugin, self)
+    def __init__(self, plugin, controller):
+        super(AbstractFileImporterView, self).__init__(plugin, controller)
+        sourceWidgetGladeFilePath = os.path.join(
+            self.getPlugin().getNetzobStaticResourcesPath(),
+            "ui", AbstractFileImporterView.SOURCE_WIDGET_GLADE_FILENAME)
+        sourceWidgetBuilder = Gtk.Builder()
+        sourceWidgetBuilder.add_from_file(sourceWidgetGladeFilePath)
+        self._getObjects(sourceWidgetBuilder, ["fileListLabel", "fileListExpander"])
+        self.setSourceConfigurationWidget(self.fileListExpander)
 
-    def run(self):
-        self.view.run()
-
-    def doSetSourceFiles(self, filePathList):
-        self.model.setSourceFiles(filePathList)
-
-    def doReadMessages(self):
-        self.model.setSeparator(self.view.separatorEntry.get_text().strip())
-        self.model.readMessages()
-        for message in self.model.messages:
-            self.view.listListStore.append([False, str(message.getID()), message.getStringData()])
-
-    def doGetMessageDetails(self, messageID):
-        message = self.model.getMessageByID(str(messageID))
-        return TypeConvertor.hexdump(TypeConvertor.netzobRawToPythonRaw(message.getData()))
-
-    def doImportMessages(self, selectedMessages):
-        self.model.saveMessagesInCurrentProject(selectedMessages)
-
-    def clearSeparatorButton_clicked_cb(self, widget):
-        self.view.separatorEntry.set_text("")
+    def setSourceFiles(self, filePathList):
+        self.fileListLabel.set_text("\n".join(filePathList))
+        if len(filePathList) <= 5:
+            self.fileListExpander.set_expanded(True)

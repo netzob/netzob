@@ -40,12 +40,12 @@ from gi.repository import Gtk
 from netzob_plugins.Importers.PCAPImporter.PCAPImporter import PCAPImporter
 from netzob_plugins.Importers.PCAPImporter.PCAPImporterView import PCAPImporterView
 from netzob.Common.NetzobException import NetzobImportException
-from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractImporterController
+from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.ModelReturnCodes import ERROR, WARNING, SUCCEDED
 
 
-class PCAPImporterController(AbstractImporterController):
+class PCAPImporterController(AbstractFileImporterController):
     """Controller of PCAP importer plugin"""
 
     COLUMN_ID = 0

@@ -39,10 +39,9 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
+from netzob.Common.Plugins.Importers.AbstractFileImporterView import AbstractFileImporterView
 
-
-class XMLImporterView(AbstractImporterView):
+class XMLImporterView(AbstractFileImporterView):
     """View of the XML importer plugin"""
 
     GLADE_FILENAME = "XMLImportConfigurationWidget.glade"

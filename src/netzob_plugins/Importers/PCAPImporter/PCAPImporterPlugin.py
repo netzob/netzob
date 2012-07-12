@@ -29,7 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-
+import fnmatch
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -37,12 +37,12 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.PCAPImporter.PCAPImporterController import PCAPImporterController
 
 
-class PCAPImporterPlugin(NetzobPlugin):
+class PCAPImporterPlugin(FileImporterPlugin):
     """PCAPImporter : Provide the possibility to import messages
        from PCAP network capture files"""
 
@@ -52,11 +52,22 @@ class PCAPImporterPlugin(NetzobPlugin):
                                     + "from PCAP network capture files")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
+    FILE_TYPE_DESCRIPTION = "PCAP File"
+
     def __init__(self, netzob):
         super(PCAPImporterPlugin, self).__init__(netzob)
         self.controller = PCAPImporterController(netzob, self)
-        self.entryPoints = [ImportMenuExtension(netzob, self.controller,
-                                "ImportPCAP", _("Import from PCAP file"))]
+        self.entryPoints = []
 
     def getEntryPoints(self):
         return self.entryPoints
+
+    def canHandleFile(self, filePath):
+        return fnmatch.fnmatch(filePath, "*.pcap")
+
+    def getFileTypeDescription(self):
+        return self.FILE_TYPE_DESCRIPTION
+
+    def importFile(self, filePathList):
+        self.controller.setSourceFiles(filePathList)
+        self.controller.run()

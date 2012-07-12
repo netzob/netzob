@@ -47,11 +47,11 @@ from netzob.Import.AbstractImporter import AbstractImporter
 #| FileImporter:
 #|     GUI for capturing messages
 #+----------------------------------------------
-class FileImporter(AbstractImporter):
+class DelimiterSeparatedImporter(AbstractImporter):
     """Model of file importer plugin"""
 
     def __init__(self, netzob):
-        super(FileImporter, self).__init__("FILE IMPORT", netzob)
+        super(DelimiterSeparatedImporter, self).__init__("FILE IMPORT", netzob)
         self.log = logging.getLogger('netzob.Import.FileImporter.py')
 
         # create the environmental dependancy object

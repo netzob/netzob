@@ -42,6 +42,7 @@ import logging
 
 class AbstractPluginView(object):
     """Regroup methods any plugins' view must be able to access"""
+
     def __init__(self, plugin, controller):
         self.plugin = plugin
         self.controller = controller

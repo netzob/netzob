@@ -41,24 +41,22 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
-from netzob.Common.NetzobException import NetzobImportException
+from netzob.Common.Plugins.Importers.AbstractFileImporterView import AbstractFileImporterView
 
 
-class FileImporterView(AbstractImporterView):
+class DelimiterSeparatedImporterView(AbstractFileImporterView):
     """View of file importer plugin"""
 
     # Name of the associated glade file
     GLADE_FILENAME = "FileImportConfigurationWidget.glade"
 
     def __init__(self, plugin, controller):
-        super(FileImporterView, self).__init__(plugin, controller)
+        super(DelimiterSeparatedImporterView, self).__init__(plugin, controller)
 
         # Import and add configuration widget
         self.builderConfWidget = Gtk.Builder()
         curDir = os.path.dirname(__file__)
-        self.builderConfWidget.add_from_file(os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", FileImporterView.GLADE_FILENAME))
+        self.builderConfWidget.add_from_file(os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", DelimiterSeparatedImporterView.GLADE_FILENAME))
         self._getObjects(self.builderConfWidget, ["fileConfigurationBox",
                                                   "separatorEntry"])
         self.builderConfWidget.connect_signals(self.controller)

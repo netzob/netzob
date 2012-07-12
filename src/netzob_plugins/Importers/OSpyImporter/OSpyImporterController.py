@@ -37,12 +37,12 @@
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractImporterController
+from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
 from netzob_plugins.Importers.OSpyImporter.OSpyImporter import OSpyImporter
 from netzob_plugins.Importers.OSpyImporter.OSpyImporterView import OSpyImporterView
 
 
-class OSpyImporterController(AbstractImporterController):
+class OSpyImporterController(AbstractFileImporterController):
     COLUMN_ID = 1
     COLUMN_SELECTED = 0
 

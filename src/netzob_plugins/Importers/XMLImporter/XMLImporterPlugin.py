@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+import fnmatch
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -37,11 +38,11 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.XMLImporter.XMLImporterController import XMLImporterController
 
-class XMLImporterPlugin(NetzobPlugin):
+class XMLImporterPlugin(FileImporterPlugin):
     """XMLImporter : Provide the possibility to import messages
        from netzob XML message files"""
 
@@ -50,10 +51,22 @@ class XMLImporterPlugin(NetzobPlugin):
     __plugin_description__ = _("Provide the possibility to import messages from netzob XML message files")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
+    FILE_TYPE_DESCRIPTION = "Netzob XML Traces"
+
     def __init__(self, netzob):
         super(XMLImporterPlugin, self).__init__(netzob)
         self.controller = XMLImporterController(netzob, self)
-        self.entryPoints = [ImportMenuExtension(netzob, self.controller, "ImportXML", _("Import from XML file"))]
+        self.entryPoints = []
 
     def getEntryPoints(self):
         return self.entryPoints
+
+    def canHandleFile(self, filePath):
+        return fnmatch.fnmatch(filePath, "*.xml")
+
+    def getFileTypeDescription(self):
+        return self.FILE_TYPE_DESCRIPTION
+
+    def importFile(self, filePathList):
+        self.controller.setSourceFiles(filePathList)
+        self.controller.run()

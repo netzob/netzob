@@ -37,12 +37,12 @@
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractImporterController
+from netzob.Common.Plugins.Importers.AbstractFileImporterController import AbstractFileImporterController
 from netzob_plugins.Importers.XMLImporter.XMLImporter import XMLImporter
 from netzob_plugins.Importers.XMLImporter.XMLImporterView import XMLImporterView
 
+class XMLImporterController(AbstractFileImporterController):
 
-class XMLImporterController(AbstractImporterController):
     COLUMN_ID = 1
     COLUMN_SELECTED = 0
 

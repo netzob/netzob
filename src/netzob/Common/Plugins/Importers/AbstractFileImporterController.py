@@ -30,22 +30,29 @@
 #+---------------------------------------------------------------------------+
 import logging
 import uuid
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from gettext import gettext as _
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-
+from gi.repository import Gtk, Pango
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Plugins.Importers.AbstractImporterController import AbstractImporterController
 
 
-#+---------------------------------------------------------------------------+
-#| ImporterPlugin:
-#|     Abstract class for all the importer plugins
-#+---------------------------------------------------------------------------+
-class ImporterPlugin(NetzobPlugin):
+class AbstractFileImporterController(AbstractImporterController):
 
-    def __init__(self, netzob):
-        NetzobPlugin.__init__(self, netzob)
+    def __init__(self, netzob, plugin):
+        super(AbstractImporterController, self).__init__(netzob, plugin)
+
+    def setSourceFiles(self, filePathList):
+        self.view.setSourceFiles(filePathList)
+        self.doSetSourceFiles(filePathList)
+
+    def doSetSourceFiles(self, filePathList):
+        raise NotImplementedError("Classes inheriting from "
+                + "AbstractImporterController must implement "
+                + "the doSetSourceFiles method")

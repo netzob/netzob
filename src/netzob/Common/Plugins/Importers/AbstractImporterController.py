@@ -36,13 +36,11 @@ from gettext import gettext as _
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Pango
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.NetzobException import NetzobImportException
-from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.Common.Plugins.AbstractPluginController import AbstractPluginController
-
 
 class AbstractImporterController(AbstractPluginController):
     """Abstract controller for importers plugins"""
@@ -61,11 +59,6 @@ class AbstractImporterController(AbstractPluginController):
         return [row[self.COLUMN_ID] for row in self.view.listListStore
                            if row[self.COLUMN_SELECTED]]
 
-    def doSetSourceFiles(self, filePathList):
-        raise NotImplementedError("Classes inheriting from "
-                + "AbstractImporterController must implement "
-                + "the doSetSourceFiles method")
-
     def doReadMessages(self):
         raise NotImplementedError("Classes inheriting from "
                 + "AbstractImporterController must implement "
@@ -80,28 +73,6 @@ class AbstractImporterController(AbstractPluginController):
         raise NotImplementedError("Classes inheriting from "
                 + "AbstractImporterController must implement "
                 + "the doImportMessages method")
-
-    def openFile(self, widget):
-        chooser = Gtk.FileChooserDialog(title=_("Open PCAP file"),
-            parent=self.netzob,
-            action=Gtk.FileChooserAction.OPEN,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                      Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
-        chooser.set_filename(self.view.openFileEntry.get_text().strip())
-        self.view.hideWarning()
-        self.view.clearPacketView()
-
-        res = chooser.run()
-        if res == Gtk.ResponseType.OK:
-            filePath = chooser.get_filename()
-            chooser.destroy()
-            try:
-                self.doSetSourceFiles([filePath])
-                self.view.openFileEntry.set_text(filePath)
-            except NetzobImportException, importEx:
-                NetzobErrorMessage(importEx.message)
-        else:
-            chooser.destroy()
 
     def readMessages(self, widget=None):
         self.view.hideWarning()

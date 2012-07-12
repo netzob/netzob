@@ -34,18 +34,21 @@ import os
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Pango
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
-
 class AbstractImporterView(AbstractPluginView):
-
     GLADE_FILENAME = "AbstractImporterView.glade"
 
     def __init__(self, plugin, controller):
         super(AbstractImporterView, self).__init__(plugin, controller)
         self._builder = Gtk.Builder()
-        curDir = os.path.dirname(__file__)
-        gladeFilePath = os.path.join(self.getPlugin().getNetzobStaticResourcesPath(), "ui", AbstractImporterView.GLADE_FILENAME)
+        gladeFilePath = os.path.join(
+            self.getPlugin().getNetzobStaticResourcesPath(),
+            "ui", AbstractImporterView.GLADE_FILENAME)
 
         self._builder.add_from_file(gladeFilePath)
         self._getObjects(self._builder, ["dialog", "openFileEntry",
@@ -58,6 +61,11 @@ class AbstractImporterView(AbstractPluginView):
         self._builder.connect_signals(self.getController())
         self.cancelButton.connect_object("clicked", Gtk.Widget.destroy,
             self.dialog)
+
+    def setSourceConfigurationWidget(self, widget):
+        self.globalBox.pack_start(widget, False, False, 0)
+        self.globalBox.reorder_child(widget, 0)
+        widget.show()
 
     def setImportConfigurationWidget(self, widget):
         self.globalBox.pack_start(widget, False, False, 0)

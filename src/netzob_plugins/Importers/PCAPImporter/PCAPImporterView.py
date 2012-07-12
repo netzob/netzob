@@ -39,10 +39,10 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporterView
+from netzob.Common.Plugins.Importers.AbstractFileImporterView import AbstractFileImporterView
 
 
-class PCAPImporterView(AbstractImporterView):
+class PCAPImporterView(AbstractFileImporterView):
     """View of PCAP importer plugin"""
 
     GLADE_FILENAME = "PCAPImportConfigurationWidget.glade"

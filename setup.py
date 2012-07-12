@@ -210,7 +210,7 @@ setup(
     cmdclass=CMD_CLASS,
     entry_points="""
         [netzob.plugins]
-            fileImporter = netzob_plugins.Importers.FileImporter.FileImporterPlugin:FileImporterPlugin
+            delemiterSeparatedImporter = netzob_plugins.Importers.DelimiterSeparatedImporter.DelimiterSeparatedImporterPlugin:DelimiterSeparatedImporterPlugin
             pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
             ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
             xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin

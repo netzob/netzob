@@ -28,64 +28,41 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import os
-from gettext import gettext as _
-
+import logging
+import uuid
+from abc import abstractmethod
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
-import gi
-gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Plugins.Importers.AbstractFileImporterView import AbstractFileImporterView
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+
+class FileImporterPlugin(NetzobPlugin):
+    """Abstract base class for all file importer plugins"""
+
+    PLUGIN_PRIORITY = 1
+
+    def __init__(self, netzob):
+        NetzobPlugin.__init__(self, netzob)
+
+    @abstractmethod
+    def canHandleFile(self, filePath):
+        """Checks if the file at filePath can be handled by this
+        importer plugin"""
+        pass
+
+    @abstractmethod
+    def getFileTypeDescription(self):
+        """Returns a string representation   
+        (eg "PCAP file" or "XML file")"""
+        pass
+
+    @abstractmethod
+    def importFile(self, filePathList):
+        """Imports message located in file at filePath"""
+        pass
 
 
-class OSpyImporterView(AbstractFileImporterView):
-
-    GLADE_FILENAME = "OSpyImportConfigurationWidget.glade"
-
-    def __init__(self, plugin, controller):
-        super(OSpyImporterView, self).__init__(plugin, controller)
-
-        # Import and add configuration widget
-        self.builderConfWidget = Gtk.Builder()
-        curDir = os.path.dirname(__file__)
-        gladePath = os.path.join(self.getPlugin().getPluginStaticResourcesPath(), "ui", OSpyImporterView.GLADE_FILENAME)
-
-        self.builderConfWidget.add_from_file(gladePath)
-        self._getObjects(self.builderConfWidget, ["applyAlign"])
-        self.builderConfWidget.connect_signals(self.controller)
-        self.setDialogTitle(_("Import messages from oSpy file"))
-        self.setImportConfigurationWidget(self.applyAlign)
-
-        # Configure treeview
-        def add_text_column(text, modelColumn):
-            column = Gtk.TreeViewColumn(text)
-            column.pack_start(cell, True)
-            column.add_attribute(cell, "text", modelColumn)
-            column.set_sort_column_id(modelColumn)
-            self.listTreeView.append_column(column)
-
-        self.listListStore = Gtk.ListStore('gboolean', str, str, str, str,
-                str, str, str)
-        self.listTreeView.set_model(self.listListStore)
-        toggleCellRenderer = Gtk.CellRendererToggle()
-        toggleCellRenderer.set_activatable(True)
-        toggleCellRenderer.connect("toggled", self.controller.selectMessage)
-        # Selected column
-        column = Gtk.TreeViewColumn()
-        column.pack_start(toggleCellRenderer, True)
-        column.add_attribute(toggleCellRenderer, "active", 0)
-        self.listTreeView.append_column(column)
-        cell = Gtk.CellRendererText()
-        add_text_column("ID", 1)
-        add_text_column("Source Address", 2)
-        add_text_column("Destination Address", 3)
-        add_text_column("Protocol", 4)
-        add_text_column("Source Port", 5)
-        add_text_column("Destination Port", 6)
-        add_text_column("Payload", 7)
