@@ -70,6 +70,9 @@ argsFactoriesPath = os.path.join(libPath, "argsFactories")
 regexPath = os.path.join(libPath, "libRegex")
 pyRegexPath = os.path.join(regexPath, "Py_lib")
 
+# Tools path
+toolsPath = os.path.join(libPath, "tools")
+
 # Generate the random binary identifier BID
 macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
 
@@ -84,7 +87,9 @@ moduleLibNeedleman = Extension('_libNeedleman',
                                         os.path.join(needlemanPath, "scoreComputation.c"),
                                         os.path.join(argsFactoriesPath, "factory.c"),
                                         os.path.join(regexPath, "regex.c"),
-                                        os.path.join(regexPath, "manipulate.c")],
+                                        os.path.join(regexPath, "manipulate.c"),
+                                        os.path.join(toolsPath, "getBID.c")],
+                               define_macros=macros,
                                include_dirs=includes)
 
 # Module ScoreComputation
@@ -98,21 +103,26 @@ moduleLibScoreComputation = Extension('_libScoreComputation',
                                         os.path.join(pyInterfacePath, "libInterface.c"),
                                         os.path.join(argsFactoriesPath, "factory.c"),
                                         os.path.join(regexPath, "regex.c"),
-                                        os.path.join(regexPath, "manipulate.c")],
+                                        os.path.join(regexPath, "manipulate.c"),
+                                        os.path.join(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
 # Module Interface
 moduleLibInterface = Extension('_libInterface',
                                sources=[os.path.join(interfacePath, "Interface.c"),
-                                        os.path.join(pyInterfacePath, "libInterface.c")],
+                                        os.path.join(pyInterfacePath, "libInterface.c"),
+                                        os.path.join(toolsPath, "getBID.c")],
+                               define_macros=macros,
                                include_dirs=includes)
 
 # Module Regex
 moduleLibRegex = Extension('_libRegex',
                                sources=[os.path.join(regexPath, "regex.c"),
                                         os.path.join(pyRegexPath, "libRegex.c"),
-                                        os.path.join(regexPath, "manipulate.c")],
+                                        os.path.join(regexPath, "manipulate.c"),
+                                        os.path.join(toolsPath, "getBID.c")],
+                                define_macros=macros,
                                include_dirs=includes)
 
 #+----------------------------------------------------------------------------

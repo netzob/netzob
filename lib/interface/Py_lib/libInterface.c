@@ -43,6 +43,7 @@ unsigned int deserializeSymbols(t_groups * groups, PyObject *symbols, Bool debug
 PyObject* py_deserializeSymbols(PyObject* self, PyObject* args);
 
 static PyMethodDef libInterface_methods[] = {
+		{"getBID", py_getBID, METH_NOARGS},
 		{"deserializeMessages", py_deserializeMessages, METH_VARARGS},
 		{"deserializeGroups", py_deserializeGroups, METH_VARARGS},
 		{"deserializeSymbols",py_deserializeSymbols, METH_VARARGS},

@@ -35,4 +35,13 @@
 //Python callback
 extern PyObject *python_callback;
 
+
+#define DEFAULT_BID "0000000000"
+#define STR(x) x
+
+//+---------------------------------------------------------------------------+
+//| py_getBID : Returns the unique Binary IDentifier
+//+---------------------------------------------------------------------------+
+PyObject * py_getBID(PyObject* self, PyObject *noarg);
+
 #endif

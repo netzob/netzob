@@ -51,21 +51,6 @@ PyMODINIT_FUNC init_libScoreComputation(void) {
 }
 
 //+---------------------------------------------------------------------------+
-//| py_getBID : Returns the unique Binary IDentifier
-//+---------------------------------------------------------------------------+
-PyObject * py_getBID(PyObject* self, PyObject *noarg) {
-#ifdef BID
-#define STR(x) x
-	char str_bid[32];
-	strcpy(str_bid,STR(BID));
-	return Py_BuildValue("s", str_bid);
-#else
-	printf("libScoreComputation : The macro which established the BID has not been defined when compiling the lib, default one will be returned.\n");
-	return Py_BuildValue("s", "0000000000");
-#endif
-}
-
-//+---------------------------------------------------------------------------+
 //| py_getHighestEquivalenceGroup : Python wrapper for getHighestEquivalenceGroup
 //+---------------------------------------------------------------------------+
 PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {

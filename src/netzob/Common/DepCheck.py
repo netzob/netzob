@@ -63,16 +63,14 @@ class DepCheck(object):
         pathToImportedLib = "Unknown path"
         for m in sys.modules.keys():
             if m == "_libNeedleman":
-                pathToImportedLib = sys.modules[m]
+                pathToImportedLib = sys.modules[m].__file__
                 logging.debug("Imported _libNeedleman from {0}".format(pathToImportedLib))
         try:
-            if _libNeedleman.getBID() != NetzobResources.BID:
-                if NetzobResources.BID == "$BID":
-                    logging.warning("The current python code has not been built, hence it's not possible to compare the BID of executed libs.")
-                else:
-                    logging.error("Binary Identifier is {0} (expected {1}).".format(_libNeedleman.getBID(), NetzobResources.BID))
-                    logging.error("The loaded libNeedleman library is deprecated, please rebuild it.")
-                    return False
+            BIDNeedleman = _libNeedleman.getBID()
+            if BIDNeedleman != NetzobResources.BID and NetzobResources.BID != "$BID":
+                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDNeedleman, NetzobResources.BID))
+                logging.error("The loaded libNeedleman library is deprecated, please rebuild it.")
+                return False
         except AttributeError:
             logging.error("The _libNeedleman imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
@@ -87,37 +85,39 @@ class DepCheck(object):
         pathToImportedLib = "Unknown path"
         for m in sys.modules.keys():
             if m == "_libScoreComputation":
-                pathToImportedLib = sys.modules[m]
+                pathToImportedLib = sys.modules[m].__file__
                 logging.debug("Imported _libScoreComputation from {0}".format(pathToImportedLib))
         try:
-            if _libScoreComputation.getBID() != NetzobResources.BID:
-                if NetzobResources.BID == "$BID":
-                    logging.warning("The current python code has not been built, hence it's not possible to compare the BID of executed libs.")
-                else:
-                    logging.error("Binary Identifier is {0} (expected {1}).".format(_libScoreComputation.getBID(), NetzobResources.BID))
-                    logging.error("The loaded libScoreComputation library is deprecated, please rebuild it.")
-                    return False
+            BIDScoreComputation = _libScoreComputation.getBID()
+            if BIDScoreComputation != NetzobResources.BID and NetzobResources.BID != "$BID":
+                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDScoreComputation, NetzobResources.BID))
+                logging.error("The loaded libScoreComputation library is deprecated, please rebuild it.")
+                return False
         except AttributeError:
             logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
-#
-#        # Verify we can load the lib Interface
-#        try:
-#            import _libInterface
-#        except ImportError:
-#            logging.error(_("Impossible to import the libInterface"))
-#            return False
-#        try:
-#            if _libInterface.getBID() != NetzobResources.BID:
-#                if NetzobResources.BID == "$BID":
-#                    logging.warning("The current python code has not been built.")
-#                else:
-#                    logging.error("Binary Identifier is {0} (expected {1}).".format(_libInterface.getBID(), NetzobResources.BID))
-#                    logging.error("The loaded libInterface library is deprecated, please rebuild it.")
-#                    return False
-#        except AttributeError:
-#            logging.error("The libInterface imported is not the expected one and do not provide all the required methods.")
-#            return False
+
+        # Verify we can load the lib Interface
+        try:
+            import _libInterface
+        except ImportError:
+            logging.error(_("Impossible to import the libInterface"))
+            return False
+
+        pathToImportedLib = "Unknown path"
+        for m in sys.modules.keys():
+            if m == "_libInterface":
+                pathToImportedLib = sys.modules[m].__file__
+                logging.debug("Imported _libInterface from {0}".format(pathToImportedLib))
+        try:
+            BIDInterface = _libInterface.getBID()
+            if BIDInterface != NetzobResources.BID and NetzobResources.BID != "$BID":
+                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDInterface, NetzobResources.BID))
+                logging.error("The loaded libInterface library is deprecated, please rebuild it.")
+                return False
+        except AttributeError:
+            logging.error("The _libInterface imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
+            return False
 
         # Verify we can load the lib Regex
         try:
@@ -129,20 +129,21 @@ class DepCheck(object):
         pathToImportedLib = "Unknown path"
         for m in sys.modules.keys():
             if m == "_libRegex":
-                pathToImportedLib = sys.modules[m]
+                pathToImportedLib = sys.modules[m].__file__
                 logging.debug("Imported _libRegex from {0}".format(pathToImportedLib))
         try:
-            if _libRegex.getBID() != NetzobResources.BID:
-                if NetzobResources.BID == "$BID":
-                    logging.warning("The current python code has not been built, hence it's not possible to compare the BID of executed libs.")
-                else:
-                    logging.error("Binary Identifier is {0} (expected {1}).".format(_libRegex.getBID(), NetzobResources.BID))
-                    logging.error("The loaded libRegex library is deprecated, please rebuild it.")
-                    return False
+            BIDRegex = _libRegex.getBID()
+            if BIDRegex != NetzobResources.BID and NetzobResources.BID != "$BID":
+                logging.error("Binary Identifier is {0} (expected {1}).".format(BIDRegex, NetzobResources.BID))
+                logging.error("The loaded libRegex library is deprecated, please rebuild it.")
+                return False
             return True
         except AttributeError:
             logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
+
+        if NetzobResources.BID == "$BID":
+            logging.warning("The current executed python code has not been built using setup.py, hence it's not possible to compare the BID of executed libs.")
 
     @staticmethod
     def check_lxml():

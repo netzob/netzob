@@ -24,26 +24,18 @@
 //| @sponsors : Amossys, http://www.amossys.fr                                |
 //|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 //+---------------------------------------------------------------------------+
-
-#ifndef libScoreComputation_H
-#define libScoreComputation_H
-
-//+---------------------------------------------------------------------------+
-//| Imports
-//+---------------------------------------------------------------------------+
-
-#include "commonLib.h"
 #include "commonPythonLib.h"
-#include "scoreComputation.h"
 
 //+---------------------------------------------------------------------------+
-//| py_getHighestEquivalentGroup : Python wrapper for getHighestEquivalentGroup
+//| py_getBID : Returns the unique Binary IDentifier
 //+---------------------------------------------------------------------------+
-PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args);
-
-//+---------------------------------------------------------------------------+
-//| initLibNeedleman : Python will use this function to init the module
-//+---------------------------------------------------------------------------+
-PyMODINIT_FUNC init_libScoreComputation(void);
-
-#endif
+PyObject * py_getBID(PyObject* self, PyObject *noarg) {
+	char str_bid[37];
+	#ifdef BID
+		strcpy(str_bid,STR(BID));
+	#else
+		printf("The macro which established the BID has not been defined when compiling the lib, default one will be returned.\n");
+		strcpy(str_bid, STR(DEFAULT_BID));
+	#endif
+	return Py_BuildValue("s", str_bid);
+}

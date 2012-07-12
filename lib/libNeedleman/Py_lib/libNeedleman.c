@@ -54,21 +54,6 @@ PyMODINIT_FUNC init_libNeedleman(void) {
 }
 
 //+---------------------------------------------------------------------------+
-//| py_getBID : Returns the unique Binary IDentifier
-//+---------------------------------------------------------------------------+
-PyObject * py_getBID(PyObject* self, PyObject *noarg) {
-#ifdef BID
-#define STR(x) x
-	char str_bid[32];
-	strcpy(str_bid,STR(BID));
-	return Py_BuildValue("s", str_bid);
-#else
-	printf("libNeedleman : The macro which established the BID has not been defined when compiling the lib, default one will be returned.\n");
-	return Py_BuildValue("s", "0000000000");
-#endif
-}
-
-//+---------------------------------------------------------------------------+
 //| py_alignSequences : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
 PyObject* py_alignMessages(PyObject* self, PyObject* args) {
