@@ -51,6 +51,7 @@ from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.Simulator.UISimulator import UISimulator
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Workspace import Workspace
+from netzob.Common.Project import Project
 from netzob.Common import CommandLine
 
 
@@ -157,22 +158,28 @@ class NetzobGui(object):
         combobox = self.builder.get_object("combobox1")
         combobox.set_active(0)    #see the default view "vocabulary" on the button
         combobox.connect("changed",self.combobox_changed_cb)
-        
-        #add element symbol list
-        self.addRowSymbolList(True, "ManualAjoutSymbol", 4, 2, "gtk-add")
-
+    
         #add 2 spreadsheet
         self.addSpreadSheet("Hello", 0)
         self.addSpreadSheet("ManualAjoutSymbol", 1)
 
-        #project symbol
-        print"workspace :%s"%self.getCurrentWorkspace()
+        #load list symbol  
+        pliste2 = self.getCurrentWorkspace().getProjects()        
+        project = Project.loadProject(self.getCurrentWorkspace(), pliste2[2].getPath())
+        symbols = project.getVocabulary().getSymbols()
+        for sym in symbols:
+            self.addRowSymbolList(False, sym.getName(), len(sym.getMessages()),  len(sym.getFields()), "imageProblem")
+        print "end"
+        
+        #select all
+        
+        #unselect all
         
         
-        pliste2 = self.getCurrentWorkspace().getProjects()     
-        print "projet0 : %s"% str(pliste2[0].getPath())
-        self.getCurrentWorkspace().loadProject( pliste2[0].getPath())
-
+        #self.currentProject = Project.loadProject(self.getCurrentWorkspace(), pliste2[0].getPath())
+        #print "actual project: "%str(self.getCurrentProject().getName())
+        
+        
         #[test] give the image in the real ressource container
         #imgCapture = builder.get_object("Capture")
         #imgSequence = builder.get_object("Sequence")
@@ -380,6 +387,27 @@ class NetzobGui(object):
             
     def addRowSymbolList(self,selection,name,message,field,image):
         """
+        @type  selection: boolean
+        @param selection: if selected symbol
+        @type  name: string
+        @param name: name of the symbol
+        @type  message: string
+        @param message: number of message in the symbol
+        @type  field: string
+        @param field: number of field in the symbol   
+        @type  image: string
+        @param image: image of the lock button (freeze partitioning)
+        """
+        model = self.builder.get_object("liststore1")
+        iter = model.append()
+        model.set(iter, 0, selection)
+        model.set(iter, 1, name)
+        model.set(iter, 2, message)
+        model.set(iter, 3, field)
+        model.set(iter, 4, image)
+
+    def setSelectAllSymbol(self,symbols):
+        """
         @type  selection: string
         @param selection: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
         @type  name: string
@@ -392,9 +420,5 @@ class NetzobGui(object):
         @param image: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
         """
         model = self.builder.get_object("liststore1")
-        iter = model.append()
-        model.set(iter, 0, selection)
-        model.set(iter, 1, name)
-        model.set(iter, 2, message)
-        model.set(iter, 3, field)
-        model.set(iter, 4, image)
+        #todo a continuer
+        
