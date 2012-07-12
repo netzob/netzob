@@ -133,7 +133,6 @@ class NetzobGui(object):
                 window.show_all()
         except TypeError:
             Gtk.Window.__init__(self)
-
         #add menu
         self.addElement("box1","menu-vocabulary",0,False,False,True)
         self.addElement("box1","menu-grammar",0,False,False,False)
@@ -169,44 +168,25 @@ class NetzobGui(object):
         symbols = project.getVocabulary().getSymbols()
         for sym in symbols:
             self.addRowSymbolList(False, sym.getName(), len(sym.getMessages()),  len(sym.getFields()), "imageProblem")
-        print "end"
         
-        #select all
+        #add select all button symbol list
+        selectallbutton = self.builder.get_object("toolbutton1")
+        selectallbutton.connect("clicked",self.button_selectAllSymbol_cb)
         
-        #unselect all
+        #add unselect all button symbol list
+        unselectallbutton = self.builder.get_object("toolbutton2")  
+        unselectallbutton.connect("clicked",self.button_unSelectAllSymbol_cb)
+         
+        #create symbol
+        createsymbolbutton = self.builder.get_object("toolbutton11")  
+        createsymbolbutton.connect("clicked",self.button_createSymbol_cb)
         
-        
-        #self.currentProject = Project.loadProject(self.getCurrentWorkspace(), pliste2[0].getPath())
-        #print "actual project: "%str(self.getCurrentProject().getName())
-        
-        
-        #[test] give the image in the real ressource container
-        #imgCapture = builder.get_object("Capture")
-        #imgSequence = builder.get_object("Sequence")
-        
-        #print "dir %s" % dir(imgSequence)
-        #imgCapture.pixbuf = ressourceglade+"/icons/22x22/capture.png"
-        #imgCapture.set_from_pixbuf( ressourceglade+"/icons/22x22/capture.png")
-        
-        #print "Capture.pixbuf new : %s"% imgCapture.pixbuf
-        
+              
         
         #run
+        
         Gtk.main()
 
-        # Create and display the menu
-
-
-        # Notebook definition
-    
-      
-        # Adding the different notebook
-       
-#        self.fuzzing = UIfuzzing(self)
- 
-        # Initialize a clipboard object
-
-        # Show every widgets
 
     #+----------------------------------------------
     #| Update each panels
@@ -265,7 +245,7 @@ class NetzobGui(object):
             page[1].kill()
         Gtk.main_quit()
 
-    #+----------------------------------------------
+    #+-------------   34       def callback(self, widget, data=None):---------------------------------
     #| Called when user select a notebook
     #+----------------------------------------------
     def notebookFocus(self, notebook, page, pagenum):
@@ -399,26 +379,37 @@ class NetzobGui(object):
         @param image: image of the lock button (freeze partitioning)
         """
         model = self.builder.get_object("liststore1")
-        iter = model.append()
-        model.set(iter, 0, selection)
-        model.set(iter, 1, name)
-        model.set(iter, 2, message)
-        model.set(iter, 3, field)
-        model.set(iter, 4, image)
+        i = model.append()
+        model.set(i, 0, selection)
+        model.set(i, 1, name)
+        model.set(i, 2, message)
+        model.set(i, 3, field)
+        model.set(i, 4, image)
 
-    def setSelectAllSymbol(self,symbols):
+    def button_selectAllSymbol_cb(self,widget):
         """
-        @type  selection: string
-        @param selection: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
-        @type  name: string
-        @param name: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
-        @type  message: string
-        @param message: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
-        @type  field: string
-        @param field: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"   
-        @type  image: string
-        @param image: Switch for the view. Value available: "vocabulary", "grammar" and "traffic"
+        select all the symbol in the symbol list
         """
         model = self.builder.get_object("liststore1")
         #todo a continuer
+        for s in model:
+            s[0]= True
+            
+    def button_unSelectAllSymbol_cb(self,widget):
+        """
+        unselect all the symbol in the symbol list
+        """
+        model = self.builder.get_object("liststore1")
+        #todo a continuer
+        for s in model:
+            s[0]= False
+    
+    def button_createSymbol_cb(self,widget):
+        builder2 = Gtk.Builder()
+        builder2.add_from_file(self.ressourceglade+"/ui/dialogbox.glade")
+        createsymbol = self.builder.get_object("createsymbol")
+        createsymbol.run()
         
+        
+  
+>>>>>>> 5af44a1... Added more callbacks for symbol list toolbar
