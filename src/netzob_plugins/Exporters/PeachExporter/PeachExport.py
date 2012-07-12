@@ -105,14 +105,14 @@ class PeachExport:
 
         xmlTest = etree.SubElement(xmlRoot, "Test", name="DefaultTest")
         xmlCommentTest1 = etree.Comment('TODO: Enable Agent <Agent ref="TheAgent"/> ')
-        xmlCommentTest2 = etree.Comment("TODO: Configure the test.")
+        xmlCommentTest2 = etree.Comment("TODO: Configure the test. The following lines are given in example.")
         xmlTest.append(xmlCommentTest1)
         xmlTest.append(xmlCommentTest2)
         xmlTestStateModel = etree.SubElement(xmlTest, "StateModel", ref="SimpleStateModel")
         xmlPublisher = etree.SubElement(xmlTest, "Publisher")
         xmlPublisher.attrib["class"] = "udp.Udp"
-        xmlParamHost = etree.SubElement(xmlPublisher, "Param", name="host", value="127.0.0.1")
-        xmlParamPort = etree.SubElement(xmlPublisher, "Param", name="port", value="4242")
+        xmlParamHost = etree.SubElement(xmlPublisher, "Param", name="host", value="0.0.0.0")
+        xmlParamPort = etree.SubElement(xmlPublisher, "Param", name="port", value="0000")
 
         xmlRun = etree.SubElement(xmlRoot, "Run", name="DefaultRun")
         xmlCommentRun = etree.Comment("TODO: Configure the run.")
@@ -259,7 +259,7 @@ class PeachExport:
                                 xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
                             else:
                                 if splittedRegex[i] != "":
-                                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), mutable="false", valueType="hex", value=splittedRegex[i])
+                                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
                                     logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
                     else:
                         # If the field's regex is (), we add a null-length Peach field type.
@@ -279,6 +279,19 @@ class PeachExport:
 
         """
         return (abitarray.tobytes()).encode('hex')
+
+    def bitarray2str(self, abitarray):
+        """
+            bitarray2str:
+                Transform a bitarray in a 'u string.
+
+                @type abitarray: bitarray.bitarray
+                @param abitarray: the given bitarray which is transformed.
+                @return type: string
+                @return: the 'u string translation of the bitarray.
+
+        """
+        return (abitarray.tobytes())
 
     def getRecVariableTypedValueLists(self, variable):
         """
@@ -306,8 +319,10 @@ class PeachExport:
                 for value in self.getRecVariableTypedValueLists(child):
                     typedValueLists.append(value)
         elif variableType == "ReferencedVariable":
-            #TODO: complete this.
-            pass
+            # We retrieve the typedValueLists of the pointed variable. Referenced variable are variable pointing to another variable.
+            vocabulary = self.netzob.getCurrentProject().getVocabulary()
+            pointedVariable = variable.getPointedVariable(vocabulary)
+            typedValueLists = self.getRecVariableTypedValueLists(pointedVariable)
         else:
             # We add the variable type and its binary value as a singleton list in the higher list.
             vocabulary = self.netzob.getCurrentProject().getVocabulary()

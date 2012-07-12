@@ -142,9 +142,9 @@ class PeachExportController:
         # Set the format choice as default
         fuzzingBase = combo.get_active_text()
         if fuzzingBase == "Variable":
-            self.model.variableOverRegex = True
+            self.model.setVariableOverRegex(True)
         elif fuzzingBase == "Regex":
-            self.model.variableOverRegex = False
+            self.model.setVariableOverRegex(False)
 
         # If nothing is currently displayed, nothing is updated.
         if self.selectedSymbolID > -2:

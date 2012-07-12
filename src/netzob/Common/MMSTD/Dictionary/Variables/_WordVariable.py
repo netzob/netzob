@@ -136,13 +136,6 @@ class WordVariable(Variable):
 #+---------------------------------------------------------------------------+
 #| Functions Inherited from netzob.Common.MMSTD.Dictionary.Variable.Variable.|
 #+---------------------------------------------------------------------------+
-    #+-----------------------------------------------------------------------+
-    #| getValue :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if it is set and not forget
-    #|     or the value in memory if it has one
-    #|     else it is NONE
-    #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
         """getValue:
                 Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
