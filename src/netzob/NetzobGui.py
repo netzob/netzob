@@ -168,17 +168,11 @@ class NetzobGui(object):
         #project symbol
         print"workspace :%s"%self.getCurrentWorkspace()
         
-        #loadProject(self.getCurrentWorkspace(), projectDirectory)
         
-        """
-        pliste2 = self.getCurrentWorkspace().getNameOfProjects
+        pliste2 = self.getCurrentWorkspace().getProjects()     
+        print "projet0 : %s"% str(pliste2[0].getPath())
+        self.getCurrentWorkspace().loadProject( pliste2[0].getPath())
 
-        for p in pliste2:
-            print "project : %s " % str(p)
-        
-        print "projet0 : %s"% str(pliste2[0])
-        """
-        
         #[test] give the image in the real ressource container
         #imgCapture = builder.get_object("Capture")
         #imgSequence = builder.get_object("Sequence")

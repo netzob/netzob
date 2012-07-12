@@ -26,6 +26,27 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">partitioning-sequence.png</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="upper">100</property>
+    <property name="value">50</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkImage" id="concatfield">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">concat-field.png</property>
+  </object>
+  <object class="GtkImage" id="createvariable">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">create-variable.png</property>
+  </object>
+  <object class="GtkImage" id="cutleft">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">edit-cut-left.png</property>
+  </object>
   <object class="GtkImage" id="cutright">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -57,27 +78,6 @@
         <col id="2" translatable="yes">011001</col>
       </row>
     </data>
-  </object>
-  <object class="GtkAdjustment" id="adjustment1">
-    <property name="upper">100</property>
-    <property name="value">50</property>
-    <property name="step_increment">5</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkImage" id="concatfield">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">concat-field.png</property>
-  </object>
-  <object class="GtkImage" id="createvariable">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">create-variable.png</property>
-  </object>
-  <object class="GtkImage" id="cutleft">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">edit-cut-left.png</property>
   </object>
   <object class="GtkImage" id="environmentdep">
     <property name="visible">True</property>
@@ -175,13 +175,6 @@
                       <object class="GtkCellRendererToggle" id="cellrenderertoggle2"/>
                       <attributes>
                         <attribute name="active">0</attribute>
-                      </attributes>
-                    </child>
-                    <child>
-                      <object class="GtkCellRendererPixbuf" id="cellrenderertoggle1"/>
-                      <attributes>
-                        <attribute name="pixbuf">1</attribute>
-                        <attribute name="stock-size">1</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -548,40 +541,6 @@
       <!-- column-name imagepixbuf -->
       <column type="GdkPixbuf"/>
     </columns>
-    <data>
-      <row>
-        <col id="0">True</col>
-        <col id="1" translatable="yes">Hello</col>
-        <col id="2">2</col>
-        <col id="3">3</col>
-        <col id="4" translatable="yes">freezepartitioning</col>
-        <col id="5"/>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">Login</col>
-        <col id="2">1</col>
-        <col id="3">8</col>
-        <col id="4" translatable="yes">gtk-add</col>
-        <col id="5"/>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">Disconnect</col>
-        <col id="2">3</col>
-        <col id="3">4</col>
-        <col id="4" translatable="yes">gtk-add</col>
-        <col id="5"/>
-      </row>
-      <row>
-        <col id="0">False</col>
-        <col id="1" translatable="yes">DataFromClient</col>
-        <col id="2">1</col>
-        <col id="3">2</col>
-        <col id="4" translatable="yes">gtk-add</col>
-        <col id="5"/>
-      </row>
-    </data>
   </object>
   <object class="GtkMenuBar" id="menu-grammar">
     <property name="visible">True</property>
