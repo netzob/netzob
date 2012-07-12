@@ -30,7 +30,8 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import sys
-import logging.config
+import logging
+logging.basicConfig(level=logging.DEBUG)
 import os
 import optparse
 from gi.repository import GObject

@@ -61,10 +61,10 @@ class DepCheck(object):
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in  sys.modules.keys():
+        for m in sys.modules.keys():
             if m == "_libNeedleman":
                 pathToImportedLib = sys.modules[m]
-
+                logging.debug("Imported _libNeedleman from {0}".format(pathToImportedLib))
         try:
             if _libNeedleman.getBID() != NetzobResources.BID:
                 if NetzobResources.BID == "$BID":
@@ -85,10 +85,10 @@ class DepCheck(object):
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in  sys.modules.keys():
+        for m in sys.modules.keys():
             if m == "_libScoreComputation":
                 pathToImportedLib = sys.modules[m]
-
+                logging.debug("Imported _libScoreComputation from {0}".format(pathToImportedLib))
         try:
             if _libScoreComputation.getBID() != NetzobResources.BID:
                 if NetzobResources.BID == "$BID":
@@ -127,10 +127,10 @@ class DepCheck(object):
             return False
 
         pathToImportedLib = "Unknown path"
-        for m in  sys.modules.keys():
+        for m in sys.modules.keys():
             if m == "_libRegex":
                 pathToImportedLib = sys.modules[m]
-
+                logging.debug("Imported _libRegex from {0}".format(pathToImportedLib))
         try:
             if _libRegex.getBID() != NetzobResources.BID:
                 if NetzobResources.BID == "$BID":
