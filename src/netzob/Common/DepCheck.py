@@ -137,13 +137,14 @@ class DepCheck(object):
                 logging.error("Binary Identifier is {0} (expected {1}).".format(BIDRegex, NetzobResources.BID))
                 logging.error("The loaded libRegex library is deprecated, please rebuild it.")
                 return False
-            return True
         except AttributeError:
             logging.error("The _libScoreComputation imported ({0}) is not the expected one and do not provide all the required methods.".format(pathToImportedLib))
             return False
 
         if NetzobResources.BID == "$BID":
             logging.warning("The current executed python code has not been built using setup.py, hence it's not possible to compare the BID of executed libs.")
+
+        return True
 
     @staticmethod
     def check_lxml():

@@ -32,10 +32,11 @@
 PyObject * py_getBID(PyObject* self, PyObject *noarg) {
 	char str_bid[37];
 	#ifdef BID
-		strcpy(str_bid,STR(BID));
+		strncpy(str_bid,STR(BID), sizeof str_bid - 1);
 	#else
 		printf("The macro which established the BID has not been defined when compiling the lib, default one will be returned.\n");
-		strcpy(str_bid, STR(DEFAULT_BID));
+		strncpy(str_bid, STR(DEFAULT_BID), sizeof str_bid - 1);
 	#endif
+	str_bid[sizeof str_bid -1]='\0';
 	return Py_BuildValue("s", str_bid);
 }
