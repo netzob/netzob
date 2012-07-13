@@ -44,25 +44,19 @@ from netzob_plugins.Exporters.PeachExporter.PeachExport import PeachExport
 
 
 class PeachExportController:
-    """
-        PeachExportController:
+    """PeachExportController:
             A controller liking the Peach export and its view in the netzob GUI.
-
     """
 
     def new(self):
-        """
-            new:
+        """new:
                 Called when a user select a new trace.
-
         """
         pass
 
     def update(self):
-        """
-            update:
+        """update:
                 Update the view. More precisely, it sets the symbol tree view which is its left part.
-
         """
         self.view.symbolTreeview.get_model().clear()
 
@@ -73,26 +67,20 @@ class PeachExportController:
             iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
     def clear(self):
-        """
-            clear:
-
+        """clear:
         """
         pass
 
     def kill(self):
-        """
-            kill:
-
+        """kill:
         """
         pass
 
     def __init__(self, netzob):
-        """
-            Constructor of PeachExportController:
+        """Constructor of PeachExportController:
 
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
-
         """
         self.netzob = netzob
         self.model = PeachExport(netzob)
@@ -102,10 +90,8 @@ class PeachExportController:
         self.selectedSymbolID = -2
 
     def initCallbacks(self):
-        """
-            initCallbacks:
+        """initCallbacks:
                 Link the callbacks.
-
         """
         self.view.symbolTreeview.connect("cursor-changed", self.symbolSelected_cb)
         self.view.comboFuzzingBase.connect("changed", self.changeFuzzingBase)
@@ -113,13 +99,11 @@ class PeachExportController:
         self.view.checkMutateStaticFields.connect("toggled", self.toggleStaticFieldsMutation)
 
     def symbolSelected_cb(self, treeview):
-        """
-            symbolSelected_cb:
+        """symbolSelected_cb:
                 Called when a symbol is selected in the symbol tree view.
 
                 @type treeview: gtk.TreeView
                 @param treeview: the symbol tree view.
-
         """
         (model, iter) = treeview.get_selection().get_selected()
         if(iter):
@@ -128,13 +112,11 @@ class PeachExportController:
                 self.showXMLDefinition(symbolID)
 
     def changeFuzzingBase(self, combo):
-        """
-            changeFuzzingBase:
+        """changeFuzzingBase:
                 Change the fuzzing base between "based on regex" and "based on variable".
 
                 @type combo: netzob.UI.NetzobWidgets.NetzobComboBoxEntry
                 @param combo: the combobox which modification causes the call of this functions.
-
         """
         # Set the format choice as default
         fuzzingBase = combo.get_active_text()
@@ -148,13 +130,11 @@ class PeachExportController:
             self.showXMLDefinition(self.selectedSymbolID)
 
     def toggleStaticFieldsMutation(self, check):
-        """
-            toggleStaticFieldsMutation:
+        """toggleStaticFieldsMutation:
             Allow or not netzob static fields to be mutated.
 
             @type check: gtk.ToggleButton
             @param check: the checkButton which toggling causes the call of this function.
-
         """
         self.model.setMutateStaticFields(check.get_active())
         # If nothing is currently displayed, nothing is updated.
@@ -162,13 +142,11 @@ class PeachExportController:
             self.showXMLDefinition(self.selectedSymbolID)
 
     def showXMLDefinition(self, symbolID):
-        """
-            showXMLDefinition:
+        """showXMLDefinition:
                 Show the XML Definition of the given symbol in the main subview of the Peachexportview.
 
                 @type symbolID: integer
                 @param symbolID: a number which identifies the symbol which XML Definition is displayed.
-
         """
         self.selectedSymbolID = symbolID
         # Special case "entire project"
@@ -185,13 +163,11 @@ class PeachExportController:
             self.view.textarea.get_buffer().set_text(_("No XML definition found"))
 
     def exportFuzzer(self, button):
-        """
-            exportFuzzer:
+        """exportFuzzer:
                 Export one or all netzob symbols in a Peach Fuzzer.
 
                 @type button: gtk.Button
                 @param button: the button which was clicked and caused the call of this function.
-
         """
         if self.selectedSymbolID != "-2":
             chooser = gtk.FileChooserDialog(title=_("Export as Peach Fuzzer (XML)"), action=gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
@@ -228,11 +204,9 @@ class PeachExportController:
                     NetzobInfoMessage(_("The following error occurred while exporting the project as a Peach Fuzzer to '{0}': {1}").format(fileName, e))
 
     def getPanel(self):
-        """
-            getPanel:
+        """getPanel:
 
-                @return type: netzob_plugins.PeachExporter.PeachExportView.PeachExportView
+                @rtype: netzob_plugins.PeachExporter.PeachExportView.PeachExportView
                 @return: the plugin view.
-
         """
         return self.view

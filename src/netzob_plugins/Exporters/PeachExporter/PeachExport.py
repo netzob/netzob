@@ -41,37 +41,31 @@ from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 class PeachExport:
-    """
-        PeachExport:
+    """PeachExport:
             Utility for exporting netzob information into Peach pit file.
             Simplify the construction of a fuzzer with Peach.
-
     """
 
     def __init__(self, netzob):
-        """
-            Constructor of PeachExport:
+        """Constructor of PeachExport:
 
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
-
         """
         self.netzob = netzob
         self.variableOverRegex = True
         self.mutateStaticFields = True
 
     def getPeachDefinition(self, symbolID, entireProject):
-        """
-            getXMLDefinition:
+        """getXMLDefinition:
                 Returns the Peach pit file (XML format) made on the  netzob information.
 
                 @type symbolID: integer
                 @param symbolID: a number which identifies the symbol the xml definition of which we need.
                 @type entireProject: boolean
                 @param entireProject: true if we want to see the Peach definition of the whole project, false elsewhere.
-                @return type: string
+                @rtype: string
                 @return: the string representation of the generated Peach xml pit file.
-
         """
         logging.debug(_("Targeted symbolID: {0}").format(str(symbolID)))
         # TODO(stateful fuzzer): Make one state model for each state of the protocol.
@@ -137,13 +131,11 @@ class PeachExport:
         return result
 
     def makeAllDataModels(self, xmlFather):
-        """
-            makeAllDataModels:
+        """makeAllDataModels:
                 Transform every single netzob symbol into Peach data model.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element
-
         """
         project = self.netzob.getCurrentProject()
         vocabulary = project.getVocabulary()
@@ -155,8 +147,7 @@ class PeachExport:
             dataModelid = dataModelid + 1
 
     def makeADataModel(self, xmlFather, symbol, dataModelid):
-        """
-            makeADataModel:
+        """makeADataModel:
                 Dissect a netzob symbol in order to extract essential data for the making of Peach fields in its data Model
 
                 @type xmlFather: lxml.etree.element
@@ -165,7 +156,6 @@ class PeachExport:
                 @param symbol: the given symbol that will be dissected.
                 @type dataModelid: integer
                 @param dataModelid: a number that identifies the data model.
-
         """
         xmlDataModel = etree.SubElement(xmlFather, "DataModel", name=("dataModel{0}").format(str(dataModelid)))
         for field in symbol.getFields():
@@ -277,41 +267,35 @@ class PeachExport:
                         logging.debug(_("The field {0} is empty.").format(field.getName()))
 
     def bitarray2hex(self, abitarray):
-        """
-            bitarray2hex:
+        """bitarray2hex:
                 Transform a bitarray in a pure hex string.
 
                 @type abitarray: bitarray.bitarray
                 @param abitarray: the given bitarray which is transformed.
-                @return type: string
+                @rtype: string
                 @return: the hex translation of the bitarray.
-
         """
         return (abitarray.tobytes()).encode('hex')
 
     def bitarray2str(self, abitarray):
-        """
-            bitarray2str:
+        """bitarray2str:
                 Transform a bitarray in a 'u string.
 
                 @type abitarray: bitarray.bitarray
                 @param abitarray: the given bitarray which is transformed.
-                @return type: string
+                @rtype: string
                 @return: the 'u string translation of the bitarray.
-
         """
         return (abitarray.tobytes())
 
     def getRecVariableTypedValueLists(self, variable):
-        """
-            getRecVariableTypedValueLists:
+        """getRecVariableTypedValueLists:
                 Find the value(s) and its(their) type of a variable. May be recursive.
 
                 @type variable: netzob.common.MMSTD.Dictionary.Variable.variable
                 @param variable: the given variable which values are searched.
-                @return type: (string, bitarray.bitarray) list list.
+                @rtype: (string, bitarray.bitarray) list list.
                 @return: the list, representing aggregations, of lists, representing alternations, of couple (type of a leaf variable, value (in bitarray) of leaf variable).
-
         """
         logging.debug(_("<[ variable  : {0}.").format(str(variable.getName())))
         variableType = variable.getTypeVariable()
@@ -346,8 +330,7 @@ class PeachExport:
         return typedValueLists
 
     def concatVariableValues(self, fatherValueLists, sonValueLists):
-        """
-            concatVariableValues:
+        """concatVariableValues:
                 Insert the values of a son to its father's in such a way that the global form (aggregation of alternation) is respected.
                 From an aerial point of view, we concatenate both father and son's inner list in a double list. This concatenation stays in the inner list.
 
@@ -355,9 +338,8 @@ class PeachExport:
                 @param fatherValueLists: the preexisting father double list.
                 @type fatherValueLists: (string, bitarray.bitarray) list list.
                 @param fatherValueLists: the son double list to be inserted.
-                @return type: (string, bitarray.bitarray) list list.
+                @rtype: (string, bitarray.bitarray) list list.
                 @return: the double list resulting of the concatenation.
-
         """
         finalValueLists = []
         if len(fatherValueLists) == 0:
@@ -373,17 +355,15 @@ class PeachExport:
         return finalValueLists
 
     def getPeachFieldType(self, typedValueLists, index):
-        """
-            getPeachFieldType:
+        """getPeachFieldType:
                 Get the peach type (Blob, String or Number) of the current field. This type is determined through the majority of the type of an alternation.
 
                 @type typedValueLists: (string, bitarray.bitarray) list list.
                 @param typedValueLists: a double list composed of aggregation of alternation, we search transversely among an alternation the majority type.
                 @type index: integer
                 @param index: an index pointing to the targeted alternation.
-                @return type: string
+                @rtype: string
                 @return: the majority type of the targeted alternation.
-
         """
         peachType = ""
         for typedValueList in typedValueLists:
@@ -404,13 +384,11 @@ class PeachExport:
         return peachType
 
     def makeAllStateModels(self, xmlFather):
-        """
-            makeAllStateModels:
+        """makeAllStateModels:
                 Create a Peach state model. Create one state by data model and chain it to the previously created one.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
-
         """
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
         # There is always at least one state, the first state which is naturally called state0 and is the initial state.
@@ -428,13 +406,11 @@ class PeachExport:
             stateid = stateid + 1
 
     def makeAStateModel(self, xmlFather):
-        """
-            makeAStateModel:
+        """makeAStateModel:
                 Create a Peach state model with only one state.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
-
         """
         xmlStateModel = etree.SubElement(xmlFather, "StateModel", name="SimpleStateModel", initialState="state0")
         project = self.netzob.getCurrentProject()
@@ -442,17 +418,15 @@ class PeachExport:
         xmlState = self.makeAState(xmlStateModel, 0)
 
     def makeAState(self, xmlFather, stateid):
-        """
-            makeAState:
+        """makeAState:
                 Create one state which will output data formatted according to a previously created data model.
 
                 @type xmlFather: lxml.etree.element
                 @param xmlFather: the xml tree father of the current element.
                 @type stateid: integer
                 @param stateid: a number that identifies the state in the state model and links to the proper data model.
-                @return type: lxml.etree.element
+                @rtype: lxml.etree.element
                 @return: a Peach state in xml format.
-
         """
         # We create one state which will output fuzzed data.
         xmlState = etree.SubElement(xmlFather, "State", name=("state{0}").format(str(stateid)))
@@ -464,23 +438,19 @@ class PeachExport:
         return xmlState
 
     def setVariableOverRegex(self, value):
-        """
-            setVariableOverRegex:
+        """setVariableOverRegex:
                 Setter for variableOverRegex.
 
             @type value: boolean
             @param value: the new value of variableOverRegex.
-
         """
         self.variableOverRegex = value
 
     def setMutateStaticFields(self, value):
-        """
-            setMutateStaticFields:
+        """setMutateStaticFields:
                 Setter for mutateStaticFields.
 
             @type value: boolean
             @param value: the new value of mutateStaticFields.
-
         """
         self.mutateStaticFields = value

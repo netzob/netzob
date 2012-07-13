@@ -40,31 +40,25 @@ from Peach.Engine.common import *
 
 
 class Or(Fixup):
-    """
-        Or:
+    """Or:
             Replace field's value with a logical OR of values in Param "values" (separated by ';' characters).
-
     """
 
     def __init__(self, values):
-        """
-            Constructor of Or:
+        """Constructor of Or:
 
-            @type values: string
-            @param values: a list of values (separated by ';' characters) allowed by the user to be set in the father field.
-
+                @type values: string
+                @param values: a list of values (separated by ';' characters) allowed by the user to be set in the father field.
         """
         Fixup.__init__(self)
         self.values = values
 
     def fixup(self):
-        """
-            fixup:
+        """fixup:
                 Called by the Peach engine. Replace the father field value by one of the value given (randomly chosen).
 
-                @return type: string
+                @rtype: string
                 @return: the new value of the father field.
-
         """
         values = string.split(self.values, ";")
         values.append("")  # We append an empty value for having empty fields sometimes.
@@ -75,34 +69,28 @@ class Or(Fixup):
 
 
 class RandomString(Fixup):
-    """
-        RandomString:
+    """RandomString:
             Replace field's value with a random string which size is in a given range.
-
     """
 
     def __init__(self, minlen, maxlen):
-        """
-            Constructor of RandomString:
+        """Constructor of RandomString:
 
                 @type minlen: string
                 @param minlen: the minimum length of the random string we will create.
                 @type maxlen: string
                 @param maxlen: the maximum length of the random string we will create.
-
         """
         Fixup.__init__(self)
         self.minlen = minlen
         self.maxlen = maxlen
 
     def fixup(self):
-        """
-            fixup:
+        """fixup:
                 Called by the Peach engine. Replace the father field value by a random value which size is between minlen and maxlen.
 
-                @return type: string
+                @rtype: string
                 @return: the new value of the father field.
-
         """
         minlen = self.minlen
         maxlen = self.maxlen

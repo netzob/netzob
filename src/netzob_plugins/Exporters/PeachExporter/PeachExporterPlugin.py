@@ -42,11 +42,9 @@ from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachEx
 
 
 class PeachExporterPlugin(ExporterPlugin):
-    """
-        PeachExporterPlugin:
+    """PeachExporterPlugin:
             Export netzob symbols into Peach pit files.
             Simplify the construction of a fuzzer with Peach.
-
     """
     __plugin_name__ = "PeachExporter"
     __plugin_version__ = "0.1"
@@ -54,73 +52,59 @@ class PeachExporterPlugin(ExporterPlugin):
     __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
 
     def __init__(self, netzob):
-        """
-            Constructor of PeachExporterPlugin:
+        """Constructor of PeachExporterPlugin:
 
                 @type netzob: netzob.NetzobGUI.NetzobGUI
                 @param netzob: the main netzob project.
-
         """
         ExporterPlugin.__init__(self, netzob)
         self.entryPoints = [GlobalMenuEntryPoint(self.getNetzob())]
 
     def getName(self):
-        """
-            getName:
+        """getName:
 
-                @return type: string
+                @rtype: string
                 @return: the plugin name.
-
         """
         return self.__plugin_name__
 
     def getVersion(self):
-        """
-            getVersion:
+        """getVersion:
 
-            @return type: string
-            @return: the plugin version.
-
+                @rtype: string
+                @return: the plugin version.
         """
         return self.__plugin_version__
 
     def getDescription(self):
-        """
-            getDescription:
+        """getDescription:
 
-            @return type: string
-            @return: a plugin description.
-
+                @rtype: string
+                @return: a plugin description.
         """
         return self.__plugin_description__
 
     def getAuthor(self):
-        """
-            getAuthor:
+        """getAuthor:
 
-            @return type: string
-            @return: the plugin author.
-
+                @rtype: string
+                @return: the plugin author.
         """
         return self.__plugin_author__
 
     def getEntryPoints(self):
-        """
-            getEntryPoints:
+        """getEntryPoints:
 
-            @return type: netzob_plugins.Exporters.PeachExporter.EntryPoints.GlobalMenuEntryPoint.GlobalMenuEntryPoint
-            @return: the plugin entry point, so it can be linked to the netzob project.
-
+                @rtype: netzob_plugins.Exporters.PeachExporter.EntryPoints.GlobalMenuEntryPoint.GlobalMenuEntryPoint
+                @return: the plugin entry point, so it can be linked to the netzob project.
         """
         return self.entryPoints
 
     def setVal(self, val):
-        """
-            setVal:
+        """setVal:
                 Useless function.
 
-            @type val:
-            @param val:
-
+                @type val:
+                @param val:
         """
         self.val = val

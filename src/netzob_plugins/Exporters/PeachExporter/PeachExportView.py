@@ -40,16 +40,12 @@ from netzob.UI.NetzobWidgets import NetzobLabel, NetzobComboBoxEntry
 
 
 class PeachExportView:
-    """
-    PeachExportView:
-        GUI for exporting results in Peach pit XML.
-
+    """PeachExportView:
+            GUI for exporting results in Peach pit XML.
     """
 
     def __init__(self):
-        """
-            Constructor of PeachExportView:
-
+        """Constructor of PeachExportView:
         """
         self.buildPanel()
 
@@ -59,10 +55,8 @@ class PeachExportView:
         self.dialog.set_size_request(600, 400)
 
     def buildPanel(self):
-        """
-            buildPanel:
+        """buildPanel:
                 Build and display the Peach exporter GUI.
-
         """
         # First we create a VPaned which hosts the two main children
         self.panel = gtk.VPaned()
@@ -96,10 +90,8 @@ class PeachExportView:
         self.panel.set_position(350)
 
     def buildSymbolTreeview(self):
-        """
-            builSymbolTreeView:
+        """builSymbolTreeView:
                 Build a symbol tree view in the GUI (left column). This tree view lists all the symbol of the project.
-
         """
         # Tree store contains:
         # str : text (symbol Name)
@@ -126,8 +118,7 @@ class PeachExportView:
         self.symbolTreeview.show()
 
     def buildOptionsView(self):
-        """
-            buildOptionsView:
+        """buildOptionsView:
                 Build the options view (bottom of the main view). This view proposes some options to sharpen the fuzzing.
         """
         self.optionsTable = gtk.Table(rows=1, columns=4, homogeneous=False)
