@@ -26,26 +26,6 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">partitioning-sequence.png</property>
   </object>
-  <object class="GtkImage" id="cutleft">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">edit-cut-left.png</property>
-  </object>
-  <object class="GtkImage" id="concatfield">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">concat-field.png</property>
-  </object>
-  <object class="GtkImage" id="createvariable">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">create-variable.png</property>
-  </object>
-  <object class="GtkImage" id="cutright">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">edit-cut-right.png</property>
-  </object>
   <object class="GtkListStore" id="Tableur">
     <columns>
       <!-- column-name bouton -->
@@ -78,6 +58,26 @@
     <property name="value">50</property>
     <property name="step_increment">5</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkImage" id="concatfield">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">concat-field.png</property>
+  </object>
+  <object class="GtkImage" id="createvariable">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">create-variable.png</property>
+  </object>
+  <object class="GtkImage" id="cutleft">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">edit-cut-left.png</property>
+  </object>
+  <object class="GtkImage" id="cutright">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">edit-cut-right.png</property>
   </object>
   <object class="GtkImage" id="environmentdep">
     <property name="visible">True</property>
@@ -119,22 +119,6 @@
     <property name="can_focus">False</property>
     <property name="pixbuf">unselect-all-symbol.png</property>
   </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name bouton -->
-      <column type="gboolean"/>
-      <!-- column-name Name -->
-      <column type="gchararray"/>
-      <!-- column-name Field -->
-      <column type="gint"/>
-      <!-- column-name Message -->
-      <column type="gint"/>
-      <!-- column-name image -->
-      <column type="gchararray"/>
-      <!-- column-name imagepixbuf -->
-      <column type="GdkPixbuf"/>
-    </columns>
-  </object>
   <object class="GtkImage" id="import">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -147,6 +131,24 @@
   <object class="GtkTextView" id="interface-traffic">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
+  </object>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name bouton -->
+      <column type="gboolean"/>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Message -->
+      <column type="gint"/>
+      <!-- column-name Field -->
+      <column type="gint"/>
+      <!-- column-name image -->
+      <column type="gchararray"/>
+      <!-- column-name imagepixbuf -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name ID -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkPaned" id="interface-vocabulary">
     <property name="visible">True</property>
@@ -212,7 +214,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext2"/>
                       <attributes>
-                        <attribute name="text">3</attribute>
+                        <attribute name="text">2</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -223,7 +225,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext5"/>
                       <attributes>
-                        <attribute name="text">2</attribute>
+                        <attribute name="text">3</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -343,8 +345,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="has_tooltip">True</property>
-                    <property name="tooltip_markup" translatable="yes">Delete one symbol</property>
-                    <property name="tooltip_text" translatable="yes">Delete one symbol</property>
+                    <property name="tooltip_markup" translatable="yes">Delete selected symbol</property>
+                    <property name="tooltip_text" translatable="yes">Delete selected symbol</property>
                     <property name="use_action_appearance">False</property>
                     <property name="label" translatable="yes">Delete</property>
                     <property name="use_underline">True</property>

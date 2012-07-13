@@ -1221,7 +1221,10 @@ class Symbol(AbstractSymbol):
 
     def setName(self, name):
         self.name = name
-
+    
+    def setMessages(self,mess):
+        self.messages=mess
+    
     def setAlignmentType(self, aType):
         self.alignmentType = aType
 
