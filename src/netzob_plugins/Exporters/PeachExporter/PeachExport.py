@@ -214,8 +214,9 @@ class PeachExport:
             #-------------------#
             else:
                 logging.debug(_("The fuzzing is based on regexes."))
+                peachType = self.getPeachFieldTypeFromNetzobFormat(field)
                 if field.isStatic():
-                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), valueType="hex", value=field.getRegex())
+                    xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=field.getRegex())
                     if not self.mutateStaticFields:
                         xmlField.attrib["mutable"] = "false"
                 else:
@@ -248,7 +249,7 @@ class PeachExport:
                                 # The given field length is the length in half-bytes.
                                 fieldMaxLength = (fieldMaxLength + 1) / 2
                                 fieldMinLength = fieldMinLength / 2
-                                xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i))
+                                xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i))
                                 xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
                                 xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomString"
                                 xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
@@ -256,7 +257,7 @@ class PeachExport:
                             else:
                                 # Static subfield.
                                 if splittedRegex[i] != "":
-                                    xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
+                                    xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i), valueType="hex", value=splittedRegex[i])
                                     logging.debug(_("The field {0} has a static subfield of value {1}.").format(field.getName(), splittedRegex[i]))
                                     if not self.mutateStaticFields:
                                         xmlField.attrib["mutable"] = "false"
@@ -379,6 +380,26 @@ class PeachExport:
                     break
         if peachType == "":
             # Eventual default value.
+            peachType = "Blob"
+        return peachType
+
+    def getPeachFieldTypeFromNetzobFormat(self, field):
+        """getPeachFieldTypeFromNetzobFormat:
+            Get the peach type (Blob, String or Number) of the current field from the netzob visualization format (string, decimal, octal, hex or binary).
+
+            @type field: netzob.Common.Field.Field
+            @param field: the given field which peach type is being searched.
+            @rtype: string
+            @return: the peach field type.
+        """
+        peachType = ""
+        format = field.getFormat()
+        logging.debug(_("Format of the field {0} is {1}.").format(field.getName(), format))
+        if format == "string":
+            peachType = "String"
+        elif format == "decimal":
+            peachType = "Number"
+        else:
             peachType = "Blob"
         return peachType
 

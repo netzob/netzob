@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 import random
 import string
+import re
 
 #+---------------------------------------------------------------------------+
 #| Local Imports                                                             |
@@ -44,28 +45,41 @@ class Or(Fixup):
             Replace field's value with a logical OR of values in Param "values" (separated by ';' characters).
     """
 
-    def __init__(self, values):
+    def __init__(self, values, mainSep='; ', sndSep=", "):
         """Constructor of Or:
 
-                @type values: string
-                @param values: a list of values (separated by ';' characters) allowed by the user to be set in the father field.
+            @type values: string
+            @param values: a list of type and values (default : type1, values1; type2, values2 ...) allowed by the user to be set in the father field. Type are String, Number and what remains.
+            @type mainSep: string
+            @param mainSep: a separator for the type-value couple given in entry.
+            @type sndSep: string
+            @param sndSep: a word that separates each value from its type.
         """
         Fixup.__init__(self)
         self.values = values
+        self.mainSep = mainSep
+        self.sndSep = sndSep
 
     def fixup(self):
         """fixup:
                 Called by the Peach engine. Replace the father field value by one of the value given (randomly chosen).
 
-                @rtype: string
+                @return type: string
                 @return: the new value of the father field.
         """
-        values = string.split(self.values, ";")
-        values.append("")  # We append an empty value for having empty fields sometimes.
+        values = string.split(self.values, self.mainSep)
         if values == None:
             raise Exception("Error: Or was unable to locate its values.")
         ran = random.randint(0, len(values) - 1)
-        return values[ran]
+        value = string.split(values[ran], self.sndSep)
+        rvalue = ""
+        if value[0] == "String":
+            rvalue = PeachTranslate(values[ran])
+        elif value[0] == "Number":
+            rvalue = int(rvalue, 16)
+        else:
+            rvalue = PeachTranslate(values[ran])
+        return PeachTranslate(values[ran])
 
 
 class RandomString(Fixup):
@@ -73,23 +87,26 @@ class RandomString(Fixup):
             Replace field's value with a random string which size is in a given range.
     """
 
-    def __init__(self, minlen, maxlen):
+    def __init__(self, minlen, maxlen, type="Blob"):
         """Constructor of RandomString:
 
                 @type minlen: string
                 @param minlen: the minimum length of the random string we will create.
                 @type maxlen: string
                 @param maxlen: the maximum length of the random string we will create.
+                @type type: string
+                @param type: the type of the eventual randomly created string, chosen between "Blob", "String" and "Number".
         """
         Fixup.__init__(self)
         self.minlen = minlen
         self.maxlen = maxlen
+        self.type = type
 
     def fixup(self):
         """fixup:
                 Called by the Peach engine. Replace the father field value by a random value which size is between minlen and maxlen.
 
-                @rtype: string
+                @return type: string
                 @return: the new value of the father field.
         """
         minlen = self.minlen
@@ -98,11 +115,71 @@ class RandomString(Fixup):
             raise Exception("Error: RandomString was unable to locate minlen.")
         if maxlen == None:
             raise Exception("Error: RandomString was unable to locate maxlen.")
-        if minlen > maxlen:
-            raise Exception("Error: minlen > maxlen.")
+        if int(minlen) > int(maxlen):
+            raise Exception("Error: minlen ({0}) > maxlen ({1}).".format(minlen, maxlen))
         value = ""
         length = random.randint(int(minlen), int(maxlen))
-        # We potentially add all printable characters
-        for i in range(length):
-            value = value + random.choice(string.printable)
+        # We potentially add all printable characters.
+        if self.type == "String":
+            for i in range(length):
+                value = value + random.choice(string.printable)
+        elif self.type == "Number":
+            for i in range(length):
+                value = value + random.choice(string.digits)
+        else:  # We assume it is "Blob"/hexa type.
+            for i in range(length):
+                value = value + random.choice(string.hexdigits)
+            value = PeachTranslate(value)
         return value
+
+
+def PeachTranslate(value):
+    """PeachTranslate:
+        This function is taken from the Peach project. It transforms an hexadecimal string in a binary string understandable by the peach data sender.
+
+        @type value: string
+        @param value: the value in hex string which is translated in binary string following the Peach way to do so.
+        @rtype: string
+        @return: a binary string understandable by peach that will be sent to the targetes program.
+    """
+#
+# Copyright (c) Michael Eddington
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+    regsHex = (
+        re.compile(r"^([,\s]*\\x([a-zA-Z0-9]{2})[,\s]*)"),
+        re.compile(r"^([,\s]*%([a-zA-Z0-9]{2})[,\s]*)"),
+        re.compile(r"^([,\s]*0x([a-zA-Z0-9]{2})[,\s]*)"),
+        re.compile(r"^([,\s]*x([a-zA-Z0-9]{2})[,\s]*)"),
+        re.compile(r"^([,\s]*([a-zA-Z0-9]{2})[,\s]*)")
+    )
+    ret = ""
+    valueLen = len(value) + 1
+    while valueLen > len(value):
+        valueLen = len(value)
+        for i in range(len(regsHex)):
+            match = regsHex[i].search(value)
+            if match != None:
+                while match != None:
+                    ret += chr(int(match.group(2), 16))
+                    value = regsHex[i].sub('', value)
+                    match = regsHex[i].search(value)
+                break
+    return ret
