@@ -48,6 +48,7 @@ from netzob.Common.Models.Factories.IRPMessageFactory import IRPMessageFactory
 from netzob.Common.Models.Factories.IRPDeviceIoControlMessageFactory import IRPDeviceIoControlMessageFactory
 from netzob.Common.Models.Factories.RawMessageFactory import RawMessageFactory
 
+
 class AbstractMessageFactory(object):
     """Factory dedicated to the manipulation of file messages"""
 

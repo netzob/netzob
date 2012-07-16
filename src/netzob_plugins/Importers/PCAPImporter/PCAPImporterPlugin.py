@@ -48,8 +48,7 @@ class PCAPImporterPlugin(FileImporterPlugin):
 
     __plugin_name__ = "PCAPImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages "
-                                    + "from PCAP network capture files")
+    __plugin_description__ = _("Provide the possibility to import messages from PCAP network capture files")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     FILE_TYPE_DESCRIPTION = "PCAP File"

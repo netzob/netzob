@@ -41,6 +41,8 @@ import logging
 from gi.repository import Gtk
 
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+
+
 class ImportFileChooserDialog(object):
 
     GLADE_FILENAME = "ImportFileChooserDialog.glade"
@@ -60,8 +62,8 @@ class ImportFileChooserDialog(object):
         self._getObjects(["importFileChooserDialog", "importTypeComboBox"])
         self.log = logging.getLogger(__name__)
         self.log.debug("Create import FileChooserDialog with plugins : "
-            + ", ".join([plugin.getFileTypeDescription()
-                         for plugin in self.pluginDict.itervalues()]))
+                       + ", ".join([plugin.getFileTypeDescription()
+                                    for plugin in self.pluginDict.itervalues()]))
         importTypeAlign = self.builder.get_object("importTypeAlign")
         styleContext = importTypeAlign.get_style_context()
         styleContext.add_class("primary-toolbar")
@@ -99,12 +101,12 @@ class ImportFileChooserDialog(object):
                     print pluginDesc
                     selectionIndex = len(self.pluginWithPriorityList)
                 self.pluginWithPriorityList.append((plugin.PLUGIN_PRIORITY,
-                    pluginDesc))
+                                                    pluginDesc))
         self.log.debug("Filtered plugins: " + ", ".join(["{0}:{1}".format(*p)
-            for p in self.pluginWithPriorityList]))
+                                                         for p in self.pluginWithPriorityList]))
         # Sort plugin list by priority
         self.pluginWithPriorityList = sorted(self.pluginWithPriorityList,
-            key=lambda t: t[0])
+                                             key=lambda t: t[0])
         self.importTypeComboBox.remove_all()
         for pluginWithPrio in self.pluginWithPriorityList:
             self.importTypeComboBox.prepend_text(pluginWithPrio[1])
@@ -120,7 +122,7 @@ class ImportFileChooserDialog(object):
             self.importTypeComboBox.set_active(0)
 
     def importTypeComboBox_changed_cb(self, widget):
-        pluginText = self.importTypeComboBox.get_active_text ()
+        pluginText = self.importTypeComboBox.get_active_text()
         # Memorize user choice if it is not the default choice
         if pluginText is not None and \
                 ((pluginText != self.importTypeUserChoice and

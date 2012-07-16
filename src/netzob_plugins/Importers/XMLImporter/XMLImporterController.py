@@ -41,6 +41,7 @@ from netzob.Common.Plugins.Importers.AbstractFileImporterController import Abstr
 from netzob_plugins.Importers.XMLImporter.XMLImporter import XMLImporter
 from netzob_plugins.Importers.XMLImporter.XMLImporterView import XMLImporterView
 
+
 class XMLImporterController(AbstractFileImporterController):
 
     COLUMN_ID = 1

@@ -82,21 +82,21 @@ class PCAPImporterController(AbstractFileImporterController):
         if self.importLayer == 2:
             for message in self.model.messages:
                 self.view.listListStore.append([str(message.getID()), False,
-                    str(message.getL2SourceAddress()),
-                    str(message.getL2DestinationAddress()),
-                    message.getStringData()])
+                                                str(message.getL2SourceAddress()),
+                                                str(message.getL2DestinationAddress()),
+                                                message.getStringData()])
         elif self.importLayer == 3:
             for message in self.model.messages:
                 self.view.listListStore.append([str(message.getID()), False,
-                    str(message.getL3SourceAddress()),
-                    str(message.getL3DestinationAddress()),
-                    message.getStringData()])
+                                                str(message.getL3SourceAddress()),
+                                                str(message.getL3DestinationAddress()),
+                                                message.getStringData()])
         else:
             for message in self.model.messages:
                 self.view.listListStore.append([str(message.getID()), False,
-                    str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()),
-                    str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()),
-                    message.getStringData()])
+                                                str(message.getL3SourceAddress()), str(message.getL3DestinationAddress()),
+                                                str(message.getL4Protocol()), str(message.getL4SourcePort()), str(message.getL4DestinationPort()),
+                                                message.getStringData()])
 
     def doGetMessageDetails(self, messageID):
         return self.model.getMessageDetails(messageID)

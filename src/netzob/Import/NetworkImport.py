@@ -76,7 +76,7 @@ class NetworkImport(AbstractImporter):
     #+-----------------------------------------------------------------------+
     def __init__(self, zob):
         AbstractImporter.__init__(self, "NETWORK IMPORT", zob.getCurrentWorkspace(),
-                zob.getCurrentProject())
+                                  zob.getCurrentProject())
         self.zob = zob
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Import.Network.py')
@@ -261,8 +261,8 @@ class NetworkImport(AbstractImporter):
 
                 # Compute the messages
                 message = L4NetworkMessage(uuid.uuid4(), timestamp,
-                        Data.encode("hex"), l2Proto, EthSrc, EthDst, "IP",
-                        IPsrc, IPdst, proto, Sport, Dport)
+                                           Data.encode("hex"), l2Proto, EthSrc, EthDst, "IP",
+                                           IPsrc, IPdst, proto, Sport, Dport)
                 messages.append(message)
 
         # We ask the confirmation

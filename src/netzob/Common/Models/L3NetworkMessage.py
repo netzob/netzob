@@ -37,9 +37,9 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Models.Factories.L3NetworkMessageFactory import L3NetworkMessageFactory
 
+
 ## Remarques :
 # - Peut-être moins clair de parler de Layer 3 source Adress que IP Adress...
-
 class L3NetworkMessage(L2NetworkMessage):
     """Definition of a layer 3 network message"""
 
@@ -49,12 +49,11 @@ class L3NetworkMessage(L2NetworkMessage):
         if len(pattern) == 1:
             pattern.insert(0, str(l3DestinationAddress))
         super(L3NetworkMessage, self).__init__(id, timestamp, data, l2Protocol,
-                l2SourceAddress, l2DestinationAddress, pattern=[])
+                                               l2SourceAddress, l2DestinationAddress, pattern=[])
         self.type = "L3Network"
         self.l3Protocol = str(l3Protocol)
         self.l3SourceAddress = str(l3SourceAddress)
         self.l3DestinationAddress = str(l3DestinationAddress)
-
 
     def getFactory(self):
         return L3NetworkMessageFactory

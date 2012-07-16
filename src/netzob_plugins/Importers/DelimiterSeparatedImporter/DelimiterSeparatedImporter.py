@@ -64,9 +64,9 @@ class DelimiterSeparatedImporter(AbstractImporter):
         for filePath in filePathList:
             size = os.path.getsize(filePath)
             creationDate = datetime.datetime.fromtimestamp(
-                    os.path.getctime(filePath))
+                os.path.getctime(filePath))
             modificationDate = datetime.datetime.fromtimestamp(
-                    os.path.getmtime(filePath))
+                os.path.getmtime(filePath))
             owner = "none"
             # Retrieve the binary content of the file
             content = self._getNetzobRawContentOfFile(filePath)
@@ -74,8 +74,8 @@ class DelimiterSeparatedImporter(AbstractImporter):
                 continue
             # Create a message
             message = FileMessage(uuid.uuid4(), 0,
-                    content, filePath, creationDate,
-                    modificationDate, owner, size, 0)
+                                  content, filePath, creationDate,
+                                  modificationDate, owner, size, 0)
             self.importedFiles.append(message)
 
     def setSeparator(self, separator):
@@ -94,9 +94,9 @@ class DelimiterSeparatedImporter(AbstractImporter):
             for s in splittedStrHexData:
                 if len(s) > 0:
                     message = FileMessage(uuid.uuid4(), 0,
-                            s, fileMessage.getFilename(), fileMessage.getCreationDate(),
-                            fileMessage.getModificationDate(), fileMessage.getOwner(),
-                            fileMessage.getSize(), lineNumber)
+                                          s, fileMessage.getFilename(), fileMessage.getCreationDate(),
+                                          fileMessage.getModificationDate(), fileMessage.getOwner(),
+                                          fileMessage.getSize(), lineNumber)
                     self.messages.append(message)
 
     def _getNetzobRawContentOfFile(self, filename):

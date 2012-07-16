@@ -43,6 +43,7 @@ from netzob.Common.Models.Factories.L4NetworkMessageFactory import L4NetworkMess
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 class L4NetworkMessage(L3NetworkMessage):
     """Definition of a layer 4 network message"""
 
@@ -51,8 +52,8 @@ class L4NetworkMessage(L3NetworkMessage):
                  l3DestinationAddress, l4Protocol, l4SourcePort, l4DestinationPort,
                  pattern=[]):
         super(L4NetworkMessage, self).__init__(id, timestamp, data, l2Protocol,
-                l2SourceAddress, l2DestinationAddress, l3Protocol, l3SourceAddress,
-                 l3DestinationAddress, pattern=[])
+                                               l2SourceAddress, l2DestinationAddress, l3Protocol, l3SourceAddress,
+                                               l3DestinationAddress, pattern=[])
         self.type = "L4Network"
         self.l4Protocol = str(l4Protocol)
         self.l4SourcePort = l4SourcePort

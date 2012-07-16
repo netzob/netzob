@@ -48,8 +48,7 @@ class DelimiterSeparatedImporterPlugin(FileImporterPlugin):
 
     __plugin_name__ = "FileImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provide the possibility to import messages "
-                                    + "from any binary or ascii file.")
+    __plugin_description__ = _("Provide the possibility to import messages from any binary or ascii file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     PLUGIN_PRIORITY = 0

@@ -42,6 +42,7 @@ from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.Common.Plugins.Extensions.ImportMenuExtension import ImportMenuExtension
 from netzob_plugins.Importers.XMLImporter.XMLImporterController import XMLImporterController
 
+
 class XMLImporterPlugin(FileImporterPlugin):
     """XMLImporter : Provide the possibility to import messages
        from netzob XML message files"""

@@ -97,13 +97,13 @@ class L4NetworkMessageFactory(object):
         msg_timestamp = int(rootElement.get("timestamp"))
         # Retrieve layer 2 properties
         (l2Protocol, l2SourceAddress, l2DestinationAddress) = \
-                L2NetworkMessageFactory.loadL2Properties(rootElement, namespace)
+            L2NetworkMessageFactory.loadL2Properties(rootElement, namespace)
         # Retrieve layer 3 properties
         (l3Protocol, l3SourceAddress, l3DestinationAddress) = \
-                L3NetworkMessageFactory.loadL3Properties(rootElement, namespace)
+            L3NetworkMessageFactory.loadL3Properties(rootElement, namespace)
         # Retrieve layer 4 properties
         (l4Protocol, l4SourcePort, l4DestinationPort) = \
-                L4NetworkMessageFactory.loadL4Properties(rootElement, namespace)
+            L4NetworkMessageFactory.loadL4Properties(rootElement, namespace)
         #Retrieve pattern
         pattern = []
         try:
@@ -125,10 +125,10 @@ class L4NetworkMessageFactory(object):
         # IMPORTANT : Avoid circular import
         from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
         message = L4NetworkMessage(msg_id, msg_timestamp, msg_data,
-                l2Protocol, l2SourceAddress, l2DestinationAddress,
-                l3Protocol, l3SourceAddress, l3DestinationAddress,
-                l4Protocol, l4SourcePort, l4DestinationPort,
-                pattern)
+                                   l2Protocol, l2SourceAddress, l2DestinationAddress,
+                                   l3Protocol, l3SourceAddress, l3DestinationAddress,
+                                   l4Protocol, l4SourcePort, l4DestinationPort,
+                                   pattern)
 
         return message
 

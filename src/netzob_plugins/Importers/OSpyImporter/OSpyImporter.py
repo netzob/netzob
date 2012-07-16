@@ -138,9 +138,9 @@ class OSpyImporter(AbstractImporter):
         # Create message
         if mData is not None:
             message = L4NetworkMessage(mUuid, mTimestamp, mData,
-                    None, None, None,
-                    "IP", l3SourceAddress, l3DestinationAddress,
-                    l4Protocol, l4SourcePort, l4DestinationPort)
+                                       None, None, None,
+                                       "IP", l3SourceAddress, l3DestinationAddress,
+                                       l4Protocol, l4SourcePort, l4DestinationPort)
             return message
 
     def _readBZ2CompressedFile(self, filePath):

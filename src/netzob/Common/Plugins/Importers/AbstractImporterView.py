@@ -40,6 +40,7 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
+
 class AbstractImporterView(AbstractPluginView):
     GLADE_FILENAME = "AbstractImporterView.glade"
 
@@ -52,15 +53,15 @@ class AbstractImporterView(AbstractPluginView):
 
         self._builder.add_from_file(gladeFilePath)
         self._getObjects(self._builder, ["dialog", "openFileEntry",
-            "listTreeView", "detailTextView", "cancelButton", "warnAlign",
-            "warnLabel", "displayCountLabel", "selectCountLabel", "importButton",
-            "globalBox"])
+                                         "listTreeView", "detailTextView", "cancelButton", "warnAlign",
+                                         "warnLabel", "displayCountLabel", "selectCountLabel", "importButton",
+                                         "globalBox"])
         # Change packet details textview font
         monoFontDesc = Pango.FontDescription("monospace")
         self.detailTextView.modify_font(monoFontDesc)
         self._builder.connect_signals(self.getController())
         self.cancelButton.connect_object("clicked", Gtk.Widget.destroy,
-            self.dialog)
+                                         self.dialog)
 
     def setSourceConfigurationWidget(self, widget):
         self.globalBox.pack_start(widget, False, False, 0)

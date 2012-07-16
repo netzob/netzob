@@ -36,6 +36,7 @@ from lxml import etree
 from netzob.Common.Token import Token
 from netzob.Common.Models.Factories.L2NetworkMessageFactory import L2NetworkMessageFactory
 
+
 class L3NetworkMessageFactory(object):
     """Factory dedicated to the manipulation of network messages"""
 
@@ -94,10 +95,10 @@ class L3NetworkMessageFactory(object):
         msg_timestamp = int(rootElement.get("timestamp"))
         # Retrieve layer 2 properties
         (l2Protocol, l2SourceAddress, l2DestinationAddress) = \
-                L2NetworkMessageFactory.loadL2Properties(rootElement, namespace)
+            L2NetworkMessageFactory.loadL2Properties(rootElement, namespace)
         #Retrieve layer 3 properties
         (l3Protocol, l3SourceAddress, l3DestinationAddress) = \
-                L3NetworkMessageFactory.loadL3Properties(rootElement, namespace)
+            L3NetworkMessageFactory.loadL3Properties(rootElement, namespace)
         #Retrieve pattern
         pattern = []
         try:
@@ -119,8 +120,8 @@ class L3NetworkMessageFactory(object):
         # IMPORTANT : Avoid circular import
         from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
         message = L3NetworkMessage(msg_id, msg_timestamp, msg_data, l2Protocol,
-                l2SourceAddress, l2DestinationAddress, l3Protocol, l3SourceAddress,
-                 l3DestinationAddress, pattern)
+                                   l2SourceAddress, l2DestinationAddress, l3Protocol, l3SourceAddress,
+                                   l3DestinationAddress, pattern)
 
         return message
 

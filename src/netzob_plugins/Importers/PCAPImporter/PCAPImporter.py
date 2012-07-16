@@ -81,17 +81,17 @@ class PCAPImporter(AbstractImporter):
                 fp.close()
             except IOError, e:
                 errorMessage = _("Error while trying to open the "
-                        + "file {0}.").format(filePath)
+                                 + "file {0}.").format(filePath)
                 if e.errno == errno.EACCES:
                     errorMessage = _("Error while trying to open the file "
-                            + "{0}, more permissions are required for "
-                            + "reading it.").format(filePath)
+                                     + "{0}, more permissions are required for "
+                                     + "reading it.").format(filePath)
                 errorMessageList.append(errorMessage)
                 self.log.warn(errorMessage)
 
         if errorMessageList != []:
             raise NetzobImportException("PCAP", "\n".join(errorMessageList),
-                        ERROR)
+                                        ERROR)
         self.filesToBeImported = filePathList
 
     def setBPFFilter(self, bpfFilter):
@@ -114,21 +114,20 @@ class PCAPImporter(AbstractImporter):
         try:
             packetReader.setfilter(self.bpfFilter)
         except:
-            errorMessage = _("The provided filter is not valid "
-                             + "(it should follow the BPF format)")
+            errorMessage = _("The provided filter is not valid (it should follow the BPF format)")
             self.log.warn(errorMessage)
             raise NetzobImportException("PCAP", errorMessage, ERROR,
-                        self.INVALID_BPF_FILTER)
+                                        self.INVALID_BPF_FILTER)
 
         self.log.info(_("Starting import from {0} (linktype:{0})").format(filePath, str(packetReader.datalink())))
         self.datalink = packetReader.datalink()
 
         if self.datalink != pcapy.DLT_EN10MB and self.datalink != pcapy.DLT_LINUX_SLL:
             errorMessage = _("This pcap cannot be imported since the "
-                    + "layer 2 is not supported ({0})").format(str(self.datalink))
+                             + "layer 2 is not supported ({0})").format(str(self.datalink))
             self.log.warn(errorMessage)
             raise NetzobImportException("PCAP", errorMessage, ERROR,
-                        self.INVALID_LAYER2)
+                                        self.INVALID_LAYER2)
         else:
             packetReader.loop(0, self._packetHandler)
 
@@ -138,60 +137,60 @@ class PCAPImporter(AbstractImporter):
         mTimestamp = int(time.time())
         if self.importLayer == 2:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
-                    self.decodeLayer2(header, payload)
+                self.decodeLayer2(header, payload)
             self.messages.append(
-                    L2NetworkMessage(
-                            mUuid,
-                            mTimestamp,
-                            l2Payload.encode("hex"),
-                            l2Proto,
-                            l2SrcAddr,
-                            l2DstAddr))
+                L2NetworkMessage(
+                    mUuid,
+                    mTimestamp,
+                    l2Payload.encode("hex"),
+                    l2Proto,
+                    l2SrcAddr,
+                    l2DstAddr))
             self._payloadDict[mUuid] = payload
         elif self.importLayer == 3:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
-                    self.decodeLayer2(header, payload)
+                self.decodeLayer2(header, payload)
             (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
-                    self.decodeLayer3(etherType, l2Payload)
+                self.decodeLayer3(etherType, l2Payload)
             self.messages.append(
-                    L3NetworkMessage(
-                            mUuid,
-                            mTimestamp,
-                            l3Payload.encode("hex"),
-                            l2Proto,
-                            l2SrcAddr,
-                            l2DstAddr,
-                            l3Proto,
-                            l3SrcAddr,
-                            l3DstAddr))
+                L3NetworkMessage(
+                    mUuid,
+                    mTimestamp,
+                    l3Payload.encode("hex"),
+                    l2Proto,
+                    l2SrcAddr,
+                    l2DstAddr,
+                    l3Proto,
+                    l3SrcAddr,
+                    l3DstAddr))
             self._payloadDict[mUuid] = payload
         else:
             (l2Proto, l2SrcAddr, l2DstAddr, l2Payload, etherType) = \
-                    self.decodeLayer2(header, payload)
+                self.decodeLayer2(header, payload)
             (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum) = \
-                    self.decodeLayer3(etherType, l2Payload)
+                self.decodeLayer3(etherType, l2Payload)
             (l4Proto, l4SrcPort, l4DstPort, l4Payload) = \
-                    self.decodeLayer4(ipProtocolNum, l3Payload)
+                self.decodeLayer4(ipProtocolNum, l3Payload)
             self.messages.append(
-                    L4NetworkMessage(
-                            mUuid,
-                            mTimestamp,
-                            l4Payload.encode("hex"),
-                            l2Proto,
-                            l2SrcAddr,
-                            l2DstAddr,
-                            l3Proto,
-                            l3SrcAddr,
-                            l3DstAddr,
-                            l4Proto,
-                            l4SrcPort,
-                            l4DstPort))
+                L4NetworkMessage(
+                    mUuid,
+                    mTimestamp,
+                    l4Payload.encode("hex"),
+                    l2Proto,
+                    l2SrcAddr,
+                    l2DstAddr,
+                    l3Proto,
+                    l3SrcAddr,
+                    l3DstAddr,
+                    l4Proto,
+                    l4SrcPort,
+                    l4DstPort))
             self._payloadDict[mUuid] = payload
 
     def decodeLayer2(self, header, payload):
         def formatMacAddress(arrayMac):
             return ":".join("{0:0>2}".format(
-                    hex(b)[2:]) for b in arrayMac.tolist())
+                hex(b)[2:]) for b in arrayMac.tolist())
 
         if self.datalink == pcapy.DLT_EN10MB:
             l2Decoder = Decoders.EthDecoder()
@@ -221,12 +220,12 @@ class PCAPImporter(AbstractImporter):
             return (l3Proto, l3SrcAddr, l3DstAddr, l3Payload, ipProtocolNum)
         else:
             warnMessage = _("Cannot import one of the provided packets since " +
-              "its layer 3 is unsupported (Only IP is " +
-              "currently supported, packet ethernet " +
-              "type = {0})").format(etherType)
+                            "its layer 3 is unsupported (Only IP is " +
+                            "currently supported, packet ethernet " +
+                            "type = {0})").format(etherType)
             self.log.warn(warnMessage)
             raise NetzobImportException("PCAP", warnMessage, WARNING,
-                        self.INVALID_LAYER3)
+                                        self.INVALID_LAYER3)
 
     def decodeLayer4(self, ipProtocolNum, l3Payload):
             if ipProtocolNum == Packets.UDP.protocol:
@@ -247,9 +246,9 @@ class PCAPImporter(AbstractImporter):
                 return (l4Proto, l4SrcPort, l4DstPort, l4Payload)
             else:
                 warnMessage = _("Cannot import one of the provided packets since " +
-               "its layer 4 is unsupported (Only UDP and TCP " +
-               "are currently supported, packet IP protocol " +
-               "number = {0})").format(ipProtocolNum.get_ip_p())
+                                "its layer 4 is unsupported (Only UDP and TCP " +
+                                "are currently supported, packet IP protocol " +
+                                "number = {0})").format(ipProtocolNum.get_ip_p())
                 self.log.warn(warnMessage)
                 raise NetzobImportException("PCAP", warnMessage, WARNING,
                                             self.INVALID_LAYER4)
@@ -257,7 +256,7 @@ class PCAPImporter(AbstractImporter):
     def getMessageDetails(self, messageID):
         if not messageID in self._payloadDict:
             errorMessage = _("Message ID: {0} not found in importer " +
-                "message list").format(messageID)
+                             "message list").format(messageID)
             self.log.error(errorMessage)
             raise NetzobImportException("PCAP", errorMessage, ERROR)
         decoder = Decoders.EthDecoder()

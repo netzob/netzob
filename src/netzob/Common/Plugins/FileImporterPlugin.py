@@ -40,6 +40,7 @@ from abc import abstractmethod
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
+
 class FileImporterPlugin(NetzobPlugin):
     """Abstract base class for all file importer plugins"""
 
@@ -56,7 +57,7 @@ class FileImporterPlugin(NetzobPlugin):
 
     @abstractmethod
     def getFileTypeDescription(self):
-        """Returns a string representation   
+        """Returns a string representation
         (eg "PCAP file" or "XML file")"""
         pass
 
@@ -64,5 +65,3 @@ class FileImporterPlugin(NetzobPlugin):
     def importFile(self, filePathList):
         """Imports message located in file at filePath"""
         pass
-
-

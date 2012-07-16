@@ -40,6 +40,7 @@ from lxml import etree
 from netzob.Common.Token import Token
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 
+
 class OldFormatNetworkMessageFactory(object):
     """Factory dedicated to the manipulation of network messages"""
 
@@ -139,9 +140,9 @@ class OldFormatNetworkMessageFactory(object):
             pattern = []
 
         result = L4NetworkMessage(msg_id, msg_timestamp, msg_data,
-                    None, None, None, # Layer 2 Information 
-                    "IP", msg_ipSource, msg_ipDestination,
-                    msg_protocol, msg_l4SourcePort, msg_l4TargetPort,
-                    pattern)
+                                  None, None, None,  # Layer 2 Information
+                                  "IP", msg_ipSource, msg_ipDestination,
+                                  msg_protocol, msg_l4SourcePort, msg_l4TargetPort,
+                                  pattern)
 
         return result

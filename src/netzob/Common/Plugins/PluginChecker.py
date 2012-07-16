@@ -39,6 +39,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 
+
 class PluginChecker(object):
 
     @staticmethod
@@ -76,5 +77,3 @@ class PluginChecker(object):
             if PluginChecker._inheritsFromNetzobPlugin(parentClass):
                 return True
         return False
-
-

@@ -49,8 +49,7 @@ class OSpyImporterPlugin(FileImporterPlugin):
 
     __plugin_name__ = "OSpyImporter"
     __plugin_version__ = "1.0"
-    __plugin_description__ = _("Provides the possibility to import messages "
-                                    + "from OSpy project file.")
+    __plugin_description__ = _("Provides the possibility to import messages from OSpy project file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
 
     FILE_TYPE_DESCRIPTION = "oSpy File"

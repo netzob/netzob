@@ -54,5 +54,5 @@ class AbstractFileImporterController(AbstractImporterController):
 
     def doSetSourceFiles(self, filePathList):
         raise NotImplementedError("Classes inheriting from "
-                + "AbstractImporterController must implement "
-                + "the doSetSourceFiles method")
+                                  + "AbstractImporterController must implement "
+                                  + "the doSetSourceFiles method")

@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 
+
 class NetzobException(Exception):
     """Class of handling Netzob specific exceptions"""
 
@@ -39,13 +40,14 @@ class NetzobException(Exception):
     def __str__(self):
         return repr(self.value)
 
+
 class NetzobImportException(NetzobException):
     """Raised if an error was encountered while importing data"""
 
     def __init__(self, source, message, statusCode=None, subCode=None):
         super(NetzobImportException, self).__init__(
             "Error while importing data from source {0} : {1}".format(
-                    source, message))
+                source, message))
         self.message = message
         self.source = source
         self.statusCode = statusCode

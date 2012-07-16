@@ -53,8 +53,7 @@ class ImportMenuExtension(GlobalMenuExtension):
         self.controller = controller
 
     def getUIDefinition(self):
-        uiDefinition = \
-        """
+        uiDefinition = """
         <ui>
         <menubar name='MenuBar'>
             <menu action='Project'>

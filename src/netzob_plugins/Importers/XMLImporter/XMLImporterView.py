@@ -41,6 +41,7 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.Importers.AbstractFileImporterView import AbstractFileImporterView
 
+
 class XMLImporterView(AbstractFileImporterView):
     """View of the XML importer plugin"""
 

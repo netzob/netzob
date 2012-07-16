@@ -57,8 +57,8 @@ class PCAPImporterView(AbstractFileImporterView):
 
         self.builderConfWidget.add_from_file(gladePath)
         self._getObjects(self.builderConfWidget, ["pcapConfigurationBox",
-                "filterEntry", "layerRadioButton2", "layerRadioButton3",
-                "layerRadioButton4"])
+                                                  "filterEntry", "layerRadioButton2", "layerRadioButton3",
+                                                  "layerRadioButton4"])
         self.layerRadioButton4.set_active(True)
         self.builderConfWidget.connect_signals(self.controller)
         self.setDialogTitle(_("Import messages from PCAP file"))
@@ -93,7 +93,7 @@ class PCAPImporterView(AbstractFileImporterView):
         # Liststore to displayer layer 2 packets
         # ID, Selected, Source Address, Destination Address, Payload
         self.listListStore = Gtk.ListStore(
-                str, 'gboolean', str, str, str)
+            str, 'gboolean', str, str, str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
         self.addTreeViewTextColumn("Source Address", 2)
@@ -105,7 +105,7 @@ class PCAPImporterView(AbstractFileImporterView):
         # Liststore to display layer 3 packets
         # ID, Selected, Source IP, Destination IP, Payload
         self.listListStore = Gtk.ListStore(
-                str, 'gboolean', str, str, str)
+            str, 'gboolean', str, str, str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
         self.addTreeViewTextColumn("Source IP", 2)
@@ -118,7 +118,7 @@ class PCAPImporterView(AbstractFileImporterView):
         # ID, Selected, Source IP, Destination IP, Protocol,
         # Source Port, Destination Port, Payload
         self.listListStore = Gtk.ListStore(
-                str, 'gboolean', str, str, str, str, str, str)
+            str, 'gboolean', str, str, str, str, str, str)
         self.listTreeView.set_model(self.listListStore)
         self.addTreeViewSelectedToggleColumn()
         self.addTreeViewTextColumn("Source IP", 2)

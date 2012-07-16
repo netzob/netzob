@@ -77,7 +77,7 @@ class XMLImporter(AbstractImporter):
         # If we find a version which validates the XML, we parse with the associated function
         if not Workspace.isSchemaValidateXML(xmlSchemaPath, filePath):
             logging.error("The specified XML file {0} is not valid "
-                    "according to the XSD ({1}).".format(filePath, xmlSchemaPath))
+                          "according to the XSD ({1}).".format(filePath, xmlSchemaPath))
         else:
             logging.debug("XML file valid according to the XSD schema")
 

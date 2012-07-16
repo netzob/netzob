@@ -44,6 +44,7 @@ from netzob.Import.ThirdParties.AbstractThirdPartyImporter import AbstractThirdP
 from netzob.Common.Models.L4NetworkMessage import L4NetworkMessage
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
+
 #+---------------------------------------------------------------------------+
 #| AbstractThirdPartyImporter:
 #|     Abstract class for third parties
@@ -179,9 +180,9 @@ class OSpy(AbstractThirdPartyImporter):
 
         if data != None:
             message = L4NetworkMessage(id, timestamp, data,
-                    None, None, None,
-                    "IP", ip_source, ip_destination,
-                    msg_protocol, l4_source_port, l4_destination_port)
+                                       None, None, None,
+                                       "IP", ip_source, ip_destination,
+                                       msg_protocol, l4_source_port, l4_destination_port)
             return message
 
     def uncompressFile(self, path):

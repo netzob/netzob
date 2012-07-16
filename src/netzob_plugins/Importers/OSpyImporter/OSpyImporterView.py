@@ -71,7 +71,7 @@ class OSpyImporterView(AbstractFileImporterView):
             self.listTreeView.append_column(column)
 
         self.listListStore = Gtk.ListStore('gboolean', str, str, str, str,
-                str, str, str)
+                                           str, str, str)
         self.listTreeView.set_model(self.listListStore)
         toggleCellRenderer = Gtk.CellRendererToggle()
         toggleCellRenderer.set_activatable(True)

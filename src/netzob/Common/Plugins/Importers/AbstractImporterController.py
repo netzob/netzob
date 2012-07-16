@@ -42,6 +42,7 @@ from gi.repository import Gtk, Pango
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.AbstractPluginController import AbstractPluginController
 
+
 class AbstractImporterController(AbstractPluginController):
     """Abstract controller for importers plugins"""
 
@@ -57,22 +58,16 @@ class AbstractImporterController(AbstractPluginController):
     @property
     def selectedMessages(self):
         return [row[self.COLUMN_ID] for row in self.view.listListStore
-                           if row[self.COLUMN_SELECTED]]
+                if row[self.COLUMN_SELECTED]]
 
     def doReadMessages(self):
-        raise NotImplementedError("Classes inheriting from "
-                + "AbstractImporterController must implement "
-                + "the doReadMessages method")
+        raise NotImplementedError("Classes inheriting from AbstractImporterController must implement the doReadMessages method")
 
     def doGetMessageDetails(self, messageID):
-        raise NotImplementedError("Classes inheriting from "
-                + "AbstractImporterController must implement "
-                + "the doGetMessageDetails method")
+        raise NotImplementedError("Classes inheriting from AbstractImporterController must implement the doGetMessageDetails method")
 
     def doImportMessages(self, selectedMessages):
-        raise NotImplementedError("Classes inheriting from "
-                + "AbstractImporterController must implement "
-                + "the doImportMessages method")
+        raise NotImplementedError("Classes inheriting from AbstractImporterController must implement the doImportMessages method")
 
     def readMessages(self, widget=None):
         self.view.hideWarning()
@@ -107,7 +102,7 @@ class AbstractImporterController(AbstractPluginController):
         if treeiter != None:
             messageID = uuid.UUID(model[treeiter][self.COLUMN_ID])
             self.view.detailTextView.get_buffer().set_text(
-                    str(self.doGetMessageDetails(messageID)))
+                str(self.doGetMessageDetails(messageID)))
 
     def selectMessage(self, cellRenderer, path):
         iter = self.view.listListStore.get_iter(path)
@@ -127,10 +122,9 @@ class AbstractImporterController(AbstractPluginController):
         if selectedCount != 0:
             currentProjectName = self.getCurrentProject().getName()
             md = Gtk.MessageDialog(
-                    self.view.dialog, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                    Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
-                    _("Are you sure to you want to import the {0} selected packets "
-                      + "in project {1}").format(selectedCount, currentProjectName))
+                self.view.dialog, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
+                _("Are you sure to you want to import the {0} selected packets in project {1}").format(selectedCount, currentProjectName))
             result = md.run()
             md.destroy()
             if result == Gtk.ResponseType.YES:

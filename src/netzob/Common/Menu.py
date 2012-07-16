@@ -87,9 +87,9 @@ class Menu(object):
       <menuitem action='Save' />
       <menuitem action='SessionManager' />
       <menu action='ImportTraces'>
-    	<menuitem action='ImportNetwork' />
-    	<menuitem action='ImportIPCFlows' />
-    	<menuitem action='ImportFromFile' />
+        <menuitem action='ImportNetwork' />
+        <menuitem action='ImportIPCFlows' />
+        <menuitem action='ImportFromFile' />
       </menu>
       <menu action='Export'>
         <menuitem action='ExportXML' />
