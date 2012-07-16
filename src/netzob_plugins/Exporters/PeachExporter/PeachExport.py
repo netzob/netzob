@@ -216,7 +216,10 @@ class PeachExport:
                 logging.debug(_("The fuzzing is based on regexes."))
                 peachType = self.getPeachFieldTypeFromNetzobFormat(field)
                 if field.isStatic():
-                    xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=field.getRegex())
+                    if peachType == "Number":
+                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), value=str(self.hexstring2int(field.getRegex())))
+                    else:
+                        xmlField = etree.SubElement(xmlDataModel, peachType, name=field.getName(), valueType="hex", value=field.getRegex())
                     if not self.mutateStaticFields:
                         xmlField.attrib["mutable"] = "false"
                 else:
@@ -287,6 +290,17 @@ class PeachExport:
                 @return: the 'u string translation of the bitarray.
         """
         return (abitarray.tobytes())
+
+    def hexstring2int(self, hexstring):
+        """hexstring2int:
+            Transform a hexstring in an int. A hexstring is like "1234deadbeef"
+
+            @type hexstring: string
+            @param hextring: the given hexstring which is trasnformed in int.
+            @rtype: integer
+            @return: the integer extracted from the hex string 'hexstring'
+        """
+        return int('0x' + hexstring, 16)
 
     def getRecVariableTypedValueLists(self, variable):
         """getRecVariableTypedValueLists:
