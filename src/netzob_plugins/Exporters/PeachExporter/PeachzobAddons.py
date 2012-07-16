@@ -45,7 +45,7 @@ class Or(Fixup):
             Replace field's value with a logical OR of values in Param "values" (separated by ';' characters).
     """
 
-    def __init__(self, values, mainSep='; ', sndSep=", "):
+    def __init__(self, values, mainSep='; ', sndSep=","):
         """Constructor of Or:
 
             @type values: string
@@ -70,16 +70,16 @@ class Or(Fixup):
         values = string.split(self.values, self.mainSep)
         if values == None:
             raise Exception("Error: Or was unable to locate its values.")
+        rvalue = ""
         ran = random.randint(0, len(values) - 1)
         value = string.split(values[ran], self.sndSep)
-        rvalue = ""
         if value[0] == "String":
-            rvalue = PeachTranslate(values[ran])
+            rvalue = PeachTranslate(value[1])
         elif value[0] == "Number":
-            rvalue = int(rvalue, 16)
+            rvalue = int(value[1], 16)
         else:
-            rvalue = PeachTranslate(values[ran])
-        return PeachTranslate(values[ran])
+            rvalue = PeachTranslate(value[1])
+        return rvalue
 
 
 class RandomField(Fixup):

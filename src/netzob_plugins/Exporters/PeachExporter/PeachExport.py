@@ -184,6 +184,7 @@ class PeachExport:
                 xmlFields = []
                 # For each subfield.
                 for i in range(subLength):
+                    # We retrieve the peach type of the field for Peach to be as efficient and precise as possible.
                     peachType = self.getPeachFieldType(typedValueLists, i)
                     xmlFields.append(etree.SubElement(xmlDataModel, peachType, valueType="hex", name=("{0}_{1}").format(field.getName(), i)))
                     # We write down all possible values the subfield can have.
@@ -191,7 +192,8 @@ class PeachExport:
                     for typedValueList in typedValueLists:
                         # If we have such a field. (The double list typedValueLists is lacunar)
                         if len(typedValueList) > i:
-                            paramValues.append(typedValueList[i][1])
+                            # We add a peach version of the netzob type in order to translate the subfield properly.
+                            paramValues.append(self.netzobTypeToPeachType(typedValueList[i][0]) + "," + self.bitarray2hex(typedValueList[i][1]))
                     if len(paramValues) > 1:
                         # If there is several possible values, we use a fixup.
                         xmlOrFixup = etree.SubElement(xmlFields[i], "Fixup")
@@ -199,12 +201,12 @@ class PeachExport:
                         # We transform the bitarray list into an hex string understandable by Peach.
                         formattedValue = ""
                         for paramValue in paramValues:
-                            formattedValue = ("{0};{1}").format(formattedValue, self.bitarray2hex(paramValue))
-                        formattedValue = formattedValue[1:]  # Remove the ';' prefix.
+                            formattedValue = ("{0}; {1}").format(formattedValue, paramValue)
+                        formattedValue = formattedValue[2:]  # Remove the '; ' prefix.
                         xmlOrFixupValueParam = etree.SubElement(xmlOrFixup, "Param", name="values", value=formattedValue)
                     elif len(paramValues) == 1:
                         # We assume that fields that has only one value are "static".
-                        formattedValue = self.bitarray2hex(paramValues[0])
+                        formattedValue = (string.split(paramValues[0], ","))[1]
                         xmlFields[i].attrib["value"] = formattedValue
                         if not self.mutateStaticFields:
                             xmlFields[i].attrib["mutable"] = "false"
@@ -257,6 +259,7 @@ class PeachExport:
                                 xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
                                 xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
                                 xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
+                                xmlRSFType = etree.SubElement(xmlRanStringFixup, "Param", name="type", value=peachType)
                             else:
                                 # Static subfield.
                                 if splittedRegex[i] != "":
@@ -301,6 +304,24 @@ class PeachExport:
             @return: the integer extracted from the hex string 'hexstring'
         """
         return int('0x' + hexstring, 16)
+
+    def netzobTypeToPeachType(self, netzobType):
+        """netzobTypeToPeachType:
+            Transform a netzob variable type (Word, IPv4Variable, Decimal Word ...) in a Peach field type (Number, String, Blob).
+
+            @type netzobType: string
+            @param netzobType: a netzob type.
+            @rtype: string
+            @return: the associated peach type.
+        """
+        peachType = ""
+        if netzobType == "DecimalWord":
+            peachType = "Number"
+        elif netzobType == "Word" or netzobType == "IPv4Variable":
+            peachType = "String"
+        else:
+            peachType = "Blob"
+        return peachType
 
     def getRecVariableTypedValueLists(self, variable):
         """getRecVariableTypedValueLists:
