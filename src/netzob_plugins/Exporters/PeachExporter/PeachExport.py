@@ -246,9 +246,9 @@ class PeachExport:
                                     fieldMaxLength = int(string.split(splittedRegex[i], ",")[1])
                                     fieldMinLength = int(string.split(splittedRegex[i], ",")[0])
                                 # The given field length is the length in half-bytes.
-                                fieldLength = (fieldMaxLength + 1) / 2
-                                xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i), length=str(fieldLength))
-                                logging.debug(_("The field {0} has a dynamic subfield of size {1}.").format(field.getName(), str(fieldLength)))
+                                fieldMaxLength = (fieldMaxLength + 1) / 2
+                                fieldMinLength = fieldMinLength / 2
+                                xmlField = etree.SubElement(xmlDataModel, "Blob", name=("{0}_{1}").format(field.getName(), i))
                                 xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
                                 xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomString"
                                 xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
@@ -262,8 +262,7 @@ class PeachExport:
                                         xmlField.attrib["mutable"] = "false"
                     else:
                         # If the field's regex is (), we add a null-length Peach field type.
-                        fieldLength = 0
-                        xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=str(fieldLength))
+                        xmlField = etree.SubElement(xmlDataModel, "Blob", name=field.getName(), length=0)
                         logging.debug(_("The field {0} is empty.").format(field.getName()))
 
     def bitarray2hex(self, abitarray):

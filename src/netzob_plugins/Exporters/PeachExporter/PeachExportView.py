@@ -134,6 +134,7 @@ class PeachExportView:
 
         self.checkMutateStaticFields = gtk.CheckButton("Mutate static fields")
         self.checkMutateStaticFields.show()
+        self.checkMutateStaticFields.set_active(True)
         self.optionsTable.attach(self.checkMutateStaticFields, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
 
         self.exportButton = gtk.Button("Export")
