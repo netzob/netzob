@@ -82,20 +82,20 @@ class Or(Fixup):
         return PeachTranslate(values[ran])
 
 
-class RandomString(Fixup):
+class RandomField(Fixup):
     """RandomString:
             Replace field's value with a random string which size is in a given range.
     """
 
     def __init__(self, minlen, maxlen, type="Blob"):
-        """Constructor of RandomString:
+        """Constructor of RandomField:
 
                 @type minlen: string
                 @param minlen: the minimum length of the random string we will create.
                 @type maxlen: string
                 @param maxlen: the maximum length of the random string we will create.
                 @type type: string
-                @param type: the type of the eventual randomly created string, chosen between "Blob", "String" and "Number".
+                @param type: the type of the eventual randomly created string, chosen between "Blob", "String", "Number", IPv4.
         """
         Fixup.__init__(self)
         self.minlen = minlen
@@ -112,9 +112,9 @@ class RandomString(Fixup):
         minlen = self.minlen
         maxlen = self.maxlen
         if minlen == None:
-            raise Exception("Error: RandomString was unable to locate minlen.")
+            raise Exception("Error: RandomField was unable to locate minlen.")
         if maxlen == None:
-            raise Exception("Error: RandomString was unable to locate maxlen.")
+            raise Exception("Error: RandomField was unable to locate maxlen.")
         if int(minlen) > int(maxlen):
             raise Exception("Error: minlen ({0}) > maxlen ({1}).".format(minlen, maxlen))
         value = ""
@@ -126,6 +126,10 @@ class RandomString(Fixup):
         elif self.type == "Number":
             for i in range(length):
                 value = value + random.choice(string.digits)
+        elif self.type == "IPv4":
+            for i in range(4):
+                value = value + "." + random.randint(0, 255)
+            value = value[1:]  # Remove the first '.'
         else:  # We assume it is "Blob"/hexa type.
             for i in range(length):
                 value = value + random.choice(string.hexdigits)

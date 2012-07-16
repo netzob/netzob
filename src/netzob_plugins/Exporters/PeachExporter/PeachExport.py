@@ -254,7 +254,7 @@ class PeachExport:
                                 fieldMinLength = fieldMinLength / 2
                                 xmlField = etree.SubElement(xmlDataModel, peachType, name=("{0}_{1}").format(field.getName(), i))
                                 xmlRanStringFixup = etree.SubElement(xmlField, "Fixup")
-                                xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomString"
+                                xmlRanStringFixup.attrib["class"] = "PeachzobAddons.RandomField"
                                 xmlRSFParamMinlen = etree.SubElement(xmlRanStringFixup, "Param", name="minlen", value=str(fieldMinLength))
                                 xmlRSFParamMaxlen = etree.SubElement(xmlRanStringFixup, "Param", name="maxlen", value=str(fieldMaxLength))
                             else:
