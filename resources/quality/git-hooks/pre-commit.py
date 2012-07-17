@@ -128,7 +128,11 @@ def checkHeader(file):
     headerGlade = header3.replace("---------------------------------------------------------------------------", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")     # For other
     with open(file, 'rb') as f:
         data = f.read()
-    if not header in data and not header2 in data and not header3 in data and not headerGlade in data:
+    if not header in data and not header2 in data and not header3 in data:
+        if file.startswith(os.path.join("src", "netzob_plugins")):  # Plugin
+            headersPlugin = header.split("Georges Bossert and Frédéric Guihéry                   |")
+            if headersPlugin[0] in data and headersPlugin[1] in data:
+                return []
         return ["The header has not been found in file"]
     return []
 
