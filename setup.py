@@ -44,8 +44,8 @@ moduleLibNeedleman = Extension('_libNeedleman',
                                sources=['lib/libNeedleman/libNeedleman.c'])
 
 CMD_CLASS = {
-             'build_manpage': manpage_command
-             }
+    'build_manpage': manpage_command
+}
 
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
@@ -91,7 +91,7 @@ setup(
                                     "resources/static/xsds/0.1/Project.xsd",
                                     "resources/static/xsds/0.1/common.xsd"]),
         ("share/locale/fr/LC_MESSAGES/", ["locales/fr/LC_MESSAGES/netzob.mo"])
-        ],
+    ],
     scripts=["netzob"],
     install_requires=dependencies,
     version=release.version,
@@ -116,7 +116,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Security",
         "Topic :: System :: Networking",
-        ],
+    ],
     long_description=release.long_description,
     cmdclass=CMD_CLASS,
     entry_points="""
@@ -126,5 +126,5 @@ setup(
     # Files that should be scanned by Babel (if available)
     message_extractors={
         'src': [('**.py', 'python', None)]
-        },
-    )
+    },
+)
