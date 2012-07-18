@@ -42,117 +42,97 @@ from lxml import etree
 from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 
-#+---------------------------------------------------------------------------+
-#| AlternateVariable:
-#|     Definition of an alternative of variables defined in a dictionary
-#+---------------------------------------------------------------------------+
 class AlternateVariable(Variable):
+    """AlternateVariable:
+            A node variable that makes an alternative of all its children.
+    """
 
-    TYPE = "Alternate"
-
-    def __init__(self, idVar, name, vars):
-        Variable.__init__(self, AlternateVariable.TYPE, idVar, name)
+    def __init__(self, idVar, name, children):
+        """Constructor of AlternateVariable:
+                @type children: netzob.Common.MMSTD.Dictionary.Variable.Variable List
+                @param children: the list of all its children.
+        """
+        Variable.__init__(self, "Alternate", idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AlternativeVariable.py')
-        self.vars = []
-        if vars is not None:
-            self.vars.extend(vars)
+        self.children = []
+        if children is not None:
+            self.children.extend(children)
 
-    def addChild(self, variable):
-        self.vars.append(variable)
-
-    def getChildren(self):
-        return self.vars
-
-    #+-----------------------------------------------------------------------+
-    #| getValue :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     else its NONE
-    #+-----------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+
+#| Functions Inherited from netzob.Common.MMSTD.Dictionary.Variable.Variable.|
+#+---------------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
+        """getValue:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
+        """
         self.log.info("getValue")
-        validVars = []
-        for var in self.vars:
-            if var.getValue(negative, vocabulary, memory) is not None:
+        for var in self.children:
+            if var.getValue(negative, vocabulary, memory) != None:
                 return var.getValue(negative, vocabulary, memory)
         return None
+#        validVars = []
 #        self.log.debug("Valid vars = " + str(validVars))
 #        idRandom = random.randint(0, len(validVars) - 1)
 #        picked = validVars[idRandom]
 #        self.log.debug("Get value will return : " + str(picked))
 #        return picked.getValue(negative, vocabulary, memory)
 
-    #+-----------------------------------------------------------------------+
-    #| getValueToSend :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     or it generates one and save its value in memory
-    #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
+        """getValueToSend:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one or it generates one and save its value in memory.
+        """
         self.log.info("getValueToSend")
-        """
-        for var in self.vars:
-            if var.getValue(negative, vocabulary, memory) != None:
-                return var.getValueToSend(negative, vocabulary, memory)
-        return None
-        """
-
-        idRandom = random.randint(0, len(self.vars) - 1)
-        picked = self.vars[idRandom]
+        idRandom = random.randint(0, len(self.children) - 1)
+        picked = self.children[idRandom]
         return picked.getValueToSend(negative, vocabulary, memory)
+#        for var in self.children:
+#            if var.getValue(negative, vocabulary, memory) != None:
+#                return var.getValueToSend(negative, vocabulary, memory)
+#        return None
 
-    #+-----------------------------------------------------------------------+
-    #| getUncontextualizedDescription :
-    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
-    #+-----------------------------------------------------------------------+
-    def getUncontextualizedDescription(self):
-        values = []
-        for var in self.vars:
-            values.append(var.getUncontextualizedDescription())
-        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
-
-    #+-----------------------------------------------------------------------+
-    #| getDescription :
-    #|     Returns the full description of the variable
-    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
+        """getDescription:
+                Get the full description of the variable.
+        """
         values = []
-        for var in self.vars:
+        for var in self.children:
             values.append(var.getDescription(negative, vocabulary, memory))
         return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
 
-    #+-----------------------------------------------------------------------+
-    #| compare :
-    #|     Returns the number of letters which match the variable
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+                Get the uncontextualized description of the variable (no use of memory or vocabulary).
+        """
+        values = []
+        for var in self.children:
+            values.append(var.getUncontextualizedDescription())
+        return "[ALT]" + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+
     def compare(self, value, indice, negative, vocabulary, memory):
+        """compare:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         saved = indice
-        for var in self.vars:
+        for var in self.children:
             self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.compare(value, saved, negative, vocabulary, memory)
-            if result != -1 and result is not None:
+            if result != -1 and result != None:
                 self.log.info("Compare successful")
                 return result
         return -1
 
-    #+-----------------------------------------------------------------------+
-    #| learn :
-    #|     Exactly like "compare" but it stores learns from the provided message
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
+        """learn:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Moreover it stores learns from the provided message.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         saved = indice
-        for var in self.vars:
+        for var in self.children:
             self.log.info("Indice = " + str(saved) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.learn(value, saved, negative, vocabulary, memory)
-            if result != -1 and result is not None:
+            if result != -1 and result != None:
                 self.log.info("Compare successful")
                 return result
             else:
@@ -160,19 +140,17 @@ class AlternateVariable(Variable):
 
         return -1
 
-    #+-----------------------------------------------------------------------+
-    #| restore :
-    #|     Restore learnt value from the last execution of the variable
-    #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        for var in self.vars:
+        """restore:
+                Restore learned value from the last execution of the variable.
+        """
+        for var in self.children:
             var.restore(vocabulary, memory)
 
-    #+-----------------------------------------------------------------------+
-    #| toXML
-    #|     Returns the XML description of the variable
-    #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
+        """toXML:
+            Create the xml tree associated to this variable.
+        """
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
@@ -180,11 +158,26 @@ class AlternateVariable(Variable):
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
 
         # Definition of the variables
-        for var in self.vars:
+        for var in self.children:
             var.toXML(xmlVariable, namespace)
 
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getChildren(self):
+        return self.children
+
+    def addChild(self, child):
+        self.children.append(child)
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Load an alternate variable from an XML definition.
+        """
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")

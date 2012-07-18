@@ -47,113 +47,100 @@ from bitarray import bitarray
 #|     Definition of an aggregation of variables defined in a dictionary
 #+---------------------------------------------------------------------------+
 class AggregateVariable(Variable):
+    """AggregateVariable:
+            Aggregation of variables defined in a dictionary.
+    """
 
-    TYPE = "Aggregate"
-
-    def __init__(self, idVar, name, vars=None):
-        Variable.__init__(self, AggregateVariable.TYPE, idVar, name)
+    def __init__(self, idVar, name, children=None):
+        """Constructor of AggregateVariable:
+                @type children: netzob.Common.MMSTD.Dictionary.Variable.Variable List
+                @param children: the list of all its children.
+        """
+        Variable.__init__(self, "Aggregate", idVar, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.py')
-        self.vars = []
-        if vars is not None:
-            self.vars.extend(vars)
+        self.children = []
+        if children is not None:
+            self.children.extend(children)
 
-    def addChild(self, variable):
-        self.vars.append(variable)
-
-    def getChildren(self):
-        return self.vars
-
-    #+-----------------------------------------------------------------------+
-    #| getValue :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     else its NONE
-    #+-----------------------------------------------------------------------+
+#+---------------------------------------------------------------------------+
+#| Functions Inherited from netzob.Common.MMSTD.Dictionary.Variable.Variable.|
+#+---------------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
+        """getValue:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
+        """
         binResult = bitarray()
         strResult = ""
-        for var in self.vars:
+        for var in self.children:
             (b, s) = var.getValue(negative, vocabulary, memory)
             self.log.debug("getValue : " + str(b))
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
 
-    #+-----------------------------------------------------------------------+
-    #| getValueToSend :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     or it generates one and save its value in memory
-    #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
+        """getValueToSend:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one or it generates one and save its value in memory.
+        """
         binResult = bitarray()
         strResult = ""
-        for var in self.vars:
+        for var in self.children:
             (b, s) = var.getValueToSend(negative, vocabulary, memory)
             self.log.debug("getValueToSend : " + str(b))
             binResult += b
             strResult = strResult + s
         return (binResult, strResult)
 
-    #+-----------------------------------------------------------------------+
-    #| getUncontextualizedDescription :
-    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
-    #+-----------------------------------------------------------------------+
-    def getUncontextualizedDescription(self):
-        values = []
-        for var in self.vars:
-            values.append(var.getUncontextualizedDescription())
-        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
-
-    #+-----------------------------------------------------------------------+
-    #| getDescription :
-    #|     Returns the full description of the variable
-    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
+        """getDescription:
+                Get the full description of the variable.
+        """
         values = []
-        for var in self.vars:
+        for var in self.children:
             values.append(var.getDescription(negative, vocabulary, memory))
         return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
 
-    #+-----------------------------------------------------------------------+
-    #| compare :
-    #|     Returns the number of letters which match the variable
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+                Get the uncontextualized description of the variable (no use of memory or vocabulary).
+        """
+        values = []
+        for var in self.children:
+            values.append(var.getUncontextualizedDescription())
+        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+
     def compare(self, value, indice, negative, vocabulary, memory):
+        """compare:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         result = indice
-        for var in self.vars:
+        for var in self.children:
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
             self.log.debug("=> " + str(value[result:]))
             result = var.compare(value, result, negative, vocabulary, memory)
-            if result == -1 or result is None:
+            if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 return result
             else:
                 self.log.debug("Compare successful")
         return result
 
-    #+-----------------------------------------------------------------------+
-    #| learn :
-    #|     Exactly like "compare" but it stores learns from the provided message
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
+        """learn:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Moreover it stores learns from the provided message.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         status = True
         toBeRestored = []
         result = indice
 
-        for var in self.vars:
+        for var in self.children:
             self.log.debug("Indice = " + str(result) + " : " + var.getDescription(negative, vocabulary, memory))
             result = var.learn(value, result, negative, vocabulary, memory)
             toBeRestored.append(var)
-            if result == -1 or result is None:
+            if result == -1 or result == None:
                 self.log.debug("Compare fail")
                 status = False
                 break
@@ -166,30 +153,43 @@ class AggregateVariable(Variable):
                 var.restore(vocabulary, memory)
         return result
 
-    #+-----------------------------------------------------------------------+
-    #| restore :
-    #|     Restore learnt value from the last execution of the variable
-    #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
-        for var in self.vars:
+        """restore:
+                Restore learned value from the last execution of the variable.
+        """
+        for var in self.children:
             var.restore(vocabulary, memory)
 
-    #+-----------------------------------------------------------------------+
-    #| toXML
-    #|     Returns the XML description of the variable
-    #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
+        """toXML:
+            Create the xml tree associated to this variable.
+        """
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
         # Definition of the variables
-        for var in self.vars:
+        for var in self.children:
             var.toXML(xmlVariable, namespace)
 
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getChildren(self):
+        return self.children
+
+    def addChild(self, child):
+        self.children.append(child)
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Load an aggregate variable from an XML definition.
+        """
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")

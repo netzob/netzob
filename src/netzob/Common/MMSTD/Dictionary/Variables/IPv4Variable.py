@@ -50,17 +50,23 @@ from netzob.Common.Type.Format import Format
 import re
 
 
-#+---------------------------------------------------------------------------+
-#| IPv4Variable :
-#|     Definition of an IPv4 variable defined in a dictionary
-#+---------------------------------------------------------------------------+
 class IPv4Variable(Variable):
+    """IPv4Variable:
+            IPv4 variable defined in a dictionary.
+    """
 
-    # OriginalValue : must be a "real" ip address declared in ASCII like : "192.168.0.10"
-    # startValue :  must be a "real" ip address declared in ASCII like : "192.168.0.10"
-    # endValue :  must be a "real" ip address declared in ASCII like : "192.168.0.11"
-    # format : must be a string value of a format (hex or ascii)
     def __init__(self, id, name, originalValue, startValue, endValue, format):
+        """Constructor of IPv4Variable:
+
+            @type originalValue: string
+            @param originalValue: the original value of the variable, must be a "real" ip address declared in ASCII like : "192.168.0.10".
+            @type startValue: string
+            @param startValue: the first value of the IP range contained by the variable, must be a "real" ip address declared in ASCII like : "192.168.0.10"
+            @type endValue: string
+            @param endValue: the last value of the IP range contained by the variable, must be a "real" ip address declared in ASCII like : "192.168.0.10"
+            @type format: string
+            @param format: the format of the given IO, either "hex" or "ascii".
+        """
         Variable.__init__(self, "IPv4Variable", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.IP4Variable.py')
 
@@ -73,11 +79,13 @@ class IPv4Variable(Variable):
         # Set the current value
         self.computeCurrentValue(self.originalValue)
 
-    #+-----------------------------------------------------------------------+
-    #| computeCurrentValue :
-    #|     Transform and save the provided "192.168.0.10" as current value
-    #+-----------------------------------------------------------------------+
     def computeCurrentValue(self, strValue):
+        """computeCurrentValue:
+                Compute a couple of binary and string values for the current variable.
+
+                @type strValue: string
+                @param strValue: a string value proposed as default value for this variable, must be a "real" ip address declared in ASCII like : "192.168.0.10".
+        """
         if strValue is not None:
             if self.format == Format.ASCII:
                 strCurrentValue = str(strValue)
@@ -99,6 +107,9 @@ class IPv4Variable(Variable):
     #|     Generate a valid value for the variable
     #+-----------------------------------------------------------------------+
     def generateValue(self):
+        """generateValue:
+                Generate a valid value for the variable.
+        """
         if self.format == Format.ASCII:
 
             ip1 = random.randint(0, 255)
@@ -113,14 +124,52 @@ class IPv4Variable(Variable):
             self.log.error("Error, the current variable (IPv4Variable) doesn't support function generateValue when its an HEX")
             raise NotImplementedError("The current variable doesn't support 'generateValue' when its an HEX.")
 
-    #+-----------------------------------------------------------------------+
-    #| getValue :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     else its NONE
-    #+-----------------------------------------------------------------------+
+    def compareFormat(self, value, indice, negative, vocabulary, memory):
+        """compareFormat:
+                Compute if the provided data is "format-compliant" and return the size of the biggest compliant data.
+
+                @type value: bitarray.bitarray
+                @param value: a bit array a subarray of which we compare to the current variable binray value.
+                @type indice: integer
+                @param indice: the starting point of comparison in value.
+                @type negative: boolean
+                @param negative: tells if we use the variable or a logical not of it.
+                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
+                @param vocabulary: the vocabulary of the current project.
+                @type memory: netzob.Common.MMSTD.Memory.Memory
+                @param memory: a memory which can contain a former value of the variable.
+                @rtype: integer
+                @return: the size of the biggest compliant data, -1 if it does not comply.
+        """
+        if self.format == Format.ASCII:
+            currentContent = TypeConvertor.bin2string(value[indice:])
+            IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
+            hasMatched = False
+            for t in range(min(len(currentContent), 15), 7, -1):
+                currentPossibleIP = currentContent[:t]
+                result = IPRegex.match(currentPossibleIP)
+                if result != None:
+                    hasMatched = True
+                elif hasMatched:
+                    break
+
+            if hasMatched:
+                result = currentContent[:t + 2]
+                self.log.debug("Compare on format was successfull : " + str(result))
+                return len(TypeConvertor.string2bin(result, 'big'))
+            else:
+                self.log.debug("Compare on format was not successfull")
+                return -1
+        else:
+            raise NotImplementedError("Error, the current variable (IPv4Variable) doesn't support function compareFormat in this case")
+
+#+---------------------------------------------------------------------------+
+#| Functions Inherited from netzob.Common.MMSTD.Dictionary.Variable.Variable.|
+#+---------------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
+        """getValue:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
+        """
         if self.getCurrentValue() is not None:
             return self.getCurrentValue()
 
@@ -129,14 +178,10 @@ class IPv4Variable(Variable):
 
         return None
 
-    #+-----------------------------------------------------------------------+
-    #| getValueToSend :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     or it generates one and save its value in memory
-    #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
+        """getValueToSend:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one or it generates one and save its value in memory.
+        """
         if self.getCurrentValue() is not None:
             self.log.debug("getValueToSend (getCurrentValue): " + str(self.getCurrentValue()))
             return self.getCurrentValue()
@@ -160,28 +205,23 @@ class IPv4Variable(Variable):
         # We return the newly generated and memorized value
         return self.getCurrentValue()
 
-    #+-----------------------------------------------------------------------+
-    #| getUncontextualizedDescription :
-    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
-    #+-----------------------------------------------------------------------+
-    def getUncontextualizedDescription(self):
-        return "IPv4Variable [originalValue = " + str(self.getOriginalValue()) + "]"
-
-    #+-----------------------------------------------------------------------+
-    #| getDescription :
-    #|     Returns the full description of the variable
-    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
+        """getDescription:
+                Get the full description of the variable.
+        """
         return "IPv4Variable [getValue = " + str(self.getValue(negative, vocabulary, memory)) + "]"
 
-    #+-----------------------------------------------------------------------+
-    #| compare :
-    #|     Returns the number of letters which match the variable
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+                Get the uncontextualized description of the variable (no use of memory or vocabulary).
+        """
+        return "IPv4Variable [originalValue = " + str(self.getOriginalValue()) + "]"
+
     def compare(self, value, indice, negative, vocabulary, memory):
+        """compare:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         localValue = self.getValue(negative, vocabulary, memory)
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
         if localValue is None:
@@ -201,37 +241,12 @@ class IPv4Variable(Variable):
                 self.log.info("Compare fail")
                 return -1
 
-    def compareFormat(self, value, indice, negative, vocabulary, memory):
-        if self.format == Format.ASCII:
-            currentContent = TypeConvertor.bin2string(value[indice:])
-            IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
-            hasMatched = False
-            for t in range(min(len(currentContent), 15), 7, -1):
-                currentPossibleIP = currentContent[:t]
-                result = IPRegex.match(currentPossibleIP)
-                if result is not None:
-                    hasMatched = True
-                elif hasMatched:
-                    break
-
-            if hasMatched:
-                result = currentContent[:t + 2]
-                self.log.debug("Compare on format was successfull : " + str(result))
-                return len(TypeConvertor.string2bin(result, 'big'))
-            else:
-                self.log.debug("Compare on format was not successfull")
-                return -1
-        else:
-            raise NotImplementedError("Error, the current variable (IPv4Variable) doesn't support function compareFormat in this case")
-
-    #+-----------------------------------------------------------------------+
-    #| learn :
-    #|     Exactly like "compare" but it stores learns from the provided message
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
+        """learn:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Moreover it stores learns from the provided message.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         if self.format == Format.ASCII:
             currentContent = TypeConvertor.bin2string(value[indice:])
             IPRegex = re.compile("(((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")
@@ -259,29 +274,16 @@ class IPv4Variable(Variable):
         else:
             raise NotImplementedError("Error, the current variable (IPv4Variable) doesn't support function compareFormat in this case")
 
-    #+-----------------------------------------------------------------------+
-    #| restore :
-    #|     Restore learnt value from the last execution of the variable
-    #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
+        """restore:
+                Restore learned value from the last execution of the variable.
+        """
         memory.restore(self)
 
-    def getCurrentValue(self):
-        return self.currentValue
-
-    def getOriginalValue(self):
-        return self.originalValue
-
-    def getStartValue(self):
-        return self.startValue
-
-    def getEndValue(self):
-        return self.endValue
-
-    def getFormat(self):
-        return self.format
-
     def toXML(self, root, namespace):
+        """toXML:
+            Create the xml tree associated to this variable.
+        """
         xmlIPv4Variable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlIPv4Variable.set("id", str(self.getID()))
         xmlIPv4Variable.set("name", str(self.getName()))
@@ -307,8 +309,32 @@ class IPv4Variable(Variable):
 
         return xmlIPv4Variable
 
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getCurrentValue(self):
+        return self.currentValue
+
+    def getOriginalValue(self):
+        return self.originalValue
+
+    def getStartValue(self):
+        return self.startValue
+
+    def getEndValue(self):
+        return self.endValue
+
+    def getFormat(self):
+        return self.format
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Load an IPv4 variable from an XML definition.
+        """
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")

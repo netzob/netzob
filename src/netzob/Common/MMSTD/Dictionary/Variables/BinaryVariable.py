@@ -44,16 +44,24 @@ from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-#+---------------------------------------------------------------------------+
-#| BinaryVariable:
-#|     Definition of a binary variable
-#+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
+    """BinaryVariable:
+            A variable which contains binary data.
+    """
 
     # OriginalValue : must be a "real" bitarray (a binary one)
     # min : nb of bits minimum
     # max : nb of bits maximum
     def __init__(self, id, name, originalValue, minBits, maxBits):
+        """Constructor of BinaryVariable:
+
+                @type originalValue: bitarray.bitarray
+                @param originalValue: the initial value of this variable.
+                @type minBits: integer
+                @param minBits: the minimum number of bits in the variable value.
+                @type maxBits: integer
+                @param maxBits: the maximum number of bits in the variable value.
+        """
         Variable.__init__(self, "Binary", id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
         self.originalValue = originalValue
@@ -63,11 +71,13 @@ class BinaryVariable(Variable):
         # Set the current value
         self.computeCurrentValue(self.originalValue)
 
-    #+-----------------------------------------------------------------------+
-    #| computeCurrentValue :
-    #|     Transform and save the provided bitarray as current value
-    #+-----------------------------------------------------------------------+
     def computeCurrentValue(self, binValue):
+        """computeCurrentValue:
+                Compute a couple of binary and string values for the current variable.
+
+                @type strValue: string
+                @param strValue: a string value proposed as default value for this variable.
+        """
         if binValue is not None:
             strCurrentValue = TypeConvertor.bitarray2StrBitarray(binValue)
             binCurrentValue = binValue
@@ -75,11 +85,10 @@ class BinaryVariable(Variable):
         else:
             self.currentValue = None
 
-    #+-----------------------------------------------------------------------+
-    #| generateValue :
-    #|     Generate a valid value for the variable
-    #+-----------------------------------------------------------------------+
     def generateValue(self):
+        """generateValue:
+                Generate a valid value for the variable.
+        """
         nbBits = random.randint(self.minBits, self.maxBits)
         creationArray = []
         for i in range(0, nbBits):
@@ -90,14 +99,37 @@ class BinaryVariable(Variable):
 
         return bitarray(creationArray)
 
-    #+-----------------------------------------------------------------------+
-    #| getValue :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     else its NONE
-    #+-----------------------------------------------------------------------+
+    def compareFormat(self, value, indice, negative, vocabulary, memory):
+        """compareFormat:
+                Compute if the provided data is "format-compliant" and return the size of the biggest compliant data.
+
+                @type value: bitarray.bitarray
+                @param value: a bit array a subarray of which we compare to the current variable binray value.
+                @type indice: integer
+                @param indice: the starting point of comparison in value.
+                @type negative: boolean
+                @param negative: tells if we use the variable or a logical not of it.
+                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
+                @param vocabulary: the vocabulary of the current project.
+                @type memory: netzob.Common.MMSTD.Memory.Memory
+                @param memory: a memory which can contain a former value of the variable.
+                @rtype: integer
+                @return: the size of the biggest compliant data, -1 if it does not comply.
+        """
+        tmp = value[indice:]
+        self.log.debug("Compare format is " + str(len(value)) + " >= " + str(self.minBits))
+        if len(tmp) >= self.minBits:
+            return min(len(value), self.maxBits)
+        else:
+            return -1
+
+#+---------------------------------------------------------------------------+
+#| Functions Inherited from netzob.Common.MMSTD.Dictionary.Variable.Variable.|
+#+---------------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
+        """getValue:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
+        """
         if self.getCurrentValue() is not None:
             return self.getCurrentValue()
 
@@ -106,14 +138,10 @@ class BinaryVariable(Variable):
 
         return None
 
-    #+-----------------------------------------------------------------------+
-    #| getValueToSend :
-    #|     Returns the current value of the variable
-    #|     it can be the original value if its set and not forget
-    #|     or the value in memory if it has one
-    #|     or it generates one and save its value in memory
-    #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
+        """getValueToSend:
+                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one or it generates one and save its value in memory.
+        """
         if self.getCurrentValue() is not None:
             self.log.debug("BINARY : HAS CURRENT VALUE")
             return self.getCurrentValue()
@@ -133,28 +161,23 @@ class BinaryVariable(Variable):
         # We return the newly generated and memorized value
         return newValue
 
-    #+-----------------------------------------------------------------------+
-    #| getUncontextualizedDescription :
-    #|     Returns the uncontextualized description of the variable (no use of memory or vocabulary)
-    #+-----------------------------------------------------------------------+
-    def getUncontextualizedDescription(self):
-        return "[BIN]" + str(self.getName()) + "= (orig=" + str(self.getOriginalValue()) + ")"
-
-    #+-----------------------------------------------------------------------+
-    #| getDescription :
-    #|     Returns the full description of the variable
-    #+-----------------------------------------------------------------------+
     def getDescription(self, negative, vocabulary, memory):
+        """getDescription:
+                Get the full description of the variable.
+        """
         return "[BIN]" + str(self.getName()) + "= (getVlue=" + str(self.getValue(negative, vocabulary, memory)) + ")"
 
-    #+-----------------------------------------------------------------------+
-    #| compare :
-    #|     Returns the number of letters which match the variable
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+                Get the uncontextualized description of the variable (no use of memory or vocabulary).
+        """
+        return "[BIN]" + str(self.getName()) + "= (orig=" + str(self.getOriginalValue()) + ")"
+
     def compare(self, value, indice, negative, vocabulary, memory):
+        """compare:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         localValue = self.getValue(negative, vocabulary, memory)
         self.log.debug("Receive : " + str(value[indice:]))
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
@@ -176,48 +199,24 @@ class BinaryVariable(Variable):
                 self.log.info("Compare fail")
                 return -1
 
-    def compareFormat(self, value, indice, negative, vocabulary, memory):
-        tmp = value[indice:]
-        self.log.debug("Compare format is " + str(len(value)) + " >= " + str(self.minBits))
-        if len(tmp) >= self.minBits:
-            return min(len(value), self.maxBits)
-        else:
-            return -1
-
-    #+-----------------------------------------------------------------------+
-    #| learn :
-    #|     Exactly like "compare" but it stores learns from the provided message
-    #|     it can return the followings :
-    #|     -1     : doesn't match
-    #|     >=0    : it matchs and the following number of bits were eaten
-    #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
+        """learn:
+                Compare the current variable to the end (starting at the "indice"-th character) of value.
+                Moreover it stores learns from the provided message.
+                Return the number of letters that matches, -1 if it does not match.
+        """
         return self.compare(value, indice, negative, vocabulary, memory)
 
-    #+-----------------------------------------------------------------------+
-    #| restore :
-    #|     Restore learnt value from the last execution of the variable
-    #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
+        """restore:
+                Restore learned value from the last execution of the variable.
+        """
         memory.restore(self)
 
-    def getCurrentValue(self):
-        return self.currentValue
-
-    def getOriginalValue(self):
-        return self.originalValue
-
-    def getMinBits(self):
-        return self.minBits
-
-    def getMaxBits(self):
-        return self.maxBits
-
-    #+-----------------------------------------------------------------------+
-    #| toXML :
-    #|     Returns the XML description of the variable
-    #+-----------------------------------------------------------------------+
     def toXML(self, root, namespace):
+        """toXML:
+            Create the xml tree associated to this variable.
+        """
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         # Header specific to the definition of a variable
         xmlVariable.set("id", str(self.getID()))
@@ -237,8 +236,29 @@ class BinaryVariable(Variable):
         xmlBinaryVariableEndValue = etree.SubElement(xmlVariable, "{" + namespace + "}maxBits")
         xmlBinaryVariableEndValue.text = str(self.getMaxBits())
 
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getCurrentValue(self):
+        return self.currentValue
+
+    def getOriginalValue(self):
+        return self.originalValue
+
+    def getMinBits(self):
+        return self.minBits
+
+    def getMaxBits(self):
+        return self.maxBits
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Load a binary variable from an XML definition.
+        """
         if version == "0.1":
             varId = xmlRoot.get("id")
             varName = xmlRoot.get("name")
