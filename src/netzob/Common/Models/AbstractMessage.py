@@ -270,18 +270,18 @@ class AbstractMessage(object):
         # Create the locationTable
         filterTable = FilterApplicationTable(splittedData)
 
-        if encoding == True or visualization == True:
+        if encoding is True or visualization is True:
             i_data = 0
             for i_field in range(0, len(self.symbol.getFields())):
                 field = self.symbol.getFields()[i_field]
                 dataField = splittedData[i_field]
 
                 # Add encoding filters
-                if encoding == True:
+                if encoding is True:
                     for filter in field.getEncodingFilters():
                         filterTable.applyFilter(filter, i_data, i_data + len(dataField))
                 # Add visualization filters
-                if visualization == True:
+                if visualization is True:
                     # Add visualization filters obtained from fields
                     for filter in field.getVisualizationFilters():
                         if len(dataField) > 0:
@@ -289,7 +289,7 @@ class AbstractMessage(object):
                 i_data = i_data + len(dataField)
 
             # Add visualization filters of our current message
-            if visualization == True:
+            if visualization is True:
                 for (filter, start, end) in self.getVisualizationFilters():
                     filterTable.applyFilter(filter, start, end)
 

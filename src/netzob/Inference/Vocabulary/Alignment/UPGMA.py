@@ -69,7 +69,7 @@ class UPGMA(object):
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
         self.scores = scores
         self.path = []
-        if explodeSymbols == False:
+        if explodeSymbols is False:
             self.symbols = symbols
         else:
             # Create a symbol for each message

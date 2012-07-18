@@ -213,11 +213,11 @@ class NeedlemanAndWunsch(object):
         found = False
         for i in range(len(align)):
             if (align[i] == "-"):
-                if (found == False):
+                if (found is False):
                     start = i
                     found = True
             else:
-                if (found == True):
+                if (found is True):
                     found = False
                     nbTiret = i - start
                     regex.append("(.{," + str(nbTiret) + "})")
@@ -227,7 +227,7 @@ class NeedlemanAndWunsch(object):
                         regex.append(align[i])
                     else:
                         regex[-1] += align[i]
-        if (found == True):
+        if (found is True):
             nbTiret = i - start + 1
             regex.append("(.{," + str(nbTiret) + "})")
 
@@ -245,7 +245,7 @@ class NeedlemanAndWunsch(object):
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
-        while doLoop == True:
+        while doLoop is True:
             doLoop = False
             for field in symbol.getFields():
                 # We try to see if this field produces only empty values when applied on messages

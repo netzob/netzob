@@ -207,7 +207,7 @@ class AutomaticGrammarInferenceView(object):
         self.dialog.show_all()
 
     def do_pulse(self, *args):
-        if self.finish == False:
+        if self.finish is False:
             self.progressbar.pulse()
             return True
         return False

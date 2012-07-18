@@ -71,7 +71,7 @@ class Process(object):
             for l in libs:
                 if l.getPath() == path:
                     found = True
-            if found == False:
+            if found is False:
                 (libName, libVersion) = SharedLib.findNameAndVersion(path)
 
                 lib = SharedLib(libName, libVersion, path)

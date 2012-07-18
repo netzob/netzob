@@ -107,7 +107,7 @@ class ParasiteGenerator():
             for line in f.readlines():
                 if line.endswith("<netzobParasite_" + func.getName() + ">:\n"):
                     flag = True
-                elif flag == True and sizeSignature > 0:
+                elif flag is True and sizeSignature > 0:
                     tmp = line.split("\t")[1]
                     for t in tmp.split():
                         if sizeSignature > 0:

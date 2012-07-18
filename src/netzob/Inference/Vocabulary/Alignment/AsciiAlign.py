@@ -51,7 +51,7 @@ class AsciiAlign():
         self.unitSize = unitSize
         self.log = logging.getLogger('netzob.Inference.Vocabulary.AsciiAlign.py')
         self.server = ""
-        if explodeSymbols == False:
+        if explodeSymbols is False:
             self.symbols = symbols
         else:
              #Create a symbol for each message and reset to constant the tokens

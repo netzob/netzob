@@ -533,7 +533,7 @@ class UImodelization:
     #|   Computes if the progress bar must be updated or not
     #+----------------------------------------------
     def do_pulse_for_sequenceAlignment(self):
-        if self.currentExecutionOfAlignmentHasFinished == False:
+        if self.currentExecutionOfAlignmentHasFinished is False:
             self.progressbarAlignment.pulse()
             return True
         return False
@@ -1565,7 +1565,7 @@ class UImodelization:
             self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]".format(id_message)))
             return
 
-        if aligned == False:  # Copy the entire raw message
+        if aligned is False:  # Copy the entire raw message
             self.netzob.clipboard.set_text(message.getStringData(), -1)
         elif field == None:  # Copy the entire aligned message
             self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)), -1)
@@ -2909,7 +2909,7 @@ class UImodelization:
     #|   Computes if the progress bar must be updated or not
     #+----------------------------------------------
     def do_pulse_for_findSizeField(self):
-        if self.currentExecutionOfFindSizeFieldHasFinished == False:
+        if self.currentExecutionOfFindSizeFieldHasFinished is False:
             self.progressBarSizeField.pulse()
             return True
         return False

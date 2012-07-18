@@ -125,7 +125,7 @@ class NetzobPlugin(object):
             if sub in NetzobPlugin.instances:
                 try:
                     # We verify the plugin has not been rejected (by the PluginChecker)
-                    if getattr(sub.getLoadedInstance(), NetzobPlugin.PLUGIN_FLAG_REJECTED) == False:
+                    if getattr(sub.getLoadedInstance(), NetzobPlugin.PLUGIN_FLAG_REJECTED) is False:
                         plugins.append(sub.getLoadedInstance())
                 except Exception, e:
                     pass

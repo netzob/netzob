@@ -213,7 +213,7 @@ class SizeFieldIdentifier(object):
                         if resCnt != len(payloads[:l + 1]):
                             res = False
                             break
-                    if res == True:
+                    if res is True:
                         self.results.append([aField.getIndex(), key * 2, start, -1, end - 1, -1, "Found potential size field (col " + str(aField.getIndex()) + "[:" + str(key * 2) + "]) for an aggregation of data field (col " + str(start) + " to col " + str(end - 1) + ")"])
             start += 1
 

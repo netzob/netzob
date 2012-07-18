@@ -269,20 +269,20 @@ class FilterApplicationTable:
                 i = i + 1
 
             if len(col_data) > 0:
-                if in_segment == True and i == i_end:
+                if in_segment is True and i is i_end:
                     i_local_end = len(col_data)
                     segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
                     segment = ""
                     in_segment = False
-                elif in_segment == True:
+                elif in_segment is True:
                     # The segment closes in the next col
                     # first we close this one
                     i_local_end = i_col_data + 1
                     segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))
                     segment = ""
-                    in_segment == True
+                    in_segment is True
                     i_local_start = 0
-        if i == i_end and in_segment == True:
+        if i is i_end and in_segment is True:
             in_segment = False
             i_local_end = len(col_data) + 1
             segments.append((i_col, i_local_start, i_local_end, i_start, i_end, segment))

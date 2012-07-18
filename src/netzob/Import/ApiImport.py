@@ -259,7 +259,7 @@ class ApiImport:
             libPath = model.get_value(iter, 2)
             found = True
 
-        if found == False:
+        if found is False:
             self.log.error(_("The selected process cannot be find !"))
             return
 
