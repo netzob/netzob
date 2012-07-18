@@ -148,6 +148,7 @@ CMD_CLASS = {
 #| Activate Babel (i18n) if available
 #+----------------------------------------------------------------------------
 try:
+    import babel
     from babel.messages import frontend as babel
     from distutils.command.build import build
 
@@ -214,9 +215,17 @@ setup(
             pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
             ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
             xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin
+
+         [babel.extractors]
+            glade = resources.sdist.babel_extract:extract_glade
         """,
     # Files that should be scanned by Babel (if available)
     message_extractors={
-        'src': [('**.py', 'python', None)]
-        },
-    )
+        'src': [
+            ('**.py', 'python', None)
+        ],
+        'resources': [
+            ('**.glade', 'glade', None)
+        ]
+    },
+)
