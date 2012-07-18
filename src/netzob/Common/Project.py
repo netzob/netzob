@@ -47,6 +47,7 @@ from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.XSDResolver import XSDResolver
+from collections import OrderedDict
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -329,9 +330,25 @@ class Project(object):
 
     def getConfiguration(self):
         return self.configuration
-
-    def setID(self, id):
-        self.id = id
+    
+    def getProperties(self):
+        properties = OrderedDict()
+        properties['name']=self.getName()
+        properties['date']=self.getCreationDate()
+        properties['symbol']=len(self.getVocabulary().getSymbols())
+        properties['message']=len(self.getVocabulary().getMessages())
+        field=0
+        for sym in self.getVocabulary().getSymbols():
+            field=field+len(sym.getFields())
+        properties['field']=field
+        properties[ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT]=self.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        properties[ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE]=self.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
+        properties[ProjectConfiguration.VOCABULARY_GLOBAL_SIGN]=self.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_SIGN)
+        properties[ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS]=self.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_ENDIANESS)
+        return properties
+    
+    def setID(self, idproject):
+        self.id = idproject
 
     def setName(self, name):
         self.name = name

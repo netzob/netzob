@@ -56,8 +56,7 @@ from netzob.Common.Project import Project #me
 from netzob.Common import CommandLine
 from netzob.Common.Symbol import Symbol #me
 from netzob.Common.ProjectConfiguration import ProjectConfiguration #me
-import uuid  #me
-
+import uuid #me
 
 actualview="vocabulary"    #default view when load netzob
 
@@ -134,6 +133,7 @@ class NetzobGui(object):
                 self.builder = Gtk.Builder()
                 self.builder.add_from_file(self.ressourceglade+"/ui/gtk3-2.3.glade")
                 window = self.builder.get_object("window")
+                window.connect("delete_event",Gtk.main_quit)
                 window.show_all()
         except TypeError:
             Gtk.Window.__init__(self)
@@ -162,10 +162,6 @@ class NetzobGui(object):
         combobox.set_active(0)    #see the default view "vocabulary" on the button
         combobox.connect("changed",self.combobox_changed_cb)
     
-        #add 2 spreadsheet
-        self.addSpreadSheet("Hello", 0)
-        self.addSpreadSheet("ManualAjoutSymbol", 1)
-
         #[test]
         #switch project 3
         project3 = self.getCurrentWorkspace().getProjects()[2]
@@ -180,9 +176,11 @@ class NetzobGui(object):
         unselectallbutton.connect("clicked",self.button_unSelectAllSymbol_cb)
         
         #activate toggle button select symbol
-        cellrenderertoggle2 = self.builder.get_object("cellrenderertoggle2")  
-        cellrenderertoggle2.set_activatable(True)
-        cellrenderertoggle2.connect("toggled",self.toggle_selectSymbol_cb)
+        cellrenderertoggle = self.builder.get_object("cellrenderertoggle1")  
+        cellrenderertoggle.set_activatable(True)
+        cellrenderertoggle.connect("toggled",self.toggle_selectSymbol_cb)
+        treeviewtoggle = self.builder.get_object("treeview4")
+        treeviewtoggle.get_selection().set_mode(Gtk.SelectionMode.NONE)
         
         #create symbol
         createsymbolbutton = self.builder.get_object("toolbutton11")  
@@ -200,7 +198,41 @@ class NetzobGui(object):
         concatenatesymbolbutton = self.builder.get_object("Concatenate")
         concatenatesymbolbutton.connect("clicked",self.button_concatenateSymbol_cb)
         
+        #new window message
+        self.focus= None
+        
+        newview = self.builder.get_object("Message view")
+        newview.connect("clicked",self.button_newview_cb)
+
+        #treeview symbol list change message for focus window
+        symboltree = self.builder.get_object("treeview1")
+        selection = symboltree.get_selection()
+        selection.connect("changed",self.selectiontreeview_switchSymbol_cb)
+        #view more the symbol window
+        self.focus = self.addSpreadSheet("empty", 0)
+        self.focus.idsymbol = None
+        
+        
+        
+        
+        #[test] focus
+        '''
+        #label style
+        label = self.builder.get_object("label3")
+        #label.override_background_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 0, 0, 1))
+        
+        style = label.get_style_context().add_class("BACKGROUND")
+        style.set_background(Gdk.RGBA(0, 0, 0, 1))
+        label.modify_fg (Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 1, 0, 1))
+        
+        #gtk.STATE_NORMAL
+        #style.set_background_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 1, 0, 1))
+        #print "style: %s"%dir(style)
+        #focus ->header message ou dans le tableur
+        #doc.override_background_color(Gtk.StateFlags.NORMAL, Gdk.RGBA(0, 0, 0, 1))
+        '''
         #run
+        self.updateAll()
         self.refreshButton(False,False,False)
         self.startGui()
 
@@ -210,8 +242,10 @@ class NetzobGui(object):
     #+----------------------------------------------
     def updateAll(self):
         self.updateSymbolList()      
-            
-
+        self.refreshProjectProperties()
+        self.refreshSymbolProperties()
+        self.refreshMessageProperties()
+        self.refreshFieldProperties()
     #+----------------------------------------------
     #| Update the current panel
     #+----------------------------------------------
@@ -302,7 +336,7 @@ class NetzobGui(object):
         if not visible:
             widget.hide()
             
-    def addSpreadSheet(self,symbolname,position):
+    def addSpreadSheet(self,name,position):
         """
         Add an external spreadsheet on the builder 
         @type  box: string
@@ -316,10 +350,10 @@ class NetzobGui(object):
         """
         #create a new builder to extract the widget
         builder2 = Gtk.Builder()
-        builder2.add_from_file(self.ressourceglade+"/ui/gtk3-2.3.glade")
+        builder2.add_from_file(self.ressourceglade+"/ui/spreadsheet.glade")   
         #set the name of the symbol
         label = builder2.get_object("label1")
-        label.set_text(symbolname)
+        label.set_text(name)
         #add the spreadsheet to the main builder
         spreadsheet = builder2.get_object("spreadsheet")
         box = self.builder.get_object("box5")
@@ -327,8 +361,14 @@ class NetzobGui(object):
         box.reorder_child(spreadsheet, position) 
         #add the message for the treeview
         #add the close button
-        #todo
-
+        closebutton = builder2.get_object("button4")
+        closebutton.connect("clicked",self.button_closeview_cb,spreadsheet)
+        #focus
+        focusbutton = builder2.get_object("button1")
+        focusbutton.connect("clicked",self.button_focusview_cb,builder2)
+        
+        return builder2
+        
     def switchWidget(self,widget,newwidget):
         """
         @type  widget: string
@@ -399,9 +439,9 @@ class NetzobGui(object):
         liststore.set(i, 6, idsymb)
     
     #return true if the id is in selection list
-    def idInSelection(self,selection,id):
+    def idInSelection(self,selection,symbolid):
         for i in selection:
-            if (i==id):
+            if (i==symbolid):
                 return True
         return False
     
@@ -415,7 +455,7 @@ class NetzobGui(object):
         for s in liststore:
             s[0]= True
 
-        self.refreshButton(self.twoSymbolOrMoreSelect(),False,True)
+        self.refreshButton(self.twoSymbolOrMoreSelect(),self.oneSymbolSelect(),self.oneSymbolOrMoreSelect())
         
     def button_unSelectAllSymbol_cb(self,widget):
         """
@@ -476,8 +516,8 @@ class NetzobGui(object):
             dialog.destroy()
         if (result == 1):
             #cancel
-            dialog.destroy()        
-    
+            dialog.destroy()
+        
     #possible que si on selectionne un unique symbol
     def button_renameSymbol_cb(self,widget):
         symbol=self.giveOneSelectSymbol()
@@ -485,7 +525,7 @@ class NetzobGui(object):
         builder2.add_from_file(self.ressourceglade+"/ui/dialogbox.glade")
         dialog = builder2.get_object("renamesymbol")
         dialog.set_title("Rename the symbol "+symbol.getName())
-
+        
         #button apply
         applybutton = builder2.get_object("button10")
         applybutton.set_sensitive(False)
@@ -559,36 +599,40 @@ class NetzobGui(object):
     def toggle_selectSymbol_cb(self,widget,buttonid):
         liststore = self.builder.get_object("liststore1")
         liststore[buttonid][0] = not liststore[buttonid][0]
-        
+        #refresh view
         self.refreshButton(self.twoSymbolOrMoreSelect(),self.oneSymbolSelect(),self.oneSymbolOrMoreSelect())
 
         
     def button_deleteSymbol_cb(self,widget):
+        #delete symbol
         for sym in self.getSymbolSelect():
-            self.getCurrentProject().getVocabulary().removeSymbol(sym)
-            
+            vocabulary =self.getCurrentProject().getVocabulary()
+            for mess in sym.getMessages():
+                vocabulary.removeMessage(mess)
+            vocabulary.removeSymbol(sym)
+        #refresh view    
         self.updateAll()
         self.refreshButton(False,False,False)
-
         
     def button_concatenateSymbol_cb(self,widget):
+        #concat the message of all selected symbols
         symbols=self.getSymbolSelect()
         message=[]
         for sym in symbols:
             message.extend(sym.getMessages())
-        newSymbolName=symbols[0].getName()
-        newSymbolId = str(uuid.uuid4())
-        self.log.debug(_("a new symbol will be created with the given name : {0}").format(newSymbolName))
-        newSymbol = Symbol(newSymbolId, newSymbolName, self.getCurrentProject())
-        newSymbol.setMessages(message)
-        self.getCurrentProject().getVocabulary().addSymbol(newSymbol)
+        #give the message to the first symbol
+        concatSymbol=symbols[0]
+        concatSymbol.setMessages(message)
+        #delete all selected symbols
         for sym in symbols:
             self.getCurrentProject().getVocabulary().removeSymbol(sym)
+        #add the concatenate symbol
+        self.getCurrentProject().getVocabulary().addSymbol(concatSymbol)
+        #refresh view
         self.updateAll()
+        self.refreshButton(False,True,False)
         
-        self.refreshButton(False,False,False)
         
-    #refresh
     def refreshButton(self,concatenate,rename,delete):
         #refresh the rename button
         renamesymbolbutton = self.builder.get_object("Rename")
@@ -599,3 +643,63 @@ class NetzobGui(object):
         #refresh the concatenate button
         concatenatesymbolbutton = self.builder.get_object("Concatenate")
         concatenatesymbolbutton.set_sensitive(concatenate)
+        
+    def refreshProjectProperties(self):
+        liststore = self.builder.get_object("projectproperties")
+        liststore.clear()
+        properties = self.getCurrentProject().getProperties()
+        #too big
+        #line = liststore.append()
+        #liststore.set(line, 0, "workspace")
+        #liststore.set(line, 1, self.getCurrentWorkspace().getPath())
+        for key in properties:
+            line = liststore.append()
+            liststore.set(line, 0, key)
+            liststore.set(line, 1, str(properties[key]))
+            
+            
+    def refreshSymbolProperties(self):
+        pass
+    
+    
+    def refreshMessageProperties(self):
+        pass
+    
+    def refreshFieldProperties(self):
+        pass
+
+    def button_newview_cb(self,widget):
+        self.focus = self.addSpreadSheet("empty", 0)
+        self.focus.idsymbol=None
+        
+        
+    def button_closeview_cb(self,widget,spreadsheet):
+        spreadsheet.destroy()
+        
+        #refresh focus
+        if self.focus.get_object("spreadsheet") == spreadsheet :
+            self.focus = None
+            
+    def selectiontreeview_switchSymbol_cb(self,widget):
+        if self.focus != None :
+            model,itera = widget.get_selected()
+            row = model[itera]
+            self.focus.idsymbol = row[6]
+            #set the text for label
+            self.focus.get_object("label1").set_text(row[1])
+            #set field for treeview
+            '''
+            treemessage = self.focus.get_object("treemessage")
+            column = Gtk.TreeViewColumn('Column Title', Gtk.CellRenderer(), text=0)
+            treemessage.append_column(column)
+            #add the message to the store
+            messagestore = self.focus.get_object("liststoremessage")
+            for mess in self.getCurrentProject().getVocabulary().getMessages():
+                m = messagestore.append()
+                messagestore.set(m,0,mess)
+            '''    
+         
+        #reste a switcher les messages du treeview
+        
+    def button_focusview_cb(self,widget,builder):
+        self.focus = builder
