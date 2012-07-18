@@ -26,27 +26,38 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports                                                            |
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
 import logging
 import os
-pygtk.require('2.0')
 
 #+---------------------------------------------------------------------------+
-#| Local Imports                                                             |
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobInfoMessage, NetzobErrorMessage
+from netzob.Common.Plugins.Exporters.AbstractExporterController import AbstractExporterController
 from netzob_plugins.Exporters.PeachExporter.PeachExportView import PeachExportView
 from netzob_plugins.Exporters.PeachExporter.PeachExport import PeachExport
 
 
-class PeachExportController:
+class PeachExportController(AbstractExporterController):
     """PeachExportController:
             A controller liking the Peach export and its view in the netzob GUI.
     """
+
+    def run(self):
+        """run:
+            Show the plugin view.
+        """
+        self.view.dialog.show_all()
+        self.view.hideWarning()
+        self.update()
 
     def new(self):
         """new:
@@ -59,12 +70,13 @@ class PeachExportController:
                 Update the view. More precisely, it sets the symbol tree view which is its left part.
         """
         self.view.symbolTreeview.get_model().clear()
+        logging.debug("The current project is {0}".format(str(self.netzob.getCurrentProject())))
+        if self.netzob.getCurrentProject() is not None:
+            # Append an "Entire project" leaf to the tree view.
+            iter = self.view.symbolTreeview.get_model().append(None, ["-1", "{0} [{1}, {2}]".format(_("Entire project"), str(len(self.netzob.getCurrentProject().getVocabulary().getSymbols())), str(len(self.netzob.getCurrentProject().getVocabulary().getMessages()))), "0", '#000000', '#DEEEF0'])
 
-        # Append an "Entire project" leaf to the tree view.
-        iter = self.view.symbolTreeview.get_model().append(None, ["-1", "{0} [{1}, {2}]".format(_("Entire project"), str(len(self.netzob.getCurrentProject().getVocabulary().getSymbols())), str(len(self.netzob.getCurrentProject().getVocabulary().getMessages()))), "0", '#000000', '#DEEEF0'])
-
-        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
-            iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
+            for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+                iter = self.view.symbolTreeview.get_model().append(None, ["{0}".format(symbol.getID()), "{0} [{1}]".format(symbol.getName(), str(len(symbol.getMessages()))), "{0}".format(symbol.getScore()), '#000000', '#DEEEF0'])
 
     def clear(self):
         """clear:
@@ -86,7 +98,6 @@ class PeachExportController:
         self.model = PeachExport(netzob)
         self.view = PeachExportView()
         self.initCallbacks()
-        self.update()
         self.selectedSymbolID = -2
 
     def initCallbacks(self):

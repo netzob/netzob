@@ -26,20 +26,23 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports                                                            |
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import gtk
-import pygtk
-pygtk.require('2.0')
 
 #+---------------------------------------------------------------------------+
-#| Local Imports                                                             |
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Pango
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import NetzobLabel, NetzobComboBoxEntry
+from netzob.Common.Plugins.Exporters.AbstractExporterView import AbstractExporterView
 
 
-class PeachExportView:
+class PeachExportView(AbstractExporterView):
     """PeachExportView:
             GUI for exporting results in Peach pit XML.
     """
@@ -49,8 +52,7 @@ class PeachExportView:
         """
         self.buildPanel()
 
-        self.dialog = gtk.Dialog(title=_("Export project as Peach pit XML"), flags=0, buttons=None)
-        self.dialog.show()
+        self.dialog = Gtk.Dialog(title=_("Export project as Peach pit XML"), flags=0, buttons=None)
         self.dialog.vbox.pack_start(self.panel, True, True, 0)
         self.dialog.set_size_request(600, 400)
 
@@ -59,10 +61,10 @@ class PeachExportView:
                 Build and display the Peach exporter GUI.
         """
         # First we create a VPaned which hosts the two main children
-        self.panel = gtk.VPaned()
+        self.panel = Gtk.VPaned()
         self.panel.show()
 
-        self.hpanel = gtk.HPaned()
+        self.hpanel = Gtk.HPaned()
         self.hpanel.show()
 
         # Create the symbol selection treeview
@@ -70,13 +72,12 @@ class PeachExportView:
         self.hpanel.add1(self.symbolTreeviewScroll)
 
         # Create the hbox content in order to display dissector data
-        bottomFrame = gtk.Frame()
+        bottomFrame = Gtk.Frame()
         bottomFrame.show()
-        bottomFrame.set_size_request(450, -1)
+        bottomFrame.set_size_request(550, -1)
         self.hpanel.add2(bottomFrame)
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.textarea = gtk.TextView()
+        sw = Gtk.ScrolledWindow()
+        self.textarea = Gtk.TextView()
         self.textarea.get_buffer().create_tag("normalTag", family="Courier")
         self.textarea.show()
         self.textarea.set_editable(False)
@@ -98,30 +99,25 @@ class PeachExportView:
         # str : text (score)
         # str : color foreground
         # str : color background
-        self.treestore = gtk.TreeStore(str, str, str, str, str)
-        self.symbolTreeview = gtk.TreeView(self.treestore)
+        self.treestore = Gtk.TreeStore(str, str, str, str, str)
+        self.symbolTreeview = Gtk.TreeView(self.treestore)
+
+        renderer = Gtk.CellRendererText()
+        columnSymbols = Gtk.TreeViewColumn("Symbols", renderer, text=1)
+        self.symbolTreeview.append_column(columnSymbols)
 
         # Symbol list
-        self.symbolTreeviewScroll = gtk.ScrolledWindow()
-        self.symbolTreeviewScroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.symbolTreeviewScroll = Gtk.ScrolledWindow()
         self.symbolTreeviewScroll.show()
         self.symbolTreeviewScroll.add(self.symbolTreeview)
 
-        lvcolumn = gtk.TreeViewColumn(_("Symbols"))
-        lvcolumn.set_sort_column_id(1)
-        cell = gtk.CellRendererText()
-        lvcolumn.pack_start(cell, True)
-        cell.set_property('background-set', True)
-        cell.set_property('foreground-set', True)
-        lvcolumn.set_attributes(cell, text=1, foreground=3, background=4)
-        self.symbolTreeview.append_column(lvcolumn)
         self.symbolTreeview.show()
 
     def buildOptionsView(self):
         """buildOptionsView:
                 Build the options view (bottom of the main view). This view proposes some options to sharpen the fuzzing.
         """
-        self.optionsTable = gtk.Table(rows=1, columns=4, homogeneous=False)
+        self.optionsTable = Gtk.Table(rows=1, columns=4, homogeneous=False)
         self.optionsTable.show()
 
         label = NetzobLabel(_("Fuzzing based on : "))
@@ -129,14 +125,14 @@ class PeachExportView:
         self.comboFuzzingBase.append_text("Variable")
         self.comboFuzzingBase.append_text("Regex")
         self.comboFuzzingBase.set_active(0)
-        self.optionsTable.attach(label, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
-        self.optionsTable.attach(self.comboFuzzingBase, 1, 2, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        self.optionsTable.attach(label, 0, 1, 0, 1)
+        self.optionsTable.attach(self.comboFuzzingBase, 1, 2, 0, 1)
 
-        self.checkMutateStaticFields = gtk.CheckButton("Mutate static fields")
+        self.checkMutateStaticFields = Gtk.CheckButton("Mutate static fields")
         self.checkMutateStaticFields.show()
         self.checkMutateStaticFields.set_active(True)
-        self.optionsTable.attach(self.checkMutateStaticFields, 2, 3, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        self.optionsTable.attach(self.checkMutateStaticFields, 2, 3, 0, 1)
 
-        self.exportButton = gtk.Button("Export")
+        self.exportButton = Gtk.Button("Export")
         self.exportButton.show()
-        self.optionsTable.attach(self.exportButton, 3, 4, 0, 1, xoptions=gtk.FILL, yoptions=0, xpadding=2, ypadding=0)
+        self.optionsTable.attach(self.exportButton, 3, 4, 0, 1)

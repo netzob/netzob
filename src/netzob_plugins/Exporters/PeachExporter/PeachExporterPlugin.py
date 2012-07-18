@@ -26,7 +26,7 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports                                                            |
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
@@ -34,10 +34,14 @@ import uuid
 import random
 
 #+---------------------------------------------------------------------------+
-#| Local Imports                                                             |
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.ExporterPlugin import ExporterPlugin
-from netzob_plugins.Exporters.PeachExporter.EntryPoints.GlobalMenuEntryPoint import GlobalMenuEntryPoint
+from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
 from netzob_plugins.Exporters.PeachExporter.PeachExportController import PeachExportController
 
 
@@ -47,7 +51,7 @@ class PeachExporterPlugin(ExporterPlugin):
             Simplify the construction of a fuzzer with Peach.
     """
     __plugin_name__ = "PeachExporter"
-    __plugin_version__ = "0.1"
+    __plugin_version__ = "0.9"
     __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
     __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
 
@@ -58,7 +62,8 @@ class PeachExporterPlugin(ExporterPlugin):
                 @param netzob: the main netzob project.
         """
         ExporterPlugin.__init__(self, netzob)
-        self.entryPoints = [GlobalMenuEntryPoint(self.getNetzob())]
+        self.controller = PeachExportController(netzob)
+        self.entryPoints = [ExportMenuExtension(netzob, self.controller, "peachExporter", "Peach pit file")]
 
     def getName(self):
         """getName:
