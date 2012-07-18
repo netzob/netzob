@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="vocabularyActionGroup">
+    <child>
+      <object class="GtkAction" id="partitioningForce">
+        <property name="label" translatable="yes">Force Partitioning</property>
+        <property name="tooltip" translatable="yes">Use force partitioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-force</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="sequenceAlignment">
+        <property name="label" translatable="yes">Sequence Alignment</property>
+        <property name="tooltip" translatable="yes">Use sequence alignment on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-sequence</property>
+        <property name="is_important">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningSimple">
+        <property name="label" translatable="yes">Simple Partitioning</property>
+        <property name="tooltip" translatable="yes">Use simple partioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-simple</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningSmooth">
+        <property name="label" translatable="yes">Smooth Partitioning</property>
+        <property name="tooltip" translatable="yes">Use smooth partioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-smooth</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="partitioningFreeze">
+        <property name="label" translatable="yes">Freeze Partitioning</property>
+        <property name="tooltip" translatable="yes">Freeze the partitioning of selected symbol</property>
+        <property name="stock_id">netzob-partitioning-freeze</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningReset">
+        <property name="label" translatable="yes">Reset Partitioning</property>
+        <property name="tooltip" translatable="yes">Reset partitioning of selected symbol</property>
+        <property name="stock_id">netzob-partitioning-reset</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="concatField">
+        <property name="label" translatable="yes">Concatenate Fields</property>
+        <property name="tooltip" translatable="yes">Concatenate selected fields</property>
+        <property name="stock_id">netzob-concat-field</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="leftSplit">
+        <property name="label" translatable="yes">Left Split Field</property>
+        <property name="tooltip" translatable="yes">Left split selected field</property>
+        <property name="stock_id">netzob-edit-cut-left</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="rightSplit">
+        <property name="label" translatable="yes">Right Split Field</property>
+        <property name="tooltip" translatable="yes">Right split selected field</property>
+        <property name="stock_id">netzob-edit-cut-right</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createVariable">
+        <property name="label" translatable="yes">Create Variable…</property>
+        <property name="tooltip" translatable="yes">Create a new variable for selected field</property>
+        <property name="stock_id">netzob-create-variable</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="moveMessagesToOtherSymbol">
+        <property name="label" translatable="yes">Move to another symbol</property>
+        <property name="tooltip" translatable="yes">Move selected messages to another symbol</property>
+        <property name="stock_id">netzob-move-to-symbol</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="deleteMessages">
+        <property name="label" translatable="yes">Delete</property>
+        <property name="tooltip" translatable="yes">Delete selected message(s)</property>
+        <property name="stock_id">gtk-remove</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="searchText">
+        <property name="label" translatable="yes">Search Text</property>
+        <property name="tooltip" translatable="yes">Search a string in all messages of current symbol</property>
+        <property name="stock_id">gtk-find</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="environmentDep">
+        <property name="label" translatable="yes">Environment Dependencies</property>
+        <property name="tooltip" translatable="yes">Search environment dependencies for all message</property>
+        <property name="stock_id">netzob-search-environment-dep</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="messagesDistribution">
+        <property name="label" translatable="yes">Messages Distribution…</property>
+        <property name="stock_id">netzob-messages-distribution</property>
+        <property name="icon_name">Display messages distribution of current symbol</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="variableTable">
+        <property name="label" translatable="yes">Variable Table…</property>
+        <property name="stock_id">netzob-variable-table</property>
+        <property name="icon_name">Display variable table</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="fieldLimits">
+        <property name="label" translatable="yes">Field Limits</property>
+        <property name="tooltip" translatable="yes">Display min and max size of selected field</property>
+        <property name="stock_id">netzob-field-limit</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="importMessagesFromFile">
+        <property name="label" translatable="yes">Import messages from file</property>
+        <property name="short_label" translatable="yes">Import messages from file</property>
+        <property name="tooltip" translatable="yes">Import  messages from file</property>
+        <property name="stock_id">netzob-import-messages</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="captureMessages">
+        <property name="label" translatable="yes">Capture messages</property>
+        <property name="short_label" translatable="yes">Capture messages</property>
+        <property name="tooltip" translatable="yes">Capture messages</property>
+        <property name="stock_id">netzob-capture-messages</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="automaticToolMenu">
+        <property name="label" translatable="yes">Automatic Tool</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="manualToolMenu">
+        <property name="label" translatable="yes">Manual Tool</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="searchMenu">
+        <property name="label" translatable="yes">Search</property>
+      </object>
+    </child>
+  </object>
+</interface>

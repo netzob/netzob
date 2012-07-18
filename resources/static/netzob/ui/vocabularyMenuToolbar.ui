@@ -1,0 +1,61 @@
+<ui>
+  <menubar name="mainMenuBar">
+    <menu action="fileMenu">
+      <placeholder name="fileMenuAdditions">
+        <menuitem action="importMessagesFromFile" />
+        <menuitem action="captureMessages" />
+      </placeholder>
+    </menu>
+    <placeholder name="mainMenuBarAdditions">
+      <menu action="automaticToolMenu">
+        <menuitem action="sequenceAlignment" />
+        <menuitem action="partitioningForce" />
+        <menuitem action="partitioningSimple" />
+        <menuitem action="partitioningSmooth" />
+        <menuitem action="partitioningFreeze" />
+        <menuitem action="partitioningReset" />
+      </menu>
+      <menu action="manualToolMenu">
+        <menuitem action="concatField" />
+        <menuitem action="leftSplit" />
+        <menuitem action="rightSplit" />
+        <menuitem action="createVariable" />
+        <menuitem action="moveMessagesToOtherSymbol" />
+        <menuitem action="deleteMessages" />
+      </menu>
+      <menu action="searchMenu">
+        <menuitem action="searchText" />
+        <menuitem action="environmentDep" />
+        <menuitem action="messagesDistribution" />
+        <menuitem action="variableTable" />
+        <menuitem action="fieldLimits" />
+      </menu>
+    </placeholder>
+  </menubar>
+  <toolbar name="mainToolbar">
+    <placeholder name="mainToolbarAdditions">
+      <toolitem action="importMessagesFromFile" />
+      <toolitem action="captureMessages" />
+      <separator />
+      <toolitem action="sequenceAlignment" />
+      <toolitem action="partitioningForce" />
+      <toolitem action="partitioningSimple" />
+      <toolitem action="partitioningSmooth" />
+      <toolitem action="partitioningFreeze" />
+      <toolitem action="partitioningReset" />
+      <separator />
+      <toolitem action="concatField" />
+      <toolitem action="leftSplit" />
+      <toolitem action="rightSplit" />
+      <toolitem action="createVariable" />
+      <toolitem action="moveMessagesToOtherSymbol" />
+      <toolitem action="deleteMessages" />
+      <separator />
+      <toolitem action="searchText" />
+      <toolitem action="environmentDep" />
+      <toolitem action="messagesDistribution" />
+      <toolitem action="variableTable" />
+      <toolitem action="fieldLimits" />
+    </placeholder>
+  </toolbar>
+</ui>

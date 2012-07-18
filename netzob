@@ -78,9 +78,9 @@ if __name__ == "__main__":
     GObject.threads_init() # for handling concurrent GUI access from threads
 
     if commandLineParser.isStartGUIRequested():
-        import netzob.NetzobGui as NetzobGui
-        netzob = NetzobGui.NetzobGui(commandLineParser)
-        netzob.startGui()
+        from netzob.NetzobMainController import NetzobMainController
+        netzobController = NetzobMainController()
+        netzobController.run()
     elif commandLineParser.isManagePluginsRequested():
         from netzob.NetzobPluginManagement import NetzobPluginManagement
         netzobPluginManagement = NetzobPluginManagement(commandLineParser)

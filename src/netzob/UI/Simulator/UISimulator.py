@@ -396,6 +396,22 @@ class UISimulator:
         # Update the GUI
         self.refreshGUI(1)
 
+        self._actionGroup = Gtk.ActionGroup("simulatorActionGroup")
+
+    @property
+    def view(self):
+        return self
+
+    def getPanel(self):
+        return self.panel
+
+    def getActionGroup(self):
+        return self._actionGroup
+
+    # Return toolbar and menu
+    def getMenuToolbarUIDefinition(self):
+        return ""
+
     #+----------------------------------------------
     #| startSelectedActor:
     #| Starts the selected actor
@@ -576,6 +592,3 @@ class UISimulator:
 #            self.updateListOfActors()
 #            self.updateGUIForActor()
         pass
-
-    def getPanel(self):
-        return self.panel

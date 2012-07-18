@@ -214,6 +214,21 @@ class UIGrammarInference:
 #        self.xdotWidget.set_size_request(500, -1)
 
         self.rightPanel.add(self.xdotWidget)
+        self._actionGroup = Gtk.ActionGroup("grammarActionGroup")
+
+    @property
+    def view(self):
+        return self
+
+    def getPanel(self):
+        return self.panel
+
+    def getActionGroup(self):
+        return self._actionGroup
+
+    # Return toolbar and menu
+    def getMenuToolbarUIDefinition(self):
+        return ""
 
     #+-----------------------------------------------------------------------+
     #| createTransition:
