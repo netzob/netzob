@@ -113,7 +113,7 @@ class TreePropertiesGenerator(AbstractViewGenerator):
     #+----------------------------------------------
     def update(self, message):
         self.treestore.clear()
-        if message == None:
+        if message is None:
             return
 
         for property in message.getProperties():

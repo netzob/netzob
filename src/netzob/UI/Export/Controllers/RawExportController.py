@@ -88,12 +88,12 @@ class RawExportController:
                 self.showXMLDefinition(symbolID)
 
     def showXMLDefinition(self, symbolID):
-        if symbolID == None:
+        if symbolID is None:
             self.log.debug(_("No selected symbol"))
             self.view.textarea.get_buffer().set_text(_("Select a symbol to see its XML definition"))
         else:
             xmlDefinition = self.model.getXMLDefinition(symbolID)
-            if xmlDefinition != None:
+            if xmlDefinition is not None:
                 self.view.textarea.get_buffer().set_text("")
                 self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), xmlDefinition, "normalTag")
             else:

@@ -64,15 +64,15 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     pathOfTraces = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}traces").text
 
     pathOfLogging = None
-    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text) > 0:
+    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging") is not None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text is not None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text) > 0:
         pathOfLogging = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}logging").text
 
     pathOfPrototypes = None
-    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes") != None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text != None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text) > 0:
+    if xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes") is not None and xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text is not None and len(xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text) > 0:
         pathOfPrototypes = xmlWorkspaceConfig.find("{" + WORKSPACE_NAMESPACE + "}prototypes").text
 
     lastProject = None
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None:
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") is not None:
         xmlProjects = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects")
         if xmlProjects.get("last", "none") != "none":
             lastProject = xmlProjects.get("last", "none")
@@ -81,19 +81,19 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
     workspace = Workspace(wsName, wsCreationDate, workspacePath, pathOfTraces, pathOfLogging, pathOfPrototypes)
 
     # Load the already imported traces
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") != None:
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces") is not None:
         xmlTraces = xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}traces")
         for xmlTrace in xmlTraces.findall("{" + WORKSPACE_NAMESPACE + "}trace"):
             trace = ImportedTrace.loadTrace(xmlTrace, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, "0.1", workspace.getPathOfTraces())
-            if trace != None:
+            if trace is not None:
                 workspace.addImportedTrace(trace)
 
     # Reference the projects
-    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") != None:
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}projects") is not None:
         for xmlProject in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}projects/{" + WORKSPACE_NAMESPACE + "}project"):
             project_path = xmlProject.get("path")
             workspace.referenceProject(project_path)
-            if project_path == lastProject and lastProject != None:
+            if project_path == lastProject and lastProject is not None:
                 workspace.referenceLastProject(lastProject)
 
     return workspace
@@ -132,7 +132,7 @@ class Workspace(object):
         for project_path in self.getProjectsPath():
             from netzob.Common.Project import Project
             projectName = Project.getNameOfProject(self, project_path)
-            if projectName != None:
+            if projectName is not None:
                 nameOfProjects.append((projectName, project_path))
         return nameOfProjects
 
@@ -141,12 +141,12 @@ class Workspace(object):
         for project_path in self.getProjectsPath():
             from netzob.Common.Project import Project
             project = Project.loadProject(self, project_path)
-            if project != None:
+            if project is not None:
                 projects.append(project)
         return projects
 
     def getLastProject(self):
-        if self.lastProjectPath == None:
+        if self.lastProjectPath is None:
             return None
 
         from netzob.Common.Project import Project
@@ -259,7 +259,7 @@ class Workspace(object):
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
-        if workspaceFile == None:
+        if workspaceFile is None:
             logging.warn("The workspace's configuration file can't be find (No workspace path given).")
             return None
         # is the workspaceFile is a file
@@ -280,7 +280,7 @@ class Workspace(object):
                 logging.debug("The file " + str(xmlSchemaPath) + " validates the workspace configuration file.")
                 parsingFunc = Workspace.WORKSPACE_SCHEMAS[xmlSchemaFile]
                 workspace = parsingFunc(workspacePath, workspaceFile)
-                if workspace != None:
+                if workspace is not None:
                     return workspace
             else:
                 logging.fatal("The specified Workspace file is not valid according to the XSD found in %s." % (xmlSchemaPath))
@@ -302,7 +302,7 @@ class Workspace(object):
         schemaContent = schemaF.read()
         schemaF.close()
 
-        if schemaContent == None or len(schemaContent) == 0:
+        if schemaContent is None or len(schemaContent) == 0:
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
 

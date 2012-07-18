@@ -86,7 +86,7 @@ class GrammarInferer(threading.Thread):
         return self.hypotheticalAutomaton
 
     def getSubmitedQueries(self):
-        if self.learner != None:
+        if self.learner is not None:
             return self.learner.getSubmitedQueries()
         return []
 
@@ -942,7 +942,7 @@ class GrammarInferer(threading.Thread):
 
             if not self.active:
                 break
-            if counterExample == None:
+            if counterExample is None:
                 self.log.info("No counter-example were found !")
                 equivalent = True
             else:

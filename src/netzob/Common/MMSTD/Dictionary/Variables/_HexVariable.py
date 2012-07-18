@@ -57,7 +57,7 @@ class HexVariable(Variable):
         self.min = -1
         self.max = -1
         self.reset = "normal"
-        if self.value != None:
+        if self.value is not None:
             self.binValue = None
             #TypeConvertor.hex2bin(self.value, 'big')
             self.strValue = value
@@ -86,7 +86,7 @@ class HexVariable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
-        if self.binValue != None and not isForced:
+        if self.binValue is not None and not isForced:
             self.log.debug("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
             return indice + len(self.binValue)
 

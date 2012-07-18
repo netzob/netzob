@@ -126,9 +126,9 @@ class ImportFileChooserDialog(object):
         # Memorize user choice if it is not the default choice
         if pluginText is not None and \
                 ((pluginText != self.importTypeUserChoice and
-                 self.importTypeUserChoice != None) or
+                 self.importTypeUserChoice is not None) or
                  (pluginText != self.pluginWithPriorityList[len(self.pluginWithPriorityList) - 1][1] and
-                 self.importTypeUserChoice == None)):
+                 self.importTypeUserChoice is None)):
             self.log.debug("Setting {0} as user choice".format(pluginText))
             self.importTypeUserChoice = pluginText
 

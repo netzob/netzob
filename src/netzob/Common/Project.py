@@ -71,19 +71,19 @@ def loadProject_0_1(projectFile):
     project = Project(projectID, projectName, projectCreationDate, projectPath)
 
     # Parse the configuration
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") != None:
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration") is not None:
         projectConfiguration = ProjectConfiguration.loadProjectConfiguration(xmlProject.find("{" + PROJECT_NAMESPACE + "}configuration"), PROJECT_NAMESPACE, "0.1")
         project.setConfiguration(projectConfiguration)
 
     # Parse the vocabulary
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") != None:
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary") is not None:
         projectVocabulary = Vocabulary.loadVocabulary(xmlProject.find("{" + PROJECT_NAMESPACE + "}vocabulary"), PROJECT_NAMESPACE, COMMON_NAMESPACE, "0.1", project)
         project.setVocabulary(projectVocabulary)
 
     # Parse the grammar
-    if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") != None:
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar") is not None:
         projectGrammar = Grammar.loadGrammar(xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar"), projectVocabulary, PROJECT_NAMESPACE, "0.1")
-        if projectGrammar != None:
+        if projectGrammar is not None:
             project.setGrammar(projectGrammar)
 
     return project
@@ -136,7 +136,7 @@ class Project(object):
         # Save the vocabulary in it
         self.getVocabulary().save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
         # Save the grammar in it
-        if self.getGrammar() != None:
+        if self.getGrammar() is not None:
             self.getGrammar().save(root, PROJECT_NAMESPACE)
         return root
 
@@ -197,7 +197,7 @@ class Project(object):
         projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
-        if projectFile == None:
+        if projectFile is None:
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
@@ -223,7 +223,7 @@ class Project(object):
 
                 projectName = xmlProject.get('name', 'none')
 
-                if projectName != None and projectName != 'none':
+                if projectName is not None and projectName != 'none':
                     return projectName
             else:
                 logging.warn("The project declared in file (" + projectFile + ") is not valid")
@@ -234,7 +234,7 @@ class Project(object):
         projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
-        if projectFile == None:
+        if projectFile is None:
             return None
         # is the projectFile is a file
         if not os.path.isfile(projectFile):
@@ -253,7 +253,7 @@ class Project(object):
                 logging.debug("The file " + str(projectFile) + " validates the project configuration file.")
                 parsingFunc = Project.PROJECT_SCHEMAS[xmlSchemaFile]
                 project = parsingFunc(projectFile)
-                if project != None:
+                if project is not None:
                     logging.info("Loading project '" + str(project.getName()) + "' from workspace.")
                     return project
             else:
@@ -275,7 +275,7 @@ class Project(object):
         schemaContent = schemaF.read()
         schemaF.close()
 
-        if schemaContent == None or len(schemaContent) == 0:
+        if schemaContent is None or len(schemaContent) == 0:
             logging.warn("Impossible to read the schema file (no content found in it)")
             return False
 

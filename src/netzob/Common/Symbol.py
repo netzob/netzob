@@ -382,7 +382,7 @@ class Symbol(AbstractSymbol):
             elif field.getIndex() == iField + 1:
                 field2 = field
 
-        if field1 == None or field2 == None:
+        if field1 is None or field2 is None:
             return 0
 
         # Build the merged regex
@@ -479,13 +479,13 @@ class Symbol(AbstractSymbol):
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
-        if field.getDescription() != None and len(field.getDescription()) > 0:
+        if field.getDescription() is not None and len(field.getDescription()) > 0:
             field1.setDescription("(1/2) " + field.getDescription())
         field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2)
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
         field2.setColor(field.getColor())
-        if field.getDescription() != None and len(field.getDescription()) > 0:
+        if field.getDescription() is not None and len(field.getDescription()) > 0:
             field2.setDescription("(2/2) " + field.getDescription())
 
         # Remove the truncated one
@@ -632,14 +632,14 @@ class Symbol(AbstractSymbol):
 #                fieldIndex = model.get_value(it, 0)
 #                dataType = model.get_value(it, 1)
 #                treeviewTarget.get_column(0).set_title("Field " + str(fieldIndex))
-#                if self.butDataCarvingHandle != None:
+#                if self.butDataCarvingHandle is not None:
 #                    but.disconnect(self.butDataCarvingHandle)
 #                self.butDataCarvingHandle = but.connect("clicked", self.applyDataType_cb, fieldIndex, dataType)
 #                for cell in self.getCellsByField(self.getFieldByIndex(fieldIndex)):
 #                    cell = glib.markup_escape_text(TypeConvertor.netzobRawToString(cell))
 #                    segments = []
 #                    for match in infoCarvers[dataType].finditer(cell):
-#                        if match == None:
+#                        if match is None:
 #                            treeviewTarget.get_model().append([cell])
 #                        segments.append((match.start(0), match.end(0)))
 #
@@ -751,7 +751,7 @@ class Symbol(AbstractSymbol):
                 envType = model.get_value(it, 2)
                 envValue = model.get_value(it, 3)
                 treeviewTarget.get_column(0).set_title(_("Field {0}").format(str(field.getIndex())))
-                if self.butDataCarvingHandle != None:
+                if self.butDataCarvingHandle is not None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getCellsByField(field):
@@ -885,7 +885,7 @@ class Symbol(AbstractSymbol):
                 envType = model.get_value(it, 2)
                 envValue = model.get_value(it, 3)
                 treeviewTarget.get_column(0).set_title(_("Field {0}").format(str(field.getIndex())))
-                if self.butDataCarvingHandle != None:
+                if self.butDataCarvingHandle is not None:
                     but.disconnect(self.butDataCarvingHandle)
                 self.butDataCarvingHandle = but.connect("clicked", self.applyDependency_cb, field, envName)
                 for cell in self.getCellsByField(field):
@@ -902,7 +902,7 @@ class Symbol(AbstractSymbol):
         result = []
         for field in self.getFields():
             if not field.isStatic():
-                if field.getVariable() != None:
+                if field.getVariable() is not None:
                     result.append(field.getVariable())
         return result
 
@@ -921,7 +921,7 @@ class Symbol(AbstractSymbol):
         self.messages.append(message)
 
     def addField(self, field, index=None):
-        if index == None:
+        if index is None:
             self.fields.append(field)
         else:
             self.fields.insert(index, field)
@@ -935,7 +935,7 @@ class Symbol(AbstractSymbol):
             self.fields.pop()
 
     def popField(self, index=None):
-        if index == None:
+        if index is None:
             self.fields.pop()
         else:
             self.fields.pop(index)
@@ -950,19 +950,19 @@ class Symbol(AbstractSymbol):
         xmlSymbol.set("rawDelimiter", str(self.getRawDelimiter()))
 
         # Interpretation attributes
-        if self.getFormat() != None:
+        if self.getFormat() is not None:
             xmlSymbolFormat = etree.SubElement(xmlSymbol, "{" + namespace_project + "}format")
             xmlSymbolFormat.text = str(self.getFormat())
 
-        if self.getUnitSize() != None:
+        if self.getUnitSize() is not None:
             xmlSymbolUnitSize = etree.SubElement(xmlSymbol, "{" + namespace_project + "}unitsize")
             xmlSymbolUnitSize.text = str(self.getUnitSize())
 
-        if self.getSign() != None:
+        if self.getSign() is not None:
             xmlSymbolSign = etree.SubElement(xmlSymbol, "{" + namespace_project + "}sign")
             xmlSymbolSign.text = str(self.getSign())
 
-        if self.getEndianess() != None:
+        if self.getEndianess() is not None:
             xmlSymbolEndianess = etree.SubElement(xmlSymbol, "{" + namespace_project + "}endianess")
             xmlSymbolEndianess.text = str(self.getEndianess())
 
@@ -1018,7 +1018,7 @@ class Symbol(AbstractSymbol):
             result += field.getName()
 
             # Description
-            if field.getDescription() != None and field.getDescription() != "":
+            if field.getDescription() is not None and field.getDescription() != "":
                 result += " (" + field.getDescription() + ") "
             result += " : "
             result += "\t"
@@ -1148,7 +1148,7 @@ class Symbol(AbstractSymbol):
         # We create an aggregate of all the fields
         rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
         for field in self.getFields():
-            if field.getVariable() == None:
+            if field.getVariable() is None:
                 variable = field.getDefaultVariable(self)
             else:
                 variable = field.getVariable()
@@ -1255,7 +1255,7 @@ class Symbol(AbstractSymbol):
         return str(self.getName())
 
     def __cmp__(self, other):
-        if other == None:
+        if other is None:
             return 1
         try:
             if self.getID() == other.getID():
@@ -1287,38 +1287,38 @@ class Symbol(AbstractSymbol):
             symbol.setRawDelimiter(rawDelimiter)
 
             # Interpretation attributes
-            if xmlRoot.find("{" + namespace_project + "}format") != None:
+            if xmlRoot.find("{" + namespace_project + "}format") is not None:
                 symbol_format = xmlRoot.find("{" + namespace_project + "}format").text
                 symbol.setFormat(symbol_format)
 
-            if xmlRoot.find("{" + namespace_project + "}unitsize") != None:
+            if xmlRoot.find("{" + namespace_project + "}unitsize") is not None:
                 symbol_unitsize = xmlRoot.find("{" + namespace_project + "}unitsize").text
                 symbol.setUnitSize(symbol_unitsize)
 
-            if xmlRoot.find("{" + namespace_project + "}sign") != None:
+            if xmlRoot.find("{" + namespace_project + "}sign") is not None:
                 symbol_sign = xmlRoot.find("{" + namespace_project + "}sign").text
                 symbol.setSign(symbol_sign)
 
-            if xmlRoot.find("{" + namespace_project + "}endianess") != None:
+            if xmlRoot.find("{" + namespace_project + "}endianess") is not None:
                 symbol_endianess = xmlRoot.find("{" + namespace_project + "}endianess").text
                 symbol.setEndianess(symbol_endianess)
 
             # we parse the messages
-            if xmlRoot.find("{" + namespace_project + "}messages-ref") != None:
+            if xmlRoot.find("{" + namespace_project + "}messages-ref") is not None:
                 xmlMessages = xmlRoot.find("{" + namespace_project + "}messages-ref")
                 for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
                     id = xmlMessage.get("id")
                     message = poolOfMessages.getMessageByID(id)
-                    if message != None:
+                    if message is not None:
                         message.setSymbol(symbol)
                         symbol.addMessage(message)
 
             # we parse the fields
-            if xmlRoot.find("{" + namespace_project + "}fields") != None:
+            if xmlRoot.find("{" + namespace_project + "}fields") is not None:
                 xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
                 for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
                     field = Field.loadFromXML(xmlField, namespace_project, version)
-                    if field != None:
+                    if field is not None:
                         symbol.addField(field)
 
             return symbol

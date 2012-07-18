@@ -109,7 +109,7 @@ class UISimulator:
         label_actorName.show()
         self.entry_actorName = Gtk.Entry()
 
-        if config.get("simulating", "actorName") != None:
+        if config.get("simulating", "actorName") is not None:
             self.entry_actorName.set_text(config.get("simulating", "actorName"))
         else:
             self.entry_actorName.set_text("")
@@ -173,7 +173,7 @@ class UISimulator:
         label_IP = Gtk.Label(label=_("IP:"))
         label_IP.show()
         self.entry_IP = Gtk.Entry()
-        if (config.get("simulating", "ip") != None):
+        if (config.get("simulating", "ip") is not None):
             self.entry_IP.set_text(config.get("simulating", "ip"))
         else:
             self.entry_IP.set_text("")
@@ -195,7 +195,7 @@ class UISimulator:
         label_Port.show()
         self.entry_Port = Gtk.Entry()
 
-        if (config.getInt("simulating", "port") != None):
+        if (config.getInt("simulating", "port") is not None):
             self.entry_Port.set_text(str(config.getInt("simulating", "port")))
         else:
             self.entry_Port.set_text("")
@@ -401,7 +401,7 @@ class UISimulator:
     #| Starts the selected actor
     #+----------------------------------------------
     def startSelectedActor(self, widget):
-        if self.selectedActor == None:
+        if self.selectedActor is None:
             return
 
         self.log.info(_("Start the actor {0}").format(self.selectedActor.getName()))
@@ -412,7 +412,7 @@ class UISimulator:
     #| Stops the selected actor
     #+----------------------------------------------
     def stopSelectedActor(self, widget):
-        if self.selectedActor == None:
+        if self.selectedActor is None:
             return
 
         self.log.info(_("Stop the actor {0}").format(self.selectedActor.getName()))
@@ -423,7 +423,7 @@ class UISimulator:
     #| Delete the selected actor (if stopped)
     #+----------------------------------------------
     def deleteSelectedActor(self, widget):
-        if self.selectedActor == None:
+        if self.selectedActor is None:
             return
 
         if self.selectedActor.isActive():
@@ -502,7 +502,7 @@ class UISimulator:
                     treestoreActor = self.treestore_listActiveActors.get_iter(line.path)
                     found = True
 
-            if treestoreActor == None:
+            if treestoreActor is None:
                 treestoreActor = self.treestore_listActiveActors.append(None, [actor.getName(), "type"])
 
             # Retrieve generates instances by the communication channel
@@ -538,7 +538,7 @@ class UISimulator:
                 if instance.getName() == actorName:
                     self.selectedActor = instance
 
-        if self.selectedActor == None:
+        if self.selectedActor is None:
             self.log.warn(_("Impossible to retrieve the requested actor"))
             return
 
@@ -546,7 +546,7 @@ class UISimulator:
         self.updateGUIForActor()
 
     def updateGUIForActor(self):
-        if self.selectedActor == None:
+        if self.selectedActor is None:
             return
 
         # First we display its model

@@ -444,7 +444,7 @@ class TypeConvertor():
     def serializeSymbol(symbol, unitSize):
         serialSymbol = ""
         format = ""
-        if symbol.getAlignment() != None and symbol.getAlignment() != "":
+        if symbol.getAlignment() is not None and symbol.getAlignment() != "":
             format += "1" + "G"
             messageTmp = ""
             alignmentTmp = ""

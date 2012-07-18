@@ -75,7 +75,7 @@ class MMSTDVisitor(threading.Thread):
         currentState = self.model.getInitialState()
         while self.active:
             currentState = currentState.executeAsMaster(self.abstractionLayer)
-            if currentState == None:
+            if currentState is None:
                 self.active = False
         self.log.debug("The MASTER stops !")
 
@@ -86,7 +86,7 @@ class MMSTDVisitor(threading.Thread):
         while self.active:
             self.log.debug("Run as a client the state " + str(currentState.getName()))
             currentState = currentState.executeAsClient(self.abstractionLayer)
-            if currentState == None:
+            if currentState is None:
                 self.log.warn("The execution of the transition didn't provide the next state")
                 self.active = False
         self.log.debug("The CLIENT stops !")

@@ -84,7 +84,7 @@ class AutomaticGrammarAbstractionView(object):
 
             # We apply the session on current automata and find an output symbol to include
             difference = self.applySession(session)
-            while difference != None:
+            while difference is not None:
                 (transition, outputSymbol) = difference
                 self.log.debug(_("A difference has been found, symbol %s must be added to transition %s") % (outputSymbol.getName(), transition.getName()))
                 self.addOutputSymbolOnTransition(outputSymbol, transition)
@@ -117,7 +117,7 @@ class AutomaticGrammarAbstractionView(object):
 
         self.log.debug(_("automata : %s") % automata.getDotCode())
 
-        if automata == None:
+        if automata is None:
             self.log.warn(_("Cannot apply a session on the current automata because it doesn't exist"))
             return None
 
@@ -149,7 +149,7 @@ class AutomaticGrammarAbstractionView(object):
                     if transition.getInputSymbol() == symbol:
                         currentTransition = transition
                         break
-                if currentTransition == None:
+                if currentTransition is None:
                     self.log.warn(_("Input symbol %s doesn't match any existing transition in current state %s") % (symbol.getName(), currentState.getName()))
                     self.log.warn(_("We forget this message."))
                 else:

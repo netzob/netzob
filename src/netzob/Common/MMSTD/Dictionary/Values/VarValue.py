@@ -68,7 +68,7 @@ class VarValue(AbstractValue):
 
         (binvalue, strvalue) = self.variable.getValue(negative, dictionary)
 
-        if binvalue == None or self.resetCondition == "force":
+        if binvalue is None or self.resetCondition == "force":
             # We execute the learning process
             self.log.debug("Variable " + self.variable.getName() + " will be learnt from input. (" + str(indice) + ")")
 
@@ -90,7 +90,7 @@ class VarValue(AbstractValue):
 
     def send(self, negative, dictionary):
         (val, strval) = self.variable.getValue(negative, dictionary)
-        if val == None or self.resetCondition == "force":
+        if val is None or self.resetCondition == "force":
             self.variable.generateValue(negative, dictionary)
             (val, strval) = self.variable.getValue(negative, dictionary)
 

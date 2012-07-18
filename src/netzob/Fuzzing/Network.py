@@ -63,7 +63,7 @@ class Network:
     def kill(self):
 #        os.popen("sudo iptables -D OUTPUT -p tcp --dport 80  -j NFQUEUE 2>&1 > /dev/null")
 #        os.popen("sudo iptables -D OUTPUT -p tcp --sport 80  -j NFQUEUE 2>&1 > /dev/null")
-        if self.aFuzzThread != None and self.aFuzzThread.isAlive():
+        if self.aFuzzThread is not None and self.aFuzzThread.isAlive():
             self.aFuzzThread._Thread__stop()
 
     def save(self):

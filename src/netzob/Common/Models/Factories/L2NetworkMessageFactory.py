@@ -83,7 +83,7 @@ class L2NetworkMessageFactory(object):
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob-common:L2NetworkMessage":
             raise NameError("The parsed xml doesn't represent a Network message.")
         # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") == None or rootElement.find("{" + namespace + "}data").text == None or not rootElement.find("{" + namespace + "}data").text:
+        if rootElement.find("{" + namespace + "}data") is None or rootElement.find("{" + namespace + "}data").text is None or not rootElement.find("{" + namespace + "}data").text:
             raise NameError("The parsed message has no data specified")
         # Parse the data field and transform it into a byte array
         msg_data = bytearray(rootElement.find("{" + namespace + "}data").text)

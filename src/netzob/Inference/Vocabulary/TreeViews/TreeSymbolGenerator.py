@@ -103,7 +103,7 @@ class TreeSymbolGenerator(AbstractViewGenerator):
         # We retrieve the current project
         project = self.netzob.getCurrentProject()
 
-        if project != None:
+        if project is not None:
             # We retrieve the vocabulary of the project
             vocabulary = project.getVocabulary()
 
@@ -123,11 +123,11 @@ class TreeSymbolGenerator(AbstractViewGenerator):
                 symbolName = symbolName + " (" + str(len(symbol.getMessages())) + ")"
                 symbolEntry = [str(symbol.getID()), symbolName, str(symbol.getScore()), '#000000', '#DEEEF0']
                 symbolIter = self.treestore.append(None, symbolEntry)
-                if selectedSymbol != None and str(symbol.getID()) == str(selectedSymbol.getID()):
+                if selectedSymbol is not None and str(symbol.getID()) == str(selectedSymbol.getID()):
                     toSelectEntry = symbolIter
 
             # if a selection entry has been found, we highlight it
-            if toSelectEntry != None:
+            if toSelectEntry is not None:
                 self.treeview.get_selection().select_iter(toSelectEntry)
 
     #+----------------------------------------------

@@ -199,7 +199,7 @@ class ThirdPartyImport(AbstractImporter):
             iter = treeview.get_model().get_iter(path)
             idMessage = str(treeview.get_model().get_value(iter, 0))
 
-        if idMessage == None:
+        if idMessage is None:
             return
 
         # Search for the selected message
@@ -208,7 +208,7 @@ class ThirdPartyImport(AbstractImporter):
             if str(message.getID()) == idMessage:
                 selectedMessage = message
 
-        if selectedMessage == None:
+        if selectedMessage is None:
             self.log.warn(_("Impossible to retrieve the message the user clicked on. Hum ?"))
             return
 
@@ -222,7 +222,7 @@ class ThirdPartyImport(AbstractImporter):
         strPaths = entryPath.get_text().split(";")
         for strPath in strPaths:
             filename = unicode(strPath, "utf-8")
-            if filename != None and filename != "" and os.path.isfile(filename):
+            if filename is not None and filename != "" and os.path.isfile(filename):
                 filesToBeImported.append(filename)
             else:
                 logging.warning(
@@ -231,7 +231,7 @@ class ThirdPartyImport(AbstractImporter):
         # Start to load
         parsedMessages = self.loadMessagesFromPlugin(self.thirdPartyStore.get_active_text(), filesToBeImported)
 
-        if parsedMessages == None:
+        if parsedMessages is None:
             logging.warning(_("Impossible to find a plugin to import data from."))
         else:
             logging.debug(_("A number of {0} messages were extracted.").format(len(parsedMessages)))
@@ -298,7 +298,7 @@ class ThirdPartyImport(AbstractImporter):
         if res == Gtk.ResponseType.OK:
             for filename in chooser.get_filenames():
                 filename = unicode(filename, "utf-8")
-                if filename != None and filename != "" and os.path.isfile(filename):
+                if filename is not None and filename != "" and os.path.isfile(filename):
                     filesToBeImported.append(filename)
         chooser.destroy()
 

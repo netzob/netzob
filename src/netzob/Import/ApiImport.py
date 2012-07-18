@@ -232,7 +232,7 @@ class ApiImport:
             if process.getPid() == pid:
                 self.selectedProcess = process
 
-        if self.selectedProcess != None:
+        if self.selectedProcess is not None:
             libs = self.selectedProcess.getSharedLibs()
             self.dllTreeview.get_model().clear()
             for lib in libs:
@@ -276,10 +276,10 @@ class ApiImport:
     #| Called when user select a prototype
     #+----------------------------------------------
     def prototypeSelected_cb(self, widget):
-        if self.selectedProcess == None:
+        if self.selectedProcess is None:
             self.log.warning(_("You have to select a process if you want to capture it"))
             return
-        if self.selectedDLL == None:
+        if self.selectedDLL is None:
             self.log.warning(_("You have to select a DLL if you want to capture it"))
             return
 
@@ -291,7 +291,7 @@ class ApiImport:
             if function.getPrototype() == prototype:
                 self.selectedFunction = function
 
-        if self.selectedFunction == None:
+        if self.selectedFunction is None:
             self.log.error(_("Impossible to retrieve the selected function"))
         else:
             self.log.info(_("Selected function done!"))
@@ -300,13 +300,13 @@ class ApiImport:
     #| Called when launching sniffing process
     #+----------------------------------------------
     def startCaptureFunction(self, button):
-        if self.selectedProcess == None:
+        if self.selectedProcess is None:
             self.log.warning(_("You have to select a process if you want to capture it"))
             return
-        if self.selectedDLL == None:
+        if self.selectedDLL is None:
             self.log.warning(_("You have to select a DLL if you want to capture it"))
             return
-        if self.selectedFunction == None:
+        if self.selectedFunction is None:
             self.log.warning(_("You have to select a function if you want to capture it"))
             return
 
@@ -381,7 +381,7 @@ class ApiImport:
         self.log.debug(_("Stoping the capture..."))
 
         # We first stop the thread
-        if self.aSniffThread != None and self.aSniffThread.isAlive():
+        if self.aSniffThread is not None and self.aSniffThread.isAlive():
             self.aSniffThread._Thread__stop()
         self.aSniffThread = None
 

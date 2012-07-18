@@ -225,16 +225,16 @@ class Vocabulary(object):
             # Messages
             for xmlMessage in xmlRoot.findall("{" + namespace_project + "}messages/{" + namespace_common + "}message"):
                 message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
-                if message != None:
+                if message is not None:
                     vocabulary.addMessage(message)
             # Symbols
             for xmlSymbol in xmlRoot.findall("{" + namespace_project + "}symbols/{" + namespace_project + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace_project, namespace_common, version, project, vocabulary)
-                if symbol != None:
+                if symbol i not None:
                     vocabulary.addSymbol(symbol)
             # Sessions
             for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
                 session = Session.loadFromXML(xmlSession, namespace_project, namespace_common, version, vocabulary)
-                if session != None:
+                if session is not None:
                     vocabulary.addSession(session)
         return vocabulary

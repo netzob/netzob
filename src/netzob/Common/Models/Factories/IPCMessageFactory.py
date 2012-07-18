@@ -100,7 +100,7 @@ class IPCMessageFactory(object):
             raise NameError("The parsed xml doesn't represent an IPC message.")
 
         # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") == None or not rootElement.find("{" + namespace + "}data").text:
+        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
             raise NameError("The parsed message has no data specified")
 
         # Parse the data field and transform it into a byte array

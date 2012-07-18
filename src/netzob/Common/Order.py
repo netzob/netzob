@@ -91,11 +91,11 @@ class Order(object):
 
             order = Order(order_value)
 
-            if xmlRoot.find("{" + namespace + "}msg-ref") != None:
+            if xmlRoot.find("{" + namespace + "}msg-ref") is not None:
                 for xmlMsg in xmlRoot.findall("{" + namespace + "}msg-ref"):
                     msgID = str(xmlMsg.text)
                     msg = vocabulary.getMessageByID(msgID)
-                    if msg == None:
+                    if msg is None:
                         logging.warn("Impossible to retrieve the message with ID " + str(msgID))
                     else:
                         order.addMessage(msg)

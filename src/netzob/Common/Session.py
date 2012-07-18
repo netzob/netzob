@@ -80,9 +80,9 @@ class Session(object):
     def save(self, root, namespace_main, namespace_common):
         xmlSession = etree.SubElement(root, "{" + namespace_common + "}session")
         xmlSession.set("id", str(self.getID()))
-        if self.getName() != None:
+        if self.getName() is not None:
             xmlSession.set("name", str(self.getName()))
-        if self.getDescription() != None:
+        if self.getDescription() is not None:
             xmlSession.set("description", str(self.getDescription()))
 
         xmlMessagesRef = etree.SubElement(xmlSession, "{" + namespace_common + "}messages-ref")
@@ -102,12 +102,12 @@ class Session(object):
 
             session = Session(id, name, description)
 
-            if xmlRoot.find("{" + namespace_common + "}messages-ref") != None:
+            if xmlRoot.find("{" + namespace_common + "}messages-ref") is not None:
                 xmlMessages = xmlRoot.find("{" + namespace_common + "}messages-ref")
                 for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message-ref"):
                     id = xmlMessage.get("id")
                     message = poolOfMessages.getMessageByID(id)
-                    if message != None:
+                    if message is not None:
                         message.setSession(session)
                         session.addMessage(message)
             return session

@@ -79,7 +79,7 @@ class MQCache():
         symbols = []
         for mqSymbol in mqSymbols:
             symbol = vocabulary.getSymbolByName(mqSymbol)
-            if symbol != None:
+            if symbol is not None:
                 symbols.append(symbol)
         mq = MembershipQuery(symbols)
 
@@ -88,7 +88,7 @@ class MQCache():
         symbolsResult = []
         for t in tmp:
             symbol = vocabulary.getSymbolByName(t)
-            if symbol != None:
+            if symbol is not None:
                 symbolsResult.append(symbol)
         self.cacheResult(mq, symbolsResult)
 

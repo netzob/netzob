@@ -80,7 +80,7 @@ class NetzobGui(Gtk.Window):
             logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
 
-        if commandLineParser.getOptions().workspace == None:
+        if commandLineParser.getOptions().workspace is None:
             workspace = str(ResourcesConfiguration.getWorkspaceFile())
         else:
             workspace = commandLineParser.getOptions().workspace
@@ -91,7 +91,7 @@ class NetzobGui(Gtk.Window):
         self.currentWorkspace = (Workspace.loadWorkspace(workspace))
 
         # the semi-automatic loading of the workspace has failed (second attempt)
-        if self.currentWorkspace == None:
+        if self.currentWorkspace is None:
             # we force the creation (or specification) of the workspace
             if not ResourcesConfiguration.initializeResources(True):
                 logging.fatal("Error while configuring the resources of Netzob")
@@ -100,7 +100,7 @@ class NetzobGui(Gtk.Window):
             logging.debug("The workspace: {0}".format(str(workspace)))
             # loading the workspace
             self.currentWorkspace = (Workspace.loadWorkspace(workspace))
-            if self.currentWorkspace == None:
+            if self.currentWorkspace is None:
                 logging.fatal("Stopping the execution (no workspace computed)!")
                 sys.exit()
 
@@ -214,7 +214,7 @@ class NetzobGui(Gtk.Window):
     def evnmtDelete(self, widget, event, data=None):
         # Before exiting, we compute if its necessary to save
         # it means we simulate a save and compare the XML with the current one
-        if (self.getCurrentProject() != None and
+        if (self.getCurrentProject() is not None and
             self.getCurrentProject().hasPendingModifications(
                 self.getCurrentWorkspace())):
             self.offerToSaveCurrentProject()

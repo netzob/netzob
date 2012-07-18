@@ -48,7 +48,7 @@ class AboutDialog:
         about.set_program_name(release.appname)
         about.set_version(release.version)
         about.set_copyright(release.copyright)
-        if release.versionName != None:
+        if release.versionName is not None:
             about.set_comments("--{0}--\n{1}".format(release.versionName, release.description))
         else:
             about.set_comments(release.description)

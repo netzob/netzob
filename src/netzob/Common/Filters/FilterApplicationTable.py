@@ -101,7 +101,7 @@ class FilterApplicationTable:
 
                 # update in the conversion addressing table
                 filterConversionAddressingTable = filter.getConversionAddressingTable(self.splittedData[col][i_local_start:i_local_end])
-                if filterConversionAddressingTable == None:
+                if filterConversionAddressingTable is None:
                      #logging.debug("Automatic deduction of the filter conversion addressing table")
                     self.updateConversionAddressingTable(i_start, i_end, i_start, i_start + len(tmpData))
                 else:
@@ -128,9 +128,9 @@ class FilterApplicationTable:
                 # Prepare filters for current column
                 for (i_col, i_local_start, i_local_end, i_start, i_end, data, filter) in toApplyFilter:
                     (openTag, endTag) = filter.getTags()
-                    if openTag != None:
+                    if openTag is not None:
                         self.registerTag(i_col, filter.getID(), i_local_start, openTag)
-                    if endTag != None:
+                    if endTag is not None:
                         self.registerTag(i_col, filter.getID(), i_local_end, endTag)
 
                 i_letter = 0

@@ -68,7 +68,7 @@ class ReferencedVariable(Variable):
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         return var.getValue(negative, vocabulary, memory)
@@ -82,7 +82,7 @@ class ReferencedVariable(Variable):
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         return var.getValueToSend(negative, vocabulary, memory)
@@ -110,7 +110,7 @@ class ReferencedVariable(Variable):
     #+-----------------------------------------------------------------------+
     def compare(self, value, indice, negative, vocabulary, memory):
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         return var.compare(value, indice, negative, vocabulary, memory)
@@ -124,7 +124,7 @@ class ReferencedVariable(Variable):
     #+-----------------------------------------------------------------------+
     def learn(self, value, indice, negative, vocabulary, memory):
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         self.log.info("Compare with a referenced variable")
@@ -136,7 +136,7 @@ class ReferencedVariable(Variable):
     #+-----------------------------------------------------------------------+
     def restore(self, vocabulary, memory):
         var = vocabulary.getVariableByID(self.varID)
-        if var == None:
+        if var is None:
             self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
             return None
         self.log.info("Compare with a referenced variable")

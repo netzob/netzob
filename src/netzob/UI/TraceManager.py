@@ -146,7 +146,7 @@ class TraceManager():
 
     def updateContentMessage(self, trace=None):
         self.treestoreMessages.clear()
-        if trace != None:
+        if trace is not None:
             for message in trace.getMessages():
                 self.treestoreMessages.append(None, [str(message.getID()), str(message.getTimestamp()), str(message.getData())])
 
@@ -181,11 +181,11 @@ class TraceManager():
                 for trace in self.workspace.getImportedTraces():
                     if str(trace.getID()) == idTrace:
                         selectedTrace = trace
-        if selectedTrace == None:
+        if selectedTrace is None:
             logging.warn("The provided ID do not match any trace.")
             return
 
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and selectedTrace != None:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and selectedTrace is not None:
             self.updateContentMessage(selectedTrace)
 
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
@@ -197,8 +197,8 @@ class TraceManager():
     #+----------------------------------------------
     def show_menu_trace(self, event, trace):
         entries = [
-            (Gtk.STOCK_ADD, self.importTrace, (trace != None)),
-            (Gtk.STOCK_REMOVE, self.deleteTrace, (trace != None))
+            (Gtk.STOCK_ADD, self.importTrace, (trace is not None)),
+            (Gtk.STOCK_REMOVE, self.deleteTrace, (trace is not None))
         ]
 
         self.menu = Gtk.Menu()
@@ -250,7 +250,7 @@ class TraceManager():
             if project.getName() == selectedProjectName:
                 selectedProject = project
 
-        if selectedProject == None:
+        if selectedProject is None:
             logging.warn("Impossible to retrieve the selected project based on its name " + str(selectedProjectName))
             return
 

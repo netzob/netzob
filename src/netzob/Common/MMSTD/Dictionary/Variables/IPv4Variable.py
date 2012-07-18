@@ -78,13 +78,13 @@ class IPv4Variable(Variable):
     #|     Transform and save the provided "192.168.0.10" as current value
     #+-----------------------------------------------------------------------+
     def computeCurrentValue(self, strValue):
-        if strValue != None:
+        if strValue is not None:
             if self.format == Format.ASCII:
                 strCurrentValue = str(strValue)
                 binCurrentValue = TypeConvertor.string2bin(strValue, 'big')
             elif self.format == Format.HEX:
                 hexVal = TypeConvertor.ipToNetzobRaw(strValue)
-                if hexVal != None:
+                if hexVal is not None:
                     strCurrentValue = str(strValue)
                     binCurrentValue = TypeConvertor.netzobRawToBitArray(hexVal)
                 else:
@@ -121,7 +121,7 @@ class IPv4Variable(Variable):
     #|     else its NONE
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        if self.getCurrentValue() != None:
+        if self.getCurrentValue() is not None:
             return self.getCurrentValue()
 
         if memory.hasMemorized(self):
@@ -137,7 +137,7 @@ class IPv4Variable(Variable):
     #|     or it generates one and save its value in memory
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
-        if self.getCurrentValue() != None:
+        if self.getCurrentValue() is not None:
             self.log.debug("getValueToSend (getCurrentValue): " + str(self.getCurrentValue()))
             return self.getCurrentValue()
 
@@ -184,7 +184,7 @@ class IPv4Variable(Variable):
     def compare(self, value, indice, negative, vocabulary, memory):
         localValue = self.getValue(negative, vocabulary, memory)
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
-        if localValue == None:
+        if localValue is None:
             return self.compareFormat(value, indice, negative, vocabulary, memory)
         else:
             (binVal, strVal) = localValue
@@ -209,7 +209,7 @@ class IPv4Variable(Variable):
             for t in range(min(len(currentContent), 15), 7, -1):
                 currentPossibleIP = currentContent[:t]
                 result = IPRegex.match(currentPossibleIP)
-                if result != None:
+                if result is not None:
                     hasMatched = True
                 elif hasMatched:
                     break
@@ -239,7 +239,7 @@ class IPv4Variable(Variable):
             for t in range(min(len(currentContent), 15), 7, -1):
                 currentPossibleIP = currentContent[:t]
                 result = IPRegex.match(currentPossibleIP)
-                if result != None:
+                if result is not None:
                     hasMatched = True
                 elif hasMatched:
                     break
@@ -289,7 +289,7 @@ class IPv4Variable(Variable):
         xmlIPv4Variable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:IPv4Variable")
 
         # Original Value
-        if self.getOriginalValue() != None:
+        if self.getOriginalValue() is not None:
             xmlIPVariableOriginalValue = etree.SubElement(xmlIPv4Variable, "{" + namespace + "}originalValue")
             xmlIPVariableOriginalValue.text = str(self.getOriginalValue())
 
@@ -314,7 +314,7 @@ class IPv4Variable(Variable):
             varName = xmlRoot.get("name")
 
             xmlIPVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
-            if xmlIPVariableOriginalValue != None:
+            if xmlIPVariableOriginalValue is not None:
                 originalValue = xmlIPVariableOriginalValue.text
             else:
                 originalValue = None

@@ -175,7 +175,7 @@ class SemiStochasticTransition(AbstractTransition):
         abstractionLayer.writeSymbol(self.inputSymbol)
         while (not finish):
             (receivedSymbol, message) = abstractionLayer.receiveSymbolWithTimeout(5)
-            if receivedSymbol == None:
+            if receivedSymbol is None:
                 self.log.info("Message received = NONE ")
                 finish = True
                 errors = True
@@ -263,7 +263,7 @@ class SemiStochasticTransition(AbstractTransition):
         inputSymbolID = xmlInput.get("symbol")
         # We retrieve the symbol associated with it
         inputSymbol = vocabulary.getSymbol(inputSymbolID)
-        if inputSymbol == None:
+        if inputSymbol is None:
             logging.warn("The vocabulary doesn't reference a symbol which ID is " + inputSymbolID)
             return None
 
@@ -277,7 +277,7 @@ class SemiStochasticTransition(AbstractTransition):
 
             outputSymbol = vocabulary.getSymbol(outputSymbolId)
 
-            if outputSymbol == None:
+            if outputSymbol is None:
                 logging.warn("The vocabulary doesn't reference a symbol which ID is " + outputSymbolId)
                 return None
 

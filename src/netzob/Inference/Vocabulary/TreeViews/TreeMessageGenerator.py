@@ -142,7 +142,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
     def default(self, symbol, messageToHighlight=None):
         self.treestore.clear()
 
-        if symbol == None:
+        if symbol is None:
             return
 
         self.symbol = symbol
@@ -172,7 +172,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
                 self.log.warn("Message : " + str(message.getStringData()))
                 continue  # We don't display the message in error
 
-            if messageToHighlight != None and str(message.getID()) == str(messageToHighlight.getID()):
+            if messageToHighlight is not None and str(message.getID()) == str(messageToHighlight.getID()):
                 nbLineMessageToHighlight = idLineMessage
 
             line = []
@@ -236,7 +236,7 @@ class TreeMessageGenerator(AbstractViewGenerator):
         self.treeview.set_model(self.treestore)
 
         # highlight the message entry
-        if messageEntryToHighlight != None:
+        if messageEntryToHighlight is not None:
             self.treeview.get_selection().select_iter(messageEntryToHighlight)
 
     def updateDefault(self):

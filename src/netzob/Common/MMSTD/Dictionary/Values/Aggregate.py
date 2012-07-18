@@ -78,7 +78,7 @@ class Aggregate(AbstractValue):
         for value in self.values:
             self.log.debug("Indice = " + str(result) + " : " + value.getType())
             result = value.compare(val, result, negative, dictionary)
-            if result == -1 or result == None:
+            if result == -1 or result is None:
                 self.log.debug("Compare fail")
                 return -1
             else:

@@ -73,7 +73,7 @@ class NetworkClient(AbstractActor):
             self.log.warn("Opening the network connection has failed : " + str(msg))
             self.socket = None
 
-        if self.socket == None:
+        if self.socket is None:
             self.log.warn("Impossible to open the socket created in the NetworkClient")
             return False
 

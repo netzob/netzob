@@ -54,7 +54,7 @@ class ConfigurationParser(object):
 
         # If the config file exists we parse it
         # if not we create an in-memory default one
-        if self.configurationFilePath == None or not os.path.isfile(self.configurationFilePath):
+        if self.configurationFilePath is None or not os.path.isfile(self.configurationFilePath):
             # create default in memory file
             self.config = ConfigurationParser.createDefault()
             self.config.write(open(self.configurationFilePath, "w"))

@@ -120,7 +120,7 @@ class Angluin(LearningAlgorithm):
         for letter in self.D:
             mq = word.getMQSuffixedWithMQ(letter)
             # we add it in the observation table
-            if self.observationTable[letter] != None:
+            if self.observationTable[letter] is not None:
                 cel = self.observationTable[letter]
             else:
                 cel = dict()
@@ -149,7 +149,7 @@ class Angluin(LearningAlgorithm):
 
         for letter in self.D:
             mq = word.getMQSuffixedWithMQ(letter)
-            if self.observationTable[letter] != None:
+            if self.observationTable[letter] is not None:
                 cel = self.observationTable[letter]
             else:
                 cel = dict()
@@ -331,7 +331,7 @@ class Angluin(LearningAlgorithm):
                 if rN == rowName:
                     mem = rN
                     break
-            if mem != None:
+            if mem is not None:
                 cols.append(self.observationTable[letter][mem])
         return cols
 
@@ -376,7 +376,7 @@ class Angluin(LearningAlgorithm):
             states.append(currentState)
             wordAndStates.append((w, currentState))
             # Is it the starting state (wordS = [EmptySymbol])
-            if startState == None and w == MembershipQuery([EmptySymbol()]):
+            if startState is None and w == MembershipQuery([EmptySymbol()]):
                 startState = currentState
                 self.log.info("Its the starting state")
 
@@ -415,7 +415,7 @@ class Angluin(LearningAlgorithm):
                             else:
                                 self.log.info("   != " + str(s2.getName()))
 
-                        if outputState != None:
+                        if outputState is not None:
                             inputSymbol = symbol.getSymbolsWhichAreNotEmpty()[0]
 
                             self.log.info("We create a transition from " + str(state.getName()) + "=>" + str(outputState.getName()))
@@ -431,7 +431,7 @@ class Angluin(LearningAlgorithm):
                         else:
                             self.log.error("<!!> Impossible to retrieve the output state named " + str(s2.getName()))
 
-        if startState != None:
+        if startState is not None:
             self.log.info("An infered automata has been computed.")
 
             self.inferedAutomata = MMSTD(startState, self.dictionary)

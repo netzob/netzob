@@ -148,13 +148,13 @@ class AbstractionLayer():
     def registerInputSymbol(self, symbol):
         self.manipulatedSymbols.append(symbol)
         self.inputSymbols.append(symbol)
-        if (self.cb_inputSymbol != None):
+        if (self.cb_inputSymbol is not None):
             self.cb_inputSymbol(symbol)
 
     def registerOutputSymbol(self, symbol):
         self.manipulatedSymbols.append(symbol)
         self.outputSymbols.append(symbol)
-        if self.cb_outputSymbol != None:
+        if self.cb_outputSymbol is not None:
             self.cb_outputSymbol(symbol)
 
     def receiveSymbolWithTimeout(self, timeout):
@@ -163,7 +163,7 @@ class AbstractionLayer():
 
         nbMaxAttempts = 5
 
-        if receivedData == None:
+        if receivedData is None:
             self.log.warn("The communication channel seems to be closed !")
 #            return (EmptySymbol(), None)
             return (None, None)

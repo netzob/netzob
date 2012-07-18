@@ -180,19 +180,19 @@ class ImportedTrace(object):
                 xmlRoot = tree.getroot()
 
                 # We retrieve the pool of messages
-                if xmlRoot.find("{" + namespace_workspace + "}messages") != None:
+                if xmlRoot.find("{" + namespace_workspace + "}messages") is not None:
                     xmlMessages = xmlRoot.find("{" + namespace_workspace + "}messages")
                     for xmlMessage in xmlMessages.findall("{" + namespace_common + "}message"):
                         message = AbstractMessageFactory.loadFromXML(xmlMessage, namespace_common, version)
-                        if message != None:
+                        if message is not None:
                             importedTrace.addMessage(message)
 
                 # We retrieve the sessions
-                if xmlRoot.find("{" + namespace_workspace + "}sessions") != None:
+                if xmlRoot.find("{" + namespace_workspace + "}sessions") is not None:
                     xmlSessions = xmlRoot.find("{" + namespace_workspace + "}sessions")
                     for xmlSession in xmlSessions.findall("{" + namespace_common + "}session"):
                         session = Session.loadFromXML(xmlSession, namespace_workspace, namespace_common, version, importedTrace)
-                        if session != None:
+                        if session is not None:
                             importedTrace.addSession(session)
             return importedTrace
         return None

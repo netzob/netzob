@@ -217,10 +217,10 @@ class SessionManager:
 
         # Sanity checks
         project = self.netzob.getCurrentProject()
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if project.getVocabulary() == None:
+        if project.getVocabulary() is None:
             NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
@@ -230,7 +230,7 @@ class SessionManager:
             if(model.iter_is_valid(iter)):
                 symbol_id = model.get_value(iter, 0)
                 symbol = project.getVocabulary().getSymbol(symbol_id)
-                if symbol != None:
+                if symbol is not None:
                     for message in symbol.getMessages():
                         self.treeview_symbol_messages.get_model().append([message.getID(), message.getStringData()])
 
@@ -243,10 +243,10 @@ class SessionManager:
 
         # Sanity checks
         project = self.netzob.getCurrentProject()
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if project.getVocabulary() == None:
+        if project.getVocabulary() is None:
             NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
@@ -256,7 +256,7 @@ class SessionManager:
             if(model.iter_is_valid(iter)):
                 session_id = model.get_value(iter, 0)
                 session = project.getVocabulary().getSession(session_id)
-                if session != None:
+                if session is not None:
                     for message in session.getMessages():
                         self.treeview_session_messages.get_model().append([message.getID(), message.getStringData()])
 

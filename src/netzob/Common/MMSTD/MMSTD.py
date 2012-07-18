@@ -133,7 +133,7 @@ class MMSTD(Automata):
         communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
         abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
         for i in range(0, len(symbols)):
-            if state != None:
+            if state is not None:
                 state = state.executeAsClient(abstractionLayer)
         outputMessages = abstractionLayer.getOutputMessages()
         generatedSymbols = []
@@ -176,7 +176,7 @@ class MMSTD(Automata):
         toAnalyze.append(self.initialState)
         while (len(toAnalyze) > 0):
             currentState = toAnalyze.pop()
-            if currentState != None:
+            if currentState is not None:
                 found = False
                 for tmpState in states:
                         if tmpState.getID() == currentState.getID():
@@ -224,15 +224,15 @@ class MMSTD(Automata):
             # Retrieve all the states
             for xmlState in xmlRoot.findall("{" + namespace + "}states/{" + namespace + "}state"):
                 state = AbstractState.loadFromXML(xmlState, namespace, version)
-                if state != None:
+                if state is not None:
                     states.append(state)
 
             # Retrieve all the transitions
-            if xmlRoot.find("{" + namespace + "}transitions") != None:
+            if xmlRoot.find("{" + namespace + "}transitions") is not None:
                 xmlTransitions = xmlRoot.find("{" + namespace + "}transitions")
                 for xmlTransition in xmlTransitions.findall("{" + namespace + "}transition"):
                     transition = AbstractTransition.loadFromXML(states, vocabulary, xmlTransition, namespace, version)
-                    if transition != None:
+                    if transition is not None:
                         transitions.append(transition)
 
             # First we retrieve the initial state to create the grammar
@@ -241,7 +241,7 @@ class MMSTD(Automata):
                 if state.getID() == initialStateID:
                     initialState = state
 
-            if initialState == None:
+            if initialState is None:
                 logging.warn("Impossible to retrieve the initial state of the saved grammar")
                 return None
 

@@ -55,7 +55,7 @@ class TextExport:
             if str(symbol.getID()) == symbolID:
                 resSymbol = symbol
                 break
-        if resSymbol == None:
+        if resSymbol is None:
             self.log.warning(_("Impossible to retrieve the symbol having the id {0}").format(str(symbolID)))
             return None
         else:

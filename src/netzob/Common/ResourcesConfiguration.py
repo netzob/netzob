@@ -71,7 +71,7 @@ class ResourcesConfiguration(object):
         # While, on everyday execution, both the static and the userpath should exists
 
         staticPath = ResourcesConfiguration.verifyStaticResources()
-        if staticPath == None:
+        if staticPath is None:
             logging.fatal(_("The static resources were not found !"))
             return False
 
@@ -80,10 +80,10 @@ class ResourcesConfiguration(object):
         else:
             userPath = None
 
-        if userPath == None:
+        if userPath is None:
             logging.info("The user resources were not found, we ask to the user its Netzob home directory")
             userPath = ResourcesConfiguration.askForUserDir()
-            if userPath == None:
+            if userPath is None:
                 return False
             else:
                 # the user has specified its home directory so we store it in
@@ -102,7 +102,7 @@ class ResourcesConfiguration(object):
         workspaceSelector.run()
         workspacePath = workspaceSelector.selectedWorkspace
 
-        if workspacePath != None:
+        if workspacePath is not None:
             ResourcesConfiguration.createWorkspace(workspacePath)
 
         return workspacePath
@@ -142,7 +142,7 @@ class ResourcesConfiguration(object):
         workspacePath = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
 
         # Workspace not declared
-        if workspacePath == None:
+        if workspacePath is None:
             return None
         # is the workspace a directory
         if not os.path.isdir(workspacePath):
@@ -191,7 +191,7 @@ class ResourcesConfiguration(object):
 
     @staticmethod
     def getWorkspaceFile():
-        if NetzobResources.WORKSPACE_DIR == None:
+        if NetzobResources.WORKSPACE_DIR is None:
             return ResourcesConfiguration.verifyUserResources()
         else:
             return NetzobResources.WORKSPACE_DIR

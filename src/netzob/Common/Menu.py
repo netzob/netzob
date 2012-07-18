@@ -168,7 +168,7 @@ class Menu(object):
         self.uimanager.get_widget("/MenuBar/Workspace/SwitchProject").set_sensitive(True)
         self.uimanager.get_widget("/MenuBar/Workspace/Quit").set_sensitive(True)
 
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             # Deactivate almost everything
             self.uimanager.get_widget("/MenuBar/Workspace/SwitchWorkspace").set_sensitive(False)
             self.uimanager.get_widget("/MenuBar/Project/SessionManager").set_sensitive(False)
@@ -268,7 +268,7 @@ class Menu(object):
 
     def switchProjectAction(self, widget, projectPath):
         newProject = Project.loadProject(self.netzob.getCurrentWorkspace(), projectPath)
-        if newProject == None:
+        if newProject is None:
             logging.error("Impossible to switch to requested project due to an error in the loading process.")
             return
 
@@ -403,7 +403,7 @@ class Menu(object):
     #| Called when user wants to display symbol structure panel
     #+----------------------------------------------
     def displaySymbolStructureAction(self, widget):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.uimanager.get_widget("/MenuBar/View/DisplaySymbolStructure").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE, isActive)
         self.netzob.updateCurrentPanel()
@@ -412,7 +412,7 @@ class Menu(object):
     #| Called when user wants to display messages panel
     #+----------------------------------------------
     def displayMessagesAction(self, widget):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.uimanager.get_widget("/MenuBar/View/DisplayMessages").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES, isActive)
         self.netzob.updateCurrentPanel()
@@ -421,7 +421,7 @@ class Menu(object):
     #| Called when user wants to display the console
     #+----------------------------------------------
     def displayConsoleAction(self, widget):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             pass
         self.netzob.updateCurrentPanel()
 
@@ -429,7 +429,7 @@ class Menu(object):
     #| Called when user wants to display search results panel
     #+----------------------------------------------
     def displaySearchAction(self, widget):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.uimanager.get_widget("/MenuBar/View/DisplaySearchResults").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH, isActive)
         self.netzob.updateCurrentPanel()
@@ -438,7 +438,7 @@ class Menu(object):
     #| Called when user wants to display properties results panel
     #+----------------------------------------------
     def displayPropertiesAction(self, widget):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.uimanager.get_widget("/MenuBar/View/DisplayProperties").get_active()
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES, isActive)
         self.netzob.updateCurrentPanel()
@@ -472,7 +472,7 @@ class Menu(object):
         projectName = entry.get_text()
 
         # we verify a name has been provided
-        if projectName == None or projectName == "":
+        if projectName is None or projectName == "":
             logging.warn(_("Unable to create a project with an empty name."))
             errorDialog = NetzobErrorMessage(_("Unable to create a project with an empty name."))
             return

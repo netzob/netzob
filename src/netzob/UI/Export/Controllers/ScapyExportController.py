@@ -88,12 +88,12 @@ class ScapyExportController:
                 self.showScapyDefinition(symbolID)
 
     def showScapyDefinition(self, symbolID):
-        if symbolID == None:
+        if symbolID is None:
             self.log.debug(_("No selected symbol"))
             self.view.textarea.get_buffer().set_text(_("Select a symbol to see its text definition"))
         else:
             scapyDefinition = self.model.getScapyDefinition(symbolID)
-            if scapyDefinition != None:
+            if scapyDefinition is not None:
                 self.view.textarea.get_buffer().set_text("")
                 self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), scapyDefinition, "normalTag")
             else:

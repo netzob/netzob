@@ -82,7 +82,7 @@ class LearningAlgorithm(object):
     def submitQuery(self, query):
         # Verify the request is not in the cache
         cachedValue = self.cache.getCachedResult(query)
-        if cachedValue != None:
+        if cachedValue is not None:
             self.log.info("The MQ is cached, result obtained : " + str(query) + " = " + str(cachedValue) + ".")
             return cachedValue[len(cachedValue) - 1]
 

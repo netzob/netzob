@@ -83,7 +83,7 @@ class Field(object):
         self.mathematicFilters = []
 
     def getEncodedVersionOfTheRegex(self):
-        if self.regex == "" or self.regex == None or self.regex == "None":  # TODO: becareful with the fact that XML files may store None as a string...
+        if self.regex == "" or self.regex is None or self.regex == "None":  # TODO: becareful with the fact that XML files may store None as a string...
             return ""
         elif self.regex.find("{") != -1:  # This is a real regex
             return self.regex
@@ -97,7 +97,7 @@ class Field(object):
             return False
 
     def isRegexOnlyDynamic(self):
-        if re.match("\(\.\{\d?,\d+\}\)", self.regex) != None:
+        if re.match("\(\.\{\d?,\d+\}\)", self.regex) is not None:
             return True
         else:
             return False
@@ -136,7 +136,7 @@ class Field(object):
         if not self.isStatic():
             filters.append(TextColorFilter("Dynamic Field", "blue"))
 #            # fields with no variable define are in yellow
-            if self.variable == None:
+            if self.variable is None:
                 filters.append(BackgroundColorFilter("Default variable", "yellow"))
 
         return filters
@@ -154,7 +154,7 @@ class Field(object):
             if mFilter.getName() == filter.getName():
                 fToRemove = mFilter
                 break
-        if fToRemove != None:
+        if fToRemove is not None:
             self.mathematicFilters.remove(fToRemove)
 
     def addMathematicFilter(self, filter):
@@ -174,39 +174,39 @@ class Field(object):
         xmlField.set("name", str(self.getName()))
         xmlField.set("index", str(self.getIndex()))
 
-        if self.getEncapsulationLevel() != None:
+        if self.getEncapsulationLevel() is not None:
             xmlFieldEncapsulationLevel = etree.SubElement(xmlField, "{" + namespace + "}encapsulation_level")
             xmlFieldEncapsulationLevel.text = str(self.getEncapsulationLevel())
 
-        if self.getRegex() != None:
+        if self.getRegex() is not None:
             xmlFieldRegex = etree.SubElement(xmlField, "{" + namespace + "}regex")
             xmlFieldRegex.text = str(self.getRegex())
 
-        if self.getFormat() != None:
+        if self.getFormat() is not None:
             xmlFieldFormat = etree.SubElement(xmlField, "{" + namespace + "}format")
             xmlFieldFormat.text = str(self.getFormat())
 
-        if self.getUnitSize() != None:
+        if self.getUnitSize() is not None:
             xmlFieldUnitSize = etree.SubElement(xmlField, "{" + namespace + "}unitsize")
             xmlFieldUnitSize.text = str(self.getUnitSize())
 
-        if self.getSign() != None:
+        if self.getSign() is not None:
             xmlFieldSign = etree.SubElement(xmlField, "{" + namespace + "}sign")
             xmlFieldSign.text = str(self.getSign())
 
-        if self.getEndianess() != None:
+        if self.getEndianess() is not None:
             xmlFieldEndianess = etree.SubElement(xmlField, "{" + namespace + "}endianess")
             xmlFieldEndianess.text = str(self.getEndianess())
 
-        if self.getDescription() != None:
+        if self.getDescription() is not None:
             xmlFieldDescription = etree.SubElement(xmlField, "{" + namespace + "}description")
             xmlFieldDescription.text = str(self.getDescription())
 
-        if self.getColor() != None:
+        if self.getColor() is not None:
             xmlFieldColor = etree.SubElement(xmlField, "{" + namespace + "}color")
             xmlFieldColor.text = str(self.getColor())
 
-        if self.getVariable() != None:
+        if self.getVariable() is not None:
             self.getVariable().toXML(xmlField, namespace)
 
     #+----------------------------------------------
@@ -233,7 +233,7 @@ class Field(object):
         return self.index
 
     def getBackgroundColor(self):
-        if self.getVariable() == None:
+        if self.getVariable() is None:
             return "yellow"
         return None
 
@@ -298,40 +298,40 @@ class Field(object):
             field_name = xmlRoot.get("name")
             field_index = int(xmlRoot.get("index"))
             field_regex = ""
-            if xmlRoot.find("{" + namespace + "}regex") != None:
+            if xmlRoot.find("{" + namespace + "}regex") is not None:
                 field_regex = xmlRoot.find("{" + namespace + "}regex").text
 
             field = Field(field_name, field_index, field_regex)
 
-            if xmlRoot.find("{" + namespace + "}encapsulation_level") != None:
+            if xmlRoot.find("{" + namespace + "}encapsulation_level") is not None:
                 field_encapsulation_level = xmlRoot.find("{" + namespace + "}encapsulation_level").text
                 field.setEncapsulationLevel(int(field_encapsulation_level))
 
-            if xmlRoot.find("{" + namespace + "}format") != None:
+            if xmlRoot.find("{" + namespace + "}format") is not None:
                 field_format = xmlRoot.find("{" + namespace + "}format").text
                 field.setFormat(field_format)
 
-            if xmlRoot.find("{" + namespace + "}unitsize") != None:
+            if xmlRoot.find("{" + namespace + "}unitsize") is not None:
                 field_unitsize = xmlRoot.find("{" + namespace + "}unitsize").text
                 field.setUnitSize(field_unitsize)
 
-            if xmlRoot.find("{" + namespace + "}sign") != None:
+            if xmlRoot.find("{" + namespace + "}sign") is not None:
                 field_sign = xmlRoot.find("{" + namespace + "}sign").text
                 field.setSign(field_sign)
 
-            if xmlRoot.find("{" + namespace + "}endianess") != None:
+            if xmlRoot.find("{" + namespace + "}endianess") is not None:
                 field_endianess = xmlRoot.find("{" + namespace + "}endianess").text
                 field.setEndianess(field_endianess)
 
-            if xmlRoot.find("{" + namespace + "}description") != None:
+            if xmlRoot.find("{" + namespace + "}description") is not None:
                 field_description = xmlRoot.find("{" + namespace + "}description").text
                 field.setDescription(field_description)
 
-            if xmlRoot.find("{" + namespace + "}color") != None:
+            if xmlRoot.find("{" + namespace + "}color") is not None:
                 field_color = xmlRoot.find("{" + namespace + "}color").text
                 field.setColor(field_color)
 
-            if xmlRoot.find("{" + namespace + "}variable") != None:
+            if xmlRoot.find("{" + namespace + "}variable") is not None:
                 var = Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
                 field.setVariable(var)
 

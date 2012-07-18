@@ -346,7 +346,7 @@ class NetworkServer(AbstractActor):
         self.allowMultipleClients = allowMultipleClients
 
     def getGeneratedInstances(self):
-        if self.server == None:
+        if self.server is None:
             return []
         return self.server.getGeneratedInstances()
 

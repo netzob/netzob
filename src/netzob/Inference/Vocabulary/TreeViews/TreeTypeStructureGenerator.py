@@ -107,7 +107,7 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
     #|         Update the treestore in normal mode
     #+----------------------------------------------
     def update(self):
-        if self.getSymbol() == None:
+        if self.getSymbol() is None:
             self.clear()
             return
 
@@ -120,16 +120,16 @@ class TreeTypeStructureGenerator(AbstractViewGenerator):
                 continue
 
             # Define the background color
-            if field.getBackgroundColor() != None:
+            if field.getBackgroundColor() is not None:
                 backgroundColor = 'background="' + field.getBackgroundColor() + '"'
             else:
                 backgroundColor = ""
 
             # Compute the associated variable (specified or automatically computed)
             variableDescription = "-"
-            if field.getVariable() != None:
+            if field.getVariable() is not None:
                 variableDescription = field.getVariable().getUncontextualizedDescription()
-            elif field.getDefaultVariable(self.getSymbol()) != None:
+            elif field.getDefaultVariable(self.getSymbol()) is not None:
                 variableDescription = field.getDefaultVariable(self.getSymbol()).getUncontextualizedDescription()
 
             self.treestore.append(None, [field.getIndex(), tab + field.getName() + ":", field.getDescription(), '<span ' + backgroundColor + ' font_family="monospace">' + variableDescription + '</span>'])

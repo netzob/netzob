@@ -391,7 +391,7 @@ class UImodelization:
 
     def sequenceAlignmentOnAllSymbols(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -523,7 +523,7 @@ class UImodelization:
 
     def percentOfAlignmentProgessBar(self, percent, message):
 #        GObject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
-        if message == None:
+        if message is None:
             GObject.idle_add(self.progressbarAlignment.set_text, "")
         else:
             GObject.idle_add(self.progressbarAlignment.set_text, message)
@@ -540,7 +540,7 @@ class UImodelization:
 
     def forcePartitioningOnAllSymbols(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -615,7 +615,7 @@ class UImodelization:
 
     def simplePartitioningOnAllSymbols(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -626,7 +626,7 @@ class UImodelization:
 
     def simplePartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -681,7 +681,7 @@ class UImodelization:
 
     def smoothPartitioningOnAllSymbols(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -692,7 +692,7 @@ class UImodelization:
 
     def smoothPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Execute the process of alignment (show the gui...)
@@ -703,7 +703,7 @@ class UImodelization:
     #+----------------------------------------------
     def smoothPartitioning(self, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -714,7 +714,7 @@ class UImodelization:
 
     def resetPartitioningOnAllSymbols(self, widget):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Retrieve all the symbols
@@ -732,7 +732,7 @@ class UImodelization:
 
     def resetPartitioningOnSpecifiedSymbols(self, widget, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Execute the process of alignment (show the gui...)
@@ -744,7 +744,7 @@ class UImodelization:
     #+----------------------------------------------
     def resetPartitioning(self, symbols):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         for symbol in symbols:
@@ -759,10 +759,10 @@ class UImodelization:
     def button_press_on_treeview_symbols(self, treeview, event):
         # Sanity checks
         project = self.netzob.getCurrentProject()
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if project.getVocabulary() == None:
+        if project.getVocabulary() is None:
             NetzobErrorMessage(_("The current project doesn't have any referenced vocabulary."))
             return
 
@@ -770,7 +770,7 @@ class UImodelization:
         y = int(event.y)
         clickedSymbol = self.treeSymbolGenerator.getSymbolAtPosition(x, y)
 
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and clickedSymbol != None:
+        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1 and clickedSymbol is not None:
             self.selectedSymbol = clickedSymbol
             self.treeTypeStructureGenerator.setSymbol(self.selectedSymbol)
             self.updateTreeStoreTypeStructure()
@@ -855,7 +855,7 @@ class UImodelization:
             for field in self.treeMessageGenerator.getSymbol().getFields():
                 if field.getIndex() == iField:
                     selectedField = field
-            if selectedField == None:
+            if selectedField is None:
                 self.log.warn(_("Impossible to retrieve the clicked field !"))
                 return
 
@@ -950,7 +950,7 @@ class UImodelization:
             self.menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None:
+            if selectedField.getVariable() is None:
                 typeMenuVariable = Gtk.Menu()
                 itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
@@ -963,7 +963,7 @@ class UImodelization:
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None:
+            if selectedField.getVariable() is not None:
                 itemVariable3 = Gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
@@ -1027,7 +1027,7 @@ class UImodelization:
         project = self.netzob.getCurrentProject()
 
         # Sanity checks
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
         menu = Gtk.Menu()
@@ -1119,7 +1119,7 @@ class UImodelization:
 
         # Retrieve the selected message and field content
         message = self.selectedSymbol.getMessageByID(message_id)
-        if message != None:
+        if message is not None:
             # Retrieve content of the field
             field_content = message.getFields(False)[aObject.getIndex()]
         else:
@@ -1129,7 +1129,7 @@ class UImodelization:
         possible_choices = Format.getSupportedFormats()
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            if field_content != None:
+            if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
                 if len(text_preview) > 10:
@@ -1292,7 +1292,7 @@ class UImodelization:
             for field in self.treeMessageGenerator.getSymbol().getFields():
                 if field.getIndex() == iField:
                     selectedField = field
-            if selectedField == None:
+            if selectedField is None:
                 self.log.warn(_("Impossible to retrieve the clicked field!"))
                 return
 
@@ -1354,7 +1354,7 @@ class UImodelization:
             self.menu.append(item)
 
             # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() == None:
+            if selectedField.getVariable() is None:
                 typeMenuVariable = Gtk.Menu()
                 itemVariable = Gtk.MenuItem(_("Create a variable"))
                 itemVariable.show()
@@ -1367,7 +1367,7 @@ class UImodelization:
                 itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
                 typeMenuVariable.append(itemVariable)
 
-            if selectedField.getVariable() != None:
+            if selectedField.getVariable() is not None:
                 itemVariable3 = Gtk.MenuItem(_("Remove variable"))
                 itemVariable3.show()
                 itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
@@ -1404,7 +1404,7 @@ class UImodelization:
                 for field in self.treeMessageGenerator.getSymbol().getFields():
                     if field.getIndex() == iField:
                         selectedField = field
-                if selectedField == None:
+                if selectedField is None:
                     self.log.warn(_("Impossible to retrieve the clicked field !"))
                     return
 
@@ -1512,7 +1512,7 @@ class UImodelization:
     def rightClickDomainOfDefinition(self, event, field):
         # Sanity checks
         project = self.netzob.getCurrentProject()
-        if project == None:
+        if project is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -1561,13 +1561,13 @@ class UImodelization:
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(id_message)
-        if message == None:
+        if message is None:
             self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]".format(id_message)))
             return
 
         if aligned is False:  # Copy the entire raw message
             self.netzob.clipboard.set_text(message.getStringData(), -1)
-        elif field == None:  # Copy the entire aligned message
+        elif field is None:  # Copy the entire aligned message
             self.netzob.clipboard.set_text(str(message.applyAlignment(styled=False, encoded=encoded)), -1)
         else:  # Just copy the selected field
             self.netzob.clipboard.set_text(message.applyAlignment(styled=False, encoded=encoded)[field.getIndex()], -1)
@@ -1581,7 +1581,7 @@ class UImodelization:
 
         # Retrieve the selected message
         message = self.selectedSymbol.getMessageByID(id_message)
-        if message == None:
+        if message is None:
             self.log.warning(_("Impossible to retrieve the message based on its ID [{0}]").format(id_message))
             return
 
@@ -1650,7 +1650,7 @@ class UImodelization:
                 message = self.selectedSymbol.getMessageByID(id_message)
 
                 # Break if the message to move was not found
-                if message == None:
+                if message is None:
                     self.log.warning(_("Impossible to retrieve the message to remove based on its ID [{0}]".format(id_message)))
                     return
                 message_symbol.removeMessage(message)
@@ -2027,7 +2027,7 @@ class UImodelization:
             if field.getIndex() == iField:
                 selectedField = field
 
-        if selectedField == None:
+        if selectedField is None:
             self.log.warn(_("Impossible to retrieve the clicked field !"))
             return
 
@@ -2074,7 +2074,7 @@ class UImodelization:
                         elementValue = treeview.get_model().get_value(aIter, 2)
 
         # Depending of its type, we select it
-        if elementType != None and elementValue != None:
+        if elementType is not None and elementValue is not None:
             if elementType == "Symbol":
                 clickedSymbol = self.netzob.getCurrentProject().getVocabulary().getSymbolByID(elementID)
                 self.selectedSymbol = clickedSymbol
@@ -2096,7 +2096,7 @@ class UImodelization:
         # Build the contextual menu
         self.menu = Gtk.Menu()
 
-        if (symbol != None):
+        if (symbol is not None):
             # Edit the Symbol
             itemEditSymbol = Gtk.MenuItem(_("Edit symbol"))
             itemEditSymbol.show()
@@ -2328,7 +2328,7 @@ class UImodelization:
                     message = msg
 
             # Break if the message to move was not found
-            if message == None:
+            if message is None:
                 self.log.warning(_("Impossible to retrieve the message to move based on its ID [{0}]".format(msg_id)))
                 return
 
@@ -2343,7 +2343,7 @@ class UImodelization:
 
                 new_message_symbol = self.netzob.getCurrentProject().getVocabulary().getSymbol(new_symbol_id)
 
-            if new_message_symbol == None:
+            if new_message_symbol is None:
                 self.log.warning(_("Impossible to retrieve the symbol in which the selected message must be moved out."))
                 return
 
@@ -2358,7 +2358,7 @@ class UImodelization:
             defaultFormat = Format.HEX
             global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
             unitSize = UnitSize.getSizeInBits(global_unitsize)
-            if unitSize == None:
+            if unitSize is None:
                 unitSize = 8
 
             alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)
@@ -2394,7 +2394,7 @@ class UImodelization:
         #defaultFormat = Format.HEX
         #global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         #unitSize = UnitSize.getSizeInBits(global_unitsize)
-        #if unitSize == None:
+        #if unitSize is None:
         #    unitSize = 8
 
         #alignmentProcess = NeedlemanAndWunsch(unitSize, self.loggingNeedlemanStatus)
@@ -2421,7 +2421,7 @@ class UImodelization:
         defaultFormat = Format.HEX
         global_unitsize = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_UNITSIZE)
         unitSize = UnitSize.getSizeInBits(global_unitsize)
-        if unitSize == None:
+        if unitSize is None:
             unitSize = 4
 
         # Process the partitioning
@@ -2476,7 +2476,7 @@ class UImodelization:
     #+----------------------------------------------
     def updateTreeStoreSymbol(self):
         # Updates the treestore with a selected message
-        if (self.selectedMessage != None):
+        if (self.selectedMessage is not None):
             self.treeSymbolGenerator.default(self.selectedSymbol)
             self.selectedMessage = None
         else:
@@ -2487,7 +2487,7 @@ class UImodelization:
     #| Update the content of the tree store for messages
     #+----------------------------------------------
     def updateTreeStoreMessage(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_MESSAGES)
             if isActive:
                 self.treeMessageGenerator.show()
@@ -2499,7 +2499,7 @@ class UImodelization:
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreTypeStructure(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SYMBOL_STRUCTURE)
             if isActive:
                 self.treeTypeStructureGenerator.show()
@@ -2511,7 +2511,7 @@ class UImodelization:
     #| Update the content of the tree store for type structure
     #+----------------------------------------------
     def updateTreeStoreSearchView(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_SEARCH)
             if isActive:
                 self.treeSearchGenerator.show()
@@ -2520,7 +2520,7 @@ class UImodelization:
                 self.treeSearchGenerator.hide()
 
     def updateTreeStoreProperties(self):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             isActive = self.netzob.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DISPLAY_PROPERTIES)
             if isActive:
                 self.treePropertiesGenerator.show()
@@ -2533,21 +2533,21 @@ class UImodelization:
     #+----------------------------------------------
     def updateScoreLimit(self, combo):
         val = combo.get_active_text()
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD, int(val))
 
     #+----------------------------------------------
     #| Called when user wants to slick internally in libNeedleman
     #+----------------------------------------------
     def activeInternalSlickRegexes(self, checkButton):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, checkButton.get_active())
 
     #+----------------------------------------------
     #| Called when user wants to activate orphan reduction
     #+----------------------------------------------
     def activeOrphanReduction(self, checkButton):
-        if self.netzob.getCurrentProject() != None:
+        if self.netzob.getCurrentProject() is not None:
             self.netzob.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, checkButton.get_active())
 
     #+----------------------------------------------
@@ -2555,7 +2555,7 @@ class UImodelization:
     #+----------------------------------------------
     def updateDisplayFormat(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -2574,7 +2574,7 @@ class UImodelization:
     #+----------------------------------------------
     def updateDisplayUnitSize(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -2593,7 +2593,7 @@ class UImodelization:
     #+----------------------------------------------
     def updateDisplaySign(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -2612,7 +2612,7 @@ class UImodelization:
     #+----------------------------------------------
     def updateDisplayEndianess(self, combo):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -2631,10 +2631,10 @@ class UImodelization:
     #+----------------------------------------------
     def freezePartitioning_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.selectedSymbol == None:
+        if self.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -2647,10 +2647,10 @@ class UImodelization:
     #+----------------------------------------------
     def dataCarving_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.selectedSymbol == None:
+        if self.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -2676,7 +2676,7 @@ class UImodelization:
             self.treeSearchGenerator.update(task)
 #
 #        box = self.selectedSymbol.dataCarving()
-#        if box != None:
+#        if box is not None:
 #            NetzobErrorMessage("No data found in messages and fields.")
 #        else:
 #            dialog = Gtk.Dialog(title="Data carving results", flags=0, buttons=None)
@@ -2688,7 +2688,7 @@ class UImodelization:
     #+----------------------------------------------
     def search_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -2761,9 +2761,9 @@ class UImodelization:
             self.log.debug(" - " + str(data))
 
         # Then we search them in the list of messages included in the vocabulary
-        if type == None:
+        if type is None:
             searchTasks = searcher.search(searchedData)
-        elif type == "Symbol" and inclusion != None:
+        elif type == "Symbol" and inclusion is not None:
             searchTasks = searcher.searchInSymbol(searchedData, inclusion)
 
         # Give the results to the dedicated view
@@ -2774,7 +2774,7 @@ class UImodelization:
     #+----------------------------------------------
     def env_dependencies_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -2805,10 +2805,10 @@ class UImodelization:
     #+----------------------------------------------
     def messagesDistribution_cb(self, but):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.selectedSymbol == None:
+        if self.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
@@ -2820,15 +2820,15 @@ class UImodelization:
     #+----------------------------------------------
     def findASN1Fields_cb(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.selectedSymbol == None:
+        if self.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 
         box = self.selectedSymbol.findASN1Fields(self.netzob.getCurrentProject())
-        if box == None:
+        if box is None:
             NetzobErrorMessage(_("No ASN.1 field found."))
         else:  # Show the results
             dialog = Gtk.Dialog(title=_("Find ASN.1 fields"), flags=0, buttons=None)
@@ -2840,10 +2840,10 @@ class UImodelization:
     #+----------------------------------------------
     def findSizeFields(self, button):
         # Sanity checks
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        if self.selectedSymbol == None:
+        if self.selectedSymbol is None:
             NetzobErrorMessage(_("No symbol selected."))
             return
 

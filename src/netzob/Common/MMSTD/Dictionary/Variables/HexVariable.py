@@ -68,7 +68,7 @@ class HexVariable(Variable):
     #|     Transform and save the provided (ef56d2...) as current value
     #+-----------------------------------------------------------------------+
     def computeCurrentValue(self, strValue):
-        if strValue != None:
+        if strValue is not None:
             strCurrentValue = strValue
             binCurrentValue = TypeConvertor.netzobRawToBitArray(strValue)
             self.currentValue = (binCurrentValue, strCurrentValue)
@@ -96,7 +96,7 @@ class HexVariable(Variable):
     #|     else its NONE
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        if self.getCurrentValue() != None:
+        if self.getCurrentValue() is not None:
             return self.getCurrentValue()
 
         if memory.hasMemorized(self):
@@ -112,7 +112,7 @@ class HexVariable(Variable):
     #|     or it generates one and save its value in memory
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
-        if self.getCurrentValue() != None:
+        if self.getCurrentValue() is not None:
             return self.getCurrentValue()
 
         if memory.hasMemorized(self):
@@ -151,7 +151,7 @@ class HexVariable(Variable):
     def compare(self, value, indice, negative, vocabulary, memory):
         localValue = self.getValue(negative, vocabulary, memory)
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
-        if localValue == None:
+        if localValue is None:
             self.log.debug("We compare the format (will we be able to learn it afterwards ?")
             return self.compareFormat(value, indice, negative, vocabulary, memory)
         else:
@@ -218,7 +218,7 @@ class HexVariable(Variable):
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:HexVariable")
 
         # Original Value
-        if self.getOriginalValue() != None:
+        if self.getOriginalValue() is not None:
             xmlHexVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             xmlHexVariableOriginalValue.text = self.getOriginalValue()
 
@@ -237,7 +237,7 @@ class HexVariable(Variable):
             varName = xmlRoot.get("name")
 
             xmlHexVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
-            if xmlHexVariableOriginalValue != None:
+            if xmlHexVariableOriginalValue is not None:
                 originalValue = xmlHexVariableOriginalValue.text
             else:
                 originalValue = None

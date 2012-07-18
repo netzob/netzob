@@ -239,7 +239,7 @@ class WMethodNetworkEquivalenceOracle(AbstractEquivalenceOracle):
 
             # Verify the request is not in the cache
             cachedValue = cache.getCachedResult(test)
-            if cachedValue == None:
+            if cachedValue is None:
                 # Compute real results
                 if self.resetScript != "":
                     os.system("sh " + self.resetScript)

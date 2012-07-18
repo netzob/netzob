@@ -61,7 +61,7 @@ class Sequence(object):
         # We retrieve the order (if it exists)
         order = self.getOrderByValue(orderNumber)
         # if it doesn't exist we create it
-        if order == None:
+        if order is None:
             order = Order(orderNumber)
             self.orders.append(order)
         order.addMessage(message)
@@ -80,7 +80,7 @@ class Sequence(object):
         xmlSequence.set("id", str(self.getID()))
         xmlSequence.set("name", str(self.getName()))
 
-        if self.getDescription() != None:
+        if self.getDescription() is not None:
             xmlSequence.set("description", str(self.getDescription()))
 
         for order in self.getSortedOrders():

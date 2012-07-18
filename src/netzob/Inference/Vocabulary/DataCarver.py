@@ -61,7 +61,7 @@ class DataCarver(object):
     def execute(self, symbol):
         results = []
         toBeAnalyzed = []
-        if symbol != None:
+        if symbol is not None:
             toBeAnalyzed.append(symbol)
         else:
             toBeAnalyzed.extend(self.project.getVocabulary().getSymbols())
@@ -85,7 +85,7 @@ class DataCarver(object):
                 for message in symbol.getMessages():
                     strData = TypeConvertor.netzobRawToString(message.getReducedStringData())
                     for match in regex.finditer(strData):
-                        if match == None:
+                        if match is None:
                             taskResult = SearchResult(message, "Data Carving : {0}".format(carver))
                             taskResult.addSegment(0, len(message.getReducedStringData()))
                             taskResults.append(taskResult)

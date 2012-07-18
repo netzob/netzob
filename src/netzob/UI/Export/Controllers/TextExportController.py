@@ -87,12 +87,12 @@ class TextExportController:
                 self.showTextDefinition(symbolID)
 
     def showTextDefinition(self, symbolID):
-        if symbolID == None:
+        if symbolID is None:
             self.log.debug(_("No selected symbol"))
             self.view.textarea.get_buffer().set_text(_("Select a symbol to see its text definition"))
         else:
             textDefinition = self.model.getTextDefinition(symbolID)
-            if textDefinition != None:
+            if textDefinition is not None:
                 self.view.textarea.get_buffer().set_text("")
                 self.view.textarea.get_buffer().insert_with_tags_by_name(self.view.textarea.get_buffer().get_start_iter(), textDefinition, "normalTag")
             else:

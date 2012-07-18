@@ -112,7 +112,7 @@ class FileMessageFactory():
             raise NameError("The parsed xml doesn't represent a File message.")
 
         # Verifies the data field
-        if rootElement.find("{" + namespace + "}data") == None or not rootElement.find("{" + namespace + "}data").text:
+        if rootElement.find("{" + namespace + "}data") is None or not rootElement.find("{" + namespace + "}data").text:
             raise NameError("The parsed message has no data specified")
 
         # Parse the data field and transform it into a byte array
@@ -134,7 +134,7 @@ class FileMessageFactory():
         msg_creationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}creationDate").text)
 
         # Retrieves the modification date
-        if rootElement.find("{" + namespace + "}modificationDate").text != None:
+        if rootElement.find("{" + namespace + "}modificationDate").text is not None:
             msg_modificationDate = TypeConvertor.xsdDatetime2PythonDatetime(rootElement.find("{" + namespace + "}modificationDate").text)
         else:
             msg_modificationDate = msg_creationDate

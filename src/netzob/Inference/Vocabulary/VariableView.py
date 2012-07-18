@@ -71,7 +71,7 @@ class VariableView(object):
 
         # Add the initial Aggregate
         self.rootVariable = AggregateVariable(variableId, self.varName, None)
-        if self.defaultValue != None:
+        if self.defaultValue is not None:
             self.rootVariable.addChild(self.defaultValue)
 
     def display(self):
@@ -131,7 +131,7 @@ class VariableView(object):
 
         # Update UI
         page = self.netzob.getCurrentNotebookPage()
-        if page != None:
+        if page is not None:
             page.update()
 
     def showMenu(self, treeview, event):
@@ -152,7 +152,7 @@ class VariableView(object):
                         if varid == variable_id:
                             rootVariable = self.datas[varid]
 
-        if rootVariable == None:
+        if rootVariable is None:
             self.log.debug(_("Impossible to find the selected variable."))
             return
 

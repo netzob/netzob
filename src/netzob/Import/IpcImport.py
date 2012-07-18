@@ -65,9 +65,9 @@ class IpcImport(AbstractImporter):
         pass
 
     def kill(self):
-        if self.stracePid != None and self.stracePid.poll() != None:
+        if self.stracePid is not None and self.stracePid.poll() is not None:
             self.stracePid.kill()
-        if self.aSniffThread != None and self.aSniffThread.isAlive():
+        if self.aSniffThread is not None and self.aSniffThread.isAlive():
             self.aSniffThread._Thread__stop()
 
     #+----------------------------------------------
@@ -276,7 +276,7 @@ class IpcImport(AbstractImporter):
     #| Retrieve the filtered FD
     #+----------------------------------------------
     def retrieveFDs(self, f_fs=True, f_net=True, f_proc=True):
-        if self.pid == None:
+        if self.pid is None:
             return []
         if False:  # f_net and (not f_fs) and (not f_proc): # -i for optimization
             cmd = "/usr/bin/lsof -i -a -d 0-1024 -a -p " + str(self.pid) + " | grep -v \"SIZE/OFF\" |awk -F \" \" {' print $5 \" \" $8 \" \" $9 \" \" $7'}"
@@ -382,10 +382,10 @@ class IpcImport(AbstractImporter):
         self.butSniffIPC.set_sensitive(True)
         self.butSniffFiltered.set_sensitive(True)
 
-        if self.stracePid != None:
+        if self.stracePid is not None:
             self.stracePid.kill()
         self.stracePid = None
-        if self.aSniffThread != None and self.aSniffThread.isAlive():
+        if self.aSniffThread is not None and self.aSniffThread.isAlive():
             self.aSniffThread._Thread__stop()
         self.aSniffThread = None
 
@@ -405,7 +405,7 @@ class IpcImport(AbstractImporter):
         data = src.readline()
         compiledRegex = re.compile("(read|write)\((\d+), \"(.*)\", \d+\)[ \t]*=[ \t]*(\d+)")
         m = compiledRegex.match(data)
-        if m == None:
+        if m is None:
             return self.doSniff
         direction = data[m.start(1): m.end(1)]
         fd = int(data[m.start(2): m.end(2)])

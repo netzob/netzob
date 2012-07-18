@@ -56,7 +56,7 @@ class AbstractMessage(object):
     def __init__(self, id, timestamp, data, type, pattern=[]):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.Models.AbstractMessage.py')
-        if id == None:
+        if id is None:
             self.id = uuid.uuid4()
         else:
             self.id = id
@@ -315,7 +315,7 @@ class AbstractMessage(object):
         except AssertionError:
             raise NetzobException("This Python version only supports 100 named groups in regex")
 
-        if dynamicDatas == None:
+        if dynamicDatas is None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + data[:255] + "...")
@@ -402,13 +402,13 @@ class AbstractMessage(object):
                 except IndexError:
                     tmp = ""
 
-            if field.getColor() == "" or field.getColor() == None:
+            if field.getColor() == "" or field.getColor() is None:
                 color = 'blue'
             else:
                 color = field.getColor()
 
             # Define the background color
-            if field.getBackgroundColor() != None:
+            if field.getBackgroundColor() is not None:
                 backgroundColor = 'background="' + field.getBackgroundColor() + '"'
             else:
                 backgroundColor = ""

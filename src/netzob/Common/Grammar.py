@@ -66,7 +66,7 @@ class Grammar(object):
     #+-----------------------------------------------------------------------+
     def save(self, root, namespace):
         xmlGrammar = etree.SubElement(root, "{" + namespace + "}grammar")
-        if self.automata != None:
+        if self.automata is not None:
             self.automata.save(xmlGrammar, namespace)
 
         if len(self.sequences) > 0:
@@ -80,20 +80,20 @@ class Grammar(object):
             automata = None
             sequences = []
 
-            if xmlRoot.find("{" + namespace + "}automata") != None:
+            if xmlRoot.find("{" + namespace + "}automata") is not None:
                 xmlAutomata = xmlRoot.find("{" + namespace + "}automata")
                 automata = Automata.loadFromXML(xmlAutomata, vocabulary, namespace, version)
 
-            if xmlRoot.find("{" + namespace + "}sequences") != None:
+            if xmlRoot.find("{" + namespace + "}sequences") is not None:
                 xmlSequences = xmlRoot.find("{" + namespace + "}sequences")
                 for xmlSequence in xmlSequences.findall("{" + namespace + "}sequence"):
                     sequence = Sequence.loadFromXML(xmlSequence, vocabulary, namespace, version)
                     sequences.append(sequence)
 
             grammar = None
-            if automata != None or len(sequences) > 0:
+            if automata is not None or len(sequences) > 0:
                 grammar = Grammar()
-                if automata != None:
+                if automata is not None:
                     grammar.setAutomata(automata)
                 if len(sequences) > 0:
                     grammar.setSequences(sequences)

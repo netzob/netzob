@@ -59,7 +59,7 @@ class IntVariable(Variable):
         self.min = -1
         self.max = -1
         self.reset = "normal"
-        if self.value != None:
+        if self.value is not None:
             self.binValue = TypeConvertor.int2bin(self.value, self.size)
             self.strValue = TypeConvertor.int2string(self.value)
         else:
@@ -73,7 +73,7 @@ class IntVariable(Variable):
 
     def restore(self):
         self.log.debug("Restore ...")
-        if self.binValueBeforeLearning != None and self.strValueBeforeLearning != None:
+        if self.binValueBeforeLearning is not None and self.strValueBeforeLearning is not None:
             self.log.debug("Restore the previsouly learned value")
             self.binValue = self.binValueBeforeLearning
             self.strValue = self.strValueBeforeLearning
@@ -92,7 +92,7 @@ class IntVariable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
         self.log.debug("Learn on " + str(indice) + " : " + str(val[indice:]))
-        if self.binValue != None and not isForced:
+        if self.binValue is not None and not isForced:
             self.log.debug("Won't learn the hex value (" + self.name + ") since it already has one is not forced to (return " + str(len(self.binValue)) + ")")
             return indice + len(self.binValue)
 

@@ -163,7 +163,7 @@ class MembershipQuery(object):
             return False
 
     def __cmp__(self, other):
-        if other == None:
+        if other is None:
             return -1
         if self.isStrictlyEqual(other):
             return 0

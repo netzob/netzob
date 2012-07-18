@@ -119,7 +119,7 @@ class WorkspaceSelector(object):
                                         buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                                  Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
-        if self.selectedWorkspace != None:
+        if self.selectedWorkspace is not None:
             chooser.set_filename(self.selectedWorkspace)
         res = chooser.run()
         if res == Gtk.ResponseType.OK:

@@ -122,7 +122,7 @@ class DictionaryXmlParser(object):
             elif typeVar == "DYN_LEN_STRING":
                 variable = DynLenStringVariable(idVar, nameVar, int(xmlVariable.text))
 
-            if variable != None:
+            if variable is not None:
                 variables.append(variable)
 
         # Parse the entries declared in dictionary

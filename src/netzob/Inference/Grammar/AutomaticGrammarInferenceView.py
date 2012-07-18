@@ -213,7 +213,7 @@ class AutomaticGrammarInferenceView(object):
         return False
 
     def callback_submitedQuery(self, query, resultQuery):
-        if query == None:
+        if query is None:
             self.log.debug(_("Impossible to show a Null query"))
             return
 
@@ -242,7 +242,7 @@ class AutomaticGrammarInferenceView(object):
         self.treestore_queries.append(None, [strQuery, strResultQuery, "blue"])
 
     def callback_hypotheticalAutomaton(self, hypotheticalAutomaton):
-        if hypotheticalAutomaton != None:
+        if hypotheticalAutomaton is not None:
             self.computedAutomaton = hypotheticalAutomaton
             self.xdotWidget.set_dotcode(self.computedAutomaton.getDotCode())
 
@@ -257,7 +257,7 @@ class AutomaticGrammarInferenceView(object):
         self.finish = True
 
     def saveGrammar(self, button):
-        if self.computedAutomaton != None:
+        if self.computedAutomaton is not None:
             self.log.debug(_("Saving the computed automata as the grammar of current project"))
             self.project.getGrammar().setAutomata(self.computedAutomaton)
             self.dialog.destroy()

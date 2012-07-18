@@ -102,9 +102,9 @@ class TreeTypeStructureGenerator():
     #|   Update the treestore
     #+----------------------------------------------
     def update(self):
-        if self.netzob.getCurrentProject() == None:
+        if self.netzob.getCurrentProject() is None:
             return
-        if self.getSymbol() == None or self.getMessage() == None:
+        if self.getSymbol() is None or self.getMessage() is None:
             self.clear()
             return
 

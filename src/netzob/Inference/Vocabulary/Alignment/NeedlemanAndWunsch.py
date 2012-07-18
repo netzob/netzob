@@ -66,7 +66,7 @@ class NeedlemanAndWunsch(object):
     #| @param currentMessage a str which represents the current alignment status
     #+-----------------------------------------------------------------------+
     def cb_executionStatus(self, donePercent, currentMessage):
-        if self.cb_status == None:
+        if self.cb_status is None:
             print "[Alignment status] " + str(donePercent) + "% " + currentMessage
         else:
             self.cb_status(donePercent, currentMessage)
@@ -78,7 +78,7 @@ class NeedlemanAndWunsch(object):
     #+-----------------------------------------------------------------------+
     def alignSymbol(self, symbol, doInternalSlick, defaultFormat):
         messages = symbol.getMessages()
-        if messages == None or len(messages) == 0:
+        if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
             field = Field.createDefaultField()

@@ -79,7 +79,7 @@ class MD5Variable(Variable):
 
     def learn(self, val, indice, isForced, dictionary):
 
-        if self.strVal == None or isForced:
+        if self.strVal is None or isForced:
             tmp = val[indice:]
             self.log.debug("Taille MD5 " + str(len(tmp)))
             # MD5 size = 16 bytes = 16*8 = 128

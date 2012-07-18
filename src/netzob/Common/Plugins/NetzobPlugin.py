@@ -143,7 +143,7 @@ class NetzobPlugin(object):
         logging.debug("Get plugin by extension")
         for plugin in NetzobPlugin.getLoadedPlugins(NetzobPlugin):
             try:
-                if plugin.getEntryPoints() != None:
+                if plugin.getEntryPoints() is not None:
                     for pluginExtensionClass in plugin.getEntryPoints():
                         logging.debug("Plugin {0} has entry point {1}".format(
                             plugin.__class__.__name__,

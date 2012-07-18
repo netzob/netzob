@@ -68,7 +68,7 @@ class BinaryVariable(Variable):
     #|     Transform and save the provided bitarray as current value
     #+-----------------------------------------------------------------------+
     def computeCurrentValue(self, binValue):
-        if binValue != None:
+        if binValue is not None:
             strCurrentValue = TypeConvertor.bitarray2StrBitarray(binValue)
             binCurrentValue = binValue
             self.currentValue = (binCurrentValue, strCurrentValue)
@@ -98,7 +98,7 @@ class BinaryVariable(Variable):
     #|     else its NONE
     #+-----------------------------------------------------------------------+
     def getValue(self, negative, vocabulary, memory):
-        if self.getCurrentValue() != None:
+        if self.getCurrentValue() is not None:
             return self.getCurrentValue()
 
         if memory.hasMemorized(self):
@@ -114,7 +114,7 @@ class BinaryVariable(Variable):
     #|     or it generates one and save its value in memory
     #+-----------------------------------------------------------------------+
     def getValueToSend(self, negative, vocabulary, memory):
-        if self.getCurrentValue() != None:
+        if self.getCurrentValue() is not None:
             self.log.debug("BINARY : HAS CURRENT VALUE")
             return self.getCurrentValue()
 
@@ -158,7 +158,7 @@ class BinaryVariable(Variable):
         localValue = self.getValue(negative, vocabulary, memory)
         self.log.debug("Receive : " + str(value[indice:]))
         # In case we can't compare with a known value, we compare only the possibility to learn it afterward
-        if localValue == None:
+        if localValue is None:
             self.log.debug("We compare the format (will we be able to learn it afterwards ?")
             return self.compareFormat(value, indice, negative, vocabulary, memory)
         else:
@@ -225,7 +225,7 @@ class BinaryVariable(Variable):
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:BinaryVariable")
 
         # Original Value
-        if self.getOriginalValue() != None:
+        if self.getOriginalValue() is not None:
             xmlBinaryVariableOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
             xmlBinaryVariableOriginalValue.text = TypeConvertor.bitarray2StrBitarray(self.getOriginalValue())
 
@@ -244,7 +244,7 @@ class BinaryVariable(Variable):
             varName = xmlRoot.get("name")
 
             xmlBinaryVariableOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
-            if xmlBinaryVariableOriginalValue != None:
+            if xmlBinaryVariableOriginalValue is not None:
                 originalValue = TypeConvertor.strBitarray2Bitarray(xmlBinaryVariableOriginalValue.text)
             else:
                 originalValue = None

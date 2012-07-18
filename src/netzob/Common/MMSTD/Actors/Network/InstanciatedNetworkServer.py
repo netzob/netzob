@@ -68,7 +68,7 @@ class InstanciatedNetworkServer(AbstractActor):
 
     def close(self):
         self.log.debug("Closing the socket")
-        if self.socket == None:
+        if self.socket is None:
             self.log.warn("No need to close the socket since it's not even open")
             return True
         self.log.debug("Shuting down the socket of the instanciated network server")

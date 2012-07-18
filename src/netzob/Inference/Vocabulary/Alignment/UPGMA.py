@@ -88,7 +88,7 @@ class UPGMA(object):
         """Callback function called by the C extension to provide info on status
         @param donePercent: a float between 0 and 100 included
         @param currentMessage: a str which represents the current alignment status"""
-        if self.cb_status == None:
+        if self.cb_status is None:
             print "[UPGMA status] " + str(donePercent) + "% " + currentMessage
         else:
             self.cb_status(donePercent, currentMessage)
