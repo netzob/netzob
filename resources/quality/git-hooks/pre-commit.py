@@ -31,15 +31,19 @@ import sys
 import subprocess
 from git import *
 
-ignore_files = ["src/netzob/ExternalLibs/xdot.py",
-                ".*\.txt",
-                ".*\.png", ".*\.ico"
-                ".*\.xsd",
-                "resources/*",
-                "__init__.py",
-                "\.git/*",
-                ".*\.pyc"
-                ]
+ignore_files = [
+    "__init__.py",
+    "src/netzob/ExternalLibs/xdot.py",
+    ".*\.txt",
+    ".*\.png", ".*\.ico"
+    ".*\.xsd", ".*\.xml",
+    "resources/*",
+    ".*\.pyc",
+    "MANIFEST\.in",
+    ".*\.po", ".*\.pot",
+    "doc/netzob\.1"
+    "\.git/*",
+]
 
 def getFiles():
     currentPath = os.getcwd()
