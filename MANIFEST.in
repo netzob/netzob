@@ -4,8 +4,7 @@ include NEWS.txt
 include PKG-INFO.txt
 include README.txt
 exclude doc/netzob.1
-recursive-include locales *
-recursive-exclude locales *.mo
+recursive-exclude resources *.mo
 recursive-include doc *
 recursive-include resources *
 recursive-include lib *
