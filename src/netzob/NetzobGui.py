@@ -64,11 +64,7 @@ class NetzobGui(Gtk.Window):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self):
-
-        # Command line commands
-        parser = CommandLine.get_parser()
-        opts, args = parser.parse_args()
+    def __init__(self, commandLineParser):
 
         locale.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
         locale.textdomain("netzob")
@@ -84,10 +80,10 @@ class NetzobGui(Gtk.Window):
             logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
 
-        if opts.workspace == None:
+        if commandLineParser.getOptions().workspace == None:
             workspace = str(ResourcesConfiguration.getWorkspaceFile())
         else:
-            workspace = opts.workspace
+            workspace = commandLineParser.getOptions().workspace
 
         logging.debug("The workspace: {0}".format(str(workspace)))
 

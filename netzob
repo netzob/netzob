@@ -60,6 +60,7 @@ except:
     sys.path.append(build_lib_path)
 
 from netzob.Common.DepCheck import DepCheck
+from netzob.Common.CommandLine import CommandLine
 
 if __name__ == "__main__":
 
@@ -68,10 +69,16 @@ if __name__ == "__main__":
         logging.fatal("Some required dependency are not available and prevent netzob from starting.")
         sys.exit()
 
+    # Parsing Command Line arguments
+    commandLineParser = CommandLine()
+
+    # compute the requested execution following the provided arguments
+    commandLineParser.parse()
+
     GObject.threads_init() # for handling concurrent GUI access from threads
 
     import netzob.NetzobGui as NetzobGui
     from netzob import release
 
-    netzob = NetzobGui.NetzobGui()
+    netzob = NetzobGui.NetzobGui(commandLineParser)
     netzob.startGui()

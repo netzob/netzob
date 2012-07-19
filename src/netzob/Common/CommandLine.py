@@ -37,19 +37,36 @@ import optparse
 from netzob import release
 
 
-#+---------------------------------------------------------------------------+
-#| get_parser
-#|  Creates and returns the command line parser.
-#+---------------------------------------------------------------------------+
-def get_parser():
-        usage = "usage: %prog [options]"
-        parser = optparse.OptionParser(usage, prog=release.appname,
-                                       version=release.version)
-        parser.add_option("-w", "--workspace",
-                          dest="workspace", help="Path to the workspace")
+#+----------------------------------------------
+#| CommandLine
+#+----------------------------------------------
+class CommandLine(object):
+    """Reads, validates and parses the command line arguments provided by
+    users"""
+
+    def __init__(self):
+        self.parser = None
+        self.providedOptions = None
+        self.providedArguments = None
+        self.configure()
+
+    def configure(self):
+        """Configure the parser based on Netzob's usage and the
+        definition of its options and arguments"""
+        self.usage = "usage: %prog [options]"
+        self.parser = optparse.OptionParser(self.usage, prog=release.appname,
+                                            version=release.version)
+        self.parser.add_option("-w", "--workspace",
+                               dest="workspace", help="Path to the workspace")
 
         # register the group of options for plugins
-        groupPlugins = optparse.OptionGroup(parser, "Manage Netzob's plugins")
+        groupPlugins = optparse.OptionGroup(self.parser, "Manage Netzob's plugins")
         groupPlugins.add_option('--plugin-list', help='List the available plugins', action="store_true")
-        parser.add_option_group(groupPlugins)
-        return parser
+        self.parser.add_option_group(groupPlugins)
+
+    def parse(self):
+        """Read and parse the provided arguments and options"""
+        (self.providedOptions, self.providedArguments) = self.parser.parse_args()
+
+    def getOptions(self):
+        return self.providedOptions
