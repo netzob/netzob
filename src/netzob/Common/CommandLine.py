@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import optparse
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Local imports
@@ -61,12 +62,26 @@ class CommandLine(object):
 
         # register the group of options for plugins
         groupPlugins = optparse.OptionGroup(self.parser, "Manage Netzob's plugins")
-        groupPlugins.add_option('--plugin-list', help='List the available plugins', action="store_true")
+        groupPlugins.add_option('--plugin-list', help='List the available plugins', action="store_true", dest="plugin_list")
         self.parser.add_option_group(groupPlugins)
 
     def parse(self):
         """Read and parse the provided arguments and options"""
         (self.providedOptions, self.providedArguments) = self.parser.parse_args()
+
+    def isStartGUIRequested(self):
+        """Compute and return if the user requested (through the command line arguments and options)
+        to start the GTK GUI"""
+        if not self.isManagePluginsRequested():
+            return False
+
+    def isManagePluginsRequested(self):
+        """Compute and return is the user has requested to manage the plugins"""
+        if self.parser is None:
+            self.parse()
+        if self.providedOptions is None:
+            return False
+        return self.providedOptions.plugin_list
 
     def getOptions(self):
         return self.providedOptions
