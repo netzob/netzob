@@ -230,7 +230,7 @@ class Vocabulary(object):
             # Symbols
             for xmlSymbol in xmlRoot.findall("{" + namespace_project + "}symbols/{" + namespace_project + "}symbol"):
                 symbol = Symbol.loadSymbol(xmlSymbol, namespace_project, namespace_common, version, project, vocabulary)
-                if symbol i not None:
+                if symbol is not None:
                     vocabulary.addSymbol(symbol)
             # Sessions
             for xmlSession in xmlRoot.findall("{" + namespace_project + "}sessions/{" + namespace_common + "}session"):
