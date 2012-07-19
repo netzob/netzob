@@ -28,8 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,27 +38,34 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 
 
-class AbstractLeafVariable(AbstractVariable):
-    """AbstractLeafVariable:
-            An abstract variable defined in a dictionary which is a leaf (variable containing data for example) in the global variable tree.
+class VariableWritingToken(AbstractVariableProcessingToken):
+    """VariableWritingToken:
+            A communication token used by variable when they are written.
     """
 
-    def __init__(self, id, name):
-        """Constructor of AbstractLeafVariable:
+    def __init__(self, value, generationStrategy):
+        """Constructor of VariableWritingToken:
+
+                @type value: bitarray
+                @param value: the current written value in binary format.
+                @type generationStrategy: string
+                @param generationStrategy: the strategy that all generation of value for this variable will follow.
         """
-        AbstractVariable.__init__(self, id, name)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
+        AbstractVariableProcessingToken.__init__()
+        self.value = value
+        self.generationStrategy = generationStrategy
 
 #+---------------------------------------------------------------------------+
-#| Functions inherited from AbstractVariable                                 |
+#| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def forget(self, processingToken):
-        self.log.debug(_("Variable {0} is forgotten.").format(self.getName()))
-        processingToken.getMemory().forget(self)
+    def getValue(self):
+        return self.value
 
-    def memorize(self, processingToken):
-        self.log.debug(_("Variable {0} is memorized.").format(self.getName()))
-        processingToken.getMemory().memorize(self)
+    def getGenerationStrategy(self):
+        return self.generationStrategy
+
+    def setValue(self, value):
+        self.value = value

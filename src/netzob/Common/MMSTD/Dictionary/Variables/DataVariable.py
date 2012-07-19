@@ -40,7 +40,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.AbstractLeafVariable import AbstractLeafVariable
+from netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable import AbstractLeafVariable
 
 
 class DataVariable(AbstractLeafVariable):
@@ -61,7 +61,7 @@ class DataVariable(AbstractLeafVariable):
                 @param maxChar: the maximum number of elementary character the value of this variable can have.
         """
         AbstractLeafVariable.__init__(self, id, name)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.DataVariable.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
         self.type = type
         self.originalValue = self.type.type2bin(originalValue)
         self.currentValue = None
@@ -71,49 +71,43 @@ class DataVariable(AbstractLeafVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
-    def learn(self, value, indice, negative, vocabulary, vmt):
+    def learn(self, readingToken):
         self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(value), str(indice)))
-
-        tmp = value[indice:]
+        tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= self.minBits:
             if len(tmp) >= self.maxBits:
                 self.currentValue = tmp[:self.maxBits]
-                vmt.addEatenBits(self.maxBits)
+                readingToken.incrementIndex(self.maxBits)
             else:
                 self.currentValue = tmp
-                vmt.addEatenBits(len(tmp))
+                readingToken.incrementIndex(len(tmp))
             self.log.info(_("Format comparison successful."))
         else:
             self.log.info(_("Format comparison failed."))
-            vmt.setOk(False)
+            readingToken.setOk(False)
 
-    def compare(self, value, indice, negative, vocabulary, memory, vmt):
+    def compare(self, readingToken):
         self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(value), str(indice)))
-
-        localValue = self.getValue(negative, vocabulary, memory)
-        if localValue is not None:
-            (binVal, strVal) = localValue
-            tmp = value[indice:]
-            if len(tmp) >= len(binVal):
-                if tmp[:len(binVal)] == binVal:
-                    self.log.info(_("Comparison successful."))
-                    vmt.addEatenBits(len(binVal))
-                    break
+        localValue = self.getValue(readingToken)
+        tmp = readingToken.getValue()[readingToken.getIndex():]
+        if len(tmp) >= len(localValue):
+            if tmp[:len(localValue)] == localValue:
+                self.log.info(_("Comparison successful."))
+                readingToken.incrementIndex(len(localValue))
+                break
         self.log.info(_("Comparison failed."))
-        vmt.setOk(False)
+        readingToken.setOk(False)
 
-    def generate(self, negative, vocabulary, generationStrategy):
+    def generate(self, writingToken):
         self.log.debug(_("Variable {0} generate a value.").format(self.getName()))
+        self.currentValue = self.getType().generateValue(writingToken.getGenerationStrategy(), self.minBits / self.getType().getAtomicSize(), self.maxBits / self.getType().getAtomicSize())
 
-        self.currentValue = self.getType().generateValue(generationStrategy, self.minBits / self.getType().getAtomicSize(), self.maxBits / self.getType().getAtomicSize())
-
-    def getValue(self, negative, vocabulary, memory):
+    def getValue(self, writingToken):
         self.log.debug(_("Variable {0} get its value.").format(self.getName()))
-
         if self.currentValue is not None:
             return self.currentValue
         else:
-            return memory.recall(self)
+            return writingToken.getMemory().recall(self)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

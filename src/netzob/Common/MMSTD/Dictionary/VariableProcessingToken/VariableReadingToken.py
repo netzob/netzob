@@ -28,8 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,27 +38,37 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 
 
-class AbstractLeafVariable(AbstractVariable):
-    """AbstractLeafVariable:
-            An abstract variable defined in a dictionary which is a leaf (variable containing data for example) in the global variable tree.
+class VariableReadingToken(AbstractVariableProcessingToken):
+    """VariableReadingToken:
+            A communication token used by variable when they are read.
     """
 
-    def __init__(self, id, name):
-        """Constructor of AbstractLeafVariable:
+    def __init__(self, value, index):
+        """Constructor of VariableReadingToken:
+
+                @type value: bitarray
+                @param value: the current read value in binary format.
+                @type index: integer
+                @param index: the current reading index in the read value.
         """
-        AbstractVariable.__init__(self, id, name)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
+        AbstractVariableProcessingToken.__init__()
+        self.value = value
+        self.index = index
 
 #+---------------------------------------------------------------------------+
-#| Functions inherited from AbstractVariable                                 |
+#| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def forget(self, processingToken):
-        self.log.debug(_("Variable {0} is forgotten.").format(self.getName()))
-        processingToken.getMemory().forget(self)
+    def getValue(self):
+        return self.value
 
-    def memorize(self, processingToken):
-        self.log.debug(_("Variable {0} is memorized.").format(self.getName()))
-        processingToken.getMemory().memorize(self)
+    def getIndex(self):
+        return self.index
+
+    def incrementIndex(self, increment):
+        self.index += increment
+
+    def setValue(self, value):
+        self.value = value

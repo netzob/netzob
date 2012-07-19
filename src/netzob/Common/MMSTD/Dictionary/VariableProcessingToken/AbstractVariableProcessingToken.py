@@ -28,8 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
+
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,27 +38,42 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
 
 
-class AbstractLeafVariable(AbstractVariable):
-    """AbstractLeafVariable:
-            An abstract variable defined in a dictionary which is a leaf (variable containing data for example) in the global variable tree.
+class AbstractVariableProcessingToken():
+    """AbstractVariableProcessingToken:
+            A communication token used by variable when they are processed.
     """
 
-    def __init__(self, id, name):
-        """Constructor of AbstractLeafVariable:
+    def __init__(self, negative, vocabulary, memory):
+        """Constructor of AbstractVariableProcessingToken:
+
+                @type negative: boolean
+                @param negative: tells if we use the processed variable or a logical not of it.
+                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
+                @param vocabulary: the vocabulary of the current project.
+                @type memory: netzob.Common.MMSTD.Memory.Memory
+                @param memory: a memory which can contain a former value of the processed variable.
         """
-        AbstractVariable.__init__(self, id, name)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
+        self.ok = True  # We consider that a communication token is always correct at construction.
+        self.negative = negative
+        self.vocabulary = vocabulary
+        self.memory = memory
 
 #+---------------------------------------------------------------------------+
-#| Functions inherited from AbstractVariable                                 |
+#| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def forget(self, processingToken):
-        self.log.debug(_("Variable {0} is forgotten.").format(self.getName()))
-        processingToken.getMemory().forget(self)
+    def isOk(self):
+        return self.ok
 
-    def memorize(self, processingToken):
-        self.log.debug(_("Variable {0} is memorized.").format(self.getName()))
-        processingToken.getMemory().memorize(self)
+    def getNegative(self):
+        return self.negative
+
+    def getVocabulary(self):
+        return self.vocabulary
+
+    def getMemory(self):
+        return self.memory
+
+    def setOk(self, ok):
+        self.ok = ok

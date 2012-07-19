@@ -56,8 +56,7 @@ class AbstractVariable:
                 @type name: string
                 @param name: the name of the variable being constructed.
         """
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.AbstractVariable.py')
-        self.type = type
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.py')
         self.id = id
         self.name = name
         self.mutable = True  # TODO: implement mutability.
@@ -66,176 +65,123 @@ class AbstractVariable:
 #+---------------------------------------------------------------------------+
 #| Visitor functions                                                         |
 #+---------------------------------------------------------------------------+
-    def read(self, negative, vocabulary, memory):
+    def read(self, readingToken):
         """read:
                 Grant a reading access to the variable.
 
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type memory: netzob.Common.MMSTD.Memory.Memory
-                @param memory: a memory which can contain a former value of the variable.
-                @rtype: netzob.Common.MMSTD.Dictionary.VariableManagementToken.VariableManagementToken
-                @return: a token which gives all critical information on this reading access.
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this reading access.
         """
-        vmt = VariableManagementToken()
         if self.mutable:
             if self.defined:
                 # mutable and defined
-                self.forget(self, negative, vocabulary, memory)
-                self.learn(self, value, indice, negative, vocabulary, vmt)
-                self.memorize(self, negative, vocabulary, memory)
+                self.forget(self, readingToken)
+                self.learn(self, readingToken)
+                self.memorize(self, readingTokenreadingToken)
 
             else:
                 # mutable and not defined
-                self.learn(self, value, indice, negative, vocabulary, vmt)
-                self.memorize(self, negative, vocabulary, memory)
+                self.learn(self, readingToken)
+                self.memorize(self, readingToken)
 
         else:
             if self.defined:
                 # not mutable and defined
-                self.compare(self, value, indice, negative, vocabulary, memory, vmt)
+                self.compare(self, readingToken)
 
             else:
                 # not mutable and not defined
-                vmt.setOk(False)
-        return vmt
-                
-        
-    def write(self, negative, vocabulary, memory):
+                readingToken.setOk(False)
+
+    def write(self, writingToken):
         """write:
                 Grant a writing access to the variable.
 
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type memory: netzob.Common.MMSTD.Memory.Memory
-                @param memory: a memory which can contain a former value of the variable.
-                @rtype: bitarry
-                @return: the value that has to be send/written.
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this writing access.
         """
-        valueToSend = None
         if self.mutable:
             if self.defined:
                 # mutable and defined
-                self.forget(self, negative, vocabulary, memory)
-                self.generate(self, negative, vocabulary)
-                self.memorize(self, negative, vocabulary, memory)
-                valueToSend = self.getValue(self, negative, vocabulary, memory)
+                self.forget(self, writingToken)
+                self.generate(self, writingToken)
+                self.memorize(self, writingToken)
+                valueToSend = self.getValue(self, writingToken)
 
             else:
                 # mutable and not defined
-                self.generate(self, negative, vocabulary)
-                self.memorize(self, negative, vocabulary, memory)
-                valueToSend = self.getValue(self, negative, vocabulary, memory)
+                self.generate(self, writingToken)
+                self.memorize(self, writingToken)
+                valueToSend = self.getValue(self, writingToken)
 
         else:
             if self.defined:
                 # not mutable and defined
-                valueToSend = self.getValue(self, negative, vocabulary, memory)
+                valueToSend = self.getValue(self, writingToken)
 
             else:
                 # not mutable and not defined
-                vmt.setOk(False)
-        return valueToSend
+                writingToken.setOk(False)
 
 #+---------------------------------------------------------------------------+
 #| Visitor abstract subFunctions                                             |
 #+---------------------------------------------------------------------------+
     @abstractmethod
-    def forget(self, negative, vocabulary, memory):
+    def forget(self, processingToken):
         """forget:
                 Remove the variable from the memory cache.
 
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type memory: netzob.Common.MMSTD.Memory.Memory
-                @param memory: a memory which can contain a former value of the variable.
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'forget'."))
 
     @abstractmethod
-    def memorize(self, negative, vocabulary, memory):
+    def memorize(self, processingToken):
         """memorize:
                 Add the variable to the memory cache.
 
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type memory: netzob.Common.MMSTD.Memory.Memory
-                @param memory: a memory which can contain a former value of the variable.
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'memorize'."))
 
     @abstractmethod
-    def learn(self, value, indice, negative, vocabulary, vmt):
+    def learn(self, readingToken):
         """learn:
                 Learn (starting at the "indice"-th character) value.
 
-                @type value: bitarray.bitarray
-                @param value: a bit array a subarray of which we compare to the current variable binary value.
-                @type indice: integer
-                @param indice: the starting point of comparison in value.
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type vmt: netzob.Common.MMSTD.Dictionary.VariableManagementToken.VariableManagementToken
-                @param vmt: a token which contains all critical information on the current operation.
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'learn'."))
 
     @abstractmethod
-    def compare(self, value, indice, negative, vocabulary, memory, vmt):
+    def compare(self, readingToken):
         """compare:
                 Compare (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
 
-                @type value: bitarray.bitarray
-                @param value: a bit array a subarray of which we compare to the current variable binary value.
-                @type indice: integer
-                @param indice: the starting point of comparison in value.
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type memory: netzob.Common.MMSTD.Memory.Memory
-                @param memory: a memory which can contain a former value of the variable.
-                @type vmt: netzob.Common.MMSTD.Dictionary.VariableManagementToken.VariableManagementToken
-                @param vmt: a token which contains all critical information on the current operation.
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'compare'."))
 
     @abstractmethod
-    def generate(self, negative, vocabulary, generationStrategy):
+    def generate(self, writingToken):
         """generate:
                 Generate a value according to a given strategy and attribute it to the variable.
 
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type generationStrategy: string
-                @param generationStrategy: a strategy ("random" for instance) that defines the way the value will be generated.
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'generate'."))
 
     @abstractmethod
-    def getValue(self, negative, vocabulary, memory):
+    def getValue(self, writingToken):
         """getValue:
 
-                @type negative: boolean
-                @param negative: tells if we use the variable or a logical not of it.
-                @type vocabulary: netzob.Common.Vocabulary.Vocabulary
-                @param vocabulary: the vocabulary of the current project.
-                @type memory: netzob.Common.MMSTD.Memory.Memory
-                @param memory: a memory which can contain a former value of the variable.
-                @rtype: bitarray
-                @return: the current value, or the last value stored in memory or None.
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'getValueToSend'."))
 
