@@ -137,22 +137,36 @@
       </packing>
     </child>
   </object>
+  <object class="GtkListStore" id="symbolListStore">
+    <columns>
+      <!-- column-name selected -->
+      <column type="gboolean"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name numOfMessages -->
+      <column type="gint"/>
+      <!-- column-name numOfFields -->
+      <column type="gint"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkPaned" id="vocabularyPanel">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
     <child>
-      <object class="GtkPaned" id="paned2">
+      <object class="GtkPaned" id="leftPaned">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="margin_bottom">6</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="box2">
+          <object class="GtkBox" id="symbolListBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="label3">
+              <object class="GtkLabel" id="symbolListLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Symbols</property>
@@ -164,57 +178,90 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTreeView" id="treeview1">
+              <object class="GtkBox" id="symbolTreeViewBox">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="headers_clickable">False</property>
-                <property name="search_column">0</property>
-                <property name="enable_grid_lines">both</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeview-selection5"/>
-                </child>
+                <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="treeviewcolumn4">
+                  <object class="GtkTreeView" id="selectSymbolTreeView">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">symbolListStore</property>
+                    <property name="enable_grid_lines">vertical</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="treeview-selection2"/>
+                    </child>
                     <child>
-                      <object class="GtkCellRendererToggle" id="cellrenderertoggle2"/>
-                      <attributes>
-                        <attribute name="active">0</attribute>
-                      </attributes>
+                      <object class="GtkTreeViewColumn" id="selectTreeViewColum">
+                        <child>
+                          <object class="GtkCellRendererToggle" id="toggleCellRenderer">
+                            <signal name="toggled" handler="toggleCellRenderer_toggled_cb" swapped="no"/>
+                          </object>
+                          <attributes>
+                            <attribute name="active">0</attribute>
+                          </attributes>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="textCellRenderer"/>
+                        </child>
+                      </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn" id="treeviewcolumn5">
-                    <property name="title" translatable="yes">Name</property>
+                  <object class="GtkTreeView" id="symbolListTreeView">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">symbolListStore</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="search_column">1</property>
+                    <property name="enable_grid_lines">both</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="treeview-selection3"/>
+                    </child>
                     <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
-                      <attributes>
-                        <attribute name="text">1</attribute>
-                      </attributes>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn5">
+                        <property name="title" translatable="yes">Name</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn6">
+                        <property name="title" translatable="yes">Message</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                          <attributes>
+                            <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn7">
+                        <property name="title" translatable="yes">Field</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext5"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
                     </child>
                   </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="treeviewcolumn6">
-                    <property name="title" translatable="yes">Message</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext2"/>
-                      <attributes>
-                        <attribute name="text">3</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="treeviewcolumn7">
-                    <property name="title" translatable="yes">Field</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext5"/>
-                      <attributes>
-                        <attribute name="text">2</attribute>
-                      </attributes>
-                    </child>
-                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -224,11 +271,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolbar" id="toolbar2">
+              <object class="GtkToolbar" id="symbolListToolbar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkToolButton" id="toolbutton1">
+                  <object class="GtkToolButton" id="selectAllSymbolsButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -239,6 +286,7 @@
                     <property name="label" translatable="yes">Select all symbol</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-select-all</property>
+                    <signal name="clicked" handler="selectAllSymbolsButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -246,7 +294,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="toolbutton2">
+                  <object class="GtkToolButton" id="unselectAllSymbolsButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -257,6 +305,7 @@
                     <property name="label" translatable="yes">Deselect all symbol</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-unselect-all</property>
+                    <signal name="clicked" handler="unselectAllSymbolsButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -276,7 +325,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="toolbutton11">
+                  <object class="GtkToolButton" id="createSymbolButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -287,6 +336,7 @@
                     <property name="label" translatable="yes">New</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-add</property>
+                    <signal name="clicked" handler="createSymbolButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -294,7 +344,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="Concatenate">
+                  <object class="GtkToolButton" id="concatSymbolButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -305,6 +355,7 @@
                     <property name="label" translatable="yes">Concatenate</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-concat-symbol</property>
+                    <signal name="clicked" handler="concatSymbolButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -312,7 +363,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="Rename">
+                  <object class="GtkToolButton" id="renameSymbolButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -323,6 +374,7 @@
                     <property name="label" translatable="yes">Rename</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-rename</property>
+                    <signal name="clicked" handler="renameSymbolButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -330,7 +382,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="toolbutton12">
+                  <object class="GtkToolButton" id="deleteSymbolButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -341,6 +393,7 @@
                     <property name="label" translatable="yes">Delete</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">gtk-delete</property>
+                    <signal name="clicked" handler="deleteSymbolButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -355,7 +408,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparator" id="separator4">
+              <object class="GtkSeparator" id="leftSeparator">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
               </object>
@@ -373,12 +426,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="box6">
+          <object class="GtkBox" id="propertiesBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="label8">
+              <object class="GtkLabel" id="propertiesLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Properties</property>
@@ -390,7 +443,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkNotebook" id="notebook1">
+              <object class="GtkNotebook" id="propertiesNotebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
@@ -496,11 +549,11 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="box3">
+      <object class="GtkBox" id="rightBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkSeparator" id="separator2">
+          <object class="GtkSeparator" id="rightSeparator">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
@@ -513,7 +566,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="box5">
+          <object class="GtkBox" id="messageListBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>

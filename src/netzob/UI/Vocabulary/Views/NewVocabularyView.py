@@ -45,18 +45,27 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 class NewVocabularyView(object):
+    SYMBOLLISTSTORE_SELECTED_COLUMN = 0
+    SYMBOLLISTSTORE_ID_COLUMN = 4
 
     def __init__(self, controller):
         self.controller = controller
+        self.netzob = self.controller.netzob
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
             "VocabularyView.glade"))
-        self._getObjects(self.builder, ["vocabularyPanel"])
+        self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
+            "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton"])
         self._loadActionGroupUIDefinition()
+        self.builder.connect_signals(self.controller)
+        # List of currently displayed message tables
+        self.messageTableLists = []
 
     def _loadActionGroupUIDefinition(self):
+        """Loads the action group and the UI definition of menu items
+        . This method should only be called in the constructor"""
         # Load actions
         actionsBuilder = Gtk.Builder()
         actionsBuilder.add_from_file(os.path.join(
@@ -75,10 +84,7 @@ class NewVocabularyView(object):
         for object in objectsList:
             setattr(self, object, builder.get_object(object))
 
-    def update(self):
-        pass
-
-    # Returns the central panel widget
+    ## Mandatory view methods
     def getPanel(self):
         return self.vocabularyPanel
 
@@ -90,8 +96,10 @@ class NewVocabularyView(object):
     def getMenuToolbarUIDefinition(self):
         return self._uiDefinition
 
-    def addSpreadSheet(self, symbolname, position):
-        """Add an external spreadsheet on the builder 
+    ## View manipulation methods
+    def addSpreadSheet(self, name, position):
+        """
+        Add an external spreadsheet on the builder 
         @type  box: string
         @param box: The hbox/vbox where add the widget
         @type  widget: string
@@ -103,10 +111,10 @@ class NewVocabularyView(object):
         """
         #create a new builder to extract the widget
         builder2 = Gtk.Builder()
-        builder2.add_from_file(self.ressourceglade + "/ui/gtk3-2.3.glade")
+        builder2.add_from_file(self.ressourceglade + "/ui/spreadsheet.glade")
         #set the name of the symbol
         label = builder2.get_object("label1")
-        label.set_text(symbolname)
+        label.set_text(name)
         #add the spreadsheet to the main builder
         spreadsheet = builder2.get_object("spreadsheet")
         box = self.builder.get_object("box5")
@@ -114,10 +122,35 @@ class NewVocabularyView(object):
         box.reorder_child(spreadsheet, position)
         #add the message for the treeview
         #add the close button
-        #todo
+        closebutton = builder2.get_object("button4")
+        closebutton.connect("clicked", self.button_closeview_cb, spreadsheet)
+        #focus
+        focusbutton = builder2.get_object("button1")
+        focusbutton.connect("clicked", self.button_focusview_cb, builder2)
 
-    def addRowSymbolList(self, selection, name, message, field, image):
-        """
+        return builder2
+
+    def update(self):
+        self.updateSymbolList()
+
+    ## Symbol List
+    def updateSymbolList(self):
+        """Updates the symbol list of the left panel, preserving the current
+        selection"""
+        symbolList = self.controller.netzob.getCurrentProject().getVocabulary().getSymbols()
+        selection = []
+        for row in self.symbolListStore:
+            if (row[0]): # 0 - Selected column
+                selection.append(row[4]) # 4 - Symbol ID column
+        self.symbolListStore.clear()
+        for sym in symbolList:
+            self.addRowSymbolList(selection, sym.getName(),
+                                  len(sym.getMessages()),
+                                  len(sym.getFields()),
+                                  sym.getID())
+
+    def addRowSymbolList(self, selection, name, message, field, symID):
+        """Adds a row in the symbol list of left panel
         @type  selection: boolean
         @param selection: if selected symbol
         @type  name: string
@@ -127,12 +160,57 @@ class NewVocabularyView(object):
         @type  field: string
         @param field: number of field in the symbol   
         @type  image: string
-        @param image: image of the lock button (freeze partitioning)
-        """
-        model = self.builder.get_object("liststore1")
-        i = model.append()
-        model.set(i, 0, selection)
-        model.set(i, 1, name)
-        model.set(i, 2, message)
-        model.set(i, 3, field)
-        model.set(i, 4, image)
+        @param image: image of the lock button (freeze partitioning)"""
+        i = self.symbolListStore.append()
+        self.symbolListStore.set(i, 0, (symID in selection))
+        self.symbolListStore.set(i, 1, name)
+        self.symbolListStore.set(i, 2, message)
+        self.symbolListStore.set(i, 3, field)
+        self.symbolListStore.set(i, 4, symID)
+
+    def updateSymbolListToolbar(self):
+        """Enables or disable buttons of the symbol list toolbar"""
+        selectedSymbolsCount = self.countSelectedSymbols()
+        self.renameSymbolButton.set_sensitive((selectedSymbolsCount == 1))
+        self.concatSymbolButton.set_sensitive((selectedSymbolsCount >= 2))
+        self.deleteSymbolButton.set_sensitive((selectedSymbolsCount >= 1))
+
+    def countSelectedSymbols(self):
+        count = 0
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                count += 1
+        return count
+
+    def getSelectedSymbolList(self):
+        currentVocabulary = self.controller.netzob.getCurrentProject().getVocabulary()
+        selectedSymbolList = []
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                symID = row[self.SYMBOLLISTSTORE_ID_COLUMN]
+                sym = currentVocabulary.getSymbolByID(symID)
+                selectedSymbolList.append(sym)
+        return selectedSymbolList
+
+    ## TODO
+    def refreshProjectProperties(self):
+        liststore = self.builder.get_object("projectproperties")
+        liststore.clear()
+        properties = self.controller.netzob.getCurrentProject().getProperties()
+        #too big
+        #line = liststore.append()
+        #liststore.set(line, 0, "workspace")
+        #liststore.set(line, 1, self.getCurrentWorkspace().getPath())
+        for key in properties:
+            line = liststore.append()
+            liststore.set(line, 0, key)
+            liststore.set(line, 1, str(properties[key]))
+
+    def refreshSymbolProperties(self):
+        pass
+
+    def refreshMessageProperties(self):
+        pass
+
+    def refreshFieldProperties(self):
+        pass

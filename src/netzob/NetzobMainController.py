@@ -64,6 +64,8 @@ class NetzobMainController(object):
         self._checkDependencies()
         self._initResourcesAndLocales()
 
+        ### TEST CODE
+        self.currentProject = self.getCurrentWorkspace().getProjects()[2]
         # Initialize main view
         self.view = NetzobMainView(self)
 
