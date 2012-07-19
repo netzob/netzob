@@ -45,21 +45,17 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class WordType(AbstractType):
-    """WordType:
-            A type represented by printable strings.
+class NumberType(AbstractType):
+    """NumberType:
+            A type represented by numbers (integers).
     """
 
     def __init__(self, atomicSize):
-        """Constructor of WordType:
+        """Constructor of NumberType:
         """
         AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.NumberType.py')
 
     def generateValue(self, generationStrategy, minSize, maxSize):
-        size = random.randint(minSize, maxSize)
-        value = ""
-        if generationStrategy == "random":
-            for i in range(size):
-                value = value + random.choice(string.printable)
-        return TypeConvertor.string2bin(value)
+        value = random.randint(10 ** (minSize - 1), 10 ** maxSize - 1)
+        return TypeConvertor.int2bin(value)
