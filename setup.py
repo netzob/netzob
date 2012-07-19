@@ -78,8 +78,8 @@ macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
 
 # Module Needleman
 moduleLibNeedleman = Extension('_libNeedleman',
-#                               extra_compile_args=["-fopenmp"],
-#                               extra_link_args=["-fopenmp"],
+                               # extra_compile_args=["-fopenmp"],
+                               # extra_link_args=["-fopenmp"],
                                sources=[os.path.join(interfacePath, "Interface.c"),
                                         os.path.join(pyInterfacePath, "libInterface.c"),
                                         os.path.join(pyNeedlemanPath, "libNeedleman.c"),
@@ -94,19 +94,19 @@ moduleLibNeedleman = Extension('_libNeedleman',
 
 # Module ScoreComputation
 moduleLibScoreComputation = Extension('_libScoreComputation',
-#                               extra_compile_args=["-fopenmp"],
-#                               extra_link_args=["-fopenmp"],
-                               sources=[os.path.join(needlemanPath, "scoreComputation.c"),
-                                        os.path.join(pyNeedlemanPath, "libScoreComputation.c"),
-                                        os.path.join(needlemanPath, "Needleman.c"),
-                                        os.path.join(interfacePath, "Interface.c"),
-                                        os.path.join(pyInterfacePath, "libInterface.c"),
-                                        os.path.join(argsFactoriesPath, "factory.c"),
-                                        os.path.join(regexPath, "regex.c"),
-                                        os.path.join(regexPath, "manipulate.c"),
-                                        os.path.join(toolsPath, "getBID.c")],
-                               define_macros=macros,
-                               include_dirs=includes)
+                                      # extra_compile_args=["-fopenmp"],
+                                      # extra_link_args=["-fopenmp"],
+                                      sources=[os.path.join(needlemanPath, "scoreComputation.c"),
+                                               os.path.join(pyNeedlemanPath, "libScoreComputation.c"),
+                                               os.path.join(needlemanPath, "Needleman.c"),
+                                               os.path.join(interfacePath, "Interface.c"),
+                                               os.path.join(pyInterfacePath, "libInterface.c"),
+                                               os.path.join(argsFactoriesPath, "factory.c"),
+                                               os.path.join(regexPath, "regex.c"),
+                                               os.path.join(regexPath, "manipulate.c"),
+                                               os.path.join(toolsPath, "getBID.c")],
+                                      define_macros=macros,
+                                      include_dirs=includes)
 
 # Module Interface
 moduleLibInterface = Extension('_libInterface',
@@ -118,12 +118,12 @@ moduleLibInterface = Extension('_libInterface',
 
 # Module Regex
 moduleLibRegex = Extension('_libRegex',
-                               sources=[os.path.join(regexPath, "regex.c"),
-                                        os.path.join(pyRegexPath, "libRegex.c"),
-                                        os.path.join(regexPath, "manipulate.c"),
-                                        os.path.join(toolsPath, "getBID.c")],
-                                define_macros=macros,
-                               include_dirs=includes)
+                           sources=[os.path.join(regexPath, "regex.c"),
+                                    os.path.join(pyRegexPath, "libRegex.c"),
+                                    os.path.join(regexPath, "manipulate.c"),
+                                    os.path.join(toolsPath, "getBID.c")],
+                           define_macros=macros,
+                           include_dirs=includes)
 
 #+----------------------------------------------------------------------------
 #| Definition of the dependencies
@@ -140,9 +140,9 @@ dependencies = [
 #| Extensions in the build operations (create manpage, i18n, ...)
 #+----------------------------------------------------------------------------
 CMD_CLASS = {
-             'build_py': pybuild_command,
-             'build_manpage': manpage_command
-             }
+    'build_py': pybuild_command,
+    'build_manpage': manpage_command
+}
 
 #+----------------------------------------------------------------------------
 #| Activate Babel (i18n) if available
@@ -178,10 +178,10 @@ setup(
         (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "repository.xml.default")]),
         (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "logging.conf.default")]),
         (os.path.join("share", "netzob", "xsds", "0.1"), [os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Workspace.xsd"),
-                                             os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Project.xsd"),
-                                             os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "common.xsd")]),
+                                                          os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Project.xsd"),
+                                                          os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "common.xsd")]),
         (os.path.join("share", "locale", "fr", "LC_MESSAGES"), [os.path.join(netzobStaticResourcesPath, "locales", "fr", "LC_MESSAGES", "netzob.mo")])
-        ],
+    ],
     scripts=["netzob"],
     install_requires=dependencies,
     version=release.version,
@@ -206,7 +206,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Security",
         "Topic :: System :: Networking",
-        ],
+    ],
     long_description=release.long_description,
     cmdclass=CMD_CLASS,
     entry_points="""
