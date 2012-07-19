@@ -12,3 +12,5 @@ Contributors
   * Maxime Olivier (Quality enforcer)
   * Alexandre Pigné (Gentoo package maintainer)
   * Franck Roland (developer)
+  * Fabien André (developer)
+  * Quentin Heyler (developer)

@@ -74,7 +74,9 @@ contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
                 "Goulven Guiheux <goulven.guiheux@amossys.fr>",
                 "Maxime Olivier <maxime@miskin.fr>",
                 "Alexandre Pigné <alex@freesenses.net>",
-                "Franck Roland <franck.l.roland@gmail.com>"]
+                "Franck Roland <franck.l.roland@gmail.com>",
+                "Fabien André <fabien.andre@insa-rennes.fr>",
+                "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>"]
 
 #+---------------------------------------------------------------------------+
 #| Email to contact authors
