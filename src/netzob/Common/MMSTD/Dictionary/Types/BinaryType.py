@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
 import logging
 import random
@@ -44,25 +45,29 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class NumberType(AbstractType):
-    """NumberType:
-            A type represented by numbers (integers).
+class BinaryType(AbstractType):
+    """BinaryType:
+            A type represented by a bitarray.
     """
 
     def __init__(self, atomicSize):
-        """Constructor of NumberType:
+        """Constructor of BinaryType:
         """
         AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.NumberType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.BinaryType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
-        value = 0
-        if generationStrategy == "random":
-            value = random.randint(10 ** (minSize - 1), 10 ** maxSize - 1)
+        size = random.randint(minSize, maxSize)
+        value = []
+        for i in range(size):
+            if random.randint(0, 1) == 1:
+                value.append(True)
+            else:
+                value.append(False)
         return self.type2bin(value)
 
     def type2bin(self, typeValue):
-        return TypeConvertor.int2bin(typeValue)
+        return bitarray(typeValue)

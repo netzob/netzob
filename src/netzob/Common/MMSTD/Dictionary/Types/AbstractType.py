@@ -31,6 +31,7 @@
 from abc import abstractmethod
 from gettext import gettext as _
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -89,6 +90,18 @@ class AbstractType():
                 @return: the generated value.
         """
         raise NotImplementedError(_("The current type does not implement 'generateValue'."))
+
+    @abstractmethod
+    def type2bin(self, typeValue):
+        """type2bin:
+                Transform a type value (string for a word, integer for a number...) in a binary value.
+
+                @type typeValue: linked to the instance of Type.
+                @param typeValue: the original value in the authentic type format.
+                @rtype: bitarray
+                @return: the value in binary format.
+        """
+        raise NotImplementedError(_("The current type does not implement 'type2bin'."))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

@@ -28,10 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from abc import abstractmethod
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -56,6 +54,9 @@ class MACType(AbstractType):
         AbstractType.__init__(self, atomicSize)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.MACType.py')
 
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractType                                     |
+#+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
@@ -63,4 +64,7 @@ class MACType(AbstractType):
             for i in range(6):
                 value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
             value = value[1:]
-        return TypeConvertor.string2bin(value)
+        return self.type2bin(value)
+
+    def type2bin(self, typeValue):
+        return TypeConvertor.string2bin(typeValue)

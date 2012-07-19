@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,25 +43,25 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class NumberType(AbstractType):
-    """NumberType:
-            A type represented by numbers (integers).
+class HexType(AbstractType):
+    """HexType:
+            A type represented by hexadecimal strings.
     """
 
     def __init__(self, atomicSize):
-        """Constructor of NumberType:
+        """Constructor of HexType:
         """
         AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.NumberType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.HexType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
-        value = 0
+        value = ""
         if generationStrategy == "random":
-            value = random.randint(10 ** (minSize - 1), 10 ** maxSize - 1)
+            value = self.generateRandomString(string.hexdigits, minSize, maxSize)
         return self.type2bin(value)
 
     def type2bin(self, typeValue):
-        return TypeConvertor.int2bin(typeValue)
+        return TypeConvertor.string2bin(typeValue)

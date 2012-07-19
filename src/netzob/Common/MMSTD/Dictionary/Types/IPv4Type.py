@@ -28,10 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from abc import abstractmethod
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -56,6 +54,9 @@ class IPv4Type(AbstractType):
         AbstractType.__init__(self, atomicSize)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IPv4Type.py')
 
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractType                                     |
+#+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
@@ -67,4 +68,7 @@ class IPv4Type(AbstractType):
             for i in range(4):
                 value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
             value = value[1:]
-        return TypeConvertor.string2bin(value)
+        return self.type2bin(value)
+
+    def type2bin(self, typeValue):
+        return TypeConvertor.string2bin(typeValue)

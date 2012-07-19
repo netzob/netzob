@@ -28,10 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from abc import abstractmethod
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -56,6 +54,14 @@ class WordType(AbstractType):
         AbstractType.__init__(self, atomicSize)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
 
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractType                                     |
+#+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
-        value = self.generateRandomString(string.printable, minSize, maxSize)
-        return TypeConvertor.string2bin(value)
+        value = ""
+        if generationStrategy == "random":
+            value = self.generateRandomString(string.printable, minSize, maxSize)
+        return self.type2bin(value)
+
+    def type2bin(self, typeValue):
+        return TypeConvertor.string2bin(typeValue)
