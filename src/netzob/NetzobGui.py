@@ -40,7 +40,6 @@ import logging
 import optparse
 
 import locale
-import gettext
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -71,8 +70,8 @@ class NetzobGui(Gtk.Window):
         parser = CommandLine.get_parser()
         opts, args = parser.parse_args()
 
-        gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
-        gettext.textdomain("netzob")
+        locale.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
+        locale.textdomain("netzob")
 
         try:
             locale.getlocale()
