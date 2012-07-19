@@ -28,8 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -40,46 +38,47 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable import AbstractNodeVariable
+from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
 
 
-class AlternateVariable(AbstractNodeVariable):
-    """AlternateVariable:
-            A data variable defined in a dictionary which is a logical or of several variables.
+class AbstractNodeVariable(AbstractVariable):
+    """AbstractNodeVariable:
+            An abstract variable defined in a dictionary which is a node (alternate, aggregate...) in the global variable tree.
     """
 
     def __init__(self, id, name, children=None):
-        """Constructor of AlternateVariable:
-
-                @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
-                @param children: the list of this variable's children.
+        """Constructor of AbstractNodeVariable:
         """
-        AbstractNodeVariable.__init__(self, id, name, children)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AlternateVariable.py')
+        AbstractVariable.__init__(self, id, name)
+        # create logger with the given configuration
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable.py')
+        self.children = []
+        if children is not None:
+            self.children.extend(children)
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
-    def learn(self, readingToken):
-        self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+    def forget(self, processingToken):
+        self.log.debug(_("Children of variable {0} are forgotten.").format(self.getName()))
         for child in self.children:
-            readingToken.setOk(True)
-            child.learn(readingToken)
-            if readingToken.isOk():
-                break
-            child.restore(readingToken)
+            child.forget(processingToken)
 
-    def compare(self, readingToken):
-        self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+    def memorize(self, processingToken):
+        self.log.debug(_("Children of variable {0} are memorized.").format(self.getName()))
         for child in self.children:
-            readingToken.setOk(True)
-            child.compare(readingToken)
-            if readingToken.isOk():
-                break
+            child.memorize(processingToken)
 
-    def getValue(self, writingToken):
-        self.log.debug(_("Variable {0} get its value.").format(self.getName()))
+    def generate(self, writingToken):
+        self.log.debug(_("Variable {0} generate a value.").format(self.getName()))
         for child in self.children:
-            child.getValue(writingToken)
-            if writingToken.getValue() != None:
-                break
+            child.generate(writingToken)
+
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getChildren(self):
+        return self.children
+
+    def addChild(self, child):
+        self.children.append(child)

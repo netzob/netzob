@@ -72,7 +72,7 @@ class DataVariable(AbstractLeafVariable):
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
     def learn(self, readingToken):
-        self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(value), str(indice)))
+        self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= self.minBits:
             if len(tmp) >= self.maxBits:
@@ -87,7 +87,7 @@ class DataVariable(AbstractLeafVariable):
             readingToken.setOk(False)
 
     def compare(self, readingToken):
-        self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(value), str(indice)))
+        self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
         localValue = self.getValue(readingToken)
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= len(localValue):
@@ -105,9 +105,10 @@ class DataVariable(AbstractLeafVariable):
     def getValue(self, writingToken):
         self.log.debug(_("Variable {0} get its value.").format(self.getName()))
         if self.currentValue is not None:
-            return self.currentValue
+            value = self.currentValue
         else:
-            return writingToken.getMemory().recall(self)
+            value = writingToken.getMemory().recall(self)
+        writingToken.setValue(value)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
