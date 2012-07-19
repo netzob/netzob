@@ -47,4 +47,9 @@ def get_parser():
                                        version=release.version)
         parser.add_option("-w", "--workspace",
                           dest="workspace", help="Path to the workspace")
+
+        # register the group of options for plugins
+        groupPlugins = optparse.OptionGroup(parser, "Manage Netzob's plugins")
+        groupPlugins.add_option('--plugin-list', help='List the available plugins', action="store_true")
+        parser.add_option_group(groupPlugins)
         return parser
