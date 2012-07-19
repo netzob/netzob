@@ -59,6 +59,6 @@ class GZipFilter(MathematicFilter):
             data = gzipper.read()
             result = TypeConvertor.pythonRawToNetzobRaw(data)
         except Exception as e:
-            logging.info("Impossible to apply GZip filter on provided message (error= {0})".format(str(e)))
+            logging.info(_("Impossible to apply GZip filter on provided message (error= {0})").format(str(e)))
             result = ""
         return result

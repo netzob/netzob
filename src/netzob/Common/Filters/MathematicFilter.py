@@ -59,8 +59,8 @@ class MathematicFilter(RenderingFilter):
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def apply(self, message):
-        self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
-        raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
+        self.log.error(_("The filter class ({0}) doesn't define 'isValid' !").format(self.getType()))
+        raise NotImplementedError("The filter class ({0}) doesn't define 'isValid' !".format(self.getType()))
 
     #+-----------------------------------------------------------------------+
     #| getConversionAddressingTable

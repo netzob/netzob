@@ -888,7 +888,7 @@ class UImodelization:
 
             # Add sub-entries to add mathematic filters on a  specific column
             subMenuMathematicFilters = self.build_mathematicFilter_submenu(selectedField)
-            item = gtk.MenuItem("Configure mathematic filters")
+            item = gtk.MenuItem(_("Configure mathematic filters"))
             item.set_submenu(subMenuMathematicFilters)
             item.show()
             menu.append(item)

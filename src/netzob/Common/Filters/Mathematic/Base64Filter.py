@@ -56,6 +56,6 @@ class Base64Filter(MathematicFilter):
             b64Content = base64.b64decode(rawContent)
             result = TypeConvertor.pythonRawToNetzobRaw(b64Content)
         except TypeError as error:
-            logging.warning("Impossible to compute the base64 value of message (error={0})".format(str(error)))
+            logging.warning(_("Impossible to compute the base64 value of message (error={0})").format(str(error)))
             result = ""
         return result

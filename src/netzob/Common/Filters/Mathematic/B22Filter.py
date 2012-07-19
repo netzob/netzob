@@ -56,6 +56,6 @@ class BZ2Filter(MathematicFilter):
             rawResult = bz2.decompress(rawData)
             result = TypeConvertor.pythonRawToNetzobRaw(rawResult)
         except Exception as e:
-            logging.info("Impossible to apply BZ2 filter on provided message (error= {0})".format(str(e)))
+            logging.info(_("Impossible to apply BZ2 filter on provided message (error= {0})").format(str(e)))
             result = ""
         return result
