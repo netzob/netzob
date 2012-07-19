@@ -45,17 +45,22 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class WordType(AbstractType):
-    """WordType:
-            A type represented by printable strings.
+class MACType(AbstractType):
+    """MACType:
+            A type represented by MAC address in strings (0d:0d:0d:0d:0d:0d).
     """
 
     def __init__(self, atomicSize):
-        """Constructor of WordType:
+        """Constructor of MACType:
         """
         AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.MACType.py')
 
     def generateValue(self, generationStrategy, minSize, maxSize):
-        value = self.generateRandomString(string.printable, minSize, maxSize)
+        # minSize and maxSize are not used.
+        value = ""
+        if generationStrategy == "random":
+            for i in range(6):
+                value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+            value = value[1:]
         return TypeConvertor.string2bin(value)

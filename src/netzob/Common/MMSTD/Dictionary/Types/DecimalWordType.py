@@ -57,9 +57,5 @@ class DecimalWordType(AbstractType):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.DecimalWordType.py')
 
     def generateValue(self, generationStrategy, minSize, maxSize):
-        size = random.randint(minSize, maxSize)
-        value = ""
-        if generationStrategy == "random":
-            for i in range(size):
-                value = value + random.choice(string.digits)
+        value = self.generateRandomString(string.digits, minSize, maxSize)
         return TypeConvertor.string2bin(value)

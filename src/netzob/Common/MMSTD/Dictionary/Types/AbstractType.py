@@ -55,6 +55,25 @@ class AbstractType():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractType.py')
         self.atomicSize = atomicSize
 
+    def generateRandomString(self, stringType, minSize, maxSize):
+        """generateRandomString:
+                Generate a random string of the given size withen the given min and max size.
+
+                @type stringType: integer
+                @param stringType: a string type as string.digits, string.letters, string.printable...
+                @type minSize: integer
+                @param minSize: the minimum size of the generated string.
+                @type maxSize: integer
+                @param maxSize: the maximum size of the generated string.
+                @rtype: string
+                @return: the randomly generated string.
+        """
+        size = random.randint(minSize, maxSize)
+        value = ""
+        for i in range(size):
+            value = value + random.choice(stringType)
+        return value
+
     @abstractmethod
     def generateValue(self, generationStrategy, minSize, maxSize):
         """generateValue:

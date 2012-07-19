@@ -45,17 +45,26 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class WordType(AbstractType):
-    """WordType:
-            A type represented by printable strings.
+class IPv4Type(AbstractType):
+    """IPv4Type:
+            A type represented by IPv4 formatted strings (192.168.10.100).
     """
 
     def __init__(self, atomicSize):
-        """Constructor of WordType:
+        """Constructor of IPv4Type:
         """
         AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IPv4Type.py')
 
     def generateValue(self, generationStrategy, minSize, maxSize):
-        value = self.generateRandomString(string.printable, minSize, maxSize)
+        # minSize and maxSize are not used.
+        value = ""
+        if generationStrategy == "random integer":
+            for i in range(4):
+                value = value + "." + str(random.randint(0, 255))
+            value = value[1:]
+        elif generationStrategy == "random hex":
+            for i in range(4):
+                value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+            value = value[1:]
         return TypeConvertor.string2bin(value)
