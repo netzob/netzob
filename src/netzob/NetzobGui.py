@@ -43,7 +43,6 @@ import locale
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-from netzob.Common.Plugins.ImporterPlugin import ImporterPlugin
 from netzob.Common import DepCheck
 from netzob.Common.Menu import Menu
 from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
