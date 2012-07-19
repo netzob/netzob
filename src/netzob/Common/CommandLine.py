@@ -73,7 +73,7 @@ class CommandLine(object):
         """Compute and return if the user requested (through the command line arguments and options)
         to start the GTK GUI"""
         if not self.isManagePluginsRequested():
-            return False
+            return True
 
     def isManagePluginsRequested(self):
         """Compute and return is the user has requested to manage the plugins"""
