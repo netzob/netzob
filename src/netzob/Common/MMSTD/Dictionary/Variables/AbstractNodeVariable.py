@@ -60,17 +60,26 @@ class AbstractNodeVariable(AbstractVariable):
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
     def forget(self, processingToken):
+        """forget:
+                All children forget their value.
+        """
         self.log.debug(_("Children of variable {0} are forgotten.").format(self.getName()))
         for child in self.children:
             child.forget(processingToken)
 
     def memorize(self, processingToken):
+        """memorize:
+                All children memorize their value.
+        """
         self.log.debug(_("Children of variable {0} are memorized.").format(self.getName()))
         for child in self.children:
             child.memorize(processingToken)
 
     def generate(self, writingToken):
-        self.log.debug(_("Variable {0} generate a value.").format(self.getName()))
+        """generate:
+                All children generate their value.
+        """
+        self.log.debug(_("Children of variable {0} generate a value.").format(self.getName()))
         for child in self.children:
             child.generate(writingToken)
 

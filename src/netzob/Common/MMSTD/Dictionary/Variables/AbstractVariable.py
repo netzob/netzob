@@ -67,7 +67,7 @@ class AbstractVariable:
 #+---------------------------------------------------------------------------+
     def read(self, readingToken):
         """read:
-                Grant a reading access to the variable.
+                Grants a reading access to the variable. The value of readingToken is read bit by bit.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this reading access.
@@ -95,7 +95,7 @@ class AbstractVariable:
 
     def write(self, writingToken):
         """write:
-                Grant a writing access to the variable.
+                Grants a writing access to the variable. A value is written according to encountered node variable rules. This value is stored in writingToken.
 
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this writing access.
@@ -129,7 +129,7 @@ class AbstractVariable:
     @abstractmethod
     def forget(self, processingToken):
         """forget:
-                Remove the variable from the memory cache.
+                Removes the variable from the memory cache.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -139,7 +139,7 @@ class AbstractVariable:
     @abstractmethod
     def memorize(self, processingToken):
         """memorize:
-                Add the variable to the memory cache.
+                Adds the variable to the memory cache.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -149,7 +149,7 @@ class AbstractVariable:
     @abstractmethod
     def learn(self, readingToken):
         """learn:
-                Learn (starting at the "indice"-th character) value.
+                Learns (starting at the "indice"-th character) value.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
@@ -159,7 +159,7 @@ class AbstractVariable:
     @abstractmethod
     def compare(self, readingToken):
         """compare:
-                Compare (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
+                Compares (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
@@ -169,7 +169,7 @@ class AbstractVariable:
     @abstractmethod
     def generate(self, writingToken):
         """generate:
-                Generate a value according to a given strategy and attribute it to the variable.
+                Generates a value according to a given strategy and attribute it to the variable.
 
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.

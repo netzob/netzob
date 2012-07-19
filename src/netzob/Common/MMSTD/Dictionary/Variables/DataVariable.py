@@ -72,7 +72,10 @@ class DataVariable(AbstractLeafVariable):
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
     def learn(self, readingToken):
-        self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        """learn:
+                The variable checks if its format complies with the read value's format. If it matches, the variable learns, else it returns NOk.
+        """
+        self.log.debug(_("Variable {0} learns {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= self.minBits:
             if len(tmp) >= self.maxBits:
@@ -87,7 +90,10 @@ class DataVariable(AbstractLeafVariable):
             readingToken.setOk(False)
 
     def compare(self, readingToken):
-        self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        """compare:
+                The variable compares its value to the read value.
+        """
+        self.log.debug(_("Variable {0} compares its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
         localValue = self.getValue(readingToken)
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= len(localValue):
@@ -99,11 +105,17 @@ class DataVariable(AbstractLeafVariable):
         readingToken.setOk(False)
 
     def generate(self, writingToken):
-        self.log.debug(_("Variable {0} generate a value.").format(self.getName()))
+        """generate:
+                A new current value is generated according to the variable type and the given generation strategy.
+        """
+        self.log.debug(_("Variable {0} generates a value.").format(self.getName()))
         self.currentValue = self.getType().generateValue(writingToken.getGenerationStrategy(), self.minBits / self.getType().getAtomicSize(), self.maxBits / self.getType().getAtomicSize())
 
     def getValue(self, writingToken):
-        self.log.debug(_("Variable {0} get its value.").format(self.getName()))
+        """getValue:
+                Returns the variable value if it has one, else it returns the memorized value.
+        """
+        self.log.debug(_("Variable {0} gets its value.").format(self.getName()))
         if self.currentValue is not None:
             value = self.currentValue
         else:

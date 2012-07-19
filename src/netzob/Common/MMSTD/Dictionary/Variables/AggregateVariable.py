@@ -61,7 +61,11 @@ class AggregateVariable(AbstractNodeVariable):
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
     def learn(self, readingToken):
-        self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        """learn:
+                Each child tries sequentially to learn a part of the read value.
+                If one of them fails, the whole operation is cancelled.
+        """
+        self.log.debug(_("Children of variable {0} learn.").format(self.getName()))
         toBeRestored = []
         for child in self.children:
             child.learn(readingToken)
@@ -74,12 +78,19 @@ class AggregateVariable(AbstractNodeVariable):
                 child.restore(readingToken)
 
     def compare(self, readingToken):
-        self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        """compare:
+                Each child is sequentially compared to a part of the read value.
+                If one comparison fails, the result is NOk, else it is Ok.
+        """
+        self.log.debug(_("Children of variable {0} are compared.").format(self.getName()))
         for child in self.children:
             child.compare(readingToken)
 
     def getValue(self, writingToken):
-        self.log.debug(_("Variable {0} get its value.").format(self.getName()))
+        """getValue:
+                Returns the concatenation of all its children values.
+        """
+        self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
         value = bitarray()
         for child in self.children:
             value += child.getValue(writingToken)

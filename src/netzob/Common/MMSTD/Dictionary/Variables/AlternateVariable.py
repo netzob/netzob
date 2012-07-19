@@ -61,7 +61,11 @@ class AlternateVariable(AbstractNodeVariable):
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
     def learn(self, readingToken):
-        self.log.debug(_("Variable {0} learn {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        """learn:
+                Each child tries to learn the read value. If it fails, it restore it value and the next child try.
+                If one child successes, the result is Ok and the process is stopped.
+        """
+        self.log.debug(_("Children of variable {0} learn.").format(self.getName()))
         for child in self.children:
             readingToken.setOk(True)
             child.learn(readingToken)
@@ -70,7 +74,11 @@ class AlternateVariable(AbstractNodeVariable):
             child.restore(readingToken)
 
     def compare(self, readingToken):
-        self.log.debug(_("Variable {0} compare its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        """compare:
+                Each child tries to compare its value to the read value. If it fails, it restore it value and the next child try.
+                If one child successes, the result is Ok.
+        """
+        self.log.debug(_("Children of variable {0} are compared.").format(self.getName()))
         for child in self.children:
             readingToken.setOk(True)
             child.compare(readingToken)
@@ -78,7 +86,10 @@ class AlternateVariable(AbstractNodeVariable):
                 break
 
     def getValue(self, writingToken):
-        self.log.debug(_("Variable {0} get its value.").format(self.getName()))
+        """getValue:
+                Returns the value of the first child which is not None.
+        """
+        self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
         for child in self.children:
             child.getValue(writingToken)
             if writingToken.getValue() != None:

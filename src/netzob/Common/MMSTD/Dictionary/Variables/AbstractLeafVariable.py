@@ -57,9 +57,15 @@ class AbstractLeafVariable(AbstractVariable):
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
     def forget(self, processingToken):
+        """forget:
+                The variable forgets its value.
+        """
         self.log.debug(_("Variable {0} is forgotten.").format(self.getName()))
         processingToken.getMemory().forget(self)
 
     def memorize(self, processingToken):
+        """memorize:
+                The variable memorizes its value.
+        """
         self.log.debug(_("Variable {0} is memorized.").format(self.getName()))
         processingToken.getMemory().memorize(self)
