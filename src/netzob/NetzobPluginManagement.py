@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #+---------------------------------------------------------------------------+
@@ -24,64 +23,38 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-import sys
-import logging
-logging.basicConfig(level=logging.DEBUG)
+from gettext import gettext as _
+import pkg_resources
 import os
-import optparse
-from gi.repository import GObject
+import sys
+
 
 #+---------------------------------------------------------------------------+
-#| Prepare, load and import the required modules
+#| Local application imports
 #+---------------------------------------------------------------------------+
-sys.path.insert(0, 'src/')
 
-# Insert in the path the directory where _libNeedleman.pyd is
-# TODO here !
-if os.name == 'nt':
-    sys.path.insert(0, 'lib/libNeedleman/')
+#+----------------------------------------------
+#| NetzobPluginManagement:
+#+----------------------------------------------
+class NetzobPluginManagement(object):
+    """Netzob entry point in order to manage netzob plugins"""
 
-try:
-    # Verify that required C extensions are available
-    import _libNeedleman
-    import _libScoreComputation
-    import _libInterface
-    import _libRegex
-except:
-    # Else, assume the path is gotten from the 'python setup.py build' command
-    arch = os.uname()[-1]
-    python_version = sys.version[:3]
-    build_lib_path = "build/lib.linux-" + arch + "-" + python_version
-    sys.path.append(build_lib_path)
+    def __init__(self, commandLineParser):
+        self.commandLineParser = commandLineParser
 
-from netzob.Common.DepCheck import DepCheck
-from netzob.Common.CommandLine import CommandLine
+    def start(self):
+        if self.commandLineParser.getOptions().plugin_list:
+            self.listAvailablePlugins()
 
-if __name__ == "__main__":
-
-    # Starting the dependency checker
-    if not DepCheck.checkRequiredDependency():
-        logging.fatal("Some required dependency are not available and prevent netzob from starting.")
-        sys.exit()
-
-    # Parsing Command Line arguments
-    commandLineParser = CommandLine()
-
-    # compute the requested execution following the provided arguments
-    commandLineParser.parse()
-
-    GObject.threads_init() # for handling concurrent GUI access from threads
-
-    if commandLineParser.isStartGUIRequested():
-        import netzob.NetzobGui as NetzobGui
-        netzob = NetzobGui.NetzobGui(commandLineParser)
-        netzob.startGui()
-    elif commandLineParser.isManagePluginsRequested():
-        from netzob.NetzobPluginManagement import NetzobPluginManagement
-        netzobPluginManagement = NetzobPluginManagement(commandLineParser)
-        netzobPluginManagement.start()
+    def listAvailablePlugins(self):
+        print "Available plugins :"
+        for entrypoint in pkg_resources.iter_entry_points('netzob.plugins'):
+            # load the plugin in memory
+            plugin_class = entrypoint.load()
+            plugin_path = sys.modules[plugin_class.__module__].__file__
+            print "+ {0} located in {1}".format(entrypoint.name, plugin_path)
