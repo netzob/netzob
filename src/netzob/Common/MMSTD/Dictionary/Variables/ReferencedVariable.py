@@ -44,7 +44,7 @@ from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVar
 
 class ReferencedVariable(AbstractVariable):
     """ReferencedVariable:
-            A variable defined which points to an other variable.
+            A variable which points to an other variable.
     """
 
     def __init__(self, id, name, pointedID):

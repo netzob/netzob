@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 from gettext import gettext as _
 import logging
 
@@ -40,30 +39,36 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AggregateVariable import AggregateVariable
+from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
 
 
-class RepeatVariable(AggregateVariable):
+class RepeatVariable(AbstractVariable):
     """RepeatVariable:
-            A variable that is an aggregate variable for which each treatment is repeated.
+            A variable with one child that repeats a certain time every treatment on this child.
     """
 
     MAX_ITERATIONS = 10
 
-    def __init__(self, id, name, children=None, minIterations, maxIterations):
+    def __init__(self, id, name, child, minIterations, maxIterations):
         """Constructor of RepeatVariable:
                 Each treatment will be repeated at most maxIterations time.
-                Each function will call once by iteration its equivalent in the AggregateVariable class on the children.
-                During an iteration, if one child's treatment failed, we canceled the iteration loop.
+                Each function will call once by iteration its equivalent in the class on the children.
+                During an iteration, if the child treatment failed, we canceled the iteration loop.
                 If we had done less than minIteration, the global processing is considered failed, else it is considered successful.
 
+                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable
+                @param child: the unique child which treatments will be repeated.
                 @type minIterations: integer
                 @param minIterations: the minimum number of iteration each treatment have to be repeated.
                 @type maxIterations: integer
                 @param maxIterations: the maximum number of iteration each treatment will be repeated.
         """
-        AggregateVariable.__init__(self, id, name, children)
+        AbstractVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.RepeatVariable.py')
+        if child is not None:
+            self.child = child
+        else:
+            log.debug(_("Construction of RepeatVariable: no child given."))
         if minIterations is not None and minChars >= 0:
             self.minIterations = minIterations
         else:
@@ -78,42 +83,93 @@ class RepeatVariable(AggregateVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def forget(self, processingToken):
+        """forget:
+                The child forgets its value.
+        """
+        self.log.debug(_("The value of the child of variable {0} is forgotten.").format(self.getName()))
+        self.child.forget(processingToken)
+
+    def memorize(self, processingToken):
+        """memorize:
+                The child memorizes its value.
+        """
+        self.log.debug(_("The value of the child of variable {0} is memorized.").format(self.getName()))
+        self.child.memorize(processingToken)
+
     def learn(self, readingToken):
         """learn:
+                The child tries to learn the read value at least minIterations time, at most maxIterations time.
         """
+        self.log.debug(_("The child of variable {0} tries to learn the value {1} starting at {2} at least {3} times, at most {4} times.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex()), str(self.minIterations), str(self.maxIterations)))
         successfullIterations = 0
         for i in range(self.maxIterations):
-            AggregateVariable.learn(self, readingToken)
+            self.child.learn(readingToken)
             if readingToken.isOk():
                 successfullIterations += 1
             else:
                 break
         # We search if we have done the minimum number of iterations.
-        if successfullIterations < selfminIterations:
+        if successfullIterations < self.minIterations:
             readingToken.setOk(False)
         else:
             readingToken.setOk(True)
 
     def compare(self, readingToken):
         """compare:
+                The child compare its value to the read value at least minIterations time, at most maxIterations time.
         """
+        self.log.debug(_("The child of variable {0} compares its current value to {1} starting at {2} at least {3} times, at most {4} times.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex()), str(self.minIterations), str(self.maxIterations)))
         successfullIterations = 0
         for i in range(self.maxIterations):
-            AggregateVariable.compare(self, readingToken)
+            self.child.compare(readingToken)
             if readingToken.isOk():
                 successfullIterations += 1
             else:
                 break
         # We search if we have done the minimum number of iterations.
-        if successfullIterations < selfminIterations:
+        if successfullIterations < self.minIterations:
             readingToken.setOk(False)
         else:
             readingToken.setOk(True)
 
+    def generate(self, writingToken):
+        """generate:
+                Calls the child generation method at least minIterations time, at most maxIterations time.
+                It concatenates these values.
+        """
+        self.log.debug(_("The child of variable {0} generates a new value at least {3} times, at most {4} times.").format(self.getName(), str(self.minIterations), str(self.maxIterations)))
+        successfullIterations = 0
+        for i in range(self.maxIterations):
+            self.child.generate(writingToken)
+            if writingToken.isOk():
+                successfullIterations += 1
+            else:
+                break
+        # We search if we have done the minimum number of iterations.
+        if successfullIterations < self.minIterations:
+            writingToken.setOk(False)
+        else:
+            writingToken.setOk(True)
+
     def getValue(self, writingToken):
         """getValue:
+                Calls the child generation method at least minIterations time, at most maxIterations time.
+                It concatenates these values.
         """
-        AggregateValue.getValue(self, writingToken)
+        self.log.debug(_("The child of variable {0} gets its value at least {3} times, at most {4} times.").format(self.getName(), str(self.minIterations), str(self.maxIterations)))
+        successfullIterations = 0
+        for i in range(self.maxIterations):
+            self.child.getValue(writingToken)
+            if writingToken.isOk():
+                successfullIterations += 1
+            else:
+                break
+        # We search if we have done the minimum number of iterations.
+        if successfullIterations < self.minIterations:
+            writingToken.setOk(False)
+        else:
+            writingToken.setOk(True)
 
     def toXML(self, root, namespace):
         """toXML:
@@ -125,9 +181,8 @@ class RepeatVariable(AggregateVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:RepeatVariable")
 
-        # Definition of children variables
-        for child in self.children:
-            child.toXML(xmlVariable, namespace)
+        # Definition of child variable
+        self.child.toXML(xmlVariable, namespace)
 
         # minIterations
         xmlMinIterations = etree.SubElement(xmlVariable, "{" + namespace + "}minIterations")
@@ -143,16 +198,14 @@ class RepeatVariable(AggregateVariable):
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version):
         """loadFromXML:
-                Loads an aggregate variable from an XML definition.
+                Loads a repeat variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-            children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
-                child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
-                children.append(child)
+            xmlChild = xmlRoot.findall("{" + namespace + "}variable")
+            child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
 
             # minIterations
             xmlMinIterations = xmlRoot.find("{" + namespace + "}minIterations")
@@ -168,5 +221,5 @@ class RepeatVariable(AggregateVariable):
             else:
                 maxIterations = MAX_ITERATIONS
 
-            return RepeatVariable(id, name, children, minIterations, maxIterations)
+            return RepeatVariable(id, name, child, minIterations, maxIterations)
         return None
