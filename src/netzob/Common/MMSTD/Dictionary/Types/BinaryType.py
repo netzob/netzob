@@ -70,7 +70,10 @@ class BinaryType(AbstractType):
         return self.type2bin(value)
 
     def type2bin(self, typeValue):
-        return bitarray(typeValue)
+        if typeValue is not None:
+            return bitarray(typeValue)
+        else:
+            return None
 
     def getBitSize(self, typeValue):
         return len(typeValue)

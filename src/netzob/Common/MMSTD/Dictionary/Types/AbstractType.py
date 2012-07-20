@@ -118,3 +118,27 @@ class AbstractType():
                 @return: the size in bits of the minimal word.
         """
         raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
+    @staticmethod
+    def makeType(typeString):
+        type = None
+        if typeString == "Binary":
+            type = BinaryWordType()
+        elif typeString == "DecimalWord":
+            type = DecimalWordType()
+        elif typeString == "HexWord":
+            type = HexWordType()
+        elif typeString == "IPv4Word":
+            type = IPv4WordType()
+        elif typeString == "MACWord":
+            type = MACWordType()
+        elif typeString == "Number":
+            type = NumberType()
+        elif typeString == "Word":
+            type = WordType()
+        else:
+            log.error(_("Wrong type specified for this variable."))
+        return type

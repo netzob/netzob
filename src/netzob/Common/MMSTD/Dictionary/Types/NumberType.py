@@ -65,7 +65,10 @@ class NumberType(AbstractType):
         return self.type2bin(value)
 
     def type2bin(self, typeValue):
-        return TypeConvertor.int2bin(typeValue)
+        if typeValue is not None:
+            return TypeConvertor.int2bin(typeValue)
+        else:
+            return None
 
     def getBitSize(self, typeValue):
         return typeValue.bit_length()

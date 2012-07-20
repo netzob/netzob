@@ -77,7 +77,10 @@ class AbstractWordType(AbstractType):
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def type2bin(self, typeValue):
-        return TypeConvertor.string2bin(typeValue)
+        if typeValue is not None:
+            return TypeConvertor.string2bin(typeValue)
+        else:
+            return None
 
     def getBitSize(self, typeValue):
         return (len(typeValue) * 8)
