@@ -50,10 +50,10 @@ class BinaryType(AbstractType):
             A type represented by a bitarray.
     """
 
-    def __init__(self, atomicSize):
+    def __init__(self):
         """Constructor of BinaryType:
         """
-        AbstractType.__init__(self, atomicSize)
+        AbstractType.__init__(self, 1)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.BinaryType.py')
 
 #+---------------------------------------------------------------------------+
@@ -71,3 +71,12 @@ class BinaryType(AbstractType):
 
     def type2bin(self, typeValue):
         return bitarray(typeValue)
+
+    def getBitSize(self, typeValue):
+        return len(typeValue)
+
+    def getMaxBitSize(self, nbChars):
+        return nbChars
+
+    def getMinBitSize(self, nbChars):
+        return nbChars

@@ -56,25 +56,6 @@ class AbstractType():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractType.py')
         self.atomicSize = atomicSize
 
-    def generateRandomString(self, stringType, minSize, maxSize):
-        """generateRandomString:
-                Generate a random string of the given size withen the given min and max size.
-
-                @type stringType: integer
-                @param stringType: a string type as string.digits, string.letters, string.printable...
-                @type minSize: integer
-                @param minSize: the minimum size of the generated string.
-                @type maxSize: integer
-                @param maxSize: the maximum size of the generated string.
-                @rtype: string
-                @return: the randomly generated string.
-        """
-        size = random.randint(minSize, maxSize)
-        value = ""
-        for i in range(size):
-            value = value + random.choice(stringType)
-        return value
-
     @abstractmethod
     def generateValue(self, generationStrategy, minSize, maxSize):
         """generateValue:
@@ -102,6 +83,42 @@ class AbstractType():
                 @return: the value in binary format.
         """
         raise NotImplementedError(_("The current type does not implement 'type2bin'."))
+
+    @abstractmethod
+    def getBitSize(self, typeValue):
+        """getBitSize:
+                Get the size in bits of the type value given.
+
+                @type typeValue: linked to the instance of Type.
+                @param typeValue: the original value in the authentic type format.
+                @rtype: integer
+                @return: the size in bits of the given value.
+        """
+        raise NotImplementedError(_("The current type does not implement 'getBitSize'."))
+
+    @abstractmethod
+    def getMaxBitSize(self, nbChars):
+        """getMaxBitSize:
+                Get the size in bits of the maximal word of this type that we can make with nbChars characters.
+
+                @type nbChars: integer
+                @param nbChars: number of characters used to make the maximal word.
+                @rtype: integer
+                @return: the size in bits of the maximal word.
+        """
+        raise NotImplementedError(_("The current type does not implement 'getMaxBitSize'."))
+
+    @abstractmethod
+    def getMinBitSize(self, nbChars):
+        """getMinBitSize:
+                Get the size in bits of the minimal word of this type that we can make with nbChars characters.
+
+                @type nbChars: integer
+                @param nbChars: number of characters used to make the minimal word.
+                @rtype: integer
+                @return: the size in bits of the minimal word.
+        """
+        raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

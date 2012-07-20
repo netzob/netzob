@@ -39,29 +39,32 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
 
 
-class HexType(AbstractType):
-    """HexType:
-            A type represented by hexadecimal strings.
+class IPv4WordType(AbstractWordType):
+    """IPv4WordType:
+            A type represented by IPv4 formatted 8-bits strings (192.168.10.100).
     """
 
-    def __init__(self, atomicSize):
-        """Constructor of HexType:
+    def __init__(self):
+        """Constructor of IPv4WordType:
         """
-        AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.HexType.py')
+        AbstractWordType.__init__(self, 7 * 8)  # Atomic size = 11 bytes * 8 bits.
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IPv4WordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
+        # minSize and maxSize are not used.
         value = ""
-        if generationStrategy == "random":
-            value = self.generateRandomString(string.hexdigits, minSize, maxSize)
+        if generationStrategy == "random integer":
+            for i in range(4):
+                value = value + "." + str(random.randint(0, 255))
+            value = value[1:]
+        elif generationStrategy == "random hex":
+            for i in range(4):
+                value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+            value = value[1:]
         return self.type2bin(value)
-
-    def type2bin(self, typeValue):
-        return TypeConvertor.string2bin(typeValue)

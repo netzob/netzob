@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -40,38 +39,25 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
 
 
-class NumberType(AbstractType):
-    """NumberType:
-            A type represented by numbers (integers).
+class HexWordType(AbstractWordType):
+    """HexWordType:
+            A type represented by hexadecimal 8-bits strings.
     """
 
     def __init__(self):
-        """Constructor of NumberType:
+        """Constructor of HexWordType:
         """
-        AbstractType.__init__(self, 1)  # Integers are managed bit by bit in Python.
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.NumberType.py')
+        AbstractWordType.__init__(self, 4)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.HexWordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
-        value = 0
+        value = ""
         if generationStrategy == "random":
-            value = random.randint(10 ** (minSize - 1), (10 ** maxSize) - 1)
+            value = self.generateRandomString(string.hexdigits, minSize, maxSize)
         return self.type2bin(value)
-
-    def type2bin(self, typeValue):
-        return TypeConvertor.int2bin(typeValue)
-
-    def getBitSize(self, typeValue):
-        return typeValue.bit_length()
-
-    def getMaxBitSize(self, nbChars):
-        return self.getBitSize((10 ** nbChars) - 1)
-
-    def getMinBitSize(self, nbChars):
-        return self.getBitSize(10 ** (nbChars - 1))

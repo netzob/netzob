@@ -39,19 +39,18 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
 
 
-class DecimalWordType(AbstractType):
+class DecimalWordType(AbstractWordType):
     """DecimalWordType:
-            A type represented by string containing only digits.
+            A type represented by 8-bits string containing only digits.
     """
 
-    def __init__(self, atomicSize):
+    def __init__(self):
         """Constructor of DecimalWordType:
         """
-        AbstractType.__init__(self, atomicSize)
+        AbstractWordType.__init__(self, 8)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.DecimalWordType.py')
 
 #+---------------------------------------------------------------------------+
@@ -62,6 +61,3 @@ class DecimalWordType(AbstractType):
         if generationStrategy == "random":
             value = self.generateRandomString(string.digits, minSize, maxSize)
         return self.type2bin(value)
-
-    def type2bin(self, typeValue):
-        return TypeConvertor.string2bin(typeValue)

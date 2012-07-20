@@ -39,20 +39,19 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
 
 
-class IPv4Type(AbstractType):
-    """IPv4Type:
-            A type represented by IPv4 formatted strings (192.168.10.100).
+class MACWordType(AbstractType):
+    """MACWordType:
+            A type represented by MAC address in 8-bits strings (0d:0d:0d:0d:0d:0d).
     """
 
-    def __init__(self, atomicSize):
-        """Constructor of IPv4Type:
+    def __init__(self):
+        """Constructor of MACWordType:
         """
-        AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IPv4Type.py')
+        AbstractWordType.__init__(self, 11 * 8)  # Atomic size = 17 bytes * 8 bits.
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.MACWordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
@@ -60,15 +59,8 @@ class IPv4Type(AbstractType):
     def generateValue(self, generationStrategy, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
-        if generationStrategy == "random integer":
-            for i in range(4):
-                value = value + "." + str(random.randint(0, 255))
-            value = value[1:]
-        elif generationStrategy == "random hex":
-            for i in range(4):
+        if generationStrategy == "random":
+            for i in range(6):
                 value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
             value = value[1:]
         return self.type2bin(value)
-
-    def type2bin(self, typeValue):
-        return TypeConvertor.string2bin(typeValue)

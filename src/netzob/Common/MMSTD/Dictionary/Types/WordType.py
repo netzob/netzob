@@ -39,19 +39,18 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
 
 
-class WordType(AbstractType):
+class WordType(AbstractWordType):
     """WordType:
-            A type represented by printable strings.
+            A type represented by printable 8-bits strings.
     """
 
-    def __init__(self, atomicSize):
+    def __init__(self):
         """Constructor of WordType:
         """
-        AbstractType.__init__(self, atomicSize)
+        AbstractWordType.__init__(self, 8)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
 
 #+---------------------------------------------------------------------------+
@@ -62,6 +61,3 @@ class WordType(AbstractType):
         if generationStrategy == "random":
             value = self.generateRandomString(string.printable, minSize, maxSize)
         return self.type2bin(value)
-
-    def type2bin(self, typeValue):
-        return TypeConvertor.string2bin(typeValue)

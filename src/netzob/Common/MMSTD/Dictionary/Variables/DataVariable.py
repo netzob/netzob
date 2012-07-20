@@ -48,25 +48,27 @@ class DataVariable(AbstractLeafVariable):
             A data variable defined in a dictionary which is a leaf in the global variable tree and contains data of a certain type.
     """
 
-    def __init__(self, id, name, type, originalValue, minChar, maxChar):
+    def __init__(self, id, name, type, originalValue, minChars, maxChars):
         """Constructor of DataVariable:
 
                 @type type: string
                 @param typeVariable: the type of the variable being constructed.
                 @type originalValue: linked to type.
                 @param originalValue: the original value of the variable.
-                @type minChar: integer
-                @param minChar: the minimum number of elementary character the value of this variable can have.
-                @type maxChar: integer
-                @param maxChar: the maximum number of elementary character the value of this variable can have.
+                @type minChars: integer
+                @param minChars: the minimum number of elementary character the value of this variable can have.
+                @type maxChars: integer
+                @param maxChars: the maximum number of elementary character the value of this variable can have.
         """
         AbstractLeafVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
         self.type = type
         self.originalValue = self.type.type2bin(originalValue)
         self.currentValue = None
-        self.minBits = minChar * type.getAtomicSize()
-        self.maxBits = minChar * type.getAtomicSize()
+        if minChars > maxChars:
+            log.error(_("Error in construction of DataVariable: minChars > maxChars"))
+        self.minBits = self.type.getMinBitSize(minChars)
+        self.maxBits = self.type.getMaxBitSize(maxChars)
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |

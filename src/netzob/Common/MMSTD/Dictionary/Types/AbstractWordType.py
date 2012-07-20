@@ -43,28 +43,47 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class MACType(AbstractType):
-    """MACType:
-            A type represented by MAC address in strings (0d:0d:0d:0d:0d:0d).
+class AbstractWordType(AbstractType):
+    """AbstractWordType:
+            A type represented by printable 8-bits strings.
     """
 
-    def __init__(self, atomicSize):
-        """Constructor of MACType:
+    def __init__(self):
+        """Constructor of AbstractWordType:
         """
-        AbstractType.__init__(self, atomicSize)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.MACType.py')
+        AbstractType.__init__(self, 8)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractWordType.py')
+
+    def generateRandomString(self, stringType, minSize, maxSize):
+        """generateRandomString:
+                Generate a random string of the given size withen the given min and max size.
+
+                @type stringType: integer
+                @param stringType: a string type as string.digits, string.letters, string.printable...
+                @type minSize: integer
+                @param minSize: the minimum size of the generated string.
+                @type maxSize: integer
+                @param maxSize: the maximum size of the generated string.
+                @rtype: string
+                @return: the randomly generated string.
+        """
+        size = random.randint(minSize, maxSize)
+        value = ""
+        for i in range(size):
+            value = value + random.choice(stringType)
+        return value
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategy, minSize, maxSize):
-        # minSize and maxSize are not used.
-        value = ""
-        if generationStrategy == "random":
-            for i in range(6):
-                value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
-            value = value[1:]
-        return self.type2bin(value)
-
     def type2bin(self, typeValue):
         return TypeConvertor.string2bin(typeValue)
+
+    def getBitSize(self, typeValue):
+        return (len(typeValue) * 8)
+
+    def getMaxBitSize(self, nbChars):
+        return (nbChars * 8)
+
+    def getMinBitSize(self, nbChars):
+        return (nbChars * 8)
