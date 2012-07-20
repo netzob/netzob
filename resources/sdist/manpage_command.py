@@ -44,7 +44,7 @@ import datetime
 #+---------------------------------------------------------------------------+
 class manpage_command(Command):
     description = "Generates Netzob's man page"
-    
+
     user_options = [
         ('output=', 'O', 'output file'),
         ('parser=', None, 'module path to optparser (e.g. mymod:func'),
@@ -59,11 +59,12 @@ class manpage_command(Command):
             raise DistutilsOptionError('\'output\' option is required')
         if self.parser is None:
             raise DistutilsOptionError('\'parser\' option is required')
-        mod_name, func_name = self.parser.split(':')
+        mod_name, class_name = self.parser.split(':')
         fromlist = mod_name.split('.')
         try:
             mod = __import__(mod_name, fromlist=fromlist)
-            self._parser = getattr(mod, func_name)()
+            cmdLine = getattr(mod, class_name)()
+            self._parser = cmdLine.parser
         except ImportError, err:
             raise
         self._parser.formatter = ManPageFormatter()
