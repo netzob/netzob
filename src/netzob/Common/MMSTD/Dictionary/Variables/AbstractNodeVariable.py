@@ -48,6 +48,9 @@ class AbstractNodeVariable(AbstractVariable):
 
     def __init__(self, id, name, children=None):
         """Constructor of AbstractNodeVariable:
+
+                @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
+                @param children: the list of this variable's children.
         """
         AbstractVariable.__init__(self, id, name)
         # create logger with the given configuration

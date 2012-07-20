@@ -72,3 +72,6 @@ class VariableReadingToken(AbstractVariableProcessingToken):
 
     def setValue(self, value):
         self.value = value
+
+    def setIndex(self, index):
+        self.index = index

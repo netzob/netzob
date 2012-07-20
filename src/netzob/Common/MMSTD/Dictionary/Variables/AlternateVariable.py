@@ -50,9 +50,6 @@ class AlternateVariable(AbstractNodeVariable):
 
     def __init__(self, id, name, children=None):
         """Constructor of AlternateVariable:
-
-                @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
-                @param children: the list of this variable's children.
         """
         AbstractNodeVariable.__init__(self, id, name, children)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AlternateVariable.py')

@@ -262,3 +262,8 @@ class AbstractVariable:
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
                 return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)
+
+            # Repeat Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RepeatVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import RepeatVariable
+                return RepeatVariable.loadFromXML(xmlRoot, namespace, version)
