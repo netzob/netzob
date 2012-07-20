@@ -197,28 +197,28 @@ class DataVariable(AbstractLeafVariable):
 
             # originalValue
             xmlOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
-            if xmlOriginalValue != None:
+            if xmlOriginalValue is not None:
                 originalValue = xmlOriginalValue.text
             else:
                 originalValue = None
 
             # minBits
             xmlMinBits = xmlRoot.find("{" + namespace + "}minBits")
-            if xmlMinBits != None:
+            if xmlMinBits is not None:
                 minBits = int(xmlMinBits.text)
             else:
                 minBits = 0
 
             # maxBits
             xmlMaxBits = xmlRoot.find("{" + namespace + "}maxBits")
-            if xmlMaxBits != None:
+            if xmlMaxBits is not None:
                 maxBits = int(xmlMaxBits.text)
             else:
                 maxBits = MAX_BITS
 
             # type
             xmlType = xmlRoot.find("{" + namespace + "}type")
-            if xmlType != None:
+            if xmlType is not None:
                 type = AbstractType.makeType(xmlType.text)
                 if type is None:
                     return None

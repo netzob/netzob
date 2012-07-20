@@ -209,14 +209,14 @@ class RepeatVariable(AbstractVariable):
 
             # minIterations
             xmlMinIterations = xmlRoot.find("{" + namespace + "}minIterations")
-            if xmlMinIterations != None:
+            if xmlMinIterations is not None:
                 minIterations = int(xmlMinIterations.text)
             else:
                 minIterations = 0
 
             # maxIterations
             xmlMaxIterations = xmlRoot.find("{" + namespace + "}maxIterations")
-            if xmlMaxIterations != None:
+            if xmlMaxIterations is not None:
                 maxIterations = int(xmlMaxIterations.text)
             else:
                 maxIterations = MAX_ITERATIONS

@@ -89,7 +89,7 @@ class AlternateVariable(AbstractNodeVariable):
         self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
         for child in self.children:
             child.getValue(writingToken)
-            if writingToken.getValue() != None:
+            if writingToken.getValue() is not None:
                 break
 
     def toXML(self, root, namespace):
