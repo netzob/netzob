@@ -42,30 +42,39 @@ import gettext
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common import DepCheck
+from netzob.Common.DepCheck import DepCheck
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Workspace import Workspace
-from netzob.Common import CommandLine
+from netzob.Common.CommandLine import CommandLine
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
-from netzob.NetzobMainView import NetzobMainView
+
 
 class NetzobMainController(object):
     """"Netzob main window controller"""
 
     def __init__(self):
         # Parse command line arguments
-        parser = CommandLine.get_parser()
-        opts, args = parser.parse_args()
+        cmdLine = CommandLine()
+        cmdLine.parse()
+        opts = cmdLine.getOptions()
 
         # Initialize everything
         self._loadWorkspace(opts)
         self._initLogging()
-        self._checkDependencies()
         self._initResourcesAndLocales()
 
+        # Check dependencies
+        if not DepCheck.checkRequiredDependency():
+            self.log.fatal("Netzob could not start because some of its" +
+                     "required dependencies were not found.")
+            sys.exit()
+
         ### TEST CODE
+        # Load thrid project of workspace
         self.currentProject = self.getCurrentWorkspace().getProjects()[2]
+        #### TEST CODE
+
         # Initialize main view
         self.view = NetzobMainView(self)
 
@@ -98,13 +107,6 @@ class NetzobMainController(object):
                 sys.exit()
 
         self.currentProject = self.currentWorkspace.getLastProject()
-
-    def _checkDependencies(self):
-        (status, version) = DepCheck.test_lxml()
-        if status == False:
-            logging.fatal(("Version of python-lxml ({0}) is too old for Netzob. " +
-                "Please install a recent version (>= 2.3)").format(version))
-            sys.exit()
 
     def _initResourcesAndLocales(self):
         # Initialiaze gettext

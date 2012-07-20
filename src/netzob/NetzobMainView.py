@@ -76,7 +76,6 @@ class NetzobMainView(object):
         self.loadBaseMenuBarAndToolbar()
         self._registerPerspectives()
 
-
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
             setattr(self, object, builder.get_object(object))
