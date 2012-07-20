@@ -50,7 +50,7 @@ class MACWordType(AbstractType):
     def __init__(self):
         """Constructor of MACWordType:
         """
-        AbstractWordType.__init__(self, 11 * 8)  # Atomic size = 17 bytes * 8 bits.
+        AbstractWordType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.MACWordType.py')
 
 #+---------------------------------------------------------------------------+
@@ -64,3 +64,12 @@ class MACWordType(AbstractType):
                 value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
             value = value[1:]
         return self.type2bin(value)
+
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractWordType                                 |
+#+---------------------------------------------------------------------------+
+    def getMaxBitSize(self, nbChars):
+        return (17 * 8)
+
+    def getMinBitSize(self, nbChars):
+        return (17 * 8)

@@ -44,13 +44,13 @@ from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordTyp
 
 class IPv4WordType(AbstractWordType):
     """IPv4WordType:
-            A type represented by IPv4 formatted 8-bits strings (192.168.10.100).
+            A type represented by IPv4 formatted 8-bits strings (192.168.10.100 or 0d.0d.0d.0d).
     """
 
     def __init__(self):
         """Constructor of IPv4WordType:
         """
-        AbstractWordType.__init__(self, 7 * 8)  # Atomic size = 11 bytes * 8 bits.
+        AbstractWordType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IPv4WordType.py')
 
 #+---------------------------------------------------------------------------+
@@ -68,3 +68,12 @@ class IPv4WordType(AbstractWordType):
                 value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
             value = value[1:]
         return self.type2bin(value)
+
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractWordType                                 |
+#+---------------------------------------------------------------------------+
+    def getMaxBitSize(self, nbChars):
+        return (15 * 8)  # 100.100.100.100
+
+    def getMinBitSize(self, nbChars):
+        return (7 * 8)  # 1.1.1.1

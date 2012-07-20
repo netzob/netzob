@@ -48,13 +48,12 @@ class AbstractType():
             It defines the type of a variable.
     """
 
-    def __init__(self, atomicSize):
+    def __init__(self):
         """Constructor of AbstractType:
                 @type atomicSize: integer
                 @param atomicSize: the size of an element of this type in bits. 1 for bits, 8 for bytes.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractType.py')
-        self.atomicSize = atomicSize
 
     @abstractmethod
     def generateValue(self, generationStrategy, minSize, maxSize):
@@ -119,9 +118,3 @@ class AbstractType():
                 @return: the size in bits of the minimal word.
         """
         raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
-
-#+---------------------------------------------------------------------------+
-#| Getters and setters                                                       |
-#+---------------------------------------------------------------------------+
-    def getAtomicSize(self):
-        return self.atomicSize

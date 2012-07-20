@@ -52,7 +52,7 @@ class NumberType(AbstractType):
     def __init__(self):
         """Constructor of NumberType:
         """
-        AbstractType.__init__(self, 1)  # Integers are managed bit by bit in Python.
+        AbstractType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.NumberType.py')
 
 #+---------------------------------------------------------------------------+

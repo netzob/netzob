@@ -53,7 +53,7 @@ class BinaryType(AbstractType):
     def __init__(self):
         """Constructor of BinaryType:
         """
-        AbstractType.__init__(self, 1)
+        AbstractType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.BinaryType.py')
 
 #+---------------------------------------------------------------------------+

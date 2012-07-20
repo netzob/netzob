@@ -50,7 +50,7 @@ class WordType(AbstractWordType):
     def __init__(self):
         """Constructor of WordType:
         """
-        AbstractWordType.__init__(self, 8)
+        AbstractWordType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
 
 #+---------------------------------------------------------------------------+

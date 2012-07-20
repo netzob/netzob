@@ -51,7 +51,7 @@ class AbstractWordType(AbstractType):
     def __init__(self):
         """Constructor of AbstractWordType:
         """
-        AbstractType.__init__(self, 8)
+        AbstractType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractWordType.py')
 
     def generateRandomString(self, stringType, minSize, maxSize):

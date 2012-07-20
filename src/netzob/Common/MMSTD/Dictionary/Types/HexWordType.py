@@ -50,7 +50,7 @@ class HexWordType(AbstractWordType):
     def __init__(self):
         """Constructor of HexWordType:
         """
-        AbstractWordType.__init__(self, 4)
+        AbstractWordType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.HexWordType.py')
 
 #+---------------------------------------------------------------------------+

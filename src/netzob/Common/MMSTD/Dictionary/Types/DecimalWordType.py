@@ -50,7 +50,7 @@ class DecimalWordType(AbstractWordType):
     def __init__(self):
         """Constructor of DecimalWordType:
         """
-        AbstractWordType.__init__(self, 8)
+        AbstractWordType.__init__(self)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.DecimalWordType.py')
 
 #+---------------------------------------------------------------------------+
