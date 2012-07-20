@@ -26,152 +26,106 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import binascii
-import random
-import string
-from lxml.etree import ElementTree
-from lxml import etree
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
+#| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
 
 
-class ReferencedVariable(Variable):
+class ReferencedVariable(AbstractVariable):
     """ReferencedVariable:
-            A variable pointing to an other variable.
+            A variable defined which points to an other variable.
     """
 
-    def __init__(self, id, name, variableID):
-        """Constructor of a ReferencedVariable:
-                @type variableID: string
-                @param variableID: id of the pointed variable.
+    def __init__(self, id, name, pointedID):
+        """Constructor of ReferencedVariable:
         """
-        Variable.__init__(self, "ReferencedVariable", id, name)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable.py')
-        self.varID = variableID
+        AbstractVariable.__init__(self, id, name)
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ReferencedVariable.py')
+        self.pointedID = pointedID
 
-    def getPointedVariable(self):
+    def getPointedVariable(self, processingToken):
         """getPointedVariable:
 
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.Variable
                 @return: the pointed variable.
         """
-        return vocabulary.getVariableByID(self.varID)
+        var = processingToken.getVocabulary().getVariableByID(self.varID)
+        self.log.debug(_("The variable pointed by variable {0} is variable {1}.").format(var.getName()))
+        if var is not None:
+            return var
+        else:
+            self.log.error("Impossible to retrieve the referenced variable which ID is " + self.pointedID)
+            processingToken.setOk(False)
+            return None
 
 #+---------------------------------------------------------------------------+
-#| Functions Inherited from netzob.Common.MMSTD.Dictionary.Variable.Variable.|
+#| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
-    def getValue(self, negative, vocabulary, memory):
-        """getValue:
-                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one else its NONE.
+    def forget(self, processingToken):
+        """forget:
+                The pointed variable forgets its value.
         """
-        var = vocabulary.getVariableByID(self.varID)
-        if var is None:
-            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
-            return None
-        return var.getValue(negative, vocabulary, memory)
+        self.log.debug(_("The variable pointed by variable {0} is forgotten.").format(self.getName()))
+        var = self.getPointedVariable(processingToken)
+        if var is not None:
+            processingToken.getMemory().forget(var)
 
-    def getValueToSend(self, negative, vocabulary, memory):
-        """getValueToSend:
-                Get the current value of the variable it can be the original value if its set and not forget or the value in memory if it has one or it generates one and save its value in memory.
+    def memorize(self, processingToken):
+        """memorize:
+                The pointed variable memorizes its value.
         """
-        var = vocabulary.getVariableByID(self.varID)
-        if var is None:
-            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
-            return None
-        return var.getValueToSend(negative, vocabulary, memory)
+        self.log.debug(_("The variable pointed by variable {0} is memorized.").format(self.getName()))
+        var = self.getPointedVariable(processingToken)
+        if var is not None:
+            processingToken.getMemory().memorize(var)
 
-    def getDescription(self, negative, vocabulary, memory):
-        """getDescription:
-                Get the full description of the variable.
-        """
-        return "ReferencedVariable (" + self.varID + ")"
-
-    def getUncontextualizedDescription(self):
-        """getUncontextualizedDescription:
-                Get the uncontextualized description of the variable (no use of memory or vocabulary).
-        """
-        return "ReferencedVariable (" + self.varID + ")"
-
-    def compare(self, value, indice, negative, vocabulary, memory):
-        """compare:
-                Compare the current variable to the end (starting at the "indice"-th character) of value.
-                Return the number of letters that matches, -1 if it does not match.
-        """
-        var = vocabulary.getVariableByID(self.varID)
-        if var is None:
-            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
-            return None
-        return var.compare(value, indice, negative, vocabulary, memory)
-
-    def learn(self, value, indice, negative, vocabulary, memory):
+    def learn(self, readingToken):
         """learn:
-                Compare the current variable to the end (starting at the "indice"-th character) of value.
-                Moreover it stores learns from the provided message.
-                Return the number of letters that matches, -1 if it does not match.
+                The pointed variable tries to learn the read value.
         """
-        var = vocabulary.getVariableByID(self.varID)
-        if var is None:
-            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
-            return None
-        self.log.info("Compare with a referenced variable")
-        return var.learn(value, indice, negative, vocabulary, memory)
+        self.log.debug(_("The variable pointed by variable {0} learns {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        var = self.getPointedVariable(processingToken)
+        if var is not None:
+            var.learn(readingToken)
 
-    def restore(self, vocabulary, memory):
-        """restore:
-                Restore learned value from the last execution of the variable.
+    def compare(self, readingToken):
+        """compare:
+                The pointed variable compares its value to the read value.
         """
-        var = vocabulary.getVariableByID(self.varID)
-        if var is None:
-            self.log.error("Impossible to retrieve the referenced variable which's ID = " + self.varID)
-            return None
-        self.log.info("Compare with a referenced variable")
-        return var.restore(vocabulary, memory)
+        self.log.debug(_("The variable pointed by variable {0} compares its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        var = self.getPointedVariable(processingToken)
+        if var is not None:
+            var.compare(readingToken)
 
-    def toXML(self, root, namespace):
-        """toXML:
-            Create the xml tree associated to this variable.
+    def generate(self, writingToken):
+        """generate:
+                A new current value is generated for the pointed variable according to the variable type and the given generation strategy.
         """
-        xmlWordVariable = etree.SubElement(root, "{" + namespace + "}variable")
-        xmlWordVariable.set("id", str(self.getID()))
-        xmlWordVariable.set("name", str(self.getName()))
+        self.log.debug(_("The variable pointed by variable {0} generates a value.").format(self.getName()))
+        var = self.getPointedVariable(processingToken)
+        if var is not None:
+            var.generate(writingToken)
 
-        xmlWordVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ReferencedVariable")
-
-        # Definition of the referenced
-        xmlWordVariableRef = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
-        xmlWordVariableRef.text = self.varID
-        return xmlWordVariable
+    def getValue(self, writingToken):
+        """getValue:
+                Returns the pointed variable value.
+        """
+        self.log.debug(_("The variable pointed by variable {0} gets its value.").format(self.getName()))
+        var = self.getPointedVariable(processingToken)
+        if var is not None:
+            var.getValue(writingToken)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-
-#+---------------------------------------------------------------------------+
-#| Static methods                                                            |
-#+---------------------------------------------------------------------------+
-    @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
-        """loadFromXML:
-                Load a referenced variable from an XML definition.
-        """
-        if version == "0.1":
-            varId = xmlRoot.get("id")
-            varName = xmlRoot.get("name")
-
-            refVarId = xmlRoot.find("{" + namespace + "}ref").text
-            return ReferencedVariable(varId, varName, refVarId)
-
-        return None
