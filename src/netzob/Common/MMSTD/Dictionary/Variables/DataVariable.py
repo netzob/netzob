@@ -48,8 +48,11 @@ class DataVariable(AbstractLeafVariable):
             A data variable defined in a dictionary which is a leaf in the global variable tree and contains data of a certain type.
     """
 
+    MAX_BITS = 1024
+
     def __init__(self, id, name, type, originalValue, minChars, maxChars):
         """Constructor of DataVariable:
+                Most of type are checked to not be None.
 
                 @type type: string
                 @param typeVariable: the type of the variable being constructed.
@@ -62,13 +65,27 @@ class DataVariable(AbstractLeafVariable):
         """
         AbstractLeafVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
-        self.type = type
-        self.originalValue = self.type.type2bin(originalValue)
+        if type is not None:
+            self.type = type
+        else:
+            # Default type is Binary.
+            log.debug(_("Construction of DataVariable: type undefined."))
+            from netzob.Common.MMSTD.Dictionary.Type.BinaryType import BinaryType
+            type = BinaryType()
+
+        self.originalValue = self.type.type2bin(originalValue)  # Can be None.
         self.currentValue = None
-        if minChars > maxChars:
-            log.error(_("Error in construction of DataVariable: minChars > maxChars"))
-        self.minBits = self.type.getMinBitSize(minChars)
-        self.maxBits = self.type.getMaxBitSize(maxChars)
+
+        if minChars is not None and minChars >= 0:
+            self.minBits = self.type.getMinBitSize(minChars)
+        else:
+            log.debug(_("Construction of DataVariable: minChars undefined or < 0. MinBits value is fixed to 0."))
+            self.minBits = 0
+        if maxChars is not None and maxChars >= minChars:
+            self.maxBits = self.type.getMaxBitSize(maxChars)
+        else:
+            log.debug(_("Construction of DataVariable: maxChars undefined or < minChars. MaxBits value is fixed to minBits."))
+            self.maxBits = self.minBits
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -124,6 +141,32 @@ class DataVariable(AbstractLeafVariable):
             value = writingToken.getMemory().recall(self)
         writingToken.setValue(value)
 
+    def toXML(self, root, namespace):
+        """toXML:
+            Creates the xml tree associated to this variable.
+        """
+        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlVariable.set("id", str(self.getID()))
+        xmlVariable.set("name", str(self.getName()))
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DataVariable")
+
+        # originalValue (can be None)
+        if self.originalValue is not None:
+            xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
+            xmlOriginalValue.text = self.originalValue
+
+        # minBits
+        xmlMinBits = etree.SubElement(xmlVariable, "{" + namespace + "}minBits")
+        xmlMinBits.text = self.minBits
+
+        # maxBits
+        xmlMaxBits = etree.SubElement(xmlVariable, "{" + namespace + "}maxBits")
+        xmlMaxBits.text = self.maxBits
+
+        # type
+        xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
+        xmlType.text = self.type.toString()
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
@@ -138,3 +181,50 @@ class DataVariable(AbstractLeafVariable):
 
     def setCurrentValue(self, currentValue):
         self.currentValue = currentValue
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Loads a data variable from an XML definition.
+                We do not trust the user and check every field (even mandatory).
+        """
+        if version == "0.1":
+            xmlID = xmlRoot.get("id")
+            xmlName = xmlRoot.get("name")
+
+            # originalValue
+            xmlOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
+            if xmlOriginalValue != None:
+                originalValue = xmlOriginalValue.text
+            else:
+                originalValue = None
+
+            # minBits
+            xmlMinBits = xmlRoot.find("{" + namespace + "}minBits")
+            if xmlMinBits != None:
+                minBits = int(xmlMinBits.text)
+            else:
+                minBits = 0
+
+            # maxBits
+            xmlMaxBits = xmlRoot.find("{" + namespace + "}maxBits")
+            if xmlMaxBits != None:
+                maxBits = int(xmlMaxBits.text)
+            else:
+                maxBits = MAX_BITS
+
+            # type
+            xmlType = xmlRoot.find("{" + namespace + "}type")
+            if xmlType != None:
+                type = AbstractType.makeType(xmlType.text)
+                if type is None:
+                    return None
+            else:
+                log.error(_("No type specified for this variable in the xml file."))
+                return None
+
+            return DataVariable(id, name, originalValue, type, minBits, maxBits)
+        return None

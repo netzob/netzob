@@ -95,3 +95,35 @@ class AggregateVariable(AbstractNodeVariable):
         for child in self.children:
             value += child.getValue(writingToken)
         writingToken.setValue(value)
+
+    def toXML(self, root, namespace):
+        """toXML:
+            Creates the xml tree associated to this variable.
+            Adds every child's own xml definition as xml child to this tree.
+        """
+        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlVariable.set("id", str(self.getID()))
+        xmlVariable.set("name", str(self.getName()))
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
+
+        # Definition of children variables
+        for child in self.children:
+            child.toXML(xmlVariable, namespace)
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Loads an aggregate variable from an XML definition.
+        """
+        if version == "0.1":
+            xmlID = xmlRoot.get("id")
+            xmlName = xmlRoot.get("name")
+            children = []
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
+                child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
+                children.append(child)
+            return AggregateVariable(id, name, children)
+        return None

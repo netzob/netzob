@@ -62,6 +62,18 @@ class AbstractVariable:
         self.mutable = True  # TODO: implement mutability.
         self.defined = True  # TODO: implement definition.
 
+    @abstractmethod
+    def toXML(self, root, namespace):
+        """toXML:
+            Create the xml tree associated to this variable.
+
+            @type root: lxml.etree.Element
+            @param root: the root of the tree being built.
+            @type namespace: string
+            @param namespace: a namespace used as a precision in the variable tree.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'toXML'."))
+
 #+---------------------------------------------------------------------------+
 #| Visitor functions                                                         |
 #+---------------------------------------------------------------------------+
@@ -188,7 +200,7 @@ class AbstractVariable:
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getId(self):
+    def getID(self):
         return self.id
 
     def getName(self):
@@ -200,7 +212,7 @@ class AbstractVariable:
     def isDefined(self):
         return self.defined
 
-    def setId(self, id):
+    def setID(self, id):
         self.id = id
 
     def getName(self, name):
@@ -211,3 +223,42 @@ class AbstractVariable:
 
     def setDefined(self, defined):
         self.defined = defined
+
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Load a variable from an XML definition.
+                Calls its proper heir function for it to create the variable.
+
+                @type xmlRoot: lxml.etree.Element
+                @param xmlRoot: the root of the XML definition.
+                @type namespace: string
+                @param namespace: the namespace (precision) associated to the variable in the XML definition.
+                @type version: string
+                @param version: the load version.
+                @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @return: a variable constructed from this XML definition.
+        """
+        if version == "0.1":
+            # Data Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+                return DataVariable.loadFromXML(xmlRoot, namespace, version, "IPv4")
+
+            # Aggregate Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
+                return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
+
+            # Alternate Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
+                return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
+
+            # Referenced Variable
+            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
+                return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)

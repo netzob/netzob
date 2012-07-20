@@ -126,6 +126,30 @@ class ReferencedVariable(AbstractVariable):
         if var is not None:
             var.getValue(writingToken)
 
+    def toXML(self, root, namespace):
+        """toXML:
+            Create the xml tree associated to this variable.
+        """
+        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlVariable.set("id", str(self.getID()))
+        xmlVariable.set("name", str(self.getName()))
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ReferencedVariable")
+
+        # Definition of the referenced variable ID.
+        xmlRefID = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
+        xmlRefID.text = self.pointedID
+
 #+---------------------------------------------------------------------------+
-#| Getters and setters                                                       |
+#| Static methods                                                            |
 #+---------------------------------------------------------------------------+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version):
+        """loadFromXML:
+                Loads an alternate variable from an XML definition.
+        """
+        if version == "0.1":
+            xmlID = xmlRoot.get("id")
+            xmlName = xmlRoot.get("name")
+            xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
+            return ReferencedVariable(xmlID, xmlName, xmlRefID)
+        return None
