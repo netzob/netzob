@@ -119,6 +119,15 @@ class AbstractType():
         """
         raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
 
+    def toString(self):
+        """toString:
+                Return a string description of the current Type.
+
+                @rtype: string
+                @return: the current type in string format.
+        """
+        raise NotImplementedError(_("The current type does not implement 'toString'."))
+
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
@@ -135,8 +144,8 @@ class AbstractType():
             type = IPv4WordType()
         elif typeString == "MACWord":
             type = MACWordType()
-        elif typeString == "Number":
-            type = NumberType()
+        elif typeString == "Integer":
+            type = IntegerType()
         elif typeString == "Word":
             type = WordType()
         else:

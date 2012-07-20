@@ -83,3 +83,6 @@ class BinaryType(AbstractType):
 
     def getMinBitSize(self, nbChars):
         return nbChars
+
+    def toString(self):
+        return "Binary"

@@ -44,16 +44,16 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
-class NumberType(AbstractType):
-    """NumberType:
+class IntegerType(AbstractType):
+    """IntegerType:
             A type represented by numbers (integers).
     """
 
     def __init__(self):
-        """Constructor of NumberType:
+        """Constructor of IntegerType:
         """
         AbstractType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.NumberType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IntegerType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
@@ -78,3 +78,6 @@ class NumberType(AbstractType):
 
     def getMinBitSize(self, nbChars):
         return self.getBitSize(10 ** (nbChars - 1))
+
+    def toString(self):
+        return "Integer"

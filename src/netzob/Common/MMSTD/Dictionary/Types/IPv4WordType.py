@@ -69,6 +69,9 @@ class IPv4WordType(AbstractWordType):
             value = value[1:]
         return self.type2bin(value)
 
+    def toString(self):
+        return "IPv4Word"
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractWordType                                 |
 #+---------------------------------------------------------------------------+

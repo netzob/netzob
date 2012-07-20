@@ -61,3 +61,6 @@ class WordType(AbstractWordType):
         if generationStrategy == "random":
             value = self.generateRandomString(string.printable, minSize, maxSize)
         return self.type2bin(value)
+
+    def toString(self):
+        return "Word"

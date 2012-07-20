@@ -61,3 +61,6 @@ class HexWordType(AbstractWordType):
         if generationStrategy == "random":
             value = self.generateRandomString(string.hexdigits, minSize, maxSize)
         return self.type2bin(value)
+
+    def toString(self):
+        return "HexWord"

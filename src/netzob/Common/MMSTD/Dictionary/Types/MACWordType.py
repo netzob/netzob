@@ -65,6 +65,9 @@ class MACWordType(AbstractType):
             value = value[1:]
         return self.type2bin(value)
 
+    def toString(self):
+        return "MACWord"
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractWordType                                 |
 #+---------------------------------------------------------------------------+
