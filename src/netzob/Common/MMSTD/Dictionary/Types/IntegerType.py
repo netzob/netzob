@@ -60,8 +60,10 @@ class IntegerType(AbstractType):
 #+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
         value = 0
-        if generationStrategy == "random":
-            value = random.randint(10 ** (minSize - 1), (10 ** maxSize) - 1)
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                value = random.randint(10 ** (minSize - 1), (10 ** maxSize) - 1)
+                break
         return self.type2bin(value)
 
     def type2bin(self, typeValue):

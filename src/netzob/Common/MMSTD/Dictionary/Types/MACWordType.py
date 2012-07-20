@@ -59,10 +59,12 @@ class MACWordType(AbstractType):
     def generateValue(self, generationStrategy, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
-        if generationStrategy == "random":
-            for i in range(6):
-                value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
-            value = value[1:]
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                for i in range(6):
+                    value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+                value = value[1:]
+                break
         return self.type2bin(value)
 
     def toString(self):

@@ -59,14 +59,17 @@ class BinaryType(AbstractType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategy, minSize, maxSize):
-        size = random.randint(minSize, maxSize)
+    def generateValue(self, generationStrategies, minSize, maxSize):
         value = []
-        for i in range(size):
-            if random.randint(0, 1) == 1:
-                value.append(True)
-            else:
-                value.append(False)
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                size = random.randint(minSize, maxSize)
+                for i in range(size):
+                    if random.randint(0, 1) == 1:
+                        value.append(True)
+                    else:
+                        value.append(False)
+                break
         return self.type2bin(value)
 
     def type2bin(self, typeValue):

@@ -58,8 +58,10 @@ class HexWordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
     def generateValue(self, generationStrategy, minSize, maxSize):
         value = ""
-        if generationStrategy == "random":
-            value = self.generateRandomString(string.hexdigits, minSize, maxSize)
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                value = self.generateRandomString(string.hexdigits, minSize, maxSize)
+                break
         return self.type2bin(value)
 
     def toString(self):

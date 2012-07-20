@@ -59,14 +59,17 @@ class IPv4WordType(AbstractWordType):
     def generateValue(self, generationStrategy, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
-        if generationStrategy == "random integer":
-            for i in range(4):
-                value = value + "." + str(random.randint(0, 255))
-            value = value[1:]
-        elif generationStrategy == "random hex":
-            for i in range(4):
-                value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
-            value = value[1:]
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                for i in range(4):
+                    value = value + "." + str(random.randint(0, 255))
+                value = value[1:]
+                break
+            elif generationStrategy == "random hex":
+                for i in range(4):
+                    value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+                value = value[1:]
+                break
         return self.type2bin(value)
 
     def toString(self):

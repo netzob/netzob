@@ -56,12 +56,12 @@ class AbstractType():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractType.py')
 
     @abstractmethod
-    def generateValue(self, generationStrategy, minSize, maxSize):
+    def generateValue(self, generationStrategies, minSize, maxSize):
         """generateValue:
                 Generate a bit array value according to the generationStrategy specification and which size is between minSize and maxSize.
 
-                @type generationStrategy: string
-                @param generationStrategy: a strategy ("random" for instance) that defines the way the value will be generated.
+                @type generationStrategies: string List
+                @param generationStrategies: a list of strategy ("random" for instance) that defines the way the value will be generated. The first allowed strategy is used.
                 @type minSize: integer
                 @param minSize: the minimum size of the value in bits.
                 @type maxSize: integer
