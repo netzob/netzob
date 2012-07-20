@@ -228,7 +228,7 @@ class AbstractionLayer():
             else:
                 self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
                 # we first restore possibly learnt value
-                self.log.debug("Restore possibly learnt value")
+                self.log.debug("Restore possibly learned value")
                 symbol.getRoot().restore(self.vocabulary, self.memory)
 
         return UnknownSymbol()

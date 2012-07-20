@@ -124,7 +124,7 @@ class Memory():
                 @param variable: the given variable, the value of which we want to save.
         """
         if variable.getCurrentValue() is not None:
-            self.temporaryMemory[variable.getId()] = variable.getCurrentValue()[0]
+            self.temporaryMemory[variable.getId()] = variable.getCurrentValue()
 
     def forget(self, variable):
         """forget:
