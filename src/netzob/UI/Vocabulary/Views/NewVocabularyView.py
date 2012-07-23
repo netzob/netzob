@@ -36,6 +36,7 @@ import os
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from collections import OrderedDict
@@ -77,20 +78,14 @@ class NewVocabularyView(object):
             "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
             "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
             "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
-            "fieldPropertiesListstore"
+            "fieldPropertiesListstore", "messageTableBox", "symbolListTreeView",
+            "symbolListTreeViewSelection"
             ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
         # List of currently displayed message tables
-        self.messageTableLists = []
-        # Set the focus symbol
-        if self.getCurrentProject().getVocabulary().getSymbols()[0] != None:
-            self.focusMessageTable = self.getCurrentProject().getVocabulary().getSymbols()[0]
-        else :
-            self.focusMessageTable = None
-        # Todo create the focus attribute
-
-
+        self.messageTableList = []
+        self.selectedMessageTable = None
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -127,40 +122,6 @@ class NewVocabularyView(object):
         return self._uiDefinition
 
     ## View manipulation methods
-    ## remove and modify
-    def addSpreadSheet(self, name, position):
-        """
-        Add an external spreadsheet on the builder 
-        @type  box: string
-        @param box: The hbox/vbox where add the widget
-        @type  widget: string
-        @param widget: The widget to add 
-        @type  position: number
-        @param position: The position to add the widget on the hbox/vbox
-        @type  expand: gboolean
-        @param expand: Set the expand properties
-        """
-        #create a new builder to extract the widget
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(self.ressourceglade + "/ui/spreadsheet.glade")
-        #set the name of the symbol
-        label = builder2.get_object("label1")
-        label.set_text(name)
-        #add the spreadsheet to the main builder
-        spreadsheet = builder2.get_object("spreadsheet")
-        box = self.builder.get_object("box5")
-        box.pack_start(spreadsheet, True, True, 0)
-        box.reorder_child(spreadsheet, position)
-        #add the message for the treeview
-        #add the close button
-        closebutton = builder2.get_object("button4")
-        closebutton.connect("clicked", self.button_closeview_cb, spreadsheet)
-        #focus
-        focusbutton = builder2.get_object("button1")
-        focusbutton.connect("clicked", self.button_focusview_cb, builder2)
-
-        return builder2
-
     def update(self):
         self.updateSymbolList()
         self.updateSymbolListToolbar()
@@ -169,23 +130,85 @@ class NewVocabularyView(object):
         self.updateMessageProperties()
         self.updateFieldProperties()"""
 
+    ## Message Tables management
+    def addMessageTable(self):
+        messageTableController = MessageTableController(self)
+        messageTable = messageTableController.view
+        self.messageTableList.append(messageTable)
+        self.setSelectedMessageTable(messageTable)
+        self.messageTableBox.pack_start(messageTable.getPanel(), True, True, 0)
+
+    def removeMessageTable(self, messageTable):
+        self.messageTableBox.remove(messageTable.getPanel())
+        messageTable.destroy()
+        self.messageTableList = [mTable for mTable in self.messageTableList
+                                 if mTable != messageTable]
+        # Select a new table in messageTable was the selected message table
+        if len(self.messageTableList) > 0:
+            self.setSelectedMessageTable(self.messageTableList[0])
+
+    def emptyMessageTableDisplayingSymbols(self, symbolList):
+        toBeRemovedTables = [mTable for mTable in self.messageTableList
+                             if mTable.getDisplayedSymbol() in symbolList]
+        for mTable in toBeRemovedTables:
+            mTable.setDisplayedSymbol(None)
+
+    def updateMessageTableDisplayingSymbols(self, symbolList):
+        toBeUpdatedTables = [mTable for mTable in self.messageTableList
+                             if mTable.getDisplayedSymbol() in symbolList]
+        for mTable in toBeUpdatedTables:
+            mTable.update()
+
+    def setSelectedMessageTable(self, selectedMessageTable):
+        # Update appearance of old and new selected message table
+        if self.selectedMessageTable is not None:
+            self.selectedMessageTable.setSelected(False)
+        selectedMessageTable.setSelected(True)
+        # Update current selected message table and 
+        self.selectedMessageTable = selectedMessageTable
+        self.setSelectedSymbolFromSelectedMessageTable()
+
+    def setDisplayedSymbolInSelectedMessageTable(self, symbol):
+        if self.selectedMessageTable is None:
+            return
+        if symbol != self.selectedMessageTable.displayedSymbol:
+            self.selectedMessageTable.setDisplayedSymbol(symbol)
+
+    def getDisplayedSymbolInSelectedMessageTable(self):
+        if self.selectedMessageTable is None:
+            return None
+        else:
+            return self.selectedMessageTable.displayedSymbol
+
     ## Symbol List
     def updateSymbolList(self):
         """Updates the symbol list of the left panel, preserving the current
         selection"""
+        print "Update sym list"
         symbolList = self.getCurrentProject().getVocabulary().getSymbols()
-        selectionIdList = []
+        checkedMessagesIDList = []
         for row in self.symbolListStore:
             if (row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]):
-                selectionIdList.append(row[self.SYMBOLLISTSTORE_ID_COLUMN])
+                checkedMessagesIDList.append(row[self.SYMBOLLISTSTORE_ID_COLUMN])
+        # Block selection changed handler
+        self.symbolListTreeViewSelection.handler_block_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
         self.symbolListStore.clear()
         for sym in symbolList:
-            self.addRowSymbolList(selectionIdList, sym.getName(),
+            self.addRowSymbolList(checkedMessagesIDList, sym.getName(),
                                   len(sym.getMessages()),
                                   len(sym.getFields()),
                                   sym.getID())
+        self.setSelectedSymbolFromSelectedMessageTable()
+        self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
 
-    def addRowSymbolList(self, selectionIdList, name, message, field, symID):
+    def setSelectedSymbolFromSelectedMessageTable(self):
+        if self.selectedMessageTable is None:
+            self.setSelectedSymbol(None)
+        else:
+            messageTableSymbol = self.selectedMessageTable.displayedSymbol
+            self.setSelectedSymbol(messageTableSymbol)
+
+    def addRowSymbolList(self, checkedMessagesIDList, name, message, field, symID):
         """Adds a row in the symbol list of left panel
         @type  selection: boolean
         @param selection: if selected symbol
@@ -198,7 +221,7 @@ class NewVocabularyView(object):
         @type  image: string
         @param image: image of the lock button (freeze partitioning)"""
         i = self.symbolListStore.append()
-        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (symID in selectionIdList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (symID in checkedMessagesIDList))
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
         self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
@@ -218,7 +241,7 @@ class NewVocabularyView(object):
                 count += 1
         return count
 
-    def getSelectedSymbolList(self):
+    def getCheckedSymbolList(self):
         currentVocabulary = self.getCurrentProject().getVocabulary()
         selectedSymbolList = []
         for row in self.symbolListStore:
@@ -228,6 +251,29 @@ class NewVocabularyView(object):
                 selectedSymbolList.append(sym)
         return selectedSymbolList
 
+    def setSelectedSymbol(self, symbol):
+        selection = self.symbolListTreeView.get_selection()
+        if symbol is None:
+            selection.unselect_all()
+        else:
+            print symbol.getID()
+            path = self.getSymbolPathInSymbolList(symbol)
+            selection.select_path(path)
+
+    def getSelectedSymbol(self):
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        model, iter = self.symbolListTreeView.get_selection().get_selected()
+        if iter is not None:
+            symID = model[iter][self.SYMBOLLISTSTORE_ID_COLUMN]
+            return currentVocabulary.getSymbolByID(symID)
+
+    def getSymbolPathInSymbolList(self, symbol):
+        symID = symbol.getID()
+        for path, row in enumerate(self.symbolListStore):
+            if row[self.SYMBOLLISTSTORE_ID_COLUMN] == symID:
+                return path
+
+    ## Properties panel
     def getProjectProperties(self):
         project = self.getCurrentProject()
         properties = OrderedDict()
@@ -249,8 +295,7 @@ class NewVocabularyView(object):
             properties[configuration.VOCABULARY_GLOBAL_ENDIANESS] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_ENDIANESS)
         return properties
 
-
-    ## TODO
+    # TODO
     def updateProjectProperties(self):
         # clean store
         self.projectPropertiesListstore.clear()
@@ -263,7 +308,7 @@ class NewVocabularyView(object):
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
 
     def getSymbolProperties(self):
-        symbol = self.focusMessageTable.getFocusSymbol()#TODO METHOD
+        symbol = self.getDisplayedSymbolInSelectedMessageTable()
         properties = OrderedDict()
         if symbol != None:
             properties['name'] = symbol.getName()
@@ -284,14 +329,15 @@ class NewVocabularyView(object):
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
 
     def getMessageProperties(self):
-        message = self.focusMessageTable.getFocusMessage()#TODO METHOD
-        properties = OrderedDict()
-        if message != None:
-            properties['name'] = message.getName()
-            # ++CODE HERE++
-            # ADD PROPERTIES FROM message
-            # ADD LIST [ Type ,TimeStamp,Filename of the source,Creation date ,Modification date,Owner,size,line number,data ]
-        return properties
+        return []
+#        message = self.focusMessageTable.getFocusMessage()#TODO METHOD
+#        properties = OrderedDict()
+#        if message != None:
+#            properties['name'] = message.getName()
+#            # ++CODE HERE++
+#            # ADD PROPERTIES FROM message
+#            # ADD LIST [ Type ,TimeStamp,Filename of the source,Creation date ,Modification date,Owner,size,line number,data ]
+#        return properties
 
     def updateMessageProperties(self):
         # clean store
@@ -304,18 +350,16 @@ class NewVocabularyView(object):
             self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
 
-
     def getFieldProperties(self):
-        field = self.focusMessageTable.getFocusField()#TODO METHOD
-        properties = OrderedDict()
-        if field != None:
-            properties['name'] = field.getName()
-            # ++CODE HERE++
-            # ADD PROPERTIES FROM message
-            # ADD LIST [ regex, 4 format variable, idea? ]
-        return properties
-
-
+        return []
+#        field = self.focusMessageTable.getFocusField()#TODO METHOD
+#        properties = OrderedDict()
+#        if field != None:
+#            properties['name'] = field.getName()
+#            # ++CODE HERE++
+#            # ADD PROPERTIES FROM message
+#            # ADD LIST [ regex, 4 format variable, idea? ]
+#        return properties
 
     def updateFieldProperties(self):
         # clean store

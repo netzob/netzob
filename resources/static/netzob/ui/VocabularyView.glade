@@ -257,7 +257,9 @@
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">both</property>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="treeview-selection2"/>
+                      <object class="GtkTreeSelection" id="symbolListTreeViewSelection">
+                        <signal name="changed" handler="symbolListTreeViewSelection_changed_cb" swapped="no"/>
+                      </object>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn5">
@@ -460,7 +462,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolButton" id="newMessageList">
+                  <object class="GtkToolButton" id="newMessageTableButton">
                     <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -469,6 +471,7 @@
                     <property name="label" translatable="yes">New MessageList</property>
                     <property name="use_underline">True</property>
                     <property name="stock_id">netzob-new-window</property>
+                    <signal name="clicked" handler="newMessageTableButton_clicked_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -785,7 +788,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="messageListBox">
+          <object class="GtkBox" id="messageTableBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>

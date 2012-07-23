@@ -116,3 +116,51 @@ class TreeMessageView(AbstractViewGenerator):
 
     def getWidget(self):
         return self.scroll
+
+# Georges is going to hate that
+# GTK related functions. These functions are used to make treeview column
+# headers clickable
+def findClosestAncestor(widget, ancestor_class):
+    if not isinstance(widget, Gtk.Widget):
+        raise TypeError("%r is not a gtk.Widget" % widget)
+    ancestor = widget.get_parent()
+    while ancestor is not None:
+        if isinstance(ancestor, ancestor_class):
+            break;
+        ancestor = ancestor.get_parent() if hasattr(ancestor, 'get_parent') and callable(ancestor.get_parent) else None
+    return ancestor
+
+def propagateButtonPressEvent(parent, event, *data):
+        parent_alloc = parent.get_allocation()
+        x = parent_alloc.x + int(event.x)
+        y = parent_alloc.y + int(event.y)
+        children = parent.get_children()
+        print "Propagating event:%r" % event
+        print "- from parent:%r" % parent
+        while children:
+            for child in children:
+                child_alloc = child.get_allocation()
+                if child_alloc.x <= x <= child_alloc.x + child_alloc.width and child_alloc.y <= y <= child_alloc.y + child_alloc.height:
+                    print "- to child:%r" % child
+                    if child.get_property('can-focus'):
+                        event.send_event = True
+                        child.grab_focus()
+                        child.emit('button-press-event', event, *data)
+                        return True
+                    else:
+                        children = child.get_children() if hasattr(child, 'get_children') and callable(child.get_children) else None
+                        break;
+            else:
+                children = None
+        return False
+
+def propagateFocusInEvent(parent, event, *data):
+    print 'focus-in', parent, event
+    child = parent.get_child()
+    if child.get_property('can-focus'):
+        child.grab_focus()
+    else:
+        if not child.child_focus(Gtk.DIR_TAB_FORWARD):
+            parent.get_toplevel().child_focus(Gtk.DIR_TAB_FORWARD)
+    return True
+

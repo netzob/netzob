@@ -28,65 +28,136 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
+import os
 
-from gi.repository import Gtk, Gdk
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Pango
+import gi
+gi.require_version('Gtk', '3.0')
 
-'''
-Created on 17 juil. 2012
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.NetzobException import NetzobException
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
-@author: heyler
-'''
+# IDEA : Add a picture in the header to tell whether the symbol
+# is locked or not
 
 class MessageTableView(object):
 
-    def __init__(self, vocabularyView, idSymbol):
-        """Constructor add an external spreadsheet on the builder 
-        @type  box: string
-        @param box: The hbox/vbox where add the widget
-        @type  widget: string
-        @param widget: The widget to add 
-        @type  position: number
-        @param position: The position to add the widget on the hbox/vbox
-        @type  expand: gboolean
-        @param expand: Set the expand properties"""
-        self.idSymbol = idSymbol
-        self.vocabularyView = vocabularyView
-        #create a new builder to extract the widget
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(self.ressourceglade + "/ui/spreadsheet.glade")
-        #set the name of the symbol
-        self.label = builder2.get_object("label1")
-        if (idSymbol == None):
-            self.label.set_text("Empty")
-        else:
-            self.label.set_text(vocabularyView.getCurrentProject().getVocabulary().getSymbolByID(idSymbol))
-        #add the spreadsheet to the main builder
-        self.spreadsheet = builder2.get_object("spreadsheet")
-        box = vocabularyView.builder.get_object("box5")
-        box.pack_start(self.spreadsheet, True, True, 0)
-        box.reorder_child(self.spreadsheet, 0)
-        #add the message for the treeview
-        self.treeview = builder2.get_object("treemessage")
+    MAX_DISPLAYED_FIELDS = 200
 
-        #add the close button
-        self.closebutton = builder2.get_object("button4")
-        self.closebutton.connect("clicked", self.button_closeview_cb, self.spreadsheet)
-        #focus
-        self.focusbutton = builder2.get_object("button1")
-        self.focusbutton.connect("clicked", self.button_focusview_cb, builder2)
+    def __init__(self, controller):
+        self.controller = controller
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui",
+            "MessageTable.glade"))
+        self._getObjects(self.builder, ["messageTableTreeView",
+                                        "messageTableBox",
+                                        "symbolNameLabel"])
+        self.builder.connect_signals(self.controller)
+        self.displayedSymbol = None
+        self.messageTableTreeView.set_rules_hint(True)
 
     def _getObjects(self, builder, objectsList):
         for object in objectsList:
             setattr(self, object, builder.get_object(object))
 
-    def setName(self, newName):
-        self.label.set_text(newName)
+    def _setupMessageTreeView(self):
+        self._clearTreeView()
+        ## Set up the message TreeView
+        # Each field is displayed in its own column
+        if self.displayedSymbol is None:
+            return
+        numOfColumns = min(self.MAX_DISPLAYED_FIELDS,
+                           len(self.displayedSymbol.getFields()))
+        for colIdx in range(0, numOfColumns):
+            self.messageTableTreeView.append_column(self._makeTreeViewColumn(colIdx))
+
+    def _makeTreeViewColumn(self, i):
+        # Cell renderer used to display field of messages         
+        markupCellRenderer = Gtk.CellRendererText()
+        markupCellRenderer.set_property("font", "monospace")
+        #markupCellRenderer.set_property("height", 16)
+        markupCellRenderer.set_padding(2, 2)
+        # GtkTreeViewColumn object
+        name = self.displayedSymbol.getFieldByIndex(i).getName()
+        treeViewColumn = Gtk.TreeViewColumn(name)
+        treeViewColumn.pack_start(markupCellRenderer, True)
+        treeViewColumn.add_attribute(markupCellRenderer, "markup", i)
+        treeViewColumn.set_resizable(True)
+        return treeViewColumn
+
+    def _clearTreeView(self):
+        for column in self.messageTableTreeView.get_columns():
+            self.messageTableTreeView.remove_column(column)
+        self.messageTableTreeView.set_model(None)
+
+    def setDisplayedSymbol(self, symbol):
+        """Memorizes symbol as the displayed symbol in this message table"""
+        self.displayedSymbol = symbol
+        self.update()
+
+    def getDisplayedSymbol(self):
+        return self.displayedSymbol
+
+    def updateMessageTableTreeView(self):
+        self._setupMessageTreeView()
+        if self.displayedSymbol is None:
+            return
+        splitMessagesMatrix = []
+        # Split every message 
+        for message in self.displayedSymbol.getMessages():
+            try:
+                splitMessage = message.applyAlignment(styled=True, encoded=True)
+            except NetzobException:
+                self.log.warn("Impossible to display one of messages since it "
+                              + "cannot be cut according to the computed regex.")
+                self.log.warn("Message : " + str(message.getStringData()))
+                continue  # We don't display the message in error
+            splitMessagesMatrix.append(splitMessage)
+
+        # Setup listStore
+        numOfColumns = min(self.MAX_DISPLAYED_FIELDS,
+                           len(self.displayedSymbol.getFields()))
+        listStoreTypes = [str] * numOfColumns
+        self.messageTableListStore = Gtk.ListStore(*listStoreTypes)
+        self.messageTableTreeView.set_model(self.messageTableListStore)
+        # Fill listStore with split messages
+        for splitMessage in splitMessagesMatrix:
+            self.messageTableListStore.append(splitMessage)
+
+    def updateSymbolNameLabel(self):
+        if self.displayedSymbol is None:
+            symbolName = "Empty Message Table"
+        else:
+            symbolName = self.displayedSymbol.getName()
+        self.symbolNameLabel.set_text(symbolName)
+
+    def setSelected(self, selected):
+        if selected:
+            boldFont = Pango.FontDescription()
+            boldFont.set_weight(Pango.Weight.SEMIBOLD)
+            self.symbolNameLabel.modify_font(boldFont)
+        else:
+            selection = self.messageTableTreeView.get_selection()
+            if selection is not None:
+                selection.unselect_all()
+            normalFont = Pango.FontDescription()
+            normalFont.set_weight(Pango.Weight.NORMAL)
+            self.symbolNameLabel.modify_font(normalFont)
 
     def update(self):
-        pass
+        self.updateSymbolNameLabel()
+        self.updateMessageTableTreeView()
 
-    def setWidget(self):
-        pass
+    def getPanel(self):
+        return self.messageTableBox
 
     def destroy(self):
-        self.widget.destroy()
+        self.messageTableBox.destroy()

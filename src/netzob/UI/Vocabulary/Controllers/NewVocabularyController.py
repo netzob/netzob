@@ -87,7 +87,7 @@ class NewVocabularyController(object):
 
     def concatSymbolButton_clicked_cb(self, toolButton):
         #concat the message of all selected symbols
-        symbols = self.view.getSelectedSymbolList()
+        symbols = self.view.getCheckedSymbolList()
         message = []
         for sym in symbols:
             message.extend(sym.getMessages())
@@ -96,16 +96,18 @@ class NewVocabularyController(object):
         concatSymbol.setMessages(message)
         currentProject = self.netzob.getCurrentProject()
         #delete all selected symbols
+        self.view.emptyMessageTableDisplayingSymbols(symbols[1:])
         for sym in symbols:
             currentProject.getVocabulary().removeSymbol(sym)
         #add the concatenate symbol
         currentProject.getVocabulary().addSymbol(concatSymbol)
         #refresh view
+        self.view.updateMessageTableDisplayingSymbols([concatSymbol])
         self.view.update()
 
     #possible que si on selectionne un unique symbol
     def renameSymbolButton_clicked_cb(self, widget):
-        symbol = self.view.getSelectedSymbolList()[0]
+        symbol = self.view.getCheckedSymbolList()[0]
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
@@ -134,6 +136,7 @@ class NewVocabularyController(object):
             currentProject = self.netzob.getCurrentProject()
             currentProject.getVocabulary().getSymbolByID(symbol.getID()).setName(newSymbolName)
             self.view.update()
+            self.view.updateMessageTableDisplayingSymbols([symbol])
             dialog.destroy()
         if (result == 1):
             #cancel
@@ -141,19 +144,32 @@ class NewVocabularyController(object):
 
     def deleteSymbolButton_clicked_cb(self, toolButton):
         # Delete symbol
-        for sym in self.view.getSelectedSymbolList():
+        for sym in self.view.getCheckedSymbolList():
             currentProject = self.netzob.getCurrentProject()
             currentVocabulary = currentProject.getVocabulary()
             for mess in sym.getMessages():
                 currentVocabulary.removeMessage(mess)
             currentVocabulary.removeSymbol(sym)
+            self.view.emptyMessageTableDisplayingSymbols([sym])
         # Update view
         self.view.update()
+
+    def newMessageTableButton_clicked_cb(self, toolButton):
+        self.view.addMessageTable()
 
     def toggleCellRenderer_toggled_cb(self, widget, buttonid):
         model = self.view.symbolListStore
         model[buttonid][0] = not model[buttonid][0]
         self.view.updateSymbolListToolbar()
+
+    def symbolListTreeViewSelection_changed_cb(self, selection):
+        print "Selection changed"
+        model, iter = selection.get_selected()
+        currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
+        if iter is not None:
+            symID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
+            symbol = currentVocabulary.getSymbolByID(symID)
+            self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
 
 ################ TO BE FIXED
     def button_newview_cb(self, widget):
