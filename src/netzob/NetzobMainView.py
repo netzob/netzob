@@ -173,3 +173,7 @@ class NetzobMainView(object):
         # Merge UI definition into UI Manager
         self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
             perspective.view.getMenuToolbarUIDefinition())
+
+    def updateProject(self):
+        for key in self.perspectiveDict:
+            self.perspectiveDict[key].update()

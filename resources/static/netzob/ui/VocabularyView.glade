@@ -161,14 +161,6 @@
       </packing>
     </child>
   </object>
-  <object class="GtkListStore" id="symbolPropertiesListstore">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name value -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkListStore" id="symbolListStore">
     <columns>
       <!-- column-name selected -->
@@ -180,6 +172,14 @@
       <!-- column-name numOfFields -->
       <column type="gint"/>
       <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="symbolPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -222,7 +222,9 @@
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">horizontal</property>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="treeview-selection1"/>
+                      <object class="GtkTreeSelection" id="treeview-selection1">
+                        <property name="mode">none</property>
+                      </object>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn13">

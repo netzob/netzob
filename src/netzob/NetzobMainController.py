@@ -35,6 +35,7 @@ from netzob.NetzobMainView import NetzobMainView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 import sys
+import os
 import logging
 import locale
 import gettext
@@ -148,3 +149,50 @@ class NetzobMainController(object):
 
     def mainWindow_destroy_cb(self, window):
         Gtk.main_quit()
+
+
+    def entry_disableButtonIfEmpty_cb(self, widget, button):
+        if(len(widget.get_text()) > 0):
+            button.set_sensitive(True)
+        else:
+            button.set_sensitive(False)
+
+    def newProject_activate_cb(self, action):
+        builder2 = Gtk.Builder()
+        print "new Project"
+        builder2.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui",
+            "dialogbox.glade"))
+        dialog = builder2.get_object("newProject")
+
+        #button apply
+        applybutton = builder2.get_object("button19")
+        applybutton.set_sensitive(False)
+        dialog.add_action_widget(applybutton, 0)
+        #button cancel
+        cancelbutton = builder2.get_object("button11")
+        dialog.add_action_widget(cancelbutton, 1)
+        #disable apply button if no text
+        entry = builder2.get_object("entry4")
+        entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
+        #run the dialog window and wait for the result
+        result = dialog.run()
+
+        if (result == 0):
+            #apply
+            newProjectName = entry.get_text()
+            self.log.debug(_("Create new project {0}").format(newProjectName))
+            # ++CODE HERE++
+            # CREATE PROJECT
+            # SWITCH TO THIS PROJECT : self.switchProject(idNewProject)
+            dialog.destroy()
+        if (result == 1):
+            #cancel
+            dialog.destroy()
+
+    def switchProject(self, idProject):
+        # ++CODE HERE++
+        # CHANGE CURRENTPROJECT TO THE idProject
+        # UPDATE VIEW : view.updateProject()
+        pass

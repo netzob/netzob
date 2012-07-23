@@ -102,6 +102,7 @@ class NewVocabularyView(object):
             "ui",
             "vocabularyActions.glade"))
         self._actionGroup = actionsBuilder.get_object("vocabularyActionGroup")
+        actionsBuilder.connect_signals(self.controller)
         uiDefinitionFilePath = os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
@@ -164,9 +165,9 @@ class NewVocabularyView(object):
         self.updateSymbolList()
         self.updateSymbolListToolbar()
         self.updateProjectProperties()
-        self.updateSymbolProperties()
+        """self.updateSymbolProperties()
         self.updateMessageProperties()
-        self.updateFieldProperties()
+        self.updateFieldProperties()"""
 
     ## Symbol List
     def updateSymbolList(self):
