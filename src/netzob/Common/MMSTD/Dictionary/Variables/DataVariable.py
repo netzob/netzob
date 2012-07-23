@@ -65,31 +65,29 @@ class DataVariable(AbstractLeafVariable):
         """
         AbstractLeafVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
-        if type is not None:
-            self.type = type
-        else:
-            # Default type is Binary.
-            log.debug(_("Construction of DataVariable: type undefined."))
-            from netzob.Common.MMSTD.Dictionary.Type.BinaryType import BinaryType
-            type = BinaryType()
-
-        self.originalValue = self.type.type2bin(originalValue)  # Can be None.
-        self.currentValue = None
-
-        if minChars is not None and minChars >= 0:
-            self.minBits = self.type.getMinBitSize(minChars)
-        else:
-            log.debug(_("Construction of DataVariable: minChars undefined or < 0. MinBits value is fixed to 0."))
-            self.minBits = 0
-        if maxChars is not None and maxChars >= minChars:
-            self.maxBits = self.type.getMaxBitSize(maxChars)
-        else:
-            log.debug(_("Construction of DataVariable: maxChars undefined or < minChars. MaxBits value is fixed to minBits."))
-            self.maxBits = self.minBits
+        self.setType(type)
+        self.setNumberBitsAndNumberChars(minChars, maxChars)
+        self.setOriginalValue(originalValue)
+        self.setCurrentValue(originalValue)
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def forget(self, processingToken):
+        """forget:
+                The variable forgets its value.
+        """
+        self.log.debug(_("Variable {0} is forgotten.").format(self.getName()))
+        processingToken.getMemory().forget(self)
+        self.setCurrentValue(None)
+
+    def memorize(self, processingToken):
+        """memorize:
+                The variable memorizes its value.
+        """
+        self.log.debug(_("Variable {0} is memorized.").format(self.getName()))
+        processingToken.getMemory().memorize(self)
+
     def learn(self, readingToken):
         """learn:
                 The variable checks if its format complies with the read value's format. If it matches, the variable learns, else it returns NOk.
@@ -97,13 +95,14 @@ class DataVariable(AbstractLeafVariable):
         self.log.debug(_("Variable {0} learns {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= self.minBits:
-            if len(tmp) >= self.maxBits:
-                self.currentValue = tmp[:self.maxBits]
+            if len(tmp) <= self.maxBits:
+                self.setCurrentValue(tmp[:self.maxBits])
                 readingToken.incrementIndex(self.maxBits)
             else:
-                self.currentValue = tmp
+                self.setCurrentValue(tmp)
                 readingToken.incrementIndex(len(tmp))
             self.log.info(_("Format comparison successful."))
+            self.setDefined(True)
         else:
             self.log.info(_("Format comparison failed."))
             readingToken.setOk(False)
@@ -128,7 +127,7 @@ class DataVariable(AbstractLeafVariable):
                 A new current value is generated according to the variable type and the given generation strategy.
         """
         self.log.debug(_("Variable {0} generates a value.").format(self.getName()))
-        self.currentValue = self.getType().generateValue(writingToken.getGenerationStrategy(), self.minBits / self.getType().getAtomicSize(), self.maxBits / self.getType().getAtomicSize())
+        self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def getValue(self, writingToken):
         """getValue:
@@ -179,8 +178,57 @@ class DataVariable(AbstractLeafVariable):
     def getCurrentValue(self):
         return currentValue
 
+    def setType(self, type):
+        if type is not None:
+            self.type = type
+        else:
+            # Default type is Binary.
+            log.debug(_("Construction of DataVariable: type undefined."))
+            from netzob.Common.MMSTD.Dictionary.Type.BinaryType import BinaryType
+            type = BinaryType()
+
+    def setNumberBitsAndNumberChars(self, minChars, maxChars):
+        if minChars is not None and minChars >= 0:
+            self.minBits = self.type.getMinBitSize(minChars)
+            self.minChars = minChars
+        else:
+            log.debug(_("Construction of DataVariable: minChars undefined or < 0. MinBits value is fixed to 0."))
+            self.minBits = 0
+            self.minChars = 0
+        if maxChars is not None and maxChars >= minChars:
+            self.maxBits = self.type.getMaxBitSize(maxChars)
+            self.maxChars = maxChars
+        else:
+            log.debug(_("Construction of DataVariable: maxChars undefined or < minChars. MaxBits value is fixed to minBits."))
+            self.maxBits = self.minBits
+            self.maxChars = self.minChars
+
+    def setOriginalValue(self, originalValue):
+        if originalValue is not None:
+            size = self.type.getBitSize(originalValue)
+            if size >= self.minBits and size <= self.maxBits:
+                self.originalValue = self.type.type2bin(originalValue)
+            else:
+                self.originalValue = None
+                self.debug(_("The given original value has an inappropriate size."))
+        else:
+            self.debug(_("The given original value is None."))
+
     def setCurrentValue(self, currentValue):
-        self.currentValue = currentValue
+        valueSet = False
+        if currentValue is not None:
+            size = self.type.getBitSize(currentValue)
+            if size >= self.minBits and size <= self.maxBits:
+                self.currentValue = self.type.type2bin(currentValue)
+                self.setDefined(True)
+                valueSet = True
+            else:
+                self.debug(_("The given current value has an inappropriate size."))
+        else:
+            self.debug(_("The given current value is None."))
+        if not valueSet:
+            self.currentValue = None
+            self.setDefined(False)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

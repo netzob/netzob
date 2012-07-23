@@ -47,31 +47,19 @@ class ReferencedVariable(AbstractVariable):
             A variable which points to an other variable.
     """
 
-    def __init__(self, id, name, pointedID):
+    def __init__(self, id, name, pointedVariable):
         """Constructor of ReferencedVariable:
         """
         AbstractVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ReferencedVariable.py')
-        self.pointedID = pointedID
-
-    def getPointedVariable(self, processingToken):
-        """getPointedVariable:
-
-                @rtype: netzob.Common.MMSTD.Dictionary.Variable.Variable
-                @return: the pointed variable.
-        """
-        var = processingToken.getVocabulary().getVariableByID(self.varID)
-        self.log.debug(_("The variable pointed by variable {0} is variable {1}.").format(var.getName()))
-        if var is not None:
-            return var
-        else:
-            self.log.error("Impossible to retrieve the referenced variable which ID is " + self.pointedID)
-            processingToken.setOk(False)
-            return None
+        self.pointedVariable = pointedVariable
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def isDefined(self):
+        return self.getPointedVariable().isDefined()
+
     def forget(self, processingToken):
         """forget:
                 The pointed variable forgets its value.
@@ -138,6 +126,12 @@ class ReferencedVariable(AbstractVariable):
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
         xmlRefID.text = self.pointedID
+
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getPointedVariable(self):
+        return self.getPointedVariable()
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

@@ -60,7 +60,14 @@ class AbstractVariable:
         self.id = id
         self.name = name
         self.mutable = True  # TODO: implement mutability.
-        self.defined = True  # TODO: implement definition.
+        self.random = False  # TODO: implement randomness.
+
+    @abstractmethod
+    def isDefined(self):
+        """isDefined:
+                Tells if the variable is defined (i.e. has a value for a leaf, enough leaf have values for a node...)
+        """
+        raise NotImplementedError(_("The current variable does not implement 'isDefined'."))
 
     @abstractmethod
     def toXML(self, root, namespace):
@@ -209,8 +216,8 @@ class AbstractVariable:
     def isMutable(self):
         return self.mutable
 
-    def isDefined(self):
-        return self.defined
+    def isRandom(self):
+        return self.random
 
     def setID(self, id):
         self.id = id
@@ -221,8 +228,8 @@ class AbstractVariable:
     def setMutable(self, mutable):
         self.mutable = mutable
 
-    def setDefined(self, defined):
-        self.defined = defined
+    def setRandom(self, random):
+        self.random = random
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

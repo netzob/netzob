@@ -57,6 +57,19 @@ class AggregateVariable(AbstractNodeVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def isDefined(self):
+        """isDefined:
+                If one child is not defined the node is not defined.
+        """
+        if self.children is not None:
+            self.setDefined(True)
+            for child in self.children:
+                if not child.isDefined():
+                    self.setDefined(False)
+                    break
+        else:
+            self.setDefined(False)
+
     def learn(self, readingToken):
         """learn:
                 Each child tries sequentially to learn a part of the read value.

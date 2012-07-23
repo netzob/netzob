@@ -83,12 +83,16 @@ class RepeatVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def isDefined(self):
+        return self.child.isDefined()
+
     def forget(self, processingToken):
         """forget:
                 The child forgets its value.
         """
         self.log.debug(_("The value of the child of variable {0} is forgotten.").format(self.getName()))
         self.child.forget(processingToken)
+        self.setDefined(False)
 
     def memorize(self, processingToken):
         """memorize:
@@ -114,6 +118,7 @@ class RepeatVariable(AbstractVariable):
             readingToken.setOk(False)
         else:
             readingToken.setOk(True)
+            self.sefDefined(True)
 
     def compare(self, readingToken):
         """compare:
@@ -151,6 +156,7 @@ class RepeatVariable(AbstractVariable):
             writingToken.setOk(False)
         else:
             writingToken.setOk(True)
+            self.sefDefined(True)
 
     def getValue(self, writingToken):
         """getValue:

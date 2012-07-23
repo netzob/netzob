@@ -57,6 +57,19 @@ class AlternateVariable(AbstractNodeVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def isDefined(self):
+        """isDefined:
+                If one child is defined the node is defined.
+        """
+        if self.children is not None:
+            self.setDefined(False)
+            for child in self.children:
+                if child.isDefined():
+                    self.setDefined(True)
+                    break
+        else:
+            self.setDefined(False)
+
     def learn(self, readingToken):
         """learn:
                 Each child tries to learn the read value. If it fails, it restore it value and the next child try.
