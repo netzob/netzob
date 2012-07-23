@@ -84,7 +84,7 @@
       <object class="GtkAction" id="deleteMessages">
         <property name="label" translatable="yes">Delete</property>
         <property name="tooltip" translatable="yes">Delete selected message(s)</property>
-        <property name="stock_id">gtk-remove</property>
+        <property name="stock_id">gtk-delete</property>
       </object>
     </child>
     <child>
@@ -104,15 +104,15 @@
     <child>
       <object class="GtkAction" id="messagesDistribution">
         <property name="label" translatable="yes">Messages Distribution…</property>
+        <property name="tooltip" translatable="yes">Display messages distribution of current symbol</property>
         <property name="stock_id">netzob-messages-distribution</property>
-        <property name="icon_name">Display messages distribution of current symbol</property>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="variableTable">
         <property name="label" translatable="yes">Variable Table…</property>
+        <property name="tooltip" translatable="yes">Display variable table</property>
         <property name="stock_id">netzob-variable-table</property>
-        <property name="icon_name">Display variable table</property>
       </object>
     </child>
     <child>
@@ -125,15 +125,15 @@
     <child>
       <object class="GtkAction" id="importMessagesFromFile">
         <property name="label" translatable="yes">Import messages from file</property>
-        <property name="short_label" translatable="yes">Import messages from file</property>
-        <property name="tooltip" translatable="yes">Import  messages from file</property>
+        <property name="short_label" translatable="yes">Import</property>
+        <property name="tooltip" translatable="yes">Import messages from file</property>
         <property name="stock_id">netzob-import-messages</property>
+        <property name="is_important">True</property>
       </object>
     </child>
     <child>
       <object class="GtkAction" id="captureMessages">
         <property name="label" translatable="yes">Capture messages</property>
-        <property name="short_label" translatable="yes">Capture messages</property>
         <property name="tooltip" translatable="yes">Capture messages</property>
         <property name="stock_id">netzob-capture-messages</property>
       </object>

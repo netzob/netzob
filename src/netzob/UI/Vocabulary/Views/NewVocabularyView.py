@@ -57,7 +57,8 @@ class NewVocabularyView(object):
             "ui",
             "VocabularyView.glade"))
         self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
-            "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton"])
+            "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton",
+            "newMessageList"])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
         # List of currently displayed message tables
@@ -132,6 +133,7 @@ class NewVocabularyView(object):
 
     def update(self):
         self.updateSymbolList()
+        self.updateSymbolListToolbar()
 
     ## Symbol List
     def updateSymbolList(self):

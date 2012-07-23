@@ -94,8 +94,6 @@ class NetzobMainView(object):
                                  "Simulator",
                                  UISimulator)
         self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
-        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
-        self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
         self.perspectiveComboBox.set_active(0)
 
     def loadBaseMenuBarAndToolbar(self):

@@ -166,4 +166,5 @@ def addNetzobIconsToDefaultFactory():
     addIconToFactory("netzob-unselect-all", "unselect-all.png")
     addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
     addIconToFactory("netzob-rename", "rename.png")
+    addIconToFactory("netzob-new-window", "new-window.png")
     Gtk.IconFactory.add_default(netzobIconFactory)
