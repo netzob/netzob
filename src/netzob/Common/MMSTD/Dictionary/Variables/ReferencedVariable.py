@@ -61,59 +61,27 @@ class ReferencedVariable(AbstractVariable):
     def isDefined(self):
         return self.getPointedVariable().isDefined()
 
-    def forget(self, processingToken):
-        """forget:
-                The pointed variable forgets its value.
+    def read(self, readingToken):
+        """read:
+                The pointed variable reads the value.
         """
-        self.log.debug(_("The variable pointed by variable {0} is forgotten.").format(self.getName()))
-        var = self.getPointedVariable(processingToken)
+        self.log.debug(_("The variable pointed by the variable {0} reads.").format(self.getName()))
+        var = self.getPointedVariable()
         if var is not None:
-            processingToken.getMemory().forget(var)
+            var.read(readingToken)
+        else:
+            readingToken.setOk(False)
 
-    def memorize(self, processingToken):
-        """memorize:
-                The pointed variable memorizes its value.
+    def write(self, writingToken):
+        """write:
+                The pointed variable writes its value.
         """
-        self.log.debug(_("The variable pointed by variable {0} is memorized.").format(self.getName()))
-        var = self.getPointedVariable(processingToken)
+        self.log.debug(_("The variable pointed by the variable {0} writes.").format(self.getName()))
+        var = self.getPointedVariable()
         if var is not None:
-            processingToken.getMemory().memorize(var)
-
-    def learn(self, readingToken):
-        """learn:
-                The pointed variable tries to learn the read value.
-        """
-        self.log.debug(_("The variable pointed by variable {0} learns {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
-        var = self.getPointedVariable(processingToken)
-        if var is not None:
-            var.learn(readingToken)
-
-    def compare(self, readingToken):
-        """compare:
-                The pointed variable compares its value to the read value.
-        """
-        self.log.debug(_("The variable pointed by variable {0} compares its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
-        var = self.getPointedVariable(processingToken)
-        if var is not None:
-            var.compare(readingToken)
-
-    def generate(self, writingToken):
-        """generate:
-                A new current value is generated for the pointed variable according to the variable type and the given generation strategy.
-        """
-        self.log.debug(_("The variable pointed by variable {0} generates a value.").format(self.getName()))
-        var = self.getPointedVariable(processingToken)
-        if var is not None:
-            var.generate(writingToken)
-
-    def getValue(self, writingToken):
-        """getValue:
-                Returns the pointed variable value.
-        """
-        self.log.debug(_("The variable pointed by variable {0} gets its value.").format(self.getName()))
-        var = self.getPointedVariable(processingToken)
-        if var is not None:
-            var.getValue(writingToken)
+            var.write(writingToken)
+        else:
+            writingToken.setOk(False)
 
     def toXML(self, root, namespace):
         """toXML:

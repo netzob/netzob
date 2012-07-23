@@ -70,43 +70,43 @@ class AggregateVariable(AbstractNodeVariable):
         else:
             self.setDefined(False)
 
-    def learn(self, readingToken):
-        """learn:
-                Each child tries sequentially to learn a part of the read value.
+    def read(self, readingToken):
+        """read:
+                Each child tries sequentially to read a part of the read value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("Children of variable {0} learn.").format(self.getName()))
+        self.log.debug(_("Children of variable {0} read.").format(self.getName()))
         savedChildren = []
         savedIndex = readingToken.getIndex()
         for child in self.getChildren():
-            child.learn(readingToken)
-            savedChildren.append(child)
+            child.read(readingToken)
+            savedChildren.append((child, child.getValue()))
             if not readingToken.isOk():
                 break
         # If it has failed we restore every executed children and the index.
         if not readingToken.isOk():
             readingToken.setIndex(savedIndex)
-            for child in savedChildren:
-                child.restore(readingToken)
+            for (child, value) in savedChildren:
+                child.setValue(value)
 
-    def compare(self, readingToken):
-        """compare:
-                Each child is sequentially compared to a part of the read value.
-                If one comparison fails, the result is NOk, else it is Ok.
+    def write(self, writingToken):
+        """write:
+                Each child tries sequentially to write its value.
+                If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("Children of variable {0} are compared.").format(self.getName()))
+        self.log.debug(_("Children of variable {0} write.").format(self.getName()))
+        savedChildren = []
+        savedValue = writingToken.getValue()
         for child in self.getChildren():
-            child.compare(readingToken)
-
-    def getValue(self, writingToken):
-        """getValue:
-                Returns the concatenation of all its children values.
-        """
-        self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
-        value = bitarray()
-        for child in self.getChildren():
-            value += child.getValue(writingToken)
-        writingToken.setValue(value)
+            child.write(writingToken)
+            savedChildren.append((child, child.getValue()))
+            if not writingToken.isOk():
+                break
+        # If it has failed we restore every executed children and the value.
+        if not writingToken.isOk():
+            writingToken.setValue(savedValue)
+            for (child, value) in savedChildren:
+                child.setValue(value)
 
     def toXML(self, root, namespace):
         """toXML:

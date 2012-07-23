@@ -57,6 +57,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         AbstractVariableProcessingToken.__init__()
         self.value = value
         self.generationStrategy = generationStrategy
+        self.index = len(value)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -67,5 +68,13 @@ class VariableWritingToken(AbstractVariableProcessingToken):
     def getGenerationStrategy(self):
         return self.generationStrategy
 
+    def getIndex(self):
+        return self.index
+
     def setValue(self, value):
+        self.index = len(value)
         self.value = value
+
+    def appendValue(self, value):
+        self.index += len(value)
+        self.value += value

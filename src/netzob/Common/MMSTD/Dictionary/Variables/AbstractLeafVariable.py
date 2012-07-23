@@ -55,6 +55,133 @@ class AbstractLeafVariable(AbstractVariable):
         self.defined = True
 
 #+---------------------------------------------------------------------------+
+#| Visitor abstract subFunctions                                             |
+#+---------------------------------------------------------------------------+
+    @abstractmethod
+    def forget(self, processingToken):
+        """forget:
+                Removes the variable from the memory cache.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'forget'."))
+
+    @abstractmethod
+    def recall(self, processingToken):
+        """recall:
+                Recalls the variable from the memory cache.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'recall'."))
+
+    @abstractmethod
+    def memorize(self, processingToken):
+        """memorize:
+                Adds the variable to the memory cache.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'memorize'."))
+
+    @abstractmethod
+    def learn(self, readingToken):
+        """learn:
+                Learns (starting at the "indice"-th character) value.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'learn'."))
+
+    @abstractmethod
+    def compare(self, readingToken):
+        """compare:
+                Compares (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'compare'."))
+
+    @abstractmethod
+    def generate(self, writingToken):
+        """generate:
+                Generates a value according to a given strategy and attribute it to the variable.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'generate'."))
+
+    @abstractmethod
+    def getValue(self, writingToken):
+        """getValue:
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'getValue'."))
+
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractVariable                                 |
+#+---------------------------------------------------------------------------+
+    def read(self, readingToken):
+        """read:
+                The leaf element tries to compare/learn the read value.
+        """
+        if self.mutable:
+            if self.defined:
+                # mutable and defined
+                self.forget(self, readingToken)
+                self.learn(self, readingToken)
+                self.memorize(self, readingTokenreadingToken)
+
+            else:
+                # mutable and not defined
+                self.learn(self, readingToken)
+                self.memorize(self, readingToken)
+
+        else:
+            if self.defined:
+                # not mutable and defined
+                self.compare(self, readingToken)
+
+            else:
+                # not mutable and not defined
+                readingToken.setOk(False)
+
+    def write(self, writingToken):
+        """write:
+                The leaf element return its value or a generate one.
+        """
+        if self.mutable:
+            if self.defined:
+                # mutable and defined
+                self.forget(self, writingToken)
+                self.generate(self, writingToken)
+                self.memorize(self, writingToken)
+                valueToSend = self.getValue(self, writingToken)
+
+            else:
+                # mutable and not defined
+                self.generate(self, writingToken)
+                self.memorize(self, writingToken)
+                valueToSend = self.getValue(self, writingToken)
+
+        else:
+            if self.defined:
+                # not mutable and defined
+                valueToSend = self.getValue(self, writingToken)
+
+            else:
+                # not mutable and not defined
+                writingToken.setOk(False)
+
+#+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def isDefined(self):

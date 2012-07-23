@@ -61,33 +61,6 @@ class AbstractNodeVariable(AbstractVariable):
             self.children.extend(children)
 
 #+---------------------------------------------------------------------------+
-#| Functions inherited from AbstractVariable                                 |
-#+---------------------------------------------------------------------------+
-    def forget(self, processingToken):
-        """forget:
-                All children forget their value.
-        """
-        self.log.debug(_("Children of variable {0} are forgotten.").format(self.getName()))
-        for child in self.getChildren():
-            child.forget(processingToken)
-
-    def memorize(self, processingToken):
-        """memorize:
-                All children memorize their value.
-        """
-        self.log.debug(_("Children of variable {0} are memorized.").format(self.getName()))
-        for child in self.getChildren():
-            child.memorize(processingToken)
-
-    def generate(self, writingToken):
-        """generate:
-                All children generate their value.
-        """
-        self.log.debug(_("Children of variable {0} generate a value.").format(self.getName()))
-        for child in self.getChildren():
-            child.generate(writingToken)
-
-#+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def getChildren(self):

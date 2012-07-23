@@ -77,15 +77,22 @@ class DataVariable(AbstractLeafVariable):
         """forget:
                 The variable forgets its value.
         """
-        self.log.debug(_("Variable {0} is forgotten.").format(self.getName()))
-        processingToken.getMemory().forget(self)
-        self.setCurrentValue(None)
+        self.log.debug(_("The value of variable {0} is forgotten.").format(self.getName()))
+        processingToken.getMemory().forget(self)  # We remove the memorized value.
+        self.setCurrentValue(None)  # We remove the local value.
+
+    def recall(self, processingToken):
+        """recall:
+                The variable recall its memorized value.
+        """
+        self.log.debug(_("The value of variable {0} is recalled.").format(self.getName()))
+        self.setCurrentValue(processingToken.getMemory().recall(self))
 
     def memorize(self, processingToken):
         """memorize:
                 The variable memorizes its value.
         """
-        self.log.debug(_("Variable {0} is memorized.").format(self.getName()))
+        self.log.debug(_("The value of variable {0} is memorized.").format(self.getName()))
         processingToken.getMemory().memorize(self)
 
     def learn(self, readingToken):
@@ -143,7 +150,7 @@ class DataVariable(AbstractLeafVariable):
             value = self.getCurrentValue()
         else:
             value = writingToken.getMemory().recall(self)
-        writingToken.setValue(value)
+        writingToken.appendValue(value)
 
     def toXML(self, root, namespace):
         """toXML:

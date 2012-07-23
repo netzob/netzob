@@ -70,40 +70,41 @@ class AlternateVariable(AbstractNodeVariable):
         else:
             self.setDefined(False)
 
-    def learn(self, readingToken):
-        """learn:
-                Each child tries to learn the read value. If it fails, it restore it value and the next child try.
-                If one child successes, the result is Ok and the process is stopped.
+    def read(self, readingToken):
+        """read:
+                Each child tries to read the value.
+                If it fails, it restore it value and the next child try.
+                It stops if one child successes.
         """
-        self.log.debug(_("Children of variable {0} learn.").format(self.getName()))
+        self.log.debug(_("Children of variable {0} read.").format(self.getName()))
+        savedIndex = readingToken.getIndex()
+        childValue = None
         for child in self.getChildren():
-            readingToken.setOk(True)
-            child.learn(readingToken)
+            childValue = child.getValue()
+            child.read(readingToken)
             if readingToken.isOk():
                 break
-            child.restore(readingToken)
+            else:
+                readingToken.setIndex(savedIndex)
+                child.setValue(childValue)
 
-    def compare(self, readingToken):
-        """compare:
-                Each child tries to compare its value to the read value. If it fails, it restore it value and the next child try.
-                If one child successes, the result is Ok.
+    def write(self, writingToken):
+        """write:
+                Each child tries to write its value..
+                If it fails, it restore it value and the next child try.
+                It stops if one child successes.
         """
-        self.log.debug(_("Children of variable {0} are compared.").format(self.getName()))
+        self.log.debug(_("Children of variable {0} write.").format(self.getName()))
+        childValue = None
+        savedValue = writingToken.getValue()
         for child in self.getChildren():
-            readingToken.setOk(True)
-            child.compare(readingToken)
-            if readingToken.isOk():
+            childValue = child.getValue()
+            child.write(writingToken)
+            if writingToken.isOk() and writingToken.getValue() is not None:
                 break
-
-    def getValue(self, writingToken):
-        """getValue:
-                Returns the value of the first child which is not None.
-        """
-        self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
-        for child in self.getChildren():
-            child.getValue(writingToken)
-            if writingToken.getValue() is not None:
-                break
+            else:
+                writingToken.setValue(savedValue)
+                child.setValue(childValue)
 
     def toXML(self, root, namespace):
         """toXML:
