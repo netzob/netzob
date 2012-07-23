@@ -71,7 +71,7 @@ class NetzobMainController(object):
             sys.exit()
 
         ### TEST CODE
-        # Load thrid project of workspace
+        # Load third project of workspace
         self.currentProject = self.getCurrentWorkspace().getProjects()[2]
         #### TEST CODE
 

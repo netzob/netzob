@@ -187,6 +187,9 @@
                     <property name="headers_clickable">False</property>
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">both</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="treeview-selection2"/>
+                    </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn5">
                         <property name="title" translatable="yes">Name</property>

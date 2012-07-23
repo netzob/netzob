@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkListStore" id="fieldPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="messagePropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="projectPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkBox" id="searchBar">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -137,6 +161,14 @@
       </packing>
     </child>
   </object>
+  <object class="GtkListStore" id="symbolPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="symbolListStore">
     <columns>
       <!-- column-name selected -->
@@ -190,9 +222,7 @@
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">horizontal</property>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="treeview-selection12">
-                        <property name="mode">none</property>
-                      </object>
+                      <object class="GtkTreeSelection" id="treeview-selection1"/>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn13">
@@ -225,7 +255,7 @@
                     <property name="search_column">0</property>
                     <property name="enable_grid_lines">both</property>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="treeview-selection10"/>
+                      <object class="GtkTreeSelection" id="treeview-selection2"/>
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="treeviewcolumn5">
@@ -256,6 +286,17 @@
                           <object class="GtkCellRendererText" id="cellrenderertext5"/>
                           <attributes>
                             <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn12">
+                        <property name="title" translatable="yes">Lock</property>
+                        <child>
+                          <object class="GtkCellRendererToggle" id="cellrenderertoggle1"/>
+                          <attributes>
+                            <attribute name="active">0</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -479,13 +520,49 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
-                  <object class="GtkTextView" id="textview1">
+                  <object class="GtkScrolledWindow" id="projectScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="projectTreeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">projectPropertiesListstore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection3"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext4"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn2">
+                            <property name="title" translatable="yes">Value</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext6"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="label5">
+                  <object class="GtkLabel" id="projectLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Project</property>
@@ -497,16 +574,52 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkTextView" id="textview3">
+                  <object class="GtkScrolledWindow" id="symbolScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="symbolTreeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">symbolPropertiesListstore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection4"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn3">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext3"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn4">
+                            <property name="title" translatable="yes">Value</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext7"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">1</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="label6">
+                  <object class="GtkLabel" id="symbolLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Symbol</property>
@@ -519,16 +632,52 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkTextView" id="textview4">
+                  <object class="GtkScrolledWindow" id="messageScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="messageTreeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">messagePropertiesListstore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection5"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn8">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext8"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn9">
+                            <property name="title" translatable="yes">Value</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext9"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">2</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="label7">
+                  <object class="GtkLabel" id="messageLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Message</property>
@@ -541,16 +690,52 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkTextView" id="textview2">
+                  <object class="GtkScrolledWindow" id="fieldScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="fieldTreeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">fieldPropertiesListstore</property>
+                        <property name="headers_clickable">False</property>
+                        <property name="search_column">0</property>
+                        <property name="enable_grid_lines">both</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection" id="treeview-selection6"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn10">
+                            <property name="title" translatable="yes">Name</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext10"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="treeviewcolumn11">
+                            <property name="title" translatable="yes">Value</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext11"/>
+                              <attributes>
+                                <attribute name="text">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">3</property>
                   </packing>
                 </child>
                 <child type="tab">
-                  <object class="GtkLabel" id="label12">
+                  <object class="GtkLabel" id="fieldLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Field</property>
