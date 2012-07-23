@@ -48,11 +48,12 @@ class ReferencedVariable(AbstractVariable):
             A variable which points to an other variable.
     """
 
-    def __init__(self, id, name, pointedVariable):
+    def __init__(self, id, name, pointedID, vocabulary):
         """Constructor of ReferencedVariable:
         """
         AbstractVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ReferencedVariable.py')
+        pointedVariable = vocabulary.getVariableByID(pointedID)
         self.setPointedVariable(pointedVariable)
 
 #+---------------------------------------------------------------------------+
@@ -65,28 +66,31 @@ class ReferencedVariable(AbstractVariable):
         """read:
                 The pointed variable reads the value.
         """
-        self.log.debug(_("The variable pointed by the variable {0} reads.").format(self.getName()))
+        self.log.debug(_("[ {0} (Referenced): read access:").format(AbstractVariable.toString(self)))
         var = self.getPointedVariable()
         if var is not None:
             var.read(readingToken)
         else:
             readingToken.setOk(False)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 The pointed variable writes its value.
         """
-        self.log.debug(_("The variable pointed by the variable {0} writes.").format(self.getName()))
+        self.log.debug(_("[ {0} (Referenced): write access:").format(AbstractVariable.toString(self)))
         var = self.getPointedVariable()
         if var is not None:
             var.write(writingToken)
         else:
             writingToken.setOk(False)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Create the xml tree associated to this variable.
         """
+        self.log.debug(_("[ {0} (Referenced): toXML:").format(AbstractVariable.toString(self)))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -94,7 +98,8 @@ class ReferencedVariable(AbstractVariable):
 
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
-        xmlRefID.text = self.pointedID
+        xmlRefID.text = self.pointedVariable.getID()
+        self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -123,6 +128,7 @@ class ReferencedVariable(AbstractVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
+        self.log.debug(_("ReferencedVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")

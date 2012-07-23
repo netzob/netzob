@@ -75,7 +75,7 @@ class AggregateVariable(AbstractNodeVariable):
                 Each child tries sequentially to read a part of the read value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("Children of variable {0} read.").format(self.getName()))
+        self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
         savedChildren = []
         savedIndex = readingToken.getIndex()
         for child in self.getChildren():
@@ -88,13 +88,14 @@ class AggregateVariable(AbstractNodeVariable):
             readingToken.setIndex(savedIndex)
             for (child, value) in savedChildren:
                 child.setValue(value)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 Each child tries sequentially to write its value.
                 If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("Children of variable {0} write.").format(self.getName()))
+        self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
         savedChildren = []
         savedValue = writingToken.getValue()
         for child in self.getChildren():
@@ -107,12 +108,14 @@ class AggregateVariable(AbstractNodeVariable):
             writingToken.setValue(savedValue)
             for (child, value) in savedChildren:
                 child.setValue(value)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Creates the xml tree associated to this variable.
             Adds every child's own xml definition as xml child to this tree.
         """
+        self.log.debug(_("[ {0} (Aggregate): toXML:").format(AbstractVariable.toString(self)))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -121,6 +124,7 @@ class AggregateVariable(AbstractNodeVariable):
         # Definition of children variables
         for child in self.children:
             child.toXML(xmlVariable, namespace)
+        self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
@@ -130,6 +134,7 @@ class AggregateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an aggregate variable from an XML definition.
         """
+        self.log.debug(_("AggregateVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")

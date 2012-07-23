@@ -128,6 +128,7 @@ class AlternateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
+        self.log.debug(_("AlternateVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")

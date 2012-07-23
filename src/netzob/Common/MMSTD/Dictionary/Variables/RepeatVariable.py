@@ -69,16 +69,16 @@ class RepeatVariable(AbstractVariable):
         if child is not None:
             self.child = child
         else:
-            log.debug(_("Construction of RepeatVariable: no child given."))
+            log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: no child given.").format(self.getName()))
         if minIterations is not None and minChars >= 0:
             self.minIterations = minIterations
         else:
-            log.debug(_("Construction of RepeatVariable: minIterations undefined or < 0. minIterations value is fixed to 0."))
+            log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: minIterations undefined or < 0. minIterations value is fixed to 0.").format(self.getName()))
             self.minIterations = 0
         if maxIterations is not None and maxIterations >= minIterations:
             self.maxIterations = maxIterations
         else:
-            log.debug(_("Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations."))
+            log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.").format(self.getName()))
             self.maxIterations = self.minIterations
 
 #+---------------------------------------------------------------------------+
@@ -91,7 +91,7 @@ class RepeatVariable(AbstractVariable):
         """read:
                 The pointed variable reads the value.
         """
-        self.log.debug(_("The child of variable {0} tries to learn the value {1} starting at {2} at least {3} times, at most {4} times.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex()), str(self.minIterations), str(self.maxIterations)))
+        self.log.debug(_("[ {0} (Repeat): read access:").format(AbstractVariable.toString(self)))
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
         for i in range(maxIterations):
@@ -105,12 +105,13 @@ class RepeatVariable(AbstractVariable):
             readingToken.setOk(False)
         else:
             readingToken.setOk(True)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 The pointed variable writes its value.
         """
-        self.log.debug(_("The child of variable {0} gets its value at least {3} times, at most {4} times.").format(self.getName(), str(self.minIterations), str(self.maxIterations)))
+        self.log.debug(_("[ {0} (Repeat): write access:").format(AbstractVariable.toString(self)))
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
         for i in range(maxIterations):
@@ -124,12 +125,14 @@ class RepeatVariable(AbstractVariable):
             writingToken.setOk(False)
         else:
             writingToken.setOk(True)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Creates the xml tree associated to this variable.
             Adds every child's own xml definition as xml child to this tree.
         """
+        self.log.debug(_("[ {0} (Repeat): toXML:").format(AbstractVariable.toString(self)))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -145,6 +148,7 @@ class RepeatVariable(AbstractVariable):
         # maxIterations
         xmlMaxIterations = etree.SubElement(xmlVariable, "{" + namespace + "}maxIterations")
         xmlMaxIterations.text = self.maxIterations
+        self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -166,6 +170,7 @@ class RepeatVariable(AbstractVariable):
                 Loads a repeat variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
+        self.log.debug(_("RepeatVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")

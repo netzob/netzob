@@ -58,6 +58,12 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         self.value = value
         self.index = index
 
+    def toString(self):
+        """toString:
+                Used for debug purpose.
+        """
+        return _("isOk: {0}, value left: {1}").format(self.isOk(), self.value[self.index:])
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+

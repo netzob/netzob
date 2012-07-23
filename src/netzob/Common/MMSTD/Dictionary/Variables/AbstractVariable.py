@@ -66,6 +66,12 @@ class AbstractVariable:
         self.mutable = mutable
         self.random = random
 
+    def toString(self):
+        """toString:
+                For debugging purpose.
+        """
+    return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, self.random, self.mutable)
+
     @abstractmethod
     def isDefined(self):
         """isDefined:
@@ -88,6 +94,7 @@ class AbstractVariable:
 #+---------------------------------------------------------------------------+
 #| Visitor functions                                                         |
 #+---------------------------------------------------------------------------+
+    @abstractmethod
     def read(self, readingToken):
         """read:
                 Grants a reading access to the variable. The value of readingToken is read bit by bit.
@@ -97,6 +104,7 @@ class AbstractVariable:
         """
         raise NotImplementedError(_("The current variable does not implement 'read'."))
 
+    @abstractmethod
     def write(self, writingToken):
         """write:
                 Grants a writing access to the variable. A value is written according to encountered node variable rules. This value is stored in writingToken.
@@ -151,6 +159,7 @@ class AbstractVariable:
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
                 @return: a variable constructed from this XML definition.
         """
+        self.log.debug(_("AbstractVariable's function loadFromXML is used."))
         if version == "0.1":
             # Data Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":

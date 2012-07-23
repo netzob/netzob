@@ -133,6 +133,7 @@ class AbstractLeafVariable(AbstractVariable):
         """read:
                 The leaf element tries to compare/learn the read value.
         """
+        self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString()))
         if self.mutable:
             if self.defined:
                 # mutable and defined
@@ -153,11 +154,13 @@ class AbstractLeafVariable(AbstractVariable):
             else:
                 # not mutable and not defined
                 readingToken.setOk(False)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
                 The leaf element return its value or a generate one.
         """
+        self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString()))
         if self.mutable:
             if self.defined:
                 # mutable and defined
@@ -180,6 +183,7 @@ class AbstractLeafVariable(AbstractVariable):
             else:
                 # not mutable and not defined
                 writingToken.setOk(False)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

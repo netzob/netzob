@@ -70,6 +70,12 @@ class DataVariable(AbstractLeafVariable):
         self.setOriginalValue(originalValue)
         self.setCurrentValue(originalValue)
 
+    def toString(self):
+        """toString:
+                For debugging purpose.
+        """
+        return _("type: {0}, bits: ({1}, {2}), chars: ({3}, {4}), current value: {5}").format(self.type.toString(), self.minBits, self.maxBits, self.minChars, self.maxChars, self.currentValue)
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
@@ -77,7 +83,7 @@ class DataVariable(AbstractLeafVariable):
         """forget:
                 The variable forgets its value.
         """
-        self.log.debug(_("The value of variable {0} is forgotten.").format(self.getName()))
+        self.log.debug(_("- {0} {1} (Data): value is forgotten.").format(AbstractVariable.toString(self), self.toString()))
         processingToken.getMemory().forget(self)  # We remove the memorized value.
         self.setCurrentValue(None)  # We remove the local value.
 
@@ -85,21 +91,22 @@ class DataVariable(AbstractLeafVariable):
         """recall:
                 The variable recall its memorized value.
         """
-        self.log.debug(_("The value of variable {0} is recalled.").format(self.getName()))
+        self.log.debug(_("- {0} {1} (Data): value is recalled.").format(AbstractVariable.toString(self), self.toString()))
         self.setCurrentValue(processingToken.getMemory().recall(self))
 
     def memorize(self, processingToken):
         """memorize:
                 The variable memorizes its value.
         """
-        self.log.debug(_("The value of variable {0} is memorized.").format(self.getName()))
+        self.log.debug(_("- {0} {1} (Data): value is memorized.").format(AbstractVariable.toString(self), self.toString()))
         processingToken.getMemory().memorize(self)
 
     def learn(self, readingToken):
         """learn:
-                The variable checks if its format complies with the read value's format. If it matches, the variable learns, else it returns NOk.
+                The variable checks if its format complies with the read value's format.
+                If it matches, the variable learns, else it returns NOk.
         """
-        self.log.debug(_("Variable {0} learns {1} (if their format are compatible) starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        self.log.debug(_("-[ {0} {1} (Data): learn.").format(AbstractVariable.toString(self), self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= self.minBits:
             if len(tmp) <= self.maxBits:
@@ -113,12 +120,13 @@ class DataVariable(AbstractLeafVariable):
         else:
             self.log.info(_("Format comparison failed."))
             readingToken.setOk(False)
+        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
 
     def compare(self, readingToken):
         """compare:
                 The variable compares its value to the read value.
         """
-        self.log.debug(_("Variable {0} compares its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
+        self.log.debug(_("-[ {0} {1} (Data): compare.").format(AbstractVariable.toString(self), self.toString()))
         if self.random:
             # A random variable's value can not be compared to a static value.
             self.log.debug(_("Variable is random."))
@@ -133,29 +141,32 @@ class DataVariable(AbstractLeafVariable):
                     break
             self.log.debug(_("Comparison failed."))
             readingToken.setOk(False)
+        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
 
     def generate(self, writingToken):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
-        self.log.debug(_("Variable {0} generates a value.").format(self.getName()))
+        self.log.debug(_("-[ {0} {1} (Data): generate.").format(AbstractVariable.toString(self), self.toString()))
         self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def getValue(self, writingToken):
         """getValue:
                 Returns the variable value if it has one, else it returns the memorized value.
         """
-        self.log.debug(_("Variable {0} gets its value.").format(self.getName()))
+        self.log.debug(_("-[ {0} {1} (Data): getValue.").format(AbstractVariable.toString(self), self.toString()))
         if self.getCurrentValue() is not None:
             value = self.getCurrentValue()
         else:
             value = writingToken.getMemory().recall(self)
         writingToken.appendValue(value)
+        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
             Creates the xml tree associated to this variable.
         """
+        self.log.debug(_("- {0} {1} (Data): toXML:").format(AbstractVariable.toString(self), self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
@@ -197,7 +208,7 @@ class DataVariable(AbstractLeafVariable):
             self.type = type
         else:
             # Default type is Binary.
-            log.debug(_("Construction of DataVariable: type undefined."))
+            log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
             from netzob.Common.MMSTD.Dictionary.Type.BinaryType import BinaryType
             type = BinaryType()
 
@@ -206,14 +217,14 @@ class DataVariable(AbstractLeafVariable):
             self.minBits = self.type.getMinBitSize(minChars)
             self.minChars = minChars
         else:
-            log.debug(_("Construction of DataVariable: minChars undefined or < 0. MinBits value is fixed to 0."))
+            log.info(_("Variable {0} (Data): minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getName()))
             self.minBits = 0
             self.minChars = 0
         if maxChars is not None and maxChars >= minChars:
             self.maxBits = self.type.getMaxBitSize(maxChars)
             self.maxChars = maxChars
         else:
-            log.debug(_("Construction of DataVariable: maxChars undefined or < minChars. MaxBits value is fixed to minBits."))
+            log.info(_("Variable {0} (Data): maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getName()))
             self.maxBits = self.minBits
             self.maxChars = self.minChars
 
@@ -224,9 +235,9 @@ class DataVariable(AbstractLeafVariable):
                 self.originalValue = self.type.type2bin(originalValue)
             else:
                 self.originalValue = None
-                self.debug(_("The given original value has an inappropriate size."))
+                self.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
         else:
-            self.debug(_("The given original value is None."))
+            self.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))
 
     def setCurrentValue(self, currentValue):
         valueSet = False
@@ -237,9 +248,9 @@ class DataVariable(AbstractLeafVariable):
                 self.setDefined(True)
                 valueSet = True
             else:
-                self.debug(_("The given current value has an inappropriate size."))
+                self.info(_("Variable {0} (Data): The given current value has an inappropriate size.").format(self.getName()))
         else:
-            self.debug(_("The given current value is None."))
+            self.info(_("Variable {0} (Data): The given current value is None.").format(self.getName()))
         if not valueSet:
             self.currentValue = None
             self.setDefined(False)
@@ -253,6 +264,7 @@ class DataVariable(AbstractLeafVariable):
                 Loads a data variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
+        self.log.debug(_("DataVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")

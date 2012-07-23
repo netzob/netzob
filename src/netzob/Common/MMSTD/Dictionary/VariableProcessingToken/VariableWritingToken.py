@@ -59,6 +59,12 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         self.generationStrategy = generationStrategy
         self.index = len(value)
 
+    def toString(self):
+        """toString:
+                Used for debug purpose.
+        """
+        return _("isOk: {0}, value: {1}").format(self.isOk(), self.value)
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
