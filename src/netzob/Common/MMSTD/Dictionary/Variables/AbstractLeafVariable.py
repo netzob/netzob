@@ -47,10 +47,10 @@ class AbstractLeafVariable(AbstractVariable):
             An abstract variable defined in a dictionary which is a leaf (variable containing data for example) in the global variable tree.
     """
 
-    def __init__(self, id, name):
+    def __init__(self, id, name, mutable, random):
         """Constructor of AbstractLeafVariable:
         """
-        AbstractVariable.__init__(self, id, name)
+        AbstractVariable.__init__(self, id, name, mutable, random)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
         self.defined = True
 

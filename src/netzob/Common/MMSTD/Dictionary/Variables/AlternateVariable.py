@@ -63,7 +63,7 @@ class AlternateVariable(AbstractNodeVariable):
         """
         if self.children is not None:
             self.setDefined(False)
-            for child in self.children:
+            for child in self.getChildren():
                 if child.isDefined():
                     self.setDefined(True)
                     break
@@ -76,7 +76,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If one child successes, the result is Ok and the process is stopped.
         """
         self.log.debug(_("Children of variable {0} learn.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             readingToken.setOk(True)
             child.learn(readingToken)
             if readingToken.isOk():
@@ -89,7 +89,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If one child successes, the result is Ok.
         """
         self.log.debug(_("Children of variable {0} are compared.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             readingToken.setOk(True)
             child.compare(readingToken)
             if readingToken.isOk():
@@ -100,7 +100,7 @@ class AlternateVariable(AbstractNodeVariable):
                 Returns the value of the first child which is not None.
         """
         self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             child.getValue(writingToken)
             if writingToken.getValue() is not None:
                 break

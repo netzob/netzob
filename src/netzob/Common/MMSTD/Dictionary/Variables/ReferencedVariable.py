@@ -29,6 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+import copy
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -52,7 +53,7 @@ class ReferencedVariable(AbstractVariable):
         """
         AbstractVariable.__init__(self, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ReferencedVariable.py')
-        self.pointedVariable = pointedVariable
+        self.setPointedVariable(pointedVariable)
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -132,6 +133,19 @@ class ReferencedVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
     def getPointedVariable(self):
         return self.getPointedVariable()
+
+    def setPointedVariable(self, pointedVariable):
+        self.origPointedVariable = pointedVariable
+        if self.isRandom():
+            # We use a deepĉopy with the random attribute.
+            self.pointedVariable = copy.deepcopy(pointedVariable)
+            self.pointedVariable.setRandom(True)
+        else:
+            self.pointedVariable = pointedVariable
+
+    def setRandom(self, random):
+        self.random = random
+        self.setPointedVariable(self.origPointedVariable)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

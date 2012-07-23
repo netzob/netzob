@@ -48,19 +48,23 @@ class AbstractVariable:
             An abstract variable defined in a dictionary.
     """
 
-    def __init__(self, id, name):
+    def __init__(self, id, name, mutable, random):
         """Constructor of AbstractVariable:
 
                 @type id: string
                 @param id: a unique identifying string.
                 @type name: string
                 @param name: the name of the variable being constructed.
+                @type mutable: boolean
+                @param mutable: tells if the variable can be modified or not.
+                @type random: boolean
+                @param random: tells if the variable has a fixed or a dynamic and randomly driven value.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.py')
         self.id = id
         self.name = name
-        self.mutable = True  # TODO: implement mutability.
-        self.random = False  # TODO: implement randomness.
+        self.mutable = mutable
+        self.random = random
 
     @abstractmethod
     def isDefined(self):

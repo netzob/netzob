@@ -50,7 +50,7 @@ class DataVariable(AbstractLeafVariable):
 
     MAX_BITS = 1024
 
-    def __init__(self, id, name, type, originalValue, minChars, maxChars):
+    def __init__(self, id, name, mutable, random, type, originalValue, minChars, maxChars):
         """Constructor of DataVariable:
                 Most of type are checked to not be None.
 
@@ -63,7 +63,7 @@ class DataVariable(AbstractLeafVariable):
                 @type maxChars: integer
                 @param maxChars: the maximum number of elementary character the value of this variable can have.
         """
-        AbstractLeafVariable.__init__(self, id, name)
+        AbstractLeafVariable.__init__(self, id, name, mutable, random)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
         self.setType(type)
         self.setNumberBitsAndNumberChars(minChars, maxChars)
@@ -112,15 +112,20 @@ class DataVariable(AbstractLeafVariable):
                 The variable compares its value to the read value.
         """
         self.log.debug(_("Variable {0} compares its current value to {1} starting at {2}.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex())))
-        localValue = self.getValue(readingToken)
-        tmp = readingToken.getValue()[readingToken.getIndex():]
-        if len(tmp) >= len(localValue):
-            if tmp[:len(localValue)] == localValue:
-                self.log.info(_("Comparison successful."))
-                readingToken.incrementIndex(len(localValue))
-                break
-        self.log.info(_("Comparison failed."))
-        readingToken.setOk(False)
+        if self.random:
+            # A random variable's value can not be compared to a static value.
+            self.log.debug(_("Variable is random."))
+            readingToken.setOk(False)
+        else:
+            localValue = self.getValue(readingToken)
+            tmp = readingToken.getValue()[readingToken.getIndex():]
+            if len(tmp) >= len(localValue):
+                if tmp[:len(localValue)] == localValue:
+                    self.log.debug(_("Comparison successful."))
+                    readingToken.incrementIndex(len(localValue))
+                    break
+            self.log.debug(_("Comparison failed."))
+            readingToken.setOk(False)
 
     def generate(self, writingToken):
         """generate:
@@ -134,8 +139,8 @@ class DataVariable(AbstractLeafVariable):
                 Returns the variable value if it has one, else it returns the memorized value.
         """
         self.log.debug(_("Variable {0} gets its value.").format(self.getName()))
-        if self.currentValue is not None:
-            value = self.currentValue
+        if self.getCurrentValue() is not None:
+            value = self.getCurrentValue()
         else:
             value = writingToken.getMemory().recall(self)
         writingToken.setValue(value)
@@ -173,10 +178,12 @@ class DataVariable(AbstractLeafVariable):
         return self.type
 
     def getOriginalValue(self):
-        return originalValue
+        return self.originalValue
 
     def getCurrentValue(self):
-        return currentValue
+        if self.isRandom():
+            self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
+        return self.currentValue
 
     def setType(self, type):
         if type is not None:

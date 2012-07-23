@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -92,7 +93,6 @@ class RepeatVariable(AbstractVariable):
         """
         self.log.debug(_("The value of the child of variable {0} is forgotten.").format(self.getName()))
         self.child.forget(processingToken)
-        self.setDefined(False)
 
     def memorize(self, processingToken):
         """memorize:
@@ -106,15 +106,16 @@ class RepeatVariable(AbstractVariable):
                 The child tries to learn the read value at least minIterations time, at most maxIterations time.
         """
         self.log.debug(_("The child of variable {0} tries to learn the value {1} starting at {2} at least {3} times, at most {4} times.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex()), str(self.minIterations), str(self.maxIterations)))
+        (minIterations, maxIterations) = selfgetNumberIterations()
         successfullIterations = 0
-        for i in range(self.maxIterations):
+        for i in range(maxIterations):
             self.child.learn(readingToken)
             if readingToken.isOk():
                 successfullIterations += 1
             else:
                 break
         # We search if we have done the minimum number of iterations.
-        if successfullIterations < self.minIterations:
+        if successfullIterations < minIterations:
             readingToken.setOk(False)
         else:
             readingToken.setOk(True)
@@ -125,15 +126,16 @@ class RepeatVariable(AbstractVariable):
                 The child compare its value to the read value at least minIterations time, at most maxIterations time.
         """
         self.log.debug(_("The child of variable {0} compares its current value to {1} starting at {2} at least {3} times, at most {4} times.").format(self.getName(), str(readingToken.getValue()), str(readingToken.getIndex()), str(self.minIterations), str(self.maxIterations)))
+        (minIterations, maxIterations) = selfgetNumberIterations()
         successfullIterations = 0
-        for i in range(self.maxIterations):
+        for i in range(maxIterations):
             self.child.compare(readingToken)
             if readingToken.isOk():
                 successfullIterations += 1
             else:
                 break
         # We search if we have done the minimum number of iterations.
-        if successfullIterations < self.minIterations:
+        if successfullIterations < minIterations:
             readingToken.setOk(False)
         else:
             readingToken.setOk(True)
@@ -144,15 +146,16 @@ class RepeatVariable(AbstractVariable):
                 It concatenates these values.
         """
         self.log.debug(_("The child of variable {0} generates a new value at least {3} times, at most {4} times.").format(self.getName(), str(self.minIterations), str(self.maxIterations)))
+        (minIterations, maxIterations) = selfgetNumberIterations()
         successfullIterations = 0
-        for i in range(self.maxIterations):
+        for i in range(maxIterations):
             self.child.generate(writingToken)
             if writingToken.isOk():
                 successfullIterations += 1
             else:
                 break
         # We search if we have done the minimum number of iterations.
-        if successfullIterations < self.minIterations:
+        if successfullIterations < minIterations:
             writingToken.setOk(False)
         else:
             writingToken.setOk(True)
@@ -164,15 +167,16 @@ class RepeatVariable(AbstractVariable):
                 It concatenates these values.
         """
         self.log.debug(_("The child of variable {0} gets its value at least {3} times, at most {4} times.").format(self.getName(), str(self.minIterations), str(self.maxIterations)))
+        (minIterations, maxIterations) = selfgetNumberIterations()
         successfullIterations = 0
-        for i in range(self.maxIterations):
+        for i in range(maxIterations):
             self.child.getValue(writingToken)
             if writingToken.isOk():
                 successfullIterations += 1
             else:
                 break
         # We search if we have done the minimum number of iterations.
-        if successfullIterations < self.minIterations:
+        if successfullIterations < minIterations:
             writingToken.setOk(False)
         else:
             writingToken.setOk(True)
@@ -197,6 +201,17 @@ class RepeatVariable(AbstractVariable):
         # maxIterations
         xmlMaxIterations = etree.SubElement(xmlVariable, "{" + namespace + "}maxIterations")
         xmlMaxIterations.text = self.maxIterations
+
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getNumberIterations(self):
+        if self.isRandom():
+            x = random.randint(0, MAX_ITERATIONS)
+            y = random.randint(0, MAX_ITERATIONS)
+            self.minIterations = min(x, y)
+            self.maxIterations = max(x, y)
+        return (self.minIterations, self.maxIterations)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

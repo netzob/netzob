@@ -63,7 +63,7 @@ class AggregateVariable(AbstractNodeVariable):
         """
         if self.children is not None:
             self.setDefined(True)
-            for child in self.children:
+            for child in self.getChildren():
                 if not child.isDefined():
                     self.setDefined(False)
                     break
@@ -78,7 +78,7 @@ class AggregateVariable(AbstractNodeVariable):
         self.log.debug(_("Children of variable {0} learn.").format(self.getName()))
         savedChildren = []
         savedIndex = readingToken.getIndex()
-        for child in self.children:
+        for child in self.getChildren():
             child.learn(readingToken)
             savedChildren.append(child)
             if not readingToken.isOk():
@@ -95,7 +95,7 @@ class AggregateVariable(AbstractNodeVariable):
                 If one comparison fails, the result is NOk, else it is Ok.
         """
         self.log.debug(_("Children of variable {0} are compared.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             child.compare(readingToken)
 
     def getValue(self, writingToken):
@@ -104,7 +104,7 @@ class AggregateVariable(AbstractNodeVariable):
         """
         self.log.debug(_("Children of variable {0} return their values.").format(self.getName()))
         value = bitarray()
-        for child in self.children:
+        for child in self.getChildren():
             value += child.getValue(writingToken)
         writingToken.setValue(value)
 

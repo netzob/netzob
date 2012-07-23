@@ -29,6 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -46,13 +47,13 @@ class AbstractNodeVariable(AbstractVariable):
             An abstract variable defined in a dictionary which is a node (alternate, aggregate...) in the global variable tree.
     """
 
-    def __init__(self, id, name, children=None):
+    def __init__(self, id, name, random, children=None):
         """Constructor of AbstractNodeVariable:
 
                 @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
                 @param children: the list of this variable's children.
         """
-        AbstractVariable.__init__(self, id, name)
+        AbstractVariable.__init__(self, id, name, random)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable.py')
         self.children = []
@@ -67,7 +68,7 @@ class AbstractNodeVariable(AbstractVariable):
                 All children forget their value.
         """
         self.log.debug(_("Children of variable {0} are forgotten.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             child.forget(processingToken)
 
     def memorize(self, processingToken):
@@ -75,7 +76,7 @@ class AbstractNodeVariable(AbstractVariable):
                 All children memorize their value.
         """
         self.log.debug(_("Children of variable {0} are memorized.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             child.memorize(processingToken)
 
     def generate(self, writingToken):
@@ -83,13 +84,15 @@ class AbstractNodeVariable(AbstractVariable):
                 All children generate their value.
         """
         self.log.debug(_("Children of variable {0} generate a value.").format(self.getName()))
-        for child in self.children:
+        for child in self.getChildren():
             child.generate(writingToken)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def getChildren(self):
+        if self.isRandom():
+            self.children = random.shuffle(self.children)
         return self.children
 
     def addChild(self, child):
