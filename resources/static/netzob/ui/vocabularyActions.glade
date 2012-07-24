@@ -7,6 +7,7 @@
         <property name="label" translatable="yes">Force Partitioning</property>
         <property name="tooltip" translatable="yes">Use force partitioning on selected symbol</property>
         <property name="stock_id">netzob-partitioning-force</property>
+        <signal name="activate" handler="partitioningForce_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -15,6 +16,7 @@
         <property name="tooltip" translatable="yes">Use sequence alignment on selected symbol</property>
         <property name="stock_id">netzob-partitioning-sequence</property>
         <property name="is_important">True</property>
+        <signal name="activate" handler="sequenceAlignment_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>

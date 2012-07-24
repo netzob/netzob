@@ -126,6 +126,8 @@ class NewVocabularyView(object):
         self.updateSymbolList()
         self.updateSymbolListToolbar()
         self.updateProjectProperties()
+        # ++CODE HERE++
+        # UNCOMMENT TO SEE MODIFICATION
         """self.updateSymbolProperties()
         self.updateMessageProperties()
         self.updateFieldProperties()"""

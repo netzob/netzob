@@ -150,7 +150,6 @@ class NetzobMainController(object):
     def mainWindow_destroy_cb(self, window):
         Gtk.main_quit()
 
-
     def entry_disableButtonIfEmpty_cb(self, widget, button):
         if(len(widget.get_text()) > 0):
             button.set_sensitive(True)
@@ -158,14 +157,13 @@ class NetzobMainController(object):
             button.set_sensitive(False)
 
     def newProject_activate_cb(self, action):
+        #open dialogbox
         builder2 = Gtk.Builder()
-        print "new Project"
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
             "dialogbox.glade"))
         dialog = builder2.get_object("newProject")
-
         #button apply
         applybutton = builder2.get_object("button19")
         applybutton.set_sensitive(False)
@@ -184,7 +182,7 @@ class NetzobMainController(object):
             newProjectName = entry.get_text()
             self.log.debug(_("Create new project {0}").format(newProjectName))
             # ++CODE HERE++
-            # CREATE PROJECT
+            # CREATE PROJECT with the name of 
             # SWITCH TO THIS PROJECT : self.switchProject(idNewProject)
             dialog.destroy()
         if (result == 1):
@@ -193,6 +191,41 @@ class NetzobMainController(object):
 
     def switchProject(self, idProject):
         # ++CODE HERE++
-        # CHANGE CURRENTPROJECT TO THE idProject
+        # CHANGE CURRENTPROJECT TO idProject
         # UPDATE VIEW : view.updateProject()
         pass
+
+    def saveProject_activate_cb(self, action):
+        # ++CODE HERE++
+        # SAVE THE CURRENT PROJECT
+        pass
+
+    def switchProject_activate_cb(self, action):
+        #open dialogbox
+        builder2 = Gtk.Builder()
+        builder2.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui",
+            "dialogbox.glade"))
+        dialog = builder2.get_object("switchWorkspace")
+        #button apply
+        applybutton = builder2.get_object("button23")
+        dialog.add_action_widget(applybutton, 0)
+        #button cancel
+        cancelbutton = builder2.get_object("button22")
+        dialog.add_action_widget(cancelbutton, 1)
+        #run the dialog window and wait for the result
+        result = dialog.run()
+
+        if (result == 0):
+            #apply
+            newWorkspacePath = dialog.get_current_folder()
+            self.log.debug(_("Switch to the workspace {0}").format(newWorkspacePath))
+            # ++CODE HERE++
+            # SWITCH/CREATE THE WORKSPACE FOR newWorkspacePath
+            # SWITCH TO THE LAST PROJECT OPEN IN THE WORKSPACE 
+            # UPDATE VIEW/PROJECT
+            dialog.destroy()
+        if (result == 1):
+            #cancel
+            dialog.destroy()
