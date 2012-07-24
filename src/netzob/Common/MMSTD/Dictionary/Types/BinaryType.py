@@ -41,8 +41,8 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
 class BinaryType(AbstractType):

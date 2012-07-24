@@ -30,6 +30,8 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import random
+import string
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,7 +41,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
 
 
 class IPv4WordType(AbstractWordType):
@@ -56,7 +58,7 @@ class IPv4WordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategy, minSize, maxSize):
+    def generateValue(self, generationStrategies, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
         for generationStrategy in generationStrategies:

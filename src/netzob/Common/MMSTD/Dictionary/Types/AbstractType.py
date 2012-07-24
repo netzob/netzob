@@ -31,7 +31,6 @@
 from abc import abstractmethod
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -135,19 +134,26 @@ class AbstractType():
     def makeType(typeString):
         type = None
         if typeString == "Binary":
-            type = BinaryWordType()
+            from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+            type = BinaryType()
         elif typeString == "DecimalWord":
+            from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
             type = DecimalWordType()
         elif typeString == "HexWord":
+            from netzob.Common.MMSTD.Dictionary.Types.HexWordType import HexWordType
             type = HexWordType()
         elif typeString == "IPv4Word":
+            from netzob.Common.MMSTD.Dictionary.Types.IPv4WordType import IPv4WordType
             type = IPv4WordType()
         elif typeString == "MACWord":
+            from netzob.Common.MMSTD.Dictionary.Types.MACWordType import MACWordType
             type = MACWordType()
         elif typeString == "Integer":
+            from netzob.Common.MMSTD.Dictionary.Types.IntegerType import IntegerType
             type = IntegerType()
         elif typeString == "Word":
+            from netzob.Common.MMSTD.Dictionary.Types.WordType import WordType
             type = WordType()
         else:
-            log.error(_("Wrong type specified for this variable."))
+            logging.error(_("Wrong type specified for this variable."))
         return type

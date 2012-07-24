@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import string
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,10 +40,10 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
 
 
-class MACWordType(AbstractType):
+class MACWordType(AbstractWordType):
     """MACWordType:
             A type represented by MAC address in 8-bits strings (0d:0d:0d:0d:0d:0d).
     """
@@ -56,7 +57,7 @@ class MACWordType(AbstractType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategy, minSize, maxSize):
+    def generateValue(self, generationStrategies, minSize, maxSize):
         # minSize and maxSize are not used.
         value = ""
         for generationStrategy in generationStrategies:

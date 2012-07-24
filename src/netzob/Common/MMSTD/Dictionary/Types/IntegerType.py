@@ -41,7 +41,7 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
 
 
 class IntegerType(AbstractType):
@@ -58,7 +58,7 @@ class IntegerType(AbstractType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategy, minSize, maxSize):
+    def generateValue(self, generationStrategies, minSize, maxSize):
         value = 0
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":

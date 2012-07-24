@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,8 +40,8 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Type.AbstractType import AbstractType
 
 
 class AbstractWordType(AbstractType):

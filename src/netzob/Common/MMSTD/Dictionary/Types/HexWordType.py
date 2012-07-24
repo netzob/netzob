@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import string
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -39,7 +40,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Type.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
 
 
 class HexWordType(AbstractWordType):
@@ -56,7 +57,7 @@ class HexWordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategy, minSize, maxSize):
+    def generateValue(self, generationStrategies, minSize, maxSize):
         value = ""
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
