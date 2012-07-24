@@ -479,8 +479,8 @@ class Menu(object):
 
         # We verify the project name doesn't already exist
         found = False
-        for project in self.netzob.getCurrentWorkspace().getProjects():
-            if project.getName() == projectName:
+        for (otherProjectName, otherProjectPath) in self.netzob.getCurrentWorkspace().getNameOfProjects():
+            if otherProjectName == projectName:
                 found = True
         if found:
             dialogBis = Gtk.Dialog(title=_("Error"), flags=0, buttons=None)
