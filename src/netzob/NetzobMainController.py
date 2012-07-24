@@ -200,7 +200,7 @@ class NetzobMainController(object):
         # SAVE THE CURRENT PROJECT
         pass
 
-    def switchProject_activate_cb(self, action):
+    def switchWorkspace_activate_cb(self, action):
         #open dialogbox
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(

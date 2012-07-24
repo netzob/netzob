@@ -32,11 +32,11 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="switchProject">
+      <object class="GtkAction" id="switchWorkspace">
         <property name="label" translatable="yes">Switch Workspace…</property>
         <property name="tooltip" translatable="yes">Select a new working directory</property>
         <property name="stock_id">gtk-jump-to</property>
-        <signal name="activate" handler="switchProject_activate_cb" swapped="no"/>
+        <signal name="activate" handler="switchWorkspace_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
