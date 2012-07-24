@@ -85,3 +85,9 @@ class CommandLine(object):
 
     def getOptions(self):
         return self.providedOptions
+
+    def getConfiguredParser(self):
+        """Return (if available) the parser configured to manage provided
+        arguments and options by user.
+        @return: the parser"""
+        return self.parser
