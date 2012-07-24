@@ -68,8 +68,8 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="openFromWorkspace">
-        <property name="label" translatable="yes">Open Project</property>
+      <object class="GtkAction" id="openProjectFromWorkspace">
+        <property name="label" translatable="yes">Open Project from Workspace</property>
       </object>
     </child>
   </object>
