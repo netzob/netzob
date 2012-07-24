@@ -33,10 +33,12 @@ import os
 import uuid
 import logging
 
-from gi.repository import Gtk, Gdk
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -244,6 +246,7 @@ class NewVocabularyController(object):
         self.focus = builder
 ###############
 
+######### MENU / TOOLBAR ENTRIES CONTROLLERS
     def sequenceAlignment_activate_cb(self, action):
         sequence_controller = NewSequenceAlignmentController(self)
         sequence_controller.run()
@@ -251,3 +254,53 @@ class NewVocabularyController(object):
     def partitioningForce_activate_cb(self, action):
         force_controller = NewForcePartitioningController(self)
         force_controller.run()
+
+    def partitioningSimple_activate_cb(self, action):
+        pass
+
+    def partitioningSmooth_activate_cb(self, action):
+        pass
+
+    def partitioningReset_activate_cb(self, action):
+        pass
+
+    def concatField_activate_cb(self, action):
+        pass
+
+    def leftSplit_activate_cb(self, action):
+        pass
+
+    def rightSplit_activate_cb(self, action):
+        pass
+
+    def createVariable_activate_cb(self, action):
+        pass
+
+    def moveMessagesToOtherSymbol_activate_cb(self, action):
+        pass
+
+    def deleteMessages_activate_cb(self, action):
+        pass
+
+    def searchText_activate_cb(self, action):
+        pass
+
+    def environmentDep_activate_cb(self, action):
+        pass
+
+    def messagesDistribution_activate_cb(self, action):
+        pass
+
+    def variableTable_activate_cb(self, action):
+        pass
+
+    def fieldLimits_activate_cb(self, action):
+        pass
+
+    def importMessagesFromFile_activate_cb(self, action):
+        pass
+
+    def captureMessages_activate_cb(self, action):
+        pass
+
+#########

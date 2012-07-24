@@ -29,16 +29,18 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk, Gdk
-import gi
-from netzob.NetzobMainView import NetzobMainView
-gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
 import sys
 import os
 import logging
 import locale
 import gettext
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk
+import gi
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -49,7 +51,7 @@ from netzob.Common.Workspace import Workspace
 from netzob.Common.CommandLine import CommandLine
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
-
+from netzob.NetzobMainView import NetzobMainView
 
 class NetzobMainController(object):
     """"Netzob main window controller"""
@@ -189,15 +191,15 @@ class NetzobMainController(object):
             #cancel
             dialog.destroy()
 
-    def switchProject(self, idProject):
-        # ++CODE HERE++
-        # CHANGE CURRENTPROJECT TO idProject
-        # UPDATE VIEW : view.updateProject()
-        pass
-
     def saveProject_activate_cb(self, action):
         # ++CODE HERE++
         # SAVE THE CURRENT PROJECT
+        pass
+
+    def importProject_activate_cb(self, action):
+        pass
+
+    def exportProject_activate_cb(self, action):
         pass
 
     def switchWorkspace_activate_cb(self, action):
@@ -229,3 +231,17 @@ class NetzobMainController(object):
         if (result == 1):
             #cancel
             dialog.destroy()
+
+    def quit_activate_cb(self, action):
+        pass
+
+    def aboutNetzob_activate_cb(self, action):
+        pass
+
+    def switchProject(self, idProject):
+        # ++CODE HERE++
+        # CHANGE CURRENTPROJECT TO idProject
+        # UPDATE VIEW : view.updateProject()
+        pass
+
+

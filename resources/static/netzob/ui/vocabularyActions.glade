@@ -24,6 +24,7 @@
         <property name="label" translatable="yes">Simple Partitioning</property>
         <property name="tooltip" translatable="yes">Use simple partioning on selected symbol</property>
         <property name="stock_id">netzob-partitioning-simple</property>
+        <signal name="activate" handler="par" swapped="no"/>
       </object>
     </child>
     <child>
@@ -31,6 +32,7 @@
         <property name="label" translatable="yes">Smooth Partitioning</property>
         <property name="tooltip" translatable="yes">Use smooth partioning on selected symbol</property>
         <property name="stock_id">netzob-partitioning-smooth</property>
+        <signal name="activate" handler="partitioningSmooth_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -45,6 +47,7 @@
         <property name="label" translatable="yes">Reset Partitioning</property>
         <property name="tooltip" translatable="yes">Reset partitioning of selected symbol</property>
         <property name="stock_id">netzob-partitioning-reset</property>
+        <signal name="activate" handler="partitioningReset_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -59,6 +62,7 @@
         <property name="label" translatable="yes">Left Split Field</property>
         <property name="tooltip" translatable="yes">Left split selected field</property>
         <property name="stock_id">netzob-edit-cut-left</property>
+        <signal name="activate" handler="leftSplit_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -66,6 +70,7 @@
         <property name="label" translatable="yes">Right Split Field</property>
         <property name="tooltip" translatable="yes">Right split selected field</property>
         <property name="stock_id">netzob-edit-cut-right</property>
+        <signal name="activate" handler="rightSplit_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -87,6 +92,7 @@
         <property name="label" translatable="yes">Delete</property>
         <property name="tooltip" translatable="yes">Delete selected message(s)</property>
         <property name="stock_id">gtk-delete</property>
+        <signal name="activate" handler="deleteMessages_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -94,6 +100,7 @@
         <property name="label" translatable="yes">Search Text</property>
         <property name="tooltip" translatable="yes">Search a string in all messages of current symbol</property>
         <property name="stock_id">gtk-find</property>
+        <signal name="activate" handler="searchText_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -101,6 +108,7 @@
         <property name="label" translatable="yes">Environment Dependencies</property>
         <property name="tooltip" translatable="yes">Search environment dependencies for all message</property>
         <property name="stock_id">netzob-search-environment-dep</property>
+        <signal name="activate" handler="environmentDep_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -108,6 +116,7 @@
         <property name="label" translatable="yes">Messages Distribution…</property>
         <property name="tooltip" translatable="yes">Display messages distribution of current symbol</property>
         <property name="stock_id">netzob-messages-distribution</property>
+        <signal name="activate" handler="messagesDistribution_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -115,6 +124,7 @@
         <property name="label" translatable="yes">Variable Table…</property>
         <property name="tooltip" translatable="yes">Display variable table</property>
         <property name="stock_id">netzob-variable-table</property>
+        <signal name="activate" handler="variableTable_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -122,6 +132,7 @@
         <property name="label" translatable="yes">Field Limits</property>
         <property name="tooltip" translatable="yes">Display min and max size of selected field</property>
         <property name="stock_id">netzob-field-limit</property>
+        <signal name="activate" handler="fieldLimits_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -131,6 +142,7 @@
         <property name="tooltip" translatable="yes">Import messages from file</property>
         <property name="stock_id">netzob-import-messages</property>
         <property name="is_important">True</property>
+        <signal name="activate" handler="importMessagesFromFile_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -138,6 +150,7 @@
         <property name="label" translatable="yes">Capture messages</property>
         <property name="tooltip" translatable="yes">Capture messages</property>
         <property name="stock_id">netzob-capture-messages</property>
+        <signal name="activate" handler="captureMessages_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
