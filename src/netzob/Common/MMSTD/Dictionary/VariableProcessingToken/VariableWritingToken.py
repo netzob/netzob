@@ -63,7 +63,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """toString:
                 Used for debug purpose.
         """
-        return _("isOk: {0}, value: {1}").format(self.isOk(), self.value)
+        return _("isOk: {0}, value: {1}").format(str(self.isOk()), str(self.value))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

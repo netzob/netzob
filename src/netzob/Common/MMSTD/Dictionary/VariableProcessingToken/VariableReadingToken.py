@@ -62,7 +62,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         """toString:
                 Used for debug purpose.
         """
-        return _("isOk: {0}, value left: {1}").format(self.isOk(), self.value[self.index:])
+        return _("isOk: {0}, value left: {1}").format(str(self.isOk()), str(self.value[self.index:]))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
