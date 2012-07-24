@@ -29,30 +29,32 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import re
 from lxml import etree
+import re
 import uuid
 
 #+---------------------------------------------------------------------------+
 #| Local imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
-from netzob.Common.Type.Format import Format
-from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
-from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
-from netzob.Common.Filters.Visualization.BackgroundColorFilter import BackgroundColorFilter
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
-
+from netzob.Common.Filters.Visualization.BackgroundColorFilter import \
+    BackgroundColorFilter
+from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
+    AlternateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
+from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.UnitSize import UnitSize
 
 #+---------------------------------------------------------------------------+
 #| Field:
@@ -63,7 +65,7 @@ class Field(object):
     #+-----------------------------------------------------------------------+
     #| Constructor
     #+-----------------------------------------------------------------------+
-    def __init__(self, name, index, regex):
+    def __init__(self, name, index, regex, symbol):
         self.name = name
         self.index = index
         self.regex = regex
@@ -72,7 +74,7 @@ class Field(object):
         self.encapsulation_level = 0
         self.description = ""
         self.color = "black"
-        self.variable = None
+        self.variable = self.getDefaultVariable(symbol)
 
         # Interpretation attributes
         self.format = Format.HEX
@@ -83,7 +85,7 @@ class Field(object):
         self.mathematicFilters = []
 
     def getEncodedVersionOfTheRegex(self):
-        if self.regex == "" or self.regex is None or self.regex == "None":  # TODO: becareful with the fact that XML files may store None as a string...
+        if self.regex == "" or self.regex is None or self.regex == "None":  # TODO: be careful with the fact that XML files may store None as a string...
             return ""
         elif self.regex.find("{") != -1:  # This is a real regex
             return self.regex
@@ -103,28 +105,29 @@ class Field(object):
             return False
 
     def getVariable(self):
-        if self.isStatic():
-            value = TypeConvertor.netzobRawToBitArray(self.getRegex())
-            variable = BinaryVariable(uuid.uuid4(), self.getName(), value, len(value), len(value))
-            return variable
         return self.variable
 
     def getDefaultVariable(self, symbol):
-        # The default variable is an alternative of all the possibilities (in binary type)
-        cells = symbol.getUniqValuesByField(self)
-        tmpDomain = set()
-        for cell in cells:
-            tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
-        domain = sorted(tmpDomain)
+        if self.isStatic():
+            value = TypeConvertor.netzobRawToBitArray(self.getRegex())
+            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(), value, len(value), len(value))  # A static field is neither mutable nor random.
+            return variable
+        else:
+            # The default variable is an alternative of all the possibilities (in binary type)
+            cells = symbol.getUniqValuesByField(self)
+            tmpDomain = set()
+            for cell in cells:
+                tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
+            domain = sorted(tmpDomain)
 
-        variable = AggregateVariable(uuid.uuid4(), "Aggregate", None)
-        alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", None)
-        for d in domain:
-            binaryVariable = BinaryVariable(uuid.uuid4(), "defaultVariable", d, len(d), len(d))
-            alternateVar.addChild(binaryVariable)
-        variable.addChild(alternateVar)
-
-        return variable
+            variable = AggregateVariable(uuid.uuid4(), "Aggregate", True, False, None)
+            alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
+            for d in domain:
+                value = TypeConvertor.bin2string(d)
+                child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(), value, len(value), len(value))
+                alternateVar.addChild(child)
+            variable.addChild(alternateVar)
+            return variable
 
     def setVariable(self, variable):
         self.variable = variable
@@ -289,11 +292,11 @@ class Field(object):
     #| Static methods
     #+----------------------------------------------
     @staticmethod
-    def createDefaultField():
-        return Field("Default", 0, "(.{,})")
+    def createDefaultField(symbol):
+        return Field("Default", 0, "(.{,})", symbol)
 
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         if version == "0.1":
             field_name = xmlRoot.get("name")
             field_index = int(xmlRoot.get("index"))
@@ -301,7 +304,7 @@ class Field(object):
             if xmlRoot.find("{" + namespace + "}regex") is not None:
                 field_regex = xmlRoot.find("{" + namespace + "}regex").text
 
-            field = Field(field_name, field_index, field_regex)
+            field = Field(field_name, field_index, field_regex, symbol)
 
             if xmlRoot.find("{" + namespace + "}encapsulation_level") is not None:
                 field_encapsulation_level = xmlRoot.find("{" + namespace + "}encapsulation_level").text

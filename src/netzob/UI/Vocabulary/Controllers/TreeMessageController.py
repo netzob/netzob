@@ -29,34 +29,36 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import logging
-from gi.repository import Pango
-from gi.repository import GObject
-from gi.repository import Gtk, Gdk
+from gi.repository import GObject, Gtk, Gdk, Pango
+from netzob.Common.Field import Field
+from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
+from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
+from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
+from netzob.Common.Models.RawMessage import RawMessage
+from netzob.Common.NetzobException import NetzobException
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
+from netzob.Common.Symbol import Symbol
+from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import \
+    NeedlemanAndWunsch
+from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
+from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel, \
+    NetzobComboBoxEntry, NetzobButton, NetzobFrame
+from netzob.UI.Vocabulary.Controllers.VariableController import \
+    VariableTreeController
+from netzob.UI.Vocabulary.Views.TreeMessageView import TreeMessageView
 import glib
-import uuid
+import logging
 import time
+import uuid
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
-from netzob.Common.Field import Field
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Models.RawMessage import RawMessage
-from netzob.Common.NetzobException import NetzobException
-from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel, NetzobComboBoxEntry, NetzobButton, NetzobFrame
-from netzob.UI.Vocabulary.Views.TreeMessageView import TreeMessageView
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Type.Format import Format
-from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
-from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
-from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
-from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
-from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 
 #+----------------------------------------------
@@ -1082,62 +1084,64 @@ class TreeMessageController(object):
 
     def rightClickCreateVariable(self, widget, symbol, field):
         self.log.debug(_("Opening the dialog for the creation of a variable"))
-        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
-        dialog.set_markup(_("Definition of the new variable"))
-
-        # Create the ID of the new variable
-        variableID = uuid.uuid4()
-
-        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
-        # id of the variable
-        variableIDLabel = NetzobLabel(_("ID :"))
-        variableIDValueLabel = NetzobLabel(str(variableID))
-        variableIDValueLabel.set_sensitive(False)
-        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # name of the variable
-        variableNameLabel = NetzobLabel(_("Name : "))
-        variableNameEntry = Gtk.Entry()
-        variableNameEntry.show()
-        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        # Include current binary values
-        variableWithCurrentBinariesLabel = NetzobLabel(_("Add current binaries : "))
-
-        variableWithCurrentBinariesButton = Gtk.CheckButton(_("Disjunctive inclusion"))
-        variableWithCurrentBinariesButton.set_active(False)
-        variableWithCurrentBinariesButton.show()
-
-        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-
-        dialog.vbox.pack_end(mainTable, True, True, 0)
-        dialog.show_all()
-        result = dialog.run()
-
-        if result != Gtk.ResponseType.OK:
-            dialog.destroy()
-            return
-
-        # We retrieve the value of the variable
-        varName = variableNameEntry.get_text()
-
-        # Disjonctive inclusion ?
-        disjunctive = variableWithCurrentBinariesButton.get_active()
-
-        if disjunctive:
-            # Create a default value
-            defaultValue = field.getDefaultVariable(symbol)
-        else:
-            defaultValue = None
-
-        # We close the current dialog
-        dialog.destroy()
+#===============================================================================
+#        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
+#        dialog.set_markup(_("Definition of the new variable"))
+# 
+#        # Create the ID of the new variable
+#        variableID = uuid.uuid4()
+# 
+#        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
+#        # id of the variable
+#        variableIDLabel = NetzobLabel(_("ID :"))
+#        variableIDValueLabel = NetzobLabel(str(variableID))
+#        variableIDValueLabel.set_sensitive(False)
+#        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+#        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+# 
+#        # name of the variable
+#        variableNameLabel = NetzobLabel(_("Name : "))
+#        variableNameEntry = Gtk.Entry()
+#        variableNameEntry.show()
+#        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+#        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+# 
+#        # Include current binary values
+#        variableWithCurrentBinariesLabel = NetzobLabel(_("Add current binaries : "))
+# 
+#        variableWithCurrentBinariesButton = Gtk.CheckButton(_("Disjunctive inclusion"))
+#        variableWithCurrentBinariesButton.set_active(False)
+#        variableWithCurrentBinariesButton.show()
+# 
+#        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+#        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
+# 
+#        dialog.vbox.pack_end(mainTable, True, True, 0)
+#        dialog.show_all()
+#        result = dialog.run()
+# 
+#        if result != Gtk.ResponseType.OK:
+#            dialog.destroy()
+#            return
+# 
+#        # We retrieve the value of the variable
+#        varName = variableNameEntry.get_text()
+# 
+#        # Disjonctive inclusion ?
+#        disjunctive = variableWithCurrentBinariesButton.get_active()
+# 
+#        if disjunctive:
+#            # Create a default value
+#            defaultValue = field.getDefaultVariable(symbol)
+#        else:
+#            defaultValue = None
+# 
+#        # We close the current dialog
+#        dialog.destroy()
+#===============================================================================
 
         # Dedicated view for the creation of a variable
-        creationPanel = VariableView(self.netzob, field, variableID, varName, defaultValue)
+        creationPanel = VariableTreeController(self.netzob, field)
         creationPanel.display()
 
     def rightClickRemoveVariable(self, widget, field):
@@ -1152,7 +1156,8 @@ class TreeMessageController(object):
             self.log.debug(_("The user didn't confirm the deletion of the variable {0}").format(str(field.getVariable().getID())))
 
     def rightClickEditVariable(self, widget, field):
-        logging.error(_("The edition of an existing variable is not yet implemented"))
+        creationPanel = VariableTreeController(self.netzob, field)
+        creationPanel.display()
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 1:

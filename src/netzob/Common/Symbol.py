@@ -97,7 +97,7 @@ class Symbol(AbstractSymbol):
 
         # Clean the symbol
         aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-        field = Field.createDefaultField()
+        field = Field.createDefaultField(self)
         field.setFormat(aFormat)
         self.addField(field)
 
@@ -144,7 +144,7 @@ class Symbol(AbstractSymbol):
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
         if minNbSplit <= 1:  # If the delimiter does not create splitted fields
-            field = Field(_("Name"), 0, "(.{,})")
+            field = Field(_("Name"), 0, "(.{,})", self)
             field.setFormat(aFormat)
             field.setColor("blue")
             self.addField(field)
@@ -159,7 +159,7 @@ class Symbol(AbstractSymbol):
             field.setColor("blue")
             self.addField(field)
             iField += 1
-            field = Field("__sep__", iField, self.getRawDelimiter())
+            field = Field("__sep__", iField, self.getRawDelimiter(), self)
             field.setFormat(aFormat)
             field.setColor("black")
             self.addField(field)
@@ -244,7 +244,7 @@ class Symbol(AbstractSymbol):
                 else:
                     # We change the field
                     iField += 1
-                    field = Field(_("Name"), iField, currentStaticField)
+                    field = Field(_("Name"), iField, currentStaticField, self)
                     field.setColor("black")
                     self.addField(field)
                     # We start a new field
@@ -254,7 +254,7 @@ class Symbol(AbstractSymbol):
             else:  # The current column is static
                 if isLastDyn:  # We change the field
                     iField += 1
-                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
+                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
                     field.setColor("blue")
                     self.addField(field)
                     # We start a new field
@@ -268,10 +268,10 @@ class Symbol(AbstractSymbol):
         # We add the last field
         iField += 1
         if resultMask[-1] == "1":  # If the last column is dynamic
-            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
+            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
             field.setColor("blue")
         else:
-            field = Field(_("Name"), iField, currentStaticField)
+            field = Field(_("Name"), iField, currentStaticField, self)
             field.setColor("black")
         self.addField(field)
 
@@ -407,7 +407,7 @@ class Symbol(AbstractSymbol):
         # Default representation is BINARY
         new_name = field1.getName() + "+" + field2.getName()
         # Creation of the new Field
-        newField = Field(new_name, field1.getIndex(), newRegex)
+        newField = Field(new_name, field1.getIndex(), newRegex, self)
 
         self.fields.remove(field1)
         self.fields.remove(field2)
@@ -475,13 +475,13 @@ class Symbol(AbstractSymbol):
         new_encapsulationLevel = field.getEncapsulationLevel()
 
         # We Build the two new fields
-        field1 = Field("(1/2)" + field.getName(), field.getIndex(), regex1)
+        field1 = Field("(1/2)" + field.getName(), field.getIndex(), regex1, self)
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
             field1.setDescription("(1/2) " + field.getDescription())
-        field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2)
+        field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2, self)
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
         field2.setColor(field.getColor())
@@ -1146,7 +1146,7 @@ class Symbol(AbstractSymbol):
 
     def getRoot(self):
         # We create an aggregate of all the fields
-        rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
+        rootSymbol = AggregateVariable(self.getID(), self.getName(), True, False, None)
         for field in self.getFields():
             if field.getVariable() is None:
                 variable = field.getDefaultVariable(self)
@@ -1317,7 +1317,7 @@ class Symbol(AbstractSymbol):
             if xmlRoot.find("{" + namespace_project + "}fields") is not None:
                 xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
                 for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
-                    field = Field.loadFromXML(xmlField, namespace_project, version)
+                    field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
                     if field is not None:
                         symbol.addField(field)
 

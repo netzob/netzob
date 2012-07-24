@@ -82,7 +82,7 @@ class AbstractImporter(object):
         for message in messages:
             symbol.addMessage(message)
         # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
+        symbol.addField(Field.createDefaultField(symbol))
         # We register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
 

@@ -51,7 +51,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Models.RawMessage import RawMessage
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.UnitSize import UnitSize
@@ -71,7 +71,6 @@ from netzob.UI.Vocabulary.Controllers.SimplePartitioningController import Simple
 from netzob.UI.Vocabulary.Controllers.SmoothPartitioningController import SmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.ResetPartitioningController import ResetPartitioningController
 from netzob.UI.Vocabulary.Controllers.FindSizeFieldsController import FindSizeFieldsController
-from netzob.Inference.Vocabulary.VariableView import VariableView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Inference.Vocabulary.Searcher import Searcher
 

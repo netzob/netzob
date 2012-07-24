@@ -81,7 +81,7 @@ class NeedlemanAndWunsch(object):
         if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
-            field = Field.createDefaultField()
+            field = Field.createDefaultField(symbol)
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
             symbol.addField(field)
@@ -97,7 +97,7 @@ class NeedlemanAndWunsch(object):
             except NetzobException:
                 logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
                 symbol.cleanFields()
-                field = Field.createDefaultField()
+                field = Field.createDefaultField(symbol)
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
                 symbol.addField(field)
@@ -235,7 +235,7 @@ class NeedlemanAndWunsch(object):
         symbol.cleanFields()
         logging.debug("REGEX " + str(regex))
         for regexElt in regex:
-            field = Field("Field " + str(iField), iField, regexElt)
+            field = Field("Field " + str(iField), iField, regexElt, symbol)
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
             symbol.addField(field)
