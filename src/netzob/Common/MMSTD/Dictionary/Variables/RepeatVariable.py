@@ -29,6 +29,9 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+from lxml import etree
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 import logging
 import random
 
@@ -40,7 +43,6 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
 
 
 class RepeatVariable(AbstractVariable):
@@ -49,6 +51,7 @@ class RepeatVariable(AbstractVariable):
     """
 
     MAX_ITERATIONS = 10
+    TYPE = "RepeatVariable"
 
     def __init__(self, id, name, child, minIterations, maxIterations):
         """Constructor of RepeatVariable:
@@ -69,21 +72,36 @@ class RepeatVariable(AbstractVariable):
         if child is not None:
             self.child = child
         else:
-            log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: no child given.").format(self.getName()))
-        if minIterations is not None and minChars >= 0:
+            self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: no child given.").format(self.getName()))
+        if minIterations is not None and minIterations >= 0:
             self.minIterations = minIterations
         else:
-            log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: minIterations undefined or < 0. minIterations value is fixed to 0.").format(self.getName()))
+            self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: minIterations undefined or < 0. minIterations value is fixed to 0.").format(self.getName()))
             self.minIterations = 0
         if maxIterations is not None and maxIterations >= minIterations:
             self.maxIterations = maxIterations
         else:
-            log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.").format(self.getName()))
+            self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.").format(self.getName()))
             self.maxIterations = self.minIterations
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def getType(self):
+        """getType:
+        """
+        return RepeatVariable.TYPE
+
+    def getDescription(self, processingToken):
+        """getDescription:
+        """
+        return _("[REP] {0}= ({1}) x ({2}-{3})").format(self.getName(), self.child.getDescription(), str(self.minIterations), str(self.maxIterations))
+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+        """
+        return _("[REP] {0}= ({1}) x ({2}-{3})").format(self.getName(), self.child.getUncontextualizedDescription(), str(self.minIterations), str(self.maxIterations))
+
     def isDefined(self):
         return self.child.isDefined()
 
@@ -125,7 +143,7 @@ class RepeatVariable(AbstractVariable):
             writingToken.setOk(False)
         else:
             writingToken.setOk(True)
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -138,16 +156,24 @@ class RepeatVariable(AbstractVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:RepeatVariable")
 
+        # random
+        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
+        xmlRandom.text = str(self.random)
+
+        # mutable
+        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
+        xmlMutable.text = str(self.mutable)
+
         # Definition of child variable
         self.child.toXML(xmlVariable, namespace)
 
         # minIterations
         xmlMinIterations = etree.SubElement(xmlVariable, "{" + namespace + "}minIterations")
-        xmlMinIterations.text = self.minIterations
+        xmlMinIterations.text = str(self.minIterations)
 
         # maxIterations
         xmlMaxIterations = etree.SubElement(xmlVariable, "{" + namespace + "}maxIterations")
-        xmlMaxIterations.text = self.maxIterations
+        xmlMaxIterations.text = str(self.maxIterations)
         self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
@@ -155,8 +181,8 @@ class RepeatVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
     def getNumberIterations(self):
         if self.isRandom():
-            x = random.randint(0, MAX_ITERATIONS)
-            y = random.randint(0, MAX_ITERATIONS)
+            x = random.randint(0, RepeatVariable.MAX_ITERATIONS)
+            y = random.randint(0, RepeatVariable.MAX_ITERATIONS)
             self.minIterations = min(x, y)
             self.maxIterations = max(x, y)
         return (self.minIterations, self.maxIterations)
@@ -170,12 +196,26 @@ class RepeatVariable(AbstractVariable):
                 Loads a repeat variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
-        self.log.debug(_("RepeatVariable's function loadFromXML is used."))
+        logging.debug(_("RepeatVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlChild = xmlRoot.findall("{" + namespace + "}variable")
-            child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
+            child = AbstractVariable.loadFromXML(xmlChild, namespace, version)
+
+            # mutable
+            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
+            if xmlMutable is not None:
+                mutable = xmlMutable.text == "True"
+            else:
+                mutable = True
+
+            # random
+            xmlRandom = xmlRoot.find("{" + namespace + "}random")
+            if xmlRandom is not None:
+                random = xmlRandom.text == "True"
+            else:
+                random = False
 
             # minIterations
             xmlMinIterations = xmlRoot.find("{" + namespace + "}minIterations")
@@ -189,7 +229,7 @@ class RepeatVariable(AbstractVariable):
             if xmlMaxIterations is not None:
                 maxIterations = int(xmlMaxIterations.text)
             else:
-                maxIterations = MAX_ITERATIONS
+                maxIterations = RepeatVariable.MAX_ITERATIONS
 
-            return RepeatVariable(id, name, child, minIterations, maxIterations)
+            return RepeatVariable(xmlID, xmlName, mutable, random, child, minIterations, maxIterations)
         return None

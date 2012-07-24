@@ -39,7 +39,7 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import AbstractVariable
 
 
 class AbstractNodeVariable(AbstractVariable):
@@ -47,13 +47,13 @@ class AbstractNodeVariable(AbstractVariable):
             An abstract variable defined in a dictionary which is a node (alternate, aggregate...) in the global variable tree.
     """
 
-    def __init__(self, id, name, random, children=None):
+    def __init__(self, id, name, mutable, random, children=None):
         """Constructor of AbstractNodeVariable:
 
                 @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
                 @param children: the list of this variable's children.
         """
-        AbstractVariable.__init__(self, id, name, random)
+        AbstractVariable.__init__(self, id, name, mutable, random)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable.py')
         self.children = []

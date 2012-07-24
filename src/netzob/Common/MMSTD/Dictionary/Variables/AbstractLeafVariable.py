@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from abc import abstractmethod
 from gettext import gettext as _
 import logging
 
@@ -39,7 +40,7 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import AbstractVariable
 
 
 class AbstractLeafVariable(AbstractVariable):
@@ -139,7 +140,7 @@ class AbstractLeafVariable(AbstractVariable):
                 # mutable and defined
                 self.forget(self, readingToken)
                 self.learn(self, readingToken)
-                self.memorize(self, readingTokenreadingToken)
+                self.memorize(self, readingToken)
 
             else:
                 # mutable and not defined

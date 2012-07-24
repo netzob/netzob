@@ -29,6 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
+from lxml import etree
 import copy
 import logging
 
@@ -40,13 +41,16 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class ReferencedVariable(AbstractVariable):
     """ReferencedVariable:
             A variable which points to an other variable.
     """
+
+    TYPE = "ReferencedVariable"
 
     def __init__(self, id, name, pointedID, vocabulary):
         """Constructor of ReferencedVariable:
@@ -59,6 +63,21 @@ class ReferencedVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def getType(self):
+        """getType:
+        """
+        return ReferencedVariable.TYPE
+
+    def getDescription(self, processingToken):
+        """getDescription:
+        """
+        return _("[REF] {0}= ({1}").format(self.getName(), self.pointedVariable.getDescription())
+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+        """
+        return _("[REF] {0}= ({1}").format(self.getName(), self.pointedVariable.getUncontextualizedDescription())
+
     def isDefined(self):
         return self.getPointedVariable().isDefined()
 
@@ -84,7 +103,7 @@ class ReferencedVariable(AbstractVariable):
             var.write(writingToken)
         else:
             writingToken.setOk(False)
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -96,8 +115,16 @@ class ReferencedVariable(AbstractVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ReferencedVariable")
 
+        # random
+        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
+        xmlRandom.text = str(self.random)
+
+        # mutable
+        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
+        xmlMutable.text = str(self.mutable)
+
         # Definition of the referenced variable ID.
-        xmlRefID = etree.SubElement(xmlWordVariable, "{" + namespace + "}ref")
+        xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
         xmlRefID.text = self.pointedVariable.getID()
         self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
@@ -128,10 +155,25 @@ class ReferencedVariable(AbstractVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
-        self.log.debug(_("ReferencedVariable's function loadFromXML is used."))
+        logging.debug(_("ReferencedVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
+
+            # mutable
+            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
+            if xmlMutable is not None:
+                mutable = xmlMutable.text == "True"
+            else:
+                mutable = True
+
+            # random
+            xmlRandom = xmlRoot.find("{" + namespace + "}random")
+            if xmlRandom is not None:
+                random = xmlRandom.text == "True"
+            else:
+                random = False
+
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            return ReferencedVariable(xmlID, xmlName, xmlRefID)
+            return ReferencedVariable(xmlID, xmlName, mutable, random, xmlRefID)
         return None

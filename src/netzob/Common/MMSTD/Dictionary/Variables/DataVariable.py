@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
 from gettext import gettext as _
+from lxml import etree
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -40,7 +41,11 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable import AbstractLeafVariable
+from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractLeafVariable import \
+    AbstractLeafVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class DataVariable(AbstractLeafVariable):
@@ -49,6 +54,7 @@ class DataVariable(AbstractLeafVariable):
     """
 
     MAX_BITS = 1024
+    TYPE = "DataVariable"
 
     def __init__(self, id, name, mutable, random, type, originalValue, minChars, maxChars):
         """Constructor of DataVariable:
@@ -74,11 +80,28 @@ class DataVariable(AbstractLeafVariable):
         """toString:
                 For debugging purpose.
         """
-        return _("type: {0}, bits: ({1}, {2}), chars: ({3}, {4}), current value: {5}").format(self.type.toString(), self.minBits, self.maxBits, self.minChars, self.maxChars, self.currentValue)
+        return _("type: {0}, bits: ({1}, {2}), chars: ({3}, {4}), current value: {5}").format(self.type.toString(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.currentValue))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def getType(self):
+        """getType:
+        """
+        return DataVariable.TYPE
+
+    def getDescription(self, processingToken):
+        """getDescription:
+                Get the full description of the variable.
+        """
+        return _("[DATA] {0}= (getVlue={1})").format(str(self.getName()), str(self.getValue(processingToken)))
+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+                Get the uncontextualized description of the variable (no use of memory or vocabulary).
+        """
+        return _("[DATA] {0}= (orig={1})").format(str(self.getName()), str(self.getOriginalValue()))
+
     def forget(self, processingToken):
         """forget:
                 The variable forgets its value.
@@ -138,8 +161,10 @@ class DataVariable(AbstractLeafVariable):
                 if tmp[:len(localValue)] == localValue:
                     self.log.debug(_("Comparison successful."))
                     readingToken.incrementIndex(len(localValue))
-                    break
-            self.log.debug(_("Comparison failed."))
+                else:
+                    self.log.debug(_("Comparison failed."))
+            else:
+                self.log.debug(_("Comparison failed."))
             readingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
 
@@ -155,12 +180,14 @@ class DataVariable(AbstractLeafVariable):
                 Returns the variable value if it has one, else it returns the memorized value.
         """
         self.log.debug(_("-[ {0} {1} (Data): getValue.").format(AbstractVariable.toString(self), self.toString()))
+        if self.isRandom():
+            self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
         if self.getCurrentValue() is not None:
             value = self.getCurrentValue()
         else:
             value = writingToken.getMemory().recall(self)
         writingToken.appendValue(value)
-        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
+        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -172,18 +199,26 @@ class DataVariable(AbstractLeafVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DataVariable")
 
+        # random
+        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
+        xmlRandom.text = str(self.random)
+
+        # mutable
+        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
+        xmlMutable.text = str(self.mutable)
+
         # originalValue (can be None)
         if self.originalValue is not None:
             xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
-            xmlOriginalValue.text = self.originalValue
+            xmlOriginalValue.text = str(self.originalValue)
 
         # minBits
         xmlMinBits = etree.SubElement(xmlVariable, "{" + namespace + "}minBits")
-        xmlMinBits.text = self.minBits
+        xmlMinBits.text = str(self.minBits)
 
         # maxBits
         xmlMaxBits = etree.SubElement(xmlVariable, "{" + namespace + "}maxBits")
-        xmlMaxBits.text = self.maxBits
+        xmlMaxBits.text = str(self.maxBits)
 
         # type
         xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
@@ -199,8 +234,6 @@ class DataVariable(AbstractLeafVariable):
         return self.originalValue
 
     def getCurrentValue(self):
-        if self.isRandom():
-            self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
         return self.currentValue
 
     def setType(self, type):
@@ -208,8 +241,8 @@ class DataVariable(AbstractLeafVariable):
             self.type = type
         else:
             # Default type is Binary.
-            log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
-            from netzob.Common.MMSTD.Dictionary.Type.BinaryType import BinaryType
+            self.log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
+            from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
             type = BinaryType()
 
     def setNumberBitsAndNumberChars(self, minChars, maxChars):
@@ -217,14 +250,14 @@ class DataVariable(AbstractLeafVariable):
             self.minBits = self.type.getMinBitSize(minChars)
             self.minChars = minChars
         else:
-            log.info(_("Variable {0} (Data): minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getName()))
+            self.log.info(_("Variable {0} (Data): minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getName()))
             self.minBits = 0
             self.minChars = 0
         if maxChars is not None and maxChars >= minChars:
             self.maxBits = self.type.getMaxBitSize(maxChars)
             self.maxChars = maxChars
         else:
-            log.info(_("Variable {0} (Data): maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getName()))
+            self.log.info(_("Variable {0} (Data): maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getName()))
             self.maxBits = self.minBits
             self.maxChars = self.minChars
 
@@ -264,7 +297,7 @@ class DataVariable(AbstractLeafVariable):
                 Loads a data variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
-        self.log.debug(_("DataVariable's function loadFromXML is used."))
+        logging.debug(_("DataVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -275,6 +308,20 @@ class DataVariable(AbstractLeafVariable):
                 originalValue = xmlOriginalValue.text
             else:
                 originalValue = None
+
+            # mutable
+            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
+            if xmlMutable is not None:
+                mutable = xmlMutable.text == "True"
+            else:
+                mutable = True
+
+            # random
+            xmlRandom = xmlRoot.find("{" + namespace + "}random")
+            if xmlRandom is not None:
+                random = xmlRandom.text == "True"
+            else:
+                random = False
 
             # minBits
             xmlMinBits = xmlRoot.find("{" + namespace + "}minBits")
@@ -288,7 +335,7 @@ class DataVariable(AbstractLeafVariable):
             if xmlMaxBits is not None:
                 maxBits = int(xmlMaxBits.text)
             else:
-                maxBits = MAX_BITS
+                maxBits = DataVariable.MAX_BITS
 
             # type
             xmlType = xmlRoot.find("{" + namespace + "}type")
@@ -297,8 +344,8 @@ class DataVariable(AbstractLeafVariable):
                 if type is None:
                     return None
             else:
-                log.error(_("No type specified for this variable in the xml file."))
+                logging.error(_("No type specified for this variable in the xml file."))
                 return None
 
-            return DataVariable(id, name, originalValue, type, minBits, maxBits)
+            return DataVariable(xmlID, xmlName, mutable, random, originalValue, type, minBits, maxBits)
         return None

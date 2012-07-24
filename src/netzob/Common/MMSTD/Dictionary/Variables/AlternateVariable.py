@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
 from gettext import gettext as _
+from lxml import etree
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -40,7 +41,8 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable import AbstractNodeVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import AbstractNodeVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import AbstractVariable
 
 
 class AlternateVariable(AbstractNodeVariable):
@@ -48,15 +50,38 @@ class AlternateVariable(AbstractNodeVariable):
             A data variable defined in a dictionary which is a logical or of several variables.
     """
 
-    def __init__(self, id, name, children=None):
+    TYPE = "AlternateVariable"
+
+    def __init__(self, id, name, mutable, random, children=None):
         """Constructor of AlternateVariable:
         """
-        AbstractNodeVariable.__init__(self, id, name, children)
+        AbstractNodeVariable.__init__(self, id, name, mutable, random, children)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AlternateVariable.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def getType(self):
+        """getType:
+        """
+        return AlternateVariable.TYPE
+
+    def getDescription(self, processingToken):
+        """getDescription:
+        """
+        values = []
+        for child in self.children:
+            values.append(child.getDescription(processingToken))
+        return "[ALT] " + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+        """
+        values = []
+        for child in self.children:
+            values.append(child.getUncontextualizedDescription())
+        return "[ALT] " + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+
     def isDefined(self):
         """isDefined:
                 If one child is defined the node is defined.
@@ -116,6 +141,14 @@ class AlternateVariable(AbstractNodeVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
 
+        # random
+        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
+        xmlRandom.text = str(self.random)
+
+        # mutable
+        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
+        xmlMutable.text = str(self.mutable)
+
         # Definition of children variables
         for child in self.children:
             child.toXML(xmlVariable, namespace)
@@ -128,13 +161,28 @@ class AlternateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
-        self.log.debug(_("AlternateVariable's function loadFromXML is used."))
+        logging.debug(_("AlternateVariable's function loadFromXML is used."))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
+
+            # mutable
+            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
+            if xmlMutable is not None:
+                mutable = xmlMutable.text == "True"
+            else:
+                mutable = True
+
+            # random
+            xmlRandom = xmlRoot.find("{" + namespace + "}random")
+            if xmlRandom is not None:
+                random = xmlRandom.text == "True"
+            else:
+                random = False
+
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            return AlternateVariable(id, name, children)
+            return AlternateVariable(xmlID, mutable, random, xmlName, children)
         return None

@@ -40,7 +40,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.VariableManagementToken import VariableManagementToken
 
 
 class AbstractVariable:
@@ -70,7 +69,36 @@ class AbstractVariable:
         """toString:
                 For debugging purpose.
         """
-    return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, self.random, self.mutable)
+        return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, str(self.random), str(self.mutable))
+
+    @abstractmethod
+    def getType(self):
+        """getType:
+                Return the type of a variable.
+        """
+        raise NotImplementedError("The current variable doesn't support 'getType'.")
+
+    @abstractmethod
+    def getDescription(self, processingToken):
+        """getDescription:
+                Get the full description of the variable.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+                @rtype: string
+                @return: the full description of the variable.
+        """
+        raise NotImplementedError("The current variable doesn't support 'getDescription'.")
+
+    @abstractmethod
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+                Get the uncontextualized description of the variable (no use of memory or vocabulary).
+
+                @rtype: string
+                @return: the uncontextualized description of the variable.
+        """
+        raise NotImplementedError("The current variable doesn't support 'getUncontextualizedDescription'.")
 
     @abstractmethod
     def isDefined(self):
@@ -132,9 +160,6 @@ class AbstractVariable:
     def setID(self, id):
         self.id = id
 
-    def getName(self, name):
-        self.name = name
-
     def setMutable(self, mutable):
         self.mutable = mutable
 
@@ -159,7 +184,7 @@ class AbstractVariable:
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
                 @return: a variable constructed from this XML definition.
         """
-        self.log.debug(_("AbstractVariable's function loadFromXML is used."))
+        logging.debug(_("AbstractVariable's function loadFromXML is used."))
         if version == "0.1":
             # Data Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":
