@@ -44,7 +44,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.Format import Format
 import re

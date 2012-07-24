@@ -230,40 +230,40 @@ class Variable():
         if version == "0.1":
             # IPv4 Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:IPv4Variable":
-                from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
+                from netzob.Common.MMSTD.Dictionary.Variables._IPv4Variable import IPv4Variable
                 return IPv4Variable.loadFromXML(xmlRoot, namespace, version)
 
             # Word Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:WordVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._WordVariable import WordVariable
                 return WordVariable.loadFromXML(xmlRoot, namespace, version)
 
             # DecimalWord Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DecimalWordVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.DecimalWordVariable import DecimalWordVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._DecimalWordVariable import DecimalWordVariable
                 return DecimalWordVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Binary Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:BinaryVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._BinaryVariable import BinaryVariable
                 return BinaryVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Hex Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:HexVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._HexVariable import HexVariable
                 return HexVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Aggregate Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._AggregateVariable import AggregateVariable
                 return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Alternate Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._AlternateVariable import AlternateVariable
                 return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Referenced Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
+                from netzob.Common.MMSTD.Dictionary.Variables._ReferencedVariable import ReferencedVariable
                 return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)

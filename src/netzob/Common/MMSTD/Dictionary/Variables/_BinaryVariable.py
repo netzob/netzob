@@ -40,7 +40,7 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 

@@ -28,11 +28,13 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
-from lxml import etree
-import random
 from bitarray import bitarray
+from gettext import gettext as _
+from lxml import etree
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+import logging
+import random
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -40,7 +42,6 @@ from bitarray import bitarray
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
 
 
 #+---------------------------------------------------------------------------+

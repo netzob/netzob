@@ -44,7 +44,7 @@ from lxml import etree
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
+from netzob.Common.MMSTD.Dictionary._Variable import Variable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
@@ -62,7 +62,7 @@ class ReferencedVariable(Variable):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable.py')
         self.varID = variableID
 
-    def getPointedVariable(self):
+    def getPointedVariable(self, vocabulary):
         """getPointedVariable:
 
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.Variable
