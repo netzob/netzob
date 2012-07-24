@@ -68,7 +68,6 @@ class NetzobMainView(object):
         self._getObjects(self.builder, ["mainWindow", "toolbarBox",
             "mainBox", "perspectiveListStore", "perspectiveComboBox"])
         self.controller = controller
-        self.builder.connect_signals(self.controller)
         self.perspectiveDict = {}
         self.currentPerspectiveMergeID = None
         self.currentPerspectiveActionGroup = None
@@ -103,6 +102,7 @@ class NetzobMainView(object):
             ResourcesConfiguration.getStaticResources(),
             "ui",
             "mainActions.glade"))
+        mainActionsBuilder.connect_signals(self.controller)
         self.mainActionGroup = mainActionsBuilder.get_object("mainActionGroup")
         # Load menu bar and toolbar UI definitions 
         self.uiManager = Gtk.UIManager()

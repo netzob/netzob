@@ -294,17 +294,6 @@
                         </child>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn12">
-                        <property name="title" translatable="yes">Lock</property>
-                        <child>
-                          <object class="GtkCellRendererToggle" id="cellrenderertoggle1"/>
-                          <attributes>
-                            <attribute name="active">0</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>

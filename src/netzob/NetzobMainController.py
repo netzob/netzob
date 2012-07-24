@@ -73,7 +73,7 @@ class NetzobMainController(object):
 
         ### TEST CODE
         # Load third project of workspace
-        self.currentProject = self.getCurrentWorkspace().getProjects()[1]
+        self.currentProject = self.getCurrentWorkspace().getProjects()[2]
         #### TEST CODE
 
         # Initialize main view
