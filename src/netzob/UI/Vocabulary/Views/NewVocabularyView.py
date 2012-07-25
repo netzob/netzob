@@ -46,6 +46,7 @@ from collections import OrderedDict
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.Vocabulary.Controllers.NewResearchController import NewResearchController
 
 class NewVocabularyView(object):
     SYMBOLLISTSTORE_SELECTED_COLUMN = 0
@@ -86,7 +87,13 @@ class NewVocabularyView(object):
         # List of currently displayed message tables
         self.messageTableList = []
         self.selectedMessageTable = None
+        # add the netzobBegin label attribute
         self.netzobBegin = None
+        # add the researchBar
+        self.researchController = NewResearchController(self.controller)
+        self.messageTableBox.pack_end(self.researchController._view.researchBar, False , False, 0)
+        self.researchController._view.research_format.set_active(4)
+        self.researchController.hide()
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items

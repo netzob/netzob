@@ -203,35 +203,8 @@ class NetzobMainController(object):
         pass
 
     def switchWorkspace_activate_cb(self, action):
-        #open dialogbox
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "dialogbox.glade"))
-        dialog = builder2.get_object("switchWorkspace")
-        #button apply
-        applybutton = builder2.get_object("button23")
-        dialog.add_action_widget(applybutton, 0)
-        #button cancel
-        cancelbutton = builder2.get_object("button22")
-        dialog.add_action_widget(cancelbutton, 1)
-        #run the dialog window and wait for the result
-        result = dialog.run()
-
-        if (result == 0):
-            #apply
-            newWorkspacePath = dialog.get_current_folder()
-            self.log.debug(_("Switch to the workspace {0}").format(newWorkspacePath))
-            # ++CODE HERE++
-            # SWITCH/CREATE THE WORKSPACE FOR newWorkspacePath
-            # SWITCH TO THE LAST PROJECT OPEN IN THE WORKSPACE 
-            # UPDATE VIEW/PROJECT
-            dialog.destroy()
-        if (result == 1):
-            #cancel
-            dialog.destroy()
-
+        # ++CODE HERE++
+        pass
     def quit_activate_cb(self, action):
         pass
 

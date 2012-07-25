@@ -267,7 +267,7 @@ class NewVocabularyController(object):
         pass
 
     def searchText_activate_cb(self, action):
-        pass
+        self._view.researchController.show()
 
     def environmentDep_activate_cb(self, action):
         pass
