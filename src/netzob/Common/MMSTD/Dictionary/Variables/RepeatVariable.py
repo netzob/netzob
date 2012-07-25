@@ -87,8 +87,8 @@ class RepeatVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
-    def getType(self):
-        """getType:
+    def getVariableType(self):
+        """getVariableType:
         """
         return RepeatVariable.TYPE
 

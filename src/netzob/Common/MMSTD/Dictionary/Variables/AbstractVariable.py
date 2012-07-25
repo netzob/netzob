@@ -72,8 +72,8 @@ class AbstractVariable:
         return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, str(self.random), str(self.mutable))
 
     @abstractmethod
-    def getType(self):
-        """getType:
+    def getVariableType(self):
+        """getVariableType:
                 Return the type of a variable.
         """
         raise NotImplementedError("The current variable doesn't support 'getType'.")
