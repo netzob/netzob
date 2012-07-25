@@ -2,12 +2,12 @@
   <menubar name="mainMenuBar">
     <menu action="fileMenu">
       <menuitem action="newProject" />
-      <menu action="openFromWorkspace" />
+      <menu action="openProjectFromWorkspace" />
       <menuitem action="saveProject" />
       <separator />
       <menuitem action="importProject" />
       <menuitem action="exportProject" />
-      <menu action="switchProject" />
+      <menu action="switchWorkspace" />
       <separator />
       <placeholder name="fileMenuAdditions" />
       <separator />

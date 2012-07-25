@@ -24,7 +24,7 @@
         <property name="label" translatable="yes">Simple Partitioning</property>
         <property name="tooltip" translatable="yes">Use simple partioning on selected symbol</property>
         <property name="stock_id">netzob-partitioning-simple</property>
-        <signal name="activate" handler="par" swapped="no"/>
+        <signal name="activate" handler="partitioningSimple_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -55,6 +55,7 @@
         <property name="label" translatable="yes">Concatenate Fields</property>
         <property name="tooltip" translatable="yes">Concatenate selected fields</property>
         <property name="stock_id">netzob-concat-field</property>
+        <signal name="activate" handler="concatField_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -78,6 +79,7 @@
         <property name="label" translatable="yes">Create Variable…</property>
         <property name="tooltip" translatable="yes">Create a new variable for selected field</property>
         <property name="stock_id">netzob-create-variable</property>
+        <signal name="activate" handler="createVariable_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -85,6 +87,7 @@
         <property name="label" translatable="yes">Move to another symbol</property>
         <property name="tooltip" translatable="yes">Move selected messages to another symbol</property>
         <property name="stock_id">netzob-move-to-symbol</property>
+        <signal name="activate" handler="moveMessagesToOtherSymbol_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
