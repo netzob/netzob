@@ -86,6 +86,7 @@ class NewVocabularyView(object):
         # List of currently displayed message tables
         self.messageTableList = []
         self.selectedMessageTable = None
+        self.netzobBegin = None
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -200,6 +201,7 @@ class NewVocabularyView(object):
                                   sym.getID())
         self.setSelectedSymbolFromSelectedMessageTable()
         self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
+        self.beginWithNetzob()
 
     def setSelectedSymbolFromSelectedMessageTable(self):
         if self.selectedMessageTable is None:
@@ -374,3 +376,19 @@ class NewVocabularyView(object):
 
     def getCurrentProject(self):
         return self.controller.netzob.getCurrentProject()
+
+    def beginWithNetzob(self):
+        if len (self.getCurrentProject().getVocabulary().getMessages()) == 0:
+            if self.netzobBegin == None:
+                print "begin with netzob"
+                builder2 = Gtk.Builder()
+                builder2.add_from_file(os.path.join(
+                ResourcesConfiguration.getStaticResources(),
+                "ui",
+                "beginWithNetzob.glade"))
+                self._getObjects(builder2, ["netzobBegin"])
+                self.messageTableBox.pack_start(self.netzobBegin, True, True, 0)
+
+        elif self.netzobBegin != None:
+            self.netzobBegin.destroy()
+            self.netzobBegin = None

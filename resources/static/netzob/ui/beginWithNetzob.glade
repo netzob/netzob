@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkLabel" id="netzobBegin">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="xpad">15</property>
+    <property name="label" translatable="yes">If you want to begin with Netzob, you must import messages.</property>
+  </object>
+</interface>
