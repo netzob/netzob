@@ -77,7 +77,7 @@ class AlternateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getDescription(processingToken))
-        return _("[ {0}, children:\n - ").format(self.toString()) + "\n - ".join(values)
+        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -85,7 +85,7 @@ class AlternateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getUncontextualizedDescription())
-        return _("[ {0}, children:\n - ").format(self.toString()) + "\n - ".join(values)
+        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
 
     def isDefined(self):
         """isDefined:
