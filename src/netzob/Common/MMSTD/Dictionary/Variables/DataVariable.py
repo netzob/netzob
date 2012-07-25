@@ -80,7 +80,7 @@ class DataVariable(AbstractLeafVariable):
         """toString:
                 For debugging purpose.
         """
-        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.toString(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.originalValue))
+        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.originalValue))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -288,6 +288,8 @@ class DataVariable(AbstractLeafVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
+            xmlMutable = xmlRoot.get("mutable")
+            xmlRandom = xmlRoot.get("random")
 
             # originalValue
             xmlOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
@@ -296,33 +298,19 @@ class DataVariable(AbstractLeafVariable):
             else:
                 originalValue = None
 
-            # mutable
-            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
-            if xmlMutable is not None:
-                mutable = xmlMutable.text == "True"
+            # minChars
+            xmlMinChars = xmlRoot.find("{" + namespace + "}minChars")
+            if xmlMinChars is not None:
+                minChars = int(xmlMinChars.text)
             else:
-                mutable = True
+                minChars = 0
 
-            # random
-            xmlRandom = xmlRoot.find("{" + namespace + "}random")
-            if xmlRandom is not None:
-                random = xmlRandom.text == "True"
+            # maxChars
+            xmlMaxChars = xmlRoot.find("{" + namespace + "}maxChars")
+            if xmlMaxChars is not None:
+                maxChars = int(xmlMaxChars.text)
             else:
-                random = False
-
-            # minBits
-            xmlMinBits = xmlRoot.find("{" + namespace + "}minBits")
-            if xmlMinBits is not None:
-                minBits = int(xmlMinBits.text)
-            else:
-                minBits = 0
-
-            # maxBits
-            xmlMaxBits = xmlRoot.find("{" + namespace + "}maxBits")
-            if xmlMaxBits is not None:
-                maxBits = int(xmlMaxBits.text)
-            else:
-                maxBits = DataVariable.MAX_BITS
+                maxChars = DataVariable.MAX_BITS
 
             # type
             xmlType = xmlRoot.find("{" + namespace + "}type")
@@ -333,7 +321,7 @@ class DataVariable(AbstractLeafVariable):
             else:
                 logging.error(_("No type specified for this variable in the xml file."))
                 return None
-            result = DataVariable(xmlID, xmlName, mutable, random, originalValue, type, minBits, maxBits)
+            result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, originalValue, type, minChars, maxChars)
             logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("DataVariable: loadFromXML fails"))

@@ -164,23 +164,11 @@ class ReferencedVariable(AbstractVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-
-            # mutable
-            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
-            if xmlMutable is not None:
-                mutable = xmlMutable.text == "True"
-            else:
-                mutable = True
-
-            # random
-            xmlRandom = xmlRoot.find("{" + namespace + "}random")
-            if xmlRandom is not None:
-                random = xmlRandom.text == "True"
-            else:
-                random = False
+            xmlMutable = xmlRoot.get("mutable")
+            xmlRandom = xmlRoot.get("random")
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            result = ReferencedVariable(xmlID, xmlName, mutable, random, xmlRefID)
+            result = ReferencedVariable(xmlID, xmlName, xmlMutable, xmlRandom, xmlRefID)
             logging.debug(_("ReferencedVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("ReferencedVariable: loadFromXML fails"))

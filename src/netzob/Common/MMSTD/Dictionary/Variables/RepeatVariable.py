@@ -205,22 +205,11 @@ class RepeatVariable(AbstractVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-            xmlChild = xmlRoot.findall("{" + namespace + "}variable")
+            xmlMutable = xmlRoot.get("mutable")
+            xmlRandom = xmlRoot.get("random")
+
+            xmlChild = xmlRoot.find("{" + namespace + "}variable")
             child = AbstractVariable.loadFromXML(xmlChild, namespace, version)
-
-            # mutable
-            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
-            if xmlMutable is not None:
-                mutable = xmlMutable.text == "True"
-            else:
-                mutable = True
-
-            # random
-            xmlRandom = xmlRoot.find("{" + namespace + "}random")
-            if xmlRandom is not None:
-                random = xmlRandom.text == "True"
-            else:
-                random = False
 
             # minIterations
             xmlMinIterations = xmlRoot.find("{" + namespace + "}minIterations")
@@ -236,7 +225,7 @@ class RepeatVariable(AbstractVariable):
             else:
                 maxIterations = RepeatVariable.MAX_ITERATIONS
 
-            result = RepeatVariable(xmlID, xmlName, mutable, random, child, minIterations, maxIterations)
+            result = RepeatVariable(xmlID, xmlName, xmlMutable, xmlRandom, child, minIterations, maxIterations)
             logging.debug(_("RepeatVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("RepeatVariable: loadFromXML fails"))

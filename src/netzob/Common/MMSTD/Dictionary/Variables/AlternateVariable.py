@@ -170,26 +170,14 @@ class AlternateVariable(AbstractNodeVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-
-            # mutable
-            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
-            if xmlMutable is not None:
-                mutable = xmlMutable.text == "True"
-            else:
-                mutable = True
-
-            # random
-            xmlRandom = xmlRoot.find("{" + namespace + "}random")
-            if xmlRandom is not None:
-                random = xmlRandom.text == "True"
-            else:
-                random = False
+            xmlMutable = xmlRoot.get("mutable")
+            xmlRandom = xmlRoot.get("random")
 
             children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}AbstractVariable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            result = AlternateVariable(xmlID, mutable, random, xmlName, children)
+            result = AlternateVariable(xmlID, xmlMutable, xmlRandom, xmlName, children)
             logging.debug(_("AlternateVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("AlternateVariable: loadFromXML fails"))

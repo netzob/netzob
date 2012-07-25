@@ -176,26 +176,14 @@ class AggregateVariable(AbstractNodeVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-
-            # mutable
-            xmlMutable = xmlRoot.find("{" + namespace + "}mutable")
-            if xmlMutable is not None:
-                mutable = xmlMutable.text == "True"
-            else:
-                mutable = True
-
-            # random
-            xmlRandom = xmlRoot.find("{" + namespace + "}random")
-            if xmlRandom is not None:
-                random = xmlRandom.text == "True"
-            else:
-                random = False
+            xmlMutable = xmlRoot.get("mutable")
+            xmlRandom = xmlRoot.get("random")
 
             children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}AbstractVariable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            result = AggregateVariable(xmlID, xmlName, mutable, random, children)
+            result = AggregateVariable(xmlID, xmlName, xmlMutable, xmlRandom, children)
             logging.debug(_("AggregateVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("AggregateVariable: loadFromXML fails"))
