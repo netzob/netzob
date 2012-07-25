@@ -30,12 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
-import re
-import uuid
-
-#+---------------------------------------------------------------------------+
-#| Local imports
-#+---------------------------------------------------------------------------+
 from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
@@ -44,23 +38,30 @@ from netzob.Common.Filters.Visualization.BackgroundColorFilter import \
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
     AlternateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-from netzob.Common.MMSTD.Dictionary._Variable import Variable
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.UnitSize import UnitSize
+import re
+import uuid
 
 #+---------------------------------------------------------------------------+
-#| Field:
-#|     Class definition of a field
+#| Local imports
 #+---------------------------------------------------------------------------+
+
+
 class Field(object):
+    """Field:
+            Class definition of a field.
+    """
 
     #+-----------------------------------------------------------------------+
     #| Constructor
@@ -335,7 +336,7 @@ class Field(object):
                 field.setColor(field_color)
 
             if xmlRoot.find("{" + namespace + "}variable") is not None:
-                var = Variable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
+                var = AbstractVariable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
                 field.setVariable(var)
 
             return field

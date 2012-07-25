@@ -53,7 +53,7 @@ class RepeatVariable(AbstractVariable):
     MAX_ITERATIONS = 10
     TYPE = "RepeatVariable"
 
-    def __init__(self, id, name, child, minIterations, maxIterations):
+    def __init__(self, id, name, mutable, random, child, minIterations, maxIterations):
         """Constructor of RepeatVariable:
                 Each treatment will be repeated at most maxIterations time.
                 Each function will call once by iteration its equivalent in the class on the children.
@@ -67,7 +67,7 @@ class RepeatVariable(AbstractVariable):
                 @type maxIterations: integer
                 @param maxIterations: the maximum number of iteration each treatment will be repeated.
         """
-        AbstractVariable.__init__(self, id, name)
+        AbstractVariable.__init__(self, id, name, mutable, random)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.RepeatVariable.py')
         if child is not None:
             self.child = child

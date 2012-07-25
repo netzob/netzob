@@ -52,13 +52,12 @@ class ReferencedVariable(AbstractVariable):
 
     TYPE = "ReferencedVariable"
 
-    def __init__(self, id, name, pointedID, vocabulary):
+    def __init__(self, id, name, mutable, random, pointedID):
         """Constructor of ReferencedVariable:
         """
-        AbstractVariable.__init__(self, id, name)
+        AbstractVariable.__init__(self, id, name, mutable, random)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ReferencedVariable.py')
-        pointedVariable = vocabulary.getVariableByID(pointedID)
-        self.setPointedVariable(pointedVariable)
+        self.pointedID = pointedID
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -71,17 +70,17 @@ class ReferencedVariable(AbstractVariable):
     def toString(self):
         """toString:
         """
-        return _("[Referenced] {0}").format(AbstractVariable.toString(self))
+        return _("[Referenced] {0}, pointed ID: {1}").format(AbstractVariable.toString(self), str(self.pointedID))
 
     def getDescription(self, processingToken):
         """getDescription:
         """
-        return _("[{0}, pointed variable:\n - {3}]").format(self.toString(), self.pointedVariable.getDescription(processingToken))
+        return _("[{0}]").format(self.toString())
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
         """
-        return _("[{0}, pointed variable:\n - {3}]").format(self.toString(), self.pointedVariable.getUncontextualizedDescription())
+        return _("[{0}]").format(self.toString())
 
     def isDefined(self):
         return self.getPointedVariable().isDefined()
@@ -136,8 +135,9 @@ class ReferencedVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getPointedVariable(self):
-        return self.getPointedVariable()
+    def getPointedVariable(self, vocabulary):
+        variable = vocabulary.getVariableByID(self.pointedID)
+        return self.getPointedVariable(variable)
 
     def setPointedVariable(self, pointedVariable):
         self.origPointedVariable = pointedVariable
