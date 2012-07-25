@@ -48,6 +48,8 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
 from netzob.UI.Vocabulary.Controllers.NewSequenceAlignmentController import NewSequenceAlignmentController
 from netzob.UI.Vocabulary.Controllers.NewForcePartitioningController import NewForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.NewSimplePartitioningController import NewSimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.NewSmoothPartitioningController import NewSmoothPartitioningController
 
 class NewVocabularyController(object):
 
@@ -221,26 +223,6 @@ class NewVocabularyController(object):
         if self.focus.get_object("spreadsheet") == spreadsheet :
             self.focus = None
 
-    def selectiontreeview_switchSymbol_cb(self, widget):
-        if self.focus != None :
-            model, itera = widget.get_selected()
-            row = model[itera]
-            self.focus.idsymbol = row[6]
-            #set the text for label
-            self.focus.get_object("label1").set_text(row[1])
-            #set field for treeview
-            '''
-            treemessage = self.focus.get_object("treemessage")
-            column = Gtk.TreeViewColumn('Column Title', Gtk.CellRenderer(), text=0)
-            treemessage.append_column(column)
-            #add the message to the store
-            messagestore = self.focus.get_object("liststoremessage")
-            for mess in self.getCurrentProject().getVocabulary().getMessages():
-                m = messagestore.append()
-                messagestore.set(m,0,mess)
-            '''
-
-        #reste a switcher les messages du treeview
 
     def button_focusview_cb(self, widget, builder):
         self.focus = builder
@@ -256,10 +238,12 @@ class NewVocabularyController(object):
         force_controller.run()
 
     def partitioningSimple_activate_cb(self, action):
-        pass
+        simple_controller = NewSimplePartitioningController(self)
+        simple_controller.run()
 
     def partitioningSmooth_activate_cb(self, action):
-        pass
+        smooth_controller = NewSmoothPartitioningController(self)
+        smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):
         pass

@@ -386,8 +386,8 @@ class NewVocabularyView(object):
                 ResourcesConfiguration.getStaticResources(),
                 "ui",
                 "beginWithNetzob.glade"))
-                self._getObjects(builder2, ["netzobBegin"])
-                self.messageTableBox.pack_start(self.netzobBegin, True, True, 0)
+                self.netzobBegin = builder2.get_object("netzobBegin")
+                self.messageTableBox.pack_start(self.netzobBegin, True , True, 0)
 
         elif self.netzobBegin != None:
             self.netzobBegin.destroy()

@@ -201,6 +201,7 @@
               <object class="GtkLabel" id="symbolListLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="double_buffered">False</property>
                 <property name="label" translatable="yes">Symbols</property>
               </object>
               <packing>
@@ -310,6 +311,7 @@
             </child>
             <child>
               <object class="GtkToolbar" id="symbolListToolbar">
+                <property name="width_request">270</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -501,6 +503,7 @@
               <object class="GtkLabel" id="propertiesLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="double_buffered">False</property>
                 <property name="label" translatable="yes">Properties</property>
               </object>
               <packing>

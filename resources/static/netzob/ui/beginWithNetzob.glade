@@ -4,7 +4,8 @@
   <object class="GtkLabel" id="netzobBegin">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="xpad">15</property>
-    <property name="label" translatable="yes">If you want to begin with Netzob, you must import messages.</property>
+    <property name="hexpand">True</property>
+    <property name="vexpand">True</property>
+    <property name="label" translatable="yes">To begin with Netzob, you must import or capture messages.</property>
   </object>
 </interface>
