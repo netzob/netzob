@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
 import logging
 import string
 
@@ -63,7 +62,7 @@ class WordType(AbstractWordType):
             if generationStrategy == "random":
                 value = self.generateRandomString(string.printable, minSize, maxSize)
                 break
-        return self.type2bin(value)
+        return self.str2bin(value)
 
-    def toString(self):
+    def getType(self):
         return "Word"

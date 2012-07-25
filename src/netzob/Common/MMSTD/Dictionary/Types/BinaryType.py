@@ -29,7 +29,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from gettext import gettext as _
 import logging
 import random
 
@@ -42,7 +41,6 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class BinaryType(AbstractType):
@@ -70,11 +68,18 @@ class BinaryType(AbstractType):
                     else:
                         value.append(False)
                 break
-        return self.type2bin(value)
+        return self.str2bin(value)
 
-    def type2bin(self, typeValue):
-        if typeValue is not None:
-            return bitarray(typeValue)
+    def str2bin(self, stri):
+        if stri is not None:
+            bina = bitarray(stri)
+            return bina
+        else:
+            return None
+
+    def bin2str(self, bina):
+        if bina is not None:
+            return bina.to01()
         else:
             return None
 
@@ -87,5 +92,5 @@ class BinaryType(AbstractType):
     def getMinBitSize(self, nbChars):
         return nbChars
 
-    def toString(self):
+    def getType(self):
         return "Binary"

@@ -74,7 +74,7 @@ class DataVariable(AbstractLeafVariable):
         self.setType(type)
         self.setNumberBitsAndNumberChars(minChars, maxChars)
         self.setOriginalValue(originalValue)
-        self.setCurrentValue(originalValue)
+        self.currentValue = self.originalValue
 
     def toString(self):
         """toString:
@@ -210,7 +210,7 @@ class DataVariable(AbstractLeafVariable):
         # originalValue (can be None)
         if self.originalValue is not None:
             xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
-            xmlOriginalValue.text = str(self.originalValue)
+            xmlOriginalValue.text = self.type.bin2str(self.originalValue)
 
         # minBits
         xmlMinBits = etree.SubElement(xmlVariable, "{" + namespace + "}minBits")
@@ -222,7 +222,7 @@ class DataVariable(AbstractLeafVariable):
 
         # type
         xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
-        xmlType.text = self.type.toString()
+        xmlType.text = self.type.getType()
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -265,7 +265,7 @@ class DataVariable(AbstractLeafVariable):
         if originalValue is not None:
             size = self.type.getBitSize(originalValue)
             if size >= self.minBits and size <= self.maxBits:
-                self.originalValue = self.type.type2bin(originalValue)
+                self.originalValue = self.type.str2bin(originalValue)
             else:
                 self.originalValue = None
                 self.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
@@ -273,20 +273,7 @@ class DataVariable(AbstractLeafVariable):
             self.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))
 
     def setCurrentValue(self, currentValue):
-        valueSet = False
-        if currentValue is not None:
-            size = self.type.getBitSize(currentValue)
-            if size >= self.minBits and size <= self.maxBits:
-                self.currentValue = self.type.type2bin(currentValue)
-                self.setDefined(True)
-                valueSet = True
-            else:
-                self.info(_("Variable {0} (Data): The given current value has an inappropriate size.").format(self.getName()))
-        else:
-            self.info(_("Variable {0} (Data): The given current value is None.").format(self.getName()))
-        if not valueSet:
-            self.currentValue = None
-            self.setDefined(False)
+        self.currentValue = currentValue
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

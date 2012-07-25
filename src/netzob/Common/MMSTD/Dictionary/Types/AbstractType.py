@@ -71,16 +71,30 @@ class AbstractType():
         raise NotImplementedError(_("The current type does not implement 'generateValue'."))
 
     @abstractmethod
-    def type2bin(self, typeValue):
-        """type2bin:
-                Transform a type value (string for a word, integer for a number...) in a binary value.
+    def str2bin(self, stri):
+        """str2bin:
+                Transform a string type value (string for a word, str(integer)...) in a binary value.
+                Must be the bin2str's inverse.
 
-                @type typeValue: linked to the instance of Type.
-                @param typeValue: the original value in the authentic type format.
+                @type stri: string
+                @param stri: the original value in an appropriate string format.
                 @rtype: bitarray
-                @return: the value in binary format.
+                @return: the value in bitarray.
         """
-        raise NotImplementedError(_("The current type does not implement 'type2bin'."))
+        raise NotImplementedError(_("The current type does not implement 'str2bin'."))
+
+    @abstractmethod
+    def bin2str(self, bina):
+        """bin2str:
+                Transform a binary type value (bitarray) in an appropriate string format.
+                Must be the str2bin's inverse.
+
+                @type bina: bitarray
+                @param bina: the original value in bitarray format.
+                @rtype: string
+                @return: the value in string.
+        """
+        raise NotImplementedError(_("The current type does not implement 'bin2str'."))
 
     @abstractmethod
     def getBitSize(self, typeValue):
@@ -118,14 +132,14 @@ class AbstractType():
         """
         raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
 
-    def toString(self):
-        """toString:
+    def getType(self):
+        """getType:
                 Return a string description of the current Type.
 
                 @rtype: string
                 @return: the current type in string format.
         """
-        raise NotImplementedError(_("The current type does not implement 'toString'."))
+        raise NotImplementedError(_("The current type does not implement 'getType'."))
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

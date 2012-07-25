@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
+from bitarray import bitarray
 import logging
 import random
 
@@ -40,7 +40,6 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
 
 
@@ -64,11 +63,18 @@ class IntegerType(AbstractType):
             if generationStrategy == "random":
                 value = random.randint(10 ** (minSize - 1), (10 ** maxSize) - 1)
                 break
-        return self.type2bin(value)
+        return self.str2bin(value)
 
-    def type2bin(self, typeValue):
-        if typeValue is not None:
-            return TypeConvertor.int2bin(typeValue)
+    def str2bin(self, stri):
+        if stri is not None:
+            bina = bitarray(bin(stri)[2:])
+            return bina
+        else:
+            return None
+
+    def bin2str(self, bina):
+        if bina is not None:
+            return str(int(bina.to01(), 2))  # Transform from a base 2 to a base 10 integer and then translate it in string.
         else:
             return None
 
@@ -81,5 +87,5 @@ class IntegerType(AbstractType):
     def getMinBitSize(self, nbChars):
         return self.getBitSize(10 ** (nbChars - 1))
 
-    def toString(self):
+    def getType(self):
         return "Integer"

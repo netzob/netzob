@@ -216,4 +216,3 @@ class AbstractVariable:
             logging.debug(_("AbstractVariable: loadFromXML ]"))
         else:
             logging.debug(_("Version != 0.1"))
-
