@@ -67,14 +67,11 @@ class NetzobMainController(object):
 
         # Check dependencies
         if not DepCheck.checkRequiredDependency():
-            self.log.fatal("Netzob could not start because some of its" +
-                     "required dependencies were not found.")
+            self.log.fatal("Netzob could not start because some of its required dependencies were not found.")
             sys.exit()
 
-        ### TEST CODE
-        # Load third project of workspace
-        self.currentProject = self.getCurrentWorkspace().getProjects()[2]
-        #### TEST CODE
+        # Fetch last loaded project
+        self.currentProject = self.getCurrentWorkspace().getLastProject()
 
         # Initialize main view
         self.view = NetzobMainView(self)
@@ -182,7 +179,7 @@ class NetzobMainController(object):
             newProjectName = entry.get_text()
             self.log.debug(_("Create new project {0}").format(newProjectName))
             # ++CODE HERE++
-            # CREATE PROJECT with the name of 
+            # CREATE PROJECT with the name of
             # SWITCH TO THIS PROJECT : self.switchProject(idNewProject)
             dialog.destroy()
         if (result == 1):
@@ -223,7 +220,7 @@ class NetzobMainController(object):
             self.log.debug(_("Switch to the workspace {0}").format(newWorkspacePath))
             # ++CODE HERE++
             # SWITCH/CREATE THE WORKSPACE FOR newWorkspacePath
-            # SWITCH TO THE LAST PROJECT OPEN IN THE WORKSPACE 
+            # SWITCH TO THE LAST PROJECT OPEN IN THE WORKSPACE
             # UPDATE VIEW/PROJECT
             dialog.destroy()
         if (result == 1):

@@ -41,11 +41,11 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from collections import OrderedDict
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+
 
 class NewVocabularyView(object):
     SYMBOLLISTSTORE_SELECTED_COLUMN = 0
@@ -75,12 +75,12 @@ class NewVocabularyView(object):
             "ui",
             "VocabularyView.glade"))
         self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
-            "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
-            "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
-            "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
-            "fieldPropertiesListstore", "messageTableBox", "symbolListTreeView",
-            "symbolListTreeViewSelection"
-            ])
+                                        "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
+                                        "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
+                                        "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
+                                        "fieldPropertiesListstore", "messageTableBox", "symbolListTreeView",
+                                        "symbolListTreeViewSelection"
+                                        ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
         # List of currently displayed message tables
@@ -166,7 +166,7 @@ class NewVocabularyView(object):
         if self.selectedMessageTable is not None:
             self.selectedMessageTable.setSelected(False)
         selectedMessageTable.setSelected(True)
-        # Update current selected message table and 
+        # Update current selected message table and
         self.selectedMessageTable = selectedMessageTable
         self.setSelectedSymbolFromSelectedMessageTable()
 
@@ -186,8 +186,12 @@ class NewVocabularyView(object):
     def updateSymbolList(self):
         """Updates the symbol list of the left panel, preserving the current
         selection"""
-        print "Update sym list"
-        symbolList = self.getCurrentProject().getVocabulary().getSymbols()
+
+        # Retrieve symbols of the current project vocabulary (if one selected)
+        symbolList = []
+        if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
+            symbolList.extend(self.getCurrentProject().getVocabulary().getSymbols())
+
         checkedMessagesIDList = []
         for row in self.symbolListStore:
             if (row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]):
@@ -219,7 +223,7 @@ class NewVocabularyView(object):
         @type  message: string
         @param message: number of message in the symbol
         @type  field: string
-        @param field: number of field in the symbol   
+        @param field: number of field in the symbol
         @type  image: string
         @param image: image of the lock button (freeze partitioning)"""
         i = self.symbolListStore.append()
