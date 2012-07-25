@@ -120,7 +120,6 @@ class AsciiAlign():
                 field = Field("Field 0", 0, "(.{, })", symbol)
                 # Use the default protocol type for representation
                 field.setFormat(self.defaultFormat)
-                symbol.addField(field)
 
         alignment.alignSymbols(self.symbols, self.project)
         self.symbols = alignment.getLastResult()

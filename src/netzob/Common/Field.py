@@ -88,15 +88,16 @@ class Field(object):
         self.encapsulation_level = 0
         self.description = ""
         self.color = "black"
-        self.variable = self.getDefaultVariable()
+        self.symbol.addField(self, index)
 
         # Interpretation attributes
         self.format = Format.HEX
         self.unitSize = UnitSize.NONE
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
-
         self.mathematicFilters = []
+
+        self.variable = self.getDefaultVariable()
 
     def getEncodedVersionOfTheRegex(self):
         """getEncodedVersionOfTheRegex:
@@ -145,7 +146,7 @@ class Field(object):
         """
         if self.isStatic():
             value = TypeConvertor.netzobRawToBitArray(self.getRegex())
-            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(), value, len(value), len(value))  # A static field is neither mutable nor random.
+            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(), value.to01(), len(value), len(value))  # A static field is neither mutable nor random.
             return variable
         else:
             # The default variable is an alternative of all the possibilities (in binary type)
@@ -157,10 +158,9 @@ class Field(object):
 
             variable = AggregateVariable(uuid.uuid4(), "Aggregate", True, False, None)
             alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
-            logging.debug("Domain: {0}".format(str(domain)))
+            logging.debug("Symbol {0}, Field {1}, Domain {2}".format(self.symbol.getName(), self.getName(), str(domain)))
             for d in domain:
-                value = TypeConvertor.bin2string(d)
-                child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(), value, len(value), len(value))
+                child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(), d.to01(), len(d), len(d))
                 alternateVar.addChild(child)
             variable.addChild(alternateVar)
             return variable
@@ -250,6 +250,7 @@ class Field(object):
                 @type namespace: string
                 @param namespace: a precision for the xml subtree.
         """
+        logging.debug(_("[ Field {0}: toXML:").format(self.getName()))
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
         xmlField.set("index", str(self.getIndex()))
@@ -288,6 +289,8 @@ class Field(object):
 
         if self.getVariable() is not None:
             self.getVariable().toXML(xmlField, namespace)
+        # logging.debug(_("Field {0}: toXML: {1} ]").format(self.getName(), etree.tostring(root)))  # a bit heavy
+        logging.debug(_("Field {0}: toXML: ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Getters                                                                   |
@@ -377,7 +380,7 @@ class Field(object):
     @staticmethod
     def createDefaultField(symbol):
         """createDefaultField:
-                Creates and returns a default empty field.
+                Creates and returns the default field.
 
                 @rtype: netzob.Commons.Field.Field
                 @return: the built field.
@@ -402,6 +405,8 @@ class Field(object):
                 @return: the built field.
         """
         if version == "0.1":
+            # logging.debug(_("[ Field: loadFromXML: {0}").format(etree.tostring(xmlRoot)))  # a bit heavy
+            logging.debug(_("[ Field: loadFromXML:").format())
             field_name = xmlRoot.get("name")
             field_index = int(xmlRoot.get("index"))
             field_regex = ""
@@ -442,6 +447,7 @@ class Field(object):
                 var = AbstractVariable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
                 field.setVariable(var)
 
+            logging.debug(_("Field: loadFromXML: {0} ]").format(field.getName()))
             return field
 
         return None

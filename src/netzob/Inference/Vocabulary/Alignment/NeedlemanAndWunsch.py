@@ -84,7 +84,6 @@ class NeedlemanAndWunsch(object):
             field = Field.createDefaultField(symbol)
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
-            symbol.addField(field)
         else:
             symbol.cleanFields()
             # We execute the alignment
@@ -100,7 +99,6 @@ class NeedlemanAndWunsch(object):
                 field = Field.createDefaultField(symbol)
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
-                symbol.addField(field)
 
     #+-----------------------------------------------------------------------+
     #| align
@@ -238,7 +236,6 @@ class NeedlemanAndWunsch(object):
             field = Field("Field " + str(iField), iField, regexElt, symbol)
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
-            symbol.addField(field)
             iField = iField + 1
         if len(symbol.getFields()) >= 100:
             raise NetzobException("This Python version only supports 100 named groups in regex")

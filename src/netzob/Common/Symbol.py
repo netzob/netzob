@@ -77,6 +77,7 @@ class Symbol(AbstractSymbol):
         AbstractSymbol.__init__(self, "Symbol")
         self.id = id
         self.name = name
+        self.project = project
         self.alignment = ""
         self.score = 0.0
         self.messages = []
@@ -96,10 +97,13 @@ class Symbol(AbstractSymbol):
         self.endianess = Endianess.BIG
 
         # Clean the symbol
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-        field = Field.createDefaultField(self)
+        self.reinitFields()
+
+    def reinitFields(self):
+        self.fields = []
+        aFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        field = Field.createDefaultField(self)  # Only one default field by symbol.
         field.setFormat(aFormat)
-        self.addField(field)
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -147,7 +151,6 @@ class Symbol(AbstractSymbol):
             field = Field(_("Name"), 0, "(.{,})", self)
             field.setFormat(aFormat)
             field.setColor("blue")
-            self.addField(field)
             return
 
         # Else, we add (maxNbSplit + maxNbSplit - 1) fields
@@ -157,12 +160,10 @@ class Symbol(AbstractSymbol):
             field = Field(_("Name"), iField, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
-            self.addField(field)
             iField += 1
             field = Field("__sep__", iField, self.getRawDelimiter(), self)
             field.setFormat(aFormat)
             field.setColor("black")
-            self.addField(field)
         self.popField()
 
     #+----------------------------------------------
@@ -246,7 +247,6 @@ class Symbol(AbstractSymbol):
                     iField += 1
                     field = Field(_("Name"), iField, currentStaticField, self)
                     field.setColor("black")
-                    self.addField(field)
                     # We start a new field
                     currentStaticField = ""
                     nbElements = 1
@@ -256,7 +256,6 @@ class Symbol(AbstractSymbol):
                     iField += 1
                     field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
                     field.setColor("blue")
-                    self.addField(field)
                     # We start a new field
                     currentStaticField = resultString[it]
                     nbElements = 1
@@ -273,7 +272,6 @@ class Symbol(AbstractSymbol):
         else:
             field = Field(_("Name"), iField, currentStaticField, self)
             field.setColor("black")
-        self.addField(field)
 
     #+----------------------------------------------
     #| freezePartitioning:
@@ -359,8 +357,11 @@ class Symbol(AbstractSymbol):
             return []
 
         res = []
+        logging.debug(_("Symbol {0}, Field {1}, Messages {2}").format(self.getName(), field.getName(), str(self.getMessages())))
         for message in self.getMessages():
+            logging.debug("Message data: " + str(message.getData()))
             messageTable = message.applyAlignment()
+            logging.debug("Message table: " + str(messageTable) + " index " + str(field.getIndex()))
             messageElt = messageTable[field.getIndex()]
             if len(messageElt) > 0 and not messageElt in res:
                 res.append(messageElt)
@@ -901,9 +902,8 @@ class Symbol(AbstractSymbol):
     def getVariables(self):
         result = []
         for field in self.getFields():
-            if not field.isStatic():
-                if field.getVariable() is not None:
-                    result.append(field.getVariable())
+            if field.getVariable() is not None:
+                result.append(field.getVariable())
         return result
 
     #+----------------------------------------------
@@ -1136,9 +1136,7 @@ class Symbol(AbstractSymbol):
         self.cleanFields()
 
         # Create a single field
-        field = Field.createDefaultField()
-        field.setFormat(aFormat)
-        self.addField(field)
+        field = self.reinitFields(self)
 
     def getValueToSend(self, inverse, vocabulary, memory):
         result = self.getRoot().getValueToSend(inverse, vocabulary, memory)
@@ -1318,8 +1316,6 @@ class Symbol(AbstractSymbol):
                 xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
                 for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
                     field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
-                    if field is not None:
-                        symbol.addField(field)
 
             return symbol
         return None
