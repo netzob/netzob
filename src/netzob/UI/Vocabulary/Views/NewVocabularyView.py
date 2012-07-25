@@ -122,15 +122,13 @@ class NewVocabularyView(object):
         return self._uiDefinition
 
     ## View manipulation methods
-    def update(self):
+    def updateLeftPanel(self):
         self.updateSymbolList()
         self.updateSymbolListToolbar()
         self.updateProjectProperties()
-        # ++CODE HERE++
-        # UNCOMMENT TO SEE MODIFICATION
-        """self.updateSymbolProperties()
+        self.updateSymbolProperties()
         self.updateMessageProperties()
-        self.updateFieldProperties()"""
+        self.updateFieldProperties()
 
     ## Message Tables management
     def addMessageTable(self):

@@ -55,7 +55,7 @@ class NewVocabularyController(object):
         self.netzob = netzob
         self._view = NewVocabularyView(self)
         self.log = logging.getLogger(__name__)
-        self.view.update()
+        self.view.updateLeftPanel()
 
     @property
     def view(self):
@@ -110,7 +110,7 @@ class NewVocabularyController(object):
             currentProject = self.netzob.getCurrentProject()
             newSymbol = Symbol(newSymbolId, newSymbolName, currentProject)
             currentProject.getVocabulary().addSymbol(newSymbol)
-            self.view.update()
+            self.view.updateLeftPanel()
             dialog.destroy()
         if (result == 1):
             #cancel
@@ -140,7 +140,7 @@ class NewVocabularyController(object):
         currentProject.getVocabulary().addSymbol(concatSymbol)
         #refresh view
         self.view.updateMessageTableDisplayingSymbols([concatSymbol])
-        self.view.update()
+        self.view.updateLeftPanel()
 
     #possible que si on selectionne un unique symbol
     def renameSymbolButton_clicked_cb(self, widget):
@@ -172,7 +172,7 @@ class NewVocabularyController(object):
             self.log.debug(_("Renamed symbol {0} to {1}").format(symbol.getName(), newSymbolName))
             currentProject = self.netzob.getCurrentProject()
             currentProject.getVocabulary().getSymbolByID(symbol.getID()).setName(newSymbolName)
-            self.view.update()
+            self.view.updateLeftPanel()
             self.view.updateMessageTableDisplayingSymbols([symbol])
             dialog.destroy()
         if (result == 1):
@@ -189,7 +189,7 @@ class NewVocabularyController(object):
             currentVocabulary.removeSymbol(sym)
             self.view.emptyMessageTableDisplayingSymbols([sym])
         # Update view
-        self.view.update()
+        self.view.updateLeftPanel()
 
     def newMessageTableButton_clicked_cb(self, toolButton):
         self.view.addMessageTable()
