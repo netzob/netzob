@@ -160,7 +160,7 @@ class ReferencedVariable(AbstractVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
-        logging.debug(_("ReferencedVariable's function loadFromXML is used."))
+        logging.debug(_("[ ReferencedVariable: loadFromXML:"))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -180,5 +180,8 @@ class ReferencedVariable(AbstractVariable):
                 random = False
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            return ReferencedVariable(xmlID, xmlName, mutable, random, xmlRefID)
+            result = ReferencedVariable(xmlID, xmlName, mutable, random, xmlRefID)
+            logging.debug(_("ReferencedVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            return result
+        logging.debug(_("ReferencedVariable: loadFromXML fails"))
         return None

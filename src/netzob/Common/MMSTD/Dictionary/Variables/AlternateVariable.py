@@ -166,7 +166,7 @@ class AlternateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
-        logging.debug(_("AlternateVariable's function loadFromXML is used."))
+        logging.debug(_("[ AlternateVariable: loadFromXML:"))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -189,5 +189,8 @@ class AlternateVariable(AbstractNodeVariable):
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            return AlternateVariable(xmlID, mutable, random, xmlName, children)
+            result = AlternateVariable(xmlID, mutable, random, xmlName, children)
+            logging.debug(_("AlternateVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            return result
+        logging.debug(_("AlternateVariable: loadFromXML fails"))
         return None

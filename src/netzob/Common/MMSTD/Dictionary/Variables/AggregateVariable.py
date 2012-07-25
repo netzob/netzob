@@ -172,7 +172,7 @@ class AggregateVariable(AbstractNodeVariable):
         """loadFromXML:
                 Loads an aggregate variable from an XML definition.
         """
-        logging.debug(_("AggregateVariable's function loadFromXML is used."))
+        logging.debug(_("[ AggregateVariable: loadFromXML:"))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -195,5 +195,8 @@ class AggregateVariable(AbstractNodeVariable):
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            return AggregateVariable(xmlID, xmlName, mutable, random, children)
+            result = AggregateVariable(xmlID, xmlName, mutable, random, children)
+            logging.debug(_("AggregateVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            return result
+        logging.debug(_("AggregateVariable: loadFromXML fails"))
         return None

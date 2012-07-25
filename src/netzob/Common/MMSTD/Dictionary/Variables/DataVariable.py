@@ -297,7 +297,7 @@ class DataVariable(AbstractLeafVariable):
                 Loads a data variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
-        logging.debug(_("DataVariable's function loadFromXML is used."))
+        logging.debug(_("[ DataVariable: loadFromXML:"))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -346,6 +346,8 @@ class DataVariable(AbstractLeafVariable):
             else:
                 logging.error(_("No type specified for this variable in the xml file."))
                 return None
-
-            return DataVariable(xmlID, xmlName, mutable, random, originalValue, type, minBits, maxBits)
+            result = DataVariable(xmlID, xmlName, mutable, random, originalValue, type, minBits, maxBits)
+            logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            return result
+        logging.debug(_("DataVariable: loadFromXML fails"))
         return None

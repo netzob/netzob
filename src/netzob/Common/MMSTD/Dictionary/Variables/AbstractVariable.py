@@ -184,29 +184,36 @@ class AbstractVariable:
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
                 @return: a variable constructed from this XML definition.
         """
-        logging.debug(_("AbstractVariable's function loadFromXML is used."))
         if version == "0.1":
+            logging.debug(_("[ AbstractVariable: loadFromXML:"))
             # Data Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
                 return DataVariable.loadFromXML(xmlRoot, namespace, version, "IPv4")
 
             # Aggregate Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
+            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
                 return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Alternate Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
+            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
                 return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Referenced Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
+            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
                 return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Repeat Variable
-            if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RepeatVariable":
+            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RepeatVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import RepeatVariable
                 return RepeatVariable.loadFromXML(xmlRoot, namespace, version)
+
+            else:
+                logging.debug(_("xmlRoot.get(...) returns {0} which does not correspond to a true variable class.").format(xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))
+            logging.debug(_("AbstractVariable: loadFromXML ]"))
+        else:
+            logging.debug(_("Version != 0.1"))
+

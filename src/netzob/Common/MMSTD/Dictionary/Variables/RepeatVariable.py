@@ -201,7 +201,7 @@ class RepeatVariable(AbstractVariable):
                 Loads a repeat variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
         """
-        logging.debug(_("RepeatVariable's function loadFromXML is used."))
+        logging.debug(_("[ RepeatVariable: loadFromXML:"))
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
@@ -236,5 +236,8 @@ class RepeatVariable(AbstractVariable):
             else:
                 maxIterations = RepeatVariable.MAX_ITERATIONS
 
-            return RepeatVariable(xmlID, xmlName, mutable, random, child, minIterations, maxIterations)
+            result = RepeatVariable(xmlID, xmlName, mutable, random, child, minIterations, maxIterations)
+            logging.debug(_("RepeatVariable: loadFromXML successes: {0} ]").format(result.toString()))
+            return result
+        logging.debug(_("RepeatVariable: loadFromXML fails"))
         return None
