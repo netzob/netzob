@@ -66,13 +66,18 @@ class AggregateVariable(AbstractNodeVariable):
         """
         return AggregateVariable.TYPE
 
+    def toString(self):
+        """toString:
+        """
+        return _("[Aggregate] {0}").format(AbstractVariable.toString(self))
+
     def getDescription(self, processingToken):
         """getDescription:
         """
         values = []
         for child in self.children:
             values.append(child.getDescription(processingToken))
-        return "[AGG] " + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+        return _("[ {0}, children:\n - ").format(self.toString()) + "\n - ".join(values)
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -80,7 +85,7 @@ class AggregateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getUncontextualizedDescription())
-        return "[AGG]" + str(self.getName()) + "= (" + " AND ".join(values) + ")"
+        return _("[ {0}, children:\n - ").format(self.toString()) + "\n - ".join(values)
 
     def isDefined(self):
         """isDefined:

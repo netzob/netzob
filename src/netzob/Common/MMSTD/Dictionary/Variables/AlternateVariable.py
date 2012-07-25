@@ -66,13 +66,18 @@ class AlternateVariable(AbstractNodeVariable):
         """
         return AlternateVariable.TYPE
 
+    def toString(self):
+        """toString:
+        """
+        return _("[Alternate] {0}").format(AbstractVariable.toString(self))
+
     def getDescription(self, processingToken):
         """getDescription:
         """
         values = []
         for child in self.children:
             values.append(child.getDescription(processingToken))
-        return "[ALT] " + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+        return _("[ {0}, children:\n - ").format(self.toString()) + "\n - ".join(values)
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -80,7 +85,7 @@ class AlternateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getUncontextualizedDescription())
-        return "[ALT] " + str(self.getName()) + "= (" + " OR ".join(values) + ")"
+        return _("[ {0}, children:\n - ").format(self.toString()) + "\n - ".join(values)
 
     def isDefined(self):
         """isDefined:

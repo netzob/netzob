@@ -68,15 +68,20 @@ class ReferencedVariable(AbstractVariable):
         """
         return ReferencedVariable.TYPE
 
+    def toString(self):
+        """toString:
+        """
+        return _("[Referenced] {0}").format(AbstractVariable.toString(self))
+
     def getDescription(self, processingToken):
         """getDescription:
         """
-        return _("[REF] {0}= ({1}").format(self.getName(), self.pointedVariable.getDescription())
+        return _("[{0}, pointed variable:\n - {3}]").format(self.toString(), self.pointedVariable.getDescription(processingToken))
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
         """
-        return _("[REF] {0}= ({1}").format(self.getName(), self.pointedVariable.getUncontextualizedDescription())
+        return _("[{0}, pointed variable:\n - {3}]").format(self.toString(), self.pointedVariable.getUncontextualizedDescription())
 
     def isDefined(self):
         return self.getPointedVariable().isDefined()
@@ -85,7 +90,7 @@ class ReferencedVariable(AbstractVariable):
         """read:
                 The pointed variable reads the value.
         """
-        self.log.debug(_("[ {0} (Referenced): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0}: read access:").format(self.toString()))
         var = self.getPointedVariable()
         if var is not None:
             var.read(readingToken)
@@ -97,7 +102,7 @@ class ReferencedVariable(AbstractVariable):
         """write:
                 The pointed variable writes its value.
         """
-        self.log.debug(_("[ {0} (Referenced): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0}: write access:").format(self.toString()))
         var = self.getPointedVariable()
         if var is not None:
             var.write(writingToken)
@@ -109,7 +114,7 @@ class ReferencedVariable(AbstractVariable):
         """toXML:
             Create the xml tree associated to this variable.
         """
-        self.log.debug(_("[ {0} (Referenced): toXML:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0}: toXML:").format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))

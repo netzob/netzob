@@ -92,15 +92,20 @@ class RepeatVariable(AbstractVariable):
         """
         return RepeatVariable.TYPE
 
+    def toString(self):
+        """toString:
+        """
+        return _("[Repeat] {0}, iterations: ({1}, {2})").format(AbstractVariable.toString(self), str(self.minIterations), str(self.maxIterations))
+
     def getDescription(self, processingToken):
         """getDescription:
         """
-        return _("[REP] {0}= ({1}) x ({2}-{3})").format(self.getName(), self.child.getDescription(), str(self.minIterations), str(self.maxIterations))
+        return _("[{0}, child:\n - {1}]").format(self.toString(), self.child.getDescription(processingToken))
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
         """
-        return _("[REP] {0}= ({1}) x ({2}-{3})").format(self.getName(), self.child.getUncontextualizedDescription(), str(self.minIterations), str(self.maxIterations))
+        return _("[{0}, child:\n - {1}]").format(self.toString(), self.child.getUncontextualizedDescription())
 
     def isDefined(self):
         return self.child.isDefined()
@@ -109,7 +114,7 @@ class RepeatVariable(AbstractVariable):
         """read:
                 The pointed variable reads the value.
         """
-        self.log.debug(_("[ {0} (Repeat): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0}: read access:").format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
         for i in range(maxIterations):
@@ -129,7 +134,7 @@ class RepeatVariable(AbstractVariable):
         """write:
                 The pointed variable writes its value.
         """
-        self.log.debug(_("[ {0} (Repeat): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0}: write access:").format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
         for i in range(maxIterations):
@@ -150,7 +155,7 @@ class RepeatVariable(AbstractVariable):
             Creates the xml tree associated to this variable.
             Adds every child's own xml definition as xml child to this tree.
         """
-        self.log.debug(_("[ {0} (Repeat): toXML:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0}: toXML:").format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))

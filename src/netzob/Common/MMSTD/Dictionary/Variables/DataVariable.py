@@ -80,7 +80,7 @@ class DataVariable(AbstractLeafVariable):
         """toString:
                 For debugging purpose.
         """
-        return _("type: {0}, bits: ({1}, {2}), chars: ({3}, {4}), current value: {5}").format(self.type.toString(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.currentValue))
+        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.toString(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.originalValue))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -90,23 +90,23 @@ class DataVariable(AbstractLeafVariable):
         """
         return DataVariable.TYPE
 
-    def getDescription(self, processingToken):
+    def getDescription(self, writingToken):
         """getDescription:
                 Get the full description of the variable.
         """
-        return _("[DATA] {0}= (getVlue={1})").format(str(self.getName()), str(self.getValue(processingToken)))
+        return _("{0}, value: {1}").format(self.toString(), self.getValue(writingToken))
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
                 Get the uncontextualized description of the variable (no use of memory or vocabulary).
         """
-        return _("[DATA] {0}= (orig={1})").format(str(self.getName()), str(self.getOriginalValue()))
+        return self.toString()
 
     def forget(self, processingToken):
         """forget:
                 The variable forgets its value.
         """
-        self.log.debug(_("- {0} {1} (Data): value is forgotten.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("- {0}: value is forgotten.").format(self.toString()))
         processingToken.getMemory().forget(self)  # We remove the memorized value.
         self.setCurrentValue(None)  # We remove the local value.
 
@@ -114,14 +114,14 @@ class DataVariable(AbstractLeafVariable):
         """recall:
                 The variable recall its memorized value.
         """
-        self.log.debug(_("- {0} {1} (Data): value is recalled.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("- {0}: value is recalled.").format(self.toString()))
         self.setCurrentValue(processingToken.getMemory().recall(self))
 
     def memorize(self, processingToken):
         """memorize:
                 The variable memorizes its value.
         """
-        self.log.debug(_("- {0} {1} (Data): value is memorized.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("- {0}: value is memorized.").format(self.toString()))
         processingToken.getMemory().memorize(self)
 
     def learn(self, readingToken):
@@ -129,7 +129,7 @@ class DataVariable(AbstractLeafVariable):
                 The variable checks if its format complies with the read value's format.
                 If it matches, the variable learns, else it returns NOk.
         """
-        self.log.debug(_("-[ {0} {1} (Data): learn.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("-[ {0}: learn.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= self.minBits:
             if len(tmp) <= self.maxBits:
@@ -149,7 +149,7 @@ class DataVariable(AbstractLeafVariable):
         """compare:
                 The variable compares its value to the read value.
         """
-        self.log.debug(_("-[ {0} {1} (Data): compare.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("-[ {0}: compare.").format(self.toString()))
         if self.random:
             # A random variable's value can not be compared to a static value.
             self.log.debug(_("Variable is random."))
@@ -172,14 +172,14 @@ class DataVariable(AbstractLeafVariable):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
-        self.log.debug(_("-[ {0} {1} (Data): generate.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("-[ {0}: generate.").format(self.toString()))
         self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def getValue(self, writingToken):
         """getValue:
                 Returns the variable value if it has one, else it returns the memorized value.
         """
-        self.log.debug(_("-[ {0} {1} (Data): getValue.").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("-[ {0}: getValue.").format(self.toString()))
         if self.isRandom():
             self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
         if self.getCurrentValue() is not None:
@@ -193,7 +193,7 @@ class DataVariable(AbstractLeafVariable):
         """toXML:
             Creates the xml tree associated to this variable.
         """
-        self.log.debug(_("- {0} {1} (Data): toXML:").format(AbstractVariable.toString(self), self.toString()))
+        self.log.debug(_("- {0}: toXML:").format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
