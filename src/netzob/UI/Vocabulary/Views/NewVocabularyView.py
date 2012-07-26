@@ -91,7 +91,7 @@ class NewVocabularyView(object):
         self.netzobBegin = None
         # add the researchBar
         self.researchController = NewResearchController(self.controller)
-        self.messageTableBox.pack_end(self.researchController._view.researchBar, False , False, 0)
+        self.messageTableBox.pack_end(self.researchController._view.researchBar, False, False, 0)
         self.researchController._view.research_format.set_active(4)
         self.researchController.hide()
 
@@ -389,17 +389,13 @@ class NewVocabularyView(object):
         return self.controller.netzob.getCurrentProject()
 
     def beginWithNetzob(self):
-        if len (self.getCurrentProject().getVocabulary().getMessages()) == 0:
-            if self.netzobBegin == None:
-                print "begin with netzob"
-                builder2 = Gtk.Builder()
-                builder2.add_from_file(os.path.join(
-                ResourcesConfiguration.getStaticResources(),
-                "ui",
-                "beginWithNetzob.glade"))
-                self.netzobBegin = builder2.get_object("netzobBegin")
-                self.messageTableBox.pack_start(self.netzobBegin, True , True, 0)
-
-        elif self.netzobBegin != None:
-            self.netzobBegin.destroy()
-            self.netzobBegin = None
+        if self.getCurrentProject() is not None:
+            if len(self.getCurrentProject().getVocabulary().getMessages()) == 0:
+                if self.netzobBegin is None:
+                    builder2 = Gtk.Builder()
+                    builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "beginWithNetzob.glade"))
+                    self.netzobBegin = builder2.get_object("netzobBegin")
+                    self.messageTableBox.pack_start(self.netzobBegin, True, True, 0)
+            elif self.netzobBegin is not None:
+                self.netzobBegin.destroy()
+                self.netzobBegin = None
