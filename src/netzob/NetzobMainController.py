@@ -40,6 +40,7 @@ import gettext
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk
 import gi
+from netzob.Common.Project import Project
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -246,8 +247,17 @@ class NetzobMainController(object):
         pass
 
     def switchProject(self, projectPath):
-        print "START"
-        # ++CODE HERE++
-        # CHANGE CURRENTPROJECT TO idProject
-        # UPDATE VIEW : view.updateProject()
-        pass
+        """Change the current project with the project
+        declared in file projectPath. If the loading is successful
+        the view is updated
+        @param projectPath: the path to the project to load
+        @type projectPath: st
+        """
+        logging.debug("Switch to the project declared in {0}".format(projectPath))
+
+        newProject = Project.loadProject(self.currentWorkspace, projectPath)
+        if newProject is not None:
+            self.currentProject = newProject
+            self.view.updateProject()
+        else:
+            logging.warning("Impossible to load the requested project.")
