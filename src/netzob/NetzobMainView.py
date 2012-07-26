@@ -172,8 +172,11 @@ class NetzobMainView(object):
             perspective.view.getMenuToolbarUIDefinition())
 
     def updateProject(self):
+        """Update the view when the current project has changed"""
         for key in self.perspectiveDict:
-            self.perspectiveDict[key].update()
+            (pDescription, pController) = self.perspectiveDict[key]
+            if pController is not None:
+                pController.restart()
 
     def updateSwitchProjectMenu(self, listOfProjectsNameAndPath):
         """Update the menu"""
