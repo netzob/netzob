@@ -68,7 +68,7 @@ class NewVocabularyController(object):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")
         self._view = NewVocabularyView(self)
-        self.view.update()
+        self.view.updateLeftPanel()
 
     ## Symbol List toolbar callbacks
     def selectAllSymbolsButton_clicked_cb(self, toolButton):
@@ -228,7 +228,6 @@ class NewVocabularyController(object):
         #refresh focus
         if self.focus.get_object("spreadsheet") == spreadsheet:
             self.focus = None
-
 
     def selectiontreeview_switchSymbol_cb(self, widget):
         if self.focus is not None:
