@@ -251,7 +251,7 @@ class NetzobMainController(object):
         declared in file projectPath. If the loading is successful
         the view is updated
         @param projectPath: the path to the project to load
-        @type projectPath: st
+        @type projectPath: str
         """
         logging.debug("Switch to the project declared in {0}".format(projectPath))
 
