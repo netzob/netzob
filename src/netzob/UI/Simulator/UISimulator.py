@@ -77,6 +77,10 @@ class UISimulator:
         self.log = logging.getLogger('netzob.Simuator.UISimulator.py')
         self.log.warn(_("The simulation process cannot be saved for the moment"))
 
+    def restart(self):
+        """Restart the view"""
+        logging.debug("Restart the UISimulator")
+
     #+----------------------------------------------
     #| Constructor:
     #| @param netzob: the netzob main class

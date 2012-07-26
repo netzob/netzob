@@ -49,6 +49,7 @@ from netzob.Common.Symbol import Symbol
 from netzob.UI.Vocabulary.Controllers.NewSequenceAlignmentController import NewSequenceAlignmentController
 from netzob.UI.Vocabulary.Controllers.NewForcePartitioningController import NewForcePartitioningController
 
+
 class NewVocabularyController(object):
 
     def __init__(self, netzob):
@@ -60,6 +61,12 @@ class NewVocabularyController(object):
     @property
     def view(self):
         return self._view
+
+    def restart(self):
+        """Restart the view"""
+        logging.debug("Restarting the vocabulary view")
+        self._view = NewVocabularyView(self)
+        self.view.update()
 
     ## Symbol List toolbar callbacks
     def selectAllSymbolsButton_clicked_cb(self, toolButton):
@@ -213,16 +220,15 @@ class NewVocabularyController(object):
         self.focus = self.addSpreadSheet("empty", 0)
         self.focus.idsymbol = None
 
-
     def button_closeview_cb(self, widget, spreadsheet):
         spreadsheet.destroy()
 
         #refresh focus
-        if self.focus.get_object("spreadsheet") == spreadsheet :
+        if self.focus.get_object("spreadsheet") == spreadsheet:
             self.focus = None
 
     def selectiontreeview_switchSymbol_cb(self, widget):
-        if self.focus != None :
+        if self.focus is not None:
             model, itera = widget.get_selected()
             row = model[itera]
             self.focus.idsymbol = row[6]

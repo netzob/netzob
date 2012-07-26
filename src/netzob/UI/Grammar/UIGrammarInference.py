@@ -81,6 +81,10 @@ class UIGrammarInference:
     def save(self, file):
         pass
 
+    def restart(self):
+        """Restart the view"""
+        logging.debug("Restart the Grammar")
+
     #+----------------------------------------------
     #| Constructor:
     #| @param netzob: the netzob main class
