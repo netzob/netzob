@@ -65,7 +65,8 @@ class AbstractNodeVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
     def getChildren(self):
         if self.isRandom():
-            self.children = random.shuffle(self.children)
+            if self.children is not None:
+                random.shuffle(self.children)
         return self.children
 
     def addChild(self, child):

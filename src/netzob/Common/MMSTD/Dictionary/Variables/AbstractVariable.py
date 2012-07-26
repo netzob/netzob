@@ -69,7 +69,7 @@ class AbstractVariable:
         """toString:
                 For debugging purpose.
         """
-        return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, str(self.random), str(self.mutable))
+        return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, str(self.mutable), str(self.random))
 
     @abstractmethod
     def getVariableType(self):

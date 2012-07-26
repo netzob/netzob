@@ -282,8 +282,8 @@ class DataVariable(AbstractLeafVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-            xmlMutable = xmlRoot.get("mutable")
-            xmlRandom = xmlRoot.get("random")
+            xmlMutable = xmlRoot.get("mutable") == "True"
+            xmlRandom = xmlRoot.get("random") == "True"
 
             # type
             type = None

@@ -199,8 +199,8 @@ class RepeatVariable(AbstractVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-            xmlMutable = xmlRoot.get("mutable")
-            xmlRandom = xmlRoot.get("random")
+            xmlMutable = xmlRoot.get("mutable") == "True"
+            xmlRandom = xmlRoot.get("random") == "True"
 
             xmlChild = xmlRoot.find("{" + namespace + "}variable")
             child = AbstractVariable.loadFromXML(xmlChild, namespace, version)

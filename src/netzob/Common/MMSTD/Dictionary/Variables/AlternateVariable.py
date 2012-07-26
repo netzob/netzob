@@ -52,7 +52,7 @@ class AlternateVariable(AbstractNodeVariable):
 
     TYPE = "AlternateVariable"
 
-    def __init__(self, id, name, mutable, random, children=None):
+    def __init__(self, id, name, mutable, random, children=[]):
         """Constructor of AlternateVariable:
         """
         AbstractNodeVariable.__init__(self, id, name, mutable, random, children)
@@ -77,7 +77,7 @@ class AlternateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getDescription(processingToken))
-        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -85,7 +85,7 @@ class AlternateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getUncontextualizedDescription())
-        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
     def isDefined(self):
         """isDefined:
@@ -164,14 +164,14 @@ class AlternateVariable(AbstractNodeVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-            xmlMutable = xmlRoot.get("mutable")
-            xmlRandom = xmlRoot.get("random")
+            xmlMutable = xmlRoot.get("mutable") == "True"
+            xmlRandom = xmlRoot.get("random") == "True"
 
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            result = AlternateVariable(xmlID, xmlMutable, xmlRandom, xmlName, children)
+            result = AlternateVariable(xmlID, xmlName, xmlMutable, xmlRandom, children)
             logging.debug(_("AlternateVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("AlternateVariable: loadFromXML fails"))

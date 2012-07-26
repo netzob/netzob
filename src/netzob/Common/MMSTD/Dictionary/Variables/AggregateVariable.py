@@ -52,7 +52,7 @@ class AggregateVariable(AbstractNodeVariable):
 
     TYPE = "AggregateVariable"
 
-    def __init__(self, id, name, mutable, random, children=None):
+    def __init__(self, id, name, mutable, random, children=[]):
         """Constructor of AggregateVariable:
         """
         AbstractNodeVariable.__init__(self, id, name, mutable, random, children)
@@ -77,7 +77,7 @@ class AggregateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getDescription(processingToken))
-        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -85,7 +85,7 @@ class AggregateVariable(AbstractNodeVariable):
         values = []
         for child in self.children:
             values.append(child.getUncontextualizedDescription())
-        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
     def isDefined(self):
         """isDefined:
@@ -170,8 +170,8 @@ class AggregateVariable(AbstractNodeVariable):
         if version == "0.1":
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
-            xmlMutable = xmlRoot.get("mutable")
-            xmlRandom = xmlRoot.get("random")
+            xmlMutable = xmlRoot.get("mutable") == "True"
+            xmlRandom = xmlRoot.get("random") == "True"
 
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
