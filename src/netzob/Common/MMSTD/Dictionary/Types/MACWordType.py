@@ -47,6 +47,8 @@ class MACWordType(AbstractWordType):
             A type represented by MAC address in 8-bits strings (0d:0d:0d:0d:0d:0d).
     """
 
+    TYPE = "MAC Word"
+
     def __init__(self):
         """Constructor of MACWordType:
         """
@@ -68,7 +70,7 @@ class MACWordType(AbstractWordType):
         return self.str2bin(value)
 
     def getType(self):
-        return "MACWord"
+        return MACWordType.TYPE
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractWordType                                 |

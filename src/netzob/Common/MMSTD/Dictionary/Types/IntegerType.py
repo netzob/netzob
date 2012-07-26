@@ -48,6 +48,8 @@ class IntegerType(AbstractType):
             A type represented by numbers (integers).
     """
 
+    TYPE = "Integer"
+
     def __init__(self):
         """Constructor of IntegerType:
         """
@@ -88,4 +90,4 @@ class IntegerType(AbstractType):
         return self.getBitSize(10 ** (nbChars - 1))
 
     def getType(self):
-        return "Integer"
+        return IntegerType.TYPE

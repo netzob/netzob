@@ -48,6 +48,8 @@ class IPv4WordType(AbstractWordType):
             A type represented by IPv4 formatted 8-bits strings (192.168.10.100 or 0d.0d.0d.0d).
     """
 
+    TYPE = "IPv4 Word"
+
     def __init__(self):
         """Constructor of IPv4WordType:
         """
@@ -74,7 +76,7 @@ class IPv4WordType(AbstractWordType):
         return self.str2bin(value)
 
     def getType(self):
-        return "IPv4Word"
+        return IPv4WordType.TYPE
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractWordType                                 |

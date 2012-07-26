@@ -147,26 +147,26 @@ class AbstractType():
     @staticmethod
     def makeType(typeString):
         type = None
-        if typeString == "Binary":
-            from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+        from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+        from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
+        from netzob.Common.MMSTD.Dictionary.Types.HexWordType import HexWordType
+        from netzob.Common.MMSTD.Dictionary.Types.IPv4WordType import IPv4WordType
+        from netzob.Common.MMSTD.Dictionary.Types.MACWordType import MACWordType
+        from netzob.Common.MMSTD.Dictionary.Types.IntegerType import IntegerType
+        from netzob.Common.MMSTD.Dictionary.Types.WordType import WordType
+        if typeString == BinaryType.TYPE:
             type = BinaryType()
-        elif typeString == "DecimalWord":
-            from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
+        elif typeString == DecimalWordType.TYPE:
             type = DecimalWordType()
-        elif typeString == "HexWord":
-            from netzob.Common.MMSTD.Dictionary.Types.HexWordType import HexWordType
+        elif typeString == HexWordType.TYPE:
             type = HexWordType()
-        elif typeString == "IPv4Word":
-            from netzob.Common.MMSTD.Dictionary.Types.IPv4WordType import IPv4WordType
+        elif typeString == IPv4WordType.TYPE:
             type = IPv4WordType()
-        elif typeString == "MACWord":
-            from netzob.Common.MMSTD.Dictionary.Types.MACWordType import MACWordType
+        elif typeString == MACWordType.TYPE:
             type = MACWordType()
-        elif typeString == "Integer":
-            from netzob.Common.MMSTD.Dictionary.Types.IntegerType import IntegerType
+        elif typeString == IntegerType.TYPE:
             type = IntegerType()
-        elif typeString == "Word":
-            from netzob.Common.MMSTD.Dictionary.Types.WordType import WordType
+        elif typeString == WordType.TYPE:
             type = WordType()
         else:
             logging.error(_("Wrong type specified for this variable."))

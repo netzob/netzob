@@ -47,6 +47,8 @@ class HexWordType(AbstractWordType):
             A type represented by hexadecimal 8-bits strings.
     """
 
+    TYPE = "Hex Word"
+
     def __init__(self):
         """Constructor of HexWordType:
         """
@@ -65,4 +67,4 @@ class HexWordType(AbstractWordType):
         return self.str2bin(value)
 
     def getType(self):
-        return "HexWord"
+        return HexWordType.TYPE

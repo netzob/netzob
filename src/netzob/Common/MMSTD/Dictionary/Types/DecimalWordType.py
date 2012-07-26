@@ -47,6 +47,8 @@ class DecimalWordType(AbstractWordType):
             A type represented by 8-bits string containing only digits.
     """
 
+    TYPE = "Decimal Word"
+
     def __init__(self):
         """Constructor of DecimalWordType:
         """
@@ -65,4 +67,4 @@ class DecimalWordType(AbstractWordType):
         return self.str2bin(value)
 
     def getType(self):
-        return "DecimalWord"
+        return DecimalWordType.TYPE

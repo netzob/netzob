@@ -48,6 +48,8 @@ class BinaryType(AbstractType):
             A type represented by a bitarray.
     """
 
+    TYPE = "Binary"
+
     def __init__(self):
         """Constructor of BinaryType:
         """
@@ -93,4 +95,4 @@ class BinaryType(AbstractType):
         return nbChars
 
     def getType(self):
-        return "Binary"
+        return BinaryType.TYPE

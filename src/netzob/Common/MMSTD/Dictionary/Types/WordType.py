@@ -47,6 +47,8 @@ class WordType(AbstractWordType):
             A type represented by printable 8-bits strings.
     """
 
+    TYPE = "Word"
+
     def __init__(self):
         """Constructor of WordType:
         """
@@ -65,4 +67,4 @@ class WordType(AbstractWordType):
         return self.str2bin(value)
 
     def getType(self):
-        return "Word"
+        return WordType.TYPE
