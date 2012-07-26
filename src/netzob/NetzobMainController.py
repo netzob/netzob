@@ -53,6 +53,7 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.NetzobMainView import NetzobMainView
 
+
 class NetzobMainController(object):
     """"Netzob main window controller"""
 
@@ -80,6 +81,9 @@ class NetzobMainController(object):
 
         # Load all available plugins
         NetzobPlugin.loadPlugins(self)
+
+        # Refresh list of available projects
+        self.updateListOfAvailableProjects()
 
     def _loadWorkspace(self, opts):
         if opts.workspace == None:
@@ -138,6 +142,12 @@ class NetzobMainController(object):
 
     def getCurrentWorkspace(self):
         return self.currentWorkspace
+
+    def updateListOfAvailableProjects(self):
+        """Fetch the list of available projects in the
+        current workspace, and provide them to its associated view"""
+        listOfProjectsNameAndPath = self.currentWorkspace.getNameOfProjects()
+        self.view.updateSwitchProjectMenu(listOfProjectsNameAndPath)
 
     def perspectiveComboBox_changed_cb(self, comboBox):
         iter = comboBox.get_active_iter()
@@ -235,10 +245,9 @@ class NetzobMainController(object):
     def aboutNetzob_activate_cb(self, action):
         pass
 
-    def switchProject(self, idProject):
+    def switchProject(self, projectPath):
+        print "START"
         # ++CODE HERE++
         # CHANGE CURRENTPROJECT TO idProject
         # UPDATE VIEW : view.updateProject()
         pass
-
-

@@ -49,6 +49,7 @@ from netzob.UI.Vocabulary.Controllers.NewVocabularyController import NewVocabula
 from netzob.UI.Simulator.UISimulator import UISimulator
 from netzob.UI.Grammar.UIGrammarInference import UIGrammarInference
 
+
 class NetzobMainView(object):
     """Netzob main window view"""
 
@@ -61,12 +62,8 @@ class NetzobMainView(object):
         self.log = logging.getLogger(__name__)
         # Load main window definition
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "mainWindow.glade"))
-        self._getObjects(self.builder, ["mainWindow", "toolbarBox",
-            "mainBox", "perspectiveListStore", "perspectiveComboBox"])
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "mainWindow.glade"))
+        self._getObjects(self.builder, ["mainWindow", "toolbarBox", "mainBox", "perspectiveListStore", "perspectiveComboBox"])
         self.controller = controller
         self.perspectiveDict = {}
         self.currentPerspectiveMergeID = None
@@ -104,7 +101,7 @@ class NetzobMainView(object):
             "mainActions.glade"))
         mainActionsBuilder.connect_signals(self.controller)
         self.mainActionGroup = mainActionsBuilder.get_object("mainActionGroup")
-        # Load menu bar and toolbar UI definitions 
+        # Load menu bar and toolbar UI definitions
         self.uiManager = Gtk.UIManager()
         self.uiManager.insert_action_group(self.mainActionGroup)
         self.uiManager.add_ui_from_file(os.path.join(
@@ -136,7 +133,7 @@ class NetzobMainView(object):
         self.perspectiveListStore.append([perspectiveCode, perspectiveDescription])
 
     def setPrimaryToolbarStyle(self, toolbar):
-        """Make toolbar a GTK primary toolbar. In most GTK themes, 
+        """Make toolbar a GTK primary toolbar. In most GTK themes,
         primary toolbars have a specific background.
         @type  toolbar: string
         @param toolbar: The toolbar name"""
@@ -158,8 +155,8 @@ class NetzobMainView(object):
 
     def switchPerspective(self, newPerspectiveCode):
         """@type  newPerspective: string
-        @param newPerspective: Switch for the view. 
-        Value available: "vocabulary", "grammar" and "traffic" """
+        @param newPerspective: Switch for the view.
+        Value available: "vocabulary", "grammar" and "traffic"."""
         # Reset base menu and toolbar
         self.resetMainWindow()
         self.log.debug("Setting perspective ID {0}".format(newPerspectiveCode))
@@ -177,3 +174,20 @@ class NetzobMainView(object):
     def updateProject(self):
         for key in self.perspectiveDict:
             self.perspectiveDict[key].update()
+
+    def updateSwitchProjectMenu(self, listOfProjectsNameAndPath):
+        """Update the menu"""
+        switchProjectMenu = self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").get_submenu()
+
+        # Update the list of project
+        for i in switchProjectMenu.get_children():
+            switchProjectMenu.remove(i)
+
+        for (projectName, projectPath) in listOfProjectsNameAndPath:
+#            actionSwitchOtherProject = Gtk.Action("FileMenu", "File", None, None)
+            projectEntry = Gtk.MenuItem(projectName)
+            projectEntry.connect("activate", self.controller.switchProject, projectPath)
+            switchProjectMenu.append(projectEntry)
+
+        switchProjectMenu.show_all()
+        self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").set_sensitive(True)
