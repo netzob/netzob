@@ -117,7 +117,7 @@
     <child>
       <object class="GtkAction" id="messagesDistribution">
         <property name="label" translatable="yes">Messages Distribution…</property>
-        <property name="tooltip" translatable="yes">Display messages distribution of current symbol</property>
+        <property name="tooltip" translatable="yes">Display messages distributions for selected symbol(s)</property>
         <property name="stock_id">netzob-messages-distribution</property>
         <signal name="activate" handler="messagesDistribution_activate_cb" swapped="no"/>
       </object>

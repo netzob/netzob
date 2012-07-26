@@ -114,4 +114,5 @@ class NewSimplePartitioningController(object):
 
     def run(self):
         self._view.simple_stop.set_sensitive(False)
+        self._view.radiobutton8bits.set_active(True)
         self._view.run()
