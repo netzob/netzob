@@ -65,6 +65,7 @@ class NetzobMainView(object):
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "mainWindow.glade"))
         self._getObjects(self.builder, ["mainWindow", "toolbarBox", "mainBox", "perspectiveListStore", "perspectiveComboBox"])
         self.controller = controller
+        self.builder.connect_signals(self.controller)
         self.perspectiveDict = {}
         self.currentPerspectiveMergeID = None
         self.currentPerspectiveActionGroup = None

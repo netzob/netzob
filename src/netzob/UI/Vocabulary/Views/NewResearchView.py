@@ -45,8 +45,7 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewSequenceAlignmentView(object):
-
+class NewResearchView(object):
 
 
     def __init__(self, controller):
@@ -57,20 +56,15 @@ class NewSequenceAlignmentView(object):
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "sequence_alignement.glade"))
-        self._getObjects(self.builder, ["sequenceDialog",
-            "sequence_execute", "sequence_cancel", "sequence_stop",
-            "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
-            "radiobutton4bit", "radiobutton8bit",
-            "orphanButton", "smoothButton",
-            "sequence_progressbar"])
+            "VocabularyView.glade"))
+        self._getObjects(self.builder, ["researchBar",
+            "research_entry",
+            "research_previous", "research_next",
+            "research_format", "research_preferences",
+            "research_close"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
-
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
-
-    def run(self):
-        self.sequenceDialog.run()

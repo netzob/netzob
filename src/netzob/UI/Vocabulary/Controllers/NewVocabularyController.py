@@ -48,6 +48,8 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
 from netzob.UI.Vocabulary.Controllers.NewSequenceAlignmentController import NewSequenceAlignmentController
 from netzob.UI.Vocabulary.Controllers.NewForcePartitioningController import NewForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.NewSimplePartitioningController import NewSimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.NewSmoothPartitioningController import NewSmoothPartitioningController
 
 
 class NewVocabularyController(object):
@@ -56,7 +58,7 @@ class NewVocabularyController(object):
         self.netzob = netzob
         self._view = NewVocabularyView(self)
         self.log = logging.getLogger(__name__)
-        self.view.update()
+        self.view.updateLeftPanel()
 
     @property
     def view(self):
@@ -117,7 +119,7 @@ class NewVocabularyController(object):
             currentProject = self.netzob.getCurrentProject()
             newSymbol = Symbol(newSymbolId, newSymbolName, currentProject)
             currentProject.getVocabulary().addSymbol(newSymbol)
-            self.view.update()
+            self.view.updateLeftPanel()
             dialog.destroy()
         if (result == 1):
             #cancel
@@ -147,7 +149,7 @@ class NewVocabularyController(object):
         currentProject.getVocabulary().addSymbol(concatSymbol)
         #refresh view
         self.view.updateMessageTableDisplayingSymbols([concatSymbol])
-        self.view.update()
+        self.view.updateLeftPanel()
 
     #possible que si on selectionne un unique symbol
     def renameSymbolButton_clicked_cb(self, widget):
@@ -179,7 +181,7 @@ class NewVocabularyController(object):
             self.log.debug(_("Renamed symbol {0} to {1}").format(symbol.getName(), newSymbolName))
             currentProject = self.netzob.getCurrentProject()
             currentProject.getVocabulary().getSymbolByID(symbol.getID()).setName(newSymbolName)
-            self.view.update()
+            self.view.updateLeftPanel()
             self.view.updateMessageTableDisplayingSymbols([symbol])
             dialog.destroy()
         if (result == 1):
@@ -196,7 +198,7 @@ class NewVocabularyController(object):
             currentVocabulary.removeSymbol(sym)
             self.view.emptyMessageTableDisplayingSymbols([sym])
         # Update view
-        self.view.update()
+        self.view.updateLeftPanel()
 
     def newMessageTableButton_clicked_cb(self, toolButton):
         self.view.addMessageTable()
@@ -227,6 +229,7 @@ class NewVocabularyController(object):
         if self.focus.get_object("spreadsheet") == spreadsheet:
             self.focus = None
 
+
     def selectiontreeview_switchSymbol_cb(self, widget):
         if self.focus is not None:
             model, itera = widget.get_selected()
@@ -247,9 +250,6 @@ class NewVocabularyController(object):
             '''
 
         #reste a switcher les messages du treeview
-
-    def button_focusview_cb(self, widget, builder):
-        self.focus = builder
 ###############
 
 ######### MENU / TOOLBAR ENTRIES CONTROLLERS
@@ -262,10 +262,12 @@ class NewVocabularyController(object):
         force_controller.run()
 
     def partitioningSimple_activate_cb(self, action):
-        pass
+        simple_controller = NewSimplePartitioningController(self)
+        simple_controller.run()
 
     def partitioningSmooth_activate_cb(self, action):
-        pass
+        smooth_controller = NewSmoothPartitioningController(self)
+        smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):
         pass
@@ -289,7 +291,7 @@ class NewVocabularyController(object):
         pass
 
     def searchText_activate_cb(self, action):
-        pass
+        self._view.researchController.show()
 
     def environmentDep_activate_cb(self, action):
         pass

@@ -45,8 +45,7 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewSequenceAlignmentView(object):
-
+class NewSimplePartitioningView(object):
 
 
     def __init__(self, controller):
@@ -57,13 +56,12 @@ class NewSequenceAlignmentView(object):
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "sequence_alignement.glade"))
-        self._getObjects(self.builder, ["sequenceDialog",
-            "sequence_execute", "sequence_cancel", "sequence_stop",
-            "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
-            "radiobutton4bit", "radiobutton8bit",
-            "orphanButton", "smoothButton",
-            "sequence_progressbar"])
+            "simple_partitioning.glade"))
+        self._getObjects(self.builder, ["simpleDialog",
+            "simple_execute", "simple_stop", "simple_cancel",
+            "radiobutton8bits", "radiobutton16bits",
+            "radiobutton32bits", "radiobutton64bits",
+            "simple_progressbar"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -73,4 +71,4 @@ class NewSequenceAlignmentView(object):
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.sequenceDialog.run()
+        self.simpleDialog.run()

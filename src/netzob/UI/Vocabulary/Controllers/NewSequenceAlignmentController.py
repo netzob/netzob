@@ -63,12 +63,17 @@ class NewSequenceAlignmentController(object):
         self._view.sequenceDialog.destroy()
 
     def sequence_execute_clicked_cb(self, widget):
-        #update button
-        self._view.sequence_stop.set_sensitive(True)
+        #update widget
         self._view.sequence_cancel.set_sensitive(False)
         self._view.sequence_execute.set_sensitive(False)
+        self._view.sequence_scale.set_sensitive(False)
+        self._view.sequence_spinbutton.set_sensitive(False)
+        self._view.radiobutton4bit.set_sensitive(False)
+        self._view.radiobutton8bit.set_sensitive(False)
+        self._view.orphanButton.set_sensitive(False)
+        self._view.smoothButton.set_sensitive(False)
         #extract choose value
-        symbolList = self.vocabularyController.getCheckedSymbolList()
+        symbolList = self.vocabularyController.view.getCheckedSymbolList()
         similarityPercent = self._view.sequence_adjustment.get_value()
         if self._view.radiobutton8bit.get_mode():
             unitSize = 8
@@ -84,12 +89,27 @@ class NewSequenceAlignmentController(object):
         # fraction = 0 <+int+< 1
         # self._view.sequence_progressbar.set_fraction(fraction)
 
+        #update button
+        self._view.sequence_stop.set_sensitive(True)
+
+        #close dialog box
+        #self._view.sequenceDialog.destroy()
+
     def sequence_stop_clicked_cb(self, widget):
-        self._view.sequence_execute.set_sensitive(True)
-        self._view.sequence_cancel.set_sensitive(True)
+        #update button
         self._view.sequence_stop.set_sensitive(False)
         # ++CODE HERE++
         # STOP THE THREAD OF SEQUENCE ALIGNEMENT
+
+        #update widget
+        self._view.sequence_cancel.set_sensitive(True)
+        self._view.sequence_execute.set_sensitive(True)
+        self._view.sequence_scale.set_sensitive(True)
+        self._view.sequence_spinbutton.set_sensitive(True)
+        self._view.radiobutton4bit.set_sensitive(True)
+        self._view.radiobutton8bit.set_sensitive(True)
+        self._view.orphanButton.set_sensitive(True)
+        self._view.smoothButton.set_sensitive(True)
 
 
     def run(self):

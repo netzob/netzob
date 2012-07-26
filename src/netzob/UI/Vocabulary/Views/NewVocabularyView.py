@@ -45,6 +45,7 @@ from collections import OrderedDict
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.Vocabulary.Controllers.NewResearchController import NewResearchController
 
 
 class NewVocabularyView(object):
@@ -86,6 +87,13 @@ class NewVocabularyView(object):
         # List of currently displayed message tables
         self.messageTableList = []
         self.selectedMessageTable = None
+        # add the netzobBegin label attribute
+        self.netzobBegin = None
+        # add the researchBar
+        self.researchController = NewResearchController(self.controller)
+        self.messageTableBox.pack_end(self.researchController._view.researchBar, False , False, 0)
+        self.researchController._view.research_format.set_active(4)
+        self.researchController.hide()
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -122,15 +130,13 @@ class NewVocabularyView(object):
         return self._uiDefinition
 
     ## View manipulation methods
-    def update(self):
+    def updateLeftPanel(self):
         self.updateSymbolList()
         self.updateSymbolListToolbar()
         self.updateProjectProperties()
-        # ++CODE HERE++
-        # UNCOMMENT TO SEE MODIFICATION
-        """self.updateSymbolProperties()
+        self.updateSymbolProperties()
         self.updateMessageProperties()
-        self.updateFieldProperties()"""
+        self.updateFieldProperties()
 
     ## Message Tables management
     def addMessageTable(self):
@@ -206,6 +212,7 @@ class NewVocabularyView(object):
                                   sym.getID())
         self.setSelectedSymbolFromSelectedMessageTable()
         self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
+        self.beginWithNetzob()
 
     def setSelectedSymbolFromSelectedMessageTable(self):
         if self.selectedMessageTable is None:
@@ -380,3 +387,19 @@ class NewVocabularyView(object):
 
     def getCurrentProject(self):
         return self.controller.netzob.getCurrentProject()
+
+    def beginWithNetzob(self):
+        if len (self.getCurrentProject().getVocabulary().getMessages()) == 0:
+            if self.netzobBegin == None:
+                print "begin with netzob"
+                builder2 = Gtk.Builder()
+                builder2.add_from_file(os.path.join(
+                ResourcesConfiguration.getStaticResources(),
+                "ui",
+                "beginWithNetzob.glade"))
+                self.netzobBegin = builder2.get_object("netzobBegin")
+                self.messageTableBox.pack_start(self.netzobBegin, True , True, 0)
+
+        elif self.netzobBegin != None:
+            self.netzobBegin.destroy()
+            self.netzobBegin = None

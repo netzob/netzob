@@ -38,13 +38,14 @@ from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
-
+import os
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewForcePartitioningView import NewForcePartitioningView
+from netzob.UI.Vocabulary.Views.NewResearchView import NewResearchView
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
-class NewForcePartitioningController(object):
+class NewResearchController(object):
     '''
     classdocs
     '''
@@ -52,74 +53,78 @@ class NewForcePartitioningController(object):
 
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
-        self._view = NewForcePartitioningView(self)
+        self._view = NewResearchView(self)
         self.log = logging.getLogger(__name__)
 
     @property
     def view(self):
         return self._view
 
-    def force_cancel_clicked_cb(self, widget):
-        self._view.forceDialog.destroy()
+    def show(self):
+        self._view.researchBar.show()
 
-    def force_execute_clicked_cb(self, widget):
-        #update widget
-        self._view.force_stop.set_sensitive(True)
-        self._view.force_cancel.set_sensitive(False)
-        self._view.force_execute.set_sensitive(False)
-        self._view.force_entry.set_sensitive(False)
-        self._view.force_radiobutton_hexa.set_sensitive(False)
-        self._view.force_radiobutton_string.set_sensitive(False)
-        #extract choose value
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
-        delimiter = self._view.force_entry.get_text()
-        if self._view.force_radiobutton_hexa.get_active():
-            delimiterType = "hexa"
-        else:
-            delimiterType = "string"
+    def hide(self):
+        self._view.researchBar.hide()
+
+    def research_entry_changed_cb(self, widget):
+        text = widget.get_text()
         # ++CODE HERE++
-        # FORCE PARTITIONING ON symbolList
-        # THE PARAMETER FORMAT: [ symbolList (symbol list),delimiter (string), delimiterType (string) ]
-        # OPEN THREAD TO STOP IT
-        # SET REGULARLY VALUE FOR PROGRESS BAR WITH
-        # fraction = 0 <+int+< 1
-        # self._view.force_progressbar.set_fraction(fraction)
+        # DO SEARCH WITH PREFERENCES
+        # (you can see PREFERENCES in the preferencesResearchDialog at VocabularyView.glade)
 
-        #update button
-        self._view.force_stop.set_sensitive(True)
 
-        #close dialog box
-        #self._view.forceDialog.destroy()
+    def research_previous_clicked_cb(self, widget):
+        # ++CODE HERE++
+        # SEARCH PREVIOUS TEXT IN A MESSAGELIST SYMBOL
+        # PRINT IT WITH MODIFIED COLOR
+        pass
 
-    def force_stop_clicked_cb(self, widget):
-        # update button
-        self._view.force_stop.set_sensitive(False)
+    def research_next_clicked_cb(self, widget):
+        # ++CODE HERE++
+        # SEARCH NEXT TEXT IN A MESSAGELIST SYMBOL
+        # PRINT IT WITH MODIFIED COLOR
+        pass
+
+    def research_close_clicked_cb(self, widget):
+        self.hide()
+
+    def research_preferences_clicked_cb(self, widget):
+        builder2 = Gtk.Builder()
+        builder2.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui",
+            "VocabularyView.glade"))
+        dialog = builder2.get_object("preferencesResearchDialog")
+
 
         # ++CODE HERE++
-        # STOP THE THREAD OF FORCE PARTITIONING
+        # SET THE RIGHT VALUE FOR THE RESEARCH 5 PREFERENCES
+        # GO TO THE FILE VocabularyView.glade TO SEE NAME OF WIDGET
+        # +exemple+ TO SET THE VALUE OF THE FIRST LINE TOGGLE FOR research_displaySymbol
+        # JUST DO THAT :
+        # builder2.get_object("research_displaySymbol").set_active(True)
 
-        #update widget
-        self._view.force_execute.set_sensitive(True)
-        self._view.force_cancel.set_sensitive(True)
-        self._view.force_entry.set_sensitive(True)
-        self._view.force_radiobutton_hexa.set_sensitive(True)
-        self._view.force_radiobutton_string.set_sensitive(True)
 
-    def force_entry_changed_cb(self, widget):
-        if(len(widget.get_text()) > 0):
-            self._view.force_execute.set_sensitive(True)
-        else:
-            self._view.force_execute.set_sensitive(False)
 
-    def run(self):
-        self._view.force_stop.set_sensitive(False)
-        # ++CODE HERE++
-        # SET THE LAST DELIMITER USE WITH
-        # delimiter = +string+
-        # self._view.force_entry.set_text(delimiter)
-        # SET THE LAST VALUE USE FOR FORMAT OF DELIMITER
-        # self._view.force_radiobutton_hexa.set_active(True)
-        # or
-        # self._view.force_radiobutton_string.set_active(True)
-        self.force_entry_changed_cb(self._view.force_entry)
-        self._view.run()
+        #button apply
+        applybutton = builder2.get_object("apply_preferences")
+        dialog.add_action_widget(applybutton, 0)
+        #button cancel
+        cancelbutton = builder2.get_object("cancel_preferences")
+        dialog.add_action_widget(cancelbutton, 1)
+        #run the dialog window and wait for the result
+        result = dialog.run()
+
+        if (result == 0):
+            #apply
+            # ++CODE HERE++
+            # SET THE RIGHT VALUE FOR THE RESEARCH 5 PREFERENCES TO THE MODEL
+            # GO TO THE FILE VocabularyView.glade TO SEE NAME OF WIDGET
+            # +exemple+ TO GET THE VALUE OF research_displaySymbol
+            # DO THAT :
+            # boolean = builder2.get_object("research_displaySymbol").get_active()
+
+            dialog.destroy()
+        if (result == 1):
+            #cancel
+            dialog.destroy()
