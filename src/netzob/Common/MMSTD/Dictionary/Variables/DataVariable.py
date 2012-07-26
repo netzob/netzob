@@ -198,14 +198,12 @@ class DataVariable(AbstractLeafVariable):
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DataVariable")
+        xmlVariable.set("mutable", str(self.isMutable()))
+        xmlVariable.set("random", str(self.isRandom()))
 
-        # random
-        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
-        xmlRandom.text = str(self.random)
-
-        # mutable
-        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
-        xmlMutable.text = str(self.mutable)
+        # type
+        xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
+        xmlType.text = self.type.getType()
 
         # originalValue (can be None)
         if self.originalValue is not None:
@@ -213,16 +211,12 @@ class DataVariable(AbstractLeafVariable):
             xmlOriginalValue.text = self.type.bin2str(self.originalValue)
 
         # minBits
-        xmlMinBits = etree.SubElement(xmlVariable, "{" + namespace + "}minBits")
+        xmlMinBits = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
         xmlMinBits.text = str(self.minBits)
 
         # maxBits
-        xmlMaxBits = etree.SubElement(xmlVariable, "{" + namespace + "}maxBits")
+        xmlMaxBits = etree.SubElement(xmlVariable, "{" + namespace + "}maxChars")
         xmlMaxBits.text = str(self.maxBits)
-
-        # type
-        xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
-        xmlType.text = self.type.getType()
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -291,6 +285,17 @@ class DataVariable(AbstractLeafVariable):
             xmlMutable = xmlRoot.get("mutable")
             xmlRandom = xmlRoot.get("random")
 
+            # type
+            type = None
+            xmlType = xmlRoot.find("{" + namespace + "}type")
+            if xmlType is not None:
+                type = AbstractType.makeType(xmlType.text)
+                if type is None:
+                    return None
+            else:
+                logging.error(_("No type specified for this variable in the xml file."))
+                return None
+
             # originalValue
             xmlOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
             if xmlOriginalValue is not None:
@@ -312,16 +317,7 @@ class DataVariable(AbstractLeafVariable):
             else:
                 maxChars = DataVariable.MAX_BITS
 
-            # type
-            xmlType = xmlRoot.find("{" + namespace + "}type")
-            if xmlType is not None:
-                type = AbstractType.makeType(xmlType.text)
-                if type is None:
-                    return None
-            else:
-                logging.error(_("No type specified for this variable in the xml file."))
-                return None
-            result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, originalValue, type, minChars, maxChars)
+            result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, type, originalValue, minChars, maxChars)
             logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("DataVariable: loadFromXML fails"))

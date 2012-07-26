@@ -118,14 +118,8 @@ class ReferencedVariable(AbstractVariable):
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ReferencedVariable")
-
-        # random
-        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
-        xmlRandom.text = str(self.random)
-
-        # mutable
-        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
-        xmlMutable.text = str(self.mutable)
+        xmlVariable.set("mutable", str(self.isMutable()))
+        xmlVariable.set("random", str(self.isRandom()))
 
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")

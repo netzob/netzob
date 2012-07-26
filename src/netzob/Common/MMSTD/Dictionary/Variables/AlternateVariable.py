@@ -145,14 +145,8 @@ class AlternateVariable(AbstractNodeVariable):
         xmlVariable.set("id", str(self.getID()))
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
-
-        # random
-        xmlRandom = etree.SubElement(xmlVariable, "{" + namespace + "}random")
-        xmlRandom.text = str(self.random)
-
-        # mutable
-        xmlMutable = etree.SubElement(xmlVariable, "{" + namespace + "}mutable")
-        xmlMutable.text = str(self.mutable)
+        xmlVariable.set("mutable", str(self.isMutable()))
+        xmlVariable.set("random", str(self.isRandom()))
 
         # Definition of children variables
         for child in self.children:
@@ -174,7 +168,7 @@ class AlternateVariable(AbstractNodeVariable):
             xmlRandom = xmlRoot.get("random")
 
             children = []
-            for xmlChildren in xmlRoot.findall("{" + namespace + "}AbstractVariable"):
+            for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
             result = AlternateVariable(xmlID, xmlMutable, xmlRandom, xmlName, children)

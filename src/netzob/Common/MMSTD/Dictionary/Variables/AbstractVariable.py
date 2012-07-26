@@ -189,7 +189,7 @@ class AbstractVariable:
             # Data Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-                return DataVariable.loadFromXML(xmlRoot, namespace, version, "IPv4")
+                return DataVariable.loadFromXML(xmlRoot, namespace, version)
 
             # Aggregate Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":

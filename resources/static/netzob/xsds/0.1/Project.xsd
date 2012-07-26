@@ -607,7 +607,7 @@
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
-					<element name="AbstractVariable" type="netzob-project:AbstractVariable"
+					<element name="variable" type="netzob-project:AbstractVariable"
 						minOccurs="0" maxOccurs="unbounded">
 					</element>
 				</sequence>
@@ -619,7 +619,7 @@
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
-					<element name="AbstractVariable" type="netzob-project:AbstractVariable"
+					<element name="variable" type="netzob-project:AbstractVariable"
 						minOccurs="0" maxOccurs="unbounded">
 					</element>
 				</sequence>
@@ -658,7 +658,7 @@
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
-					<element name="AbstractVariable" type="netzob-project:AbstractVariable"
+					<element name="variable" type="netzob-project:AbstractVariable"
 						minOccurs="1" maxOccurs="1">
 					</element>
 					<element name="minIterations" type="string" minOccurs="1"
