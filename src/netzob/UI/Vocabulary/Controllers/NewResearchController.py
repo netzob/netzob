@@ -45,11 +45,8 @@ import os
 from netzob.UI.Vocabulary.Views.NewResearchView import NewResearchView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
-class NewResearchController(object):
-    '''
-    classdocs
-    '''
 
+class NewResearchController(object):
 
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
@@ -72,7 +69,6 @@ class NewResearchController(object):
         # DO SEARCH WITH PREFERENCES
         # (you can see PREFERENCES in the preferencesResearchDialog at VocabularyView.glade)
 
-
     def research_previous_clicked_cb(self, widget):
         # ++CODE HERE++
         # SEARCH PREVIOUS TEXT IN A MESSAGELIST SYMBOL
@@ -93,9 +89,8 @@ class NewResearchController(object):
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "VocabularyView.glade"))
+            "research_preferences.glade"))
         dialog = builder2.get_object("preferencesResearchDialog")
-
 
         # ++CODE HERE++
         # SET THE RIGHT VALUE FOR THE RESEARCH 5 PREFERENCES
@@ -103,9 +98,6 @@ class NewResearchController(object):
         # +exemple+ TO SET THE VALUE OF THE FIRST LINE TOGGLE FOR research_displaySymbol
         # JUST DO THAT :
         # builder2.get_object("research_displaySymbol").set_active(True)
-
-
-
         #button apply
         applybutton = builder2.get_object("apply_preferences")
         dialog.add_action_widget(applybutton, 0)

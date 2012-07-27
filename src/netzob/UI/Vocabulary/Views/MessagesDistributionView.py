@@ -53,7 +53,7 @@ class MessagesDistributionView(object):
         self.symbolList = symbolList
 
     def buildListDistributionView(self):
-        symbolPointList = []
+        symbolDataPointList = []
         symbolNameList = []
         segments = []
         #calculate the distribution for each symbol
@@ -71,7 +71,7 @@ class MessagesDistributionView(object):
                     if len(cell) / 2 > maxCell:
                         maxCell = len(cell) / 2
                 i += maxCell
-            symbolPointList.append([resX, resY])
+            symbolDataPointList.append([resX, resY])
         segments.append(i)
 
         #create figure
@@ -79,15 +79,15 @@ class MessagesDistributionView(object):
         fig.set_facecolor('w')
 
         #add calculate point on the figure
-        pointObjectList = []
-        for sym in symbolPointList:
+        symbolPointObjectList = []
+        for sym in symbolDataPointList:
             axis = fig.add_subplot(111, frame_on=False)
             (resX, resY) = sym
-            p = axis.plot(resX, resY, '.', color=self.createColor())
-            pointObjectList.append(p[0])
+            data = axis.plot(resX, resY, '.', color=self.createColor())
+            symbolPointObjectList.append(data[0])
 
         #add legend
-        axis.legend(pointObjectList , symbolNameList, 'upper right')
+        axis.legend(symbolPointObjectList, symbolNameList, 'upper right')
         axis.hold(True)
 
         #add reload color button
@@ -95,7 +95,7 @@ class MessagesDistributionView(object):
         button = Button(reloadColor, 'Reload color')
         button.on_clicked(self.reloadColor_cb)
         self.axis = axis
-        self.pointObjectList = pointObjectList
+        self.symbolPointObjectList = symbolPointObjectList
         self.symbolNameList = symbolNameList
 
         #create the vertical bar
@@ -103,16 +103,27 @@ class MessagesDistributionView(object):
             axis.plot([segment, segment], [0, max(resY) + 5], 'k-')"""
 
         #set the limit of the figure
-        axis.set_xlim(0, max(resX) + 5)
-        axis.set_ylim(0, max(resY) + 5)
+        maxX = 0
+        maxY = 0
+        for sym in symbolDataPointList:
+            (resX, resY) = sym
+            maxX = max([max(resX), maxX])
+            maxY = max([max(resY), maxY])
+
+        axis.set_xlim(0, maxX + 5)
+        axis.set_ylim(0, maxY + 5)
         show()
 
+        #set the limit of the figure ++deprecated code++
+        """axis.set_xlim(0, max(resX) + 5)
+        axis.set_ylim(0, max(resY) + 5)
+        show()"""
 
     def reloadColor_cb(self, event):
-        for point in self.pointObjectList:
+        for point in self.symbolPointObjectList:
             point.set_color(self.createColor())
 
-        self.axis.legend(self.pointObjectList , self.symbolNameList, 'upper right')
+        self.axis.legend(self.symbolPointObjectList, self.symbolNameList, 'upper right')
 
     def createColor(self):
         return '#' + hex(randint(0, pow(255, 3))).lstrip('0x').zfill(6)

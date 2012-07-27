@@ -303,13 +303,12 @@ class NewVocabularyController(object):
         distribution = MessagesDistributionView(self._view.getCheckedSymbolList())
         distribution.buildListDistributionView()
 
-
     def variableTable_activate_cb(self, action):
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "VocabularyView.glade"))
+            "variable_table.glade"))
         dialog = builder2.get_object("variableDialog")
 
         #button apply

@@ -47,7 +47,6 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 class NewResearchView(object):
 
-
     def __init__(self, controller):
         '''
         Constructor
@@ -56,12 +55,12 @@ class NewResearchView(object):
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "VocabularyView.glade"))
+            "research_bar.glade"))
         self._getObjects(self.builder, ["researchBar",
-            "research_entry",
-            "research_previous", "research_next",
-            "research_format", "research_preferences",
-            "research_close"])
+                                        "research_entry",
+                                        "research_previous", "research_next",
+                                        "research_format", "research_preferences",
+                                        "research_close"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
