@@ -41,6 +41,7 @@ import gettext
 from gi.repository import Gtk
 import gi
 from netzob.Common.Project import Project
+from netzob.UI.Common.AboutDialog import AboutDialog
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -241,7 +242,10 @@ class NetzobMainController(object):
         pass
 
     def aboutNetzob_activate_cb(self, action):
-        pass
+        """Displays the about dialog
+        when the user click on the associate
+        menu entry."""
+        AboutDialog.display()
 
     def switchProject_cb(self, widget, projectPath):
         """Change the current project with the project
