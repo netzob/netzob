@@ -90,11 +90,13 @@ class MessagesDistributionView(object):
             axis.legend(symbolPointObjectList, symbolNameList, 'upper right')
             axis.hold(True)
 
-            #add reload color button
-            reloadColor = plt.axes([0.735, 0.9, 0.15, 0.075])
-            button = Button(reloadColor, 'Reload color')
-            button.on_clicked(self.reloadColor_cb)
-            self.axis = axis
+
+        #add reload color button
+        reloadColor = plt.axes([0.74, 0.9, 0.15, 0.075])
+        button = Button(reloadColor, 'Reload color')
+        button.on_clicked(self.reloadColor_cb)
+        self.axis = axis
+
         self.symbolPointObjectList = symbolPointObjectList
         self.symbolNameList = symbolNameList
 
