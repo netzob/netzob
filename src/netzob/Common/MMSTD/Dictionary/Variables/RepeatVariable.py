@@ -51,7 +51,7 @@ class RepeatVariable(AbstractVariable):
     """
 
     MAX_ITERATIONS = 10
-    TYPE = "RepeatVariable"
+    TYPE = "Repeat Variable"
 
     def __init__(self, id, name, mutable, random, child, minIterations, maxIterations):
         """Constructor of RepeatVariable:
@@ -185,6 +185,15 @@ class RepeatVariable(AbstractVariable):
             self.minIterations = min(x, y)
             self.maxIterations = max(x, y)
         return (self.minIterations, self.maxIterations)
+
+    def getChild(self):
+        return self.child
+
+    def setChild(self, child):
+        self.child = child
+
+    def addChild(self, child):
+        self.child = child
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

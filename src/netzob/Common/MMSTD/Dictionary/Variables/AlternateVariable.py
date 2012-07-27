@@ -50,7 +50,7 @@ class AlternateVariable(AbstractNodeVariable):
             A data variable defined in a dictionary which is a logical or of several variables.
     """
 
-    TYPE = "AlternateVariable"
+    TYPE = "Alternate Variable"
 
     def __init__(self, id, name, mutable, random, children=[]):
         """Constructor of AlternateVariable:

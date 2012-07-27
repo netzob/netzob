@@ -50,7 +50,7 @@ class AggregateVariable(AbstractNodeVariable):
             A data variable defined in a dictionary which is a logical and of several variables.
     """
 
-    TYPE = "AggregateVariable"
+    TYPE = "Aggregate Variable"
 
     def __init__(self, id, name, mutable, random, children=[]):
         """Constructor of AggregateVariable:

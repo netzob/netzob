@@ -54,7 +54,7 @@ class DataVariable(AbstractLeafVariable):
     """
 
     MAX_BITS = 1024
-    TYPE = "DataVariable"
+    TYPE = "Data Variable"
 
     def __init__(self, id, name, mutable, random, type, originalValue, minChars, maxChars):
         """Constructor of DataVariable:
@@ -80,11 +80,22 @@ class DataVariable(AbstractLeafVariable):
         """toString:
                 For debugging purpose.
         """
-        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.originalValue))
+        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.bin2str(self.originalValue)))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
+    def bin2str(self, bina):
+        """bin2str:
+                Transform a bitarray in a well-formatted string according to the type of the variable.
+
+                @type bina: bitarray
+                @param bina: a binary value.
+                @rtype: string
+                @return: a type-formatted string.
+        """
+        return self.type.bin2str(bina)
+
     def getVariableType(self):
         """getVariableType:
         """
@@ -230,6 +241,12 @@ class DataVariable(AbstractLeafVariable):
     def getCurrentValue(self):
         return self.currentValue
 
+    def getMinChars(self):
+        return self.minChars
+
+    def getMaxChars(self):
+        return self.maxChars
+
     def setType(self, type):
         if type is not None:
             self.type = type
@@ -237,7 +254,7 @@ class DataVariable(AbstractLeafVariable):
             # Default type is Binary.
             self.log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
             from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
-            type = BinaryType()
+            self.type = BinaryType()
 
     def setNumberBitsAndNumberChars(self, minChars, maxChars):
         if minChars is not None and minChars >= 0:
@@ -262,9 +279,9 @@ class DataVariable(AbstractLeafVariable):
                 self.originalValue = self.type.str2bin(originalValue)
             else:
                 self.originalValue = None
-                self.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
+                self.log.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
         else:
-            self.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))
+            self.log.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))
 
     def setCurrentValue(self, currentValue):
         self.currentValue = currentValue

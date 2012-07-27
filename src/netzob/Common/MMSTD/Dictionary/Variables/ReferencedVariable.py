@@ -50,7 +50,7 @@ class ReferencedVariable(AbstractVariable):
             A variable which points to an other variable.
     """
 
-    TYPE = "ReferencedVariable"
+    TYPE = "Referenced Variable"
 
     def __init__(self, id, name, mutable, random, pointedID):
         """Constructor of ReferencedVariable:
@@ -129,6 +129,9 @@ class ReferencedVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
+    def getPointedID(self):
+        return self.pointedID
+
     def getPointedVariable(self, vocabulary):
         variable = vocabulary.getVariableByID(self.pointedID)
         return self.getPointedVariable(variable)
