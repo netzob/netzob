@@ -103,6 +103,7 @@ class Symbol(AbstractSymbol):
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
 
+        self.default = True
         # Clean the symbol
         self.reinitFields()
 
@@ -919,6 +920,10 @@ class Symbol(AbstractSymbol):
     #+----------------------------------------------
     def removeMessage(self, message):
         self.messages.remove(message)
+        # We reinit the fields' variables.
+        if self.default:
+            for field in self.fields:
+                field.variable = field.getDefaultVariable()
 
     def addMessage(self, message):
         for msg in self.messages:
@@ -926,6 +931,10 @@ class Symbol(AbstractSymbol):
                 return
         message.setSymbol(self)
         self.messages.append(message)
+        # We reinit the fields' variables.
+        if self.default:
+            for field in self.fields:
+                field.variable = field.getDefaultVariable()
 
     def addField(self, field, index=None):
         if index is None:
@@ -1221,6 +1230,9 @@ class Symbol(AbstractSymbol):
     def getEndianess(self):
         return self.endianess
 
+    def isDefault(self):
+        return self.default
+
 #+---------------------------------------------------------------------------+
 #| Setters                                                                   |
 #+---------------------------------------------------------------------------+
@@ -1261,6 +1273,9 @@ class Symbol(AbstractSymbol):
         self.endianess = endianess
         for field in self.getFields():
             field.setEndianess(endianess)
+
+    def setDefault(self, default):
+        self.default = default
 
     def __str__(self):
         return str(self.getName())

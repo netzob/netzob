@@ -304,6 +304,9 @@ class Field(object):
     def getRegex(self):
         return self.regex
 
+    def getSymbol(self):
+        return self.symbol
+
     def getDescription(self):
         return self.description
 

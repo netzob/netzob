@@ -421,6 +421,7 @@ class VariableCreationController:
             variable = ReferencedVariable(id, name, mutable, random, pointedID)
 
         if variable is not None:
+            self.treeController.field.getSymbol().setDefault(False)
             if self.editOverCreate:
                 # We transform a node variable into a node variable.
                 if (self.variable.getVariableType() == AggregateVariable.TYPE or self.variable.getVariableType() == AlternateVariable.TYPE) and (variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE):
