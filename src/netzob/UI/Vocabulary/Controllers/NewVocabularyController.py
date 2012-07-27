@@ -309,7 +309,7 @@ class NewVocabularyController(object):
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "VocabularyView.glade"))
+            "variable_table.glade"))
         dialog = builder2.get_object("variableDialog")
 
         #button apply

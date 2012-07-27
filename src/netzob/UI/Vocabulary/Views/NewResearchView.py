@@ -56,7 +56,7 @@ class NewResearchView(object):
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "VocabularyView.glade"))
+            "research_bar.glade"))
         self._getObjects(self.builder, ["researchBar",
             "research_entry",
             "research_previous", "research_next",

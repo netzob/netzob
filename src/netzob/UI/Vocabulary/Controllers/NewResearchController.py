@@ -93,7 +93,7 @@ class NewResearchController(object):
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
             "ui",
-            "VocabularyView.glade"))
+            "research_preferences.glade"))
         dialog = builder2.get_object("preferencesResearchDialog")
 
 
