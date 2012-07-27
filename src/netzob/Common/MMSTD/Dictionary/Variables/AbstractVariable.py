@@ -87,6 +87,7 @@ class AbstractVariable:
         if self.getID() == rootVariable.getID():
             return None
 
+        motherNode = None
         # We assume that variable IDs are unique.
         if rootVariable.isNode():
             if rootVariable.getChildren() is not None:

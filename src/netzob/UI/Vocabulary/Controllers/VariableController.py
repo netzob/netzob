@@ -445,8 +445,7 @@ class VariableCreationController:
                 self.treeController.editVariable(variable)
             else:
                 self.variable.addChild(variable)
-                self.treeController.treestore.append(self.rootEntry, [str(variable.getID()), variable.toString()])
-                self.treeController.dictVariable[str(variable.getID())] = variable
+                self.treeController.registerVariable(self.rootEntry, variable)
         dialog.destroy()
 
     def setComboText(self, combo, text):
