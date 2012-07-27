@@ -172,11 +172,12 @@ class NetzobMainView(object):
         self.currentPerspectiveMergeID = self.uiManager.add_ui_from_string(
             perspective.view.getMenuToolbarUIDefinition())
 
-    def updateProject(self):
+    def currentProjectHasChanged(self):
         """Update the view when the current project has changed"""
         for key in self.perspectiveDict:
             (pDescription, pController) = self.perspectiveDict[key]
             if pController is not None:
+                logging.debug("Restarting the perspective {0}".format(pDescrition))
                 pController.restart()
 
     def updateSwitchProjectMenu(self, listOfProjectsNameAndPath):

@@ -74,9 +74,6 @@ class NetzobMainController(object):
             self.log.fatal("Netzob could not start because some of its required dependencies were not found.")
             sys.exit()
 
-        # Fetch last loaded project
-        self.currentProject = self.getCurrentWorkspace().getLastProject()
-
         # Initialize main view
         self.view = NetzobMainView(self)
 
@@ -155,7 +152,7 @@ class NetzobMainController(object):
         if iter is not None:
             model = comboBox.get_model()
             newPerspectiveCode = model[iter][0]
-        self.view.switchPerspective(newPerspectiveCode)
+            self.view.switchPerspective(newPerspectiveCode)
 
     def mainWindow_destroy_cb(self, window):
         Gtk.main_quit()
@@ -258,6 +255,6 @@ class NetzobMainController(object):
         newProject = Project.loadProject(self.currentWorkspace, projectPath)
         if newProject is not None:
             self.currentProject = newProject
-            self.view.updateProject()
+            self.view.currentProjectHasChanged()
         else:
             logging.warning("Impossible to load the requested project.")
