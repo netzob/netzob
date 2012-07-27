@@ -29,34 +29,41 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
-from gi.repository import Gtk
-from operator import attrgetter
-import re
-import glib
-import struct
-from lxml.etree import ElementTree
 from lxml import etree
+from lxml.etree import ElementTree
+from operator import attrgetter
+import glib
+import logging
+import re
+import struct
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk
 #import pyasn1.codec.der.decoder
 #from pyasn1.error import PyAsn1Error
 #from pyasn1.error import SubstrateUnderrunError
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Field import Field
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
+from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
+from netzob.Common.NetzobException import NetzobException
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Common.NetzobException import NetzobException
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
+from netzob.Common.Type.UnitSize import UnitSize
 
-
+#+---------------------------------------------------------------------------+
+#| Namespaces                                                                |
+#+---------------------------------------------------------------------------+
 NAMESPACE = "http://www.netzob.org/"
 
 # TODO: Note: this is probably useless, as it is already specified in Project.py
@@ -1136,10 +1143,19 @@ class Symbol(AbstractSymbol):
         self.cleanFields()
 
         # Create a single field
-        field = self.reinitFields(self)
+        field = self.reinitFields()
 
-    def getValueToSend(self, inverse, vocabulary, memory):
-        result = self.getRoot().getValueToSend(inverse, vocabulary, memory)
+    def write(self, writingToken):
+        """write:
+                Grants a writing access to the symbol and its variables. Retrieve and return the value issued from this access.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this writing access.
+                @rtype: bitarray
+                @return: the value this acces writes.
+        """
+        self.getRoot().write(writingToken)
+        result = writingToken.getValue()
         return result
 
     def getRoot(self):
@@ -1153,9 +1169,9 @@ class Symbol(AbstractSymbol):
             rootSymbol.addChild(variable)
         return rootSymbol
 
-    #+----------------------------------------------
-    #| GETTERS
-    #+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Getters                                                                   |
+#+---------------------------------------------------------------------------+
     def getID(self):
         return self.id
 
@@ -1205,9 +1221,9 @@ class Symbol(AbstractSymbol):
     def getEndianess(self):
         return self.endianess
 
-    #+----------------------------------------------
-    #| SETTERS
-    #+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Setters                                                                   |
+#+---------------------------------------------------------------------------+
     def setFields(self, fields):
         self.fields = fields
 
@@ -1264,9 +1280,9 @@ class Symbol(AbstractSymbol):
             self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
             return 1
 
-    #+----------------------------------------------
-    #| Static methods
-    #+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
     @staticmethod
     def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":

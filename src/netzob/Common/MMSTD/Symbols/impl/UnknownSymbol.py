@@ -60,7 +60,15 @@ class UnknownSymbol(AbstractSymbol):
             self.log.debug("The symbols are not equivalents")
             return False
 
-    def getValueToSend(self, inverse, vocabulary, memory):
+    def write(self, writingToken):
+        """write:
+                Returns bitarray('').
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this writing access.
+                @rtype: bitarray
+                @return: bitarray('').
+        """
         return (bitarray(endian='big'), "")
 
     #+-----------------------------------------------------------------------+

@@ -46,7 +46,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
             A communication token used by variable when they are read.
     """
 
-    def __init__(self, value, index):
+    def __init__(self, negative, vocabulary, memory, value, index):
         """Constructor of VariableReadingToken:
 
                 @type value: bitarray
@@ -54,7 +54,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
                 @type index: integer
                 @param index: the current reading index in the read value.
         """
-        AbstractVariableProcessingToken.__init__()
+        AbstractVariableProcessingToken.__init__(self, negative, vocabulary, memory)
         self.value = value
         self.index = index
 

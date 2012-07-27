@@ -26,15 +26,19 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
-#+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import logging
-from collections import deque
-#+---------------------------------------------------------------------------+
-#| Local application imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from AbstractActor import AbstractActor
+from collections import deque
+from gettext import gettext as _
+import bitarray
+import logging
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
+    VariableWritingToken
 
 
 #+---------------------------------------------------------------------------+
@@ -67,7 +71,11 @@ class SimpleCommunicationLayer(AbstractActor):
         if (len(self.predefinedInputs) > 0):
             symbol = self.predefinedInputs.popleft()
             self.log.debug("We simulate the reception of symbol " + str(symbol))
-            (value, strvalue) = symbol.getValueToSend(False, self.vocabulary, self.memory)
+
+            # TODO: replace default values by clever values.
+            writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
+            self.symbol.write(writingToken)
+            value = writingToken.getValue()
             self.inputMessages.append(value)
             return value
         else:

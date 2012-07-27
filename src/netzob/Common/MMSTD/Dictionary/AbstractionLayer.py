@@ -26,23 +26,26 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
+import bitarray
 import datetime
+import logging
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
+#| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
+    VariableWritingToken
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
-from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class TimeoutException(Exception):
@@ -235,7 +238,11 @@ class AbstractionLayer():
 
     def specialize(self, symbol):
         self.log.info("Specializing the symbol " + symbol.getName())
-        return symbol.getValueToSend(False, self.vocabulary, self.memory)  # (bin, str)
+
+        #TODO: Replace all default values with clever values.
+        writingToken = VariableWritingToken(self, False, self.vocabulary, self.memory, bitarray(''), ["random"])
+        result = symbol.write(writingToken)
+        return result
 
     def getMemory(self):
         return self.memory

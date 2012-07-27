@@ -57,8 +57,17 @@ class DictionarySymbol(AbstractSymbol):
             self.log.debug("The symbols are not equivalents")
             return False
 
-    def getValueToSend(self, inverse, vocabulary, memory):
-        result = self.entry.getValueToSend(inverse, vocabulary, memory)
+    def write(self, writingToken):
+        """write:
+                Grant a writing access to the entry. Retrieve and return the value issued from this access.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this writing access.
+                @rtype: bitarray
+                @return: the value this acces writes.
+        """
+        self.entry.write(writingToken)
+        result = writingToken.getValue()
         return result
 
     #+-----------------------------------------------------------------------+

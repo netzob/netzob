@@ -46,7 +46,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
             A communication token used by variable when they are written.
     """
 
-    def __init__(self, value, generationStrategy):
+    def __init__(self, negative, vocabulary, memory, value, generationStrategy):
         """Constructor of VariableWritingToken:
 
                 @type value: bitarray
@@ -54,7 +54,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
                 @type generationStrategy: string
                 @param generationStrategy: the strategy that all generation of value for this variable will follow.
         """
-        AbstractVariableProcessingToken.__init__()
+        AbstractVariableProcessingToken.__init__(self, negative, vocabulary, memory)
         self.value = value
         self.generationStrategy = generationStrategy
         self.index = len(value)
