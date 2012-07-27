@@ -113,7 +113,43 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button11">
+              <object class="GtkBox" id="newProjectWarnBox">
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkImage" id="newProjectWarnImg">
+                    <property name="can_focus">False</property>
+                    <property name="xpad">5</property>
+                    <property name="ypad">5</property>
+                    <property name="stock">gtk-dialog-warning</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="NewProjectWarnLabel">
+                    <property name="can_focus">False</property>
+                    <property name="xpad">5</property>
+                    <property name="ypad">5</property>
+                    <property name="label" translatable="yes">Warning Message</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="newProjectCancelButton">
                 <property name="label">gtk-cancel</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -125,11 +161,11 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button19">
+              <object class="GtkButton" id="newProjectApplyButton">
                 <property name="label">gtk-apply</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
@@ -141,7 +177,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -178,7 +214,7 @@
                 <property name="invisible_char_set">True</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -187,14 +223,14 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">button11</action-widget>
-      <action-widget response="0">button19</action-widget>
+      <action-widget response="0">newProjectCancelButton</action-widget>
+      <action-widget response="0">newProjectApplyButton</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="renamesymbol">

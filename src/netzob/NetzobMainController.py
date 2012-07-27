@@ -165,34 +165,59 @@ class NetzobMainController(object):
             button.set_sensitive(False)
 
     def newProject_activate_cb(self, action):
-        #open dialogbox
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "dialogbox.glade"))
-        dialog = builder2.get_object("newProject")
-        #button apply
-        applybutton = builder2.get_object("button19")
-        applybutton.set_sensitive(False)
-        dialog.add_action_widget(applybutton, 0)
-        #button cancel
-        cancelbutton = builder2.get_object("button11")
-        dialog.add_action_widget(cancelbutton, 1)
-        #disable apply button if no text
-        entry = builder2.get_object("entry4")
-        entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
-        #run the dialog window and wait for the result
-        result = dialog.run()
+        """Display the dialog in order
+        to create a new project when the user request it
+        through the menu."""
+        finish = False
+        errorMessage = None
+        while not finish:
+            #open dialogbox
+            builder2 = Gtk.Builder()
+            builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
+            dialog = builder2.get_object("newProject")
+            #button apply
+            applybutton = builder2.get_object("newProjectApplyButton")
+            applybutton.set_sensitive(False)
+            dialog.add_action_widget(applybutton, 0)
+            #button cancel
+            cancelbutton = builder2.get_object("newProjectCancelButton")
+            dialog.add_action_widget(cancelbutton, 1)
+            #disable apply button if no text
+            entry = builder2.get_object("entry4")
+            entry.connect("changed", self.entry_disableButtonIfEmpty_cb, applybutton)
+            if errorMessage is not None:
+                # Display a warning message on the dialog box
+                warnLabel = builder2.get_object("NewProjectWarnLabel")
+                warnLabel.set_text(errorMessage)
+                warnBox = builder2.get_object("newProjectWarnBox")
+                warnBox.show_all()
 
-        if (result == 0):
-            #apply
-            newProjectName = entry.get_text()
-            self.log.debug(_("Create new project {0}").format(newProjectName))
-            # ++CODE HERE++
-            # CREATE PROJECT with the name of
+            #run the dialog window and wait for the result
+            result = dialog.run()
+            if result == 0:
+                newProjectName = entry.get_text()
+                dialog.destroy()
+                self.log.debug("Verify the uniqueness of project name : {0}".format(newProjectName))
+                found = False
+                for (projectName, projectPath) in self.currentWorkspace.getNameOfProjects():
+                    if projectName == newProjectName:
+                        found = True
+                        break
+                if found:
+                    self.log.info(_("A project with the same name already exists ({0}, {1}), please change it.".format(projectName, projectPath)))
+                    errorMessage = _("A project with this name exists")
+                else:
+                    self.log.debug(_("Create new project {0}").format(newProjectName))
+                    newProject = Project.createProject(self.getCurrentWorkspace(), newProjectName)
+                    self.switchProject(newProject.getPath())
+                    finish = True
+                    errorMessage = None
+            else:
+                dialog.destroy()
+                finish = True
+
             # SWITCH TO THIS PROJECT : self.switchProject(idNewProject)
-            dialog.destroy()
+
         if (result == 1):
             #cancel
             dialog.destroy()
@@ -248,6 +273,14 @@ class NetzobMainController(object):
         AboutDialog.display()
 
     def switchProject_cb(self, widget, projectPath):
+        """Callback for the GTK view in order to
+        switch to another project.
+        @param projectPath: the path to the project to load
+        @type projectPath: str
+        """
+        self.switchProject(projectPath)
+
+    def switchProject(self, projectPath):
         """Change the current project with the project
         declared in file projectPath. If the loading is successful
         the view is updated
