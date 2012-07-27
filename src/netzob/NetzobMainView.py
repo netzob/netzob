@@ -177,7 +177,7 @@ class NetzobMainView(object):
         for key in self.perspectiveDict:
             (pDescription, pController) = self.perspectiveDict[key]
             if pController is not None:
-                logging.debug("Restarting the perspective {0}".format(pDescrition))
+                logging.debug("Restarting the perspective {0}".format(pDescription))
                 pController.restart()
 
     def updateSwitchProjectMenu(self, listOfProjectsNameAndPath):

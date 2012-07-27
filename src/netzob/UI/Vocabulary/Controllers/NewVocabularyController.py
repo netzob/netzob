@@ -68,7 +68,7 @@ class NewVocabularyController(object):
     def restart(self):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")
-        self._view = NewVocabularyView(self)
+        self.view.beginWithNetzob()
         self.view.updateLeftPanel()
 
     ## Symbol List toolbar callbacks

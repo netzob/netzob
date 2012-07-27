@@ -256,6 +256,6 @@ class NetzobMainController(object):
             newProject = Project.loadProject(self.currentWorkspace, projectPath)
             if newProject is not None:
                 self.currentProject = newProject
-                self.view.updateProject()
+                self.view.currentProjectHasChanged()
             else:
                 logging.warning("Impossible to load the requested project.")
