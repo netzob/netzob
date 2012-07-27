@@ -389,19 +389,20 @@ class NewVocabularyView(object):
         return self.controller.netzob.getCurrentProject()
 
     def beginWithNetzob(self):
-        if len (self.getCurrentProject().getVocabulary().getMessages()) == 0:
-            if self.netzobBegin == None:
-                builder2 = Gtk.Builder()
-                builder2.add_from_file(os.path.join(
-                ResourcesConfiguration.getStaticResources(),
-                "ui",
-                "beginWithNetzob.glade"))
-                self.netzobBegin = builder2.get_object("netzobBegin")
-                self.messageTableBox.pack_start(self.netzobBegin, True , True, 0)
+        if(self.getCurrentProject() is not None):
+            if len (self.getCurrentProject().getVocabulary().getMessages()) == 0:
+                if self.netzobBegin == None:
+                    builder2 = Gtk.Builder()
+                    builder2.add_from_file(os.path.join(
+                    ResourcesConfiguration.getStaticResources(),
+                    "ui",
+                    "beginWithNetzob.glade"))
+                    self.netzobBegin = builder2.get_object("netzobBegin")
+                    self.messageTableBox.pack_start(self.netzobBegin, True , True, 0)
 
-        elif self.netzobBegin != None:
-            self.netzobBegin.destroy()
-            self.netzobBegin = None
+            elif self.netzobBegin is not None:
+                self.netzobBegin.destroy()
+                self.netzobBegin = None
 
     def getDisplayedSymbol(self):
         return self.selectedMessageTable.getDisplayedSymbol()

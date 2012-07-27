@@ -190,14 +190,8 @@ class NetzobMainView(object):
         for (projectName, projectPath) in listOfProjectsNameAndPath:
 #            actionSwitchOtherProject = Gtk.Action("FileMenu", "File", None, None)
             projectEntry = Gtk.MenuItem(projectName)
-            projectEntry.connect("activate", self.switchProject_cb, projectPath)
+            projectEntry.connect("activate", self.controller.switchProject_cb, projectPath)
             switchProjectMenu.append(projectEntry)
 
         switchProjectMenu.show_all()
         self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").set_sensitive(True)
-
-    def switchProject_cb(self, widget, projectPath):
-        """Callback executed when the user
-        click on project to load it."""
-        if projectPath != None:
-            self.controller.switchProject(projectPath)

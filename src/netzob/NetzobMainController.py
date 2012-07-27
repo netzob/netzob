@@ -75,6 +75,7 @@ class NetzobMainController(object):
             sys.exit()
 
         # Fetch last loaded project
+        ##Dont work
         self.currentProject = self.getCurrentWorkspace().getLastProject()
 
         # Initialize main view
@@ -246,18 +247,19 @@ class NetzobMainController(object):
     def aboutNetzob_activate_cb(self, action):
         pass
 
-    def switchProject(self, projectPath):
+    def switchProject_cb(self, widget, projectPath):
         """Change the current project with the project
         declared in file projectPath. If the loading is successful
         the view is updated
         @param projectPath: the path to the project to load
         @type projectPath: str
         """
-        logging.debug("Switch to the project declared in {0}".format(projectPath))
+        if projectPath != None:
+            logging.debug("Switch to the project declared in {0}".format(projectPath))
 
-        newProject = Project.loadProject(self.currentWorkspace, projectPath)
-        if newProject is not None:
-            self.currentProject = newProject
-            self.view.updateProject()
-        else:
-            logging.warning("Impossible to load the requested project.")
+            newProject = Project.loadProject(self.currentWorkspace, projectPath)
+            if newProject is not None:
+                self.currentProject = newProject
+                self.view.updateProject()
+            else:
+                logging.warning("Impossible to load the requested project.")

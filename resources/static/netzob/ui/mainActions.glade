@@ -73,8 +73,8 @@
     </child>
     <child>
       <object class="GtkAction" id="switchProject">
-        <property name="label" translatable="yes">Switch Project...</property>
-        <property name="stock_id">gtk-jump-to</property>
+        <property name="label" translatable="yes">Open project from workspace</property>
+        <property name="tooltip" translatable="yes">Open a project already into the workspace</property>
         <property name="hide_if_empty">False</property>
       </object>
       <accelerator key="p" modifiers="GDK_CONTROL_MASK"/>
