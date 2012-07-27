@@ -403,28 +403,31 @@ class TreeMessageController(object):
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             self.menu.append(item)
 
-            # Add sub-entries to change the variable of a specific column
-            if selectedField.getVariable() is None:
-                typeMenuVariable = Gtk.Menu()
-                itemVariable = Gtk.MenuItem(_("Create a variable"))
-                itemVariable.show()
-                itemVariable.connect("activate", self.rightClickCreateVariable, self.getSymbol(), selectedField)
-                typeMenuVariable.append(itemVariable)
-            else:
-                typeMenuVariable = Gtk.Menu()
-                itemVariable = Gtk.MenuItem(_("Edit variable"))
-                itemVariable.show()
-                itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
-                typeMenuVariable.append(itemVariable)
-
-            if selectedField.getVariable() is not None:
-                itemVariable3 = Gtk.MenuItem(_("Remove variable"))
-                itemVariable3.show()
-                itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
-                typeMenuVariable.append(itemVariable3)
+            # Not used anymore
+#===============================================================================
+#            # Add sub-entries to change the variable of a specific column
+#            if selectedField.getVariable() is None:
+#                typeMenuVariable = Gtk.Menu()
+#                itemVariable = Gtk.MenuItem(_("Create a variable"))
+#                itemVariable.show()
+#                itemVariable.connect("activate", self.rightClickCreateVariable, self.getSymbol(), selectedField)
+#                typeMenuVariable.append(itemVariable)
+#            else:
+#                typeMenuVariable = Gtk.Menu()
+#                itemVariable = Gtk.MenuItem(_("Edit variable"))
+#                itemVariable.show()
+#                itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
+#                typeMenuVariable.append(itemVariable)
+#
+#            if selectedField.getVariable() is not None:
+#                itemVariable3 = Gtk.MenuItem(_("Remove variable"))
+#                itemVariable3.show()
+#                itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
+#                typeMenuVariable.append(itemVariable3)
+#===============================================================================
 
             item = Gtk.MenuItem(_("Configure variation of field"))
-            item.set_submenu(typeMenuVariable)
+            item.connect("activate", self.rightClickEditVariable, selectedField)
             item.show()
             self.menu.append(item)
 
@@ -1082,15 +1085,16 @@ class TreeMessageController(object):
         dialog.vbox.pack_start(frame, True, True, 0)
         dialog.show()
 
-    def rightClickCreateVariable(self, widget, symbol, field):
-        self.log.debug(_("Opening the dialog for the creation of a variable"))
+        # No more used with the new variable management ui.
 #===============================================================================
+#    def rightClickCreateVariable(self, widget, symbol, field):
+#        self.log.debug(_("Opening the dialog for the creation of a variable"))
 #        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK, None)
 #        dialog.set_markup(_("Definition of the new variable"))
-# 
+#
 #        # Create the ID of the new variable
 #        variableID = uuid.uuid4()
-# 
+#
 #        mainTable = Gtk.Table(rows=3, columns=2, homogeneous=False)
 #        # id of the variable
 #        variableIDLabel = NetzobLabel(_("ID :"))
@@ -1098,66 +1102,67 @@ class TreeMessageController(object):
 #        variableIDValueLabel.set_sensitive(False)
 #        mainTable.attach(variableIDLabel, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 #        mainTable.attach(variableIDValueLabel, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-# 
+#
 #        # name of the variable
 #        variableNameLabel = NetzobLabel(_("Name : "))
 #        variableNameEntry = Gtk.Entry()
 #        variableNameEntry.show()
 #        mainTable.attach(variableNameLabel, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 #        mainTable.attach(variableNameEntry, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-# 
+#
 #        # Include current binary values
 #        variableWithCurrentBinariesLabel = NetzobLabel(_("Add current binaries : "))
-# 
+#
 #        variableWithCurrentBinariesButton = Gtk.CheckButton(_("Disjunctive inclusion"))
 #        variableWithCurrentBinariesButton.set_active(False)
 #        variableWithCurrentBinariesButton.show()
-# 
+#
 #        mainTable.attach(variableWithCurrentBinariesLabel, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
 #        mainTable.attach(variableWithCurrentBinariesButton, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=5, ypadding=5)
-# 
+#
 #        dialog.vbox.pack_end(mainTable, True, True, 0)
 #        dialog.show_all()
 #        result = dialog.run()
-# 
+#
 #        if result != Gtk.ResponseType.OK:
 #            dialog.destroy()
 #            return
-# 
+#
 #        # We retrieve the value of the variable
 #        varName = variableNameEntry.get_text()
-# 
+#
 #        # Disjonctive inclusion ?
 #        disjunctive = variableWithCurrentBinariesButton.get_active()
-# 
+#
 #        if disjunctive:
 #            # Create a default value
 #            defaultValue = field.getDefaultVariable(symbol)
 #        else:
 #            defaultValue = None
-# 
+#
 #        # We close the current dialog
 #        dialog.destroy()
+#
+#        # Dedicated view for the creation of a variable
+#        creationPanel = VariableTreeController(self.netzob, field)
+#        # creationPanel.display()
+#
+#
+#    def rightClickRemoveVariable(self, widget, field):
+#        questionMsg = _("Click yes to confirm the removal of the variable {0}").format(field.getVariable().getID())
+#        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
+#        result = md.run()
+#        md.destroy()
+#        if result == Gtk.ResponseType.YES:
+#            field.setVariable(None)
+#            self.update()
+#        else:
+#            self.log.debug(_("The user didn't confirm the deletion of the variable {0}").format(str(field.getVariable().getID())))
 #===============================================================================
-
-        # Dedicated view for the creation of a variable
-        creationPanel = VariableTreeController(self.netzob, field)
-        creationPanel.display()
-
-    def rightClickRemoveVariable(self, widget, field):
-        questionMsg = _("Click yes to confirm the removal of the variable {0}").format(field.getVariable().getID())
-        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
-        result = md.run()
-        md.destroy()
-        if result == Gtk.ResponseType.YES:
-            field.setVariable(None)
-            self.update()
-        else:
-            self.log.debug(_("The user didn't confirm the deletion of the variable {0}").format(str(field.getVariable().getID())))
 
     def rightClickEditVariable(self, widget, field):
         creationPanel = VariableTreeController(self.netzob, field)
-        creationPanel.display()
+        # creationPanel.display()
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 1:

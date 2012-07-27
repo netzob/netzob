@@ -336,6 +336,8 @@ class Field(object):
         return self.mathematicFilters
 
     def getVariable(self):
+        if self.variable is None:
+            self.variable = self.getDefaultVariable(self.symbol)
         return self.variable
 
 #+---------------------------------------------------------------------------+

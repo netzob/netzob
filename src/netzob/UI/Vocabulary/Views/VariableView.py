@@ -29,27 +29,90 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+import logging
 import os
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
+from gi.repository import Gtk
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class VariableTreeView:
+class AbstractView:
+    """AbstractView:
+            An abstract class mothering all views for the variable management.
+    """
+    def __init__(self, controller, gladeFileName):
+
+        self.controller = controller
+        self.builderWidget = Gtk.Builder()
+        gladePath = os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "Variables", gladeFileName)
+        self.builderWidget.add_from_file(gladePath)
+        self.widgDict = dict()
+
+    def getObjects(self, keyList):
+        """getObjects:
+                Get a list of objects from the glade model to python.
+
+                @type strObjectList: string list
+                @param strObjectList: the list of all the objects we want to get from the glade model to python.
+        """
+        self.widgDict = dict()
+        for key in keyList:
+            # logging.debug("get object: {0} with key: {1}".format(self.builderWidget.get_object(key), key))
+            self.widgDict[key] = self.builderWidget.get_object(key)
+
+    def showObjects(self):
+        """showObjects:
+                Show all objects of a view.
+        """
+        for widget in self.widgDict.itervalues():
+            widget.show()
+
+#+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getWidgDict(self):
+        return self.widgDict
+
+    def getWidg(self, key):
+        return self.widgDict[key]
+
+
+class VariableTreeView(AbstractView):
+    """VariableTreeView:
+            The tree view of a variable (and its prospective children).
+    """
 
     GLADE_FILENAME = "VariableTreeView.glade"
 
     def __init__(self, controller):
-        self.controller = controller
+        AbstractView.__init__(self, controller, VariableTreeView.GLADE_FILENAME)
+        self.getObjects(["treeview", "treeviewwindow"])
+        self.showObjects()
 
-        self.builderWidget = Gtk.Builder()
-        gladePath = os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "Variables", VariableTreeView.GLADE_FILENAME)
-        self.builderWidget.add_from_file(gladePath)
-        self.treeview = self.builderWidget.get_object("treeView")
+        # Make the column
+        self.lvcolumn = Gtk.TreeViewColumn(_("Description of the variable"))
+        self.lvcolumn.set_sort_column_id(1)
+        cell = Gtk.CellRendererText()
+        self.lvcolumn.pack_start(cell, True)
+        self.lvcolumn.add_attribute(cell, "text", 1)
+        self.getWidg("treeview").append_column(self.lvcolumn)
+
+
+class VariableCreationView(AbstractView):
+    """VariableCreationView:
+            The view that allows users to create/edit variables.
+    """
+
+    GLADE_FILENAME = "VariableCreationView.glade"
+
+    def __init__(self, controller):
+        AbstractView.__init__(self, controller, VariableCreationView.GLADE_FILENAME)
+        self.getObjects(["dialog", "applyButton", "nameEntry", "mutableCheck", "randomCheck", "minLabel", "maxLabel", "minSpin", "maxSpin", "variableTypeCombo", "valueLabel", "valueEntry", "typeLabel", "typeCombo"])
+        self.showObjects()
