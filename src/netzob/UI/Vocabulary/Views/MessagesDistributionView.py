@@ -47,17 +47,16 @@ class MessagesDistributionView(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, symbolList):
+    def __init__(self, controller):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.MessagesDistributionView.py')
-        self.symbolList = symbolList
+        self.controller = controller
 
     def buildListDistributionView(self):
         symbolDataPointList = []
         symbolNameList = []
-        segments = []
         #calculate the distribution for each symbol
-        for symbol in self.symbolList:
+        for symbol in self.controller.symbolList:
             i = 0
             resX = []
             resY = []
@@ -72,7 +71,6 @@ class MessagesDistributionView(object):
                         maxCell = len(cell) / 2
                 i += maxCell
             symbolDataPointList.append([resX, resY])
-        segments.append(i)
 
         #create figure
         fig = figure("Message distribution of symbol : " + str(symbolNameList))
@@ -91,16 +89,12 @@ class MessagesDistributionView(object):
         axis.hold(True)
 
         #add reload color button
-        reloadColor = plt.axes([0.74, 0.9, 0.15, 0.075])
+        reloadColor = plt.axes([0.735, 0.9, 0.15, 0.075])
         button = Button(reloadColor, 'Reload color')
         button.on_clicked(self.reloadColor_cb)
         self.axis = axis
         self.symbolPointObjectList = symbolPointObjectList
         self.symbolNameList = symbolNameList
-
-        #create the vertical bar
-        """for segment in segments:
-            axis.plot([segment, segment], [0, max(resY) + 5], 'k-')"""
 
         #set the limit of the figure
         maxX = 0
@@ -112,12 +106,9 @@ class MessagesDistributionView(object):
 
         axis.set_xlim(0, maxX + 5)
         axis.set_ylim(0, maxY + 5)
-        show()
 
-        #set the limit of the figure ++deprecated code++
-        """axis.set_xlim(0, max(resX) + 5)
-        axis.set_ylim(0, max(resY) + 5)
-        show()"""
+        #display figure
+        show()
 
     def reloadColor_cb(self, event):
         for point in self.symbolPointObjectList:
