@@ -30,8 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
-    AbstractVariable
 import logging
 import random
 
@@ -43,9 +41,13 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import \
+    AbstractNodeVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
-class RepeatVariable(AbstractVariable):
+class RepeatVariable(AbstractNodeVariable):
     """RepeatVariable:
             A variable with one child that repeats a certain time every treatment on this child.
     """
@@ -56,7 +58,7 @@ class RepeatVariable(AbstractVariable):
     def __init__(self, id, name, mutable, random, child, minIterations, maxIterations):
         """Constructor of RepeatVariable:
                 Each treatment will be repeated at most maxIterations time.
-                Each function will call once by iteration its equivalent in the class on the children.
+                Each function will call once by iteration its equivalent in the class on the child.
                 During an iteration, if the child treatment failed, we canceled the iteration loop.
                 If we had done less than minIteration, the global processing is considered failed, else it is considered successful.
 
@@ -67,12 +69,8 @@ class RepeatVariable(AbstractVariable):
                 @type maxIterations: integer
                 @param maxIterations: the maximum number of iteration each treatment will be repeated.
         """
-        AbstractVariable.__init__(self, id, name, mutable, random)
+        AbstractNodeVariable.__init__(self, id, name, mutable, random, [child])
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.RepeatVariable.py')
-        if child is not None:
-            self.child = child
-        else:
-            self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: no child given.").format(self.getName()))
         if minIterations is not None and minIterations >= 0:
             self.minIterations = minIterations
         else:
@@ -100,15 +98,15 @@ class RepeatVariable(AbstractVariable):
     def getDescription(self, processingToken):
         """getDescription:
         """
-        return _("[{0}, child:\n - {1}]").format(self.toString(), self.child.getDescription(processingToken))
+        return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getDescription(processingToken))
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
         """
-        return _("[{0}, child:\n - {1}]").format(self.toString(), self.child.getUncontextualizedDescription())
+        return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getUncontextualizedDescription())
 
     def isDefined(self):
-        return self.child.isDefined()
+        return self.getChild().isDefined()
 
     def read(self, readingToken):
         """read:
@@ -118,7 +116,7 @@ class RepeatVariable(AbstractVariable):
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
         for i in range(maxIterations):
-            self.child.read(readingToken)
+            self.getChild().read(readingToken)
             if readingToken.isOk():
                 successfullIterations += 1
             else:
@@ -138,7 +136,7 @@ class RepeatVariable(AbstractVariable):
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
         for i in range(maxIterations):
-            self.child.write(writingToken)
+            self.getChild().write(writingToken)
             if writingToken.isOk():
                 successfullIterations += 1
             else:
@@ -164,7 +162,7 @@ class RepeatVariable(AbstractVariable):
         xmlVariable.set("random", str(self.isRandom()))
 
         # Definition of child variable
-        self.child.toXML(xmlVariable, namespace)
+        self.getChild().toXML(xmlVariable, namespace)
 
         # minIterations
         xmlMinIterations = etree.SubElement(xmlVariable, "{" + namespace + "}minIterations")
@@ -187,13 +185,10 @@ class RepeatVariable(AbstractVariable):
         return (self.minIterations, self.maxIterations)
 
     def getChild(self):
-        return self.child
-
-    def setChild(self, child):
-        self.child = child
+        return self.children[0]
 
     def addChild(self, child):
-        self.child = child
+        self.children[0] = child
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

@@ -51,7 +51,7 @@ class AbstractLeafVariable(AbstractVariable):
     def __init__(self, id, name, mutable, random):
         """Constructor of AbstractLeafVariable:
         """
-        AbstractVariable.__init__(self, id, name, mutable, random)
+        AbstractVariable.__init__(self, id, name, mutable, random, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
         self.defined = True
 

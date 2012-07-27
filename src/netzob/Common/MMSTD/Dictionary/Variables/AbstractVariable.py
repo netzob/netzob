@@ -47,7 +47,7 @@ class AbstractVariable:
             An abstract variable defined in a dictionary.
     """
 
-    def __init__(self, id, name, mutable, random):
+    def __init__(self, id, name, mutable, random, node):
         """Constructor of AbstractVariable:
 
                 @type id: string
@@ -58,12 +58,15 @@ class AbstractVariable:
                 @param mutable: tells if the variable can be modified or not.
                 @type random: boolean
                 @param random: tells if the variable has a fixed or a dynamic and randomly driven value.
+                @type node: boolean
+                @param node: tells if the variable is a node.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.py')
         self.id = id
         self.name = name
         self.mutable = mutable
         self.random = random
+        self.node = node
 
     def toString(self):
         """toString:
@@ -71,6 +74,36 @@ class AbstractVariable:
         """
         return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, str(self.mutable), str(self.random))
 
+    def findMotherNode(self, rootVariable):
+        """findMotherNode:
+                Find the node that is just above the variable in the global tree structure.
+                Start the search of this node from a given root variable which is supposed to be an ancestor of the variable.
+                May be recursive.
+
+                @type rootVariable: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param rootVariable: a root ancestor of the being searched node.
+        """
+        # If the variable is the root of the tree.
+        if self.getID() == rootVariable.getID():
+            return None
+
+        # We assume that variable IDs are unique.
+        if rootVariable.isNode():
+            if rootVariable.getChildren() is not None:
+                for child in rootVariable.getChildren():
+                    if self.getID() == child.getID():
+                        # We find it
+                        return rootVariable
+                    else:
+                        # It may be in a child's children.
+                        node = self.findMotherNode(child)
+                        if node is not None:
+                            motherNode = node
+        return motherNode
+
+#+---------------------------------------------------------------------------+
+#| abstract method                                                           |
+#+---------------------------------------------------------------------------+
     @abstractmethod
     def getVariableType(self):
         """getVariableType:
@@ -120,7 +153,7 @@ class AbstractVariable:
         raise NotImplementedError(_("The current variable does not implement 'toXML'."))
 
 #+---------------------------------------------------------------------------+
-#| Visitor functions                                                         |
+#| Visitor abstract method                                                   |
 #+---------------------------------------------------------------------------+
     @abstractmethod
     def read(self, readingToken):
@@ -157,6 +190,9 @@ class AbstractVariable:
     def isRandom(self):
         return self.random
 
+    def isNode(self):
+        return self.node
+
     def setID(self, id):
         self.id = id
 
@@ -165,6 +201,9 @@ class AbstractVariable:
 
     def setRandom(self, random):
         self.random = random
+
+    def setNode(self, node):
+        self.node = node
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

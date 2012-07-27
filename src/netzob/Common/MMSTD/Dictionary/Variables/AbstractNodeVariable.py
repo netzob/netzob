@@ -53,12 +53,41 @@ class AbstractNodeVariable(AbstractVariable):
                 @type children: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
                 @param children: the list of this variable's children.
         """
-        AbstractVariable.__init__(self, id, name, mutable, random)
+        AbstractVariable.__init__(self, id, name, mutable, random, True)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractNodeVariable.py')
         self.children = []
         if children is not None:
             self.children.extend(children)
+
+    def removeChildByID(self, child):
+        """removeVariable:
+                Remove a variable having the same idea as child.
+
+                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param child: the variable that is being removed.
+        """
+        if self.children is not None:
+            for son in self.children:
+                if son.getID() == child.getID():
+                    # We edit the element.
+                    self.removeChild(son)
+                    break
+
+    def editChildByID(self, child):
+        """editVariable:
+                Edit a variable having the same idea as child.
+
+                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param child: the variable that is being edited.
+        """
+        if self.children is not None:
+            for son in self.children:
+                if son.getID() == child.getID():
+                    # We edit the element.
+                    self.removeChild(son)
+                    self.addChild(child)
+                    break
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -70,4 +99,9 @@ class AbstractNodeVariable(AbstractVariable):
         return self.children
 
     def addChild(self, child):
-        self.children.append(child)
+        if self.children is not None:
+            self.children.append(child)
+
+    def removeChild(self, child):
+        if self.children is not None:
+            self.children.remove(child)
