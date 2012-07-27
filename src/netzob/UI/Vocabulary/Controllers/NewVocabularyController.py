@@ -50,7 +50,7 @@ from netzob.UI.Vocabulary.Controllers.NewSequenceAlignmentController import NewS
 from netzob.UI.Vocabulary.Controllers.NewForcePartitioningController import NewForcePartitioningController
 from netzob.UI.Vocabulary.Controllers.NewSimplePartitioningController import NewSimplePartitioningController
 from netzob.UI.Vocabulary.Controllers.NewSmoothPartitioningController import NewSmoothPartitioningController
-from netzob.UI.Vocabulary.Views.MessagesDistributionView import MessagesDistributionView
+from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 
 
 class NewVocabularyController(object):
@@ -230,26 +230,6 @@ class NewVocabularyController(object):
         if self.focus.get_object("spreadsheet") == spreadsheet:
             self.focus = None
 
-    def selectiontreeview_switchSymbol_cb(self, widget):
-        if self.focus is not None:
-            model, itera = widget.get_selected()
-            row = model[itera]
-            self.focus.idsymbol = row[6]
-            #set the text for label
-            self.focus.get_object("label1").set_text(row[1])
-            #set field for treeview
-            '''
-            treemessage = self.focus.get_object("treemessage")
-            column = Gtk.TreeViewColumn('Column Title', Gtk.CellRenderer(), text=0)
-            treemessage.append_column(column)
-            #add the message to the store
-            messagestore = self.focus.get_object("liststoremessage")
-            for mess in self.getCurrentProject().getVocabulary().getMessages():
-                m = messagestore.append()
-                messagestore.set(m,0,mess)
-            '''
-
-        #reste a switcher les messages du treeview
 ###############
 
 ######### MENU / TOOLBAR ENTRIES CONTROLLERS
@@ -300,8 +280,8 @@ class NewVocabularyController(object):
         pass
 
     def messagesDistribution_activate_cb(self, action):
-        distribution = MessagesDistributionView(self._view.getCheckedSymbolList())
-        distribution.buildListDistributionView()
+        distribution = MessagesDistributionController(self._view.getCheckedSymbolList())
+        distribution.run()
 
     def variableTable_activate_cb(self, action):
         builder2 = Gtk.Builder()
