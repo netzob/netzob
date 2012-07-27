@@ -53,6 +53,7 @@ from netzob.UI.Vocabulary.Controllers.NewSmoothPartitioningController import New
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 
 
+
 class NewVocabularyController(object):
 
     def __init__(self, netzob):
@@ -210,7 +211,6 @@ class NewVocabularyController(object):
         self.view.updateSymbolListToolbar()
 
     def symbolListTreeViewSelection_changed_cb(self, selection):
-        print "Selection changed"
         model, iter = selection.get_selected()
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
         if iter is not None:
