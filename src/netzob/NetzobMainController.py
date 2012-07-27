@@ -63,7 +63,6 @@ class NetzobMainController(object):
         cmdLine = CommandLine()
         cmdLine.parse()
         opts = cmdLine.getOptions()
-
         # Initialize everything
         self._loadWorkspace(opts)
         self._initLogging()
@@ -75,6 +74,7 @@ class NetzobMainController(object):
             sys.exit()
 
         # Initialize main view
+        self.view = None    # small hack since the attribute need to exists when the main glade is loaded
         self.view = NetzobMainView(self)
 
         # Load all available plugins
@@ -149,7 +149,7 @@ class NetzobMainController(object):
 
     def perspectiveComboBox_changed_cb(self, comboBox):
         iter = comboBox.get_active_iter()
-        if iter is not None:
+        if iter is not None and self.view is not None:
             model = comboBox.get_model()
             newPerspectiveCode = model[iter][0]
             self.view.switchPerspective(newPerspectiveCode)
