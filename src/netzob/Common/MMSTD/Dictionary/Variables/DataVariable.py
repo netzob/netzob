@@ -284,6 +284,7 @@ class DataVariable(AbstractLeafVariable):
                 self.originalValue = None
                 self.log.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
         else:
+            self.originalValue = None
             self.log.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))
 
     def setCurrentValue(self, currentValue):

@@ -199,7 +199,8 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         instanciatedNetworkServer = InstanciatedNetworkServer(self.request)
 
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        # abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
 
         # And we create an MMSTD visitor for this
         self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer)
@@ -246,7 +247,8 @@ class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
         self.log.info("A client has just initiated a connection on the server.")
 
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(self.server.getModel().getVocabulary().getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        # abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(self.server.getModel().getVocabulary().getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
 
         # Initialize a dedicated automata and creates a visitor
         modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)

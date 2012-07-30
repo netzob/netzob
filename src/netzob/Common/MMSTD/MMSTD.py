@@ -130,8 +130,10 @@ class MMSTD(Automata):
     #| @return the generated traces (a list of symbols) by the MMSTD and the end state
     #+---------------------------------------------------------------------------+
     def getOutputTrace(self, state, symbols):
-        communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
-        abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
+        communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory())
+        abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory())
+        # communicationLayer = SimpleCommunicationLayer(symbols, [], self.vocabulary, Memory(self.vocabulary.getVariables()))
+        # abstractionLayer = AbstractionLayer(communicationLayer, self.vocabulary, Memory(self.vocabulary.getVariables()))
         for i in range(0, len(symbols)):
             if state is not None:
                 state = state.executeAsClient(abstractionLayer)
