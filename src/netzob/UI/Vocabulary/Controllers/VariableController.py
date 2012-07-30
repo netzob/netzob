@@ -224,14 +224,23 @@ class VariableTreeController:
         result = md.run()
         md.destroy()
         if result == Gtk.ResponseType.YES:
-            # Edit the variable
-            motherNode = variable.findMotherNode(self.field.getVariable())
-            motherNode.editChildByID(variable)
+            if variable.getID() == self.field.getVariable().getID():
+                # Edit the variable
+                self.field.setVariable(variable)
 
-            # Update its entry
-            entry = self.dictEntry[variable.getID()]
-            self.treestore.remove(entry)
-            self.registerVariable(self.dictEntry[motherNode.getID()], variable)
+                # Update its entry
+                entry = self.dictEntry[variable.getID()]
+                self.treestore.remove(entry)
+                self.registerVariable(None, variable)
+            else:
+                # Edit the variable
+                motherNode = variable.findMotherNode(self.field.getVariable())
+                motherNode.editChildByID(variable)
+
+                # Update its entry
+                entry = self.dictEntry[variable.getID()]
+                self.treestore.remove(entry)
+                self.registerVariable(self.dictEntry[motherNode.getID()], variable)
         else:
             logging.info(_("The user didn't confirm the edition of the variable {0}").format(variable.getName()))
 
