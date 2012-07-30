@@ -116,3 +116,16 @@ class VariableCreationView(AbstractView):
         AbstractView.__init__(self, controller, VariableCreationView.GLADE_FILENAME)
         self.getObjects(["dialog", "applyButton", "nameEntry", "mutableCheck", "randomCheck", "minLabel", "maxLabel", "minSpin", "maxSpin", "variableTypeCombo", "valueLabel", "valueEntry", "typeLabel", "typeCombo"])
         self.showObjects()
+
+
+class VariableMovingView(AbstractView):
+    """VariableMovingView:
+            The view that allows users to move variables.
+    """
+
+    GLADE_FILENAME = "VariableMovingView.glade"
+
+    def __init__(self, controller):
+        AbstractView.__init__(self, controller, VariableMovingView.GLADE_FILENAME)
+        self.getObjects(["dialog", "applyButton", "entry"])
+        self.showObjects()

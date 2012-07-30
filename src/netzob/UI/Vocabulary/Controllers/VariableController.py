@@ -40,7 +40,6 @@ from gi.repository import Gtk
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-
 from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
@@ -54,7 +53,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import \
 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
     RepeatVariable
 from netzob.UI.Vocabulary.Views.VariableView import VariableTreeView, \
-    VariableCreationView
+    VariableCreationView, VariableMovingView
 
 
 class VariableTreeController:
@@ -163,12 +162,20 @@ class VariableTreeController:
             itemAdd.show()
             self.menu.append(itemAdd)
 
+        # To edit an element.
         itemEdit = Gtk.MenuItem(_("Edit this element"))
         itemEdit.connect("activate", VariableCreationController, self, variable, iter, True)
         itemEdit.show()
 
-        # If we have not click on the root variable, we can remove it. The root variable can be edited. it is way enough.
+        # If we have not click on the root variable, we can move and remove it. The root variable can be edited. it is way enough.
         if variable.getID() != self.field.getVariable().getID():
+            # To move an element.
+            itemMove = Gtk.MenuItem(_("Move this element"))
+            itemMove.connect("activate", VariableMovingController, self, variable)
+            itemMove.show()
+            self.menu.append(itemMove)
+
+            # To remove an element.
             itemRemove = Gtk.MenuItem(_("Remove this element"))
             itemRemove.connect("activate", self.removeVariable, variable)
             itemRemove.show()
@@ -231,7 +238,7 @@ class VariableTreeController:
 
 class VariableCreationController:
     """VariableCreationController:
-            Manage a view that allow the user to modify/create a variable by specifying each of its field.
+            Manage a view that allows the user to modify/create a variable by specifying each of its field.
     """
 
     def __init__(self, item, treeController, variable, rootEntry, editOverCreate):
@@ -263,6 +270,8 @@ class VariableCreationController:
                 Init the callbacks.
         """
         self.view.getWidg("variableTypeCombo").connect('changed', self.updateOptions)
+        self.view.getWidg("minSpin").connect('changed', self.updateMaxSpin)
+        self.view.getWidg("applyButton").connect("clicked", self.validateChanges)
 
     def updateOptions(self, widget=None):
         """updateOptions:
@@ -272,6 +281,8 @@ class VariableCreationController:
                 @param widget: the widget which modification calls this function.
         """
         strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
+
+        handler_id = None
 
         # Node variable
         if strVarType == AggregateVariable.TYPE or strVarType == AlternateVariable.TYPE:
@@ -284,6 +295,11 @@ class VariableCreationController:
             self.view.getWidg("typeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
+
+            # We disconnect a signal reserved to Data variable.
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
 
         # Data variable
         elif strVarType == DataVariable.TYPE:
@@ -301,6 +317,8 @@ class VariableCreationController:
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
+            handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
+
         # Pointing variable
         elif strVarType == ReferencedVariable.TYPE:
             self.view.getWidg("valueLabel").set_text("Pointed ID")
@@ -314,6 +332,10 @@ class VariableCreationController:
             self.view.getWidg("typeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
+
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
 
         # Repeat variable
         elif strVarType == RepeatVariable.TYPE:
@@ -330,6 +352,10 @@ class VariableCreationController:
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
+
         else:
             self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
@@ -340,6 +366,35 @@ class VariableCreationController:
             self.view.getWidg("typeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
+
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
+
+    def updateMinSpin(self, widget):
+        """updateMinSpin:
+                Fix the value of minspin to len(value) in order to help the user to know the size of the value he entered.$
+        """
+        size = len(str(self.view.getWidg("valueEntry").get_text()))
+        # Protect previously defined minValue.
+        # if self.view.getWidg("minSpin").get_text() is None or str(self.view.getWidg("minSpin").get_text()) == '' or size < int(self.view.getWidg("minSpin").get_text()):
+        self.view.getWidg("minSpin").set_text(str(size))
+
+    def updateMaxSpin(self, widget):
+        """updateMaxSpin:
+                Fix the value of maxSpin to at least minSpin.
+                Called when minSpin is modified to a greater value than maxspin.
+        """
+        if self.view.getWidg("minSpin").get_text() is None or str(self.view.getWidg("minSpin").get_text()) == '':
+            minSpin = 0
+        else:
+            minSpin = int(self.view.getWidg("minSpin").get_text())
+        if self.view.getWidg("maxSpin").get_text() is None or str(self.view.getWidg("maxSpin").get_text()) == '':
+            maxSpin = 0
+        else:
+            maxSpin = int(self.view.getWidg("maxSpin").get_text())
+        if minSpin > maxSpin:
+            self.view.getWidg("maxSpin").set_text(self.view.getWidg("minSpin").get_text())
 
     def runDialog(self):
         """runDialog:
@@ -356,7 +411,10 @@ class VariableCreationController:
             self.setComboText(self.view.getWidg("variableTypeCombo"), self.variable.getVariableType())
 
             if self.variable.getVariableType() == DataVariable.TYPE:
-                self.view.getWidg("valueEntry").set_text(self.variable.bin2str(self.variable.getOriginalValue()))
+                if self.variable.getOriginalValue() is not None:
+                    self.view.getWidg("valueEntry").set_text(self.variable.bin2str(self.variable.getOriginalValue()))
+                else:
+                    self.view.getWidg("valueEntry").set_text('')
                 self.setComboText(self.view.getWidg("typeCombo"), self.variable.getType().getType())
                 self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
@@ -369,19 +427,17 @@ class VariableCreationController:
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getNumberIterations()[1]))
 
         self.updateOptions()
-        self.view.getWidg("applyButton").connect("clicked", self.validateChanges, dialog)
         dialog.run()
 
-    def validateChanges(self, widget, dialog):
+    def validateChanges(self, widget):
         """validateChanges:
                 Validate the changes that a user has done on a variable.
                 Called by a click on the apply button.
 
                 @type widget: Gtk.widget
                 @param widget: the widget which calls this function.
-                @type dialog: Gtk.dialog
-                @param dialog: the dialog which widget calls this function.
         """
+        dialog = self.view.getWidg("dialog")
         if self.editOverCreate:
             id = self.variable.getID()
         else:
@@ -449,6 +505,15 @@ class VariableCreationController:
         dialog.destroy()
 
     def setComboText(self, combo, text):
+        """setComboText:
+                Fix the displayed value of a combo box to the item which value is "text".
+                This value must be one of the possible values of the combobox.
+
+                @type combo: Gtk.Combobox
+                @param combo: the combobox which displayed value we want to change.
+                @type text: string
+                @param text: the string value we want that the combobox displays.
+        """
         model = combo.get_model()
         iter = model.get_iter_first()
         while True:
@@ -459,3 +524,63 @@ class VariableCreationController:
                 iter = model.iter_next(iter)
             else:
                 break
+
+
+class VariableMovingController:
+    """VariableMovingController:
+            Manage a view that allows the user to move a variable to a specified position.
+    """
+
+    def __init__(self, item, treeController, variable):
+        """Constructor of VariableMovingController:
+                Called by a click on the tree view of all variables.
+
+                @type item: Gtk.Menuitem
+                @param item: the menu item that calls this constructor.
+                @type treeController: VariableTreeController
+                @param treeController: the controller of the tree view which cause this controller's view to appear.
+                @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
+                @param variable: the variable that will be modified/to which we will add a child.
+        """
+        self.treeController = treeController
+        self.netzob = self.treeController.netzob
+        self.variable = variable
+        self.view = VariableMovingView(self)
+        self.initCallBacks()
+        self.runDialog()
+
+    def initCallBacks(self):
+        """initCallbacks:
+                Init the callbacks.
+        """
+        self.view.getWidg("applyButton").connect("clicked", self.validateChanges)
+
+    def runDialog(self):
+        """runDialog:
+                Run a dialog that allows to move a variable.
+        """
+        dialog = self.view.getWidg("dialog")
+        motherNode = self.variable.findMotherNode(self.treeController.field.getVariable())
+        self.view.getWidg("entry").set_text(str(motherNode.indexOfChild(self.variable)))
+        dialog.show_all()
+        dialog.run()
+
+    def validateChanges(self, widget):
+        """validateChanges:
+                Validate the changes that a user has done on a variable.
+                Called by a click on the apply button.
+
+                @type widget: Gtk.widget
+                @param widget: the widget which calls this function.
+        """
+        position = int(self.view.getWidg("entry").get_text())
+        motherNode = self.variable.findMotherNode(self.treeController.field.getVariable())
+
+        # Move the variable entry in the tree view.
+        entry = self.treeController.dictEntry[self.variable.getID()]
+        self.treeController.treestore.move_before(entry, self.treeController.dictEntry[motherNode.getChildren()[position].getID()])
+
+        # Move the variable.
+        motherNode.moveChild(self.variable, position)
+
+        self.view.getWidg("dialog").destroy()
