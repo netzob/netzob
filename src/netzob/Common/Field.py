@@ -97,6 +97,7 @@ class Field(object):
         self.endianess = Endianess.BIG
         self.mathematicFilters = []
 
+        self.variable = None
         self.variable = self.getDefaultVariable()
 
     def getEncodedVersionOfTheRegex(self):
@@ -339,8 +340,6 @@ class Field(object):
         return self.mathematicFilters
 
     def getVariable(self):
-        if self.variable is None:
-            self.variable = self.getDefaultVariable(self.symbol)
         return self.variable
 
 #+---------------------------------------------------------------------------+

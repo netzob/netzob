@@ -165,7 +165,7 @@ class Symbol(AbstractSymbol):
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field(_("Name"), iField, "(.{,})")
+            field = Field(_("Name"), iField, "(.{,})", self)
             field.setFormat(aFormat)
             field.setColor("blue")
             iField += 1
