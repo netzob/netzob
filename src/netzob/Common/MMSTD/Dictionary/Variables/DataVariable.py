@@ -94,7 +94,10 @@ class DataVariable(AbstractLeafVariable):
                 @rtype: string
                 @return: a type-formatted string.
         """
-        return self.type.bin2str(bina)
+        if bina is not None:
+            return self.type.bin2str(bina)
+        else:
+            return None
 
     def getVariableType(self):
         """getVariableType:

@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 import logging
 import random
 
@@ -60,9 +61,24 @@ class AbstractNodeVariable(AbstractVariable):
         if children is not None:
             self.children.extend(children)
 
+    def moveChild(self, child, position):
+        """removeVariable:
+                move child to a given position
+
+                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param child: the variable that is being moved.
+                @type position: integer
+                @param position: the position where the child is being moved.
+        """
+        if position < 0 or position > len(self.children):
+            self.log.info(_("Wrong position given, nothing is done: the position {0} is without the boundaries [0, {1}]").format(str(position), str(len(self.children))))
+        else:
+            self.removeChild(child)
+            self.insertChild(position, child)
+
     def removeChildByID(self, child):
         """removeVariable:
-                Remove a variable having the same idea as child.
+                Remove a variable having the same id as child. It can be a clone of child.
 
                 @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
                 @param child: the variable that is being removed.
@@ -76,7 +92,7 @@ class AbstractNodeVariable(AbstractVariable):
 
     def editChildByID(self, child):
         """editVariable:
-                Edit a variable having the same idea as child.
+                Edit a variable having the same id as child. It can be a previous version of child.
 
                 @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
                 @param child: the variable that is being edited.
@@ -98,6 +114,9 @@ class AbstractNodeVariable(AbstractVariable):
                 random.shuffle(self.children)
         return self.children
 
+#+---------------------------------------------------------------------------+
+#| Implementation of list functions                                          |
+#+---------------------------------------------------------------------------+
     def addChild(self, child):
         if self.children is not None:
             self.children.append(child)
@@ -105,3 +124,13 @@ class AbstractNodeVariable(AbstractVariable):
     def removeChild(self, child):
         if self.children is not None:
             self.children.remove(child)
+
+    def insertChild(self, i, child):
+        if self.children is not None:
+            self.children.insert(i, child)
+
+    def indexOfChild(self, child):
+        if self.children is not None:
+            return self.children.index(child)
+        else:
+            return None
