@@ -117,7 +117,7 @@ class NetworkClient(AbstractActor):
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result
-        result.fromstring(chars)
+        result.frombytes(chars)
 
         self.log.debug("Received : " + str(result))
         return result

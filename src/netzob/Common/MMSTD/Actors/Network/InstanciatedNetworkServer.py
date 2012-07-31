@@ -110,7 +110,9 @@ class InstanciatedNetworkServer(AbstractActor):
     def write(self, message):
         self.log.debug("Writing to the socket")
         self.outputMessages.append(message)
-        self.socket.send(message.tostring())
+        # This work only for values between 0x00 and 0x7f
+        # self.socket.send(message.tostring())
+        self.socket.send(message.tobytes())
 
         self.log.debug("Write down !")
 
