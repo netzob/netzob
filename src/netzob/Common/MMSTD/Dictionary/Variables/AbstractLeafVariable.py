@@ -155,6 +155,7 @@ class AbstractLeafVariable(AbstractVariable):
 
             else:
                 # not mutable and not defined
+                self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
                 readingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -180,6 +181,7 @@ class AbstractLeafVariable(AbstractVariable):
         else:
             if self.defined:
                 # not mutable and defined
+                self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
                 self.writeValue(writingToken)
 
             else:

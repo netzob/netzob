@@ -28,7 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-
+from gettext import gettext as _
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -76,4 +77,5 @@ class AbstractVariableProcessingToken():
         return self.memory
 
     def setOk(self, ok):
+        logging.debug(_("The token's ok flag is set to {0}.").format(ok))
         self.ok = ok

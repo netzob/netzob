@@ -132,7 +132,7 @@ class DataVariable(AbstractLeafVariable):
         """
         dictOfValues = dict()
         dictOfValues[self.getID()] = self.getValue(processingToken)
-        self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
+        # self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
         return dictOfValues
 
     def restore(self, processingToken):
@@ -204,10 +204,11 @@ class DataVariable(AbstractLeafVariable):
                     self.log.debug(_("Comparison successful."))
                     readingToken.incrementIndex(len(localValue))
                 else:
-                    self.log.debug(_("Comparison failed."))
+                    self.log.debug(_("Comparison failed: wrong value."))
+                    readingToken.setOk(False)
             else:
-                self.log.debug(_("Comparison failed."))
-            readingToken.setOk(False)
+                self.log.debug(_("Comparison failed: wrong size."))
+                readingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
 
     def generate(self, writingToken):
