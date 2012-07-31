@@ -47,11 +47,11 @@ class AbstractVariable:
             An abstract variable defined in a dictionary.
     """
 
-    def __init__(self, id, name, mutable, random, node):
+    def __init__(self, _id, name, mutable, random, node):
         """Constructor of AbstractVariable:
 
-                @type id: string
-                @param id: a unique identifying string.
+                @type _id: string
+                @param _id: a unique identifying string.
                 @type name: string
                 @param name: the name of the variable being constructed.
                 @type mutable: boolean
@@ -62,7 +62,7 @@ class AbstractVariable:
                 @param node: tells if the variable is a node.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.py')
-        self.id = id
+        self.id = _id
         self.name = name
         self.mutable = mutable
         self.random = random
@@ -216,8 +216,8 @@ class AbstractVariable:
     def isNode(self):
         return self.node
 
-    def setID(self, id):
-        self.id = id
+    def setID(self, _id):
+        self.id = _id
 
     def setMutable(self, mutable):
         self.mutable = mutable

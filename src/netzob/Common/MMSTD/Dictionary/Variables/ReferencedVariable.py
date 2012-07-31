@@ -53,10 +53,10 @@ class ReferencedVariable(AbstractVariable):
 
     TYPE = "Referenced Variable"
 
-    def __init__(self, id, name, mutable, random, pointedID):
+    def __init__(self, _id, name, mutable, random, pointedID):
         """Constructor of ReferencedVariable:
         """
-        AbstractVariable.__init__(self, id, name, mutable, random, False)
+        AbstractVariable.__init__(self, _id, name, mutable, random, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ReferencedVariable.py')
         self.pointedID = pointedID
 

@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -56,7 +55,7 @@ class DataVariable(AbstractLeafVariable):
     MAX_BITS = 1024
     TYPE = "Data Variable"
 
-    def __init__(self, id, name, mutable, random, type, originalValue, minChars, maxChars):
+    def __init__(self, _id, name, mutable, random, _type, originalValue, minChars, maxChars):
         """Constructor of DataVariable:
                 Most of type are checked to not be None.
 
@@ -69,9 +68,9 @@ class DataVariable(AbstractLeafVariable):
                 @type maxChars: integer
                 @param maxChars: the maximum number of elementary character the value of this variable can have.
         """
-        AbstractLeafVariable.__init__(self, id, name, mutable, random)
+        AbstractLeafVariable.__init__(self, _id, name, mutable, random)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
-        self.setType(type)
+        self.setType(_type)
         self.setNumberBitsAndNumberChars(minChars, maxChars)
         self.setOriginalValue(originalValue)
         self.currentValue = self.originalValue
@@ -277,9 +276,9 @@ class DataVariable(AbstractLeafVariable):
     def getMaxChars(self):
         return self.maxChars
 
-    def setType(self, type):
+    def setType(self, _type):
         if type is not None:
-            self.type = type
+            self.type = _type
         else:
             # Default type is Binary.
             self.log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
@@ -334,10 +333,10 @@ class DataVariable(AbstractLeafVariable):
             xmlRandom = xmlRoot.get("random") == "True"
 
             # type
-            type = None
+            _type = None
             xmlType = xmlRoot.find("{" + namespace + "}type")
             if xmlType is not None:
-                type = AbstractType.makeType(xmlType.text)
+                _type = AbstractType.makeType(xmlType.text)
                 if type is None:
                     return None
             else:
@@ -365,7 +364,7 @@ class DataVariable(AbstractLeafVariable):
             else:
                 maxChars = DataVariable.MAX_BITS
 
-            result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, type, originalValue, minChars, maxChars)
+            result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, _type, originalValue, minChars, maxChars)
             logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("DataVariable: loadFromXML fails"))

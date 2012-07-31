@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -52,10 +51,10 @@ class AggregateVariable(AbstractNodeVariable):
 
     TYPE = "Aggregate Variable"
 
-    def __init__(self, id, name, mutable, random, children=[]):
+    def __init__(self, _id, name, mutable, random, children=[]):
         """Constructor of AggregateVariable:
         """
-        AbstractNodeVariable.__init__(self, id, name, mutable, random, children)
+        AbstractNodeVariable.__init__(self, _id, name, mutable, random, children)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AggregateVariable.py')
 
 #+---------------------------------------------------------------------------+

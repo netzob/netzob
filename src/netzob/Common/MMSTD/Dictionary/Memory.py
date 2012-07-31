@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -93,8 +92,8 @@ class Memory():
                 Debug functions which print all values in temporary memory.
         """
         self.log.debug("Memory map:")
-        for id in self.temporaryMemory.keys():
-            self.log.debug("> " + str(id) + " = " + str(self.temporaryMemory.get(id)))
+        for _id in self.temporaryMemory.keys():
+            self.log.debug("> " + str(_id) + " = " + str(self.temporaryMemory.get(_id)))
 
 #+---------------------------------------------------------------------------+
 #| Functions on temporary memory elements                                    |

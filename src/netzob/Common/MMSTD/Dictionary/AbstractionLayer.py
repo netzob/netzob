@@ -29,7 +29,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from bitarray import bitarray
-from gettext import gettext as _
 import datetime
 import logging
 
