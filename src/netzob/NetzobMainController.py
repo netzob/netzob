@@ -34,6 +34,8 @@ import os
 import logging
 import locale
 import gettext
+import uuid
+import shutil
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -215,9 +217,6 @@ class NetzobMainController(object):
             else:
                 dialog.destroy()
                 finish = True
-
-            # SWITCH TO THIS PROJECT : self.switchProject(idNewProject)
-
         if (result == 1):
             #cancel
             dialog.destroy()
@@ -227,8 +226,91 @@ class NetzobMainController(object):
         # SAVE THE CURRENT PROJECT
         pass
 
+    def fileSetFileChooser_importProject_cb(self, widget, applyButton):
+        """Callback executed when the user
+        selects a file in the file chooser of
+        the import project dialog box"""
+        selectedFile = widget.get_filename()
+        if selectedFile is not None:
+            applyButton.set_sensitive(True)
+        else:
+            applyButton.set_sensitive(False)
+
     def importProject_activate_cb(self, action):
-        pass
+        """Display the dialog in order
+        to import a project when the user request it
+        through the menu."""
+        logging.debug("Import project")
+        finish = False
+        errorMessage = None
+        while not finish:
+            #open dialogbox
+            builder2 = Gtk.Builder()
+            builder2.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(), "ui", "dialogbox.glade"))
+            dialog = builder2.get_object("importProject")
+            #button apply
+            applybutton = builder2.get_object("importProjectApplyButton")
+            applybutton.set_sensitive(False)
+            dialog.add_action_widget(applybutton, 0)
+            #button cancel
+            cancelbutton = builder2.get_object("importProjectCancelButton")
+            dialog.add_action_widget(cancelbutton, 1)
+            #disable apply button if no file is provided
+            fileChooserButton = builder2.get_object("importProjectFileChooserButton")
+            fileChooserButton.connect("file-set", self.fileSetFileChooser_importProject_cb, applybutton)
+            if errorMessage is not None:
+                # Display a warning message on the dialog box
+                warnLabel = builder2.get_object("importProjectWarnLabel")
+                warnLabel.set_text(errorMessage)
+                warnBox = builder2.get_object("importProjectWarnBox")
+                warnBox.show_all()
+
+            #run the dialog window and wait for the result
+            result = dialog.run()
+            if result == 0:
+                selectedFile = fileChooserButton.get_filename()
+                dialog.destroy()
+
+                if selectedFile is None:
+                    errorMessage = _("No file selected")
+                else:
+                    # Verify the file is a valid definition of a project
+                    if Project.loadProjectFromFile(selectedFile) is None:
+                        errorMessage = _("The file doesn't define a valid project.")
+                    else:
+                        # Generate the Unique ID of the imported project
+                        idProject = str(uuid.uuid4())
+                        # First we verify and create if necessary the directory of the project
+                        projectPath = "projects/" + idProject + "/"
+                        destPath = os.path.join(os.path.join(self.getCurrentWorkspace().getPath(), projectPath))
+                        if not os.path.exists(destPath):
+                            logging.info("Creation of the directory " + destPath)
+                            os.mkdir(destPath)
+                        # Retrieving and storing of the config file
+                        try:
+                            destFile = os.path.join(destPath, Project.CONFIGURATION_FILENAME)
+                            shutil.copy(selectedFile, destFile)
+
+                            project = Project.loadProject(self.getCurrentWorkspace(), destPath)
+                            project.setID(idProject)
+                            project.setName(_("Copy of {0}").format(project.getName()))
+                            project.setPath(projectPath)
+                            project.saveConfigFile(self.getCurrentWorkspace())
+                            self.getCurrentWorkspace().referenceProject(project.getPath())
+                            self.getCurrentWorkspace().saveConfigFile()
+                            self.updateListOfAvailableProjects()
+                            finish = True
+                            errorMessage = None
+                        except IOError, e:
+                            errorMessage = _("An error occurred while copying the file")
+                            logging.warn("Error when importing project: " + str(e))
+
+            else:
+                dialog.destroy()
+                finish = True
+        if (result == 1):
+            #cancel
+            dialog.destroy()
 
     def exportProject_activate_cb(self, action):
         pass
