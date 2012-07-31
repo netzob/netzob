@@ -28,7 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-
+from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -82,5 +82,6 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         self.value = value
 
     def appendValue(self, value):
-        self.index += len(value)
-        self.value += value
+        if value is not None:
+            self.index += len(value)
+            self.value += value

@@ -471,7 +471,7 @@ class UISimulator:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort), int(actorSPort))
 
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory)
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory())
         # abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))
 
         # And we create an MMSTD visitor for this
@@ -567,8 +567,8 @@ class UISimulator:
 
         # Now we update its memory
         self.treestore_memory.clear()
-        for memory_id in self.selectedActor.getMemory().recallAll().keys():
-            self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallAll()[memory_id]])
+        for memory_id in self.selectedActor.getMemory().recallMemory().keys():
+            self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallMemory()[memory_id]])
 
     def refreshGUI(self, tempo=0.5):
 #TODO

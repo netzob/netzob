@@ -28,8 +28,8 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
-import bitarray
 import datetime
 import logging
 
@@ -41,6 +41,10 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import \
+    AbstractVariableProcessingToken
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
+    VariableReadingToken
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
     VariableWritingToken
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
@@ -198,9 +202,9 @@ class AbstractionLayer():
 
         self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
-        (binMessage, strMessage) = self.specialize(symbol)
+        binMessage = self.specialize(symbol)
+        strMessage = str(binMessage)
         self.log.info("- str = '" + strMessage + "'")
-        self.log.info("- bin = '" + str(binMessage) + "'")
 
         # now we send it
         now = datetime.datetime.now()
@@ -220,7 +224,9 @@ class AbstractionLayer():
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
             self.log.debug("Try to abstract message through : " + str(symbol.getName()))
-            if symbol.getRoot().compare(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory) != -1:
+            readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
+            symbol.getRoot().read(readingToken)
+            if readingToken.isOk():
                 self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
                 # It matchs so we learn from it if it's possible
                 self.memory.createMemory()
@@ -232,7 +238,8 @@ class AbstractionLayer():
                 self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
                 # we first restore possibly learnt value
                 self.log.debug("Restore possibly learned value")
-                symbol.getRoot().restore(self.vocabulary, self.memory)
+                processingToken = AbstractVariableProcessingToken(False, self.vocabulary, self.memory)
+                symbol.getRoot().restore(processingToken)
 
         return UnknownSymbol()
 
@@ -240,7 +247,7 @@ class AbstractionLayer():
         self.log.info("Specializing the symbol " + symbol.getName())
 
         #TODO: Replace all default values with clever values.
-        writingToken = VariableWritingToken(self, False, self.vocabulary, self.memory, bitarray(''), ["random"])
+        writingToken = VariableWritingToken(False, self.vocabulary, self.memory, bitarray(''), ["random"])
         result = symbol.write(writingToken)
         return result
 

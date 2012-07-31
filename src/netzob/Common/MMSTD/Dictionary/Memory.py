@@ -106,7 +106,7 @@ class Memory():
                 @param variable: the given variable we search in memory.
                 @return: True if the variable has been found in the memory.
         """
-        return variable.getId() in self.temporaryMemory.keys()
+        return variable.getID() in self.temporaryMemory.keys()
 
     def restore(self, variable):
         """restore:
@@ -114,8 +114,8 @@ class Memory():
 
                 @param variable: the given variable, the value of which we want to restore.
         """
-        if variable.getId() in self.memory.keys():
-            self.temporaryMemory[variable.getId()] = self.memory[variable.getId()]
+        if variable.getID() in self.memory.keys():
+            self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
 
     def memorize(self, variable):
         """memorize:
@@ -124,14 +124,14 @@ class Memory():
                 @param variable: the given variable, the value of which we want to save.
         """
         if variable.getCurrentValue() is not None:
-            self.temporaryMemory[variable.getId()] = variable.getCurrentValue()
+            self.temporaryMemory[variable.getID()] = variable.getCurrentValue()
 
     def forget(self, variable):
         """forget:
                 Remove a variable and its value from the temporary memory.
         """
         if self.hasMemorized(variable):
-            self.temporaryMemory.popitem(variable.getId())
+            self.temporaryMemory.popitem(variable.getID())
 
     def recall(self, variable):
         """recall:
@@ -141,6 +141,6 @@ class Memory():
                 @return: the value of the given variable in the temporary memory.
         """
         if self.hasMemorized(variable):
-            return self.temporaryMemory[variable.getId()]
+            return self.temporaryMemory[variable.getID()]
         else:
             return None
