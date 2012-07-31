@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from gettext import gettext as _
 from bitarray import bitarray
 import datetime
 import logging
@@ -84,7 +85,7 @@ class AbstractionLayer():
         self.connected = True
 
     def setDisconnected(self):
-        self.log.debug("Disconnected changes to FALSE")
+        self.log.debug("Connected changes to FALSE")
         self.connected = False
 
 #    def registerInputSymbol(self, symbol):
@@ -183,7 +184,7 @@ class AbstractionLayer():
             symbol = self.abstract(receivedData)
 
             # We store the received messages its time and its abstract representation
-            self.inputMessages.append([receptionTime, receivedData, symbol])
+            self.inputMessages.append([receptionTime, str(receivedData), symbol.getName()])
             self.registerInputSymbol(symbol)
 
             return (symbol, receivedData)
@@ -208,38 +209,47 @@ class AbstractionLayer():
         # now we send it
         now = datetime.datetime.now()
         sendingTime = now.strftime("%H:%M:%S")
-        self.outputMessages.append([sendingTime, strMessage, symbol])
+        self.outputMessages.append([sendingTime, strMessage, symbol.getName()])
         self.registerOutputSymbol(symbol)
 
         self.communicationChannel.write(binMessage)
 
-    #+-----------------------------------------------------------------------+
-    #| abstract
-    #|     Searches in the vocabulary the symbol which abstract the received message
-    #| @return a possible symbol or None if none exist in the vocabulary
-    #+-----------------------------------------------------------------------+
     def abstract(self, message):
+        """abstract:
+                Searches in the vocabulary the symbol which abstract the received message.
+
+                @type message: netzob.Common.Models.AbstractMessage
+                @param message: the message that is being read/compare/learn.
+                @rtype: netzob.Common.Symbol
+                @return: the symbol which content matches the message.
+        """
         self.log.debug("We abstract the received message : " + str(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
-            self.log.debug("Try to abstract message through : " + str(symbol.getName()))
+            self.log.debug(_("Try to abstract message through : {0}.").format(symbol.getName()))
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
             symbol.getRoot().read(readingToken)
             if readingToken.isOk():
-                self.log.info("The message " + str(message) + " match symbol " + symbol.getName())
-                # It matchs so we learn from it if it's possible
-                self.memory.createMemory()
-                self.log.debug("We memorize the symbol " + str(symbol.getRoot()))
-                symbol.getRoot().learn(TypeConvertor.strBitarray2Bitarray(message), 0, False, self.vocabulary, self.memory)
-                self.memory.persistMemory()
+                self.log.debug(_("The message matches symbol {0}.").format(symbol.getName()))
+                # It matches so we learn from it if it's possible
                 return symbol
             else:
-                self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
-                # we first restore possibly learnt value
-                self.log.debug("Restore possibly learned value")
-                processingToken = AbstractVariableProcessingToken(False, self.vocabulary, self.memory)
-                symbol.getRoot().restore(processingToken)
-
+                self.log.debug(_("The message doesn't match symbol {0}.").format(symbol.getName()))
+            # This is now managed in the variables modules.
+            #===================================================================
+            #    self.memory.createMemory()
+            #    self.log.debug("We memorize the symbol " + str(symbol.getRoot()))
+            #    readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
+            #    symbol.getRoot().learn(readingToken)
+            #    self.memory.persistMemory()
+            #    return symbol
+            # else:
+            #    self.log.debug("Entry " + str(symbol.getID()) + " doesn't match")
+            #    # we first restore a possibly learned value
+            #    self.log.debug("Restore possibly learned value")
+            #    processingToken = AbstractVariableProcessingToken(False, self.vocabulary, self.memory)
+            #    symbol.getRoot().restore(processingToken)
+            #===================================================================
         return UnknownSymbol()
 
     def specialize(self, symbol):
