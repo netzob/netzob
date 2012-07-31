@@ -230,9 +230,7 @@ class Project(object):
         return None
 
     @staticmethod
-    def loadProject(workspace, projectDirectory):
-        projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
-
+    def loadProjectFromFile(projectFile):
         # verify we can open and read the file
         if projectFile is None:
             return None
@@ -259,6 +257,11 @@ class Project(object):
             else:
                 logging.warn("The project declared in file (" + projectFile + ") is not valid")
         return None
+
+    @staticmethod
+    def loadProject(workspace, projectDirectory):
+        projectFile = os.path.join(os.path.join(workspace.getPath(), projectDirectory), Project.CONFIGURATION_FILENAME)
+        return Project.loadProjectFromFile(projectFile)
 
     @staticmethod
     def isSchemaValidateXML(schemaFile, xmlFile):
