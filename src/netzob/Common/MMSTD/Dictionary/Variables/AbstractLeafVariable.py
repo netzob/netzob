@@ -61,7 +61,7 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def forget(self, processingToken):
         """forget:
-                Removes the variable from the memory cache.
+                Remove the variable from the memory cache.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -71,7 +71,7 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def recall(self, processingToken):
         """recall:
-                Recalls the variable from the memory cache.
+                Recall the variable value from the memory cache.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -81,7 +81,7 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def memorize(self, processingToken):
         """memorize:
-                Adds the variable to the memory cache.
+                Add the variable to the memory cache.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -91,7 +91,7 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def learn(self, readingToken):
         """learn:
-                Learns (starting at the "indice"-th character) value.
+                Learn (starting at the "indice"-th character) value.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
@@ -101,7 +101,7 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def compare(self, readingToken):
         """compare:
-                Compares (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
+                Compare (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
@@ -111,7 +111,7 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def generate(self, writingToken):
         """generate:
-                Generates a value according to a given strategy and attribute it to the variable.
+                Generate a value according to a given strategy and attribute it to the variable.
 
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
@@ -119,13 +119,14 @@ class AbstractLeafVariable(AbstractVariable):
         raise NotImplementedError(_("The current variable does not implement 'generate'."))
 
     @abstractmethod
-    def getValue(self, writingToken):
-        """getValue:
+    def writeValue(self, writingToken):
+        """writeValue:
+                Write the local value of a leaf variable in the writing token.
 
                 @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
                 @param writingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'getValue'."))
+        raise NotImplementedError(_("The current variable does not implement 'writeValue'."))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -134,23 +135,23 @@ class AbstractLeafVariable(AbstractVariable):
         """read:
                 The leaf element tries to compare/learn the read value.
         """
-        self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString()))
+        self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString(self)))
         if self.mutable:
             if self.defined:
                 # mutable and defined
-                self.forget(self, readingToken)
-                self.learn(self, readingToken)
-                self.memorize(self, readingToken)
+                self.forget(readingToken)
+                self.learn(readingToken)
+                self.memorize(readingToken)
 
             else:
                 # mutable and not defined
-                self.learn(self, readingToken)
-                self.memorize(self, readingToken)
+                self.learn(readingToken)
+                self.memorize(readingToken)
 
         else:
             if self.defined:
                 # not mutable and defined
-                self.compare(self, readingToken)
+                self.compare(readingToken)
 
             else:
                 # not mutable and not defined
@@ -161,25 +162,25 @@ class AbstractLeafVariable(AbstractVariable):
         """write:
                 The leaf element return its value or a generate one.
         """
-        self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString()))
+        self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString(self)))
         if self.mutable:
             if self.defined:
                 # mutable and defined
-                self.forget(self, writingToken)
-                self.generate(self, writingToken)
-                self.memorize(self, writingToken)
-                valueToSend = self.getValue(self, writingToken)
+                self.forget(writingToken)
+                self.generate(writingToken)
+                self.memorize(writingToken)
+                self.writeValue(writingToken)
 
             else:
                 # mutable and not defined
-                self.generate(self, writingToken)
-                self.memorize(self, writingToken)
-                valueToSend = self.getValue(self, writingToken)
+                self.generate(writingToken)
+                self.memorize(writingToken)
+                self.writeValue(writingToken)
 
         else:
             if self.defined:
                 # not mutable and defined
-                valueToSend = self.getValue(self, writingToken)
+                self.writeValue(writingToken)
 
             else:
                 # not mutable and not defined

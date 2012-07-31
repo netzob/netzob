@@ -105,6 +105,28 @@ class AbstractNodeVariable(AbstractVariable):
                     self.addChild(child)
                     break
 
+    def restore(self, processingToken):
+        """restore:
+                Restore all children on the memory cache.
+        """
+        self.log.debug(_("[ {0}: children's memorized value are restored.").format(self.toString()))
+        for child in self.children:
+            child.restore(processingToken)
+        self.log.debug(_("Variable {0}: ]").format(self.getName()))
+
+    def getDictOfValues(self, processingToken):
+        """getDictOfValues
+                We concatenate every dictOfValues of eachChild.
+        """
+        dictOfValues = dict()
+        self.log.debug(_("[ Dict of values:"))
+        for child in self.children:
+            dictOfValue = child.getDictOfValues(processingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+        self.log.debug(_(" Dict of values: {0} ]").format(str(dictOfValues)))
+        return dictOfValues
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+

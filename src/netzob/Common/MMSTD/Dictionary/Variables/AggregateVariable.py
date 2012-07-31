@@ -106,18 +106,31 @@ class AggregateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
-        savedChildren = []
+        # Computing memory, contains all values before the start of the computation. So, if an error occured, we can restore the former and correct values.
+        dictOfValues = dict()
         savedIndex = readingToken.getIndex()
         for child in self.getChildren():
+            # Memorize each child susceptible to be restored. One by one.
+            dictOfValue = child.getDictOfValues(readingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            # Child execution.
             child.read(readingToken)
-            savedChildren.append((child, child.getValue()))
             if not readingToken.isOk():
                 break
+
         # If it has failed we restore every executed children and the index.
         if not readingToken.isOk():
             readingToken.setIndex(savedIndex)
-            for (child, value) in savedChildren:
-                child.setValue(value)
+            vocabulary = readingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(readingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -126,18 +139,30 @@ class AggregateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
-        savedChildren = []
+        dictOfValues = dict()
         savedValue = writingToken.getValue()
         for child in self.getChildren():
+            # Memorize each child susceptible to be restored. One by one.
+            dictOfValue = child.getDictOfValues(writingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            # Child execution.
             child.write(writingToken)
-            savedChildren.append((child, child.getValue()))
             if not writingToken.isOk():
                 break
+
         # If it has failed we restore every executed children and the value.
         if not writingToken.isOk():
             writingToken.setValue(savedValue)
-            for (child, value) in savedChildren:
-                child.setValue(value)
+            vocabulary = writingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(writingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):

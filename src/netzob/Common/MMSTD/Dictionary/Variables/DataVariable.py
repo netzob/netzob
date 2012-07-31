@@ -82,6 +82,18 @@ class DataVariable(AbstractLeafVariable):
         """
         return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.bin2str(self.originalValue)))
 
+    def getValue(self, processingToken):
+        """getValue:
+                Return the current value if it has one, a memorized value in other cases.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        if self.getCurrentValue() is not None:
+            return self.getCurrentValue()
+        else:
+            return processingToken.getMemory().recall(self)
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
@@ -116,6 +128,23 @@ class DataVariable(AbstractLeafVariable):
         """
         return self.toString()
 
+    def getDictOfValues(self, processingToken):
+        """getDictOfValues:
+        """
+        dictOfValues = dict()
+        dictOfValues[self.getID()] = self.getValue(processingToken)
+        self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
+        return dictOfValues
+
+    def restore(self, processingToken):
+        """restore:
+        """
+        self.log.debug(_("- {0}: memorized value is restored.").format(self.toString()))
+        processingToken.getMemory().restore(self)
+
+#+---------------------------------------------------------------------------+
+#| Visitor abstract subFunctions                                             |
+#+---------------------------------------------------------------------------+
     def forget(self, processingToken):
         """forget:
                 The variable forgets its value.
@@ -189,17 +218,15 @@ class DataVariable(AbstractLeafVariable):
         self.log.debug(_("-[ {0}: generate.").format(self.toString()))
         self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
-    def getValue(self, writingToken):
-        """getValue:
-                Returns the variable value if it has one, else it returns the memorized value.
+    def writeValue(self, writingToken):
+        """writeValue:
+                Write the variable value if it has one, else it returns the memorized value.
+                Write this value in the writingToken.
         """
-        self.log.debug(_("-[ {0}: getValue.").format(self.toString()))
+        self.log.debug(_("-[ {0}: writeValue.").format(self.toString()))
         if self.isRandom():
             self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
-        if self.getCurrentValue() is not None:
-            value = self.getCurrentValue()
-        else:
-            value = writingToken.getMemory().recall(self)
+        value = self.getValue(writingToken)
         writingToken.appendValue(value)
         self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), writingToken.toString()))
 

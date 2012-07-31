@@ -48,6 +48,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
 class ReferencedVariable(AbstractVariable):
     """ReferencedVariable:
             A variable which points to an other variable.
+            Beware when using it, it can leads to obviously dangerous behavior.
     """
 
     TYPE = "Referenced Variable"
@@ -108,6 +109,24 @@ class ReferencedVariable(AbstractVariable):
         else:
             writingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def restore(self, processingToken):
+        """restore:
+            Restore the value of the pointed variable.
+        """
+        var = self.getPointedVariable()
+        if var is not None:
+            var.restore(processingToken)
+
+    def getDictOfValues(self, processingToken):
+        """getDictOfValues:
+                Get the dictionary of values of the pointed variable.
+        """
+        var = self.getPointedVariable()
+        if var is not None:
+            return var.getDictOfValues(processingToken)
+        else:
+            return None
 
     def toXML(self, root, namespace):
         """toXML:

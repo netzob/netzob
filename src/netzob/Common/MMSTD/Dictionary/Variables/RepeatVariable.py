@@ -115,6 +115,13 @@ class RepeatVariable(AbstractNodeVariable):
         self.log.debug(_("[ {0}: read access:").format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
+
+        # Memorized initial values for the child and its successors.
+        dictOfValues = dict()
+        dictOfValue = self.getChild().getDictOfValues(readingToken)
+        for key, val in dictOfValue.iteritems():
+            dictOfValues[key] = val
+
         for i in range(maxIterations):
             self.getChild().read(readingToken)
             if readingToken.isOk():
@@ -124,6 +131,14 @@ class RepeatVariable(AbstractNodeVariable):
         # We search if we have done the minimum number of iterations.
         if successfullIterations < minIterations:
             readingToken.setOk(False)
+            # If not, we clean our traces.
+            vocabulary = readingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(readingToken)
         else:
             readingToken.setOk(True)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
@@ -135,6 +150,13 @@ class RepeatVariable(AbstractNodeVariable):
         self.log.debug(_("[ {0}: write access:").format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
+
+        # Memorized initial values for the child and its successors.
+        dictOfValues = dict()
+        dictOfValue = self.getChild().getDictOfValues(writingToken)
+        for key, val in dictOfValue.iteritems():
+            dictOfValues[key] = val
+
         for i in range(maxIterations):
             self.getChild().write(writingToken)
             if writingToken.isOk():
@@ -144,6 +166,14 @@ class RepeatVariable(AbstractNodeVariable):
         # We search if we have done the minimum number of iterations.
         if successfullIterations < minIterations:
             writingToken.setOk(False)
+            # If not, we clean our traces.
+            vocabulary = writingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(writingToken)
         else:
             writingToken.setOk(True)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))

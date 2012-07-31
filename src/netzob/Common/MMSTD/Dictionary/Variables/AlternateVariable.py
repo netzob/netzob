@@ -108,15 +108,24 @@ class AlternateVariable(AbstractNodeVariable):
         """
         self.log.debug(_("Children of variable {0} read.").format(self.getName()))
         savedIndex = readingToken.getIndex()
-        childValue = None
         for child in self.getChildren():
-            childValue = child.getValue()
+            # Memorized values for the child and its successors.
+            dictOfValues = dict()
+            dictOfValue = child.getDictOfValues(readingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
             child.read(readingToken)
             if readingToken.isOk():
                 break
             else:
                 readingToken.setIndex(savedIndex)
-                child.setValue(childValue)
+
+                # We restore values for the child and its successors.
+                child.restore(readingToken)
+                vocabulary = readingToken.getVocabulary()
+                for key, val in dictOfValues.iteritems():
+                    vocabulary.getVariableByID(key).setCurrentValue(val)
 
     def write(self, writingToken):
         """write:
@@ -125,16 +134,25 @@ class AlternateVariable(AbstractNodeVariable):
                 It stops if one child successes.
         """
         self.log.debug(_("Children of variable {0} write.").format(self.getName()))
-        childValue = None
         savedValue = writingToken.getValue()
         for child in self.getChildren():
-            childValue = child.getValue()
+            # Memorized values for the child and its successor.
+            dictOfValues = dict()
+            dictOfValue = child.getDictOfValues(writingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
             child.write(writingToken)
             if writingToken.isOk() and writingToken.getValue() is not None:
                 break
             else:
                 writingToken.setValue(savedValue)
-                child.setValue(childValue)
+
+                # We restore values for the child and its successor.
+                child.restore(writingToken)
+                vocabulary = writingToken.getVocabulary()
+                for key, val in dictOfValues.iteritems():
+                    vocabulary.getVariableByID(key).setCurrentValue(val)
 
     def toXML(self, root, namespace):
         """toXML:

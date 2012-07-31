@@ -153,6 +153,28 @@ class AbstractVariable:
         """
         raise NotImplementedError(_("The current variable does not implement 'toXML'."))
 
+    @abstractmethod
+    def restore(self, processingToken):
+        """restore:
+                Restore the variable on the memory cache from the real memory.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'recall'."))
+
+    @abstractmethod
+    def getDictOfValues(self, processingToken):
+        """getDictOfValues:
+                Return a dictionary which contains the variable id as key and the value as value of the variable is a leaf and a dictionary containing all couples variable id - value of the children if the variable is a node.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+                @rtype: String*bitarray dict
+                @return: a dictionary containing ids of variable and values in a bitarray format.
+        """
+        raise NotImplementedError("The current variable doesn't support 'getDictOfValues'.")
+
 #+---------------------------------------------------------------------------+
 #| Visitor abstract method                                                   |
 #+---------------------------------------------------------------------------+
