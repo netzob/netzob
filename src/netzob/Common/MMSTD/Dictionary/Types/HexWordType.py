@@ -68,3 +68,17 @@ class HexWordType(AbstractWordType):
 
     def getType(self):
         return HexWordType.TYPE
+
+    def suitsBinary(self, bina):
+        byteset = bina.tobyte()
+        stri = ''
+        for byte in byteset:
+            # We naively try to decode in ascii the binary.
+            try:
+                stri = byte.decode('ascii')
+                # We search if each character is in string.hexdigits
+                if string.hexdigits.find(stri) == -1:
+                    return False
+            except:
+                return False
+        return True

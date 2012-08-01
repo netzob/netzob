@@ -91,3 +91,6 @@ class IntegerType(AbstractType):
 
     def getType(self):
         return IntegerType.TYPE
+
+    def suitsBinary(self, bina):
+        return True

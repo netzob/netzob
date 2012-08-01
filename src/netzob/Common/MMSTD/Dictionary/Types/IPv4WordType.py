@@ -78,6 +78,58 @@ class IPv4WordType(AbstractWordType):
     def getType(self):
         return IPv4WordType.TYPE
 
+    def suitsBinary(self, bina):
+        byteset = bina.tobyte()
+        stri = ''
+        ip = ''
+        for byte in byteset:
+            # We naively try to decode in ascii the binary.
+            try:
+                stri = byte.decode('ascii')
+                # We search if each character is in string.hexdigits or is a dot.
+                if string.hexdigits.find(stri) == -1:
+                    if stri != '.':
+                        return False
+                ip += stri
+            except:
+                return False
+        spip = ip.split('.')
+        # An ipv4 is composed of four parts.
+        if len(spip) != 4:
+            return False
+
+        # We search if the ip is in decimal format : 128.215.0.16
+        decimalIP = True
+        for i in range(len(spip)):
+            # Each term cannot exceed 3 characters.
+            if len(spip[i]) > 3:
+                decimalIP = False
+                break
+            # Each term can contain only decimal characters.
+            for char in spip[i]:
+                if string.digits.find(char) == -1:
+                    decimalIP = False
+                    break
+            # Can be seen as a second check.
+            try:
+                intspip = int(spip[i])
+            except:
+                decimalIP = False
+                break
+            # These terms can not exceed 255.
+            if intspip > 255:
+                decimalIP = False
+                break
+
+        # We search if the ip is in hex format : a0.bb.0.8f
+        hexIP = True
+        for i in range(len(spip)):
+            # Each term cannot exceed 2 characters.
+            if len(spip[i]) > 2:
+                hexIP = False
+                break
+        return hexIP or decimalIP
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractWordType                                 |
 #+---------------------------------------------------------------------------+

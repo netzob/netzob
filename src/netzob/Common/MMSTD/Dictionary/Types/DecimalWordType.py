@@ -66,5 +66,16 @@ class DecimalWordType(AbstractWordType):
                 break
         return self.str2bin(value)
 
-    def getType(self):
-        return DecimalWordType.TYPE
+    def suitsBinary(self, bina):
+        byteset = bina.tobyte()
+        stri = ''
+        for byte in byteset:
+            # We naively try to decode in ascii the binary.
+            try:
+                stri = byte.decode('ascii')
+                # We search if each character is in string.digits
+                if string.digits.find(stri) == -1:
+                    return False
+            except:
+                return False
+        return True

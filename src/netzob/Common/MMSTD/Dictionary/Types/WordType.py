@@ -68,3 +68,13 @@ class WordType(AbstractWordType):
 
     def getType(self):
         return WordType.TYPE
+
+    def suitsBinary(self, bina):
+        byteset = bina.tobyte()
+        for byte in byteset:
+            # We naively try to decode in ascii the binary.
+            try:
+                byte.decode('ascii')
+            except:
+                return False
+        return True

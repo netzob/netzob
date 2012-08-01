@@ -132,6 +132,7 @@ class AbstractType():
         """
         raise NotImplementedError(_("The current type does not implement 'getMinBitSize'."))
 
+    @abstractmethod
     def getType(self):
         """getType:
                 Return a string description of the current Type.
@@ -141,12 +142,24 @@ class AbstractType():
         """
         raise NotImplementedError(_("The current type does not implement 'getType'."))
 
+    @abstractmethod
+    def suitsBinary(self, bina):
+        """suitsBinary:
+                Tell if a bitarray is well formatted and the type suits it.
+
+                @type bina: bitarray
+                @param bina: the bitarray that is being analyzed.
+                @rtype: boolean
+                @return: True if the type suits the bitarray.
+        """
+        raise NotImplementedError(_("The current type does not implement 'suitsBinary'."))
+
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
     def makeType(typeString):
-        type = None
+        _type = None
         from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
         from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
         from netzob.Common.MMSTD.Dictionary.Types.HexWordType import HexWordType
@@ -155,19 +168,19 @@ class AbstractType():
         from netzob.Common.MMSTD.Dictionary.Types.IntegerType import IntegerType
         from netzob.Common.MMSTD.Dictionary.Types.WordType import WordType
         if typeString == BinaryType.TYPE:
-            type = BinaryType()
+            _type = BinaryType()
         elif typeString == DecimalWordType.TYPE:
-            type = DecimalWordType()
+            _type = DecimalWordType()
         elif typeString == HexWordType.TYPE:
-            type = HexWordType()
+            _type = HexWordType()
         elif typeString == IPv4WordType.TYPE:
-            type = IPv4WordType()
+            _type = IPv4WordType()
         elif typeString == MACWordType.TYPE:
-            type = MACWordType()
+            _type = MACWordType()
         elif typeString == IntegerType.TYPE:
-            type = IntegerType()
+            _type = IntegerType()
         elif typeString == WordType.TYPE:
-            type = WordType()
+            _type = WordType()
         else:
             logging.error(_("Wrong type specified for this variable."))
-        return type
+        return _type

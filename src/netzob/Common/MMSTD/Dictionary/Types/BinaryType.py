@@ -96,3 +96,6 @@ class BinaryType(AbstractType):
 
     def getType(self):
         return BinaryType.TYPE
+
+    def suitsBinary(self, bina):
+        return True

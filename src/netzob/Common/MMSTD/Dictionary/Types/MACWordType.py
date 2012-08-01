@@ -72,6 +72,33 @@ class MACWordType(AbstractWordType):
     def getType(self):
         return MACWordType.TYPE
 
+    def suitsBinary(self, bina):
+        byteset = bina.tobyte()
+        stri = ''
+        ip = ''
+        for byte in byteset:
+            # We naively try to decode in ascii the binary.
+            try:
+                stri = byte.decode('ascii')
+                # We search if each character is in string.hexdigits or is a dot.
+                if string.hexdigits.find(stri) == -1:
+                    if stri != '.':
+                        return False
+                ip += stri
+            except:
+                return False
+        spip = ip.split('.')
+        # A MAC address is composed of six parts.
+        if len(spip) != 6:
+            return False
+
+        # We search if the MAX is in hex format : a0.bb.0.8f.54.a0
+        for i in range(len(spip)):
+            # Each term cannot exceed 2 characters.
+            if len(spip[i]) > 2:
+                return False
+        return True
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractWordType                                 |
 #+---------------------------------------------------------------------------+
