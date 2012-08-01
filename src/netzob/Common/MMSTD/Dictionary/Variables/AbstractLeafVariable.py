@@ -53,7 +53,6 @@ class AbstractLeafVariable(AbstractVariable):
         """
         AbstractVariable.__init__(self, _id, name, mutable, random, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
-        self.defined = True
 
 #+---------------------------------------------------------------------------+
 #| Visitor abstract subFunctions                                             |
@@ -136,8 +135,8 @@ class AbstractLeafVariable(AbstractVariable):
                 The leaf element tries to compare/learn the read value.
         """
         self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString(self)))
-        if self.mutable:
-            if self.defined:
+        if self.isMutable():
+            if self.isDefined(readingToken):
                 # mutable and defined
                 self.forget(readingToken)
                 self.learn(readingToken)
@@ -149,7 +148,7 @@ class AbstractLeafVariable(AbstractVariable):
                 self.memorize(readingToken)
 
         else:
-            if self.defined:
+            if self.isDefined(readingToken):
                 # not mutable and defined
                 self.compare(readingToken)
 
@@ -164,8 +163,8 @@ class AbstractLeafVariable(AbstractVariable):
                 The leaf element return its value or a generate one.
         """
         self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString(self)))
-        if self.mutable:
-            if self.defined:
+        if self.isMutable():
+            if self.isDefined(writingToken):
                 # mutable and defined
                 self.forget(writingToken)
                 self.generate(writingToken)
@@ -179,7 +178,7 @@ class AbstractLeafVariable(AbstractVariable):
                 self.writeValue(writingToken)
 
         else:
-            if self.defined:
+            if self.isDefined(writingToken):
                 # not mutable and defined
                 self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
                 self.writeValue(writingToken)
@@ -188,12 +187,3 @@ class AbstractLeafVariable(AbstractVariable):
                 # not mutable and not defined
                 writingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
-
-#+---------------------------------------------------------------------------+
-#| Getters and setters                                                       |
-#+---------------------------------------------------------------------------+
-    def isDefined(self):
-        return self.defined
-
-    def setDefined(self, defined):
-        self.defined = defined

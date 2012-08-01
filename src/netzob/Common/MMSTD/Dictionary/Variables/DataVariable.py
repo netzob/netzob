@@ -84,6 +84,7 @@ class DataVariable(AbstractLeafVariable):
     def getValue(self, processingToken):
         """getValue:
                 Return the current value if it has one, a memorized value in other cases.
+                If the variable is random, its value is not modified each time (many) the getValue is called. It is modified when it has to be written.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -127,9 +128,20 @@ class DataVariable(AbstractLeafVariable):
         """
         return self.toString()
 
+    def isDefined(self, processingToken):
+        """isDefined:
+                If the leaf is random or has no values, it is not defined.
+        """
+        return (not self.isRandom()) and self.getValue(processingToken) is not None
+
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
+                This function is called for saving the value of the variable.
         """
+        # A random variable does not need to be saved.
+        if self.isRandom():
+            return dict()
+
         dictOfValues = dict()
         dictOfValues[self.getID()] = self.getValue(processingToken)
         # self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
@@ -140,6 +152,37 @@ class DataVariable(AbstractLeafVariable):
         """
         self.log.debug(_("- {0}: memorized value is restored.").format(self.toString()))
         processingToken.getMemory().restore(self)
+
+    def toXML(self, root, namespace):
+        """toXML:
+            Creates the xml tree associated to this variable.
+        """
+        self.log.debug(_("- {0}: toXML:").format(self.toString()))
+        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
+        xmlVariable.set("id", str(self.getID()))
+        xmlVariable.set("name", str(self.getName()))
+        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DataVariable")
+        xmlVariable.set("mutable", str(self.isMutable()))
+        xmlVariable.set("random", str(self.isRandom()))
+
+        # type
+        xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
+        xmlType.text = self.type.getType()
+
+        # originalValue (can be None)
+        if self.originalValue is not None:
+            xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
+            # We memorize the current value as the future original value.
+            # I assume that the user want the last current value (that he may have hand-edited) of the variable to be memorized.
+            xmlOriginalValue.text = self.type.bin2str(self.currentValue)
+
+        # minChars
+        xmlMinChars = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
+        xmlMinChars.text = str(self.minChars)
+
+        # maxBits
+        xmlMaxChars = etree.SubElement(xmlVariable, "{" + namespace + "}maxChars")
+        xmlMaxChars.text = str(self.maxChars)
 
 #+---------------------------------------------------------------------------+
 #| Visitor abstract subFunctions                                             |
@@ -171,28 +214,40 @@ class DataVariable(AbstractLeafVariable):
                 The variable checks if its format complies with the read value's format.
                 If it matches, the variable learns, else it returns NOk.
         """
-        self.log.debug(_("-[ {0}: learn.").format(self.toString()))
+        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
+        # Length comparison.
         if len(tmp) >= self.minBits:
             if len(tmp) <= self.maxBits:
-                self.setCurrentValue(tmp[:self.maxBits])
-                readingToken.incrementIndex(self.maxBits)
+                # Format comparison.
+                if self.type.suitsBinary(tmp[:self.maxBits]):
+                    # We learn as much as we can.
+                    self.setCurrentValue(tmp[:self.maxBits])
+                    readingToken.incrementIndex(self.maxBits)
+                    self.log.info(_("Format comparison successful."))
+                else:
+                    readingToken.setOk(False)
+                    self.log.info(_("Format comparison failed: wrong format."))
             else:
-                self.setCurrentValue(tmp)
-                readingToken.incrementIndex(len(tmp))
-            self.log.info(_("Format comparison successful."))
-            self.setDefined(True)
+                # Format comparison.
+                if self.type.suitsBinary(tmp):
+                    # We learn everything that last.
+                    self.setCurrentValue(tmp)
+                    readingToken.incrementIndex(len(tmp))
+                else:
+                    readingToken.setOk(False)
+                    self.log.info(_("Format comparison failed: wrong format."))
         else:
-            self.log.info(_("Format comparison failed."))
             readingToken.setOk(False)
-        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
+            self.log.info(_("Format comparison failed: wrong size."))
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def compare(self, readingToken):
         """compare:
                 The variable compares its value to the read value.
         """
-        self.log.debug(_("-[ {0}: compare.").format(self.toString()))
-        if self.random:
+        self.log.debug(_("- [ {0}: compare.").format(self.toString()))
+        if self.isRandom():
             # A random variable's value can not be compared to a static value.
             self.log.debug(_("Variable is random."))
             readingToken.setOk(False)
@@ -204,12 +259,12 @@ class DataVariable(AbstractLeafVariable):
                     self.log.debug(_("Comparison successful."))
                     readingToken.incrementIndex(len(localValue))
                 else:
-                    self.log.debug(_("Comparison failed: wrong value."))
                     readingToken.setOk(False)
+                    self.log.debug(_("Comparison failed: wrong value."))
             else:
-                self.log.debug(_("Comparison failed: wrong size."))
                 readingToken.setOk(False)
-        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), readingToken.toString()))
+                self.log.debug(_("Comparison failed: wrong size."))
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def generate(self, writingToken):
         """generate:
@@ -223,41 +278,12 @@ class DataVariable(AbstractLeafVariable):
                 Write the variable value if it has one, else it returns the memorized value.
                 Write this value in the writingToken.
         """
-        self.log.debug(_("-[ {0}: writeValue.").format(self.toString()))
+        self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
         if self.isRandom():
             self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
         value = self.getValue(writingToken)
         writingToken.appendValue(value)
-        self.log.debug(_("Variable {0}: {1}. ]-").format(self.getName(), writingToken.toString()))
-
-    def toXML(self, root, namespace):
-        """toXML:
-            Creates the xml tree associated to this variable.
-        """
-        self.log.debug(_("- {0}: toXML:").format(self.toString()))
-        xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
-        xmlVariable.set("id", str(self.getID()))
-        xmlVariable.set("name", str(self.getName()))
-        xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DataVariable")
-        xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
-
-        # type
-        xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
-        xmlType.text = self.type.getType()
-
-        # originalValue (can be None)
-        if self.originalValue is not None:
-            xmlOriginalValue = etree.SubElement(xmlVariable, "{" + namespace + "}originalValue")
-            xmlOriginalValue.text = self.type.bin2str(self.originalValue)
-
-        # minBits
-        xmlMinBits = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
-        xmlMinBits.text = str(self.minBits)
-
-        # maxBits
-        xmlMaxBits = etree.SubElement(xmlVariable, "{" + namespace + "}maxChars")
-        xmlMaxBits.text = str(self.maxBits)
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

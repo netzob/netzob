@@ -86,18 +86,15 @@ class AlternateVariable(AbstractNodeVariable):
             values.append(child.getUncontextualizedDescription())
         return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
-    def isDefined(self):
+    def isDefined(self, processingToken):
         """isDefined:
                 If one child is defined the node is defined.
         """
         if self.children is not None:
-            self.setDefined(False)
             for child in self.getChildren():
-                if child.isDefined():
-                    self.setDefined(True)
-                    break
-        else:
-            self.setDefined(False)
+                if child.isDefined(processingToken):
+                    return True
+        return False
 
     def read(self, readingToken):
         """read:

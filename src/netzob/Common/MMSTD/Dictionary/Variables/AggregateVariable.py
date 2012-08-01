@@ -86,18 +86,17 @@ class AggregateVariable(AbstractNodeVariable):
             values.append(child.getUncontextualizedDescription())
         return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
-    def isDefined(self):
+    def isDefined(self, processingToken):
         """isDefined:
                 If one child is not defined the node is not defined.
         """
         if self.children is not None:
-            self.setDefined(True)
             for child in self.getChildren():
-                if not child.isDefined():
-                    self.setDefined(False)
-                    break
+                if not child.isDefined(processingToken):
+                    return False
+            return True
         else:
-            self.setDefined(False)
+            return False
 
     def read(self, readingToken):
         """read:

@@ -105,8 +105,10 @@ class RepeatVariable(AbstractNodeVariable):
         """
         return _("[{0}, child:\n - {1}]").format(self.toString(), self.getChild().getUncontextualizedDescription())
 
-    def isDefined(self):
-        return self.getChild().isDefined()
+    def isDefined(self, processingToken):
+        """isDefined:
+        """
+        return self.getChild().isDefined(processingToken)
 
     def read(self, readingToken):
         """read:

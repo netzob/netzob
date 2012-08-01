@@ -135,9 +135,14 @@ class AbstractVariable:
         raise NotImplementedError("The current variable doesn't support 'getUncontextualizedDescription'.")
 
     @abstractmethod
-    def isDefined(self):
+    def isDefined(self, processingToken):
         """isDefined:
                 Tells if the variable is defined (i.e. has a value for a leaf, enough leaf have values for a node...)
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+                @rtype: boolean
+                @return: True if the variable is defined.
         """
         raise NotImplementedError(_("The current variable does not implement 'isDefined'."))
 

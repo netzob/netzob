@@ -83,8 +83,10 @@ class ReferencedVariable(AbstractVariable):
         """
         return _("[{0}]").format(self.toString())
 
-    def isDefined(self):
-        return self.getPointedVariable().isDefined()
+    def isDefined(self, processingToken):
+        """isDefined:
+        """
+        return self.getPointedVariable().isDefined(processingToken)
 
     def read(self, readingToken):
         """read:
