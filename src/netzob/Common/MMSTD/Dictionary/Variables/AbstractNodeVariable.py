@@ -119,12 +119,12 @@ class AbstractNodeVariable(AbstractVariable):
                 We concatenate every dictOfValues of eachChild.
         """
         dictOfValues = dict()
-        self.log.debug(_("[ Dict of values:"))
+        # self.log.debug(_("[ Dict of values:"))
         for child in self.children:
             dictOfValue = child.getDictOfValues(processingToken)
             for key, val in dictOfValue.iteritems():
                 dictOfValues[key] = val
-        self.log.debug(_(" Dict of values: {0} ]").format(str(dictOfValues)))
+        # self.log.debug(_(" Dict of values: {0} ]").format(str(dictOfValues)))
         return dictOfValues
 
 #+---------------------------------------------------------------------------+

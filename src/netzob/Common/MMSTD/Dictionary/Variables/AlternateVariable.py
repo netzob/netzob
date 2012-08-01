@@ -102,7 +102,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If it fails, it restore it value and the next child try.
                 It stops if one child successes.
         """
-        self.log.debug(_("Children of variable {0} read.").format(self.getName()))
+        self.log.debug(_("[ {0} (Alternate): read access:").format(AbstractVariable.toString(self)))
         savedIndex = readingToken.getIndex()
         for child in self.getChildren():
             # Memorized values for the child and its successors.
@@ -123,13 +123,15 @@ class AlternateVariable(AbstractNodeVariable):
                 for key, val in dictOfValues.iteritems():
                     vocabulary.getVariableByID(key).setCurrentValue(val)
 
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
     def write(self, writingToken):
         """write:
                 Each child tries to write its value..
                 If it fails, it restore it value and the next child try.
                 It stops if one child successes.
         """
-        self.log.debug(_("Children of variable {0} write.").format(self.getName()))
+        self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
         savedValue = writingToken.getValue()
         for child in self.getChildren():
             # Memorized values for the child and its successor.
@@ -149,6 +151,8 @@ class AlternateVariable(AbstractNodeVariable):
                 vocabulary = writingToken.getVocabulary()
                 for key, val in dictOfValues.iteritems():
                     vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
