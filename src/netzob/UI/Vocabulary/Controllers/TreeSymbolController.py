@@ -25,29 +25,42 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-from gi.repository import Gtk, Gdk
 import uuid
 
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
-from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel
-from netzob.UI.Vocabulary.Views.TreeSymbolView import TreeSymbolView
-from netzob.UI.Vocabulary.Controllers.SequenceAlignmentController import SequenceAlignmentController
-from netzob.UI.Vocabulary.Controllers.ForcePartitioningController import ForcePartitioningController
-from netzob.UI.Vocabulary.Controllers.SimplePartitioningController import SimplePartitioningController
-from netzob.UI.Vocabulary.Controllers.SmoothPartitioningController import SmoothPartitioningController
-from netzob.UI.Vocabulary.Controllers.ResetPartitioningController import ResetPartitioningController
-from netzob.Common.Type.Format import Format
-from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Symbol import Symbol
+from netzob.Common.Type.Endianess import Endianess
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import \
+    NeedlemanAndWunsch
+from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel
+from netzob.UI.Vocabulary.Controllers.ForcePartitioningController import \
+    ForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.ResetPartitioningController import \
+    ResetPartitioningController
+from netzob.UI.Vocabulary.Controllers.SequenceAlignmentController import \
+    SequenceAlignmentController
+from netzob.UI.Vocabulary.Controllers.SimplePartitioningController import \
+    SimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.SmoothPartitioningController import \
+    SmoothPartitioningController
+from netzob.UI.Vocabulary.Views.TreeSymbolView import TreeSymbolView
 
 
 #+----------------------------------------------

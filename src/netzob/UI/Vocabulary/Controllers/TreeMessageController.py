@@ -25,11 +25,23 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
+import glib
+import logging
+import time
+import uuid
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
 from gi.repository import GObject, Gtk, Gdk, Pango
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 from netzob.Common.Field import Field
 from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
@@ -51,14 +63,6 @@ from netzob.UI.NetzobWidgets import NetzobErrorMessage, NetzobLabel, \
 from netzob.UI.Vocabulary.Controllers.VariableController import \
     VariableTreeController
 from netzob.UI.Vocabulary.Views.TreeMessageView import TreeMessageView
-import glib
-import logging
-import time
-import uuid
-
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
 
 
 #+----------------------------------------------
@@ -403,32 +407,24 @@ class TreeMessageController(object):
             item.connect("activate", self.rightClickDomainOfDefinition, selectedField)
             self.menu.append(item)
 
-            # Not used anymore
-#===============================================================================
-#            # Add sub-entries to change the variable of a specific column
-#            if selectedField.getVariable() is None:
-#                typeMenuVariable = Gtk.Menu()
-#                itemVariable = Gtk.MenuItem(_("Create a variable"))
-#                itemVariable.show()
-#                itemVariable.connect("activate", self.rightClickCreateVariable, self.getSymbol(), selectedField)
-#                typeMenuVariable.append(itemVariable)
-#            else:
-#                typeMenuVariable = Gtk.Menu()
-#                itemVariable = Gtk.MenuItem(_("Edit variable"))
-#                itemVariable.show()
-#                itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
-#                typeMenuVariable.append(itemVariable)
-#
-#            if selectedField.getVariable() is not None:
-#                itemVariable3 = Gtk.MenuItem(_("Remove variable"))
-#                itemVariable3.show()
-#                itemVariable3.connect("activate", self.rightClickRemoveVariable, selectedField)
-#                typeMenuVariable.append(itemVariable3)
-#===============================================================================
+            #---------------------#
+            # Variable Management #
+            #---------------------#
+
+            typeMenuVariable = Gtk.Menu()
+            itemVariable = Gtk.MenuItem(_("Edit variable"))
+            itemVariable.show()
+            itemVariable.connect("activate", self.rightClickEditVariable, selectedField)
+            typeMenuVariable.append(itemVariable)
+
+            itemVariable2 = Gtk.MenuItem(_("Reset variable"))
+            itemVariable2.show()
+            itemVariable2.connect("activate", self.rightClickResetVariable, selectedField)
+            typeMenuVariable.append(itemVariable2)
 
             item = Gtk.MenuItem(_("Configure variation of field"))
-            item.connect("activate", self.rightClickEditVariable, selectedField)
             item.show()
+            item.set_submenu(typeMenuVariable)
             self.menu.append(item)
 
             item = Gtk.SeparatorMenuItem()
@@ -1161,8 +1157,27 @@ class TreeMessageController(object):
 #===============================================================================
 
     def rightClickEditVariable(self, widget, field):
-        creationPanel = VariableTreeController(self.netzob, field)
-        # creationPanel.display()
+        """rightClickEditVariable:
+                Called by a right click on a variable and then a choice of the 'edit variable' option of the 'configure variation of field' menu.
+                Launch a variable modification interface on the given field's variable.
+        """
+        VariableTreeController(self.netzob, field)
+
+    def rightClickResetVariable(self, widget, field):
+        """rightClickResetVariable:
+                Called by a right click on a variable and then a choice of the 'reset variable' option of the 'configure variation of field' menu.
+                Set the variable of the given field to default.
+                A confirmation popup may be opened.
+        """
+        questionMsg = _("Click yes to confirm that you want to reset the variable of the field {0}").format(field.getName())
+        md = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg)
+        result = md.run()
+        md.destroy()
+        if result == Gtk.ResponseType.YES:
+            field.setVariable(field.getDefaultVariable())
+            self.update()
+        else:
+            self.log.debug(_("The user didn't confirm the reseting of the variable of the field {0}").format(field.getName()))
 
     def doSplitColumn(self, widget, textview, field, dialog):
         if self.split_max_len <= 1:
