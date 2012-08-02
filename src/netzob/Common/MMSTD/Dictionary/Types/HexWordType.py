@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 import logging
 import string
 
@@ -39,7 +40,8 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import \
+    AbstractWordType
 
 
 class HexWordType(AbstractWordType):
@@ -58,6 +60,34 @@ class HexWordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
+    def str2bin(self, stri):
+        if stri is not None:
+            # bitarray(bin(int(stri, 16))[2:]) : remove (int) all left-sided useful '0's.*
+
+            sbin = ''
+            for char in stri:
+                # We translate half-byte by half-byte.
+                onecharbin = bin(int(char, 16))[2:]  # We translate a character into binary.
+                for i in range(4 - len(onecharbin)):
+                    sbin += '0'  # We prepend '0's to match the format: one hex char = 4 binary chars.
+                sbin += onecharbin  # We append a new character's translation.
+            return bitarray(sbin)
+        else:
+            return None
+
+    def bin2str(self, bina):
+        if bina is not None:
+            # str(hex(int(bina.to01(), 2))) : remove (int) all left-sided useful '0's.
+
+            sbin = bina.to01()  # We retrieve a string with the '0's and '1's of the binary.
+            stri = ''
+            for start in xrange(0, len(sbin), 4):
+                # We translate half-byte by half-byte.
+                stri += str(hex(int(sbin[start:start + 4], 2)))[2:]
+            return stri
+        else:
+            return None
+
     def generateValue(self, generationStrategies, minSize, maxSize):
         value = ""
         for generationStrategy in generationStrategies:
