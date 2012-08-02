@@ -109,15 +109,9 @@ class HexWordType(AbstractWordType):
         return HexWordType.TYPE
 
     def suitsBinary(self, bina):
-        byteset = bina.tobytes()
-        stri = ''
-        for byte in byteset:
-            # We naively try to decode in ascii the binary.
-            try:
-                stri = byte.decode('ascii')
-                # We search if each character is in string.hexdigits
-                if string.hexdigits.find(stri) == -1:
-                    return False
-            except:
-                return False
+        # We naively try to decode in ascii the binary.
+        try:
+            str(hex(int(bina.to01(), 2)))
+        except:
+            return False
         return True

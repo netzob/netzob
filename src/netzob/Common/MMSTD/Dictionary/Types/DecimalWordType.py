@@ -66,6 +66,9 @@ class DecimalWordType(AbstractWordType):
                 break
         return self.str2bin(value)
 
+    def getType(self):
+        return DecimalWordType.TYPE
+
     def suitsBinary(self, bina):
         byteset = bina.tobytes()
         stri = ''

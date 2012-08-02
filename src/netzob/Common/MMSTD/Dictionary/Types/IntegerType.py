@@ -81,7 +81,7 @@ class IntegerType(AbstractType):
             return None
 
     def getBitSize(self, typeValue):
-        return typeValue.bit_length()
+        return self.str2bin(typeValue).bit_length()
 
     def getMaxBitSize(self, nbChars):
         return self.getBitSize((10 ** nbChars) - 1)
