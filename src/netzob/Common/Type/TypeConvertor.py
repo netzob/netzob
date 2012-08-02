@@ -61,7 +61,7 @@ class TypeConvertor():
 
     @staticmethod
     def bin2string(bin):
-        return bin.tostring()
+        return bin.tobytes()
 
     @staticmethod
     def str2bool(val):
@@ -101,7 +101,10 @@ class TypeConvertor():
 
     @staticmethod
     def bin2strhex(bin):
-        return str(hex(int(bin.to01(), 2)))
+        if len(bin) == 0:
+            return ''
+        else:
+            return str(hex(int(bin.to01(), 2)))
 
     @staticmethod
     def int2bin(i, nbbits):
