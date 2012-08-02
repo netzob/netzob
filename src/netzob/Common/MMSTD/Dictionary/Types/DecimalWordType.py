@@ -67,7 +67,7 @@ class DecimalWordType(AbstractWordType):
         return self.str2bin(value)
 
     def suitsBinary(self, bina):
-        byteset = bina.tobyte()
+        byteset = bina.tobytes()
         stri = ''
         for byte in byteset:
             # We naively try to decode in ascii the binary.

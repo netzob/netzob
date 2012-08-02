@@ -79,7 +79,7 @@ class IPv4WordType(AbstractWordType):
         return IPv4WordType.TYPE
 
     def suitsBinary(self, bina):
-        byteset = bina.tobyte()
+        byteset = bina.tobytes()
         stri = ''
         ip = ''
         for byte in byteset:

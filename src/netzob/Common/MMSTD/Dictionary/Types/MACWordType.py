@@ -73,7 +73,7 @@ class MACWordType(AbstractWordType):
         return MACWordType.TYPE
 
     def suitsBinary(self, bina):
-        byteset = bina.tobyte()
+        byteset = bina.tobytes()
         stri = ''
         ip = ''
         for byte in byteset:

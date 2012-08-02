@@ -70,7 +70,7 @@ class WordType(AbstractWordType):
         return WordType.TYPE
 
     def suitsBinary(self, bina):
-        byteset = bina.tobyte()
+        byteset = bina.tobytes()
         for byte in byteset:
             # We naively try to decode in ascii the binary.
             try:

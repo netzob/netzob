@@ -88,6 +88,15 @@ class HexWordType(AbstractWordType):
         else:
             return None
 
+    def getBitSize(self, typeValue):
+        return (len(typeValue) * 4)
+
+    def getMaxBitSize(self, nbChars):
+        return (nbChars * 4)
+
+    def getMinBitSize(self, nbChars):
+        return (nbChars * 4)
+
     def generateValue(self, generationStrategies, minSize, maxSize):
         value = ""
         for generationStrategy in generationStrategies:
@@ -100,7 +109,7 @@ class HexWordType(AbstractWordType):
         return HexWordType.TYPE
 
     def suitsBinary(self, bina):
-        byteset = bina.tobyte()
+        byteset = bina.tobytes()
         stri = ''
         for byte in byteset:
             # We naively try to decode in ascii the binary.
