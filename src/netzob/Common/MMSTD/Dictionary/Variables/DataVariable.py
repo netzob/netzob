@@ -35,16 +35,17 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
-
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractLeafVariable import \
     AbstractLeafVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 
 
 class DataVariable(AbstractLeafVariable):
@@ -79,7 +80,13 @@ class DataVariable(AbstractLeafVariable):
         """toString:
                 For debugging purpose.
         """
-        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), str(self.bin2str(self.originalValue)))
+        # We simply avoid to print unreadable binary.
+        if self.getType().getType() == BinaryType.TYPE:
+            readableValue = TypeConvertor.bin2strhex(self.originalValue)
+        else:
+            readableValue = self.bin2str(self.originalValue)
+
+        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), readableValue)
 
     def getValue(self, processingToken):
         """getValue:
@@ -120,7 +127,13 @@ class DataVariable(AbstractLeafVariable):
         """getDescription:
                 Get the full description of the variable.
         """
-        return _("{0}, value: {1}").format(self.toString(), self.getValue(writingToken))
+        # We simply avoid to print unreadable binary.
+        if self.getType().getType() == BinaryType.TYPE:
+            readableValue = TypeConvertor.bin2strhex(self.getValue(writingToken))
+        else:
+            readableValue = str(self.bin2str(self.getValue(writingToken)))
+
+        return _("{0}, value: {1}").format(self.toString(), readableValue)
 
     def getUncontextualizedDescription(self):
         """getUncontextualizedDescription:
@@ -224,6 +237,7 @@ class DataVariable(AbstractLeafVariable):
                     # We learn as much as we can.
                     self.setCurrentValue(tmp[:self.maxBits])
                     readingToken.incrementIndex(self.maxBits)
+                    readingToken.setOk(True)
                     self.log.info(_("Format comparison successful."))
                 else:
                     readingToken.setOk(False)
@@ -234,6 +248,8 @@ class DataVariable(AbstractLeafVariable):
                     # We learn everything that last.
                     self.setCurrentValue(tmp)
                     readingToken.incrementIndex(len(tmp))
+                    readingToken.setOk(True)
+                    self.log.info(_("Format comparison successful."))
                 else:
                     readingToken.setOk(False)
                     self.log.info(_("Format comparison failed: wrong format."))
@@ -258,6 +274,7 @@ class DataVariable(AbstractLeafVariable):
                 if tmp[:len(localValue)] == localValue:
                     self.log.debug(_("Comparison successful."))
                     readingToken.incrementIndex(len(localValue))
+                    readingToken.setOk(True)
                 else:
                     readingToken.setOk(False)
                     self.log.debug(_("Comparison failed: wrong value."))

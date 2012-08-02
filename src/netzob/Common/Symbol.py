@@ -26,7 +26,7 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
@@ -911,7 +911,8 @@ class Symbol(AbstractSymbol):
         result = []
         for field in self.getFields():
             if field.getVariable() is not None:
-                result.append(field.getVariable())
+                # We add all variable that has the root variable of field as ancestor.
+                result.extend(field.getVariable().getProgeny())
         return result
 
     #+----------------------------------------------

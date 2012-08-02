@@ -41,8 +41,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import \
-    AbstractVariableProcessingToken
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
     VariableReadingToken
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
@@ -178,7 +176,7 @@ class AbstractionLayer():
         if len(receivedData) > 0:
             now = datetime.datetime.now()
             receptionTime = now.strftime("%H:%M:%S")
-            self.log.info("Received following message : " + str(receivedData))
+            self.log.info("Received following message : " + TypeConvertor.bin2strhex(receivedData))
 
             # Now we abstract the message
             symbol = self.abstract(receivedData)
@@ -203,7 +201,7 @@ class AbstractionLayer():
         self.log.info("Sending symbol '" + str(symbol) + "' over the communication channel")
         # First we specialize the symbol in a message
         binMessage = self.specialize(symbol)
-        strMessage = str(binMessage)
+        strMessage = TypeConvertor.bin2strhex(binMessage)
         self.log.info("- str = '" + strMessage + "'")
 
         # now we send it
@@ -223,13 +221,16 @@ class AbstractionLayer():
                 @rtype: netzob.Common.Symbol
                 @return: the symbol which content matches the message.
         """
-        self.log.debug("We abstract the received message : " + str(message))
+        self.log.debug("We abstract the received message : " + TypeConvertor.bin2strhex(message))
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
             self.log.debug(_("Try to abstract message through : {0}.").format(symbol.getName()))
             readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
             symbol.getRoot().read(readingToken)
-            if readingToken.isOk():
+
+            logging.debug(_("ReadingToken: isOk: {0}, index: {1}, len(value): {2}").format(str(readingToken.isOk()), str(readingToken.getIndex()), str(len(readingToken.getValue()))))
+            # The message matches if the read is ok and the whole entry was read.
+            if readingToken.isOk() and readingToken.getIndex() == len(readingToken.getValue()):
                 self.log.debug(_("The message matches symbol {0}.").format(symbol.getName()))
                 # It matches so we learn from it if it's possible
                 return symbol

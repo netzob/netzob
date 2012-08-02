@@ -72,7 +72,7 @@ class AbstractVariable:
         """toString:
                 For debugging purpose.
         """
-        return _("Variable {0} (mutable: {1}, random: {2})").format(self.name, str(self.mutable), str(self.random))
+        return _("Variable {0} ({3}) (mutable: {1}, random: {2})").format(self.name, str(self.mutable), str(self.random), self.id)
 
     def findMotherNode(self, rootVariable):
         """findMotherNode:
@@ -101,6 +101,20 @@ class AbstractVariable:
                         if node is not None:
                             motherNode = node
         return motherNode
+
+    def getProgeny(self):
+        """getProgeny:
+                Get this variable and all variable that descends from it. (i.e. son, grandson...)
+
+                @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
+                @return: a list of the whole progeny plus this variable.
+        """
+        progeny = []
+        progeny.append(self)
+        if self.isNode():
+            for child in self.children:
+                progeny.extend(child.getProgeny())
+        return progeny
 
 #+---------------------------------------------------------------------------+
 #| abstract method                                                           |

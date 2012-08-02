@@ -38,7 +38,9 @@ from gettext import gettext as _
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import AbstractVariableProcessingToken
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import \
+    AbstractVariableProcessingToken
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class VariableWritingToken(AbstractVariableProcessingToken):
@@ -63,7 +65,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """toString:
                 Used for debug purpose.
         """
-        return _("isOk: {0}, value: {1}").format(str(self.isOk()), str(self.value))
+        return _("WritingToken: isOk: {0}, value: {1}").format(str(self.isOk()), TypeConvertor.bin2strhex(self.value))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

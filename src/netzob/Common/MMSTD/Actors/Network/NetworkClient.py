@@ -26,18 +26,24 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import socket
-import select
-import logging
 from bitarray import bitarray
+from gettext import gettext as _
+import logging
+import select
+import socket
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+

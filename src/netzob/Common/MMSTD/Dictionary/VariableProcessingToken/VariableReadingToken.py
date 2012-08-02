@@ -30,16 +30,16 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 
-
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import \
+    AbstractVariableProcessingToken
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken import AbstractVariableProcessingToken
 
 
 class VariableReadingToken(AbstractVariableProcessingToken):
@@ -63,7 +63,7 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         """toString:
                 Used for debug purpose.
         """
-        return _("isOk: {0}, value left: {1}").format(str(self.isOk()), str(self.value[self.index:]))
+        return _("ReadingToken: isOk: {0}, value left: {1}").format(str(self.isOk()), TypeConvertor.bin2strhex(self.value[self.index:]))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |

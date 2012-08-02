@@ -68,7 +68,10 @@ class AlternateVariable(AbstractNodeVariable):
     def toString(self):
         """toString:
         """
-        return _("[Alternate] {0}").format(AbstractVariable.toString(self))
+        lgth = 0
+        if self.children is not None:
+            lgth = len(self.children)
+        return _("[Alternate] {0} ({1})").format(AbstractVariable.toString(self), str(lgth))
 
     def getDescription(self, processingToken):
         """getDescription:
