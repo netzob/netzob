@@ -30,7 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -105,6 +104,25 @@ class AbstractNodeVariable(AbstractVariable):
                     self.addChild(child)
                     break
 
+#+---------------------------------------------------------------------------+
+#| Functions inherited from AbstractVariable                                 |
+#+---------------------------------------------------------------------------+
+    def getDescription(self, processingToken):
+        """getDescription:
+        """
+        values = []
+        for child in self.children:
+            values.append(child.getDescription(processingToken))
+        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+        """
+        values = []
+        for child in self.children:
+            values.append(child.getUncontextualizedDescription())
+        return _("[ {0}, children:\n").format(self.toString()) + "\n".join(values) + " ]"
+
     def restore(self, processingToken):
         """restore:
                 Restore all children on the memory cache.
@@ -131,9 +149,6 @@ class AbstractNodeVariable(AbstractVariable):
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def getChildren(self):
-        if self.isRandom():
-            if self.children is not None:
-                random.shuffle(self.children)
         return self.children
 
 #+---------------------------------------------------------------------------+

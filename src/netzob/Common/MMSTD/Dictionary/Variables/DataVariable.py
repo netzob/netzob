@@ -91,7 +91,6 @@ class DataVariable(AbstractLeafVariable):
     def getValue(self, processingToken):
         """getValue:
                 Return the current value if it has one, a memorized value in other cases.
-                If the variable is random, its value is not modified each time (many) the getValue is called. It is modified when it has to be written.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -143,9 +142,9 @@ class DataVariable(AbstractLeafVariable):
 
     def isDefined(self, processingToken):
         """isDefined:
-                If the leaf is random or has no values, it is not defined.
+                If the leaf has no values, it is not defined.
         """
-        return (not self.isRandom()) and self.getValue(processingToken) is not None
+        return self.getValue(processingToken) is not None
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
@@ -231,23 +230,24 @@ class DataVariable(AbstractLeafVariable):
         tmp = readingToken.getValue()[readingToken.getIndex():]
         # Length comparison.
         if len(tmp) >= self.minBits:
+            self.log.debug(str(len(tmp)) + " - " + str(self.minBits) + " - " + str(self.maxBits))
             if len(tmp) <= self.maxBits:
-                # Format comparison.
-                if self.type.suitsBinary(tmp[:self.maxBits]):
-                    # We learn as much as we can.
-                    self.setCurrentValue(tmp[:self.maxBits])
-                    readingToken.incrementIndex(self.maxBits)
-                    readingToken.setOk(True)
-                    self.log.info(_("Format comparison successful."))
-                else:
-                    readingToken.setOk(False)
-                    self.log.info(_("Format comparison failed: wrong format."))
-            else:
                 # Format comparison.
                 if self.type.suitsBinary(tmp):
                     # We learn everything that last.
                     self.setCurrentValue(tmp)
                     readingToken.incrementIndex(len(tmp))
+                    readingToken.setOk(True)
+                    self.log.info(_("Format comparison successful."))
+                else:
+                    readingToken.setOk(False)
+                    self.log.info(_("Format comparison failed: wrong format."))
+            else:  # len(tmp) > self.maxBits
+                # Format comparison.
+                if self.type.suitsBinary(tmp[:self.maxBits]):
+                    # We learn as much as we can.
+                    self.setCurrentValue(tmp[:self.maxBits])
+                    readingToken.incrementIndex(self.maxBits)
                     readingToken.setOk(True)
                     self.log.info(_("Format comparison successful."))
                 else:
@@ -263,24 +263,19 @@ class DataVariable(AbstractLeafVariable):
                 The variable compares its value to the read value.
         """
         self.log.debug(_("- [ {0}: compare.").format(self.toString()))
-        if self.isRandom():
-            # A random variable's value can not be compared to a static value.
-            self.log.debug(_("Variable is random."))
-            readingToken.setOk(False)
-        else:
-            localValue = self.getValue(readingToken)
-            tmp = readingToken.getValue()[readingToken.getIndex():]
-            if len(tmp) >= len(localValue):
-                if tmp[:len(localValue)] == localValue:
-                    self.log.debug(_("Comparison successful."))
-                    readingToken.incrementIndex(len(localValue))
-                    readingToken.setOk(True)
-                else:
-                    readingToken.setOk(False)
-                    self.log.debug(_("Comparison failed: wrong value."))
+        localValue = self.getValue(readingToken)
+        tmp = readingToken.getValue()[readingToken.getIndex():]
+        if len(tmp) >= len(localValue):
+            if tmp[:len(localValue)] == localValue:
+                self.log.debug(_("Comparison successful."))
+                readingToken.incrementIndex(len(localValue))
+                readingToken.setOk(True)
             else:
                 readingToken.setOk(False)
-                self.log.debug(_("Comparison failed: wrong size."))
+                self.log.debug(_("Comparison failed: wrong value."))
+        else:
+            readingToken.setOk(False)
+            self.log.debug(_("Comparison failed: wrong size."))
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def generate(self, writingToken):
@@ -296,8 +291,6 @@ class DataVariable(AbstractLeafVariable):
                 Write this value in the writingToken.
         """
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
-        if self.isRandom():
-            self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
         value = self.getValue(writingToken)
         writingToken.appendValue(value)
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))

@@ -160,30 +160,30 @@ class AbstractLeafVariable(AbstractVariable):
 
     def write(self, writingToken):
         """write:
-                The leaf element return its value or a generate one.
+                The leaf element returns its value or a generated one.
         """
         self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString(self)))
-        if self.isMutable():
+        if self.isRandom():
             if self.isDefined(writingToken):
-                # mutable and defined
+                # random and defined
                 self.forget(writingToken)
                 self.generate(writingToken)
                 self.memorize(writingToken)
                 self.writeValue(writingToken)
 
             else:
-                # mutable and not defined
+                # random and not defined
                 self.generate(writingToken)
                 self.memorize(writingToken)
                 self.writeValue(writingToken)
 
         else:
             if self.isDefined(writingToken):
-                # not mutable and defined
-                self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
+                # not random and defined
                 self.writeValue(writingToken)
 
             else:
-                # not mutable and not defined
+                # not random and not defined
+                self.log.debug(_("Write abort: the variable is neither defined, nor random."))
                 writingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))

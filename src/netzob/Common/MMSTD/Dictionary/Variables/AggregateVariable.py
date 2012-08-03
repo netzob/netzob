@@ -31,6 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -40,8 +41,10 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import AbstractNodeVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import \
+    AbstractNodeVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class AggregateVariable(AbstractNodeVariable):
@@ -69,25 +72,9 @@ class AggregateVariable(AbstractNodeVariable):
         """toString:
         """
         lgth = 0
-        if self.children is not None:
-            lgth = len(self.children)
+        if self.getChildren() is not None:
+            lgth = len(self.getChildren())
         return _("[Aggregate] {0} ({1})").format(AbstractVariable.toString(self), str(lgth))
-
-    def getDescription(self, processingToken):
-        """getDescription:
-        """
-        values = []
-        for child in self.children:
-            values.append(child.getDescription(processingToken))
-        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
-
-    def getUncontextualizedDescription(self):
-        """getUncontextualizedDescription:
-        """
-        values = []
-        for child in self.children:
-            values.append(child.getUncontextualizedDescription())
-        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
     def isDefined(self, processingToken):
         """isDefined:
@@ -140,6 +127,11 @@ class AggregateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
+
+        if self.isRandom():
+            if self.getChildren() is not None:
+                random.shuffle(self.getChildren())
+
         dictOfValues = dict()
         savedValue = writingToken.getValue()
         for child in self.getChildren():
@@ -180,7 +172,7 @@ class AggregateVariable(AbstractNodeVariable):
         xmlVariable.set("random", str(self.isRandom()))
 
         # Definition of children variables
-        for child in self.children:
+        for child in self.getChildren():
             child.toXML(xmlVariable, namespace)
         self.log.debug(_("Variable {0}. ]").format(self.getName()))
 

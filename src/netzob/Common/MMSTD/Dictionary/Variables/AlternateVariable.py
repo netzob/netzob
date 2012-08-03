@@ -31,6 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -40,8 +41,10 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import AbstractNodeVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import \
+    AbstractNodeVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class AlternateVariable(AbstractNodeVariable):
@@ -72,22 +75,6 @@ class AlternateVariable(AbstractNodeVariable):
         if self.children is not None:
             lgth = len(self.children)
         return _("[Alternate] {0} ({1})").format(AbstractVariable.toString(self), str(lgth))
-
-    def getDescription(self, processingToken):
-        """getDescription:
-        """
-        values = []
-        for child in self.children:
-            values.append(child.getDescription(processingToken))
-        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
-
-    def getUncontextualizedDescription(self):
-        """getUncontextualizedDescription:
-        """
-        values = []
-        for child in self.children:
-            values.append(child.getUncontextualizedDescription())
-        return _("[ {0}, children ({1}):\n").format(self.toString(), len(self.children)) + "\n".join(values) + " ]"
 
     def isDefined(self, processingToken):
         """isDefined:
@@ -135,6 +122,11 @@ class AlternateVariable(AbstractNodeVariable):
                 It stops if one child successes.
         """
         self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
+
+        if self.isRandom():
+            if self.getChildren() is not None:
+                random.shuffle(self.getChildren())
+
         savedValue = writingToken.getValue()
         for child in self.getChildren():
             # Memorized values for the child and its successor.

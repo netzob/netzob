@@ -144,7 +144,7 @@ class ReferencedVariable(AbstractVariable):
 
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
-        xmlRefID.text = self.pointedVariable.getID()
+        xmlRefID.text = self.pointedID
         self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
@@ -157,18 +157,8 @@ class ReferencedVariable(AbstractVariable):
         variable = vocabulary.getVariableByID(self.pointedID)
         return self.getPointedVariable(variable)
 
-    def setPointedVariable(self, pointedVariable):
-        self.origPointedVariable = pointedVariable
-        if self.isRandom():
-            # We use a deepĉopy with the random attribute.
-            self.pointedVariable = copy.deepcopy(pointedVariable)
-            self.pointedVariable.setRandom(True)
-        else:
-            self.pointedVariable = pointedVariable
-
-    def setRandom(self, random):
-        self.random = random
-        self.setPointedVariable(self.origPointedVariable)
+    def setPointedID(self, pointedID):
+        self.setPointedID(pointedID)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

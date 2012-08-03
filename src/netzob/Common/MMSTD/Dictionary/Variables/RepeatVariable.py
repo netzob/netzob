@@ -52,7 +52,7 @@ class RepeatVariable(AbstractNodeVariable):
             A variable with one child that repeats a certain time every treatment on this child.
     """
 
-    MAX_ITERATIONS = 10
+    MAX_ITERATIONS = 10  # TODO: Choose a better value.
     TYPE = "Repeat Variable"
 
     def __init__(self, _id, name, mutable, random, child, minIterations, maxIterations):
@@ -81,6 +81,17 @@ class RepeatVariable(AbstractNodeVariable):
         else:
             self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.").format(self.getName()))
             self.maxIterations = self.minIterations
+
+    def getRandomNumberIterations(self):
+        """getRandomNumberIterations:
+                Generate randomly a couple of max and min number iterations.
+                TODO: implement a better random finding way (for example a Poisson law center around 10, so we would mostly have short values, and sometimes we would have high values.
+        """
+        x = random.randint(0, RepeatVariable.MAX_ITERATIONS)
+        y = random.randint(0, RepeatVariable.MAX_ITERATIONS)
+        self.minIterations = min(x, y)
+        self.maxIterations = max(x, y)
+        return self.getNumberIterations()
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -150,7 +161,11 @@ class RepeatVariable(AbstractNodeVariable):
                 The pointed variable writes its value.
         """
         self.log.debug(_("[ {0}: write access:").format(self.toString()))
-        (minIterations, maxIterations) = self.getNumberIterations()
+
+        if self.isRandom():
+            (minIterations, maxIterations) = self.getRandomNumberIterations()
+        else:
+            (minIterations, maxIterations) = self.getNumberIterations()
         successfullIterations = 0
 
         # Memorized initial values for the child and its successors.
@@ -209,11 +224,6 @@ class RepeatVariable(AbstractNodeVariable):
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def getNumberIterations(self):
-        if self.isRandom():
-            x = random.randint(0, RepeatVariable.MAX_ITERATIONS)
-            y = random.randint(0, RepeatVariable.MAX_ITERATIONS)
-            self.minIterations = min(x, y)
-            self.maxIterations = max(x, y)
         return (self.minIterations, self.maxIterations)
 
     def getChild(self):
