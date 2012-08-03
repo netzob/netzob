@@ -93,7 +93,7 @@ class NetworkClient(AbstractActor):
         try:
             self.socket.shutdown(socket.SHUT_RDWR)
         except socket.error, msg:
-            self.log.debug("Error appeared while shuting down the socket." + str(msg))
+            self.log.debug("Error appeared while shutting down the socket." + str(msg))
 
         try:
             self.socket.close()
@@ -125,14 +125,14 @@ class NetworkClient(AbstractActor):
             return result
         result.frombytes(chars)
 
-        self.log.debug("Received : " + str(result))
+        self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
     def write(self, message):
         self.log.debug("Write down !")
         self.outputMessages.append(message)
         try:
-            self.outputFile.write(message.tostring())
+            self.outputFile.write(message.tobytes())
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")

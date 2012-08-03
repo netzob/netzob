@@ -101,7 +101,9 @@ class TypeConvertor():
 
     @staticmethod
     def bin2strhex(bin):
-        if len(bin) == 0:
+        if bin is None:
+            return None
+        elif len(bin) == 0:
             return ''
         else:
             return str(hex(int(bin.to01(), 2)))

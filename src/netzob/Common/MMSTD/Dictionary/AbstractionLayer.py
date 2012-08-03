@@ -182,7 +182,7 @@ class AbstractionLayer():
             symbol = self.abstract(receivedData)
 
             # We store the received messages its time and its abstract representation
-            self.inputMessages.append([receptionTime, str(receivedData), symbol.getName()])
+            self.inputMessages.append([receptionTime, TypeConvertor.bin2strhex(receivedData), symbol.getName()])
             self.registerInputSymbol(symbol)
 
             return (symbol, receivedData)

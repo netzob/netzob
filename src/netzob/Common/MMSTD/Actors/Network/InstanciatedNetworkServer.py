@@ -26,19 +26,24 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
 import logging
-import socket
 import select
-
-from bitarray import bitarray
+import socket
 
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -103,8 +108,7 @@ class InstanciatedNetworkServer(AbstractActor):
             return result
         result.fromstring(chars)
 
-#        self.inputMessages.append(receivedData)
-        self.log.debug("Received : " + str(result) + "(" + result.tostring() + ")")
+        self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
     def write(self, message):

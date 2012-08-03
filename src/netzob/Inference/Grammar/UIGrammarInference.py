@@ -575,7 +575,7 @@ class UIGrammarInference:
                 self.log.warn(_("Impossible to retrieve the selected dictionary entry"))
                 return
 
-            outputSymbolsTreeStore.append(None, [selectedEntry.getType(), selectedEntry.getID(), selectedEntry.getName(), entryTime, entryProba])
+            outputSymbolsTreeStore.append(None, [selectedEntry.getType(), str(selectedEntry.getID()), selectedEntry.getName(), str(entryTime), str(entryProba)])
 
     #+-----------------------------------------------------------------------+
     #| createState:
