@@ -98,7 +98,7 @@ class VariableTreeView(AbstractView):
 
         # Make the column
         self.lvcolumn = Gtk.TreeViewColumn(_("Description of the variable"))
-        self.lvcolumn.set_sort_column_id(1)
+        self.lvcolumn.set_sort_column_id(-1)
         cell = Gtk.CellRendererText()
         self.lvcolumn.pack_start(cell, True)
         self.lvcolumn.add_attribute(cell, "text", 1)
