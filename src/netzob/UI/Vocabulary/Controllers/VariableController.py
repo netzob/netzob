@@ -29,31 +29,35 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
-import uuid
-
-#+---------------------------------------------------------------------------+
-#| Related third party imports                                               |
-#+---------------------------------------------------------------------------+
 from gi.repository import Gtk
-
-#+---------------------------------------------------------------------------+
-#| Local application imports                                                 |
-#+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
+    AbstractRelationType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
     AlternateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import \
+    ComputedRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import \
-    ReferencedVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DirectRelationVariable import \
+    DirectRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
     RepeatVariable
 from netzob.UI.Vocabulary.Views.VariableView import VariableTreeView, \
     VariableCreationView, VariableMovingView
+import logging
+import uuid
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 
 
 class VariableTreeController:
@@ -297,11 +301,13 @@ class VariableCreationController:
         if strVarType == AggregateVariable.TYPE or strVarType == AlternateVariable.TYPE:
             self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
+            self.view.getWidg("relationTypeLabel").set_visible(False)
             self.view.getWidg("minLabel").set_visible(False)
             self.view.getWidg("maxLabel").set_visible(False)
 
             self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
+            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
 
@@ -318,33 +324,17 @@ class VariableCreationController:
 
             self.view.getWidg("valueLabel").set_visible(True)
             self.view.getWidg("typeLabel").set_visible(True)
+            self.view.getWidg("relationTypeLabel").set_visible(False)
             self.view.getWidg("minLabel").set_visible(True)
             self.view.getWidg("maxLabel").set_visible(True)
 
             self.view.getWidg("valueEntry").set_visible(True)
             self.view.getWidg("typeCombo").set_visible(True)
+            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
             handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
-
-        # Pointing variable
-        elif strVarType == ReferencedVariable.TYPE:
-            self.view.getWidg("valueLabel").set_text("Pointed ID")
-
-            self.view.getWidg("valueLabel").set_visible(True)
-            self.view.getWidg("typeLabel").set_visible(False)
-            self.view.getWidg("minLabel").set_visible(False)
-            self.view.getWidg("maxLabel").set_visible(False)
-
-            self.view.getWidg("valueEntry").set_visible(True)
-            self.view.getWidg("typeCombo").set_visible(False)
-            self.view.getWidg("minSpin").set_visible(False)
-            self.view.getWidg("maxSpin").set_visible(False)
-
-            if handler_id is not None:
-                object.disconnect(handler_id)
-                handler_id = None
 
         # Repeat variable
         elif strVarType == RepeatVariable.TYPE:
@@ -353,11 +343,13 @@ class VariableCreationController:
 
             self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
+            self.view.getWidg("relationTypeLabel").set_visible(False)
             self.view.getWidg("minLabel").set_visible(True)
             self.view.getWidg("maxLabel").set_visible(True)
 
             self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
+            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
@@ -365,14 +357,57 @@ class VariableCreationController:
                 object.disconnect(handler_id)
                 handler_id = None
 
+        # Direct Relation variable
+        elif strVarType == DirectRelationVariable.TYPE:
+            self.view.getWidg("valueLabel").set_text("Pointed ID")
+
+            self.view.getWidg("valueLabel").set_visible(True)
+            self.view.getWidg("typeLabel").set_visible(False)
+            self.view.getWidg("relationTypeLabel").set_visible(False)
+            self.view.getWidg("minLabel").set_visible(False)
+            self.view.getWidg("maxLabel").set_visible(False)
+
+            self.view.getWidg("valueEntry").set_visible(True)
+            self.view.getWidg("typeCombo").set_visible(False)
+            self.view.getWidg("relationTypeCombo").set_visible(False)
+            self.view.getWidg("minSpin").set_visible(False)
+            self.view.getWidg("maxSpin").set_visible(False)
+
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
+
+        # Computed Relation variable
+        elif strVarType == ComputedRelationVariable.TYPE:
+            self.view.getWidg("valueLabel").set_text("Pointed ID")
+            self.view.getWidg("minLabel").set_text("Minimum number of characters")
+            self.view.getWidg("maxLabel").set_text("Maximum number of characters")
+
+            self.view.getWidg("valueLabel").set_visible(True)
+            self.view.getWidg("typeLabel").set_visible(False)
+            self.view.getWidg("relationTypeLabel").set_visible(True)
+            self.view.getWidg("minLabel").set_visible(True)
+            self.view.getWidg("maxLabel").set_visible(True)
+
+            self.view.getWidg("valueEntry").set_visible(True)
+            self.view.getWidg("typeCombo").set_visible(False)
+            self.view.getWidg("relationTypeCombo").set_visible(True)
+            self.view.getWidg("minSpin").set_visible(True)
+            self.view.getWidg("maxSpin").set_visible(True)
+
+            handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
+
+        # Default case
         else:
             self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
+            self.view.getWidg("relationTypeLabel").set_visible(False)
             self.view.getWidg("minLabel").set_visible(False)
             self.view.getWidg("maxLabel").set_visible(False)
 
             self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
+            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
 
@@ -382,12 +417,14 @@ class VariableCreationController:
 
     def updateMinSpin(self, widget):
         """updateMinSpin:
-                Fix the value of minspin to len(value) in order to help the user to know the size of the value he entered.$
+                Fix the value of minspin to len(value) in order to help the user to know the size of the value he entered.
         """
-        size = len(str(self.view.getWidg("valueEntry").get_text()))
-        # Protect previously defined minValue.
-        # if self.view.getWidg("minSpin").get_text() is None or str(self.view.getWidg("minSpin").get_text()) == '' or size < int(self.view.getWidg("minSpin").get_text()):
-        self.view.getWidg("minSpin").set_text(str(size))
+        strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
+        if strVarType == DataVariable.TYPE:
+            size = len(str(self.view.getWidg("valueEntry").get_text()))
+            # Protect previously defined minValue.
+            # if self.view.getWidg("minSpin").get_text() is None or str(self.view.getWidg("minSpin").get_text()) == '' or size < int(self.view.getWidg("minSpin").get_text()):
+            self.view.getWidg("minSpin").set_text(str(size))
 
     def updateMaxSpin(self, widget):
         """updateMaxSpin:
@@ -419,6 +456,7 @@ class VariableCreationController:
             self.view.getWidg("randomCheck").set_active(self.variable.isRandom())
             self.setComboText(self.view.getWidg("variableTypeCombo"), self.variable.getVariableType())
 
+            # Data Variable
             if self.variable.getVariableType() == DataVariable.TYPE:
                 if self.variable.getOriginalValue() is not None:
                     self.view.getWidg("valueEntry").set_text(self.variable.bin2str(self.variable.getOriginalValue()))
@@ -428,12 +466,21 @@ class VariableCreationController:
                 self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
 
-            if self.variable.getVariableType() == ReferencedVariable.TYPE:
-                self.view.getWidg("valueEntry").set_text(self.variable.getPointedID())
-
-            if self.variable.getVariableType() == RepeatVariable.TYPE:
+            # Repeat Variable
+            elif self.variable.getVariableType() == RepeatVariable.TYPE:
                 self.view.getWidg("minSpin").set_text(str(self.variable.getNumberIterations()[0]))
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getNumberIterations()[1]))
+
+            # Direct Relation Variable
+            elif self.variable.getVariableType() == DirectRelationVariable.TYPE:
+                self.view.getWidg("valueEntry").set_text(self.variable.getPointedID())
+
+            # Computed Relation Variable
+            elif self.variable.getVariableType() == ComputedRelationVariable.TYPE:
+                self.view.getWidg("valueEntry").set_text(self.variable.bin2str(self.variable.getPointedID()))
+                self.setComboText(self.view.getWidg("relationTypeCombo"), self.variable.getType().getType())
+                self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
+                self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
 
         self.updateOptions()
         dialog.run()
@@ -463,27 +510,35 @@ class VariableCreationController:
             variable = AggregateVariable(id, name, mutable, random)
 
         # Alternate Variable
-        if strVarType == AlternateVariable.TYPE:
+        elif strVarType == AlternateVariable.TYPE:
             variable = AlternateVariable(id, name, mutable, random)
 
         # Repeat Variable
-        if strVarType == RepeatVariable.TYPE:
+        elif strVarType == RepeatVariable.TYPE:
             minIterations = int(self.view.getWidg("minSpin").get_text())
             maxIterations = int(self.view.getWidg("maxSpin").get_text())
             variable = RepeatVariable(id, name, mutable, random, None, minIterations, maxIterations)
 
-        # Data variable
-        if strVarType == DataVariable.TYPE:
+        # Data Variable
+        elif strVarType == DataVariable.TYPE:
             originalValue = str(self.view.getWidg("valueEntry").get_text())
             vtype = AbstractType.makeType(self.view.getWidg("typeCombo").get_active_text())
             minChars = int(self.view.getWidg("minSpin").get_text())
             maxChars = int(self.view.getWidg("maxSpin").get_text())
             variable = DataVariable(id, name, mutable, random, vtype, originalValue, minChars, maxChars)
 
-        # Pointing variable
-        if strVarType == ReferencedVariable.TYPE:
+        # Direct Relation Variable
+        elif strVarType == DirectRelationVariable.TYPE:
             pointedID = str(self.view.getWidg("valueEntry").get_text())
-            variable = ReferencedVariable(id, name, mutable, random, pointedID)
+            variable = DirectRelationVariable(id, name, mutable, random, pointedID)
+
+        # Computed Relation Variable
+        elif strVarType == ComputedRelationVariable.TYPE:
+            pointedID = str(self.view.getWidg("valueEntry").get_text())
+            vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text())
+            minChars = int(self.view.getWidg("minSpin").get_text())
+            maxChars = int(self.view.getWidg("maxSpin").get_text())
+            variable = ComputedRelationVariable(id, name, mutable, random, vtype, pointedID, minChars, maxChars)
 
         if variable is not None:
             self.treeController.field.getSymbol().setDefault(False)
