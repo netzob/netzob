@@ -103,6 +103,7 @@ class AlternateVariable(AbstractNodeVariable):
 
             child.read(readingToken)
             if readingToken.isOk():
+                child.setChecked(True)  # We check the validating child
                 break
             else:
                 readingToken.setIndex(savedIndex)
@@ -123,7 +124,8 @@ class AlternateVariable(AbstractNodeVariable):
         """
         self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
 
-        if self.isRandom():
+        if self.isRandom() and not self.isChecked():
+            # If the variable is random, we randomly sort its values. (If it has not been done yet).
             if self.getChildren() is not None:
                 random.shuffle(self.getChildren())
 
@@ -137,6 +139,7 @@ class AlternateVariable(AbstractNodeVariable):
 
             child.write(writingToken)
             if writingToken.isOk() and writingToken.getValue() is not None:
+                child.setChecked(True)  # We check the validating child
                 break
             else:
                 writingToken.setValue(savedValue)

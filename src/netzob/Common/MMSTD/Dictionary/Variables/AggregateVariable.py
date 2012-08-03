@@ -60,6 +60,15 @@ class AggregateVariable(AbstractNodeVariable):
         AbstractNodeVariable.__init__(self, _id, name, mutable, random, children)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AggregateVariable.py')
 
+    def checkChildren(self, checked):
+        """checkChildren:
+                Variable are checked by their mother node.
+                This function checks all children of the variable.
+        """
+        if self.getChildren() is not None:
+            for child in self.getChildren():
+                child.setChecked(checked)
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
@@ -118,7 +127,8 @@ class AggregateVariable(AbstractNodeVariable):
                 child.setCurrentValue(val)
                 # We restore the cached values.
                 child.restore(readingToken)
-
+        else:
+            self.checkChildren(True)  # We check all children.
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -128,7 +138,8 @@ class AggregateVariable(AbstractNodeVariable):
         """
         self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
 
-        if self.isRandom():
+        if self.isRandom() and not self.isChecked():
+            # If the variable is random, we randomly sort its values. (If it has not been done yet).
             if self.getChildren() is not None:
                 random.shuffle(self.getChildren())
 
@@ -155,7 +166,8 @@ class AggregateVariable(AbstractNodeVariable):
                 child.setCurrentValue(val)
                 # We restore the cached values.
                 child.restore(writingToken)
-
+        else:
+            self.checkChildren(True)  # We check all children.
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):

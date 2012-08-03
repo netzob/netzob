@@ -145,6 +145,17 @@ class AbstractNodeVariable(AbstractVariable):
         # self.log.debug(_(" Dict of values: {0} ]").format(str(dictOfValues)))
         return dictOfValues
 
+    def getProgeny(self):
+        """getProgeny:
+                Get this variable and all variable that descends from it. (i.e. son, grandson...)
+        """
+        progeny = []
+        progeny.append(self)
+        if self.children is not None:
+            for child in self.children:
+                progeny.extend(child.getProgeny())
+        return progeny
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+

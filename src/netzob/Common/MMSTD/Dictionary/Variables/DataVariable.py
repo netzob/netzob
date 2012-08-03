@@ -35,8 +35,8 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
-from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractLeafVariable import \
     AbstractLeafVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
@@ -148,12 +148,14 @@ class DataVariable(AbstractLeafVariable):
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
-                This function is called for saving the value of the variable.
+                This function is called for saving the value of the variable if it is unchecked.
         """
         # A random variable does not need to be saved.
         if self.isRandom():
             return dict()
-
+        # A checked variable does not need to be saved. It does not have to be reset.
+        if self.isChecked():
+            return dict()
         dictOfValues = dict()
         dictOfValues[self.getID()] = self.getValue(processingToken)
         # self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
@@ -197,7 +199,7 @@ class DataVariable(AbstractLeafVariable):
         xmlMaxChars.text = str(self.maxChars)
 
 #+---------------------------------------------------------------------------+
-#| Visitor abstract subFunctions                                             |
+#| Functions inherited from AbstractLeafVariable                             |
 #+---------------------------------------------------------------------------+
     def forget(self, processingToken):
         """forget:
@@ -282,7 +284,7 @@ class DataVariable(AbstractLeafVariable):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
-        self.log.debug(_("-[ {0}: generate.").format(self.toString()))
+        self.log.debug(_("- {0}: generate.").format(self.toString()))
         self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def writeValue(self, writingToken):
@@ -319,7 +321,7 @@ class DataVariable(AbstractLeafVariable):
         else:
             # Default type is Binary.
             self.log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
-            from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+            from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
             self.type = BinaryType()
 
     def setNumberBitsAndNumberChars(self, minChars, maxChars):
@@ -399,7 +401,7 @@ class DataVariable(AbstractLeafVariable):
             if xmlMaxChars is not None:
                 maxChars = int(xmlMaxChars.text)
             else:
-                maxChars = DataVariable.MAX_BITS
+                maxChars = minChars
 
             result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, _type, originalValue, minChars, maxChars)
             logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))

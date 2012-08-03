@@ -138,14 +138,22 @@ class AbstractLeafVariable(AbstractVariable):
         if self.isMutable():
             if self.isDefined(readingToken):
                 # mutable and defined
-                self.forget(readingToken)
-                self.learn(readingToken)
-                self.memorize(readingToken)
+                if not self.isChecked():
+                    self.forget(readingToken)
+                    self.learn(readingToken)
+                    self.memorize(readingToken)
+                else:  # We compare the value previously learned (during the checking access) to the one that should have been learned.
+                    self.log.debug(_("The variable is already checked, so we compare the value formerly learned to the proposed one."))
+                    self.compare(readingToken)
 
             else:
                 # mutable and not defined
-                self.learn(readingToken)
-                self.memorize(readingToken)
+                if not self.isChecked():
+                    self.learn(readingToken)
+                    self.memorize(readingToken)
+                else:
+                    self.log.debug(_("The variable is already checked, so we compare the value formerly learned to the proposed one."))
+                    self.compare(readingToken)
 
         else:
             if self.isDefined(readingToken):
@@ -156,6 +164,7 @@ class AbstractLeafVariable(AbstractVariable):
                 # not mutable and not defined
                 self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
                 readingToken.setOk(False)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -166,15 +175,17 @@ class AbstractLeafVariable(AbstractVariable):
         if self.isRandom():
             if self.isDefined(writingToken):
                 # random and defined
-                self.forget(writingToken)
-                self.generate(writingToken)
-                self.memorize(writingToken)
+                if not self.isChecked():  # A checked variable does not modify its value.
+                    self.forget(writingToken)
+                    self.generate(writingToken)
+                    self.memorize(writingToken)
                 self.writeValue(writingToken)
 
             else:
                 # random and not defined
-                self.generate(writingToken)
-                self.memorize(writingToken)
+                if not self.isChecked():
+                    self.generate(writingToken)
+                    self.memorize(writingToken)
                 self.writeValue(writingToken)
 
         else:
@@ -186,4 +197,5 @@ class AbstractLeafVariable(AbstractVariable):
                 # not random and not defined
                 self.log.debug(_("Write abort: the variable is neither defined, nor random."))
                 writingToken.setOk(False)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))

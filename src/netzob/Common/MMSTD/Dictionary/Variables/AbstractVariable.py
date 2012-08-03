@@ -67,6 +67,8 @@ class AbstractVariable:
         self.mutable = mutable
         self.random = random
         self.node = node
+        self.checked = False  # Tell if a variable has already been accessed (so that a relationVariable and the variable it points have the same value.)
+        # Variable are checked by their mother node once this one thinks it has completed its treatment on the given child.
 
     def toString(self):
         """toString:
@@ -105,19 +107,17 @@ class AbstractVariable:
     def getProgeny(self):
         """getProgeny:
                 Get this variable and all variable that descends from it. (i.e. son, grandson...)
+                Overwritten for AbstractNodeVariable.
 
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
                 @return: a list of the whole progeny plus this variable.
         """
         progeny = []
         progeny.append(self)
-        if self.isNode():
-            for child in self.children:
-                progeny.extend(child.getProgeny())
         return progeny
 
 #+---------------------------------------------------------------------------+
-#| abstract method                                                           |
+#| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+
     @abstractmethod
     def getVariableType(self):
@@ -180,12 +180,13 @@ class AbstractVariable:
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'recall'."))
+        raise NotImplementedError(_("The current variable does not implement 'restore'."))
 
     @abstractmethod
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
                 Return a dictionary which contains the variable id as key and the value as value of the variable is a leaf and a dictionary containing all couples variable id - value of the children if the variable is a node.
+                Contain values of unchecked data variables.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -235,6 +236,9 @@ class AbstractVariable:
     def isNode(self):
         return self.node
 
+    def isChecked(self):
+        return self.checked
+
     def setID(self, _id):
         self.id = _id
 
@@ -246,6 +250,9 @@ class AbstractVariable:
 
     def setNode(self, node):
         self.node = node
+
+    def setChecked(self, checked):
+        self.checked = checked
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
@@ -282,15 +289,20 @@ class AbstractVariable:
                 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
                 return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
 
-            # Referenced Variable
-            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ReferencedVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
-                return ReferencedVariable.loadFromXML(xmlRoot, namespace, version)
-
             # Repeat Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RepeatVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import RepeatVariable
                 return RepeatVariable.loadFromXML(xmlRoot, namespace, version)
+
+            # Direct Relation Variable
+            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DirectRelationVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.DirectRelationVariable import DirectRelationVariable
+                return DirectRelationVariable.loadFromXML(xmlRoot, namespace, version)
+
+            # Computed Relation Variable
+            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ComputedRelationVariable":
+                from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import ComputedRelationVariable
+                return ComputedRelationVariable.loadFromXML(xmlRoot, namespace, version)
 
             else:
                 logging.debug(_("xmlRoot.get(...) returns {0} which does not correspond to a true variable class.").format(xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))

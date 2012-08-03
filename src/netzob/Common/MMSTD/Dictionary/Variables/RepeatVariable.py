@@ -93,6 +93,14 @@ class RepeatVariable(AbstractNodeVariable):
         self.maxIterations = max(x, y)
         return self.getNumberIterations()
 
+    def checkChild(self, checked):
+        """checkChild:
+                Variable are checked by their mother node.
+                This function checks the child of the variable.
+        """
+        if self.getChild() is not None:
+            self.getChild().setChecked(checked)
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
@@ -154,6 +162,8 @@ class RepeatVariable(AbstractNodeVariable):
                 child.restore(readingToken)
         else:
             readingToken.setOk(True)
+
+        self.checkChild(True)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -162,7 +172,8 @@ class RepeatVariable(AbstractNodeVariable):
         """
         self.log.debug(_("[ {0}: write access:").format(self.toString()))
 
-        if self.isRandom():
+        if self.isRandom() and not self.isChecked():
+            # If the variable is random, we randomly choose a min and a max number of iterations. (If it has not been done yet).
             (minIterations, maxIterations) = self.getRandomNumberIterations()
         else:
             (minIterations, maxIterations) = self.getNumberIterations()
@@ -193,6 +204,8 @@ class RepeatVariable(AbstractNodeVariable):
                 child.restore(writingToken)
         else:
             writingToken.setOk(True)
+
+        self.checkChild(True)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
