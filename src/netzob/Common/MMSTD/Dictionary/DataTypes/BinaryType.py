@@ -40,7 +40,7 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
 
 
 class BinaryType(AbstractType):
@@ -54,7 +54,7 @@ class BinaryType(AbstractType):
         """Constructor of BinaryType:
         """
         AbstractType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.BinaryType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.BinaryType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |

@@ -39,7 +39,7 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractWordType import AbstractWordType
 
 
 class WordType(AbstractWordType):
@@ -53,7 +53,7 @@ class WordType(AbstractWordType):
         """Constructor of WordType:
         """
         AbstractWordType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.WordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.WordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |

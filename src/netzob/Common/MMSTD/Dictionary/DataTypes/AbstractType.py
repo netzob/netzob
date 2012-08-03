@@ -49,11 +49,12 @@ class AbstractType():
 
     def __init__(self):
         """Constructor of AbstractType:
-                @type atomicSize: integer
-                @param atomicSize: the size of an element of this type in bits. 1 for bits, 8 for bytes.
         """
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.AbstractType.py')
 
+#+---------------------------------------------------------------------------+
+#| Abstract methods                                                          |
+#+---------------------------------------------------------------------------+
     @abstractmethod
     def generateValue(self, generationStrategies, minSize, maxSize):
         """generateValue:
@@ -160,13 +161,13 @@ class AbstractType():
     @staticmethod
     def makeType(typeString):
         _type = None
-        from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
-        from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
-        from netzob.Common.MMSTD.Dictionary.Types.HexWordType import HexWordType
-        from netzob.Common.MMSTD.Dictionary.Types.IPv4WordType import IPv4WordType
-        from netzob.Common.MMSTD.Dictionary.Types.MACWordType import MACWordType
-        from netzob.Common.MMSTD.Dictionary.Types.IntegerType import IntegerType
-        from netzob.Common.MMSTD.Dictionary.Types.WordType import WordType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import DecimalWordType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.HexWordType import HexWordType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.MACWordType import MACWordType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
+        from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
         if typeString == BinaryType.TYPE:
             _type = BinaryType()
         elif typeString == DecimalWordType.TYPE:

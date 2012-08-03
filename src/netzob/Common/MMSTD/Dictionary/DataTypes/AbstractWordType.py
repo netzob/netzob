@@ -40,7 +40,7 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
 
 
 class AbstractWordType(AbstractType):
@@ -52,7 +52,7 @@ class AbstractWordType(AbstractType):
         """Constructor of AbstractWordType:
         """
         AbstractType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.AbstractWordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.AbstractWordType.py')
 
     def generateRandomString(self, stringType, minSize, maxSize):
         """generateRandomString:

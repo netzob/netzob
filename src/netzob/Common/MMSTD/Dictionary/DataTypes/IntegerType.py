@@ -40,7 +40,7 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
 
 
 class IntegerType(AbstractType):
@@ -54,7 +54,7 @@ class IntegerType(AbstractType):
         """Constructor of IntegerType:
         """
         AbstractType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.IntegerType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.IntegerType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |

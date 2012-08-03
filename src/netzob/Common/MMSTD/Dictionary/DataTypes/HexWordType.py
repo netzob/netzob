@@ -40,7 +40,7 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import \
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractWordType import \
     AbstractWordType
 
 
@@ -55,7 +55,7 @@ class HexWordType(AbstractWordType):
         """Constructor of HexWordType:
         """
         AbstractWordType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.HexWordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.HexWordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |

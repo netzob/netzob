@@ -39,7 +39,7 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractWordType import AbstractWordType
 
 
 class MACWordType(AbstractWordType):
@@ -53,7 +53,7 @@ class MACWordType(AbstractWordType):
         """Constructor of MACWordType:
         """
         AbstractWordType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.MACWordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.MACWordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |

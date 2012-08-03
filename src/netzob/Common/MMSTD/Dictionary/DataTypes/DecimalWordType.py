@@ -39,7 +39,7 @@ import string
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Types.AbstractWordType import AbstractWordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractWordType import AbstractWordType
 
 
 class DecimalWordType(AbstractWordType):
@@ -53,7 +53,7 @@ class DecimalWordType(AbstractWordType):
         """Constructor of DecimalWordType:
         """
         AbstractWordType.__init__(self)
-        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Type.DecimalWordType.py')
+        self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.DecimalWordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
