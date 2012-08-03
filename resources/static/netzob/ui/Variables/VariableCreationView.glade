@@ -179,8 +179,9 @@
                   <item translatable="yes">Data Variable</item>
                   <item translatable="yes">Aggregate Variable</item>
                   <item translatable="yes">Alternate Variable</item>
-                  <item translatable="yes">Referenced Variable</item>
                   <item translatable="yes">Repeat Variable</item>
+                  <item translatable="yes">Direct Relation Variable</item>
+                  <item translatable="yes">Computed Relation Variable</item>
                 </items>
               </object>
               <packing>
@@ -272,6 +273,35 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">6</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBoxText" id="relationTypeCombo">
+                <property name="can_focus">False</property>
+                <property name="focus_on_click">False</property>
+                <property name="entry_text_column">0</property>
+                <property name="id_column">1</property>
+                <items>
+                  <item translatable="yes">Size Relation</item>
+                </items>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">8</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="relationTypeLabel">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Type</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">8</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>

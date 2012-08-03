@@ -631,20 +631,17 @@
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
-				    <element name="type" type="string" minOccurs="1"
-						maxOccurs="1"></element>
+				    <element name="type" type="string"></element>
 					<element name="originalValue" type="string" minOccurs="0"
 						maxOccurs="1"></element>
-					<element name="minChars" type="string" minOccurs="1"
-						maxOccurs="1"></element>
-					<element name="maxChars" type="string" minOccurs="1"
-						maxOccurs="1"></element>
+					<element name="minChars" type="string"></element>
+					<element name="maxChars" type="string"></element>
 				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>
 	
-	<complexType name="ReferencedVariable">
+	<complexType name="DirectRelationVariable">
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
@@ -654,17 +651,28 @@
 		</complexContent>
 	</complexType>
 
+	<complexType name="ComputedRelationVariable">
+		<complexContent>
+			<extension base="netzob-project:AbstractVariable">
+				<sequence>
+				    
+				    <element name="type" type="string"></element>
+					<element name="ref" type="string"></element>
+					<element name="minChars" type="string"></element>
+					<element name="maxChars" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
 	<complexType name="RepeatVariable">
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
-					<element name="variable" type="netzob-project:AbstractVariable"
-						minOccurs="1" maxOccurs="1">
+					<element name="variable" type="netzob-project:AbstractVariable">
 					</element>
-					<element name="minIterations" type="string" minOccurs="1"
-						maxOccurs="1"></element>
-					<element name="maxIterations" type="string" minOccurs="1"
-						maxOccurs="1"></element>
+					<element name="minIterations" type="string"></element>
+					<element name="maxIterations" type="string"></element>
 				</sequence>
 			</extension>
 		</complexContent>
