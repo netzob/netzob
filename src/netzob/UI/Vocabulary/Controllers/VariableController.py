@@ -33,8 +33,6 @@ from gi.repository import Gtk
 from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
-    AbstractVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
     AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
@@ -85,6 +83,7 @@ class VariableTreeController:
                 Init the callbacks.
         """
         self.view.getWidg("treeview").connect('button-press-event', self.showMenu)
+        self.view.getWidg("button").connect('clicked', self.view.destroyDialog)
 
     def registerContent(self, variable):
         """registerContent:
@@ -137,10 +136,10 @@ class VariableTreeController:
 
             # Retrieve the selected variable
             varid = None
-            iter = treeview.get_model().get_iter(path)
-            if iter:
-                if treeview.get_model().iter_is_valid(iter):
-                    varid = treeview.get_model().get_value(iter, 0)
+            aniter = treeview.get_model().get_iter(path)
+            if aniter:
+                if treeview.get_model().iter_is_valid(aniter):
+                    varid = treeview.get_model().get_value(aniter, 0)
 
                     if varid is not None:
                         variable = self.dictVariable[varid]
@@ -162,13 +161,13 @@ class VariableTreeController:
                 itemAdd = Gtk.MenuItem(_("Edit the sub-element"))
             else:
                 itemAdd = Gtk.MenuItem(_("Add a sub-element"))
-            itemAdd.connect("activate", VariableCreationController, self, variable, iter, False)
+            itemAdd.connect("activate", VariableCreationController, self, variable, aniter, False)
             itemAdd.show()
             self.menu.append(itemAdd)
 
         # To edit an element.
         itemEdit = Gtk.MenuItem(_("Edit this element"))
-        itemEdit.connect("activate", VariableCreationController, self, variable, iter, True)
+        itemEdit.connect("activate", VariableCreationController, self, variable, aniter, True)
         itemEdit.show()
 
         # If we have not click on the root variable, we can move and remove it. The root variable can be edited. it is way enough.
@@ -294,7 +293,7 @@ class VariableCreationController:
                 @param widget: the widget which modification calls this function.
         """
         strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
-
+        self.selectedVariableChosen = False  # Allow the user to choose one variable ID for relation variable through a pretty tree view.
         handler_id = None
 
         # Node variable
@@ -311,7 +310,6 @@ class VariableCreationController:
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
 
-            # We disconnect a signal reserved to Data variable.
             if handler_id is not None:
                 object.disconnect(handler_id)
                 handler_id = None
@@ -334,6 +332,9 @@ class VariableCreationController:
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
             handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
 
         # Repeat variable
@@ -377,6 +378,9 @@ class VariableCreationController:
                 object.disconnect(handler_id)
                 handler_id = None
 
+            handler_id = self.view.getWidg("valueEntry").connect('focus-in-event', self.chooseSelectedVariable)  # the signal 'select-get' seems to work as well.
+            # TODO: allow this only once
+
         # Computed Relation variable
         elif strVarType == ComputedRelationVariable.TYPE:
             self.view.getWidg("valueLabel").set_text("Pointed ID")
@@ -395,7 +399,10 @@ class VariableCreationController:
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
-            handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
+            if handler_id is not None:
+                object.disconnect(handler_id)
+                handler_id = None
+            handler_id = self.view.getWidg("valueEntry").connect('focus-in-event', self.chooseSelectedVariable)
 
         # Default case
         else:
@@ -477,7 +484,7 @@ class VariableCreationController:
 
             # Computed Relation Variable
             elif self.variable.getVariableType() == ComputedRelationVariable.TYPE:
-                self.view.getWidg("valueEntry").set_text(self.variable.bin2str(self.variable.getPointedID()))
+                self.view.getWidg("valueEntry").set_text(self.variable.getPointedID())
                 self.setComboText(self.view.getWidg("relationTypeCombo"), self.variable.getType().getType())
                 self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
@@ -495,9 +502,9 @@ class VariableCreationController:
         """
         dialog = self.view.getWidg("dialog")
         if self.editOverCreate:
-            id = self.variable.getID()
+            anid = self.variable.getID()
         else:
-            id = str(uuid.uuid4())
+            anid = str(uuid.uuid4())
 
         name = self.view.getWidg("nameEntry").get_text()
         mutable = self.view.getWidg("mutableCheck").get_active()
@@ -507,17 +514,17 @@ class VariableCreationController:
         variable = None
         # Aggregate variable
         if strVarType == AggregateVariable.TYPE:
-            variable = AggregateVariable(id, name, mutable, random)
+            variable = AggregateVariable(anid, name, mutable, random)
 
         # Alternate Variable
         elif strVarType == AlternateVariable.TYPE:
-            variable = AlternateVariable(id, name, mutable, random)
+            variable = AlternateVariable(anid, name, mutable, random)
 
         # Repeat Variable
         elif strVarType == RepeatVariable.TYPE:
             minIterations = int(self.view.getWidg("minSpin").get_text())
             maxIterations = int(self.view.getWidg("maxSpin").get_text())
-            variable = RepeatVariable(id, name, mutable, random, None, minIterations, maxIterations)
+            variable = RepeatVariable(anid, name, mutable, random, None, minIterations, maxIterations)
 
         # Data Variable
         elif strVarType == DataVariable.TYPE:
@@ -525,12 +532,12 @@ class VariableCreationController:
             vtype = AbstractType.makeType(self.view.getWidg("typeCombo").get_active_text())
             minChars = int(self.view.getWidg("minSpin").get_text())
             maxChars = int(self.view.getWidg("maxSpin").get_text())
-            variable = DataVariable(id, name, mutable, random, vtype, originalValue, minChars, maxChars)
+            variable = DataVariable(anid, name, mutable, random, vtype, originalValue, minChars, maxChars)
 
         # Direct Relation Variable
         elif strVarType == DirectRelationVariable.TYPE:
             pointedID = str(self.view.getWidg("valueEntry").get_text())
-            variable = DirectRelationVariable(id, name, mutable, random, pointedID)
+            variable = DirectRelationVariable(anid, name, mutable, random, pointedID)
 
         # Computed Relation Variable
         elif strVarType == ComputedRelationVariable.TYPE:
@@ -538,7 +545,7 @@ class VariableCreationController:
             vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text())
             minChars = int(self.view.getWidg("minSpin").get_text())
             maxChars = int(self.view.getWidg("maxSpin").get_text())
-            variable = ComputedRelationVariable(id, name, mutable, random, vtype, pointedID, minChars, maxChars)
+            variable = ComputedRelationVariable(anid, name, mutable, random, vtype, pointedID, minChars, maxChars)
 
         if variable is not None:
             self.treeController.field.getSymbol().setDefault(False)
@@ -579,15 +586,26 @@ class VariableCreationController:
                 @param text: the string value we want that the combobox displays.
         """
         model = combo.get_model()
-        iter = model.get_iter_first()
+        aniter = model.get_iter_first()
         while True:
-            if str(model[iter][0]) == text:
-                combo.set_active_iter(iter)
+            if str(model[aniter][0]) == text:
+                combo.set_active_iter(aniter)
                 break
-            if model.iter_next(iter) is not None:
-                iter = model.iter_next(iter)
+            if model.iter_next(aniter) is not None:
+                aniter = model.iter_next(aniter)
             else:
                 break
+
+    def chooseSelectedVariable(self, widget, event):
+        """chooseSelectedVariable:
+                Manage the creation and showing of a VariableIDTreeController that allows the user to choose one variable and get its ID.
+
+                @param widget: the widget which is connected to this function through the event event.
+                @param event: the event that calls this function.
+        """
+        if not self.selectedVariableChosen:
+            self.selectedVariableChosen = True
+            VariableIDTreeController(self)
 
 
 class VariableMovingController:
@@ -647,4 +665,115 @@ class VariableMovingController:
         # Move the variable.
         motherNode.moveChild(self.variable, position)
 
+        self.view.getWidg("dialog").destroy()
+
+
+class VariableIDTreeController:
+    """VariableIDTreeController:
+            Controls a variable's ID tree view display.
+            This treeview displays every variable of the vocabulary and is useful for selecting one of them.
+    """
+
+    def __init__(self, variableCreationController):
+        """Constructor of VariableIDTreeController:
+
+                @type variableCreationController: VariableCreationController
+                @param variableCreationController: the variable creation controller that indirectly causes this variableIDTreeController to appear.
+        """
+        self.view = VariableTreeView(self)
+        self.netzob = variableCreationController.netzob
+        self.variableCreationController = variableCreationController
+        self.registerContent()
+
+    def initCallbacks(self):
+        """initCallbacks:
+                Init the callbacks.
+        """
+        self.view.getWidg("treeview").connect('button-press-event', self.showMenu)
+        self.view.getWidg("button").connect('clicked', self.view.destroyDialog)
+
+    def registerContent(self):
+        """registerContent:
+                Register each variable and their entry in the tree view.
+                Fill the tree view of a variable with all its displayable content.
+        """
+        self.dictEntry = dict()
+        self.dictVariable = dict()
+        self.treestore = Gtk.TreeStore(str, str)  # id of the data, description
+        for symbol in self.netzob.getCurrentProject().getVocabulary().getSymbols():
+            self.registerVariable(None, symbol.getRoot())
+        self.initCallbacks()
+        self.view.getWidg("treeview").set_model(self.treestore)
+
+    def registerVariable(self, rootEntry, variable):
+        """registerVariable:
+                Register a variable in the tree view under its root variable (Aggregate or Alternate).
+                May be recursive.
+
+                @type rootEntry: Gtk.treerow
+                @param rootEntry: the root entry under which we will add this entry.
+                @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable.AbstractVariable
+                @param variable: the variable which will be added to the tree view representation.
+        """
+        self.dictVariable[str(variable.getID())] = variable
+        newEntry = self.treestore.append(rootEntry, [str(variable.getID()), variable.toString()])
+        self.dictEntry[str(variable.getID())] = newEntry
+        if variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE:
+            if variable.getChildren() is not None:
+                for child in variable.getChildren():
+                    self.registerVariable(newEntry, child)
+        if variable.getVariableType() == RepeatVariable.TYPE:
+            if variable.getChild() is not None:
+                self.registerVariable(newEntry, variable.getChild())
+
+    def showMenu(self, treeview, event):
+        """showMenu:
+                Called on right click on a variable.
+
+                @param treeview: the treeview which contains the triggering variable.
+                @param event: the mouse event which called this function.
+        """
+        variable = None
+        if event.button == 3:
+            x = int(event.x)
+            y = int(event.y)
+            (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+
+            # Retrieve the selected variable
+            varid = None
+            aniter = treeview.get_model().get_iter(path)
+            if aniter:
+                if treeview.get_model().iter_is_valid(aniter):
+                    varid = treeview.get_model().get_value(aniter, 0)
+
+                    if varid is not None:
+                        variable = self.dictVariable[varid]
+        else:
+            # Wrong mouse click
+            return
+
+        if variable is None:
+            logging.debug(_("Impossible to find the selected variable."))
+            return
+
+        # We display the menu for the insertion of sub-elements if its an Aggregate or an Alternative
+        self.menu = Gtk.Menu()
+
+        # To select an element.
+        itemSelect = Gtk.MenuItem(_("Select this element"))
+        itemSelect.connect("activate", self.selectElement, variable)
+        itemSelect.show()
+
+        self.menu.append(itemSelect)
+        self.menu.popup(None, None, None, None, event.button, event.time)
+
+    def selectElement(self, widget, variable):
+        """selectElement:
+                Give the ID of the variable associated to the selected element to the globally calling variableCreationController.
+
+                @param widget: the widget on which this function is connected.
+                @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
+                @param variable: the variable that is selected/of which we want the ID.
+        """
+        self.variableCreationController.view.getWidg("valueEntry").set_text(str(variable.getID()))
         self.view.getWidg("dialog").destroy()

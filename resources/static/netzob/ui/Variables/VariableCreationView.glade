@@ -208,6 +208,7 @@
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
                 <property name="invisible_char_set">True</property>
+                <property name="progress_fraction">0.029999999329447746</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>

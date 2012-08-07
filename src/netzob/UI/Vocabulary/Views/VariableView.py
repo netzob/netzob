@@ -93,7 +93,7 @@ class VariableTreeView(AbstractView):
 
     def __init__(self, controller):
         AbstractView.__init__(self, controller, VariableTreeView.GLADE_FILENAME)
-        self.getObjects(["treeview", "treeviewwindow"])
+        self.getObjects(["dialog", "button", "treeview"])
         self.showObjects()
 
         # Make the column
@@ -103,6 +103,13 @@ class VariableTreeView(AbstractView):
         self.lvcolumn.pack_start(cell, True)
         self.lvcolumn.add_attribute(cell, "text", 1)
         self.getWidg("treeview").append_column(self.lvcolumn)
+
+    def destroyDialog(self, widget):
+        """destroyDialog:
+                Destroy the dialog window.
+                This function is here for connection purpose. A connection always add extra arguments such as this 'widget'.
+        """
+        self.getWidg("dialog").destroy()
 
 
 class VariableCreationView(AbstractView):
