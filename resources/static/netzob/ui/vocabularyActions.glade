@@ -151,8 +151,10 @@
     <child>
       <object class="GtkAction" id="captureMessages">
         <property name="label" translatable="yes">Capture messages</property>
+        <property name="short_label" translatable="yes">Capture</property>
         <property name="tooltip" translatable="yes">Capture messages</property>
         <property name="stock_id">netzob-capture-messages</property>
+        <property name="is_important">True</property>
         <signal name="activate" handler="captureMessages_activate_cb" swapped="no"/>
       </object>
     </child>
