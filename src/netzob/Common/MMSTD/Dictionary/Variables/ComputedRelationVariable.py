@@ -85,7 +85,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
     def toString(self):
         """toString:
         """
-        return _("[Relation] {0}, pointed ID: {1}, type: {2}, minChars: {3}, maxChars: {4}.").format(AbstractVariable.toString(self), str(self.pointedID), self.type.getType(), str(self.getMinChars()), str(self.getMaxChars()))
+        return _("[Computed Relation] {0}, pointed ID: {1}, type: {2}, minChars: {3}, maxChars: {4}.").format(AbstractVariable.toString(self), str(self.pointedID), self.type.getType(), str(self.getMinChars()), str(self.getMaxChars()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -249,7 +249,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
             xmlType = xmlRoot.find("{" + namespace + "}type")
             if xmlType is not None:
                 _type = AbstractRelationType.makeType(xmlType.text)
-                if type is None:
+                if _type is None:
                     return None
             else:
                 logging.error(_("No type specified for this variable in the xml file."))
@@ -270,7 +270,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
                 maxChars = minChars
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlRandom, type, xmlRefID, minChars, maxChars)
+            result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlRandom, _type, xmlRefID, minChars, maxChars)
             logging.debug(_("ComputedRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("ComputedRelationVariable: loadFromXML fails"))
