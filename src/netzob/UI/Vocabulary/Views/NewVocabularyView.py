@@ -177,6 +177,10 @@ class NewVocabularyView(object):
         self.setSelectedSymbolFromSelectedMessageTable()
 
     def setDisplayedSymbolInSelectedMessageTable(self, symbol):
+        if len(self.messageTableList) == 0:
+            self.addMessageTable()
+            self.setSelectedMessageTable(self.messageTableList[0])
+
         if self.selectedMessageTable is None:
             return
         if symbol != self.selectedMessageTable.displayedSymbol:
