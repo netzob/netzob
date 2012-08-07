@@ -155,6 +155,12 @@ class NewVocabularyView(object):
         if len(self.messageTableList) > 0:
             self.setSelectedMessageTable(self.messageTableList[0])
 
+    def removeAllMessageTables(self):
+        for child in self.messageTableBox.get_children():
+            self.messageTableBox.remove(child)
+
+        self.messageTableList = []
+
     def emptyMessageTableDisplayingSymbols(self, symbolList):
         toBeRemovedTables = [mTable for mTable in self.messageTableList
                              if mTable.getDisplayedSymbol() in symbolList]
@@ -275,7 +281,8 @@ class NewVocabularyView(object):
         else:
             print symbol.getID()
             path = self.getSymbolPathInSymbolList(symbol)
-            selection.select_path(path)
+            if path is not None:
+                selection.select_path(path)
 
     def getSelectedSymbol(self):
         currentVocabulary = self.getCurrentProject().getVocabulary()

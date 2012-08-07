@@ -53,7 +53,6 @@ from netzob.UI.Vocabulary.Controllers.NewSmoothPartitioningController import New
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 
 
-
 class NewVocabularyController(object):
 
     def __init__(self, netzob):
@@ -69,7 +68,7 @@ class NewVocabularyController(object):
     def restart(self):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")
-        self.view.beginWithNetzob()
+        self.view.removeAllMessageTables()
         self.view.updateLeftPanel()
 
     ## Symbol List toolbar callbacks
