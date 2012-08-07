@@ -7,10 +7,10 @@
       <separator />
       <menuitem action="importProject" />
       <menuitem action="exportProject" />
-      <menu action="switchWorkspace" />
       <separator />
       <placeholder name="fileMenuAdditions" />
       <separator />
+      <menuitem action="switchWorkspace" />
       <menuitem action="quit" />
     </menu>
     <menu action="viewMenu">

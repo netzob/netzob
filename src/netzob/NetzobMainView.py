@@ -180,6 +180,11 @@ class NetzobMainView(object):
                 logging.debug("Restarting the perspective {0}".format(pDescription))
                 pController.restart()
 
+    def currentWorkspaceHasChanged(self):
+        """Update the view when the current workspace has changed"""
+        self.currentProjectHasChanged()
+        self.updateSwitchProjectMenu(self.controller.getCurrentWorkspace().getNameOfProjects())
+
     def updateSwitchProjectMenu(self, listOfProjectsNameAndPath):
         """Update the menu"""
         switchProjectMenu = self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").get_submenu()

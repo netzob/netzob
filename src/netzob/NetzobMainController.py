@@ -406,32 +406,82 @@ class NetzobMainController(object):
             #cancel
             dialog.destroy()
 
-    def switchWorkspace_activate_cb(self, action):
-        #open dialogbox
-        builder2 = Gtk.Builder()
-        builder2.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "dialogbox.glade"))
-        dialog = builder2.get_object("switchWorkspace")
-        #button apply
-        applybutton = builder2.get_object("button23")
-        dialog.add_action_widget(applybutton, 0)
-        #button cancel
-        cancelbutton = builder2.get_object("button22")
-        dialog.add_action_widget(cancelbutton, 1)
-        #run the dialog window and wait for the result
-        result = dialog.run()
+    def fileSetFileChooser_switchWorkspace_cb(self, widget, applyButton):
+        """Callback executed when the user
+        selects a directory in the file chooser"""
+        currentFolder = widget.get_current_folder()
+        if currentFolder is not None and len(currentFolder) > 0:
+            applyButton.set_sensitive(True)
+        else:
+            applyButton.set_sensitive(False)
 
-        if (result == 0):
-            #apply
-            newWorkspacePath = dialog.get_current_folder()
-            self.log.debug(_("Switch to the workspace {0}").format(newWorkspacePath))
-            # ++CODE HERE++
-            # SWITCH/CREATE THE WORKSPACE FOR newWorkspacePath
-            # SWITCH TO THE LAST PROJECT OPEN IN THE WORKSPACE
-            # UPDATE VIEW/PROJECT
-            dialog.destroy()
+    def switchWorkspace_activate_cb(self, action):
+
+        finish = False
+        errorMessage = None
+        while not finish:
+            #open dialogbox
+            builder2 = Gtk.Builder()
+            builder2.add_from_file(os.path.join(
+                ResourcesConfiguration.getStaticResources(),
+                "ui",
+                "dialogbox.glade"))
+            dialog = builder2.get_object("switchWorkspace")
+            #button apply
+            applybutton = builder2.get_object("switchWorkspaceApplyButton")
+            dialog.add_action_widget(applybutton, 0)
+            #button cancel
+            cancelbutton = builder2.get_object("switchWorkspaceCancelButton")
+            dialog.add_action_widget(cancelbutton, 1)
+
+            #disable apply button if no directory is provided
+            fileChooserButton = builder2.get_object("switchWorkspaceFileChooserButton")
+
+            fileChooserButton.connect("current-folder-changed", self.fileSetFileChooser_switchWorkspace_cb, applybutton)
+            if errorMessage is not None:
+                # Display a warning message on the dialog box
+                warnLabel = builder2.get_object("switchWorkspaceWarnLabel")
+                warnLabel.set_text(errorMessage)
+                warnBox = builder2.get_object("switchWorkspaceWarnBox")
+                warnBox.show_all()
+
+            #run the dialog window and wait for the result
+            result = dialog.run()
+
+            if result == 0:
+                selectedFolder = fileChooserButton.get_current_folder()
+                dialog.destroy()
+
+                if selectedFolder is None:
+                    errorMessage = _("No directory selected")
+                else:
+                    # we verify if its an empty directory
+                    if len(os.listdir(selectedFolder)) > 0:
+                        # is a valid workspace directory
+                        errorMessage = Workspace.isFolderAValidWorkspace(selectedFolder)
+                        if errorMessage is None:
+                            try:
+                                self.currentWorkspace = (Workspace.loadWorkspace(selectedFolder))
+                                self.currentProject = self.currentWorkspace.getLastProject()
+                                finish = True
+                                errorMessage = None
+                                self.view.currentWorkspaceHasChanged()
+                            except Exception, e:
+                                errorMessage = _("An error occurred while loading workspace.")
+                                logging.warn("Error while loading workspace declared in folder {0} : {1}".format(selectedFolder, e))
+                    else:
+                        # create a new workspace
+                        try:
+                            self.currentWorkspace = ResourcesConfiguration.createWorkspace(selectedFolder)
+                            finish = True
+                            errorMessage = None
+                            self.view.currentWorkspaceHasChanged()
+                        except Exception, e:
+                                errorMessage = _("An error occurred while creating workspace.")
+                                logging.warn("Error while creating workspace declared in folder {0} : {1}".format(selectedFolder, e))
+            else:
+                dialog.destroy()
+                finish = True
         if (result == 1):
             #cancel
             dialog.destroy()

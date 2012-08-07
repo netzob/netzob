@@ -255,22 +255,45 @@ class Workspace(object):
         return workspace
 
     @staticmethod
-    def loadWorkspace(workspacePath):
+    def isFolderAValidWorkspace(workspacePath):
+        """Computes if the provided folder
+        represents a valid (and loadable) workspace
+        @return: None if the workspace is loadable or the error message if not valid
+        """
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file
         if workspaceFile is None:
-            logging.warn("The workspace's configuration file can't be find (No workspace path given).")
-            return None
+            return _("The workspace's configuration file can't be find (No workspace path given).")
         # is the workspaceFile is a file
         if not os.path.isfile(workspaceFile):
-            logging.warn("The specified workspace's configuration file (" + str(workspaceFile) + ") is not valid : its not a file.")
-            return None
+            return _("The specified workspace's configuration file ({0}) is not valid : its not a file.".format(workspaceFile))
         # is it readable
         if not os.access(workspaceFile, os.R_OK):
-            logging.warn("The specified workspace's configuration file (" + str(workspaceFile) + ") is not readable.")
+            return _("The specified workspace's configuration file ({0}) is not readable.".format(workspaceFile))
+
+        for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys():
+            from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+            xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
+            # If we find a version which validates the XML, we parse with the associated function
+            if Workspace.isSchemaValidateXML(xmlSchemaPath, workspaceFile):
+                return None
+        return _("The specified workspace is not valid according the XSD definitions.")
+
+    @staticmethod
+    def loadWorkspace(workspacePath):
+        """Load the workspace declared in the
+        provided directory
+        @type workspacePath: str
+        @var workspacePath: folder to load as a workspace
+        @return a workspace or None if not valid"""
+
+        errorMessage = Workspace.isFolderAValidWorkspace(workspacePath)
+        if errorMessage is not None:
+            logging.warn(errorMessage)
             return None
 
+        workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
         # We validate the file given the schemas
         for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys():
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
