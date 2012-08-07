@@ -232,9 +232,9 @@ class NetzobMainController(object):
             dialog.destroy()
 
     def saveProject_activate_cb(self, action):
-        # ++CODE HERE++
-        # SAVE THE CURRENT PROJECT
-        pass
+        """Save the current project"""
+        if self.getCurrentProject() is not None:
+            self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
     def fileSetFileChooser_importProject_cb(self, widget, applyButton):
         """Callback executed when the user

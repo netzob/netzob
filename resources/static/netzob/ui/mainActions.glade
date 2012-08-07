@@ -13,7 +13,7 @@
     </child>
     <child>
       <object class="GtkAction" id="saveProject">
-        <property name="label" translatable="yes">Save Project…</property>
+        <property name="label" translatable="yes">Save Project</property>
         <property name="tooltip" translatable="yes">Save current project</property>
         <property name="stock_id">gtk-save</property>
         <signal name="activate" handler="saveProject_activate_cb" swapped="no"/>
