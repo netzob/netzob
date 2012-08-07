@@ -38,6 +38,9 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk
 import gi
+from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -323,7 +326,18 @@ class NewVocabularyController(object):
         pass
 
     def importMessagesFromFile_activate_cb(self, action):
-        pass
+        """Execute all the plugins associated with
+        file import."""
+        if self.netzob.getCurrentProject() is not None:
+            chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+            res = chooser.run()
+            plugin = None
+            if res == chooser.RESPONSE_OK:
+                (filePathList, plugin) = chooser.getFilenameListAndPlugin()
+            chooser.destroy()
+            if plugin is not None:
+                plugin.setFinish_cb(self.view.updateSymbolList)
+                plugin.importFile(filePathList)
 
     def captureMessages_activate_cb(self, action):
         pass

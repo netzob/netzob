@@ -130,7 +130,9 @@ class AbstractImporterController(AbstractPluginController):
             if result == Gtk.ResponseType.YES:
                 self.doImportMessages(selectedMessages)
                 self.view.dialog.destroy()
-                self.netzob.update()
+                # Execute the finish (CB) method if one is defined
+                if self.plugin.finish is not None:
+                    self.plugin.finish()
 
     def updateCounters(self):
         displayedPackets = self.view.listListStore.iter_n_children(None)

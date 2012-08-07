@@ -48,6 +48,7 @@ class FileImporterPlugin(NetzobPlugin):
 
     def __init__(self, netzob):
         NetzobPlugin.__init__(self, netzob)
+        self.finish = None
 
     @abstractmethod
     def canHandleFile(self, filePath):
@@ -65,3 +66,8 @@ class FileImporterPlugin(NetzobPlugin):
     def importFile(self, filePathList):
         """Imports message located in file at filePath"""
         pass
+
+    def setFinish_cb(self, finish):
+        """Define the callback function which should be executed by the
+        plugin when he has finished to import messages."""
+        self.finish = finish

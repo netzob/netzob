@@ -202,7 +202,6 @@ class NewVocabularyView(object):
     def updateSymbolList(self):
         """Updates the symbol list of the left panel, preserving the current
         selection"""
-
         # Retrieve symbols of the current project vocabulary (if one selected)
         symbolList = []
         if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
@@ -219,7 +218,7 @@ class NewVocabularyView(object):
             self.addRowSymbolList(checkedMessagesIDList, sym.getName(),
                                   len(sym.getMessages()),
                                   len(sym.getFields()),
-                                  sym.getID())
+                                  str(sym.getID()))
         self.setSelectedSymbolFromSelectedMessageTable()
         self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
         self.beginWithNetzob()
