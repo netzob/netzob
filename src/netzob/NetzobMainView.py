@@ -196,3 +196,16 @@ class NetzobMainView(object):
 
         switchProjectMenu.show_all()
         self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").set_sensitive(True)
+
+    def offerToSaveCurrentProject(self):
+        """Display a message dialog which
+        offer to the user to save the current project"""
+        questionMsg = (_("Do you want to save the current project (%s)") %
+                       self.controller.getCurrentProject().getName())
+        md = (Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg))
+        result = md.run()
+        md.destroy()
+        if result == Gtk.ResponseType.YES:
+            return True
+        else:
+            return False

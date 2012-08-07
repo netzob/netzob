@@ -139,6 +139,15 @@ class NetzobMainController(object):
         self.view.run()
         Gtk.main()
 
+    def close(self):
+        currentProject = self.getCurrentProject()
+        # Close the current project
+        if currentProject is not None:
+            if currentProject.hasPendingModifications(self.getCurrentWorkspace()) and self.view.offerToSaveCurrentProject():
+                self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
+        # Close the controller
+        Gtk.main_quit()
+
     def getCurrentProject(self):
         return self.currentProject
 
@@ -159,7 +168,7 @@ class NetzobMainController(object):
             self.view.switchPerspective(newPerspectiveCode)
 
     def mainWindow_destroy_cb(self, window):
-        Gtk.main_quit()
+        self.close()
 
     def entry_disableButtonIfEmpty_cb(self, widget, button):
         if(len(widget.get_text()) > 0):
@@ -428,7 +437,9 @@ class NetzobMainController(object):
             dialog.destroy()
 
     def quit_activate_cb(self, action):
-        pass
+        """Callback executed when the user
+        request to close Netzob"""
+        self.close()
 
     def aboutNetzob_activate_cb(self, action):
         """Displays the about dialog
