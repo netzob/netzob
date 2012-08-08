@@ -52,7 +52,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
   Bool doInternalSlick_copy = doInternalSlick;
 */
   // First we fill the matrix with 0s
-  if (callbackStatus(status, "Building the scoring matrix for %d groups", nbGroups) == -1) {
+  if (callbackStatus(0, status, "Building the scoring matrix for %d groups", nbGroups) == -1) {
     printf("Error, error while executing C callback.\n");
   }
 
@@ -119,7 +119,7 @@ void getHighestEquivalentGroup(t_equivalentGroup * result, Bool doInternalSlick,
     }
     free( matrix );
  
-    if (callbackStatus(status, "Two equivalent groups were found.") == -1) {
+    if (callbackStatus(0, status, "Two equivalent groups were found.") == -1) {
       printf("Error, error while executing C callback.\n");
     }
 
@@ -241,7 +241,6 @@ float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode)
 }
 
 void getHighestEquivalentGroup2(t_equivalentGroup * result, Bool doInternalSlick, int nbMessage, t_message* messages, Bool debugMode, float** scoreMatrix) {
-    
     int i;
     float maxScore = -1.0f;
     int i_maximum = -1;
@@ -278,7 +277,7 @@ void getHighestEquivalentGroup2(t_equivalentGroup * result, Bool doInternalSlick
                 //printf("matrix %d,%d = %f\n", i, p, scoreMatrix[i][p]);
             //}
         }
-        if (callbackStatus((double)100.0*(i*nbMessage+nbMessage-1)/((nbMessage-1)*(nbMessage+1)), "Building Status: %lf", (float)100.0*(i*nbMessage+nbMessage-1)/((nbMessage-1)*(nbMessage+1))) == -1) {
+        if (callbackStatus(0, (double)100.0*(i*nbMessage+nbMessage-1)/((nbMessage-1)*(nbMessage+1)), "Building Status: %lf", (float)100.0*(i*nbMessage+nbMessage-1)/((nbMessage-1)*(nbMessage+1))) == -1) {
    			 printf("Error, error while executing C callback.\n");
   		}
     }

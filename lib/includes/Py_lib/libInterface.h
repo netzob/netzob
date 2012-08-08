@@ -33,7 +33,7 @@
 //+---------------------------------------------------------------------------+
 //| python_callback : The ref to the python callback function
 //+---------------------------------------------------------------------------+
-int callbackStatus(double percent, char* message, ...);
+int callbackStatus(int stage, double percent, char* message, ...);
 
 //+---------------------------------------------------------------------------+
 //| py_deserializeMessages : Python wrapper for deserializeMessages

@@ -37,6 +37,9 @@
 #include <malloc.h>
 #endif
 
+// The Python callback
+extern PyObject *python_callback;
+
 static PyMethodDef libScoreComputation_methods[] = {
 		{"getBID", py_getBID, METH_NOARGS},
 		{"getHighestEquivalentGroup", py_getHighestEquivalentGroup, METH_VARARGS},
@@ -75,20 +78,18 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
     PyErr_SetString(PyExc_TypeError, "The provided 7th parameter should be callback");
     return NULL;
   }
+
   // Parse the callback
-  //Py_XINCREF(temp_cb);          /* Add a reference to new callback */
-  //Py_XINCREF(python_callback);  /* Dispose of previous callback */
-  //python_callback = temp_cb;    /* Remember new callback */
-  
+  Py_XINCREF(temp_cb);          /* Add a reference to new callback */
+  Py_XDECREF(python_callback);  /* Dispose of previous callback */
+  python_callback = temp_cb;    /* Remember new callback */
+
   int parseRet;
   parseRet = parseArgs(wrapperFactory,&nbmessage,&mesmessages);
   //Parsing error: PyErr allready set in parseArgs
   if(parseRet){
     return NULL;
   }
-  
-  
-  
   
   //init matrix
   scoreMatrix = (float**) malloc (nbmessage*sizeof(float*));
