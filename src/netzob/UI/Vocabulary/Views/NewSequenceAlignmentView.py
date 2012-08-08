@@ -72,3 +72,24 @@ class NewSequenceAlignmentView(object):
 
     def run(self):
         self.sequenceDialog.run()
+
+    def resetProgressBars(self):
+        """Reset the initial values of all the
+        progress bars declared in the interface."""
+        self.labelStage0.show()
+        self.stage0ProgressBar.show()
+        self.stage0ProgressBar.set_fraction(0)
+
+        self.labelStage1.show()
+        self.stage1ProgressBar.show()
+        self.stage1ProgressBar.set_fraction(0)
+
+        self.labelStage2.show()
+        self.stage2ProgressBar.show()
+        self.stage2ProgressBar.set_fraction(0)
+
+        self.labelStage3.show()
+        self.stage3ProgressBar.show()
+        self.stage3ProgressBar.set_fraction(0)
+
+        self.sequence_progressbar.set_fraction(0)

@@ -115,14 +115,15 @@ class NewSequenceAlignmentController(object):
         # Retrieve the results
         new_symbols = self.alignmentSolution.getLastResult()
 
+        # Clean the interface
+        self._view.resetProgressBars()
+
         # Register the symbols
         if new_symbols is not None:
             self.vocabularyController.getCurrentProject().getVocabulary().setSymbols(new_symbols)
-
-        self.vocabularyController.restart()
-
-        # close dialog box
-        self._view.sequenceDialog.destroy()
+            # close dialog box
+            self._view.sequenceDialog.destroy()
+            self.vocabularyController.restart()
 
     def percentOfAlignmentProgessBar(self, stage, percent, message):
         # select the good progress bar in function of the stage
