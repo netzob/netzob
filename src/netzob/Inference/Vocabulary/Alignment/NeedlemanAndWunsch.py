@@ -58,6 +58,9 @@ class NeedlemanAndWunsch(object):
         self.unitSize = unitSize
         self.result = []
         self.scores = {}
+        self.absoluteStage = None
+        self.statusRatio = None
+        self.statusRatioOffset = None
 
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
@@ -65,11 +68,20 @@ class NeedlemanAndWunsch(object):
     #| @param donePercent a float between 0 and 100 included
     #| @param currentMessage a str which represents the current alignment status
     #+-----------------------------------------------------------------------+
-    def cb_executionStatus(self, donePercent, currentMessage):
+    def cb_executionStatus(self, stage, donePercent, currentMessage):
+        if self.absoluteStage is not None:
+            stage = self.absoluteStage
+
+        totalPercent = donePercent
+        if self.statusRatio is not None:
+            totalPercent = totalPercent / self.statusRatio
+            if self.statusRatioOffset is not None:
+                totalPercent = totalPercent + 100 / self.statusRatio * self.statusRatioOffset
+
         if self.cb_status is None:
-            print "[Alignment status] " + str(donePercent) + "% " + currentMessage
+            print "[Alignment status] " + str(totalPercent) + "% " + currentMessage
         else:
-            self.cb_status(donePercent, currentMessage)
+            self.cb_status(stage, totalPercent, currentMessage)
 
     #+-----------------------------------------------------------------------+
     #| alignSymbol
@@ -301,7 +313,7 @@ class NeedlemanAndWunsch(object):
             else:
                 symbolsToCluster.append(s)
 
-        clusteringSolution = UPGMA(project, symbolsToCluster, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_status)
+        clusteringSolution = UPGMA(project, symbolsToCluster, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_executionStatus)
         t1 = time.time()
         self.result = clusteringSolution.executeClustering()
 
