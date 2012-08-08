@@ -124,7 +124,7 @@ class UPGMA(object):
                 return None
 
             self.currentAlignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
-            self.currentAlignment.statusRatioOffset = alignment.statusRatioOffset + 1
+            self.currentAlignment.statusRatioOffset = self.currentAlignment.statusRatioOffset + 1
 
         return self.symbols
 

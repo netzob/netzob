@@ -95,7 +95,7 @@ class NeedlemanAndWunsch(object):
         if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
-            if self.stop:
+            if self.isFinish():
                 return
 
             field = Field.createDefaultField()
