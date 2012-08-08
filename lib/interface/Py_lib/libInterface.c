@@ -39,6 +39,7 @@
 
 // The Python callback
 PyObject *python_callback;
+PyObject *python_callback_isFinish;
 
 unsigned int deserializeSymbols(t_groups * groups, PyObject *symbols, Bool debugMode);
 PyObject* py_deserializeSymbols(PyObject* self, PyObject* args);
@@ -57,6 +58,27 @@ PyMODINIT_FUNC init_libInterface(void) {
   (void) Py_InitModule("_libInterface", libInterface_methods);
 }
 
+int callbackIsFinish(void) {
+	if (python_callback_isFinish != NULL) {
+			int isFinish;
+			PyObject *result_cb;
+			result_cb = PyObject_CallObject(python_callback_isFinish, NULL);
+			if (result_cb == NULL) {
+				return -1;
+			}
+			if (result_cb == Py_True) {
+				isFinish = 1;
+			}
+			else if (result_cb == Py_False) {
+				isFinish = 0;
+			} else {
+				isFinish = -1;
+			}
+			Py_DECREF(result_cb);
+			return isFinish;
+	}
+	return -1;
+}
 
 //+---------------------------------------------------------------------------+
 //| callbackStatus : displays the status or call python wrapper is available

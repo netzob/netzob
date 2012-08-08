@@ -39,6 +39,7 @@
 
 // The Python callback
 extern PyObject *python_callback;
+extern PyObject *python_callback_isFinish;
 
 static PyMethodDef libScoreComputation_methods[] = {
 		{"getBID", py_getBID, METH_NOARGS},
@@ -61,6 +62,7 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
   unsigned int debugMode = 0;
   int i = 0,j = 0;
   PyObject *temp_cb;
+  PyObject *temp2_cb;
   t_equivalentGroup result;
   Bool bool_debugMode;
   PyObject* wrapperFactory;
@@ -70,19 +72,28 @@ PyObject* py_getHighestEquivalentGroup(PyObject* self, PyObject* args) {
 
   
   // Converts the arguments
-  if (!PyArg_ParseTuple(args, "hOhO", &doInternalSlick, &temp_cb, &debugMode,&wrapperFactory)) {
+  if (!PyArg_ParseTuple(args, "hOOhO", &doInternalSlick, &temp_cb, &temp2_cb, &debugMode,&wrapperFactory)) {
     PyErr_SetString(PyExc_TypeError, "Error while parsing the arguments provided to py_getHighestEquivalentGroup");
     return NULL;
   }
-    if (!PyCallable_Check(temp_cb)) {
-    PyErr_SetString(PyExc_TypeError, "The provided 7th parameter should be callback");
-    return NULL;
+  if (!PyCallable_Check(temp_cb)) {
+      PyErr_SetString(PyExc_TypeError, "The provided argument (status) should be callback");
+      return NULL;
+  }
+  if (!PyCallable_Check(temp2_cb)) {
+      PyErr_SetString(PyExc_TypeError, "The provided argument (is finish) should be callback");
+      return NULL;
   }
 
   // Parse the callback
-  Py_XINCREF(temp_cb);          /* Add a reference to new callback */
-  Py_XDECREF(python_callback);  /* Dispose of previous callback */
-  python_callback = temp_cb;    /* Remember new callback */
+    Py_XINCREF(temp_cb);          /* Add a reference to new callback */
+    Py_XDECREF(python_callback);  /* Dispose of previous callback */
+    python_callback = temp_cb;    /* Remember new callback */
+
+    // Parse the callback2
+    Py_XINCREF(temp2_cb);          /* Add a reference to new callback */
+    Py_XDECREF(python_callback_isFinish);  /* Dispose of previous callback */
+    python_callback_isFinish = temp2_cb;    /* Remember new callback */
 
   int parseRet;
   parseRet = parseArgs(wrapperFactory,&nbmessage,&mesmessages);

@@ -89,6 +89,9 @@ void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group,
     if (callbackStatus(0, status, "Consider message %d in the alignment process", i_message) == -1) {
       printf("Error, error while executing C callback.\n");
     }
+    if (callbackIsFinish() == 1) {
+    	return;
+    }
 	
 	/*initialize the next message*/
     new_message.len = group->messages[i_message].len;
@@ -179,6 +182,9 @@ void alignMessages(t_message *resMessage, Bool doInternalSlick, t_group* group, 
     // Update the execution status
     if (callbackStatus(0, status, "Consider message %d in the alignment process", i_message) == -1) {
       printf("Error, error while executing C callback.\n");
+    }
+    if (callbackIsFinish() == 1) {
+    	return;
     }
 
     new_message.len = group->messages[i_message].len;

@@ -69,6 +69,8 @@ class UPGMA(object):
         self.log = logging.getLogger('netzob.Inference.Vocabulary.UPGMA.py')
         self.scores = scores
         self.path = []
+        self.flagStop = False
+        self.currentAlignment = None
         if explodeSymbols is False:
             self.symbols = symbols
         else:
@@ -98,19 +100,31 @@ class UPGMA(object):
         @return the new list of symbols"""
         self.log.debug("Re-Organize the symbols (nbIteration={0}, min_equivalence={1})".format(self.nbIteration, self.minEquivalence))
         # Process the UPGMA on symbols
+
+        if self.isFinish():
+            return None
+
         self.cb_executionStatus(0, 0, "Clustering into symbols...")
         self.processUPGMA()
         self.cb_executionStatus(1, 100, None)
         # Retrieve the alignment of each symbol and the build the associated regular expression
         self.cb_executionStatus(2, 0, "Compute the definition for each cluster...")
 
-        alignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
-        alignment.absoluteStage = 2
-        alignment.statusRatio = len(self.symbols)
-        alignment.statusRatioOffset = 0
+        if self.isFinish():
+            return None
+
+        self.currentAlignment = NeedlemanAndWunsch(self.unitSize, self.cb_status)
+        self.currentAlignment.absoluteStage = 2
+        self.currentAlignment.statusRatio = len(self.symbols)
+        self.currentAlignment.statusRatioOffset = 0
+
         for symbol in self.symbols:
-            alignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
-            alignment.statusRatioOffset = alignment.statusRatioOffset + 1
+
+            if self.isFinish():
+                return None
+
+            self.currentAlignment.alignSymbol(symbol, self.doInternalSlick, self.defaultFormat)
+            self.currentAlignment.statusRatioOffset = alignment.statusRatioOffset + 1
 
         return self.symbols
 
@@ -123,11 +137,15 @@ class UPGMA(object):
         debug = False
         wrapper = WrapperArgsFactory("_libScoreComputation.getHighestEquivalentGroup")
         wrapper.typeList[wrapper.function](self.symbols)
-        (i_max, j_max, maxScore, listScores) = _libScoreComputation.getHighestEquivalentGroup(self.doInternalSlick, self.cb_executionStatus, debug, wrapper)
+        (i_max, j_max, maxScore, listScores) = _libScoreComputation.getHighestEquivalentGroup(self.doInternalSlick, self.cb_executionStatus, self.isFinish, debug, wrapper)
 
         # Retrieve the scores for each association of symbols
         self.scores = {}
         for (iuid, juid, score) in listScores:
+
+            if self.isFinish():
+                return (None, None, None)
+
             if iuid not in self.scores.keys():
                 self.scores[iuid] = {}
             if juid not in self.scores.keys():
@@ -154,6 +172,10 @@ class UPGMA(object):
             max_j = max(self.scores[max_i], key=lambda y: self.scores[max_i][y])
             maxScore = self.scores[max_i][max_j]
         while len(self.scores) > 1 and maxScore >= self.minEquivalence:
+
+            if self.isFinish():
+                return
+
             symbols_uid = [s.getID() for s in self.symbols]  # List of the UID in of symbols
             (i_maximum, j_maximum) = (symbols_uid.index(max_i), symbols_uid.index(max_j))
             size_i = len(self.symbols[i_maximum].getMessages())
@@ -310,3 +332,13 @@ class UPGMA(object):
     def getScores(self):
         """@return: the dictionnary of scores"""
         return self.scores
+
+    def stop(self):
+        """Stop the current execution of any clustering operation"""
+        self.flagStop = True
+        if self.currentAlignment is not None:
+            self.currentAlignment.stop()
+
+    def isFinish(self):
+        """Compute if we should finish the current clustering operation"""
+        return self.flagStop

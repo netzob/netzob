@@ -56,6 +56,7 @@ class NewSequenceAlignmentController(object):
         self.vocabularyController = vocabularyController
         self._view = NewSequenceAlignmentView(self)
         self.log = logging.getLogger(__name__)
+        self.alignmentSolution = None
 
     @property
     def view(self):
@@ -93,13 +94,13 @@ class NewSequenceAlignmentController(object):
         self.vocabularyController.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, smooth)
 
         # Configure Needleman and Wunsch
-        alignmentSolution = NeedlemanAndWunsch(unitSize, self.percentOfAlignmentProgessBar)
+        self.alignmentSolution = NeedlemanAndWunsch(unitSize, self.percentOfAlignmentProgessBar)
 
         # Define the alignment JOB
         self._view.sequence_stop.set_sensitive(True)
-        Job(self.startSequenceAlignment(alignmentSolution, symbolList, unitSize))
+        Job(self.startSequenceAlignment(symbolList, unitSize))
 
-    def startSequenceAlignment(self, alignmentSolution, symbols, unitSize):
+    def startSequenceAlignment(self, symbols, unitSize):
         """Definition of a JOB, which executes the alignment process
         @type symbols: a list of Symbols
         @var symbols: the list of symbols to align
@@ -107,12 +108,12 @@ class NewSequenceAlignmentController(object):
         @var unitSize: the unit size to consider when aligning
         """
         try:
-            (yield ThreadedTask(alignmentSolution.alignSymbols, symbols, self.vocabularyController.getCurrentProject()))
+            (yield ThreadedTask(self.alignmentSolution.alignSymbols, symbols, self.vocabularyController.getCurrentProject()))
         except TaskError, e:
             self.log.error(_("Error while proceeding to the alignment: {0}").format(str(e)))
 
         # Retrieve the results
-        new_symbols = alignmentSolution.getLastResult()
+        new_symbols = self.alignmentSolution.getLastResult()
 
         # Register the symbols
         if new_symbols is not None:
@@ -176,9 +177,10 @@ class NewSequenceAlignmentController(object):
 
     def sequence_stop_clicked_cb(self, widget):
         #update button
+
         self._view.sequence_stop.set_sensitive(False)
         # ++CODE HERE++
-        # STOP THE THREAD OF SEQUENCE ALIGNEMENT
+        self.alignmentSolution.stop()
 
         #update widget
         self._view.sequence_cancel.set_sensitive(True)

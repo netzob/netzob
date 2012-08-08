@@ -61,6 +61,8 @@ class NeedlemanAndWunsch(object):
         self.absoluteStage = None
         self.statusRatio = None
         self.statusRatioOffset = None
+        self.flagStop = False
+        self.clusteringSolution = None
 
     #+-----------------------------------------------------------------------+
     #| cb_executionStatus
@@ -93,22 +95,38 @@ class NeedlemanAndWunsch(object):
         if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
+            if self.stop:
+                return
+
             field = Field.createDefaultField()
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
             symbol.addField(field)
         else:
             symbol.cleanFields()
+
+            if self.isFinish():
+                return
+
             # We execute the alignment
             (alignment, score) = self.align(doInternalSlick, messages)
+
+            if self.isFinish():
+                return
+
             symbol.setAlignment(alignment)
             logging.debug("Alignment : {0}".format(alignment))
+
             # We update the regex based on the results
             try:
+                if self.isFinish():
+                    return
                 self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
+
             except NetzobException:
                 logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
                 symbol.cleanFields()
+
                 field = Field.createDefaultField()
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
@@ -127,6 +145,9 @@ class NeedlemanAndWunsch(object):
         debug = False
         (score1, score2, score3, regex, mask) = _libNeedleman.alignMessages(doInternalSlick, len(messages), format, serialMessages, self.cb_executionStatus, debug)
         scores = (score1, score2, score3)
+
+        if self.isFinish():
+            return
 
         alignment = self.deserializeAlignment(regex, mask)
         alignment = self.smoothAlignment(alignment)
@@ -224,6 +245,10 @@ class NeedlemanAndWunsch(object):
         regex = []
         found = False
         for i in range(len(align)):
+
+            if self.isFinish():
+                return
+
             if (align[i] == "-"):
                 if (found is False):
                     start = i
@@ -247,6 +272,10 @@ class NeedlemanAndWunsch(object):
         symbol.cleanFields()
         logging.debug("REGEX " + str(regex))
         for regexElt in regex:
+
+            if self.isFinish():
+                return
+
             field = Field("Field " + str(iField), iField, regexElt)
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
@@ -260,6 +289,10 @@ class NeedlemanAndWunsch(object):
         while doLoop is True:
             doLoop = False
             for field in symbol.getFields():
+
+                if self.isFinish():
+                    return
+
                 # We try to see if this field produces only empty values when applied on messages
                 if not field.isStatic():
                     cells = symbol.getCellsByField(field)
@@ -313,13 +346,19 @@ class NeedlemanAndWunsch(object):
             else:
                 symbolsToCluster.append(s)
 
-        clusteringSolution = UPGMA(project, symbolsToCluster, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_executionStatus)
+        if self.isFinish():
+            return
+
+        self.clusteringSolution = UPGMA(project, symbolsToCluster, True, nbIteration, minEquivalence, doInternalSlick, defaultFormat, self.unitSize, self.cb_executionStatus)
         t1 = time.time()
-        self.result = clusteringSolution.executeClustering()
+        self.result = self.clusteringSolution.executeClustering()
+
+        if self.isFinish():
+            return
 
         # We optionally handle orphans
         if doOrphanReduction:
-            self.result = clusteringSolution.executeOrphanReduction()
+            self.result = self.clusteringSolution.executeOrphanReduction()
         t2 = time.time()
 
         self.result.extend(preResults)
@@ -328,3 +367,12 @@ class NeedlemanAndWunsch(object):
 
     def getLastResult(self):
         return self.result
+
+    def isFinish(self):
+        return self.flagStop
+
+    def stop(self):
+        self.flagStop = True
+        if self.clusteringSolution is not None:
+            logging.debug("Close the clustering solution")
+            self.clusteringSolution.stop()
