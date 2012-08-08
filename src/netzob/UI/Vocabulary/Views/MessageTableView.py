@@ -74,14 +74,11 @@ class MessageTableView(object):
     def __makeMessageTreeView(self):
         # Instanciate treeview
         messageTableTreeView = Gtk.TreeView()
-        messageTableTreeView.connect("enter-notify-event",
-                                     self.controller.messageTableTreeView_enter_notify_event_cb)
-        messageTableTreeView.connect("leave-notify-event",
-                                        self.controller.messageTableTreeView_leave_notify_event_cb)
-        messageTableTreeView.connect("button-press-event",
-                                        self.controller.messageTableTreeView_button_press_event_cb)
+        messageTableTreeView.connect("enter-notify-event", self.controller.messageTableTreeView_enter_notify_event_cb)
+        messageTableTreeView.connect("leave-notify-event", self.controller.messageTableTreeView_leave_notify_event_cb)
+        messageTableTreeView.connect("button-press-event", self.controller.messageTableTreeView_button_press_event_cb)
         messageTableTreeView.set_rules_hint(True)
-        messageTableTreeView.set_grid_lines(Gtk.TreeViewGridLines.VERTICAL)
+        messageTableTreeView.set_grid_lines(Gtk.TreeViewGridLines.BOTH)
         # Create columns
         if self.displayedSymbol is None:
             return messageTableTreeView
@@ -185,8 +182,7 @@ class MessageTableView(object):
             sortIndex = -2
         else:
             sortIndex = field.getIndex()
-        self.messageTableListStore.set_sort_column_id(sortIndex,
-                                                       sortTypeMap[sortType])
+        self.messageTableListStore.set_sort_column_id(sortIndex, sortTypeMap[sortType])
         self.treeViewHeaderGroup.setAllColumnsSortIndicator(sortIndex, sortType)
 
     def updateSymbolNameLabel(self):
@@ -293,8 +289,7 @@ class TreeViewHeaderWidget(Gtk.VBox):
 
         # Regex
         self.regexEventBox = Gtk.EventBox()
-        self.regexEventBox.modify_bg(Gtk.StateType.NORMAL,
-                                Gdk.Color.parse("#c8c8c8")[1])
+        self.regexEventBox.modify_bg(Gtk.StateType.NORMAL, Gdk.Color.parse("#c8c8c8")[1])
         self.regexLabel = Gtk.Label()
         self.regexEventBox.add(self.regexLabel)
         boldFont = Pango.FontDescription()
@@ -364,12 +359,10 @@ class TreeViewHeaderWidget(Gtk.VBox):
         self.sortStatus = sortStatus
         if sortStatus == self.SORT_ASCENDING:
             self.sortArrow.set(Gtk.ArrowType.UP, Gtk.ShadowType.NONE)
-            self.sortArrow.modify_fg(Gtk.StateType.NORMAL,
-                                     Gdk.Color.parse("red")[1])
+            self.sortArrow.modify_fg(Gtk.StateType.NORMAL, Gdk.Color.parse("red")[1])
         elif sortStatus == self.SORT_DESCENDING:
             self.sortArrow.set(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
-            self.sortArrow.modify_fg(Gtk.StateType.NORMAL,
-                                     Gdk.Color.parse("red")[1])
+            self.sortArrow.modify_fg(Gtk.StateType.NORMAL, Gdk.Color.parse("red")[1])
         elif sortStatus == self.SORT_NONE:
             self.__resetSortArrow()
 
@@ -421,8 +414,7 @@ class TreeViewHeaderWidget(Gtk.VBox):
         supportedFormats = Format.getSupportedFormats()
         currentFormat = self.field.getFormat()
         currentFormatIdx = supportedFormats.index(currentFormat)
-        newFormat = supportedFormats[(currentFormatIdx + 1) % \
-                                         len(supportedFormats)]
+        newFormat = supportedFormats[(currentFormatIdx + 1) % len(supportedFormats)]
         self.field.setFormat(newFormat)
         self.setFormat(newFormat)
         self.messageTableView.updateMessageTableListStore()
