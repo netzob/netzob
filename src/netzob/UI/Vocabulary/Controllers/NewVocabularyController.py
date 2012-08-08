@@ -340,6 +340,19 @@ class NewVocabularyController(object):
                 plugin.importFile(filePathList)
 
     def captureMessages_activate_cb(self, action):
-        pass
+        """Execute all the plugins associated with
+        capture function."""
+        if self.netzob.getCurrentProject() is not None:
+            chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+            res = chooser.run()
+            plugin = None
+            if res == chooser.RESPONSE_OK:
+                (filePathList, plugin) = chooser.getFilenameListAndPlugin()
+            chooser.destroy()
+            if plugin is not None:
+                plugin.setFinish_cb(self.view.updateSymbolList)
+                plugin.importFile(filePathList)
 
-#########
+    def getCurrentProject(self):
+        """Return the current project (can be None)"""
+        return self.netzob.getCurrentProject()

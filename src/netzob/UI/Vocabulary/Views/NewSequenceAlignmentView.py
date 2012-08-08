@@ -47,8 +47,6 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 class NewSequenceAlignmentView(object):
 
-
-
     def __init__(self, controller):
         '''
         Constructor
@@ -59,14 +57,14 @@ class NewSequenceAlignmentView(object):
             "ui",
             "sequence_alignement.glade"))
         self._getObjects(self.builder, ["sequenceDialog",
-            "sequence_execute", "sequence_cancel", "sequence_stop",
-            "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
-            "radiobutton4bit", "radiobutton8bit",
-            "orphanButton", "smoothButton",
-            "sequence_progressbar"])
+                                        "sequence_execute", "sequence_cancel", "sequence_stop",
+                                        "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
+                                        "radiobutton4bit", "radiobutton8bit",
+                                        "orphanButton", "smoothButton",
+                                        "sequence_progressbar", "stage0ProgressBar", "stage1ProgressBar", "stage2ProgressBar", "stage3ProgressBar",
+                                        "labelStage0", "labelStage1", "labelStage2", "labelStage3"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
-
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:

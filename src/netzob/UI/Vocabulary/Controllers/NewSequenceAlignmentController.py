@@ -34,21 +34,23 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk
 import gi
+from gi.repository import Gtk, Gdk, GObject
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
+import time
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.Threads.Job import Job
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
+from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.UI.Vocabulary.Views.NewSequenceAlignmentView import NewSequenceAlignmentView
+from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
+
 
 class NewSequenceAlignmentController(object):
-    '''
-    classdocs
-    '''
-
+    '''Controls the execution of the alignment process'''
 
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
@@ -60,10 +62,13 @@ class NewSequenceAlignmentController(object):
         return self._view
 
     def sequence_cancel_clicked_cb(self, widget):
+        """Callback executed when the user close the alignment window"""
         self._view.sequenceDialog.destroy()
 
     def sequence_execute_clicked_cb(self, widget):
-        #update widget
+        """Callback executed when the user request to start
+        the alignment process"""
+
         self._view.sequence_cancel.set_sensitive(False)
         self._view.sequence_execute.set_sensitive(False)
         self._view.sequence_scale.set_sensitive(False)
@@ -72,7 +77,8 @@ class NewSequenceAlignmentController(object):
         self._view.radiobutton8bit.set_sensitive(False)
         self._view.orphanButton.set_sensitive(False)
         self._view.smoothButton.set_sensitive(False)
-        #extract choose value
+
+        # retrieves the alignment parameters
         symbolList = self.vocabularyController.view.getCheckedSymbolList()
         similarityPercent = self._view.sequence_adjustment.get_value()
         if self._view.radiobutton8bit.get_mode():
@@ -81,19 +87,92 @@ class NewSequenceAlignmentController(object):
             unitSize = 4
         orphan = self._view.orphanButton.get_active()
         smooth = self._view.smoothButton.get_active()
-        # ++CODE HERE++
-        # SEQUENCE ALIGNMENT ON symbolList
-        # THE PARAMETER FORMAT: [ symbolList (symbol list),similarityPercent (double), orphan smooth (boolean) ]
-        # OPEN THREAD TO STOP IT
-        # SET REGULARLY VALUE FOR PROGRESS BAR WITH
-        # fraction = 0 <+int+< 1
-        # self._view.sequence_progressbar.set_fraction(fraction)
 
-        #update button
+        self.vocabularyController.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_EQUIVALENCE_THRESHOLD, int(similarityPercent))
+        self.vocabularyController.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION, orphan)
+        self.vocabularyController.getCurrentProject().getConfiguration().setVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_DO_INTERNAL_SLICK, smooth)
+
+        # Configure Needleman and Wunsch
+        alignmentSolution = NeedlemanAndWunsch(unitSize, self.percentOfAlignmentProgessBar)
+
+        # Define the alignment JOB
         self._view.sequence_stop.set_sensitive(True)
+        Job(self.startSequenceAlignment(alignmentSolution, symbolList, unitSize))
 
-        #close dialog box
-        #self._view.sequenceDialog.destroy()
+    def startSequenceAlignment(self, alignmentSolution, symbols, unitSize):
+        """Definition of a JOB, which executes the alignment process
+        @type symbols: a list of Symbols
+        @var symbols: the list of symbols to align
+        @type unitSize: int
+        @var unitSize: the unit size to consider when aligning
+        """
+        try:
+            (yield ThreadedTask(alignmentSolution.alignSymbols, symbols, self.vocabularyController.getCurrentProject()))
+        except TaskError, e:
+            self.log.error(_("Error while proceeding to the alignment: {0}").format(str(e)))
+
+        # Retrieve the results
+        new_symbols = alignmentSolution.getLastResult()
+
+        # Register the symbols
+        if new_symbols is not None:
+            self.vocabularyController.getCurrentProject().getVocabulary().setSymbols(new_symbols)
+
+        self.vocabularyController.restart()
+
+        # close dialog box
+        self._view.sequenceDialog.destroy()
+
+    def percentOfAlignmentProgessBar(self, stage, percent, message):
+        # select the good progress bar in function of the stage
+        progressBar = None
+        totalPercent = None
+        nbStage = 3
+        if self.vocabularyController.getCurrentProject().getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_ORPHAN_REDUCTION):
+            nbStage = 4
+
+        if stage == 0:
+            progressBar = self._view.stage0ProgressBar
+        elif stage == 1:
+            progressBar = self._view.stage1ProgressBar
+        elif stage == 2:
+            progressBar = self._view.stage2ProgressBar
+        elif stage == 3:
+            progressBar = self._view.stage3ProgressBar
+
+        if nbStage != 4:
+            self._view.labelStage3.hide()
+            self._view.stage3ProgressBar.hide()
+
+        if stage > 0:
+            self._view.labelStage0.hide()
+            self._view.stage0ProgressBar.hide()
+
+        if stage > 1:
+            self._view.labelStage1.hide()
+            self._view.stage1ProgressBar.hide()
+
+        if stage > 2:
+            self._view.labelStage2.hide()
+            self._view.stage2ProgressBar.hide()
+
+        if stage > 3:
+            self._view.labelStage3.hide()
+            self._view.stage3ProgressBar.hide()
+
+        if percent is not None:
+            totalPercent = (100 / nbStage) * stage + percent / nbStage
+            valPercent = float(percent) / float(100)
+            valTotalPercent = float(totalPercent) / float(100)
+            logging.debug("Alignment progression ({0}): {1}% {2}".format(stage, totalPercent, message))
+            time.sleep(0.01)
+            GObject.idle_add(self._view.sequence_progressbar.set_fraction, valTotalPercent)
+            GObject.idle_add(progressBar.set_fraction, valPercent)
+
+        if message is None:
+            GObject.idle_add(self._view.sequence_progressbar.set_text, "")
+        else:
+            GObject.idle_add(self._view.sequence_progressbar.set_text, message)
 
     def sequence_stop_clicked_cb(self, widget):
         #update button
@@ -110,7 +189,6 @@ class NewSequenceAlignmentController(object):
         self._view.radiobutton8bit.set_sensitive(True)
         self._view.orphanButton.set_sensitive(True)
         self._view.smoothButton.set_sensitive(True)
-
 
     def run(self):
         self._view.sequence_stop.set_sensitive(False)
