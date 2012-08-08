@@ -30,12 +30,15 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 import gi
+from netzob.Common.Threads.Job import Job
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -44,16 +47,15 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.NewSmoothPartitioningView import NewSmoothPartitioningView
 
-class NewSmoothPartitioningController(object):
-    '''
-    classdocs
-    '''
 
+class NewSmoothPartitioningController(object):
+    """Executes the smooth operation on selected symbols"""
 
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
         self._view = NewSmoothPartitioningView(self)
         self.log = logging.getLogger(__name__)
+        self.flagStop = False
 
     @property
     def view(self):
@@ -63,39 +65,67 @@ class NewSmoothPartitioningController(object):
         self._view.smoothDialog.destroy()
 
     def smooth_execute_clicked_cb(self, widget):
+        """Callback executed when the user
+        requests to start the smooth
+        operation"""
         # update widget
         self._view.smooth_cancel.set_sensitive(False)
         self._view.smooth_execute.set_sensitive(False)
+        self._view.smooth_stop.set_sensitive(True)
         #extract choose value
         symbolList = self.vocabularyController.view.getCheckedSymbolList()
 
-        # ++CODE HERE++
-        # smooth PARTITIONING ON symbolList
-        # THE PARAMETER FORMAT: [ symbolList (symbol list) ]
-        # OPEN THREAD TO STOP IT
-        # SET REGULARLY VALUE FOR PROGRESS BAR WITH
-        # fraction = 0 <+int+< 1
-        # self._view.smooth_progressbar.set_fraction(fraction)
+        # Define the smooth JOB
+        Job(self.startSmooth(symbolList))
 
         #update button
-        self._view.smooth_stop.set_sensitive(True)
-
-        #close dialog box
-        #self._view.smoothDialog.destroy()
-
-
-    def smooth_stop_clicked_cb(self, widget):
-        # update button
+        self._view.smooth_cancel.set_sensitive(True)
+        self._view.smooth_execute.set_sensitive(False)
         self._view.smooth_stop.set_sensitive(False)
 
+    def startSmooth(self, symbols):
+        """Start the smooth operation by creating
+        a dedicated thread
+        @var symbols: the list of symbols that should be smoothed
+        """
+        if len(symbols) > 0:
+            self.log.debug("Start to smooth the selected symbols")
+            try:
+                (yield ThreadedTask(self.smooth, symbols))
+            except TaskError, e:
+                self.log.error(_("Error while proceeding to the smoothing of symbols: {0}").format(str(e)))
 
-        # ++CODE HERE++
-        # STOP THE THREAD OF smooth PARTITIONING
+            self.vocabularyController.restart()
+        else:
+            self.log.debug("No symbol selected")
 
+    def smooth(self, symbols):
+        """Smooth the provided symbols"""
+        step = 100 / len(symbols)
+        total = 0
+        for symbol in symbols:
+            GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth symbol {0}".format(symbol.getName())))
+            if self.flagStop:
+                return
+            symbol.slickRegex(self.vocabularyController.getCurrentProject())
+            total = total + step
+            time.sleep(0.01)
+            GObject.idle_add(self._view.smooth_progressbar.set_fraction, total)
+        GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth finished !"))
+
+    def smooth_stop_clicked_cb(self, widget):
+        """Callback executed when the
+        user wants to stop the current smooth operation"""
+        # update button
+        self._view.smooth_stop.set_sensitive(False)
         # update widget
         self._view.smooth_execute.set_sensitive(True)
         self._view.smooth_cancel.set_sensitive(True)
+        self.flagStop = True
 
     def run(self):
         self._view.smooth_stop.set_sensitive(False)
         self._view.run()
+
+    def stop(self):
+        self.flagStop = True
