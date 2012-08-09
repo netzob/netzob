@@ -42,77 +42,84 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewSimplePartitioningView import NewSimplePartitioningView
+from netzob.UI.Vocabulary.Views.NewForcePartitioningView import NewForcePartitioningView
 
-class NewSimplePartitioningController(object):
+
+class NewForcePartitioningController(object):
     '''
     classdocs
     '''
 
-
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
-        self._view = NewSimplePartitioningView(self)
+        self._view = NewForcePartitioningView(self)
         self.log = logging.getLogger(__name__)
 
     @property
     def view(self):
         return self._view
 
-    def simple_cancel_clicked_cb(self, widget):
-        self._view.simpleDialog.destroy()
+    def force_cancel_clicked_cb(self, widget):
+        self._view.forceDialog.destroy()
 
-    def simple_execute_clicked_cb(self, widget):
-        # update widget
-        self._view.simple_cancel.set_sensitive(False)
-        self._view.simple_execute.set_sensitive(False)
-        self._view.radiobutton8bits.set_sensitive(False)
-        self._view.radiobutton16bits.set_sensitive(False)
-        self._view.radiobutton32bits.set_sensitive(False)
-        self._view.radiobutton64bits.set_sensitive(False)
+    def force_execute_clicked_cb(self, widget):
+        #update widget
+        self._view.force_stop.set_sensitive(True)
+        self._view.force_cancel.set_sensitive(False)
+        self._view.force_execute.set_sensitive(False)
+        self._view.force_entry.set_sensitive(False)
+        self._view.force_radiobutton_hexa.set_sensitive(False)
+        self._view.force_radiobutton_string.set_sensitive(False)
         #extract choose value
         symbolList = self.vocabularyController.view.getCheckedSymbolList()
-        if self._view.radiobutton8bits.get_active():
-            formatBits = 8
-        elif self._view.radiobutton16bits.get_active():
-            formatBits = 16
-        elif self._view.radiobutton32bits.get_active():
-            formatBits = 32
-        elif self._view.radiobutton64bits.get_active():
-            formatBits = 64
-
+        delimiter = self._view.force_entry.get_text()
+        if self._view.force_radiobutton_hexa.get_active():
+            delimiterType = "hexa"
+        else:
+            delimiterType = "string"
         # ++CODE HERE++
-        # simple PARTITIONING ON symbolList
-        # THE PARAMETER FORMAT: [ symbolList (symbol list),formatBits (int) ]
+        # FORCE PARTITIONING ON symbolList
+        # THE PARAMETER FORMAT: [ symbolList (symbol list),delimiter (string), delimiterType (string) ]
         # OPEN THREAD TO STOP IT
         # SET REGULARLY VALUE FOR PROGRESS BAR WITH
         # fraction = 0 <+int+< 1
-        # self._view.simple_progressbar.set_fraction(fraction)
+        # self._view.force_progressbar.set_fraction(fraction)
 
         #update button
-        self._view.simple_stop.set_sensitive(True)
+        self._view.force_stop.set_sensitive(True)
 
         #close dialog box
-        #self._view.simpleDialog.destroy()
+        #self._view.forceDialog.destroy()
 
-
-    def simple_stop_clicked_cb(self, widget):
+    def force_stop_clicked_cb(self, widget):
         # update button
-        self._view.simple_stop.set_sensitive(False)
-
+        self._view.force_stop.set_sensitive(False)
 
         # ++CODE HERE++
-        # STOP THE THREAD OF simple PARTITIONING
+        # STOP THE THREAD OF FORCE PARTITIONING
 
-        # update widget
-        self._view.simple_execute.set_sensitive(True)
-        self._view.simple_cancel.set_sensitive(True)
-        self._view.radiobutton8bits.set_sensitive(True)
-        self._view.radiobutton16bits.set_sensitive(True)
-        self._view.radiobutton32bits.set_sensitive(True)
-        self._view.radiobutton64bits.set_sensitive(True)
+        #update widget
+        self._view.force_execute.set_sensitive(True)
+        self._view.force_cancel.set_sensitive(True)
+        self._view.force_entry.set_sensitive(True)
+        self._view.force_radiobutton_hexa.set_sensitive(True)
+        self._view.force_radiobutton_string.set_sensitive(True)
+
+    def force_entry_changed_cb(self, widget):
+        if(len(widget.get_text()) > 0):
+            self._view.force_execute.set_sensitive(True)
+        else:
+            self._view.force_execute.set_sensitive(False)
 
     def run(self):
-        self._view.simple_stop.set_sensitive(False)
-        self._view.radiobutton8bits.set_active(True)
+        self._view.force_stop.set_sensitive(False)
+        # ++CODE HERE++
+        # SET THE LAST DELIMITER USE WITH
+        # delimiter = +string+
+        # self._view.force_entry.set_text(delimiter)
+        # SET THE LAST VALUE USE FOR FORMAT OF DELIMITER
+        # self._view.force_radiobutton_hexa.set_active(True)
+        # or
+        # self._view.force_radiobutton_string.set_active(True)
+        self.force_entry_changed_cb(self._view.force_entry)
         self._view.run()

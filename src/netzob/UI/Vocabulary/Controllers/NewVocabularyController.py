@@ -49,10 +49,10 @@ gi.require_version('Gtk', '3.0')
 from netzob.UI.Vocabulary.Views.NewVocabularyView import NewVocabularyView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
-from netzob.UI.Vocabulary.Controllers.NewSequenceAlignmentController import NewSequenceAlignmentController
-from netzob.UI.Vocabulary.Controllers.NewForcePartitioningController import NewForcePartitioningController
-from netzob.UI.Vocabulary.Controllers.NewSimplePartitioningController import NewSimplePartitioningController
-from netzob.UI.Vocabulary.Controllers.NewSmoothPartitioningController import NewSmoothPartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.NewSequenceAlignmentController import NewSequenceAlignmentController
+from netzob.UI.Vocabulary.Controllers.Partitioning.NewForcePartitioningController import NewForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.NewSimplePartitioningController import NewSimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.NewSmoothPartitioningController import NewSmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 
 
