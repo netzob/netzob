@@ -101,16 +101,17 @@ class NewSmoothPartitioningController(object):
 
     def smooth(self, symbols):
         """Smooth the provided symbols"""
-        step = 100 / len(symbols)
-        total = 0
+        step = float(100) / float(len(symbols))
+        total = float(0)
         for symbol in symbols:
             GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
             symbol.slickRegex(self.vocabularyController.getCurrentProject())
             total = total + step
+            rtotal = float(total) / float(100)
             time.sleep(0.01)
-            GObject.idle_add(self._view.smooth_progressbar.set_fraction, total)
+            GObject.idle_add(self._view.smooth_progressbar.set_fraction, rtotal)
         GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth finished !"))
 
     def smooth_stop_clicked_cb(self, widget):
