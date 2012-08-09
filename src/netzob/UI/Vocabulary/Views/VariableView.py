@@ -121,7 +121,7 @@ class VariableCreationView(AbstractView):
 
     def __init__(self, controller):
         AbstractView.__init__(self, controller, VariableCreationView.GLADE_FILENAME)
-        self.getObjects(["dialog", "applyButton", "nameEntry", "mutableCheck", "randomCheck", "minLabel", "maxLabel", "minSpin", "maxSpin", "variableTypeCombo", "valueLabel", "valueEntry", "typeLabel", "typeCombo", "relationTypeLabel", "relationTypeCombo"])
+        self.getObjects(["dialog", "applyButton", "nameEntry", "mutableCheck", "randomCheck", "minLabel", "maxLabel", "minSpin", "maxSpin", "variableTypeCombo", "valueLabel", "valueEntry", "typeLabel", "typeCombo", "relationTypeLabel", "relationTypeCombo", "IDButton", "IDEntry", "IDLabel", "IDGrid"])
         self.showObjects()
 
 

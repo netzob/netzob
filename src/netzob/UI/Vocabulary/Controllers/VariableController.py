@@ -284,6 +284,7 @@ class VariableCreationController:
         self.view.getWidg("variableTypeCombo").connect('changed', self.updateOptions)
         self.view.getWidg("minSpin").connect('changed', self.updateMaxSpin)
         self.view.getWidg("applyButton").connect("clicked", self.validateChanges)
+        self.view.getWidg("IDButton").connect("clicked", self.chooseSelectedVariable)
 
     def updateOptions(self, widget=None):
         """updateOptions:
@@ -293,7 +294,6 @@ class VariableCreationController:
                 @param widget: the widget which modification calls this function.
         """
         strVarType = self.view.getWidg("variableTypeCombo").get_active_text()
-        self.selectedVariableChosen = False  # Allow the user to choose one variable ID for relation variable through a pretty tree view.
         handler_id = None
 
         # Node variable
@@ -306,9 +306,14 @@ class VariableCreationController:
 
             self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
-            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
+
+            self.view.getWidg("relationTypeCombo").set_visible(False)
+            self.view.getWidg("IDGrid").set_visible(False)
+            self.view.getWidg("IDLabel").set_visible(False)
+            self.view.getWidg("IDEntry").set_visible(False)
+            self.view.getWidg("IDButton").set_visible(False)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
@@ -328,13 +333,15 @@ class VariableCreationController:
 
             self.view.getWidg("valueEntry").set_visible(True)
             self.view.getWidg("typeCombo").set_visible(True)
-            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
 
-            if handler_id is not None:
-                object.disconnect(handler_id)
-                handler_id = None
+            self.view.getWidg("relationTypeCombo").set_visible(False)
+            self.view.getWidg("IDGrid").set_visible(False)
+            self.view.getWidg("IDLabel").set_visible(False)
+            self.view.getWidg("IDEntry").set_visible(False)
+            self.view.getWidg("IDButton").set_visible(False)
+
             handler_id = self.view.getWidg("valueEntry").connect('changed', self.updateMinSpin)
 
         # Repeat variable
@@ -350,9 +357,14 @@ class VariableCreationController:
 
             self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
-            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
+
+            self.view.getWidg("relationTypeCombo").set_visible(False)
+            self.view.getWidg("IDGrid").set_visible(False)
+            self.view.getWidg("IDLabel").set_visible(False)
+            self.view.getWidg("IDEntry").set_visible(False)
+            self.view.getWidg("IDButton").set_visible(False)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
@@ -368,18 +380,20 @@ class VariableCreationController:
             self.view.getWidg("minLabel").set_visible(False)
             self.view.getWidg("maxLabel").set_visible(False)
 
-            self.view.getWidg("valueEntry").set_visible(True)
+            self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
-            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
+
+            self.view.getWidg("relationTypeCombo").set_visible(False)
+            self.view.getWidg("IDGrid").set_visible(True)
+            self.view.getWidg("IDLabel").set_visible(True)
+            self.view.getWidg("IDEntry").set_visible(True)
+            self.view.getWidg("IDButton").set_visible(True)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
                 handler_id = None
-
-            handler_id = self.view.getWidg("valueEntry").connect('focus-in-event', self.chooseSelectedVariable)  # the signal 'select-get' seems to work as well.
-            # TODO: allow this only once
 
         # Computed Relation variable
         elif strVarType == ComputedRelationVariable.TYPE:
@@ -393,16 +407,20 @@ class VariableCreationController:
             self.view.getWidg("minLabel").set_visible(True)
             self.view.getWidg("maxLabel").set_visible(True)
 
-            self.view.getWidg("valueEntry").set_visible(True)
+            self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
-            self.view.getWidg("relationTypeCombo").set_visible(True)
             self.view.getWidg("minSpin").set_visible(True)
             self.view.getWidg("maxSpin").set_visible(True)
+
+            self.view.getWidg("relationTypeCombo").set_visible(True)
+            self.view.getWidg("IDGrid").set_visible(True)
+            self.view.getWidg("IDLabel").set_visible(True)
+            self.view.getWidg("IDEntry").set_visible(True)
+            self.view.getWidg("IDButton").set_visible(True)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
                 handler_id = None
-            handler_id = self.view.getWidg("valueEntry").connect('focus-in-event', self.chooseSelectedVariable)
 
         # Default case
         else:
@@ -414,9 +432,14 @@ class VariableCreationController:
 
             self.view.getWidg("valueEntry").set_visible(False)
             self.view.getWidg("typeCombo").set_visible(False)
-            self.view.getWidg("relationTypeCombo").set_visible(False)
             self.view.getWidg("minSpin").set_visible(False)
             self.view.getWidg("maxSpin").set_visible(False)
+
+            self.view.getWidg("relationTypeCombo").set_visible(False)
+            self.view.getWidg("IDGrid").set_visible(False)
+            self.view.getWidg("IDLabel").set_visible(False)
+            self.view.getWidg("IDEntry").set_visible(False)
+            self.view.getWidg("IDButton").set_visible(False)
 
             if handler_id is not None:
                 object.disconnect(handler_id)
@@ -480,11 +503,11 @@ class VariableCreationController:
 
             # Direct Relation Variable
             elif self.variable.getVariableType() == DirectRelationVariable.TYPE:
-                self.view.getWidg("valueEntry").set_text(self.variable.getPointedID())
+                self.view.getWidg("IDEntry").set_text(self.variable.getPointedID())
 
             # Computed Relation Variable
             elif self.variable.getVariableType() == ComputedRelationVariable.TYPE:
-                self.view.getWidg("valueEntry").set_text(self.variable.getPointedID())
+                self.view.getWidg("IDEntry").set_text(self.variable.getPointedID())
                 self.setComboText(self.view.getWidg("relationTypeCombo"), self.variable.getType().getType())
                 self.view.getWidg("minSpin").set_text(str(self.variable.getMinChars()))
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getMaxChars()))
@@ -536,12 +559,12 @@ class VariableCreationController:
 
         # Direct Relation Variable
         elif strVarType == DirectRelationVariable.TYPE:
-            pointedID = str(self.view.getWidg("valueEntry").get_text())
+            pointedID = str(self.view.getWidg("IDEntry").get_text())
             variable = DirectRelationVariable(anid, name, mutable, random, pointedID)
 
         # Computed Relation Variable
         elif strVarType == ComputedRelationVariable.TYPE:
-            pointedID = str(self.view.getWidg("valueEntry").get_text())
+            pointedID = str(self.view.getWidg("IDEntry").get_text())
             vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text())
             minChars = int(self.view.getWidg("minSpin").get_text())
             maxChars = int(self.view.getWidg("maxSpin").get_text())
@@ -550,26 +573,31 @@ class VariableCreationController:
         if variable is not None:
             self.treeController.field.getSymbol().setDefault(False)
             if self.editOverCreate:
+
                 # We transform a node variable into a node variable.
                 if (self.variable.getVariableType() == AggregateVariable.TYPE or self.variable.getVariableType() == AlternateVariable.TYPE) and (variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE):
                     children = self.variable.getChildren()
                     self.variable = variable
                     for child in children:
                         self.variable.addChild(child)
+
                 # We transform a repeat variable into a node variable.
                 elif (self.variable.getVariableType() == RepeatVariable.TYPE) and (variable.getVariableType() == AggregateVariable.TYPE or variable.getVariableType() == AlternateVariable.TYPE):
                     child = self.variable.getChild()
                     self.variable = variable
                     self.variable.addChild(child)
+
                 # We transform a repeat variable into a repeat variable.
                 elif (self.variable.getVariableType() == RepeatVariable.TYPE) and (variable.getVariableType() == RepeatVariable.TYPE):
                     child = self.variable.getChild()
                     self.variable = variable
                     self.variable.setChild(child)
+
                 # We do not manage/save children.
                 else:
                     self.variable = variable
                 self.treeController.editVariable(variable)
+
             else:
                 self.variable.addChild(variable)
                 self.treeController.registerVariable(self.rootEntry, variable)
@@ -596,16 +624,13 @@ class VariableCreationController:
             else:
                 break
 
-    def chooseSelectedVariable(self, widget, event):
+    def chooseSelectedVariable(self, widget):
         """chooseSelectedVariable:
                 Manage the creation and showing of a VariableIDTreeController that allows the user to choose one variable and get its ID.
 
                 @param widget: the widget which is connected to this function through the event event.
-                @param event: the event that calls this function.
         """
-        if not self.selectedVariableChosen:
-            self.selectedVariableChosen = True
-            VariableIDTreeController(self)
+        VariableIDTreeController(self)
 
 
 class VariableMovingController:
@@ -775,5 +800,5 @@ class VariableIDTreeController:
                 @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable
                 @param variable: the variable that is selected/of which we want the ID.
         """
-        self.variableCreationController.view.getWidg("valueEntry").set_text(str(variable.getID()))
+        self.variableCreationController.view.getWidg("IDEntry").set_text(str(variable.getID()))
         self.view.getWidg("dialog").destroy()
