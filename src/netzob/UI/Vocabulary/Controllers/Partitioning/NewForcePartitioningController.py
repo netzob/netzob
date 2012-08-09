@@ -30,12 +30,16 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Threads.Job import Job
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -46,14 +50,14 @@ from netzob.UI.Vocabulary.Views.Partitioning.NewForcePartitioningView import New
 
 
 class NewForcePartitioningController(object):
-    '''
-    classdocs
-    '''
+    """Manages the execution of the force partitioning on 
+    the selected symbols"""
 
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
         self._view = NewForcePartitioningView(self)
         self.log = logging.getLogger(__name__)
+        self.flagStop = False
 
     @property
     def view(self):
@@ -63,6 +67,7 @@ class NewForcePartitioningController(object):
         self._view.forceDialog.destroy()
 
     def force_execute_clicked_cb(self, widget):
+        self.flagStop = False
         #update widget
         self._view.force_stop.set_sensitive(True)
         self._view.force_cancel.set_sensitive(False)
@@ -77,26 +82,49 @@ class NewForcePartitioningController(object):
             delimiterType = "hexa"
         else:
             delimiterType = "string"
-        # ++CODE HERE++
-        # FORCE PARTITIONING ON symbolList
-        # THE PARAMETER FORMAT: [ symbolList (symbol list),delimiter (string), delimiterType (string) ]
-        # OPEN THREAD TO STOP IT
-        # SET REGULARLY VALUE FOR PROGRESS BAR WITH
-        # fraction = 0 <+int+< 1
-        # self._view.force_progressbar.set_fraction(fraction)
+        # encode the delimiter
+        encodedDelimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, delimiterType)
+
+        Job(self.startForcePartitioning(symbolList, encodedDelimiter, format))
+
+    def startForcePartitioning(self, symbols, delimiter, format):
+        if len(symbols) > 0:
+            self.log.debug("Start to force partitioning the selected symbols")
+            try:
+                (yield ThreadedTask(self.forcePartitioning, symbols, delimiter, format))
+            except TaskError, e:
+                self.log.error(_("Error while proceeding to the force partitioning of symbols: {0}").format(str(e)))
+        else:
+            self.log.debug("No symbol selected")
+
+        self.vocabularyController.restart()
 
         #update button
         self._view.force_stop.set_sensitive(True)
 
         #close dialog box
-        #self._view.forceDialog.destroy()
+        self._view.forceDialog.destroy()
+
+    def forcePartitioning(self, symbols, encodedDelimiter, format):
+        """Smooth the provided symbols"""
+        step = float(100) / float(len(symbols))
+        total = float(0)
+        for symbol in symbols:
+            GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning symbol {0}".format(symbol.getName())))
+            if self.flagStop:
+                return
+            symbol.forcePartitioning(self.vocabularyController.getCurrentProject(), format, encodedDelimiter)
+            total = total + step
+            rtotal = float(total) / float(100)
+            time.sleep(0.01)
+            GObject.idle_add(self._view.force_progressbar.set_fraction, rtotal)
+        GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning finished !"))
 
     def force_stop_clicked_cb(self, widget):
         # update button
         self._view.force_stop.set_sensitive(False)
 
-        # ++CODE HERE++
-        # STOP THE THREAD OF FORCE PARTITIONING
+        self.flagStop = True
 
         #update widget
         self._view.force_execute.set_sensitive(True)
@@ -113,13 +141,4 @@ class NewForcePartitioningController(object):
 
     def run(self):
         self._view.force_stop.set_sensitive(False)
-        # ++CODE HERE++
-        # SET THE LAST DELIMITER USE WITH
-        # delimiter = +string+
-        # self._view.force_entry.set_text(delimiter)
-        # SET THE LAST VALUE USE FOR FORMAT OF DELIMITER
-        # self._view.force_radiobutton_hexa.set_active(True)
-        # or
-        # self._view.force_radiobutton_string.set_active(True)
-        self.force_entry_changed_cb(self._view.force_entry)
         self._view.run()
