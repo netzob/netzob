@@ -123,7 +123,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """retrieveValue:
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(readingToken.getVocabulary)
+        pointedVariable = self.getPointedVariable(readingToken.getVocabulary())
         if pointedVariable is None:
             readingToken.setOk(False)
             self.log.debug("No pointed variable.")
@@ -180,38 +180,19 @@ class ComputedRelationVariable(AbstractRelationVariable):
                 Compute the value of the relation variable according to the pointed variable's own value.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        self.setCurrentValue(self.type.computeValue())
+        self.setCurrentValue(self.type.computeValue(self.getPointedVariable(writingToken.getVocabulary()), writingToken))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getPointedID(self):
-        return self.pointedID
-
-    def getPointedVariable(self, vocabulary):
-        variable = vocabulary.getVariableByID(self.pointedID)
-        return self.getPointedVariable(variable)
-
-    def getType(self):
-        return self.type
-
-    def getCurrentValue(self):
-        return self.currentValue
-
     def getMinChars(self):
         return self.minChars
 
     def getMaxChars(self):
         return self.maxChars
 
-    def setPointedID(self, pointedID):
-        self.setPointedID(pointedID)
-
     def setType(self, _type):
         self.type = _type
-
-    def setCurrentValue(self, currentValue):
-        self.currentValue = currentValue
 
     def setNumberBitsAndNumberChars(self, minChars, maxChars):
         if minChars is not None and minChars >= 0:

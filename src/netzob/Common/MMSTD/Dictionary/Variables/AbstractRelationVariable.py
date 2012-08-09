@@ -69,7 +69,7 @@ class AbstractRelationVariable(AbstractVariable):
                 @param readingToken: a token which contains all critical information on this access.
         """
         self.log.debug(_("- [ {0}: compare.").format(self.toString()))
-        localValue = self.getCurrentValue(readingToken)
+        localValue = self.getCurrentValue()
         tmp = readingToken.getValue()[readingToken.getIndex():]
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
@@ -90,7 +90,7 @@ class AbstractRelationVariable(AbstractVariable):
                 Write this value in the writingToken.
         """
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
-        value = self.getCurrentValue(writingToken)
+        value = self.getCurrentValue()
         writingToken.appendValue(value)
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
@@ -153,17 +153,17 @@ class AbstractRelationVariable(AbstractVariable):
     def isDefined(self, processingToken):
         """isDefined:
         """
-        pointedVariable = self.getPointedVariable()
+        pointedVariable = self.getPointedVariable(processingToken.getVocabulary())
         if pointedVariable is None:
             self.log.debug("No pointed variable.")
             return False
         else:
-            return pointedVariable.isDefined()
+            return pointedVariable.isDefined(processingToken)
 
     def restore(self, processingToken):
         """restore:
         """
-        pointedVariable = self.getPointedVariable()
+        pointedVariable = self.getPointedVariable(processingToken.getVocabulary())
         if pointedVariable is None:
             self.log.debug("No pointed variable.")
             return False
@@ -173,7 +173,7 @@ class AbstractRelationVariable(AbstractVariable):
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
         """
-        pointedVariable = self.getPointedVariable()
+        pointedVariable = self.getPointedVariable(processingToken.getVocabulary())
         if pointedVariable is None:
             self.log.debug("No pointed variable.")
             return False
@@ -239,7 +239,7 @@ class AbstractRelationVariable(AbstractVariable):
 
     def getPointedVariable(self, vocabulary):
         variable = vocabulary.getVariableByID(self.pointedID)
-        return self.getPointedVariable(variable)
+        return variable
 
     def getType(self):
         return self.type

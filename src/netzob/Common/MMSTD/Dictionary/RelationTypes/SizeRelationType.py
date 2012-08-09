@@ -68,13 +68,13 @@ class SizeRelationType():
         """
         return IntegerType()
 
-    def computeValue(self, writingToken):
+    def computeValue(self, pointedVariable, writingToken):
         """computeValue:
         """
         writingToken2 = VariableWritingToken(writingToken.getNegative(), writingToken.getVocabulary(), writingToken.getMemory(), bitarray(''), writingToken.getGenerationStrategy())
-        self.getPointedVariable().write(writingToken)
+        pointedVariable.write(writingToken)
         if writingToken2.isOk():
-            self.getPointedVariable.setChecked(True)
+            pointedVariable.setChecked(True)
             return len(writingToken2.getValue())
         else:
             return 0

@@ -101,7 +101,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """retrieveValue:
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(readingToken.getVocabulary)
+        pointedVariable = self.getPointedVariable(readingToken.getVocabulary())
         if pointedVariable is None:
             readingToken.setOk(False)
             self.log.debug("No pointed variable.")
@@ -118,7 +118,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         self.log.debug(_("- [ {0}: learn.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
 
-        pointedVariable = self.getPointedVariable(readingToken.getVocabulary)
+        pointedVariable = self.getPointedVariable(readingToken.getVocabulary())
         if pointedVariable is None:
             self.log.debug("No pointed variable.")
             readingToken.setOk(False)
@@ -159,7 +159,7 @@ class DirectRelationVariable(AbstractRelationVariable):
                 A new current value is generated according to the pointed variable type and the given generation strategy.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(writingToken.getVocabulary)
+        pointedVariable = self.getPointedVariable(writingToken.getVocabulary())
         if pointedVariable is None:
             writingToken.setOk(False)
             self.log.debug("No pointed variable.")
@@ -171,7 +171,7 @@ class DirectRelationVariable(AbstractRelationVariable):
                 Compute the value of the relation variable according to the pointed variable's own value.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(writingToken.getVocabulary)
+        pointedVariable = self.getPointedVariable(writingToken.getVocabulary())
         if pointedVariable is None:
             writingToken.setOk(False)
             self.log.debug("No pointed variable.")
