@@ -45,6 +45,7 @@ from gi.repository import Gtk
 import gi
 from netzob.Common.Project import Project
 from netzob.UI.Common.AboutDialog import AboutDialog
+from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -68,6 +69,7 @@ class NetzobMainController(object):
         cmdLine.parse()
         opts = cmdLine.getOptions()
         # Initialize everything
+        self._loadBugReporter(opts)
         self._loadWorkspace(opts)
         self._initLogging()
         self._initResourcesAndLocales()
@@ -86,6 +88,20 @@ class NetzobMainController(object):
 
         # Refresh list of available projects
         self.updateListOfAvailableProjects()
+
+    def _loadBugReporter(self, opts):
+        """Activate the bug reporter if the command line
+        options requests it"""
+        if opts.bugReport:
+            logging.debug("Activate the bug reporter")
+
+            def log_uncaught_exceptions(exceptionClass, exceptionInstance, traceback):
+                bugReporterController = BugReporterController(exceptionClass, exceptionInstance, traceback)
+                bugReporterController.run()
+
+            sys.excepthook = log_uncaught_exceptions
+        else:
+            logging.debug("Bug reporter not requested.")
 
     def _loadWorkspace(self, opts):
         if opts.workspace == None:

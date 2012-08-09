@@ -29,60 +29,40 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import optparse
-import logging
+import os
 
 #+---------------------------------------------------------------------------+
-#| Local imports
+#| Related third party imports
 #+---------------------------------------------------------------------------+
-from netzob import release
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-#+----------------------------------------------
-#| CommandLine
-#+----------------------------------------------
-class CommandLine(object):
-    """Reads, validates and parses the command line arguments provided by
-    users"""
+class BugReporterView(object):
 
-    def __init__(self):
-        self.parser = None
-        self.providedOptions = None
-        self.providedArguments = None
-        self.configure()
+    def __init__(self, controller):
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui",
+                                                "dialogbox.glade"))
+        self._getObjects(self.builder, ["bugReporter",
+                                        "bugTrackerEntry", "bugReporterApiKeyEntry",
+                                        "reportTextView",
+                                        "bugReporterSaveButton", "bugReporterCancelButton",
+                                        "bugReporterWarnBox", "bugReporterWarnLabel", "bugReporterRememberAPIKeyCheckButton"])
+        self.controller = controller
+        self.builder.connect_signals(self.controller)
 
-    def configure(self):
-        """Configure the parser based on Netzob's usage and the
-        definition of its options and arguments"""
-        self.usage = "usage: %prog [options]"
-        self.parser = optparse.OptionParser(self.usage, prog=release.appname,
-                                            version=release.version)
-        self.parser.add_option("-w", "--workspace",
-                               dest="workspace", help="Path to the workspace")
-        self.parser.add_option("-b", "--bug-reporter", action="store_true", dest="bugReport", help="Activate the bug reporter")
+    def _getObjects(self, builder, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
 
-        # register the group of options for plugins
-        groupPlugins = optparse.OptionGroup(self.parser, "Manage Netzob's plugins")
-        groupPlugins.add_option('--plugin-list', help='List the available plugins', action="store_true", dest="plugin_list")
-        self.parser.add_option_group(groupPlugins)
-
-    def parse(self):
-        """Read and parse the provided arguments and options"""
-        (self.providedOptions, self.providedArguments) = self.parser.parse_args()
-
-    def isStartGUIRequested(self):
-        """Compute and return if the user requested (through the command line arguments and options)
-        to start the GTK GUI"""
-        if not self.isManagePluginsRequested():
-            return True
-
-    def isManagePluginsRequested(self):
-        """Compute and return is the user has requested to manage the plugins"""
-        if self.parser is None:
-            self.parse()
-        if self.providedOptions is None:
-            return False
-        return self.providedOptions.plugin_list
-
-    def getOptions(self):
-        return self.providedOptions
+    def run(self):
+        self.bugReporter.run()
