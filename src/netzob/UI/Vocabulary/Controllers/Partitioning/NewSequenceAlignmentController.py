@@ -45,7 +45,7 @@ import time
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.UI.Vocabulary.Views.NewSequenceAlignmentView import NewSequenceAlignmentView
+from netzob.UI.Vocabulary.Views.Partitioning.NewSequenceAlignmentView import NewSequenceAlignmentView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 

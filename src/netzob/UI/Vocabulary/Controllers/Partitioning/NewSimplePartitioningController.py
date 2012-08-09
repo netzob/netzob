@@ -42,7 +42,7 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewSimplePartitioningView import NewSimplePartitioningView
+from netzob.UI.Vocabulary.Views.Partitioning.NewSimplePartitioningView import NewSimplePartitioningView
 
 
 class NewSimplePartitioningController(object):

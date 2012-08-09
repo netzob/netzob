@@ -42,7 +42,7 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewForcePartitioningView import NewForcePartitioningView
+from netzob.UI.Vocabulary.Views.Partitioning.NewForcePartitioningView import NewForcePartitioningView
 
 
 class NewForcePartitioningController(object):

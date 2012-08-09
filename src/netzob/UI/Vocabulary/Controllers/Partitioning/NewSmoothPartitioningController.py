@@ -45,7 +45,7 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewSmoothPartitioningView import NewSmoothPartitioningView
+from netzob.UI.Vocabulary.Views.Partitioning.NewSmoothPartitioningView import NewSmoothPartitioningView
 
 
 class NewSmoothPartitioningController(object):

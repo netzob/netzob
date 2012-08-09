@@ -252,10 +252,10 @@ class NewVocabularyController(object):
         smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):
-        # ++CODE HERE++
-        # RESET THE PARTITIONING OF CHECKED SYMBOL
-        # UPDATE VIEW
-        pass
+        """Callback executed when the user clicks
+        on the reset button. It starts the dedicated controller."""
+        reset_controller = ResetPartitionningController(self)
+        reset_controller.run()
 
     def concatField_activate_cb(self, action):
         pass

@@ -45,30 +45,25 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewSimplePartitioningView(object):
-
+class NewSmoothPartitioningView(object):
 
     def __init__(self, controller):
         '''
         Constructor
         '''
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "simple_partitioning.glade"))
-        self._getObjects(self.builder, ["simpleDialog",
-            "simple_execute", "simple_stop", "simple_cancel",
-            "radiobutton8bits", "radiobutton16bits",
-            "radiobutton32bits", "radiobutton64bits",
-            "simple_progressbar"])
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui",
+                                                "smooth_partitioning.glade"))
+        self._getObjects(self.builder, ["smoothDialog",
+                                        "smooth_execute", "smooth_stop", "smooth_cancel",
+                                        "smooth_progressbar"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
-
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.simpleDialog.run()
+        self.smoothDialog.run()
