@@ -41,6 +41,7 @@ import gi
 from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
+from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -254,7 +255,7 @@ class NewVocabularyController(object):
     def partitioningReset_activate_cb(self, action):
         """Callback executed when the user clicks
         on the reset button. It starts the dedicated controller."""
-        reset_controller = ResetPartitionningController(self)
+        reset_controller = ResetPartitioningController(self)
         reset_controller.run()
 
     def concatField_activate_cb(self, action):
