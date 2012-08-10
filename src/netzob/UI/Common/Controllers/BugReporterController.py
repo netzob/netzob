@@ -89,20 +89,23 @@ class BugReporterController(object):
     def bugReporter_save_clicked_cb(self, widget):
         """callback executed when the user request to send the report"""
 
-        errorMessage = None
-        infoMessage = None
-
         # verify :
         # 0) server is UP
         # 1) server https certificate is known
         # 2) API Key is valid
         if not self.isServerUp():
-            errorMessage = _("Impossible to contact the remote server.")
-            self.displayErrorAndInfoMessage(errorMessage, infoMessage)
+            self.displayErrorAndInfoMessage(_("Impossible to contact the remote server."), None)
             return
 
         if not self.isServerCertificateValid():
             self.displayServerCertificate()
+            return
+        else:
+            self.sendBugReport()
+
+    def sendBugReport(self):
+        errorMessage = None
+        infoMessage = None
 
         if not self.isAPIKeyValid():
             errorMessage = _("Please verify your API key.")
@@ -215,6 +218,9 @@ class BugReporterController(object):
     def certificateErrorApplyButton_clicked_cb(self, widget):
         self.disableRemoteCertificateVerification = True
         self._errorCertificateView.certificateError.destroy()
+
+        self.displayErrorAndInfoMessage(_("The server's certificate won't be verified."), None)
+        self.sendBugReport()
 
     def certificateErrorCancelButton_clicked_cb(self, widget):
         self.disableRemoteCertificateVerification = False
