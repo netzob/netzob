@@ -130,7 +130,7 @@ class Symbol(AbstractSymbol):
     #| forcePartitioning:
     #|  Specify a delimiter for partitioning
     #+----------------------------------------------
-    def forcePartitioning(self, projectConfiguration, aFormat, rawDelimiter):
+    def forcePartitioning(self, aFormat, rawDelimiter):
         self.alignmentType = "delimiter"
         self.rawDelimiter = rawDelimiter
         self.cleanFields()
@@ -169,7 +169,7 @@ class Symbol(AbstractSymbol):
     #| simplePartitioning:
     #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simplePartitioning(self, projectConfiguration, unitSize):
+    def simplePartitioning(self, unitSize):
         self.alignmentType = "regex"
         self.rawDelimiter = ""
         self.cleanFields()
@@ -1221,10 +1221,10 @@ class Symbol(AbstractSymbol):
 
     def setName(self, name):
         self.name = name
-    
-    def setMessages(self,mess):
-        self.messages=mess
-    
+
+    def setMessages(self, mess):
+        self.messages = mess
+
     def setAlignmentType(self, aType):
         self.alignmentType = aType
 

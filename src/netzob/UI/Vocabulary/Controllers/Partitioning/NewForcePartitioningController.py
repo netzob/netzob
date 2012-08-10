@@ -116,7 +116,7 @@ class NewForcePartitioningController(object):
             GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
-            symbol.forcePartitioning(self.vocabularyController.getCurrentProject(), format, encodedDelimiter)
+            symbol.forcePartitioning(format, encodedDelimiter)
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)

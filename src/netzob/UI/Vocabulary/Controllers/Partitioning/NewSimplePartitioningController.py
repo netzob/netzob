@@ -36,6 +36,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.Common.Type.UnitSize import UnitSize
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -70,30 +71,53 @@ class NewSimplePartitioningController(object):
         self._view.radiobutton16bits.set_sensitive(False)
         self._view.radiobutton32bits.set_sensitive(False)
         self._view.radiobutton64bits.set_sensitive(False)
-        #extract choose value
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
-        if self._view.radiobutton8bits.get_active():
-            formatBits = 8
-        elif self._view.radiobutton16bits.get_active():
-            formatBits = 16
-        elif self._view.radiobutton32bits.get_active():
-            formatBits = 32
-        elif self._view.radiobutton64bits.get_active():
-            formatBits = 64
 
-        # ++CODE HERE++
-        # simple PARTITIONING ON symbolList
-        # THE PARAMETER FORMAT: [ symbolList (symbol list),formatBits (int) ]
-        # OPEN THREAD TO STOP IT
-        # SET REGULARLY VALUE FOR PROGRESS BAR WITH
-        # fraction = 0 <+int+< 1
-        # self._view.simple_progressbar.set_fraction(fraction)
+        #extract chosen value
+        symbolList = self.vocabularyController.view.getCheckedSymbolList()
+        formatBits = UnitSize.BITS8
+
+        if self._view.radiobutton16bits.get_active():
+            formatBits = UnitSize.BITS16
+        elif self._view.radiobutton32bits.get_active():
+            formatBits = UnitSize.BITS32
+        elif self._view.radiobutton64bits.get_active():
+            formatBits = UnitSize.BITS64
+
+        # create a job to execute the partitioning
+        Job(self.startSimplePartitioning(symbolList, formatBits))
+
+    def startSimplePartitioning(self, symbols, unitSize):
+        if len(symbols) > 0:
+            self.log.debug("Start to simple partitioning the selected symbols")
+            try:
+                (yield ThreadedTask(self.simplePartitioning, symbols, unitSize))
+            except TaskError, e:
+                self.log.error(_("Error while proceeding to the simple partitioning of symbols: {0}").format(str(e)))
+        else:
+            self.log.debug("No symbol selected")
+
+        self.vocabularyController.restart()
 
         #update button
         self._view.simple_stop.set_sensitive(True)
 
         #close dialog box
-        #self._view.simpleDialog.destroy()
+        self._view.simpleDialog.destroy()
+
+    def simplePartitioning(self, symbols, unitSize):
+        """Simple partitioning the provided symbols"""
+        step = float(100) / float(len(symbols))
+        total = float(0)
+        for symbol in symbols:
+            GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning symbol {0}".format(symbol.getName())))
+            if self.flagStop:
+                return
+            symbol.simplePartitioning(unitSize)
+            total = total + step
+            rtotal = float(total) / float(100)
+            time.sleep(0.01)
+            GObject.idle_add(self._view.simple_progressbar.set_fraction, rtotal)
+        GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning finished !"))
 
     def simple_stop_clicked_cb(self, widget):
         # update button
