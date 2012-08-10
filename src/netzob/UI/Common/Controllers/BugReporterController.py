@@ -228,7 +228,7 @@ class BugReporterController(object):
             h = httplib2.Http(disable_ssl_certificate_validation=False)
             api_url = "{0}".format(BugReporterController.URL_TARGET_BUG_REPORT)
             resp, content = h.request(api_url, 'GET')
-            return False
+            return True
         except SSLHandshakeError, e:
             self.log.error("The SSL certificate of the remote server is not valid. ({0})".format(e))
         except Exception, e:
