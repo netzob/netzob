@@ -334,8 +334,8 @@ class BugReporterController(object):
                 pos2 = content[pos:].index("</id>")
                 idIssue = content[pos + len("<issue><id>"):pos + pos2]
                 if int(idIssue) > 0:
-
                     issueContent = self.getCompleteDefinitionOfIssue(idIssue)
+
                     if issueContent is not None:
                         # now we verify the user didn't already reported it
                         authorXML = self.getCurrentAuthorXMLDefinition()
@@ -371,13 +371,13 @@ class BugReporterController(object):
             api_url = "{0}/users/current.xml?key={1}".format(BugReporterController.URL_TARGET_BUG_REPORT, self.apiKey)
             resp, content = h.request(api_url, 'GET')
 
-            regex = "<user><id>(.*)</id><login>(.*)</login><firstname>(.*)</firstname><lastname>(.*)</lastname>(.*)"
+            regex = "<user><id>(.*)</id>(.*)<firstname>(.*)</firstname><lastname>(.*)</lastname>(.*)"
             m = re.search(regex, content)
             idUser = m.group(1)
             firstnameUser = m.group(3)
             lastnameUser = m.group(4)
 
-            xmlAuthor = "name=\"{0} {1}\" id=\"{2}\"".format(firstnameUser, lastnameUser, idUser)
+            xmlAuthor = " name=\"{0} {1}\" id=\"{2}\"".format(firstnameUser, lastnameUser, idUser)
 
         except HTTPError, e:
             logging.error("An HTTPError occurred while trying to fetch user info {0}".format(e))
