@@ -40,6 +40,7 @@ import gi
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
 from netzob.Common.Threads.Job import Job
+from netzob.Common.Type.Format import Format
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -50,7 +51,7 @@ from netzob.UI.Vocabulary.Views.Partitioning.NewForcePartitioningView import New
 
 
 class NewForcePartitioningController(object):
-    """Manages the execution of the force partitioning on 
+    """Manages the execution of the force partitioning on
     the selected symbols"""
 
     def __init__(self, vocabularyController):
@@ -79,13 +80,15 @@ class NewForcePartitioningController(object):
         symbolList = self.vocabularyController.view.getCheckedSymbolList()
         delimiter = self._view.force_entry.get_text()
         if self._view.force_radiobutton_hexa.get_active():
-            delimiterType = "hexa"
+            delimiterType = Format.HEX
         else:
-            delimiterType = "string"
+            delimiterType = Format.STRING
+
         # encode the delimiter
         encodedDelimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, delimiterType)
 
-        Job(self.startForcePartitioning(symbolList, encodedDelimiter, format))
+        # create a job to execute the partitioning
+        Job(self.startForcePartitioning(symbolList, encodedDelimiter, delimiterType))
 
     def startForcePartitioning(self, symbols, delimiter, format):
         if len(symbols) > 0:
