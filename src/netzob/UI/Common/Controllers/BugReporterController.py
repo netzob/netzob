@@ -58,8 +58,8 @@ from gi.repository import GObject
 class BugReporterController(object):
     """Manage the bug reporting when an exception occurs"""
 
-    HOST_TARGET_BUG_RPEORT = "dev.netzob.org"
-    URL_TARGET_BUG_REPORT = "https://{0}".format(HOST_TARGET_BUG_RPEORT)
+    HOST_TARGET_BUG_REPORT = "dev.netzob.org"
+    URL_TARGET_BUG_REPORT = "https://{0}".format(HOST_TARGET_BUG_REPORT)
     PROJECT_NAME_BUG_REPORT = "abr"
     PROJECT_ID_BUG_REPORT = "3"
     TRACKER_ID_BUG_REPORT = "1"
@@ -205,7 +205,7 @@ class BugReporterController(object):
 
     def displayServerCertificate(self):
         # "https://tarantella.math.ethz.ch/"
-        remoteCertificate = ssl.get_server_certificate(("tarantella.math.ethz.ch", 443), ssl.PROTOCOL_SSLv3, None)
+        remoteCertificate = ssl.get_server_certificate((BugReporterController.HOST_TARGET_BUG_REPORT, 443), ssl.PROTOCOL_SSLv3, None)
 
         # Display the error dialog
         self._errorCertificateView = BugReporterCertificateErrorView(self)
