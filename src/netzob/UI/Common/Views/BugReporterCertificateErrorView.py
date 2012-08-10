@@ -45,18 +45,16 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class BugReporterView(object):
+class BugReporterCertificateErrorView(object):
 
     def __init__(self, controller):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui",
                                                 "dialogbox.glade"))
-        self._getObjects(self.builder, ["bugReporter",
-                                        "bugTrackerEntry", "bugReporterApiKeyEntry",
-                                        "reportTextView",
-                                        "bugReporterSaveButton", "bugReporterCancelButton", "bugReporterMessageBox",
-                                        "bugReporterInfoImg", "bugReporterWarnImg", "bugReporterWarnLabel", "bugReporterRememberAPIKeyCheckButton"])
+        self._getObjects(self.builder, ["certificateError",
+                                        "certificateErrorApplyButton", "certificateErrorCancelButton",
+                                        "certificateErrorTextView"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -65,4 +63,4 @@ class BugReporterView(object):
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.bugReporter.run()
+        self.certificateError.run()

@@ -34,6 +34,8 @@ import traceback
 import httplib2
 import hashlib
 import re
+import ssl
+import pprint
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -44,6 +46,8 @@ from netzob.UI.Common.Views.BugReporterView import BugReporterView
 from netzob import release
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from urllib2 import HTTPError
+from httplib2 import SSLHandshakeError
+from netzob.UI.Common.Views.BugReporterCertificateErrorView import BugReporterCertificateErrorView
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -54,7 +58,8 @@ from gi.repository import GObject
 class BugReporterController(object):
     """Manage the bug reporting when an exception occurs"""
 
-    URL_TARGET_BUG_REPORT = "https://dev.netzob.org"
+    HOST_TARGET_BUG_RPEORT = "dev.netzob.org"
+    URL_TARGET_BUG_REPORT = "https://{0}".format(HOST_TARGET_BUG_RPEORT)
     PROJECT_NAME_BUG_REPORT = "abr"
     PROJECT_ID_BUG_REPORT = "3"
     TRACKER_ID_BUG_REPORT = "1"
@@ -67,6 +72,7 @@ class BugReporterController(object):
         self.apiKey = ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile()
         self._view = BugReporterView(self)
         self.log = logging.getLogger(__name__)
+        self.disableRemoteCertificateVerification = False
 
         self.targetBugReport = "{0}/projects/{1}".format(BugReporterController.URL_TARGET_BUG_REPORT, BugReporterController.PROJECT_NAME_BUG_REPORT)
 
@@ -82,20 +88,55 @@ class BugReporterController(object):
 
     def bugReporter_save_clicked_cb(self, widget):
         """callback executed when the user request to send the report"""
-        self.log.debug("Start to send the report")
+
+        errorMessage = None
+        infoMessage = None
+
+        # verify :
+        # 0) server is UP
+        # 1) server https certificate is known
+        # 2) API Key is valid
+        if not self.isServerUp():
+            errorMessage = _("Impossible to contact the remote server.")
+            self.displayErrorAndInfoMessage(errorMessage, infoMessage)
+            return
+
+        if not self.isServerCertificateValid():
+            self.displayServerCertificate()
+
+        if not self.isAPIKeyValid():
+            errorMessage = _("Please verify your API key.")
+            self.displayErrorAndInfoMessage(errorMessage, infoMessage)
+            return
+
+        self._view.bugReporterSaveButton.set_sensitive(False)
+        self._view.bugReporterCancelButton.set_sensitive(True)
+        self._view.bugReporterCancelButton.set_label(_("Fermer"))
+
+        # Compute the content of the report
         reportContent = self.getReportContent()
+
+        # Verify if its a duplicated report
         idDuplicateIssue = self.getIssueWithContent(reportContent)
 
         if idDuplicateIssue is not None:
             if idDuplicateIssue > 0:
                 # Found a duplicated issue, we register the user as a watcher
-                self.log.debug("Bug already reported but we register you on it")
-                self.registerUserOnIssue(idDuplicateIssue)
+                self.log.info("Bug already reported but we register you on it")
+                registerErrorMessage = self.registerUserOnIssue(idDuplicateIssue)
+                if registerErrorMessage is None:
+                    infoMessage = _("You've been associated to the bug report {0}/issues/{1}.".format(BugReporterController.URL_TARGET_BUG_REPORT, idDuplicateIssue))
+                else:
+                    self.log.error(registerErrorMessage)
+                    errorMessage = _("An error occurred while you were associated with the bug report {0}/issues/{1}.".format(BugReporterController.URL_TARGET_BUG_REPORT, idDuplicateIssue))
+            else:
+                infoMessage = "You have already reported this bug."
         else:
-            self.log.debug("Bug has not been reported")
+            self.log.debug("This bug has never been reported yet.")
             errorMessage = self.publishReport(reportContent)
             if errorMessage is None:
-                pass
+                idDuplicateIssue = self.getIssueWithContent(reportContent)
+                infoMessage = _("The bug report has successfully been published on {0}/issues/{1}".format(BugReporterController.URL_TARGET_BUG_REPORT, idDuplicateIssue))
 
         # save the provided api key
         if self._view.bugReporterRememberAPIKeyCheckButton.get_active():
@@ -107,7 +148,20 @@ class BugReporterController(object):
             self.log.debug("Forget the API Key from the user configuration file.")
             ResourcesConfiguration.saveAPIKey(None)
 
-        self._view.bugReporter.destroy()
+        self.displayErrorAndInfoMessage(errorMessage, infoMessage)
+
+    def displayErrorAndInfoMessage(self, errorMessage, infoMessage):
+        self._view.bugReporterMessageBox.show_all()
+        if errorMessage is not None:
+            self._view.bugReporterWarnImg.show()
+            self._view.bugReporterInfoImg.hide()
+            self._view.bugReporterWarnLabel.set_text(errorMessage)
+        elif infoMessage is not None:
+            self._view.bugReporterInfoImg.show()
+            self._view.bugReporterWarnImg.hide()
+            self._view.bugReporterWarnLabel.set_text(infoMessage)
+        else:
+            self._view.bugReporter.destroy()
 
     def bugReporter_entry_changed_cb(self, widget):
         """Callback executed when the user modify the API Key entry"""
@@ -129,6 +183,58 @@ class BugReporterController(object):
         self._view.reportTextView.get_buffer().set_text(self.getReportContent())
         self._view.run()
 
+    def isServerUp(self):
+        """Computes if the remote server is up by sending an HTTPS Get connection"""
+        try:
+            h = httplib2.Http(disable_ssl_certificate_validation=True)
+            api_url = "{0}".format(BugReporterController.URL_TARGET_BUG_REPORT)
+            resp, content = h.request(api_url, 'GET')
+            return resp['status'] == '200'
+        except Exception, e:
+            self.log.error("Error while verifying the server is up : {0}".format(e))
+        return False
+
+    def isAPIKeyValid(self):
+        """Computes if the given API key is valid.
+        To do so, it verifies the status code of an http request using
+        the provided api key."""
+        h = httplib2.Http(disable_ssl_certificate_validation=self.disableRemoteCertificateVerification)
+        api_url = "{0}/issues.xml?key={1}".format(self.targetBugReport, self.apiKey)
+        resp, content = h.request(api_url, 'GET')
+        return resp['status'] == '200'
+
+    def displayServerCertificate(self):
+        # "https://tarantella.math.ethz.ch/"
+        remoteCertificate = ssl.get_server_certificate(("tarantella.math.ethz.ch", 443), ssl.PROTOCOL_SSLv3, None)
+
+        # Display the error dialog
+        self._errorCertificateView = BugReporterCertificateErrorView(self)
+        self._errorCertificateView.certificateErrorTextView.get_buffer().set_text(remoteCertificate)
+        self._errorCertificateView.run()
+
+    def certificateErrorApplyButton_clicked_cb(self, widget):
+        self.disableRemoteCertificateVerification = True
+        self._errorCertificateView.certificateError.destroy()
+
+    def certificateErrorCancelButton_clicked_cb(self, widget):
+        self.disableRemoteCertificateVerification = False
+        self._errorCertificateView.certificateError.destroy()
+
+    def isServerCertificateValid(self):
+        """Verify if the httplib2 considers the server certificate is valid.
+        @return: True if its a valid certificate
+        """
+        try:
+            h = httplib2.Http(disable_ssl_certificate_validation=False)
+            api_url = "{0}".format(BugReporterController.URL_TARGET_BUG_REPORT)
+            resp, content = h.request(api_url, 'GET')
+            return False
+        except SSLHandshakeError, e:
+            self.log.error("The SSL certificate of the remote server is not valid. ({0})".format(e))
+        except Exception, e:
+            self.log.error("An error occurred while verifying the SSL connection with the remote server : {0}".format(e))
+        return False
+
     def getReportContent(self):
         """Generates and returns the bug report content
         given the specified attributes which define the occurred exception."""
@@ -143,7 +249,7 @@ class BugReporterController(object):
         """
         sha1 = self.getSHA1Value(reportContent)
         try:
-            h = httplib2.Http(disable_ssl_certificate_validation=False)
+            h = httplib2.Http(disable_ssl_certificate_validation=self.disableRemoteCertificateVerification)
             api_url = "{0}/issues.xml?key={1}&project_id={2}&tracker_id={3}&cf_{4}={5}".format(self.targetBugReport, self.apiKey, BugReporterController.PROJECT_ID_BUG_REPORT, BugReporterController.TRACKER_ID_BUG_REPORT, BugReporterController.CUSTOM_FIELD_SHA2_ID_BUG_REPORT, sha1)
             resp, content = h.request(api_url, 'GET')
             return self.getIssueIDFromXML(content)
@@ -173,7 +279,7 @@ class BugReporterController(object):
       </custom_fields>
   </issue>""".format(BugReporterController.PROJECT_ID_BUG_REPORT, BugReporterController.TRACKER_ID_BUG_REPORT, subject, reportContent, BugReporterController.CUSTOM_FIELD_SHA2_ID_BUG_REPORT, sha1)
         try:
-            h = httplib2.Http(disable_ssl_certificate_validation=False)
+            h = httplib2.Http(disable_ssl_certificate_validation=self.disableRemoteCertificateVerification)
             api_url = "{0}/issues.xml?key={1}".format(self.targetBugReport, self.apiKey)
             resp, content = h.request(api_url, 'POST', xmlContent, headers={'Content-Type': 'application/xml'})
         except HTTPError, e:
@@ -194,7 +300,7 @@ class BugReporterController(object):
       <notes>+1</notes>
   </issue>"""
         try:
-            h = httplib2.Http(disable_ssl_certificate_validation=False)
+            h = httplib2.Http(disable_ssl_certificate_validation=self.disableRemoteCertificateVerification)
             api_url = "{0}/issues/{1}.xml?key={2}".format(self.targetBugReport, issueID, self.apiKey)
             resp, content = h.request(api_url, 'PUT', xmlContent, headers={'Content-Type': 'application/xml'})
         except HTTPError, e:
@@ -237,13 +343,13 @@ class BugReporterController(object):
                         else:
                             return int(idIssue)
         except Exception, e:
-            logging.error("An exception occurred while parsing the XML : {0}".format(e))
+            pass
         return None
 
     def getCompleteDefinitionOfIssue(self, idIssue):
         xmlContent = None
         try:
-            h = httplib2.Http(disable_ssl_certificate_validation=False)
+            h = httplib2.Http(disable_ssl_certificate_validation=self.disableRemoteCertificateVerification)
             api_url = "{0}/issues/{1}.xml?include=journals&key={2}".format(BugReporterController.URL_TARGET_BUG_REPORT, idIssue, self.apiKey)
             resp, xmlContent = h.request(api_url, 'GET')
         except HTTPError, e:
@@ -255,7 +361,7 @@ class BugReporterController(object):
     def getCurrentAuthorXMLDefinition(self):
         xmlAuthor = None
         try:
-            h = httplib2.Http(disable_ssl_certificate_validation=False)
+            h = httplib2.Http(disable_ssl_certificate_validation=self.disableRemoteCertificateVerification)
             api_url = "{0}/users/current.xml?key={1}".format(BugReporterController.URL_TARGET_BUG_REPORT, self.apiKey)
             resp, content = h.request(api_url, 'GET')
 
