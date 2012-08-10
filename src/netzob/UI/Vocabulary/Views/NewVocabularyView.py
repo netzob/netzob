@@ -37,6 +37,8 @@ import os
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from collections import OrderedDict
@@ -80,7 +82,7 @@ class NewVocabularyView(object):
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
                                         "fieldPropertiesListstore", "messageTableBox", "symbolListTreeView",
-                                        "symbolListTreeViewSelection"
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
@@ -297,6 +299,9 @@ class NewVocabularyView(object):
 
     ## Properties panel
     def getProjectProperties(self):
+        """Computes the set of properties
+        on the current project, and displays them
+        in the treeview"""
         project = self.getCurrentProject()
         properties = OrderedDict()
         if project != None:
@@ -305,12 +310,12 @@ class NewVocabularyView(object):
             properties['workspace'] = self.controller.netzob.getCurrentWorkspace().getPath()
             properties['name'] = project.getName()
             properties['date'] = project.getCreationDate()
-            properties['symbol'] = len(project.getVocabulary().getSymbols())
-            properties['message'] = len(project.getVocabulary().getMessages())
+            properties['symbols'] = len(project.getVocabulary().getSymbols())
+            properties['messages'] = len(project.getVocabulary().getMessages())
             field = 0
             for sym in project.getVocabulary().getSymbols():
                 field = field + len(sym.getFields())
-            properties['field'] = field
+            properties['fields'] = field
             properties[configuration.VOCABULARY_GLOBAL_FORMAT] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_FORMAT)
             properties[configuration.VOCABULARY_GLOBAL_UNITSIZE] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_UNITSIZE)
             properties[configuration.VOCABULARY_GLOBAL_SIGN] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_SIGN)
@@ -330,13 +335,29 @@ class NewVocabularyView(object):
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
 
     def getSymbolProperties(self):
+        """Create the list of properties associated
+        with the current displayed symbol"""
         symbol = self.getDisplayedSymbolInSelectedMessageTable()
         properties = OrderedDict()
         if symbol != None:
             properties['name'] = symbol.getName()
-            # ++CODE HERE++
-            # ADD PROPERTIES FROM symbol
-            # ADD LIST [ Type Structure , number of field , number of message , score , alignement type , 4 format variable ]
+            properties['messages'] = len(symbol.getMessages())
+            properties['fields'] = len(symbol.getFields())
+            minMsgSize = None
+            maxMsgSize = 0
+            avgMsgSize = 0
+            if len(symbol.getMessages()) > 0:
+                for m in symbol.getMessages():
+                    s = len(m.getData()) * 2
+                    if minMsgSize is None or s < minMsgSize:
+                        minMsgSize = s
+                    if maxMsgSize is None or s > maxMsgSize:
+                        maxMsgSize = s
+                    avgMsgSize += s
+                avgMsgSize = avgMsgSize / len(symbol.getMessages())
+            properties['avg msg size (bytes)'] = avgMsgSize
+            properties['min msg size (bytes)'] = minMsgSize
+            properties['max msg size (bytes)'] = maxMsgSize
         return properties
 
     def updateSymbolProperties(self):
@@ -349,6 +370,16 @@ class NewVocabularyView(object):
             line = self.symbolPropertiesListstore.append()
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
+
+        # update the message distribution graphic
+        #Todo when ploting in GTK3 will be available
+#        self.updateSymbolPropertiesMessagesDistribution()
+
+    def updateSymbolPropertiesMessagesDistribution(self):
+        currentSymbol = self.getDisplayedSymbolInSelectedMessageTable()
+        if currentSymbol is not None:
+            messagesDistributionController = MessagesDistributionController([])
+            messagesDistributionController.run(self.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
         return []

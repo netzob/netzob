@@ -52,9 +52,10 @@ class MessagesDistributionView(object):
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.MessagesDistributionView.py')
         self.controller = controller
 
-    def buildListDistributionView(self):
+    def buildListDistributionView(self, panel=None):
         symbolDataPointList = []
         symbolNameList = []
+        axis = None
         #calculate the distribution for each symbol
         for symbol in self.controller.symbolList:
             i = 0
@@ -85,14 +86,15 @@ class MessagesDistributionView(object):
             symbolPointObjectList.append(data[0])
 
         #add legend
-        axis.legend(symbolPointObjectList, symbolNameList, 'upper right')
-        axis.hold(True)
+        if axis is not None:
+            axis.legend(symbolPointObjectList, symbolNameList, 'upper right')
+            axis.hold(True)
 
-        #add reload color button
-        reloadColor = plt.axes([0.735, 0.9, 0.15, 0.075])
-        button = Button(reloadColor, 'Reload color')
-        button.on_clicked(self.reloadColor_cb)
-        self.axis = axis
+            #add reload color button
+            reloadColor = plt.axes([0.735, 0.9, 0.15, 0.075])
+            button = Button(reloadColor, 'Reload color')
+            button.on_clicked(self.reloadColor_cb)
+            self.axis = axis
         self.symbolPointObjectList = symbolPointObjectList
         self.symbolNameList = symbolNameList
 
@@ -104,11 +106,17 @@ class MessagesDistributionView(object):
             maxX = max([max(resX), maxX])
             maxY = max([max(resY), maxY])
 
-        axis.set_xlim(0, maxX + 5)
-        axis.set_ylim(0, maxY + 5)
+        if axis is not None:
+            axis.set_xlim(0, maxX + 5)
+            axis.set_ylim(0, maxY + 5)
 
-        #display figure
-        show()
+        if panel == None:
+            #display figure
+            show()
+        else:
+            canvas = FigureCanvasGTK(fig)
+            canvas.show()
+            panel.pack_start(self.canvas, True, True)
 
     def reloadColor_cb(self, event):
         for point in self.symbolPointObjectList:

@@ -49,5 +49,5 @@ class MessagesDistributionController(object):
         self.symbolList = symbolList
         self._view = MessagesDistributionView(self)
 
-    def run(self):
-        self._view.buildListDistributionView()
+    def run(self, panel=None):
+        self._view.buildListDistributionView(panel)
