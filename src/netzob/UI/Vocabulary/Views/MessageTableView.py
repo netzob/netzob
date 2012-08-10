@@ -77,14 +77,14 @@ class MessageTableView(object):
         messageTableTreeView.connect("enter-notify-event", self.controller.messageTableTreeView_enter_notify_event_cb)
         messageTableTreeView.connect("leave-notify-event", self.controller.messageTableTreeView_leave_notify_event_cb)
         messageTableTreeView.connect("button-press-event", self.controller.messageTableTreeView_button_press_event_cb)
+        messageTableTreeView.get_selection().connect("changed", self.controller.messageTableTreeView_changed_event_cb)
         messageTableTreeView.set_rules_hint(True)
         messageTableTreeView.set_grid_lines(Gtk.TreeViewGridLines.BOTH)
         # Create columns
         if self.displayedSymbol is None:
             return messageTableTreeView
-        numOfColumns = min(self.MAX_DISPLAYED_FIELDS,
-                           len(self.displayedSymbol.getFields()))
-        for colIdx in range(0, numOfColumns):
+        numOfColumns = 1 + min(self.MAX_DISPLAYED_FIELDS, len(self.displayedSymbol.getFields()))
+        for colIdx in range(1, numOfColumns):
             (tvc, head) = self.__makeTreeViewColumn(colIdx)
             #tvc.set_clickable(True)
             messageTableTreeView.append_column(tvc)
@@ -105,6 +105,7 @@ class MessageTableView(object):
         return messageTableTreeView
 
     def __makeTreeViewColumn(self, i):
+        i = i - 1
         markupCellRenderer = Gtk.CellRendererText()
         treeViewColumn = Gtk.TreeViewColumn()
         field = self.displayedSymbol.getFieldByIndex(i)
@@ -114,7 +115,7 @@ class MessageTableView(object):
         treeViewColumn.set_widget(headerWidget)
         treeViewColumn.set_resizable(True)
         treeViewColumn.pack_start(markupCellRenderer, True)
-        treeViewColumn.add_attribute(markupCellRenderer, "markup", i)
+        treeViewColumn.add_attribute(markupCellRenderer, "markup", i + 1)
         markupCellRenderer.set_property("font", "monospace")
         return (treeViewColumn, headerWidget)
 
@@ -154,7 +155,8 @@ class MessageTableView(object):
         # Split every message
         for message in self.displayedSymbol.getMessages():
             try:
-                splitMessage = message.applyAlignment(styled=True, encoded=True)
+                splitMessage = [str(message.getID())]
+                splitMessage.extend(message.applyAlignment(styled=True, encoded=True))
             except NetzobException:
                 self.log.warn("Impossible to display one of messages since it "
                               + "cannot be cut according to the computed regex.")
@@ -164,7 +166,8 @@ class MessageTableView(object):
         # Setup listStore
         numOfColumns = min(self.MAX_DISPLAYED_FIELDS,
                            len(self.displayedSymbol.getFields()))
-        listStoreTypes = [str] * numOfColumns
+        # the list store must include the ID and a column for every field
+        listStoreTypes = [str] * (numOfColumns + 1)
         self.messageTableListStore = Gtk.ListStore(*listStoreTypes)
         # Fill listStore with split messages
         for splitMessage in splitMessagesMatrix:

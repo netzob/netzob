@@ -279,7 +279,6 @@ class NewVocabularyView(object):
         if symbol is None:
             selection.unselect_all()
         else:
-            print symbol.getID()
             path = self.getSymbolPathInSymbolList(symbol)
             if path is not None:
                 selection.select_path(path)
@@ -290,6 +289,10 @@ class NewVocabularyView(object):
         if iter is not None:
             symID = model[iter][self.SYMBOLLISTSTORE_ID_COLUMN]
             return currentVocabulary.getSymbolByID(symID)
+
+    def getSelectedMessageInSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            return self.selectedMessageTable.controller.getSelectedMessage()
 
     def getSymbolPathInSymbolList(self, symbol):
         symID = symbol.getID()
@@ -382,15 +385,17 @@ class NewVocabularyView(object):
             messagesDistributionController.run(self.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
-        return []
-#        message = self.focusMessageTable.getFocusMessage()#TODO METHOD
-#        properties = OrderedDict()
-#        if message != None:
-#            properties['name'] = message.getName()
-#            # ++CODE HERE++
-#            # ADD PROPERTIES FROM message
-#            # ADD LIST [ Type ,TimeStamp,Filename of the source,Creation date ,Modification date,Owner,size,line number,data ]
-#        return properties
+        """Retrieve the current selected message (in the selected TableMessage)
+        and return its properties"""
+        message = self.getSelectedMessageInSelectedMessageTable()
+        if message is not None:
+            properties = OrderedDict()
+            if message != None:
+                for p in message.getProperties():
+                    properties[p[0]] = str(p[2])
+            return properties
+        else:
+            return []
 
     def updateMessageProperties(self):
         # clean store

@@ -36,10 +36,28 @@ class MessageTableController(object):
     def __init__(self, vocabularyPerspective):
         self.vocabularyPerspective = vocabularyPerspective
         self._view = MessageTableView(self)
+        self.selectedMessage = None
 
     @property
     def view(self):
         return self._view
+
+    def getSelectedMessage(self):
+        return self.selectedMessage
+
+    def messageTableTreeView_changed_event_cb(self, selection):
+        """Callback executed when the user
+        clicks on a message in the MessageTable"""
+        if selection is not None:
+            model, iter = selection.get_selected()
+            if iter is not None:
+                msgID = model[iter][0]
+                if msgID is not None:
+                    self.selectedMessage = self.vocabularyPerspective.getCurrentProject().getVocabulary().getMessageByID(msgID)
+                    self.vocabularyPerspective.updateMessageProperties()
+                    return
+        self.selectedMessage = None
+        self.vocabularyPerspective.updateMessageProperties()
 
     def messageListBox_button_press_event_cb(self, box, eventButton):
         self.vocabularyPerspective.setSelectedMessageTable(self.view)
