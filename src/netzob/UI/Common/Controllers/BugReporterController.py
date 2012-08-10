@@ -54,6 +54,12 @@ from gi.repository import GObject
 class BugReporterController(object):
     """Manage the bug reporting when an exception occurs"""
 
+    URL_TARGET_BUG_REPORT = "https://dev.netzob.org"
+    PROJECT_NAME_BUG_REPORT = "abr"
+    PROJECT_ID_BUG_REPORT = "3"
+    TRACKER_ID_BUG_REPORT = "1"
+    CUSTOM_FIELD_SHA2_ID_BUG_REPORT = "5"
+
     def __init__(self, exceptionClass, exceptionInstance, traceback):
         self.exceptionClass = exceptionClass
         self.exceptionInstance = exceptionInstance
@@ -61,11 +67,9 @@ class BugReporterController(object):
         self.apiKey = ResourcesConfiguration.extractAPIKeyDefinitionFromLocalFile()
         self._view = BugReporterView(self)
         self.log = logging.getLogger(__name__)
-        self.shortTargetBugReport = "https://dev.netzob.org"
-        self.targetBugReport = "{0}/projects/abr".format(self.shortTargetBugReport)
 
-        self.project_id = "3"
-        self.tracker_id = "1"
+        self.targetBugReport = "{0}/projects/{1}".format(BugReporterController.URL_TARGET_BUG_REPORT, BugReporterController.PROJECT_NAME_BUG_REPORT)
+
         self.customFieldSHA2ID = "5"
 
     @property
@@ -140,7 +144,7 @@ class BugReporterController(object):
         sha1 = self.getSHA1Value(reportContent)
         try:
             h = httplib2.Http(disable_ssl_certificate_validation=False)
-            api_url = "{0}/issues.xml?key={1}&project_id={2}&tracker_id={3}&cf_{4}={5}".format(self.targetBugReport, self.apiKey, self.project_id, self.tracker_id, self.customFieldSHA2ID, sha1)
+            api_url = "{0}/issues.xml?key={1}&project_id={2}&tracker_id={3}&cf_{4}={5}".format(self.targetBugReport, self.apiKey, BugReporterController.PROJECT_ID_BUG_REPORT, BugReporterController.TRACKER_ID_BUG_REPORT, BugReporterController.CUSTOM_FIELD_SHA2_ID_BUG_REPORT, sha1)
             resp, content = h.request(api_url, 'GET')
             return self.getIssueIDFromXML(content)
 
@@ -167,7 +171,7 @@ class BugReporterController(object):
             <value>{5}</value>
         </custom_field>
       </custom_fields>
-  </issue>""".format(self.project_id, self.tracker_id, subject, reportContent, self.customFieldSHA2ID, sha1)
+  </issue>""".format(BugReporterController.PROJECT_ID_BUG_REPORT, BugReporterController.TRACKER_ID_BUG_REPORT, subject, reportContent, BugReporterController.CUSTOM_FIELD_SHA2_ID_BUG_REPORT, sha1)
         try:
             h = httplib2.Http(disable_ssl_certificate_validation=False)
             api_url = "{0}/issues.xml?key={1}".format(self.targetBugReport, self.apiKey)
@@ -240,7 +244,7 @@ class BugReporterController(object):
         xmlContent = None
         try:
             h = httplib2.Http(disable_ssl_certificate_validation=False)
-            api_url = "{0}/issues/{1}.xml?include=journals&key={2}".format(self.shortTargetBugReport, idIssue, self.apiKey)
+            api_url = "{0}/issues/{1}.xml?include=journals&key={2}".format(BugReporterController.URL_TARGET_BUG_REPORT, idIssue, self.apiKey)
             resp, xmlContent = h.request(api_url, 'GET')
         except HTTPError, e:
             logging.error("An HTTPError occurred while trying to fetch user info {0}".format(e))
@@ -252,7 +256,7 @@ class BugReporterController(object):
         xmlAuthor = None
         try:
             h = httplib2.Http(disable_ssl_certificate_validation=False)
-            api_url = "{0}/users/current.xml?key={1}".format(self.shortTargetBugReport, self.apiKey)
+            api_url = "{0}/users/current.xml?key={1}".format(BugReporterController.URL_TARGET_BUG_REPORT, self.apiKey)
             resp, content = h.request(api_url, 'GET')
 
             regex = "<user><id>(.*)</id><login>(.*)</login><firstname>(.*)</firstname><lastname>(.*)</lastname>(.*)"
