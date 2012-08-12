@@ -12,7 +12,6 @@
         <menuitem action="partitioningForce" />
         <menuitem action="partitioningSimple" />
         <menuitem action="partitioningSmooth" />
-        <menuitem action="partitioningFreeze" />
         <menuitem action="partitioningReset" />
       </menu>
       <menu action="manualToolMenu">
@@ -41,7 +40,6 @@
       <toolitem action="partitioningForce" />
       <toolitem action="partitioningSimple" />
       <toolitem action="partitioningSmooth" />
-      <toolitem action="partitioningFreeze" />
       <toolitem action="partitioningReset" />
       <separator />
       <toolitem action="concatField" />

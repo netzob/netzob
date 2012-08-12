@@ -36,13 +36,6 @@
       </object>
     </child>
     <child>
-      <object class="GtkToggleAction" id="partitioningFreeze">
-        <property name="label" translatable="yes">Freeze Partitioning</property>
-        <property name="tooltip" translatable="yes">Freeze the partitioning of selected symbol</property>
-        <property name="stock_id">netzob-partitioning-freeze</property>
-      </object>
-    </child>
-    <child>
       <object class="GtkAction" id="partitioningReset">
         <property name="label" translatable="yes">Reset Partitioning</property>
         <property name="tooltip" translatable="yes">Reset partitioning of selected symbol</property>
