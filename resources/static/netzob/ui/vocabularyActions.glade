@@ -166,5 +166,11 @@
         <property name="label" translatable="yes">Search</property>
       </object>
     </child>
+    <child>
+      <object class="GtkAction" id="relationsViewer">
+        <property name="label" translatable="yes">Relations</property>
+        <signal name="activate" handler="relationsViewer_activate_cb" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>

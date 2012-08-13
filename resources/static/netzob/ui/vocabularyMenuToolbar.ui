@@ -27,6 +27,7 @@
         <menuitem action="environmentDep" />
         <menuitem action="messagesDistribution" />
         <menuitem action="variableTable" />
+        <menuitem action="relationsViewer" />
         <menuitem action="fieldLimits" />
       </menu>
     </placeholder>

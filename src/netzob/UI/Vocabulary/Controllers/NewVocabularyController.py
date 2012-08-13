@@ -42,6 +42,7 @@ from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
+from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -288,6 +289,10 @@ class NewVocabularyController(object):
     def messagesDistribution_activate_cb(self, action):
         distribution = MessagesDistributionController(self._view.getCheckedSymbolList())
         distribution.run()
+
+    def relationsViewer_activate_cb(self, action):
+        relations = RelationsController(self)
+        relations.show()
 
     def variableTable_activate_cb(self, action):
         builder2 = Gtk.Builder()
