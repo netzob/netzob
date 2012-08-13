@@ -29,6 +29,7 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 import os
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -77,9 +78,15 @@ class MessageTableView(object):
         messageTableTreeView.connect("enter-notify-event", self.controller.messageTableTreeView_enter_notify_event_cb)
         messageTableTreeView.connect("leave-notify-event", self.controller.messageTableTreeView_leave_notify_event_cb)
         messageTableTreeView.connect("button-press-event", self.controller.messageTableTreeView_button_press_event_cb)
+        messageTableTreeView.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         messageTableTreeView.get_selection().connect("changed", self.controller.messageTableTreeView_changed_event_cb)
         messageTableTreeView.set_rules_hint(True)
         messageTableTreeView.set_grid_lines(Gtk.TreeViewGridLines.BOTH)
+        # Configures it as a Drag Source
+        messageTableTreeView.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [], Gdk.DragAction.MOVE)
+        messageTableTreeView.connect("drag-data-get", self.__drag_data_get_event)
+        messageTableTreeView.drag_source_add_text_targets()
+
         # Create columns
         if self.displayedSymbol is None:
             return messageTableTreeView
@@ -158,9 +165,8 @@ class MessageTableView(object):
                 splitMessage = [str(message.getID())]
                 splitMessage.extend(message.applyAlignment(styled=True, encoded=True))
             except NetzobException:
-                self.log.warn("Impossible to display one of messages since it "
-                              + "cannot be cut according to the computed regex.")
-                self.log.warn("Message : " + str(message.getStringData()))
+                logging.warn("Impossible to display one of messages since it cannot be cut according to the computed regex.")
+                logging.warn("Message : " + str(message.getStringData()))
                 continue  # We don't display the message in error
             splitMessagesMatrix.append(splitMessage)
         # Setup listStore
@@ -209,6 +215,16 @@ class MessageTableView(object):
             normalFont = Pango.FontDescription()
             normalFont.set_weight(Pango.Weight.NORMAL)
             self.symbolNameLabel.modify_font(normalFont)
+
+    def __drag_data_get_event(self, widget, drag_context, data, info, time):
+        """Callback executed when the user request this treeview as the the
+        source of its drag and drop operation"""
+        (model, rows) = widget.get_selection().get_selected_rows()
+        if rows is not None:
+            for row in rows:
+                msgID = model[row][0]
+                if msgID is not None:
+                    data.set_text("m:{0}".format(msgID), -1)
 
     def update(self):
         self.updateSymbolNameLabel()

@@ -52,11 +52,12 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 class NewSequenceAlignmentController(object):
     '''Controls the execution of the alignment process'''
 
-    def __init__(self, vocabularyController):
+    def __init__(self, vocabularyController, symbols=None):
         self.vocabularyController = vocabularyController
         self._view = NewSequenceAlignmentView(self)
         self.log = logging.getLogger(__name__)
         self.alignmentSolution = None
+        self.symbols = symbols
 
     @property
     def view(self):
@@ -80,7 +81,6 @@ class NewSequenceAlignmentController(object):
         self._view.smoothButton.set_sensitive(False)
 
         # retrieves the alignment parameters
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
         similarityPercent = self._view.sequence_adjustment.get_value()
         if self._view.radiobutton8bit.get_mode():
             unitSize = 8
@@ -98,7 +98,7 @@ class NewSequenceAlignmentController(object):
 
         # Define the alignment JOB
         self._view.sequence_stop.set_sensitive(True)
-        Job(self.startSequenceAlignment(symbolList, unitSize))
+        Job(self.startSequenceAlignment(self.symbols, unitSize))
 
     def startSequenceAlignment(self, symbols, unitSize):
         """Definition of a JOB, which executes the alignment process

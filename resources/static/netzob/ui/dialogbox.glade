@@ -219,7 +219,7 @@ Thank you for your help.</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="editable">False</property>
-                    <property name="invisible_char">●</property>
+                    <property name="invisible_char">â—</property>
                     <property name="invisible_char_set">True</property>
                   </object>
                   <packing>
@@ -264,7 +264,7 @@ Thank you for your help.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
-                        <property name="invisible_char">●</property>
+                        <property name="invisible_char">â—</property>
                         <property name="invisible_char_set">True</property>
                         <signal name="changed" handler="bugReporter_entry_changed_cb" swapped="no"/>
                       </object>
@@ -602,7 +602,7 @@ is not valid !</property>
               <object class="GtkEntry" id="entry1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
+                <property name="invisible_char">â—</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -754,7 +754,7 @@ is not valid !</property>
                 <property name="hexpand">True</property>
                 <property name="orientation">vertical</property>
                 <property name="action">select-folder</property>
-                <property name="title" translatable="yes">Sélectionner un répertoire</property>
+                <property name="title" translatable="yes">SÃ©lectionner un rÃ©pertoire</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -768,7 +768,7 @@ is not valid !</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
-                <property name="invisible_char">●</property>
+                <property name="invisible_char">â—</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -1038,7 +1038,7 @@ is not valid !</property>
               <object class="GtkEntry" id="entry4">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
+                <property name="invisible_char">â—</property>
                 <property name="invisible_char_set">True</property>
               </object>
               <packing>
@@ -1137,7 +1137,7 @@ is not valid !</property>
               <object class="GtkEntry" id="entry3">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
+                <property name="invisible_char">â—</property>
                 <property name="invisible_char_set">True</property>
               </object>
               <packing>
@@ -1278,7 +1278,7 @@ is not valid !</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <property name="action">select-folder</property>
-                <property name="title" translatable="yes">Sélectionner un répertoire</property>
+                <property name="title" translatable="yes">SÃ©lectionner un rÃ©pertoire</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -1301,3 +1301,4 @@ is not valid !</property>
     </action-widgets>
   </object>
 </interface>
+

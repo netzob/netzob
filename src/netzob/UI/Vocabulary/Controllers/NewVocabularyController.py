@@ -241,7 +241,8 @@ class NewVocabularyController(object):
 
 ######### MENU / TOOLBAR ENTRIES CONTROLLERS
     def sequenceAlignment_activate_cb(self, action):
-        sequence_controller = NewSequenceAlignmentController(self)
+        symbols = self.view.getCheckedSymbolList()
+        sequence_controller = NewSequenceAlignmentController(self, symbols)
         sequence_controller.run()
 
     def partitioningForce_activate_cb(self, action):
@@ -365,3 +366,12 @@ class NewVocabularyController(object):
     def getCurrentProject(self):
         """Return the current project (can be None)"""
         return self.netzob.getCurrentProject()
+
+    def moveMessage(self, message, targetSymbol):
+        """Move the provided message in the specified symbol.
+        Warning, this method do not consider the possible regex problems
+        which needs to be addressed by a set of dedicated solutions"""
+        sourceSymbolID = message.getSymbol().getID()
+        sourceSymbol = self.getCurrentProject().getVocabulary().getSymbolByID(sourceSymbolID)
+        sourceSymbol.removeMessage(message)
+        targetSymbol.addMessage(message)

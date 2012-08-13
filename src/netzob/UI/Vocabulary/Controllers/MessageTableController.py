@@ -49,8 +49,9 @@ class MessageTableController(object):
         """Callback executed when the user
         clicks on a message in the MessageTable"""
         if selection is not None:
-            model, iter = selection.get_selected()
-            if iter is not None:
+            (model, rows) = selection.get_selected_rows()
+            if rows is not None and len(rows) > 0:
+                iter = rows[0]
                 msgID = model[iter][0]
                 if msgID is not None:
                     self.selectedMessage = self.vocabularyPerspective.getCurrentProject().getVocabulary().getMessageByID(msgID)

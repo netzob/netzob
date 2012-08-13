@@ -39,6 +39,7 @@ import gi
 from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from collections import OrderedDict
@@ -86,6 +87,11 @@ class NewVocabularyView(object):
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
+        # Configure the drag and drop
+        self.symbolListTreeView.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
+        self.symbolListTreeView.connect('drag-data-received', self.drag_data_received_event)
+        self.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
+        self.symbolListTreeView.drag_dest_add_text_targets()
         # List of currently displayed message tables
         self.messageTableList = []
         self.selectedMessageTable = None
@@ -131,6 +137,44 @@ class NewVocabularyView(object):
     def getMenuToolbarUIDefinition(self):
         return self._uiDefinition
 
+    def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
+        """Callback executed when the user drops
+        some data in the treeview of symbols."""
+        receivedData = data.get_text()
+
+        # retrieve the drop row
+        path, position = widget.get_dest_row_at_pos(x, y)
+        targetSymbol = None
+        if path is not None:
+            symbolID = widget.get_model()[path][NewVocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            if symbolID is not None:
+                targetSymbol = self.controller.getCurrentProject().getVocabulary().getSymbolByID(symbolID)
+
+        if targetSymbol is None:
+            return
+
+        if receivedData is not None and len(receivedData) > 2:
+            if targetSymbol is not None and receivedData[:2] == "m:":
+                for msgID in receivedData[2:].split(","):
+                    message = self.controller.getCurrentProject().getVocabulary().getMessageByID(msgID)
+                    # verify if the target symbol's regex is valid according to the message
+                    if message is not None:
+                        if targetSymbol.isRegexValidForMessage(message):
+                            self.controller.moveMessage(message, targetSymbol)
+                        else:
+                            self.drag_receivedMessages(targetSymbol, message)
+                        self.updateSelectedMessageTable()
+                        self.updateLeftPanel()
+
+    def drag_receivedMessages(self, targetSymbol, message):
+        """Executed by the drop callback which has discovered
+        some messages (identified by their ID) to be moved from their
+        current symbol to the selected symbol"""
+        if message is not None:
+            targetSymbol.addMessage(message)
+            moveMessageController = MoveMessageController(self.controller, message, targetSymbol)
+            moveMessageController.run()
+
     ## View manipulation methods
     def updateLeftPanel(self):
         self.updateSymbolList()
@@ -168,6 +212,10 @@ class NewVocabularyView(object):
                              if mTable.getDisplayedSymbol() in symbolList]
         for mTable in toBeRemovedTables:
             mTable.setDisplayedSymbol(None)
+
+    def updateSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            self.selectedMessageTable.update()
 
     def updateMessageTableDisplayingSymbols(self, symbolList):
         toBeUpdatedTables = [mTable for mTable in self.messageTableList

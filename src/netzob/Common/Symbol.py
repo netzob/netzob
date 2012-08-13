@@ -911,7 +911,10 @@ class Symbol(AbstractSymbol):
     #| message and recompute regex and score
     #+----------------------------------------------
     def removeMessage(self, message):
-        self.messages.remove(message)
+        if message in self.messages:
+            self.messages.remove(message)
+        else:
+            self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
 
     def addMessage(self, message):
         for msg in self.messages:
@@ -1162,7 +1165,15 @@ class Symbol(AbstractSymbol):
         return self.id
 
     def getMessages(self):
-        return self.messages
+        """Computes and returns messages
+        associated with the current symbol"""
+        result = []
+        for message in self.messages:
+            if message.getSymbol() is self:
+                result.append(message)
+            else:
+                self.removeMessage(message)
+        return result
 
     def getScore(self):
         return self.score
@@ -1250,6 +1261,25 @@ class Symbol(AbstractSymbol):
         self.endianess = endianess
         for field in self.getFields():
             field.setEndianess(endianess)
+
+    def isRegexValidForMessage(self, message):
+        """Offers to verify if the provided message
+        can be splitted in fields following their definition
+        in the current symbol"""
+        regex = []
+        for field in self.getFields():
+            regex.append(field.getRegex())
+        # Now we apply the regex over the message
+        try:
+            compiledRegex = re.compile("".join(regex))
+            data = message.getReducedStringData()
+            dynamicDatas = compiledRegex.match(data)
+        except AssertionError:
+            return False
+
+        if dynamicDatas is None:
+            return False
+        return True
 
     def __str__(self):
         return str(self.getName())
