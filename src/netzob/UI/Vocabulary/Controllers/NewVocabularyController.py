@@ -38,11 +38,6 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk
 import gi
-from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
-from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
-from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
-from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -56,6 +51,12 @@ from netzob.UI.Vocabulary.Controllers.Partitioning.NewForcePartitioningControlle
 from netzob.UI.Vocabulary.Controllers.Partitioning.NewSimplePartitioningController import NewSimplePartitioningController
 from netzob.UI.Vocabulary.Controllers.Partitioning.NewSmoothPartitioningController import NewSmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
+from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
+from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
+from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
+from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
+from netzob.UI.NetzobWidgets import NetzobQuestionMessage
+from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 
 
 class NewVocabularyController(object):
@@ -279,7 +280,18 @@ class NewVocabularyController(object):
         pass
 
     def deleteMessages_activate_cb(self, action):
-        pass
+        questionMsg = _("Click yes to confirm the deletion of the selected message(s)")
+        result = NetzobQuestionMessage(questionMsg)
+        if result != Gtk.ResponseType.YES:
+            return
+        selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
+        for message in selectedMessages:
+            # Remove message from model
+            self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
+            message.getSymbol().removeMessage(message)
+        # Update view
+        self.view.updateSelectedMessageTable()
+        self.view.updateLeftPanel()
 
     def searchText_activate_cb(self, action):
         self._view.researchController.show()
