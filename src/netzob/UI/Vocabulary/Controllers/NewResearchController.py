@@ -58,6 +58,7 @@ class NewResearchController(object):
         return self._view
 
     def show(self):
+        print "show research bar"
         self._view.researchBar.show()
 
     def hide(self):

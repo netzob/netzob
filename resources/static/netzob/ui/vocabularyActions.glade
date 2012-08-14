@@ -3,23 +3,6 @@
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkActionGroup" id="vocabularyActionGroup">
     <child>
-      <object class="GtkAction" id="partitioningForce">
-        <property name="label" translatable="yes">Force Partitioning</property>
-        <property name="tooltip" translatable="yes">Use force partitioning on selected symbol</property>
-        <property name="stock_id">netzob-partitioning-force</property>
-        <signal name="activate" handler="partitioningForce_activate_cb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkAction" id="sequenceAlignment">
-        <property name="label" translatable="yes">Sequence Alignment</property>
-        <property name="tooltip" translatable="yes">Use sequence alignment on selected symbol</property>
-        <property name="stock_id">netzob-partitioning-sequence</property>
-        <property name="is_important">True</property>
-        <signal name="activate" handler="sequenceAlignment_activate_cb" swapped="no"/>
-      </object>
-    </child>
-    <child>
       <object class="GtkAction" id="partitioningSimple">
         <property name="label" translatable="yes">Simple Partitioning</property>
         <property name="tooltip" translatable="yes">Use simple partioning on selected symbol</property>
@@ -92,14 +75,6 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="searchText">
-        <property name="label" translatable="yes">Search Text</property>
-        <property name="tooltip" translatable="yes">Search a string in all messages of current symbol</property>
-        <property name="stock_id">gtk-find</property>
-        <signal name="activate" handler="searchText_activate_cb" swapped="no"/>
-      </object>
-    </child>
-    <child>
       <object class="GtkAction" id="environmentDep">
         <property name="label" translatable="yes">Environment Dependencies</property>
         <property name="tooltip" translatable="yes">Search environment dependencies for all message</property>
@@ -162,14 +137,39 @@
       </object>
     </child>
     <child>
+      <object class="GtkAction" id="relationsViewer">
+        <property name="label" translatable="yes">Relations</property>
+        <signal name="activate" handler="relationsViewer_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="partitioningForce">
+        <property name="label" translatable="yes">Force Partitioning</property>
+        <property name="tooltip" translatable="yes">Use force partitioning on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-force</property>
+        <signal name="activate" handler="partitioningForce_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
       <object class="GtkAction" id="searchMenu">
         <property name="label" translatable="yes">Search</property>
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="relationsViewer">
-        <property name="label" translatable="yes">Relations</property>
-        <signal name="activate" handler="relationsViewer_activate_cb" swapped="no"/>
+      <object class="GtkAction" id="sequenceAlignment">
+        <property name="label" translatable="yes">Sequence Alignment</property>
+        <property name="tooltip" translatable="yes">Use sequence alignment on selected symbol</property>
+        <property name="stock_id">netzob-partitioning-sequence</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="sequenceAlignment_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkToggleAction" id="searchText">
+        <property name="label" translatable="yes">Search Text</property>
+        <property name="tooltip" translatable="yes">Search a string in all messages of current symbol</property>
+        <property name="stock_id">gtk-find</property>
+        <signal name="toggled" handler="searchText_toggled_cb" swapped="no"/>
       </object>
     </child>
   </object>

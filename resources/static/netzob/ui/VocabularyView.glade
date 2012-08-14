@@ -650,10 +650,25 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="messageTableBox">
+          <object class="GtkBox" id="messageTableBoxAndResearchBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox" id="messageTableBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <placeholder/>
             </child>

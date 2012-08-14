@@ -84,7 +84,7 @@ class NewVocabularyView(object):
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
                                         "messageTableBox", "symbolListTreeView",
-                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport"
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
@@ -100,7 +100,7 @@ class NewVocabularyView(object):
         self.netzobBegin = None
         # add the researchBar
         self.researchController = NewResearchController(self.controller)
-        self.messageTableBox.pack_end(self.researchController._view.researchBar, False, False, 0)
+        self.messageTableBoxAndResearchBox.pack_end(self.researchController._view.researchBar, False, False, 0)
         self.researchController._view.research_format.set_active(4)
         self.researchController.hide()
 

@@ -332,8 +332,13 @@ class NewVocabularyController(object):
         self.view.updateSelectedMessageTable()
         self.view.updateLeftPanel()
 
-    def searchText_activate_cb(self, action):
-        self._view.researchController.show()
+    def searchText_toggled_cb(self, action):
+        """Callback executed when the user clicks
+        on the research toggle button"""
+        if action.get_active():
+            self._view.researchController.show()
+        else:
+            self._view.researchController.hide()
 
     def environmentDep_activate_cb(self, action):
         pass
