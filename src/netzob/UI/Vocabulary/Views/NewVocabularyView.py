@@ -338,9 +338,9 @@ class NewVocabularyView(object):
             symID = model[iter][self.SYMBOLLISTSTORE_ID_COLUMN]
             return currentVocabulary.getSymbolByID(symID)
 
-    def getSelectedMessageInSelectedMessageTable(self):
+    def getSelectedMessagesInSelectedMessageTable(self):
         if self.selectedMessageTable is not None:
-            return self.selectedMessageTable.controller.getSelectedMessage()
+            return self.selectedMessageTable.controller.getSelectedMessages()
 
     def getSymbolPathInSymbolList(self, symbol):
         symID = symbol.getID()
@@ -431,10 +431,11 @@ class NewVocabularyView(object):
             variableDisplayerController.run(self.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
-        """Retrieve the current selected message (in the selected TableMessage)
-        and return its properties"""
-        message = self.getSelectedMessageInSelectedMessageTable()
-        if message is not None:
+        """Retrieve the current first selected message (in the
+        selected TableMessage) and return its properties"""
+        messages = self.getSelectedMessagesInSelectedMessageTable()
+        if messages is not None and len(messages) > 0:
+            message = messages[0]
             properties = OrderedDict()
             if message != None:
                 for p in message.getProperties():

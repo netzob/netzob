@@ -128,6 +128,19 @@ def NetzobInfoMessage(text):
     md.run()
     md.destroy()
 
+#+---------------------------------------------------------------------------+
+#| NetzobQuestionMessage:
+#+---------------------------------------------------------------------------+
+def NetzobQuestionMessage(text):
+    md = Gtk.MessageDialog(None,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.QUESTION,
+                           Gtk.ButtonsType.YES_NO,
+                           text)
+    result = md.run()
+    md.destroy()
+    return result
+
 
 def addNetzobIconsToDefaultFactory():
     def addIconToFactory(iconStockID, iconFilename):
