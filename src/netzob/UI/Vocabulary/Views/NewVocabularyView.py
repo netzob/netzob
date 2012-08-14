@@ -83,7 +83,7 @@ class NewVocabularyView(object):
                                         "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
-                                        "fieldPropertiesListstore", "messageTableBox", "symbolListTreeView",
+                                        "messageTableBox", "symbolListTreeView",
                                         "symbolListTreeViewSelection", "messagesDistributionSymbolViewport"
                                         ])
         self._loadActionGroupUIDefinition()
@@ -183,7 +183,6 @@ class NewVocabularyView(object):
         self.updateProjectProperties()
         self.updateSymbolProperties()
         self.updateMessageProperties()
-        self.updateFieldProperties()
 
     ## Message Tables management
     def addMessageTable(self):
@@ -374,7 +373,6 @@ class NewVocabularyView(object):
             properties[configuration.VOCABULARY_GLOBAL_ENDIANESS] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_ENDIANESS)
         return properties
 
-    # TODO
     def updateProjectProperties(self):
         # clean store
         self.projectPropertiesListstore.clear()
@@ -455,28 +453,6 @@ class NewVocabularyView(object):
             line = self.messagePropertiesListstore.append()
             self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
-
-    def getFieldProperties(self):
-        return []
-#        field = self.focusMessageTable.getFocusField()#TODO METHOD
-#        properties = OrderedDict()
-#        if field != None:
-#            properties['name'] = field.getName()
-#            # ++CODE HERE++
-#            # ADD PROPERTIES FROM message
-#            # ADD LIST [ regex, 4 format variable, idea? ]
-#        return properties
-
-    def updateFieldProperties(self):
-        # clean store
-        self.fieldPropertiesListstore.clear()
-        # get field properties
-        properties = self.getFieldProperties()
-        # add field properties
-        for key in properties:
-            line = self.fieldPropertiesListstore.append()
-            self.fieldPropertiesListstore.set(line, 0, key)
-            self.fieldPropertiesListstore.set(line, 1, str(properties[key]))
 
     def getCurrentProject(self):
         return self.controller.netzob.getCurrentProject()
