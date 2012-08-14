@@ -40,6 +40,7 @@ from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
+from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from collections import OrderedDict
@@ -422,15 +423,14 @@ class NewVocabularyView(object):
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
 
-        # update the message distribution graphic
-        #Todo when ploting in GTK3 will be available
-#        self.updateSymbolPropertiesMessagesDistribution()
+        # update the variable definition
+        self.updateSymbolVariableDefinition()
 
-    def updateSymbolPropertiesMessagesDistribution(self):
+    def updateSymbolVariableDefinition(self):
         currentSymbol = self.getDisplayedSymbolInSelectedMessageTable()
         if currentSymbol is not None:
-            messagesDistributionController = MessagesDistributionController([])
-            messagesDistributionController.run(self.messagesDistributionSymbolViewport)
+            variableDisplayerController = VariableDisplayerController(self, currentSymbol)
+            variableDisplayerController.run(self.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):
         """Retrieve the current selected message (in the selected TableMessage)
