@@ -754,7 +754,7 @@ is not valid !</property>
                 <property name="hexpand">True</property>
                 <property name="orientation">vertical</property>
                 <property name="action">select-folder</property>
-                <property name="title" translatable="yes">SÃ©lectionner un rÃ©pertoire</property>
+                <property name="title" translatable="yes">Select a directory</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -1278,7 +1278,7 @@ is not valid !</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <property name="action">select-folder</property>
-                <property name="title" translatable="yes">SÃ©lectionner un rÃ©pertoire</property>
+                <property name="title" translatable="yes">Select a directory</property>
               </object>
               <packing>
                 <property name="expand">True</property>
