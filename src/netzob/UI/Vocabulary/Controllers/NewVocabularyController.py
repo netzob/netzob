@@ -36,8 +36,9 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import gi
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -66,6 +67,7 @@ class NewVocabularyController(object):
         self._view = NewVocabularyView(self)
         self.log = logging.getLogger(__name__)
         self.view.updateLeftPanel()
+        self.selectedMessagesToMove = None
 
     @property
     def view(self):
@@ -223,6 +225,9 @@ class NewVocabularyController(object):
         if iter is not None:
             symID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
             symbol = currentVocabulary.getSymbolByID(symID)
+
+            self.executeMoveTargetOperation(symbol)
+
             self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
             self._view.updateSymbolProperties()
 
@@ -277,7 +282,41 @@ class NewVocabularyController(object):
         pass
 
     def moveMessagesToOtherSymbol_activate_cb(self, action):
-        pass
+        """Callback executed when the user clicks on the move
+        button. It retrieves the selected message, and change the cursor
+        to show that moving is in progress. The user needs to click on a symbol to
+        select the target symbol"""
+        if self.getCurrentProject() is None:
+            return
+
+        selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
+        if selectedMessages is None or len(selectedMessages) == 0:
+            return
+
+        self.selectedMessagesToMove = selectedMessages
+
+        cursor = Gdk.Cursor.new(Gdk.CursorType.FLEUR)
+        self.view.vocabularyPanel.get_root_window().set_cursor(cursor)
+
+    def executeMoveTargetOperation(self, targetSymbol):
+        """Execute the pending move operation on the specified symbol"""
+        if self.selectedMessagesToMove is not None and len(self.selectedMessagesToMove) > 0:
+            # drop selected messages
+            for message in self.selectedMessagesToMove:
+                if message is not None:
+                    if targetSymbol.isRegexValidForMessage(message):
+                        self.moveMessage(message, targetSymbol)
+                    else:
+                        moveMessageController = MoveMessageController(self, self.selectedMessagesToMove, targetSymbol)
+                        moveMessageController.run()
+
+            self.removePendingMessagesToMove()
+
+    def removePendingMessagesToMove(self):
+        """Clean the pending messages the user wanted to move (using the button)."""
+        cursor = Gdk.Cursor.new(Gdk.CursorType.ARROW)
+        self.view.vocabularyPanel.get_root_window().set_cursor(cursor)
+        self.selectedMessagesToMove = None
 
     def deleteMessages_activate_cb(self, action):
         questionMsg = _("Click yes to confirm the deletion of the selected message(s)")
@@ -383,7 +422,8 @@ class NewVocabularyController(object):
         """Move the provided message in the specified symbol.
         Warning, this method do not consider the possible regex problems
         which needs to be addressed by a set of dedicated solutions"""
-        sourceSymbolID = message.getSymbol().getID()
-        sourceSymbol = self.getCurrentProject().getVocabulary().getSymbolByID(sourceSymbolID)
-        sourceSymbol.removeMessage(message)
-        targetSymbol.addMessage(message)
+        if message is not None and targetSymbol is not None:
+            sourceSymbolID = message.getSymbol().getID()
+            sourceSymbol = self.getCurrentProject().getVocabulary().getSymbolByID(sourceSymbolID)
+            sourceSymbol.removeMessage(message)
+            targetSymbol.addMessage(message)

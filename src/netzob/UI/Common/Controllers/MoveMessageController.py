@@ -49,11 +49,11 @@ from gi.repository import GObject
 class MoveMessageController(object):
     """Manage the case when its not trivial to move a message from a symbol to another one"""
 
-    def __init__(self, vocabularyController, message, targetSymbol):
+    def __init__(self, vocabularyController, messages, targetSymbol):
         self.vocabularyController = vocabularyController
         self.log = logging.getLogger(__name__)
         self._view = MoveMessageView(self)
-        self.message = message
+        self.messages = messages
         self.targetSymbol = targetSymbol
 
     @property
@@ -71,34 +71,34 @@ class MoveMessageController(object):
     def moveMessageApplyButton_clicked_cb(self, widget):
         """Callback executed when the user request
         the execution of the ticked solution"""
+        for message in self.messages:
+            # retrieve which solution to execute
+            if self._view.moveMessageMoveAndForgetRadioButton.get_active():
+                self.forgetRegexAndMove(message)
+            elif self._view.moveMessageMoveAndReComputeRadioButton.get_active():
+                self.recomputeRegexAndMove(message)
+            elif self._view.moveMessageMoveInTrashRadioButton.get_active():
+                self.moveInTrash(message)
 
-        # retrieve which solution to execute
-        if self._view.moveMessageMoveAndForgetRadioButton.get_active():
-            self.forgetRegexAndMove()
-        elif self._view.moveMessageMoveAndReComputeRadioButton.get_active():
-            self.recomputeRegexAndMove()
-        elif self._view.moveMessageMoveInTrashRadioButton.get_active():
-            self.moveInTrash()
-
-    def forgetRegexAndMove(self):
+    def forgetRegexAndMove(self, message):
         """Move the requested message from its symbol
         to the defined other which's regex is reseted"""
-        self.vocabularyController.moveMessage(self.message, self.targetSymbol)
+        self.vocabularyController.moveMessage(message, self.targetSymbol)
 
         self.targetSymbol.resetPartitioning(self.vocabularyController.getCurrentProject())
         self._view.destroy()
 
-    def recomputeRegexAndMove(self):
+    def recomputeRegexAndMove(self, message):
         """Move the requested message to the selected symbol
         which's regex is recomputed"""
-        self.vocabularyController.moveMessage(self.message, self.targetSymbol)
+        self.vocabularyController.moveMessage(message, self.targetSymbol)
 
         self._view.destroy()
         sequence_controller = NewSequenceAlignmentController(self.vocabularyController, [self.targetSymbol])
         sequence_controller.run()
 
-    def moveInTrash(self):
+    def moveInTrash(self, message):
         """Move the selected message in the trash symbol"""
         trashSymbol = self.vocabularyController.getCurrentProject().getVocabulary().getTrashSymbol()
-        self.vocabularyController.moveMessage(self.message, trashSymbol)
+        self.vocabularyController.moveMessage(message, trashSymbol)
         self._view.destroy()

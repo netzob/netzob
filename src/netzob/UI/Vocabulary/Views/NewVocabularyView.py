@@ -172,8 +172,7 @@ class NewVocabularyView(object):
         some messages (identified by their ID) to be moved from their
         current symbol to the selected symbol"""
         if message is not None:
-            targetSymbol.addMessage(message)
-            moveMessageController = MoveMessageController(self.controller, message, targetSymbol)
+            moveMessageController = MoveMessageController(self.controller, [message], targetSymbol)
             moveMessageController.run()
 
     ## View manipulation methods

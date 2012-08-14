@@ -48,6 +48,10 @@ class MessageTableController(object):
     def messageTableTreeView_changed_event_cb(self, selection):
         """Callback executed when the user
         clicks on a message in the MessageTable"""
+
+        if self.vocabularyPerspective.controller.selectedMessagesToMove is not None:
+            self.vocabularyPerspective.controller.removePendingMessagesToMove()
+
         self.selectedMessages = []
         if selection is not None:
             (model, rows) = selection.get_selected_rows()
