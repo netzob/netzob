@@ -59,3 +59,7 @@ class XDotWidget(DotWidget):
     def drawAutomata(self, automata):
         self.set_dotcode(automata.getDotCode())
         self.zoom_to_fit()
+
+    def drawDotCode(self, dotCode):
+        self.set_dotcode(dotCode)
+        self.zoom_to_fit()
