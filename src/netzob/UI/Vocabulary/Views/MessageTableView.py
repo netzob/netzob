@@ -91,6 +91,7 @@ class MessageTableView(object):
         if self.displayedSymbol is None:
             return messageTableTreeView
         numOfColumns = 1 + min(self.MAX_DISPLAYED_FIELDS, len(self.displayedSymbol.getFields()))
+        self.treeViewHeaderGroup.clear()
         for colIdx in range(1, numOfColumns):
             (tvc, head) = self.__makeTreeViewColumn(colIdx)
             #tvc.set_clickable(True)

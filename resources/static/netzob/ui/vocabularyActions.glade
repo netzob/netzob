@@ -35,19 +35,11 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="leftSplit">
-        <property name="label" translatable="yes">Left Split Field</property>
-        <property name="tooltip" translatable="yes">Left split selected field</property>
+      <object class="GtkAction" id="split">
+        <property name="label" translatable="yes">Split Field</property>
+        <property name="tooltip" translatable="yes">Split selected field</property>
         <property name="stock_id">netzob-edit-cut-left</property>
-        <signal name="activate" handler="leftSplit_activate_cb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkAction" id="rightSplit">
-        <property name="label" translatable="yes">Right Split Field</property>
-        <property name="tooltip" translatable="yes">Right split selected field</property>
-        <property name="stock_id">netzob-edit-cut-right</property>
-        <signal name="activate" handler="rightSplit_activate_cb" swapped="no"/>
+        <signal name="activate" handler="split_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>

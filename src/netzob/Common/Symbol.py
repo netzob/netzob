@@ -475,18 +475,18 @@ class Symbol(AbstractSymbol):
         new_encapsulationLevel = field.getEncapsulationLevel()
 
         # We Build the two new fields
-        field1 = Field("(1/2)" + field.getName(), field.getIndex(), regex1)
+        field1 = Field(field.getName() + "-1", field.getIndex(), regex1)
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field1.setDescription("(1/2) " + field.getDescription())
-        field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2)
+            field1.setDescription(field.getDescription() + "-1")
+        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2)
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
         field2.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field2.setDescription("(2/2) " + field.getDescription())
+            field2.setDescription(field.getDescription() + "-2")
 
         # Remove the truncated one
         self.fields.remove(field)
@@ -500,7 +500,6 @@ class Symbol(AbstractSymbol):
         self.fields.append(field2)
         # sort fields by their index
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-
         return True
 
     #+-----------------------------------------------------------------------+

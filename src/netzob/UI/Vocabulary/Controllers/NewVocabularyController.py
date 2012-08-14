@@ -53,10 +53,11 @@ from netzob.UI.Vocabulary.Controllers.Partitioning.NewSimplePartitioningControll
 from netzob.UI.Vocabulary.Controllers.Partitioning.NewSmoothPartitioningController import NewSmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
+from netzob.UI.Vocabulary.Controllers.SplitFieldController import SplitFieldController
 from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.UI.NetzobWidgets import NetzobQuestionMessage
+from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 
 
@@ -272,11 +273,17 @@ class NewVocabularyController(object):
     def concatField_activate_cb(self, action):
         pass
 
-    def leftSplit_activate_cb(self, action):
-        pass
-
-    def rightSplit_activate_cb(self, action):
-        pass
+    def split_activate_cb(self, action):
+        symbol = self.view.selectedMessageTable.getDisplayedSymbol()
+        if symbol == None:
+            return
+        fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        if fields != None and len(fields) > 0:
+            field = fields[0] # We take the first one
+            controller = SplitFieldController(self, symbol, field)
+            controller.run()
+        else:
+            NetzobErrorMessage(_("No selected field."))
 
     def createVariable_activate_cb(self, action):
         pass

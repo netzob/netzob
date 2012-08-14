@@ -44,6 +44,7 @@ from gi.repository import GObject
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.Partitioning.NewSimplePartitioningView import NewSimplePartitioningView
+from netzob.Common.Threads.Job import Job
 
 
 class NewSimplePartitioningController(object):

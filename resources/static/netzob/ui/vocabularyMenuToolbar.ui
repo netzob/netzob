@@ -16,8 +16,7 @@
       </menu>
       <menu action="manualToolMenu">
         <menuitem action="concatField" />
-        <menuitem action="leftSplit" />
-        <menuitem action="rightSplit" />
+        <menuitem action="split" />
         <menuitem action="createVariable" />
         <menuitem action="moveMessagesToOtherSymbol" />
         <menuitem action="deleteMessages" />
@@ -44,8 +43,7 @@
       <toolitem action="partitioningReset" />
       <separator />
       <toolitem action="concatField" />
-      <toolitem action="leftSplit" />
-      <toolitem action="rightSplit" />
+      <toolitem action="split" />
       <toolitem action="createVariable" />
       <toolitem action="moveMessagesToOtherSymbol" />
       <toolitem action="deleteMessages" />
