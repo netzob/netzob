@@ -93,7 +93,7 @@
     <child>
       <object class="GtkAction" id="fieldLimits">
         <property name="label" translatable="yes">Field Limits</property>
-        <property name="tooltip" translatable="yes">Display min and max size of selected field</property>
+        <property name="tooltip" translatable="yes">Display min and max size of selected symbol</property>
         <property name="stock_id">netzob-field-limit</property>
         <signal name="activate" handler="fieldLimits_activate_cb" swapped="no"/>
       </object>

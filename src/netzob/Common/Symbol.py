@@ -276,10 +276,10 @@ class Symbol(AbstractSymbol):
         self.addField(field)
 
     #+----------------------------------------------
-    #| freezePartitioning:
+    #| computeFieldsLimits:
     #|
     #+----------------------------------------------
-    def freezePartitioning(self):
+    def computeFieldsLimits(self):
         for field in self.getFields():
             tmpRegex = field.getRegex()
             if field.isStatic():

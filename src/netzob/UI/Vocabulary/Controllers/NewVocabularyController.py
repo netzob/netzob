@@ -57,7 +57,7 @@ from netzob.UI.Vocabulary.Controllers.SplitFieldController import SplitFieldCont
 from netzob.UI.Import.ImportFileChooserDialog import ImportFileChooserDialog
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
-from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage
+from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 
 
@@ -396,7 +396,18 @@ class NewVocabularyController(object):
             dialog.destroy()
 
     def fieldLimits_activate_cb(self, action):
-        pass
+        # Sanity checks
+        if self.netzob.getCurrentProject() is None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+
+        if self.view.getSelectedSymbol() is None:
+            NetzobErrorMessage(_("No symbol selected."))
+            return
+
+        self.view.getSelectedSymbol().computeFieldsLimits()
+        self.view.updateSelectedMessageTable()
+        NetzobInfoMessage(_("Fields limits computed."))
 
     def importMessagesFromFile_activate_cb(self, action):
         """Execute all the plugins associated with
