@@ -62,16 +62,38 @@ class VariableDisplayerView(object):
     def run(self, panel):
         xdotWidget = XDotWidget()
         panel.add(xdotWidget)
-        rootVariable = self.controller.symbol.getRoot()
+        if self.controller.symbol is None:
+            return
+        # We retrieve all the fields and there associated variables
+        fields = dict()
+        for field in self.controller.symbol.getFields():
+            var = field.getVariable()
+            if var is None:
+                var = field.getDefaultVariable(self.controller.symbol)
+            fields["F{0}".format(field.getIndex())] = var
 
         dotCode = ["digraph G {"]
-        dotCode.extend(self.addDotCodeForVariable(rootVariable))
+        dotCode.extend(self.addDotCodeForFields(fields))
         dotCode.append("}")
-
-        print '\n'.join(dotCode)
 
         xdotWidget.drawDotCode('\n'.join(dotCode))
         xdotWidget.show_all()
+
+    def addDotCodeForFields(self, fields):
+        dotCode = []
+
+        labelName = []
+        for fieldName in fields.keys():
+            labelName.append("<{0}> {0}".format(fieldName))
+
+        dotCode.append("\"root\" [shape = record, label=\"{0}\"];".format(' | '.join(labelName)))
+        for fieldName in fields.keys():
+
+            dotCode.append("subgraph cluster{0} {{".format(fieldName))
+            dotCode.extend(self.addDotCodeForVariable(fields[fieldName]))
+            dotCode.append("}")
+            dotCode.append("\"root\":\"{0}\" -> \"{1}\"".format(fieldName, fields[fieldName].getID()))
+        return dotCode
 
     def addDotCodeForVariable(self, variable):
         dotCode = []
