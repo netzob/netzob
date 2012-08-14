@@ -217,13 +217,13 @@ class NewVocabularyController(object):
     def symbolListTreeViewSelection_changed_cb(self, selection):
         """Callback executed when the user
         clicks on a symbol in the list"""
-        self._view.updateSymbolProperties()
         model, iter = selection.get_selected()
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
         if iter is not None:
             symID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
             symbol = currentVocabulary.getSymbolByID(symID)
             self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
+            self._view.updateSymbolProperties()
 
 ################ TO BE FIXED
     def button_newview_cb(self, widget):
