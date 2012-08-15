@@ -106,6 +106,7 @@
           <object class="GtkComboBoxText" id="research_format">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="active">6</property>
             <property name="entry_text_column">0</property>
             <property name="id_column">1</property>
             <items>

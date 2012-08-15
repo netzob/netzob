@@ -61,6 +61,9 @@ class NewResearchController(object):
         self.log = logging.getLogger(__name__)
         self.searchRunning = False
         self.stopFlag = False
+        self.executedSearchTasks = None
+        self.idResult = 0
+        self.nbResult = 0
 
     @property
     def view(self):
@@ -129,27 +132,31 @@ class NewResearchController(object):
             self.log.error("Cannot search for data if provided with type {0}".format(format))
 
         if searchTasks is not None:
-            searchTasks = searcher.search(searchTasks)
-            nbResult = 0
-            for searchTask in searchTasks:
-                nbResult += len(searchTask.getResults())
+            self.executedSearchTasks = searcher.search(searchTasks)
+            self.idResult = -1
+            self.nbResult = 0
+            for searchTask in self.executedSearchTasks:
+                self.nbResult += len(searchTask.getResults())
 
-            if nbResult == 0:
+            if self.nbResult == 0:
                 GObject.idle_add(self._view.imageWarning.show)
                 GObject.idle_add(self._view.numberOfResultLabel.show)
                 GObject.idle_add(self._view.numberOfResultLabel.set_label, _("No occurrence found."))
             else:
                 GObject.idle_add(self._view.imageWarning.hide)
                 GObject.idle_add(self._view.numberOfResultLabel.show)
-                if nbResult > 1:
-                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrences found.".format(nbResult)))
+                if self.nbResult > 1:
+                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrences found.".format(self.nbResult)))
                 else:
-                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrence found.".format(nbResult)))
+                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrence found.".format(self.nbResult)))
 
-            if not self.stopFlag and nbResult > 0:
+            if not self.stopFlag and self.nbResult > 0:
                 # if search has completed (not stopped), nav. is allowed
-                GObject.idle_add(self._view.research_previous.set_sensitive, True)
+                GObject.idle_add(self._view.research_previous.set_sensitive, False)
                 GObject.idle_add(self._view.research_next.set_sensitive, True)
+            else:
+                self.executedSearchTasks = None
+                self.idResult = 0
 
         self.searchRunning = False
         self.stopFlag = False
@@ -162,16 +169,48 @@ class NewResearchController(object):
             self.stopFlag = True
 
     def research_previous_clicked_cb(self, widget):
-        # ++CODE HERE++
-        # SEARCH PREVIOUS TEXT IN A MESSAGELIST SYMBOL
-        # PRINT IT WITH MODIFIED COLOR
-        pass
+        """Callback executed when the user clicks on the previous result button"""
+        self.idResult -= 1
+
+        self.updateNextAndPreviousButtons()
+
+        # fetch the id result
+        currentResult = self.getCurrentResult()
+        print currentResult
 
     def research_next_clicked_cb(self, widget):
-        # ++CODE HERE++
-        # SEARCH NEXT TEXT IN A MESSAGELIST SYMBOL
-        # PRINT IT WITH MODIFIED COLOR
-        pass
+        """Callback executed when the user clicks on the next result button"""
+        self.idResult += 1
+
+        self.updateNextAndPreviousButtons()
+
+        # fetch the id result
+        currentResult = self.getCurrentResult()
+        print currentResult
+
+    def updateNextAndPreviousButtons(self):
+        """Update the sensitivity of next and previous buttons"""
+        # deactivate next if no more results
+        if self.idResult <= 0:
+            self._view.research_previous.set_sensitive(False)
+        else:
+            self._view.research_previous.set_sensitive(True)
+
+        # deactivate next if no more results
+        if self.idResult >= self.nbResult - 1:
+            self._view.research_next.set_sensitive(False)
+        else:
+            self._view.research_next.set_sensitive(True)
+
+    def getCurrentResult(self):
+        """Return the result number self.idResult"""
+        id = 0
+        for searchTask in self.executedSearchTasks:
+            for result in searchTask.getResults():
+                if id == self.idResult:
+                    return result
+                id += 1
+        return None
 
     def research_close_clicked_cb(self, widget):
         self.hide()
