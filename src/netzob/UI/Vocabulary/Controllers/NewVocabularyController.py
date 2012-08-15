@@ -271,13 +271,36 @@ class NewVocabularyController(object):
         reset_controller.run()
 
     def concatField_activate_cb(self, action):
-        pass
-
-    def split_activate_cb(self, action):
+        # Sanity check
         symbol = self.view.selectedMessageTable.getDisplayedSymbol()
         if symbol == None:
+            NetzobErrorMessage(_("No selected symbol."))
             return
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        if fields == None or len(fields) < 2:
+            NetzobErrorMessage(_("You need to select at least two fields."))
+            return
+        # We retrieve the first and last fields selected
+        firstField = fields[0]
+        lastField = fields[0]
+        for field in fields:
+            if field.getIndex() < firstField.getIndex():
+                firstField = field
+            if field.getIndex() > lastField.getIndex():
+                lastField = field
+        # We concatenate between the first and last fields
+        symbol.concatFields(firstField.getIndex(), lastField.getIndex())
+        self.view.updateSelectedMessageTable()
+        self.view.updateLeftPanel()
+
+    def split_activate_cb(self, action):
+        # Sanity check
+        symbol = self.view.selectedMessageTable.getDisplayedSymbol()
+        if symbol == None:
+            NetzobErrorMessage(_("No selected symbol."))
+            return
+        fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        # Split field
         if fields != None and len(fields) > 0:
             field = fields[0] # We take the first one
             controller = SplitFieldController(self, symbol, field)
@@ -351,6 +374,11 @@ class NewVocabularyController(object):
         pass
 
     def messagesDistribution_activate_cb(self, action):
+        # Sanity check
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
         distribution = MessagesDistributionController(self._view.getCheckedSymbolList())
         distribution.run()
 
