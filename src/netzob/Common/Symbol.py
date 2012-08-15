@@ -368,9 +368,22 @@ class Symbol(AbstractSymbol):
 
     #+----------------------------------------------
     #| concatFields:
-    #|  Concatenate two fields starting from iField
+    #|  Concatenate fields from index startField to endField
     #+----------------------------------------------
-    def concatFields(self, iField):
+    def concatFields(self, startField, endField):
+        for i_concatleft in range(endField - startField):
+            if not self.concatCloseFields(startField):
+                break
+            else:
+                for i_concatleft in range(startField - endField):
+                    if not self.concatCloseFields(endField):
+                        break
+
+    #+----------------------------------------------
+    #| concatCloseFields:
+    #|  Concatenate two fields starting from index iField
+    #+----------------------------------------------
+    def concatCloseFields(self, iField):
         field1 = None
         field2 = None
         if iField == len(self.fields) - 1:
