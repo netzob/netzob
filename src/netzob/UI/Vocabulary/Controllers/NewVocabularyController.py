@@ -374,6 +374,11 @@ class NewVocabularyController(object):
         pass
 
     def messagesDistribution_activate_cb(self, action):
+        # Sanity check
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
         distribution = MessagesDistributionController(self._view.getCheckedSymbolList())
         distribution.run()
 
