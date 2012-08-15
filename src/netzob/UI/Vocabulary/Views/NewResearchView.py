@@ -57,10 +57,10 @@ class NewResearchView(object):
             "ui",
             "research_bar.glade"))
         self._getObjects(self.builder, ["researchBar",
-                                        "research_entry",
+                                        "research_entry", "numberOfResultLabel"
                                         "research_previous", "research_next",
                                         "research_format", "research_preferences",
-                                        "research_close"])
+                                        "research_close", "spinnerSearchProcess"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 

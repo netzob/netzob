@@ -30,15 +30,19 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import os
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.Common.Threads.Job import Job
+from netzob.Common.Threads.Tasks.ThreadedTask import TaskError, ThreadedTask
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
-import os
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -52,23 +56,60 @@ class NewResearchController(object):
         self.vocabularyController = vocabularyController
         self._view = NewResearchView(self)
         self.log = logging.getLogger(__name__)
+        self.searchRunning = False
+        self.stopFlag = False
 
     @property
     def view(self):
         return self._view
 
     def show(self):
-        print "show research bar"
         self._view.researchBar.show()
 
     def hide(self):
         self._view.researchBar.hide()
 
     def research_entry_changed_cb(self, widget):
+        """Callback executed when the user types some
+        data in the research entry"""
+
+        if self.vocabularyController.getCurrentProject() is None:
+            return
+
         text = widget.get_text()
-        # ++CODE HERE++
-        # DO SEARCH WITH PREFERENCES
-        # (you can see PREFERENCES in the preferencesResearchDialog at VocabularyView.glade)
+        self.stopSearch()
+        while self.searchRunning:
+            time.sleep(0.01)
+
+        if len(text) > 0:
+            Job(self.startNewSearch(text))
+
+    def startNewSearch(self, text):
+        """Start a search process with the provided text"""
+        try:
+            (yield ThreadedTask(self.search, text))
+        except TaskError, e:
+            self.log.error(_("Error while proceeding to the search process: {0}").format(str(e)))
+
+    def search(self, text):
+        self.searchRunning = True
+        """Execute the search process (to be executed in a dedicated thread)"""
+        symbols = self.vocabularyController.getCurrentProject().getVocabulary().getSymbols()
+        GObject.idle_add(self._view.spinnerSearchProcess.show)
+        GObject.idle_add(self._view.spinnerSearchProcess.start)
+        for symbol in symbols:
+            if self.stopFlag:
+                break
+            time.sleep(0.5)
+        GObject.idle_add(self._view.spinnerSearchProcess.stop)
+        GObject.idle_add(self._view.spinnerSearchProcess.hide)
+        self.searchRunning = False
+        self.stopFlag = False
+
+    def stopSearch(self):
+        """Stop any current search process"""
+        if self.searchRunning:
+            self.stopFlag = True
 
     def research_previous_clicked_cb(self, widget):
         # ++CODE HERE++
