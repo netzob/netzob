@@ -94,6 +94,7 @@ class NewResearchController(object):
         # Disallow nav in search results while none are computed
         self._view.research_previous.set_sensitive(False)
         self._view.research_next.set_sensitive(False)
+        self._view.currentSelectedResultLabel.set_label("")
 
         if len(text) > 0:
             Job(self.startNewSearch(text, tformat))
@@ -190,6 +191,8 @@ class NewResearchController(object):
 
         # fetch the current result
         currentResult = self.getCurrentResult()
+
+        self._view.currentSelectedResultLabel.set_label(_("{0}/{1} : {2}".format(self.idResult + 1, self.nbResult, currentResult.getVariationDescription())))
 
         self.decolorizeAllResult()
 
