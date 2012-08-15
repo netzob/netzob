@@ -40,6 +40,9 @@ from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Threads.Tasks.ThreadedTask import TaskError, ThreadedTask
+from netzob.Inference.Vocabulary.SearchTask import SearchTask
+from netzob.Common.Type.Format import Format
+from netzob.Inference.Vocabulary.Searcher import Searcher
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -77,34 +80,81 @@ class NewResearchController(object):
             return
 
         text = widget.get_text()
+        tformat = self._view.research_format.get_active_text()
+
+        # Stop current search process (and wit for it stops)
         self.stopSearch()
         while self.searchRunning:
-            time.sleep(0.01)
+            time.sleep(0.001)
+
+        # Disallow nav in search results while none are computed
+        self._view.research_previous.set_sensitive(False)
+        self._view.research_next.set_sensitive(False)
 
         if len(text) > 0:
-            Job(self.startNewSearch(text))
+            Job(self.startNewSearch(text, tformat))
 
-    def startNewSearch(self, text):
-        """Start a search process with the provided text"""
+    def startNewSearch(self, text, format):
+        """Start a search process with the provided text and format"""
         try:
-            (yield ThreadedTask(self.search, text))
+            (yield ThreadedTask(self.search, text, format))
         except TaskError, e:
             self.log.error(_("Error while proceeding to the search process: {0}").format(str(e)))
 
-    def search(self, text):
-        self.searchRunning = True
+    def search(self, text, format):
         """Execute the search process (to be executed in a dedicated thread)"""
+        self.searchRunning = True
+
         symbols = self.vocabularyController.getCurrentProject().getVocabulary().getSymbols()
         GObject.idle_add(self._view.spinnerSearchProcess.show)
         GObject.idle_add(self._view.spinnerSearchProcess.start)
-        for symbol in symbols:
-            if self.stopFlag:
-                break
-            time.sleep(0.5)
-        GObject.idle_add(self._view.spinnerSearchProcess.stop)
-        GObject.idle_add(self._view.spinnerSearchProcess.hide)
+
+        # create a task for the text
+        searcher = Searcher(self.vocabularyController.getCurrentProject())
+        # generate variations for each provided format (see glade file)
+        if format == "string":
+            searchTasks = searcher.getSearchedDataForString(text)
+        elif format == "hexa":
+            searchTasks = searcher.getSearchedDataForHexadecimal(text)
+        elif format == "decimal":
+            searchTasks = searcher.getSearchedDataForDecimal(text)
+        elif format == "octal":
+            searchTasks = searcher.getSearchedDataForOctal(text)
+        elif format == "binary":
+            searchTasks = searcher.getSearchedDataForBinary(text)
+        elif format == "ipv4":
+            searchTasks = searcher.getSearchedDataForIP(text)
+        else:
+            searchTasks = None
+            self.log.error("Cannot search for data if provided with type {0}".format(format))
+
+        if searchTasks is not None:
+            searchTasks = searcher.search(searchTasks)
+            nbResult = 0
+            for searchTask in searchTasks:
+                nbResult += len(searchTask.getResults())
+
+            if nbResult == 0:
+                GObject.idle_add(self._view.imageWarning.show)
+                GObject.idle_add(self._view.numberOfResultLabel.show)
+                GObject.idle_add(self._view.numberOfResultLabel.set_label, _("No occurrence found."))
+            else:
+                GObject.idle_add(self._view.imageWarning.hide)
+                GObject.idle_add(self._view.numberOfResultLabel.show)
+                if nbResult > 1:
+                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrences found.".format(nbResult)))
+                else:
+                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrence found.".format(nbResult)))
+
+            if not self.stopFlag and nbResult > 0:
+                # if search has completed (not stopped), nav. is allowed
+                GObject.idle_add(self._view.research_previous.set_sensitive, True)
+                GObject.idle_add(self._view.research_next.set_sensitive, True)
+
         self.searchRunning = False
         self.stopFlag = False
+        GObject.idle_add(self._view.spinnerSearchProcess.stop)
+        GObject.idle_add(self._view.spinnerSearchProcess.hide)
 
     def stopSearch(self):
         """Stop any current search process"""

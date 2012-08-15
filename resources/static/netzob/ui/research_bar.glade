@@ -23,7 +23,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="bilozob">
+      <object class="GtkBox" id="research_buttons">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">5</property>
@@ -113,6 +113,7 @@
               <item translatable="yes">octal</item>
               <item translatable="yes">decimal</item>
               <item translatable="yes">hexa</item>
+              <item translatable="yes">ipv4</item>
               <item translatable="yes">string</item>
             </items>
           </object>
@@ -186,6 +187,9 @@
           <object class="GtkLabel" id="numberOfResultLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans Italic 10"/>
+            </attributes>
           </object>
           <packing>
             <property name="expand">False</property>
