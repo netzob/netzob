@@ -270,7 +270,6 @@ class Searcher(object):
         return results
 
     def semiInvertedOnNaturalSearch(self, data, message):
-        logging.debug("semi inverted = " + str(data))
         results = []
         invData = ""
         for i in range(0, len(data), 2):
