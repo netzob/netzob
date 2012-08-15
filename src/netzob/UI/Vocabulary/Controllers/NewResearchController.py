@@ -43,6 +43,7 @@ from netzob.Common.Threads.Tasks.ThreadedTask import TaskError, ThreadedTask
 from netzob.Inference.Vocabulary.SearchTask import SearchTask
 from netzob.Common.Type.Format import Format
 from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -103,6 +104,10 @@ class NewResearchController(object):
             (yield ThreadedTask(self.search, text, format))
         except TaskError, e:
             self.log.error(_("Error while proceeding to the search process: {0}").format(str(e)))
+
+        if self.executedSearchTasks is not None and len(self.executedSearchTasks) > 0:
+            self.idResult += 1
+            self.showCurrentResult()
 
     def search(self, text, format):
         """Execute the search process (to be executed in a dedicated thread)"""
@@ -171,22 +176,64 @@ class NewResearchController(object):
     def research_previous_clicked_cb(self, widget):
         """Callback executed when the user clicks on the previous result button"""
         self.idResult -= 1
-
-        self.updateNextAndPreviousButtons()
-
-        # fetch the id result
-        currentResult = self.getCurrentResult()
-        print currentResult
+        self.showCurrentResult()
 
     def research_next_clicked_cb(self, widget):
         """Callback executed when the user clicks on the next result button"""
         self.idResult += 1
+        self.showCurrentResult()
 
+    def showCurrentResult(self):
+        """Show the current result (open the symbol) and
+        highlight with a "Search Filter" the segments"""
         self.updateNextAndPreviousButtons()
 
-        # fetch the id result
+        # fetch the current result
         currentResult = self.getCurrentResult()
-        print currentResult
+
+        self.decolorizeAllResult()
+
+        # add a dedicated filter for the result
+        self.colorizeResult(currentResult)
+
+        # the result message should become the displayed one
+        self.showResult(currentResult)
+
+    def decolorizeAllResult(self):
+        """Search for all the "Search Filters" on any symbol
+        and remove them"""
+        vocabulary = self.vocabularyController.getCurrentProject().getVocabulary()
+        for symbol in vocabulary.getSymbols():
+            filterToRemoveFromSymbol = []
+            for filter in symbol.getVisualizationFilters():
+                if filter.getName() == "Search":
+                    filterToRemoveFromSymbol.append(filter)
+
+            for filter in filterToRemoveFromSymbol:
+                symbol.removeVisualizationFilter(filter)
+
+            filterToRemoveFromMessage = []
+            for message in symbol.getMessages():
+                for (filter, start, end) in message.getVisualizationFilters():
+                    if filter.getName() == "Search":
+                        filterToRemoveFromMessage.append(filter)
+
+                for f in filterToRemoveFromMessage:
+                    message.removeVisualizationFilter(f)
+
+    def colorizeResult(self, result):
+        """Colorize by adding a filter on the segment
+        pointed by the results"""
+        for (start, length) in result.getSegments():
+            filter = TextColorFilter("Search", "green")
+            message = result.getMessage()
+            message.addVisualizationFilter(filter, start, start + length)
+
+    def showResult(self, result):
+        """Show the result pointed message"""
+        currentMessage = result.getMessage()
+        self.vocabularyController.view.setDisplayedSymbolInSelectedMessageTable(currentMessage.getSymbol())
+        self.vocabularyController.view.updateSelectedMessageTable()
 
     def updateNextAndPreviousButtons(self):
         """Update the sensitivity of next and previous buttons"""
@@ -213,6 +260,11 @@ class NewResearchController(object):
         return None
 
     def research_close_clicked_cb(self, widget):
+        """Callback executed when the user closes the results"""
+        self.executedSearchTasks = None
+        self.idResult = 0
+        self.decolorizeAllResult()
+        self.vocabularyController.view.updateSelectedMessageTable()
         self.hide()
 
     def research_preferences_clicked_cb(self, widget):
