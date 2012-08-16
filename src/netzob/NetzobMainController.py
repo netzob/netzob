@@ -41,7 +41,7 @@ from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.Project import Project
 from netzob.UI.Common.AboutDialog import AboutDialog
@@ -73,6 +73,9 @@ class NetzobMainController(object):
         self._loadWorkspace(opts)
         self._initLogging()
         self._initResourcesAndLocales()
+
+        # Initialize a clipboard object
+        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         # Check dependencies
         if not DepCheck.checkRequiredDependency():

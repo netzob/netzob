@@ -252,7 +252,7 @@ class AbstractMessage(object):
         else:
             return self.applyDelimiter(styled, encoded)
 
-    def getFields(self, encoding=False, visualization=False):
+    def getFields(self, visualization=False, encoding=False):
         # Retrieve the data in columns
         splittedData = self.getSplittedData()
 

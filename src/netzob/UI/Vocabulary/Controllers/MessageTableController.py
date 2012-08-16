@@ -25,11 +25,16 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
+#+----------------------------------------------
+#| Global Imports
+#+----------------------------------------------
+from gi.repository import Gdk
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.MessageTableView import MessageTableView
-
+from netzob.UI.Vocabulary.Controllers.ContextualMenuOnFieldController import ContextualMenuOnFieldController
 
 class MessageTableController(object):
 
@@ -71,8 +76,43 @@ class MessageTableController(object):
     def closeButton_clicked_cb(self, button):
         self.vocabularyPerspective.removeMessageTable(self.view)
 
-    def messageTableTreeView_button_press_event_cb(self, treeView, eventButton):
+    def messageTableTreeView_button_press_event_cb(self, treeview, eventButton):
         self.vocabularyPerspective.setSelectedMessageTable(self.view)
+        # Popup a contextual menu if right click
+        if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
+            x = int(eventButton.x)
+            y = int(eventButton.y)
+            try:
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            except:
+                # No message selected
+                return
+
+            # Retrieve the selected message
+            symbol = self.vocabularyPerspective.getSelectedSymbol()
+            message_id = None
+            aIter = treeview.get_model().get_iter(path)
+            if aIter and treeview.get_model().iter_is_valid(aIter):
+                message_id = treeview.get_model().get_value(aIter, 0)
+                message = symbol.getMessageByID(message_id)
+            else:
+                self.log.warn(_("Impossible to retrieve the clicked message !"))
+                return
+
+            # Retrieve the selected field number
+            iField = 0
+            for col in treeview.get_columns():
+                if col == treeviewColumn:
+                    break
+                iField += 1
+            field = symbol.getFieldByIndex(iField)
+            if field is None:
+                self.log.warn(_("Impossible to retrieve the clicked field !"))
+                return
+
+            # Popup a contextual menu
+            menuController = ContextualMenuOnFieldController(self.vocabularyPerspective.controller, symbol, message, field)
+            menuController.run(eventButton)
 
     def messageTableTreeView_enter_notify_event_cb(self, treeView, data=None):
         self.view.treeViewHeaderGroup.setAllColumnsFocus(True)
