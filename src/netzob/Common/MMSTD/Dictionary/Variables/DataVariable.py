@@ -56,7 +56,7 @@ class DataVariable(AbstractLeafVariable):
     MAX_BITS = 1024
     TYPE = "Data Variable"
 
-    def __init__(self, _id, name, mutable, random, _type, originalValue, minChars, maxChars):
+    def __init__(self, _id, name, mutable, random, _type, originalValue):
         """Constructor of DataVariable:
                 Most of type are checked to not be None.
 
@@ -64,15 +64,10 @@ class DataVariable(AbstractLeafVariable):
                 @param typeVariable: the type of the variable being constructed.
                 @type originalValue: linked to type.
                 @param originalValue: the original value of the variable.
-                @type minChars: integer
-                @param minChars: the minimum number of elementary character the value of this variable can have.
-                @type maxChars: integer
-                @param maxChars: the maximum number of elementary character the value of this variable can have.
         """
         AbstractLeafVariable.__init__(self, _id, name, mutable, random)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
         self.setType(_type)
-        self.setNumberBitsAndNumberChars(minChars, maxChars)
         self.setOriginalValue(originalValue)
         self.currentValue = self.originalValue
 
@@ -86,7 +81,7 @@ class DataVariable(AbstractLeafVariable):
         else:
             readableValue = self.bin2str(self.originalValue)
 
-        return _("[Data] {0}, type: {1}, bits: ({2}, {3}), chars: ({4}, {5}), original value: {6}").format(AbstractVariable.toString(self), self.type.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars), readableValue)
+        return _("[Data] {0}, type: {1}, original value: {6}").format(AbstractVariable.toString(self), self.type.toString(), readableValue)
 
     def getValue(self, processingToken):
         """getValue:
@@ -192,11 +187,11 @@ class DataVariable(AbstractLeafVariable):
 
         # minChars
         xmlMinChars = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
-        xmlMinChars.text = str(self.minChars)
+        xmlMinChars.text = str(self.type.getMinChars())
 
         # maxBits
         xmlMaxChars = etree.SubElement(xmlVariable, "{" + namespace + "}maxChars")
-        xmlMaxChars.text = str(self.maxChars)
+        xmlMaxChars.text = str(self.type.getMaxChars())
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractLeafVariable                             |
@@ -230,34 +225,56 @@ class DataVariable(AbstractLeafVariable):
         """
         self.log.debug(_("- [ {0}: learn.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
-        # Length comparison.
-        if len(tmp) >= self.minBits:
-            self.log.debug(str(len(tmp)) + " - " + str(self.minBits) + " - " + str(self.maxBits))
-            if len(tmp) <= self.maxBits:
-                # Format comparison.
-                if self.type.suitsBinary(tmp):
-                    # We learn everything that last.
-                    self.setCurrentValue(tmp)
-                    readingToken.incrementIndex(len(tmp))
-                    readingToken.setOk(True)
-                    self.log.info(_("Format comparison successful."))
-                else:
-                    readingToken.setOk(False)
-                    self.log.info(_("Format comparison failed: wrong format."))
-            else:  # len(tmp) > self.maxBits
-                # Format comparison.
-                if self.type.suitsBinary(tmp[:self.maxBits]):
-                    # We learn as much as we can.
-                    self.setCurrentValue(tmp[:self.maxBits])
-                    readingToken.incrementIndex(self.maxBits)
-                    readingToken.setOk(True)
-                    self.log.info(_("Format comparison successful."))
-                else:
-                    readingToken.setOk(False)
-                    self.log.info(_("Format comparison failed: wrong format."))
+
+        # If the type has a definite size.
+        if self.type.isSized():
+            minBits = self.type.getMinBits()
+            maxBits = self.type.getMaxBits()
+            # Length comparison.
+            if len(tmp) >= minBits:
+                self.log.debug(str(len(tmp)) + " - " + str(minBits) + " - " + str(maxBits))
+                if len(tmp) <= maxBits:
+                    # Format comparison.
+                    if self.type.suitsBinary(tmp):
+                        # We learn everything that last.
+                        self.setCurrentValue(tmp)
+                        readingToken.incrementIndex(len(tmp))
+                        readingToken.setOk(True)
+                        self.log.info(_("Format comparison successful."))
+                    else:
+                        readingToken.setOk(False)
+                        self.log.info(_("Format comparison failed: wrong format."))
+                else:  # len(tmp) > self.maxBits
+                    # Format comparison.
+                    if self.type.suitsBinary(tmp[:maxBits]):
+                        # We learn as much as we can.
+                        self.setCurrentValue(tmp[:maxBits])
+                        readingToken.incrementIndex(maxBits)
+                        readingToken.setOk(True)
+                        self.log.info(_("Format comparison successful."))
+                    else:
+                        readingToken.setOk(False)
+                        self.log.info(_("Format comparison failed: wrong format."))
+            else:
+                readingToken.setOk(False)
+                self.log.info(_("Format comparison failed: wrong size."))
+
+        # If the type is delimited from 0 to a delimiter.
         else:
-            readingToken.setOk(False)
-            self.log.info(_("Format comparison failed: wrong size."))
+            endi = -1
+            for i in range(len(tmp)):
+                if self.type.endsHere(tmp[i:]):
+                    endi = i
+                    break
+            if endi != -1:
+                # We learn from the beginning to the delimiter.
+                self.setCurrentValue(tmp[:endi + len(self.getType().getDelimiter())])  # The delimiter token is a part of the variable.
+                readingToken.incrementIndex(endi + len(self.getType().getDelimiter()))
+                readingToken.setOk(True)
+            else:
+                readingToken.setOk(False)
+                self.log.info(_("Format comparison failed: no delimiter found."))
+
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def compare(self, readingToken):
@@ -267,6 +284,7 @@ class DataVariable(AbstractLeafVariable):
         self.log.debug(_("- [ {0}: compare.").format(self.toString()))
         localValue = self.getValue(readingToken)
         tmp = readingToken.getValue()[readingToken.getIndex():]
+
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
                 self.log.debug(_("Comparison successful."))
@@ -285,7 +303,7 @@ class DataVariable(AbstractLeafVariable):
                 A new current value is generated according to the variable type and the given generation strategy.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
+        self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy()))
 
     def writeValue(self, writingToken):
         """writeValue:
@@ -309,41 +327,18 @@ class DataVariable(AbstractLeafVariable):
     def getCurrentValue(self):
         return self.currentValue
 
-    def getMinChars(self):
-        return self.minChars
-
-    def getMaxChars(self):
-        return self.maxChars
-
     def setType(self, _type):
         if type is not None:
             self.type = _type
         else:
             # Default type is Binary.
             self.log.info(_("Variable {0} (Data): type undefined.").format(self.getName()))
-            from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
             self.type = BinaryType()
-
-    def setNumberBitsAndNumberChars(self, minChars, maxChars):
-        if minChars is not None and minChars >= 0:
-            self.minBits = self.type.getMinBitSize(minChars)
-            self.minChars = minChars
-        else:
-            self.log.info(_("Variable {0} (Data): minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getName()))
-            self.minBits = 0
-            self.minChars = 0
-        if maxChars is not None and maxChars >= minChars:
-            self.maxBits = self.type.getMaxBitSize(maxChars)
-            self.maxChars = maxChars
-        else:
-            self.log.info(_("Variable {0} (Data): maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getName()))
-            self.maxBits = self.minBits
-            self.maxChars = self.minChars
 
     def setOriginalValue(self, originalValue):
         if originalValue is not None:
             size = self.type.getBitSize(originalValue)
-            if size >= self.minBits and size <= self.maxBits:
+            if size >= self.type.getMinBits() and size <= self.type.getMaxBits():
                 self.originalValue = self.type.str2bin(originalValue)
             else:
                 self.originalValue = None
