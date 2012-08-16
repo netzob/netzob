@@ -631,11 +631,16 @@
 		<complexContent>
 			<extension base="netzob-project:AbstractVariable">
 				<sequence>
+				    <element name="sized" type="string"></element>
 				    <element name="type" type="string"></element>
 					<element name="originalValue" type="string" minOccurs="0"
 						maxOccurs="1"></element>
-					<element name="minChars" type="string"></element>
-					<element name="maxChars" type="string"></element>
+					<element name="minChars" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+					<element name="maxChars" type="string" minOccurs="0"
+						maxOccurs="1"></element>
+                    <element name="delimiter" type="string" minOccurs="0"
+						maxOccurs="1"></element>
 				</sequence>
 			</extension>
 		</complexContent>
