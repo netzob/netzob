@@ -147,7 +147,7 @@ class Field(object):
         """
         if self.isStatic():
             value = TypeConvertor.netzobRawToBitArray(self.getRegex())
-            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(), value.to01(), len(value), len(value))  # A static field is neither mutable nor random.
+            variable = DataVariable(uuid.uuid4(), self.getName(), False, False, BinaryType(True, len(value), len(value)), value.to01())  # A static field is neither mutable nor random.
             return variable
         else:
             # The default variable is an alternative of all the possibilities (in binary type)
@@ -161,7 +161,7 @@ class Field(object):
             alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
             logging.debug("Symbol {0}, Field {1}, Domain {2}".format(self.symbol.getName(), self.getName(), str(domain)))
             for d in domain:
-                child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(), d.to01(), len(d), len(d))
+                child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
                 alternateVar.addChild(child)
             variable.addChild(alternateVar)
             return variable

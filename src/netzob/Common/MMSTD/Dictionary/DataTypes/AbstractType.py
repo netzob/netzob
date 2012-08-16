@@ -71,7 +71,7 @@ class AbstractType():
         # TODO: manage minBits/maxBits
 
     def toString(self):
-        return _("{1}, bits: ({2}, {3}), chars: ({4}, {5})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars))
+        return (_("{0}, bits: ({1}, {2}), chars: ({3}, {4})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars)))
 
     def endsHere(self, bina):
         """endsHere:
@@ -232,14 +232,14 @@ class AbstractType():
 
     def setNumberBitsAndNumberChars(self, minChars, maxChars):
         if minChars is not None and minChars >= 0:
-            self.minBits = self.type.getMinBitSize(minChars)
+            self.minBits = self.getMinBitSize(minChars)
             self.minChars = minChars
         else:
             self.log.info(_("Type {0} : minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getType()))
             self.minBits = 0
             self.minChars = 0
         if maxChars is not None and maxChars >= minChars:
-            self.maxBits = self.type.getMaxBitSize(maxChars)
+            self.maxBits = self.getMaxBitSize(maxChars)
             self.maxChars = maxChars
         else:
             self.log.info(_("Type {0} : maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getType()))
