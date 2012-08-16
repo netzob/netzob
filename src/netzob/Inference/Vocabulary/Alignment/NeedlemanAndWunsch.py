@@ -304,7 +304,7 @@ class NeedlemanAndWunsch(object):
                             if fieldNext.getIndex() > field.getIndex():
                                 fieldNext.setIndex(fieldNext.getIndex() - 1)
                         # Concatenate the surrounding fields (because they should be static fields)
-                        if symbol.concatFields(field.getIndex() - 1) == 1:
+                        if symbol.concatFields(field.getIndex() - 1, field.getIndex()) == 1:
                             doLoop = True
                             break
 
