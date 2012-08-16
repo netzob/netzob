@@ -48,28 +48,25 @@ class AbstractWordType(AbstractType):
             A type represented by printable 8-bits strings.
     """
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of AbstractWordType:
         """
-        AbstractType.__init__(self)
+        AbstractType.__init__(self, sized, minChars, maxChars, delimiter)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.AbstractWordType.py')
 
-    def generateRandomString(self, stringType, minSize, maxSize):
+    def generateRandomString(self, stringType, charSize):
         """generateRandomString:
                 Generate a random string of the given size withen the given min and max size.
 
                 @type stringType: integer
                 @param stringType: a string type as string.digits, string.letters, string.printable...
-                @type minSize: integer
-                @param minSize: the minimum size of the generated string.
-                @type maxSize: integer
-                @param maxSize: the maximum size of the generated string.
+                @type charSize: integer
+                @param charSize: the size of the generated string.
                 @rtype: string
                 @return: the randomly generated string.
         """
-        size = random.randint(minSize, maxSize)
         value = ""
-        for i in range(size):
+        for i in range(charSize):
             value = value + random.choice(stringType)
         return value
 

@@ -50,21 +50,20 @@ class BinaryType(AbstractType):
 
     TYPE = "Binary"
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of BinaryType:
         """
-        AbstractType.__init__(self)
+        AbstractType.__init__(self, sized, minChars, maxChars, delimiter)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.BinaryType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategies, minSize, maxSize):
+    def generateFixedSizeValue(self, generationStrategies, charSize):
         value = []
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
-                size = random.randint(minSize, maxSize)
-                for i in range(size):
+                for i in range(charSize):
                     if random.randint(0, 1) == 1:
                         value.append(True)
                     else:

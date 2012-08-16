@@ -49,20 +49,20 @@ class WordType(AbstractWordType):
 
     TYPE = "Word"
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of WordType:
         """
-        AbstractWordType.__init__(self)
+        AbstractWordType.__init__(self, sized, minChars, maxChars, delimiter)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.WordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategies, minSize, maxSize):
+    def generateFixedSizeValue(self, generationStrategies, charSize):
         value = ""
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
-                value = self.generateRandomString(string.printable, minSize, maxSize)
+                value = self.generateRandomString(string.printable, charSize)
                 break
         return self.str2bin(value)
 

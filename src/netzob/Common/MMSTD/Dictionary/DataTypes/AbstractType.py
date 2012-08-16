@@ -31,6 +31,7 @@
 from abc import abstractmethod
 from gettext import gettext as _
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -44,32 +45,85 @@ import logging
 
 class AbstractType():
     """AbstractType:
-            It defines the type of a variable.
+            It defines the type that rules the data of a variable.
+            Such a typed data can be delimited by a minimum and a maximum or by a delimiter at the end.
     """
 
-    def __init__(self):
+    MAX_CHARS = 100
+
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of AbstractType:
+
+                @type sized: boolean
+                @param sized: tell if the variable can be delimited by a size or by a delimiter.
+                @type minChars: integer
+                @param minChars: the minimum number of characters of the variable associated to the given type.
+                @type maxChars: integer
+                @param maxChars: the maximum number of characters of the variable associated to the given type.
+                @type delimiter: bitarray
+                @param delimiter: a set of bits that tells where the associated variable ends.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.AbstractType.py')
+        self.sized = sized
+        self.setNumberBitsAndNumberChars(minChars, maxChars)
+        self.delimiter = delimiter
+
+        # TODO: manage minBits/maxBits
+
+    def toString(self):
+        return _("{1}, bits: ({2}, {3}), chars: ({4}, {5})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars))
+
+    def endsHere(self, bina):
+        """endsHere:
+                (For unsized type)
+                Tell if the type ends at the beginning of bita. i.e. we found the delimiter as a prefix of bina.
+
+                @type bina: bitarray
+                @param bina: the bitarray which could prefix with the variable's type delimiter which would indicate the end of the data block.
+                @rtype: boolean
+                @return: True if it ends here, False if we have to go deeper.
+        """
+        if len(bina) < len(self.delimiter):
+            return False
+        for i in range(len(self.delimiter)):
+            if bina[i] != self.delimiter[i]:
+                return False
+        return True
+
+    def generateValue(self, generationStrategies):
+        """generateValue:
+                Generate a bit array value according to the generationStrategy specification.
+
+                @type generationStrategies: string List
+                @param generationStrategies: a list of strategy ("random" for instance) that defines the way the value will be generated. The first allowed strategy is used.
+                @rtype: bitarray
+                @return: the generated value.
+        """
+        if self.sized:
+            size = random.randint(self.minChars, self.maxChars)
+            return self.generateFixedSizeValue(generationStrategies, size)
+        else:
+            size = random.randint(0, AbstractType.MAX_CHARS)
+            value = self.generateFixedSizeValue(generationStrategies, size)
+            value += self.delimiter  # The delimiter is a part of the final value.
+            return value
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+
     @abstractmethod
-    def generateValue(self, generationStrategies, minSize, maxSize):
-        """generateValue:
+    def generateFixedSizeValue(self, generationStrategies, charSize):
+        """generateFixedSizeValue:
                 Generate a bit array value according to the generationStrategy specification and which size is between minSize and maxSize.
 
                 @type generationStrategies: string List
                 @param generationStrategies: a list of strategy ("random" for instance) that defines the way the value will be generated. The first allowed strategy is used.
-                @type minSize: integer
-                @param minSize: the minimum size of the value in bits.
-                @type maxSize: integer
-                @param maxSize: the maximum size of the value in bits.
+                @type charSize: integer
+                @param charSize: the size of the value in characters.
                 @rtype: bitarray
                 @return: the generated value.
         """
-        raise NotImplementedError(_("The current type does not implement 'generateValue'."))
+        raise NotImplementedError(_("The current type does not implement 'generateFixedSizeValue'."))
 
     @abstractmethod
     def str2bin(self, stri):
@@ -156,10 +210,47 @@ class AbstractType():
         raise NotImplementedError(_("The current type does not implement 'suitsBinary'."))
 
 #+---------------------------------------------------------------------------+
+#| Getters and Setters                                                       |
+#+---------------------------------------------------------------------------+
+    def isSized(self):
+        return self.sized
+
+    def getMinChars(self):
+        return self.minChars
+
+    def getMaxChars(self):
+        return self.maxChars
+
+    def getDelimiter(self):
+        return self.delimiter
+
+    def getMinBits(self):
+        return self.minBits
+
+    def getMaxBits(self):
+        return self.maxBits
+
+    def setNumberBitsAndNumberChars(self, minChars, maxChars):
+        if minChars is not None and minChars >= 0:
+            self.minBits = self.type.getMinBitSize(minChars)
+            self.minChars = minChars
+        else:
+            self.log.info(_("Type {0} : minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getType()))
+            self.minBits = 0
+            self.minChars = 0
+        if maxChars is not None and maxChars >= minChars:
+            self.maxBits = self.type.getMaxBitSize(maxChars)
+            self.maxChars = maxChars
+        else:
+            self.log.info(_("Type {0} : maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getType()))
+            self.maxBits = self.minBits
+            self.maxChars = self.minChars
+
+#+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def makeType(typeString):
+    def makeType(typeString, sized, minSize=0, maxSize=0, delimiter=None):
         _type = None
         from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
         from netzob.Common.MMSTD.Dictionary.DataTypes.DecimalWordType import DecimalWordType
@@ -169,19 +260,19 @@ class AbstractType():
         from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
         from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
         if typeString == BinaryType.TYPE:
-            _type = BinaryType()
+            _type = BinaryType(sized, minSize, maxSize, delimiter)
         elif typeString == DecimalWordType.TYPE:
-            _type = DecimalWordType()
+            _type = DecimalWordType(sized, minSize, maxSize, delimiter)
         elif typeString == HexWordType.TYPE:
-            _type = HexWordType()
-        elif typeString == IPv4WordType.TYPE:
-            _type = IPv4WordType()
-        elif typeString == MACWordType.TYPE:
-            _type = MACWordType()
+            _type = HexWordType(sized, minSize, maxSize, delimiter)
         elif typeString == IntegerType.TYPE:
-            _type = IntegerType()
+            _type = IntegerType(sized, minSize, maxSize, delimiter)
+        elif typeString == IPv4WordType.TYPE:
+            _type = IPv4WordType(sized, minSize, maxSize, delimiter)
+        elif typeString == MACWordType.TYPE:
+            _type = MACWordType(sized, minSize, maxSize, delimiter)
         elif typeString == WordType.TYPE:
-            _type = WordType()
+            _type = WordType(sized, minSize, maxSize, delimiter)
         else:
             logging.error(_("Wrong type specified for this variable."))
         return _type

@@ -52,14 +52,14 @@ class MACWordType(AbstractWordType):
     def __init__(self):
         """Constructor of MACWordType:
         """
-        AbstractWordType.__init__(self)
+        AbstractWordType.__init__(self, True, 17, 17, None)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.MACWordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategies, minSize, maxSize):
-        # minSize and maxSize are not used.
+    def generateFixedSizeValue(self, generationStrategies, charSize):
+        # charSize is not used.
         value = ""
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":

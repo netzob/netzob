@@ -50,20 +50,20 @@ class IntegerType(AbstractType):
 
     TYPE = "Integer"
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of IntegerType:
         """
-        AbstractType.__init__(self)
+        AbstractType.__init__(self, sized, minChars, maxChars, delimiter)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.IntegerType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategies, minSize, maxSize):
+    def generateFixedSizeValue(self, generationStrategies, charSize):
         value = 0
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
-                value = random.randint(10 ** (minSize - 1), (10 ** maxSize) - 1)
+                value = random.randint(10 ** (charSize - 1), (10 ** charSize) - 1)
                 break
         return self.str2bin(value)
 

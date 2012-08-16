@@ -53,14 +53,14 @@ class IPv4WordType(AbstractWordType):
     def __init__(self):
         """Constructor of IPv4WordType:
         """
-        AbstractWordType.__init__(self)
+        AbstractWordType.__init__(self, True, 7, 15, None)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.IPv4WordType.py')
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
-    def generateValue(self, generationStrategies, minSize, maxSize):
-        # minSize and maxSize are not used.
+    def generateFixedSizeValue(self, generationStrategies, charSize):
+        # charSize is not used.
         value = ""
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
