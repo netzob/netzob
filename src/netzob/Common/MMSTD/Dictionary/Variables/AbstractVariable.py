@@ -47,7 +47,7 @@ class AbstractVariable:
             An abstract variable defined in a dictionary.
     """
 
-    def __init__(self, _id, name, mutable, random, node):
+    def __init__(self, _id, name, mutable, learnable, node):
         """Constructor of AbstractVariable:
 
                 @type _id: string
@@ -56,8 +56,8 @@ class AbstractVariable:
                 @param name: the name of the variable being constructed.
                 @type mutable: boolean
                 @param mutable: tells if the variable can be modified or not.
-                @type random: boolean
-                @param random: tells if the variable has a fixed or a dynamic and randomly driven value.
+                @type learnable: boolean
+                @param learnable: tells if the variable can learned a value, initialized itself or not.
                 @type node: boolean
                 @param node: tells if the variable is a node.
         """
@@ -65,16 +65,14 @@ class AbstractVariable:
         self.id = _id
         self.name = name
         self.mutable = mutable
-        self.random = random
+        self.learnable = learnable
         self.node = node
-        self.checked = False  # Tell if a variable has already been accessed (so that a relationVariable and the variable it points have the same value.)
-        # Variable are checked by their mother node once this one thinks it has completed its treatment on the given child.
 
     def toString(self):
         """toString:
                 For debugging purpose.
         """
-        return _("Variable {0} ({3}) (mutable: {1}, random: {2})").format(self.name, str(self.mutable), str(self.random), self.id)
+        return _("Variable {0} ({3}) (mutable: {1}, learnable: {2})").format(self.name, str(self.mutable), str(self.learnable), self.id)
 
     def findMotherNode(self, rootVariable):
         """findMotherNode:
@@ -186,7 +184,6 @@ class AbstractVariable:
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
                 Return a dictionary which contains the variable id as key and the value as value of the variable is a leaf and a dictionary containing all couples variable id - value of the children if the variable is a node.
-                Contain values of unchecked data variables.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -230,14 +227,11 @@ class AbstractVariable:
     def isMutable(self):
         return self.mutable
 
-    def isRandom(self):
-        return self.random
+    def isLearnable(self):
+        return self.learnable
 
     def isNode(self):
         return self.node
-
-    def isChecked(self):
-        return self.checked
 
     def setID(self, _id):
         self.id = _id
@@ -245,14 +239,11 @@ class AbstractVariable:
     def setMutable(self, mutable):
         self.mutable = mutable
 
-    def setRandom(self, random):
-        self.random = random
+    def setLearnable(self, learnable):
+        self.learnable = learnable
 
     def setNode(self, node):
         self.node = node
-
-    def setChecked(self, checked):
-        self.checked = checked
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

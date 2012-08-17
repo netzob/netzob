@@ -31,7 +31,6 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -54,11 +53,74 @@ class AlternateVariable(AbstractNodeVariable):
 
     TYPE = "Alternate Variable"
 
-    def __init__(self, _id, name, mutable, random, children=[]):
+    def __init__(self, _id, name, mutable, learnable, children=[]):
         """Constructor of AlternateVariable:
         """
-        AbstractNodeVariable.__init__(self, _id, name, mutable, random, children)
+        AbstractNodeVariable.__init__(self, _id, name, mutable, learnable, children)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AlternateVariable.py')
+
+    def readChildren(self, readingToken):
+        """read:
+                Each child tries to read the value.
+                If it fails, it restore it value and the next child try.
+                It stops if one child successes.
+        """
+        self.log.debug(_("[ {0} (Alternate): read access:").format(AbstractVariable.toString(self)))
+        savedIndex = readingToken.getIndex()
+        for child in self.getChildren():
+            # Memorized values for the child and its successors.
+            dictOfValues = dict()
+            dictOfValue = child.getDictOfValues(readingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            child.read(readingToken)
+            if readingToken.isOk():
+                break
+            else:
+                readingToken.setIndex(savedIndex)
+
+                # We restore values for the child and its successors.
+                child.restore(readingToken)
+                vocabulary = readingToken.getVocabulary()
+                for key, val in dictOfValues.iteritems():
+                    vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        if self.isLearnable() and not readingToken.isOk():
+            # If we dont not found a proper child but the node can learn, we learn the value.
+            pass
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
+    def writeChildren(self, writingToken):
+        """write:
+                Each child tries to write its value..
+                If it fails, it restore it value and the next child try.
+                It stops if one child successes.
+        """
+        self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
+
+        savedValue = writingToken.getValue()
+        for child in self.getChildren():
+            # Memorized values for the child and its successor.
+            dictOfValues = dict()
+            dictOfValue = child.getDictOfValues(writingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            child.write(writingToken)
+            if writingToken.isOk() and writingToken.getValue() is not None:
+                break
+            else:
+                writingToken.setValue(savedValue)
+
+                # We restore values for the child and its successor.
+                child.restore(writingToken)
+                vocabulary = writingToken.getVocabulary()
+                for key, val in dictOfValues.iteritems():
+                    vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -88,68 +150,46 @@ class AlternateVariable(AbstractNodeVariable):
 
     def read(self, readingToken):
         """read:
-                Each child tries to read the value.
-                If it fails, it restore it value and the next child try.
-                It stops if one child successes.
+                Each child tries sequentially to read a part of the read value.
+                If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Alternate): read access:").format(AbstractVariable.toString(self)))
-        savedIndex = readingToken.getIndex()
-        for child in self.getChildren():
-            # Memorized values for the child and its successors.
-            dictOfValues = dict()
-            dictOfValue = child.getDictOfValues(readingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
+        if self.getChildren() is not None:
+            if self.isMutable():
+                # mutable.
+                self.shuffleChildren()
+                self.readChildren(readingToken)  # TODO: Implement the children enrichment in readChildren
 
-            child.read(readingToken)
-            if readingToken.isOk():
-                child.setChecked(True)  # We check the validating child
-                break
             else:
-                readingToken.setIndex(savedIndex)
+                # not mutable.
+                self.readChildren(readingToken)
 
-                # We restore values for the child and its successors.
-                child.restore(readingToken)
-                vocabulary = readingToken.getVocabulary()
-                for key, val in dictOfValues.iteritems():
-                    vocabulary.getVariableByID(key).setCurrentValue(val)
-
+        else:
+            # no child.
+            self.log.debug(_("Write abort: the variable has no child."))
+            readingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
-                Each child tries to write its value..
-                If it fails, it restore it value and the next child try.
-                It stops if one child successes.
+                Each child tries sequentially to write its value.
+                If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
+        if self.getChildren() is not None:
+            if self.isMutable():
+                # mutable.
+                self.shuffleChildren()
+                self.writeChildren(writingToken)
 
-        if self.isRandom() and not self.isChecked():
-            # If the variable is random, we randomly sort its values. (If it has not been done yet).
-            if self.getChildren() is not None:
-                random.shuffle(self.getChildren())
-
-        savedValue = writingToken.getValue()
-        for child in self.getChildren():
-            # Memorized values for the child and its successor.
-            dictOfValues = dict()
-            dictOfValue = child.getDictOfValues(writingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
-
-            child.write(writingToken)
-            if writingToken.isOk() and writingToken.getValue() is not None:
-                child.setChecked(True)  # We check the validating child
-                break
             else:
-                writingToken.setValue(savedValue)
+                # not mutable.
+                self.writeChildren(writingToken)
 
-                # We restore values for the child and its successor.
-                child.restore(writingToken)
-                vocabulary = writingToken.getVocabulary()
-                for key, val in dictOfValues.iteritems():
-                    vocabulary.getVariableByID(key).setCurrentValue(val)
-
+        else:
+            # no child.
+            self.log.debug(_("Write abort: the variable has no child."))
+            writingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
@@ -162,7 +202,7 @@ class AlternateVariable(AbstractNodeVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AlternateVariable")
         xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
+        xmlVariable.set("learnable", str(self.isLearnable()))
 
         # Definition of children variables
         for child in self.children:
@@ -181,13 +221,13 @@ class AlternateVariable(AbstractNodeVariable):
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlMutable = xmlRoot.get("mutable") == "True"
-            xmlRandom = xmlRoot.get("random") == "True"
+            xmlLearnable = xmlRoot.get("learnable") == "True"
 
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            result = AlternateVariable(xmlID, xmlName, xmlMutable, xmlRandom, children)
+            result = AlternateVariable(xmlID, xmlName, xmlMutable, xmlLearnable, children)
             logging.debug(_("AlternateVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("AlternateVariable: loadFromXML fails"))

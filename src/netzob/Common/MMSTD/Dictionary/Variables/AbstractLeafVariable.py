@@ -48,10 +48,10 @@ class AbstractLeafVariable(AbstractVariable):
             An abstract variable defined in a dictionary which is a leaf (variable containing data for example) in the global variable tree.
     """
 
-    def __init__(self, _id, name, mutable, random):
+    def __init__(self, _id, name, mutable, learnable):
         """Constructor of AbstractLeafVariable:
         """
-        AbstractVariable.__init__(self, _id, name, mutable, random, False)
+        AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractLeafVariable.py')
 
 #+---------------------------------------------------------------------------+
@@ -88,9 +88,19 @@ class AbstractLeafVariable(AbstractVariable):
         raise NotImplementedError(_("The current variable does not implement 'memorize'."))
 
     @abstractmethod
+    def compareFormat(self, readingToken):
+        """compareFormat:
+                Compare (starting at the "indice"-th character) the readingToken's value format to the variable type format.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'compareFormat'."))
+
+    @abstractmethod
     def learn(self, readingToken):
         """learn:
-                Learn (starting at the "indice"-th character) value.
+                Learn (starting at the "indice"-th character) the readingToken's value.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
@@ -100,12 +110,22 @@ class AbstractLeafVariable(AbstractVariable):
     @abstractmethod
     def compare(self, readingToken):
         """compare:
-                Compare (starting at the "indice"-th character) value to the current or a previously memorized value of variable.
+                Compare (starting at the "indice"-th character) the readingToken's value to the current or a previously memorized value of variable.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'compare'."))
+
+    @abstractmethod
+    def mutate(self, writingToken):
+        """mutate:
+                Mutate the memorized value according to a given strategy and attribute it to the variable.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'generate'."))
 
     @abstractmethod
     def generate(self, writingToken):
@@ -136,34 +156,50 @@ class AbstractLeafVariable(AbstractVariable):
         """
         self.log.debug(_("[ {0} (leaf): read access:").format(AbstractVariable.toString(self)))
         if self.isMutable():
-            if self.isDefined(readingToken):
-                # mutable and defined
-                if not self.isChecked():
+            if self.isLearnable():
+                if self.isDefined(readingToken):
+                    # mutable, learnable and defined.
                     self.forget(readingToken)
+                    self.compareFormat(readingToken)
                     self.learn(readingToken)
                     self.memorize(readingToken)
-                else:  # We compare the value previously learned (during the checking access) to the one that should have been learned.
-                    self.log.debug(_("The variable is already checked, so we compare the value formerly learned to the proposed one."))
-                    self.compare(readingToken)
+
+                else:
+                    # mutable, learnable and not defined.
+                    self.compareFormat(readingToken)
+                    self.learn(readingToken)
+                    self.memorize(readingToken)
 
             else:
-                # mutable and not defined
-                if not self.isChecked():
-                    self.learn(readingToken)
-                    self.memorize(readingToken)
+                if self.isDefined(readingToken):
+                    # mutable, not learnable and defined.
+                    self.compareFormat(readingToken)
+
                 else:
-                    self.log.debug(_("The variable is already checked, so we compare the value formerly learned to the proposed one."))
-                    self.compare(readingToken)
+                    # mutable, learnable and not defined.
+                    self.compareFormat(readingToken)
 
         else:
-            if self.isDefined(readingToken):
-                # not mutable and defined
-                self.compare(readingToken)
+            if self.isLearnable():
+                if self.isDefined(readingToken):
+                    # not mutable, learnable and defined.
+                    self.compare(readingToken)
+
+                else:
+                    # not mutable, learnable and not defined.
+                    self.compareFormat(readingToken)
+                    self.learn(readingToken)
+                    self.memorize(readingToken)
 
             else:
-                # not mutable and not defined
-                self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
-                readingToken.setOk(False)
+                if self.isDefined(readingToken):
+                    # not mutable, not learnable and defined.
+                    self.compare(readingToken)
+
+                else:
+                    # not mutable, not learnable and not defined.
+                    self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
+                    readingToken.setOk(False)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -172,30 +208,49 @@ class AbstractLeafVariable(AbstractVariable):
                 The leaf element returns its value or a generated one.
         """
         self.log.debug(_("[ {0} (leaf): write access:").format(AbstractVariable.toString(self)))
-        if self.isRandom():
-            if self.isDefined(writingToken):
-                # random and defined
-                if not self.isChecked():  # A checked variable does not modify its value.
-                    self.forget(writingToken)
-                    self.generate(writingToken)
-                    self.memorize(writingToken)
-                self.writeValue(writingToken)
+        if self.isMutable():
+            if self.isLearnable():
+                if self.isDefined(writingToken):
+                    # mutable, learnable and defined.
+                    self.mutate(writingToken)
+                    self.writeValue(writingToken)
 
-            else:
-                # random and not defined
-                if not self.isChecked():
+                else:
+                    # mutable, learnable and not defined.
                     self.generate(writingToken)
                     self.memorize(writingToken)
-                self.writeValue(writingToken)
+                    self.writeValue(writingToken)
+            else:
+                if self.isDefined(writingToken):
+                    # mutable, not learnable, defined.
+                    self.generate(writingToken)
+                    self.writeValue(writingToken)
+
+                else:
+                    # mutable, not learnable, not defined.
+                    self.generate(writingToken)
+                    self.writeValue(writingToken)
 
         else:
-            if self.isDefined(writingToken):
-                # not random and defined
-                self.writeValue(writingToken)
+            if self.isLearnable():
+                if self.isDefined(writingToken):
+                    # not mutable, learnable and defined.
+                    self.writeValue(writingToken)
+
+                else:
+                    # not mutable, learnable and not defined.
+                    self.generate(writingToken)
+                    self.memorize(writingToken)
+                    self.writeValue(writingToken)
 
             else:
-                # not random and not defined
-                self.log.debug(_("Write abort: the variable is neither defined, nor random."))
-                writingToken.setOk(False)
+                if self.isDefined(writingToken):
+                    # not mutable, not learnable and defined.
+                    self.writeValue(writingToken)
+
+                else:
+                    # not mutable, not learnable and not defined.
+                    self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
+                    writingToken.setOk(False)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))

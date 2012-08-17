@@ -58,10 +58,10 @@ class DirectRelationVariable(AbstractRelationVariable):
 
     TYPE = "Direct Relation Variable"
 
-    def __init__(self, _id, name, mutable, random, pointedID):
+    def __init__(self, _id, name, mutable, learnable, pointedID):
         """Constructor of DirectRelationVariable:
         """
-        AbstractRelationVariable.__init__(self, _id, name, mutable, random, pointedID)
+        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedID)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
 
 #+---------------------------------------------------------------------------+
@@ -87,7 +87,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DirectRelationVariable")
         xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
+        xmlVariable.set("learnable", str(self.isLearnable()))
 
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
@@ -97,7 +97,7 @@ class DirectRelationVariable(AbstractRelationVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |
 #+---------------------------------------------------------------------------+
-    def retrieveValue(self, readingToken):
+    def retrieveValue(self, readingToken):  # WRONG TODO: correct this
         """retrieveValue:
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
@@ -114,6 +114,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """learn:
                 The variable checks if the pointed variable's format complies with the read value's format.
                 If it matches, the variable learns, else it returns NOk.
+                Not used anymore but may be interesting in the future.
         """
         self.log.debug(_("- [ {0}: learn.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
@@ -170,7 +171,7 @@ class DirectRelationVariable(AbstractRelationVariable):
         """computeValue:
                 Compute the value of the relation variable according to the pointed variable's own value.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
         pointedVariable = self.getPointedVariable(writingToken.getVocabulary())
         if pointedVariable is None:
             writingToken.setOk(False)
@@ -193,10 +194,10 @@ class DirectRelationVariable(AbstractRelationVariable):
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlMutable = xmlRoot.get("mutable") == "True"
-            xmlRandom = xmlRoot.get("random") == "True"
+            xmlLearnable = xmlRoot.get("learnable") == "True"
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            result = DirectRelationVariable(xmlID, xmlName, xmlMutable, xmlRandom, xmlRefID)
+            result = DirectRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, xmlRefID)
             logging.debug(_("DirectRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("DirectRelationVariable: loadFromXML fails"))

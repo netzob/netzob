@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -103,6 +104,14 @@ class AbstractNodeVariable(AbstractVariable):
                     self.removeChild(son)
                     self.addChild(child)
                     break
+
+    def shuffleChildren(self):
+        """shuffleChildren:
+                Randomly sort children of the variable.
+        """
+        self.log.debug(_("-  {0}: shuffleChildren.").format(self.toString()))
+        if self.getChildren() is not None:
+            random.shuffle(self.getChildren())
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |

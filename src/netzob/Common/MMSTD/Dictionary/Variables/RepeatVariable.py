@@ -55,7 +55,7 @@ class RepeatVariable(AbstractNodeVariable):
     MAX_ITERATIONS = 10  # TODO: Choose a better value.
     TYPE = "Repeat Variable"
 
-    def __init__(self, _id, name, mutable, random, child, minIterations, maxIterations):
+    def __init__(self, _id, name, mutable, learnable, child, minIterations, maxIterations):
         """Constructor of RepeatVariable:
                 Each treatment will be repeated at most maxIterations time.
                 Each function will call once by iteration its equivalent in the class on the child.
@@ -69,7 +69,7 @@ class RepeatVariable(AbstractNodeVariable):
                 @type maxIterations: integer
                 @param maxIterations: the maximum number of iteration each treatment will be repeated.
         """
-        AbstractNodeVariable.__init__(self, _id, name, mutable, random, [child])
+        AbstractNodeVariable.__init__(self, _id, name, mutable, learnable, [child])
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.RepeatVariable.py')
         if minIterations is not None and minIterations >= 0:
             self.minIterations = minIterations
@@ -82,8 +82,82 @@ class RepeatVariable(AbstractNodeVariable):
             self.log.info(_("Variable {0} (Repeat): Construction of RepeatVariable: maxIterations undefined or < minIterations. maxIterations value is fixed to minIterations.").format(self.getName()))
             self.maxIterations = self.minIterations
 
-    def getRandomNumberIterations(self):
-        """getRandomNumberIterations:
+    def readChild(self, readingToken):
+        """read:
+                The pointed variable reads the value.
+        """
+        self.log.debug(_("[ {0}: read access:").format(self.toString()))
+        (minIterations, maxIterations) = self.getNumberIterations()
+        successfullIterations = 0
+
+        # Memorized initial values for the child and its successors.
+        dictOfValues = dict()
+        dictOfValue = self.getChild().getDictOfValues(readingToken)
+        for key, val in dictOfValue.iteritems():
+            dictOfValues[key] = val
+
+        for i in range(maxIterations):
+            self.getChild().read(readingToken)
+            if readingToken.isOk():
+                successfullIterations += 1
+            else:
+                break
+        # We search if we have done the minimum number of iterations.
+        if successfullIterations < minIterations:
+            readingToken.setOk(False)
+            # If not, we clean our traces.
+            vocabulary = readingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(readingToken)
+        else:
+            readingToken.setOk(True)
+
+        self.checkChild(True)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
+    def writeChild(self, writingToken):
+        """write:
+                The pointed variable writes its value.
+        """
+        self.log.debug(_("[ {0}: write access:").format(self.toString()))
+        (minIterations, maxIterations) = self.getNumberIterations()
+        successfullIterations = 0
+
+        # Memorized initial values for the child and its successors.
+        dictOfValues = dict()
+        dictOfValue = self.getChild().getDictOfValues(writingToken)
+        for key, val in dictOfValue.iteritems():
+            dictOfValues[key] = val
+
+        for i in range(maxIterations):
+            self.getChild().write(writingToken)
+            if writingToken.isOk():
+                successfullIterations += 1
+            else:
+                break
+        # We search if we have done the minimum number of iterations.
+        if successfullIterations < minIterations:
+            writingToken.setOk(False)
+            # If not, we clean our traces.
+            vocabulary = writingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(writingToken)
+        else:
+            writingToken.setOk(True)
+
+        self.checkChild(True)
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def randomizeIterations(self):
+        """randomizeIterations:
                 Generate randomly a couple of max and min number iterations.
                 TODO: implement a better random finding way (for example a Poisson law center around 10, so we would mostly have short values, and sometimes we would have high values.
         """
@@ -131,81 +205,39 @@ class RepeatVariable(AbstractNodeVariable):
 
     def read(self, readingToken):
         """read:
-                The pointed variable reads the value.
+                Each child tries sequentially to read a part of the read value.
+                If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0}: read access:").format(self.toString()))
-        (minIterations, maxIterations) = self.getNumberIterations()
-        successfullIterations = 0
+        self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
+        if self.getChildren() is not None:
+            self.readChild(readingToken)  # TODO: implement adaptation in readChild.
 
-        # Memorized initial values for the child and its successors.
-        dictOfValues = dict()
-        dictOfValue = self.getChild().getDictOfValues(readingToken)
-        for key, val in dictOfValue.iteritems():
-            dictOfValues[key] = val
-
-        for i in range(maxIterations):
-            self.getChild().read(readingToken)
-            if readingToken.isOk():
-                successfullIterations += 1
-            else:
-                break
-        # We search if we have done the minimum number of iterations.
-        if successfullIterations < minIterations:
-            readingToken.setOk(False)
-            # If not, we clean our traces.
-            vocabulary = readingToken.getVocabulary()
-            for key, val in dictOfValues.iteritems():
-                child = vocabulary.getVariableByID(key)
-                # We restore the current values.
-                child.setCurrentValue(val)
-                # We restore the cached values.
-                child.restore(readingToken)
         else:
-            readingToken.setOk(True)
-
-        self.checkChild(True)
+            # no child.
+            self.log.debug(_("Write abort: the variable has no child."))
+            readingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
         """write:
-                The pointed variable writes its value.
+                Each child tries sequentially to write its value.
+                If one of them fails, the whole operation is cancelled.
         """
-        self.log.debug(_("[ {0}: write access:").format(self.toString()))
+        self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
+        if self.getChildren() is not None:
+            if self.isMutable():
+                # mutable.
+                self.randomizeIterations()
+                self.writeChildren(writingToken)
 
-        if self.isRandom() and not self.isChecked():
-            # If the variable is random, we randomly choose a min and a max number of iterations. (If it has not been done yet).
-            (minIterations, maxIterations) = self.getRandomNumberIterations()
-        else:
-            (minIterations, maxIterations) = self.getNumberIterations()
-        successfullIterations = 0
-
-        # Memorized initial values for the child and its successors.
-        dictOfValues = dict()
-        dictOfValue = self.getChild().getDictOfValues(writingToken)
-        for key, val in dictOfValue.iteritems():
-            dictOfValues[key] = val
-
-        for i in range(maxIterations):
-            self.getChild().write(writingToken)
-            if writingToken.isOk():
-                successfullIterations += 1
             else:
-                break
-        # We search if we have done the minimum number of iterations.
-        if successfullIterations < minIterations:
-            writingToken.setOk(False)
-            # If not, we clean our traces.
-            vocabulary = writingToken.getVocabulary()
-            for key, val in dictOfValues.iteritems():
-                child = vocabulary.getVariableByID(key)
-                # We restore the current values.
-                child.setCurrentValue(val)
-                # We restore the cached values.
-                child.restore(writingToken)
-        else:
-            writingToken.setOk(True)
+                # not mutable.
+                self.writeChildren(writingToken)
 
-        self.checkChild(True)
+        else:
+            # no child.
+            self.log.debug(_("Write abort: the variable has no child."))
+            writingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
@@ -219,7 +251,7 @@ class RepeatVariable(AbstractNodeVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:RepeatVariable")
         xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
+        xmlVariable.set("learnable", str(self.isLearnable()))
 
         # Definition of child variable
         self.getChild().toXML(xmlVariable, namespace)
@@ -259,7 +291,7 @@ class RepeatVariable(AbstractNodeVariable):
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlMutable = xmlRoot.get("mutable") == "True"
-            xmlRandom = xmlRoot.get("random") == "True"
+            xmlLearnable = xmlRoot.get("learnable") == "True"
 
             xmlChild = xmlRoot.find("{" + namespace + "}variable")
             child = AbstractVariable.loadFromXML(xmlChild, namespace, version)
@@ -278,7 +310,7 @@ class RepeatVariable(AbstractNodeVariable):
             else:
                 maxIterations = RepeatVariable.MAX_ITERATIONS
 
-            result = RepeatVariable(xmlID, xmlName, xmlMutable, xmlRandom, child, minIterations, maxIterations)
+            result = RepeatVariable(xmlID, xmlName, xmlMutable, xmlLearnable, child, minIterations, maxIterations)
             logging.debug(_("RepeatVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("RepeatVariable: loadFromXML fails"))

@@ -31,7 +31,6 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
-import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -54,20 +53,150 @@ class AggregateVariable(AbstractNodeVariable):
 
     TYPE = "Aggregate Variable"
 
-    def __init__(self, _id, name, mutable, random, children=[]):
+    def __init__(self, _id, name, mutable, learnable, children=[]):
         """Constructor of AggregateVariable:
         """
-        AbstractNodeVariable.__init__(self, _id, name, mutable, random, children)
+        AbstractNodeVariable.__init__(self, _id, name, mutable, learnable, children)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AggregateVariable.py')
 
-    def checkChildren(self, checked):
-        """checkChildren:
-                Variable are checked by their mother node.
-                This function checks all children of the variable.
+    def sortChildrenToRead(self, readingToken):
+        """sortChildrenToRead:
+                Sort children of the variable in order to read the entry value.
+                If an arrangement is found then it returns OK, else it returns NOK and restores the former value for each child.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
         """
-        if self.getChildren() is not None:
-            for child in self.getChildren():
-                child.setChecked(checked)
+        self.log.debug(_("- [ {0}: sortChildrenToRead.").format(self.toString()))
+
+        # We save the state of the underlying variables and the readingToken index before the first treatment.
+        globalDictOfValues = dict()
+        globalSavedIndex = readingToken.getIndex()
+
+        childrenLeft = self.getChildren()
+        orderedChildren = []
+        processing = True
+        # The while loop stops if there is no child left, no entry data left or if an entire for loop was not successful.
+        while childrenLeft is not None and readingToken.getIndex() < len(readingToken.getValue()) and processing:
+            # Tell if an entire tour has not been successful. In such a case the while loop is terminated. (Instead of re-doing the same treatment again and again).
+            processing = False
+
+            # We search a suitable child for the value we have to read.
+            for child in childrenLeft:
+                # We save the state of the underlying variables and the readingToken between each treatment.
+                localDictOfValues = dict()
+                localSavedIndex = readingToken.getIndex()
+
+                # Memorize each child susceptible to be restored. One by one.
+                dictOfValue = child.getDictOfValues(readingToken)
+                for key, val in dictOfValue.iteritems():
+                    localDictOfValues[key] = val
+
+                # Child execution.
+                child.read(readingToken)
+                if readingToken.isOk():
+                    # We have found a suitable child, so we remove it from childrenLeft and add it (at the end, to respect the order) to the orderedChildren list.
+                    orderedChildren.append(childrenLeft.pop(child))
+                    processing = True  # We want to continue the process on what is left.
+                    break
+
+                else:
+                    # It was not a good candidate, so we restore the former values and continue.
+                    readingToken.setIndex(localSavedIndex)
+                    # We restore values for the child and its successors.
+                    child.restore(readingToken)
+                    vocabulary = readingToken.getVocabulary()
+                    for key, val in localDictOfValues.iteritems():
+                        vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        if not childrenLeft is None:
+            readingToken.setOk(False)
+
+        # If it has failed we restore every executed children and the index.
+        if not readingToken.isOk():
+            readingToken.setIndex(globalSavedIndex)
+            vocabulary = readingToken.getVocabulary()
+            for key, val in globalDictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(readingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def readChildren(self, readingToken):
+        """readChildren:
+                Execute a read access sequentially on each child of the variable.
+                If all child successes, then it returns OK, else it returns NOK and restores the former value for each child.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: readChildren.").format(self.toString()))
+
+        # Computing memory, contains all values before the start of the computation. So, if an error occured, we can restore the former and correct values.
+        dictOfValues = dict()
+        savedIndex = readingToken.getIndex()
+        for child in self.getChildren():
+            # Memorize each child susceptible to be restored. One by one.
+            dictOfValue = child.getDictOfValues(readingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            # Child execution.
+            child.read(readingToken)
+            if not readingToken.isOk():
+                break
+
+        # If it has failed we restore every executed children and the index.
+        if not readingToken.isOk():
+            readingToken.setIndex(savedIndex)
+            vocabulary = readingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(readingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def writeChildren(self, writingToken):
+        """writeChildren:
+                Execute a write access sequentially on each child of the variable.
+                If all child successes, then it returns OK, else it returns NOK and restores the former value for each child.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: readChildren.").format(self.toString()))
+
+        dictOfValues = dict()
+        savedValue = writingToken.getValue()
+        for child in self.getChildren():
+            # Memorize each child susceptible to be restored. One by one.
+            dictOfValue = child.getDictOfValues(writingToken)
+            for key, val in dictOfValue.iteritems():
+                dictOfValues[key] = val
+
+            # Child execution.
+            child.write(writingToken)
+            if not writingToken.isOk():
+                break
+
+        # If it has failed we restore every executed children and the value.
+        if not writingToken.isOk():
+            writingToken.setValue(savedValue)
+            vocabulary = writingToken.getVocabulary()
+            for key, val in dictOfValues.iteritems():
+                child = vocabulary.getVariableByID(key)
+                # We restore the current values.
+                child.setCurrentValue(val)
+                # We restore the cached values.
+                child.restore(writingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -103,32 +232,20 @@ class AggregateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
-        # Computing memory, contains all values before the start of the computation. So, if an error occured, we can restore the former and correct values.
-        dictOfValues = dict()
-        savedIndex = readingToken.getIndex()
-        for child in self.getChildren():
-            # Memorize each child susceptible to be restored. One by one.
-            dictOfValue = child.getDictOfValues(readingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
+        if self.getChildren() is not None:
+            if self.isMutable():
+                # mutable.
+                self.sortChildrenToRead(readingToken)  # TODO: implement extension into sortChildrenToRead
+                self.readChildren(readingToken)
 
-            # Child execution.
-            child.read(readingToken)
-            if not readingToken.isOk():
-                break
+            else:
+                # not mutable.
+                self.readChildren(readingToken)  # TODO: implement extension into readChildren
 
-        # If it has failed we restore every executed children and the index.
-        if not readingToken.isOk():
-            readingToken.setIndex(savedIndex)
-            vocabulary = readingToken.getVocabulary()
-            for key, val in dictOfValues.iteritems():
-                child = vocabulary.getVariableByID(key)
-                # We restore the current values.
-                child.setCurrentValue(val)
-                # We restore the cached values.
-                child.restore(readingToken)
         else:
-            self.checkChildren(True)  # We check all children.
+            # no child.
+            self.log.debug(_("Write abort: the variable has no child."))
+            readingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -137,37 +254,20 @@ class AggregateVariable(AbstractNodeVariable):
                 If one of them fails, the whole operation is cancelled.
         """
         self.log.debug(_("[ {0} (Aggregate): write access:").format(AbstractVariable.toString(self)))
+        if self.getChildren() is not None:
+            if self.isMutable():
+                # mutable.
+                self.shuffleChildren()
+                self.writeChildren(writingToken)
 
-        if self.isRandom() and not self.isChecked():
-            # If the variable is random, we randomly sort its values. (If it has not been done yet).
-            if self.getChildren() is not None:
-                random.shuffle(self.getChildren())
+            else:
+                # not mutable.
+                self.writeChildren(writingToken)
 
-        dictOfValues = dict()
-        savedValue = writingToken.getValue()
-        for child in self.getChildren():
-            # Memorize each child susceptible to be restored. One by one.
-            dictOfValue = child.getDictOfValues(writingToken)
-            for key, val in dictOfValue.iteritems():
-                dictOfValues[key] = val
-
-            # Child execution.
-            child.write(writingToken)
-            if not writingToken.isOk():
-                break
-
-        # If it has failed we restore every executed children and the value.
-        if not writingToken.isOk():
-            writingToken.setValue(savedValue)
-            vocabulary = writingToken.getVocabulary()
-            for key, val in dictOfValues.iteritems():
-                child = vocabulary.getVariableByID(key)
-                # We restore the current values.
-                child.setCurrentValue(val)
-                # We restore the cached values.
-                child.restore(writingToken)
         else:
-            self.checkChildren(True)  # We check all children.
+            # no child.
+            self.log.debug(_("Write abort: the variable has no child."))
+            writingToken.setOk(False)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
@@ -181,7 +281,7 @@ class AggregateVariable(AbstractNodeVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:AggregateVariable")
         xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
+        xmlVariable.set("learnable", str(self.isLearnable()))
 
         # Definition of children variables
         for child in self.getChildren():
@@ -201,13 +301,13 @@ class AggregateVariable(AbstractNodeVariable):
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlMutable = xmlRoot.get("mutable") == "True"
-            xmlRandom = xmlRoot.get("random") == "True"
+            xmlLearnable = xmlRoot.get("learnable") == "True"
 
             children = []
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
                 child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
                 children.append(child)
-            result = AggregateVariable(xmlID, xmlName, xmlMutable, xmlRandom, children)
+            result = AggregateVariable(xmlID, xmlName, xmlMutable, xmlLearnable, children)
             logging.debug(_("AggregateVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("AggregateVariable: loadFromXML fails"))

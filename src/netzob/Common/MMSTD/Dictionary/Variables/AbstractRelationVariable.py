@@ -30,9 +30,8 @@
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
 from gettext import gettext as _
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
-    AbstractVariable
 import logging
+import random
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -42,6 +41,8 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class AbstractRelationVariable(AbstractVariable):
@@ -50,13 +51,13 @@ class AbstractRelationVariable(AbstractVariable):
             Beware when using it, it can leads to obviously dangerous behavior.
     """
 
-    def __init__(self, _id, name, mutable, random, pointedID):
+    def __init__(self, _id, name, mutable, learnable, pointedID):
         """Constructor of AbstractRelationVariable:
 
                 @type pointedID: string
                 @param pointedID: the id of the pointed variable.
         """
-        AbstractVariable.__init__(self, _id, name, mutable, random, False)
+        AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
         self.pointedID = pointedID
         self.currentValue = None
@@ -92,6 +93,19 @@ class AbstractRelationVariable(AbstractVariable):
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
         value = self.getCurrentValue()
         writingToken.appendValue(value)
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+
+    def randomizePointedVariable(self, writingToken):
+        """randomizePointedVariable
+                Replace the pointed variable by another one, randomly found in the global tree.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this writing access.
+        """
+        self.log.debug(_("- [ {0}: randomizePointedVariable.").format(self.toString()))
+        variables = writingToken.getVocabulary().getVariables()
+        i = random.randint(0, len(variables))
+        self.pointedID = variables[i].getID()
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
@@ -186,18 +200,12 @@ class AbstractRelationVariable(AbstractVariable):
         """
         self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
         if self.isMutable():
-            if not self.isChecked():
-                self.retrieveValue(readingToken)
-                self.learn(readingToken)
-            else:  # We compare the value previously learned (during the checking access) to the one that should have been learned.
-                self.log.debug(_("The variable is already checked, so we compare the value formerly learned to the proposed one."))
-                self.compare(readingToken)
+            self.compareFormat(readingToken)
 
         else:
             if self.isDefined(readingToken):
                 # not mutable and defined
-                if not self.isChecked():
-                    self.retrieveValue(readingToken)
+                self.retrieveValue(readingToken)  # TODO: repair retrieveValue.
                 self.compare(readingToken)
 
             else:
@@ -212,16 +220,15 @@ class AbstractRelationVariable(AbstractVariable):
                 The relation variable returns a computed or a generated value.
         """
         self.log.debug(_("[ {0} (relation): write access:").format(AbstractVariable.toString(self)))
-        if self.isRandom():
-            if not self.isChecked():  # A checked variable does not modify its value.
-                self.generate(writingToken)
+        if self.isLearnable():
+            self.randomizePointedVariable(writingToken)
+            self.computeValue(writingToken)
             self.writeValue(writingToken)
 
         else:
             if self.isDefined(writingToken):
                 # not random and defined
-                if not self.isChecked():  # A checked variable does not modify its value.
-                    self.computeValue(writingToken)
+                self.computeValue(writingToken)
                 self.writeValue(writingToken)
 
             else:

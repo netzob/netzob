@@ -57,7 +57,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
     TYPE = "Computed Relation Variable"
 
-    def __init__(self, _id, name, mutable, random, _type, pointedID, minChars, maxChars):
+    def __init__(self, _id, name, mutable, learnable, _type, pointedID, minChars, maxChars):
         """Constructor of ComputedRelationVariable:
 
                 @type _type: string
@@ -67,7 +67,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
                 @type maxChars: integer
                 @param maxChars: the maximum number of elementary character the value of this variable can have.
         """
-        AbstractVariable.__init__(self, _id, name, mutable, random, False)
+        AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ComputedRelationVariable.py')
         self.pointedID = pointedID
         self.setType(_type)
@@ -97,7 +97,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ComputedRelationVariable")
         xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
+        xmlVariable.set("learnable", str(self.isLearnable()))
 
         # type
         xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
@@ -119,7 +119,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |
 #+---------------------------------------------------------------------------+
-    def retrieveValue(self, readingToken):
+    def retrieveValue(self, readingToken):  # WRONG TODO: correct this
         """retrieveValue:
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
@@ -135,7 +135,8 @@ class ComputedRelationVariable(AbstractRelationVariable):
     def learn(self, readingToken):
         """learn:
                 The pointed variable checks if its format complies with the read value's format.
-                If it matches, the variable learns, else it returns NOk.
+                If it matches, the variable learns, else it returns NOK.
+                Not used anymore but may be interesting in the future.
         """
         self.log.debug(_("- [ {0}: learn.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
@@ -179,7 +180,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """computeValue:
                 Compute the value of the relation variable according to the pointed variable's own value.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
         self.setCurrentValue(self.type.computeValue(self.getPointedVariable(writingToken.getVocabulary()), writingToken))
 
 #+---------------------------------------------------------------------------+
@@ -223,7 +224,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlMutable = xmlRoot.get("mutable") == "True"
-            xmlRandom = xmlRoot.get("random") == "True"
+            xmlLearnable = xmlRoot.get("learnable") == "True"
 
             # type
             _type = None
@@ -251,7 +252,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
                 maxChars = minChars
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlRandom, _type, xmlRefID, minChars, maxChars)
+            result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, xmlRefID, minChars, maxChars)
             logging.debug(_("ComputedRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("ComputedRelationVariable: loadFromXML fails"))

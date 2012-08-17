@@ -58,16 +58,16 @@ class DataVariable(AbstractLeafVariable):
     MAX_BITS = 1024
     TYPE = "Data Variable"
 
-    def __init__(self, _id, name, mutable, random, _type, originalValue):
+    def __init__(self, _id, name, mutable, learnable, _type, originalValue):
         """Constructor of DataVariable:
-                Most of type are checked to not be None.
+                Most of attribute are checked to not be None.
 
                 @type type: string
                 @param typeVariable: the type of the variable being constructed.
                 @type originalValue: linked to type.
                 @param originalValue: the original value of the variable.
         """
-        AbstractLeafVariable.__init__(self, _id, name, mutable, random)
+        AbstractLeafVariable.__init__(self, _id, name, mutable, learnable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.DataVariable.py')
         self.setType(_type)
         self.setOriginalValue(originalValue)
@@ -145,14 +145,12 @@ class DataVariable(AbstractLeafVariable):
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
-                This function is called for saving the value of the variable if it is unchecked.
+                This function is called for saving the value of the variable.
         """
         # A random variable does not need to be saved.
-        if self.isRandom():
-            return dict()
-        # A checked variable does not need to be saved. It does not have to be reset.
-        if self.isChecked():
-            return dict()
+        #if self.isRandom():
+        #    return dict()
+
         dictOfValues = dict()
         dictOfValues[self.getID()] = self.getValue(processingToken)
         # self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
@@ -174,7 +172,7 @@ class DataVariable(AbstractLeafVariable):
         xmlVariable.set("name", str(self.getName()))
         xmlVariable.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:DataVariable")
         xmlVariable.set("mutable", str(self.isMutable()))
-        xmlVariable.set("random", str(self.isRandom()))
+        xmlVariable.set("learnable", str(self.isLearnable()))
 
         # sized
         xmlSized = etree.SubElement(xmlVariable, "{" + namespace + "}sized")
@@ -228,12 +226,11 @@ class DataVariable(AbstractLeafVariable):
         self.log.debug(_("- {0}: value is memorized.").format(self.toString()))
         processingToken.getMemory().memorize(self)
 
-    def learn(self, readingToken):
-        """learn:
+    def compareFormat(self, readingToken):
+        """compareFormat:
                 The variable checks if its format complies with the read value's format.
-                If it matches, the variable learns, else it returns NOk.
         """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
         tmp = readingToken.getValue()[readingToken.getIndex():]
 
         # If the type has a definite size.
@@ -242,13 +239,10 @@ class DataVariable(AbstractLeafVariable):
             maxBits = self.type.getMaxBits()
             # Length comparison.
             if len(tmp) >= minBits:
-                self.log.debug(str(len(tmp)) + " - " + str(minBits) + " - " + str(maxBits))
+                #self.log.debug(str(len(tmp)) + " - " + str(minBits) + " - " + str(maxBits))
                 if len(tmp) <= maxBits:
                     # Format comparison.
                     if self.type.suitsBinary(tmp):
-                        # We learn everything that last.
-                        self.setCurrentValue(tmp)
-                        readingToken.incrementIndex(len(tmp))
                         readingToken.setOk(True)
                         self.log.info(_("Format comparison successful."))
                     else:
@@ -257,9 +251,6 @@ class DataVariable(AbstractLeafVariable):
                 else:  # len(tmp) > self.maxBits
                     # Format comparison.
                     if self.type.suitsBinary(tmp[:maxBits]):
-                        # We learn as much as we can.
-                        self.setCurrentValue(tmp[:maxBits])
-                        readingToken.incrementIndex(maxBits)
                         readingToken.setOk(True)
                         self.log.info(_("Format comparison successful."))
                     else:
@@ -278,12 +269,48 @@ class DataVariable(AbstractLeafVariable):
                     break
             if endi != -1:
                 # We learn from the beginning to the delimiter.
-                self.setCurrentValue(tmp[:endi + len(self.getType().getDelimiter())])  # The delimiter token is a part of the variable.
-                readingToken.incrementIndex(endi + len(self.getType().getDelimiter()))
+                self.log.info(_("Format comparison successful."))
                 readingToken.setOk(True)
             else:
                 readingToken.setOk(False)
                 self.log.info(_("Format comparison failed: no delimiter found."))
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def learn(self, readingToken):
+        """learn:
+        """
+        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+        if readingToken.isOk():  # A format comparison had been executed before, its result must be "OK".
+            tmp = readingToken.getValue()[readingToken.getIndex():]
+
+            # If the type has a definite size.
+            if self.type.isSized():
+                maxBits = self.type.getMaxBits()
+                # Length comparison. (len(tmp) >= minBits is implicita as the readingToken is OK.)
+                if len(tmp) <= maxBits:
+                    self.setCurrentValue(tmp)
+                    readingToken.incrementIndex(len(tmp))
+
+                else:  # len(tmp) > self.maxBits
+                    # We learn as much as we can.
+                    self.setCurrentValue(tmp[:maxBits])
+                    readingToken.incrementIndex(maxBits)
+
+            # If the type is delimited from 0 to a delimiter.
+            else:
+                endi = 0
+                for i in range(len(tmp)):
+                    if self.type.endsHere(tmp[i:]):
+                        endi = i
+                        break
+                # We learn from the beginning to the delimiter.
+                self.setCurrentValue(tmp[:endi + len(self.getType().getDelimiter())])  # The delimiter token is a part of the variable.
+                readingToken.incrementIndex(endi + len(self.getType().getDelimiter()))
+
+            self.log.info(_("Learning done."))
+        else:
+            self.log.info(_("Learning abort because the previous format comparison failed."))
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
@@ -307,6 +334,13 @@ class DataVariable(AbstractLeafVariable):
             readingToken.setOk(False)
             self.log.debug(_("Comparison failed: wrong size."))
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def mutate(self, writingToken):
+        """mutate:
+                The current value is mutated according to the given generation strategy.
+        """
+        self.log.debug(_("- {0}: mutate.").format(self.toString()))
+        self.setCurrentValue(self.getType().mutateValue(writingToken.getGenerationStrategy(), self.getValue()))
 
     def generate(self, writingToken):
         """generate:
@@ -374,7 +408,7 @@ class DataVariable(AbstractLeafVariable):
             xmlID = xmlRoot.get("id")
             xmlName = xmlRoot.get("name")
             xmlMutable = xmlRoot.get("mutable") == "True"
-            xmlRandom = xmlRoot.get("random") == "True"
+            xmlLearnable = xmlRoot.get("learnable") == "True"
 
             # originalValue
             xmlOriginalValue = xmlRoot.find("{" + namespace + "}originalValue")
@@ -422,7 +456,7 @@ class DataVariable(AbstractLeafVariable):
                 logging.error(_("No type specified for this variable in the xml file."))
                 return None
 
-            result = DataVariable(xmlID, xmlName, xmlMutable, xmlRandom, _type, originalValue)
+            result = DataVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, originalValue)
             logging.debug(_("DataVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("DataVariable: loadFromXML fails"))
