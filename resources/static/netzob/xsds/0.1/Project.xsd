@@ -594,7 +594,7 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="random" use="required">
+		<attribute name="learnable" use="required">
 			<simpleType>
 				<restriction base="string">
 					<minLength value="1"></minLength>
