@@ -60,6 +60,22 @@ class HexWordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
+    def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        mutatedValue = ""
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                mutatedValue = self.mutateRandomlyAString(string.hexdigits, self.bin2str(value), mutationRate, deletionRate, additionRate)
+                break
+        return self.str2bin(mutatedValue)
+
+    def generateFixedSizeValue(self, generationStrategies, charSize):
+        value = ""
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                value = self.generateRandomString(string.hexdigits, charSize)
+                break
+        return self.str2bin(value)
+
     def str2bin(self, stri):
         if stri is not None:
             # bitarray(bin(int(stri, 16))[2:]) : remove (int) all left-sided useful '0's.*
@@ -96,14 +112,6 @@ class HexWordType(AbstractWordType):
 
     def getMinBitSize(self, nbChars):
         return (nbChars * 4)
-
-    def generateFixedSizeValue(self, generationStrategies, charSize):
-        value = ""
-        for generationStrategy in generationStrategies:
-            if generationStrategy == "random":
-                value = self.generateRandomString(string.hexdigits, charSize)
-                break
-        return self.str2bin(value)
 
     def getType(self):
         return HexWordType.TYPE

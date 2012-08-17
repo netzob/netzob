@@ -68,8 +68,6 @@ class AbstractType():
         self.setNumberBitsAndNumberChars(minChars, maxChars)
         self.delimiter = delimiter
 
-        # TODO: manage minBits/maxBits
-
     def toString(self):
         return (_("{0}, bits: ({1}, {2}), chars: ({3}, {4})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars)))
 
@@ -112,9 +110,29 @@ class AbstractType():
 #| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+
     @abstractmethod
+    def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        """mutateValue:
+                Mutate the given bit array value according to the generationStrategy specification.
+
+                @type generationStrategies: string List
+                @param generationStrategies: a list of strategy ("random" for instance) that defines the way the value will be generated. The first allowed strategy is used.
+                @type value: bitarray
+                @param value: the value before mutation.
+                @type mutationRate: integer (between 0 and 100)
+                @param mutationRate: the percentage of characters that will be mutated.
+                @type deletionRate: integer (between 0 and 100)
+                @param deletionRate: the percentage of characters that will be deleted.
+                @type additionRate: integer (between 0 and 100)
+                @param additionRate: the percentage of characters that will be added.
+                @rtype: bitarray
+                @return: the value after mutation.
+        """
+        raise NotImplementedError(_("The current type does not implement 'mutateValue'."))
+
+    @abstractmethod
     def generateFixedSizeValue(self, generationStrategies, charSize):
         """generateFixedSizeValue:
-                Generate a bit array value according to the generationStrategy specification and which size is between minSize and maxSize.
+                Generate a bit array having charSize typed-characters according to the generationStrategy specification.
 
                 @type generationStrategies: string List
                 @param generationStrategies: a list of strategy ("random" for instance) that defines the way the value will be generated. The first allowed strategy is used.

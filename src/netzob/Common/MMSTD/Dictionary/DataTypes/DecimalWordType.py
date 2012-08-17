@@ -58,6 +58,14 @@ class DecimalWordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
+    def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        mutatedValue = ""
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                mutatedValue = self.mutateRandomlyAString(string.digits, self.bin2str(value), mutationRate, deletionRate, additionRate)
+                break
+        return self.str2bin(mutatedValue)
+
     def generateFixedSizeValue(self, generationStrategies, charSize):
         value = ""
         for generationStrategy in generationStrategies:

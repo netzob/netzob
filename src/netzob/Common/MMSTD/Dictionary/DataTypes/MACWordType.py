@@ -58,13 +58,28 @@ class MACWordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
+    def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        """mutateValue:
+                We mutate only, we do not delete or add new characters, so deletionRate and additionRate are useless.
+        """
+        mutatedValue = ""
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                for i in range(6):
+                    value = value + "." + self.mutateRandomlyAString(string.hexdigits, self.bin2str(value), mutationRate, deletionRate=0, additionRate=0)
+                value = value[1:]
+                break
+        return self.str2bin(mutatedValue)
+
     def generateFixedSizeValue(self, generationStrategies, charSize):
-        # charSize is not used.
+        """generateFixedSizeValue:
+                charSize is not used, MAC addresses have always the same format.
+        """
         value = ""
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
                 for i in range(6):
-                    value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+                    value = value + "." + self.generateRandomString(string.hexdigits, 2)
                 value = value[1:]
                 break
         return self.str2bin(value)

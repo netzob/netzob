@@ -56,7 +56,7 @@ class AbstractWordType(AbstractType):
 
     def generateRandomString(self, stringType, charSize):
         """generateRandomString:
-                Generate a random string of the given size withen the given min and max size.
+                Generate a random string of the given size.
 
                 @type stringType: integer
                 @param stringType: a string type as string.digits, string.letters, string.printable...
@@ -69,6 +69,40 @@ class AbstractWordType(AbstractType):
         for i in range(charSize):
             value = value + random.choice(stringType)
         return value
+
+    def mutateRandomlyAString(self, stringType, value, mutationRate, deletionRate, additionRate):
+        """mutateRandomlyAString:
+                Mutate the given string value according to the generationStrategy specification.
+
+                @type generationStrategies: string List
+                @param generationStrategies: a list of strategy ("random" for instance) that defines the way the value will be generated. The first allowed strategy is used.
+                @type value: string
+                @param value: the value before mutation.
+                @rtype: string
+                @return: the value after mutation.
+        """
+        mutatedValue = value
+
+        # First pass : deleting characters.
+        lgth = len(mutatedValue)
+        for i in range(lgth):
+            dice = random.randint(0, 100)
+            if dice < deletionRate:
+                mutatedValue = mutatedValue[:i] + mutatedValue[i + 1:]
+
+        # Second pass : mutating characters.
+        for i in range(len(mutatedValue)):
+            dice = random.randint(0, 100)
+            if dice < mutationRate:
+                mutatedValue[i] = random.choice(stringType)
+
+        # Third pass : adding characters.
+        lgth = len(mutatedValue)
+        for i in range(lgth):
+            dice = random.randint(0, 100)
+            if dice < additionRate:
+                mutatedValue = mutatedValue[:i] + random.choice(stringType) + mutatedValue[i:]
+        return mutatedValue
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |

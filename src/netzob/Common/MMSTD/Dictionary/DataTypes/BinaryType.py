@@ -59,6 +59,39 @@ class BinaryType(AbstractType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
+    def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                mutatedValue = self.bin2str(value)
+                # First pass : deleting characters.
+                lgth = len(mutatedValue)
+                for i in range(lgth):
+                    dice = random.randint(0, 100)
+                    if dice < deletionRate:
+                        mutatedValue = mutatedValue[:i] + mutatedValue[i + 1:]
+
+                # Second pass : mutating characters.
+                for i in range(len(mutatedValue)):
+                    dice = random.randint(0, 100)
+                    if dice < mutationRate:
+                        if mutatedValue[i] == '0':  # Bit flip.
+                            mutatedValue[i] = '1'
+                        else:
+                            mutatedValue[i] = '0'
+
+                # Third pass : adding characters.
+                lgth = len(mutatedValue)
+                for i in range(lgth):
+                    dice = random.randint(0, 100)
+                    if dice < additionRate:
+                        if random.randint(0, 1) == 1:
+                            addedBit = '1'
+                        else:
+                            addedBit = '0'
+                        mutatedValue = mutatedValue[:i] + addedBit + mutatedValue[i:]
+                return self.str2bin(mutatedValue)
+        return value  # Default case : we do not mutate.
+
     def generateFixedSizeValue(self, generationStrategies, charSize):
         value = []
         for generationStrategy in generationStrategies:

@@ -59,8 +59,48 @@ class IPv4WordType(AbstractWordType):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractType                                     |
 #+---------------------------------------------------------------------------+
+    def mutateValue(self, generationStrategies, value, mutationRate=10, deletionRate=5, additionRate=5):
+        """mutateValue:
+                We mutate only, we do not delete or add new characters, so deletionRate and additionRate are useless.
+        """
+        mutatedValue = ""
+        for generationStrategy in generationStrategies:
+            if generationStrategy == "random":
+                mutNumbers = value.split('.')
+                # We mutate by term.
+                for i in range(len(mutNumbers)):
+                    # We mutate by character.
+                    for j in range(len(mutNumbers[i])):
+                        dice = random.randint(0, 100)
+                        if dice < mutationRate:
+                            # We want to make valid IP address, so between 0 and 255.
+                            if len(mutNumbers[i]) == 3:  # The critic size of three characters: 100-255
+                                if j == 0:
+                                    mutNumbers[i][j] = str(random.randint(0, 2))
+                                elif j == 1:
+                                    if mutNumbers[i][0] == '2':  # term = 2.. <= 255
+                                        mutNumbers[i][j] = str(random.randint(0, 5))
+                                    else:
+                                        mutNumbers[i][j] = str(random.randint(0, 9))
+                                elif j == 2:
+                                    if mutNumbers[i][0] == '2' and mutNumbers[i][1] == '5':  # term = 25. <= 255
+                                        mutNumbers[i][j] = str(random.randint(0, 5))
+                                    else:
+                                        mutNumbers[i][j] = str(random.randint(0, 9))
+                            else:
+                                mutNumbers[i][j] = str(random.randint(0, 9))
+                mutatedValue = ".".join(mutNumbers)  # We do not mutate dots.
+                break
+            elif generationStrategy == "random hex":
+                for i in range(4):
+                    value = value + "." + self.mutateRandomlyAString(string.hexdigits, value, mutationRate, deletionRate, additionRate)
+                value = value[1:]
+        return self.str2bin(mutatedValue)
+
     def generateFixedSizeValue(self, generationStrategies, charSize):
-        # charSize is not used.
+        """generateFixedSizeValue:
+                charSize is not used, IPv4 addresses have always the same format.
+        """
         value = ""
         for generationStrategy in generationStrategies:
             if generationStrategy == "random":
@@ -70,7 +110,7 @@ class IPv4WordType(AbstractWordType):
                 break
             elif generationStrategy == "random hex":
                 for i in range(4):
-                    value = value + "." + self.generateRandomString(string.hexdigits, 2, 2)
+                    value = value + "." + self.generateRandomString(string.hexdigits, 2)
                 value = value[1:]
                 break
         return self.str2bin(value)
