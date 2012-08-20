@@ -54,11 +54,12 @@ class NewForcePartitioningController(object):
     """Manages the execution of the force partitioning on
     the selected symbols"""
 
-    def __init__(self, vocabularyController):
+    def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
         self._view = NewForcePartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
+        self.symbols = symbols
 
     @property
     def view(self):
@@ -77,7 +78,6 @@ class NewForcePartitioningController(object):
         self._view.force_radiobutton_hexa.set_sensitive(False)
         self._view.force_radiobutton_string.set_sensitive(False)
         #extract choose value
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
         delimiter = self._view.force_entry.get_text()
         if self._view.force_radiobutton_hexa.get_active():
             delimiterType = Format.HEX
@@ -88,13 +88,13 @@ class NewForcePartitioningController(object):
         encodedDelimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, delimiterType)
 
         # create a job to execute the partitioning
-        Job(self.startForcePartitioning(symbolList, encodedDelimiter, delimiterType))
+        Job(self.startForcePartitioning(encodedDelimiter, delimiterType))
 
-    def startForcePartitioning(self, symbols, delimiter, format):
-        if len(symbols) > 0:
+    def startForcePartitioning(self, delimiter, format):
+        if len(self.symbols) > 0:
             self.log.debug("Start to force partitioning the selected symbols")
             try:
-                (yield ThreadedTask(self.forcePartitioning, symbols, delimiter, format))
+                (yield ThreadedTask(self.forcePartitioning, delimiter, format))
             except TaskError, e:
                 self.log.error(_("Error while proceeding to the force partitioning of symbols: {0}").format(str(e)))
         else:
@@ -108,11 +108,11 @@ class NewForcePartitioningController(object):
         #close dialog box
         self._view.forceDialog.destroy()
 
-    def forcePartitioning(self, symbols, encodedDelimiter, format):
+    def forcePartitioning(self, encodedDelimiter, format):
         """Smooth the provided symbols"""
-        step = float(100) / float(len(symbols))
+        step = float(100) / float(len(self.symbols))
         total = float(0)
-        for symbol in symbols:
+        for symbol in self.symbols:
             GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return

@@ -102,6 +102,9 @@ class NewVocabularyController(object):
         self.view.updateSymbolListToolbar()
 
     def createSymbolButton_clicked_cb(self, toolButton):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
@@ -142,6 +145,9 @@ class NewVocabularyController(object):
             button.set_sensitive(False)
 
     def concatSymbolButton_clicked_cb(self, toolButton):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         #concat the message of all selected symbols
         symbols = self.view.getCheckedSymbolList()
         message = []
@@ -163,6 +169,9 @@ class NewVocabularyController(object):
 
     #possible que si on selectionne un unique symbol
     def renameSymbolButton_clicked_cb(self, widget):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         symbol = self.view.getCheckedSymbolList()[0]
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
@@ -199,6 +208,9 @@ class NewVocabularyController(object):
             dialog.destroy()
 
     def deleteSymbolButton_clicked_cb(self, toolButton):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         # Delete symbol
         for sym in self.view.getCheckedSymbolList():
             currentProject = self.netzob.getCurrentProject()
@@ -211,6 +223,9 @@ class NewVocabularyController(object):
         self.view.updateLeftPanel()
 
     def newMessageTableButton_clicked_cb(self, toolButton):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         self.view.addMessageTable()
 
     def toggleCellRenderer_toggled_cb(self, widget, buttonid):
@@ -248,31 +263,68 @@ class NewVocabularyController(object):
 
 ######### MENU / TOOLBAR ENTRIES CONTROLLERS
     def sequenceAlignment_activate_cb(self, action):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
         sequence_controller = NewSequenceAlignmentController(self, symbols)
         sequence_controller.run()
 
     def partitioningForce_activate_cb(self, action):
-        force_controller = NewForcePartitioningController(self)
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
+        force_controller = NewForcePartitioningController(self, symbols)
         force_controller.run()
 
     def partitioningSimple_activate_cb(self, action):
-        simple_controller = NewSimplePartitioningController(self)
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
+        simple_controller = NewSimplePartitioningController(self, symbols)
         simple_controller.run()
 
     def partitioningSmooth_activate_cb(self, action):
-        smooth_controller = NewSmoothPartitioningController(self)
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
+        smooth_controller = NewSmoothPartitioningController(self, symbols)
         smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):
         """Callback executed when the user clicks
         on the reset button. It starts the dedicated controller."""
-        reset_controller = ResetPartitioningController(self)
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
+        reset_controller = ResetPartitioningController(self, symbols)
         reset_controller.run()
 
     def concatField_activate_cb(self, action):
         # Sanity check
-        symbol = self.view.selectedMessageTable.getDisplayedSymbol()
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbol = self.view.getDisplayedSymbol()
         if symbol == None:
             NetzobErrorMessage(_("No selected symbol."))
             return
@@ -295,7 +347,10 @@ class NewVocabularyController(object):
 
     def split_activate_cb(self, action):
         # Sanity check
-        symbol = self.view.selectedMessageTable.getDisplayedSymbol()
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        symbol = self.view.getDisplayedSymbol()
         if symbol == None:
             NetzobErrorMessage(_("No selected symbol."))
             return
@@ -309,18 +364,22 @@ class NewVocabularyController(object):
             NetzobErrorMessage(_("No selected field."))
 
     def createVariable_activate_cb(self, action):
-        pass
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        NetzobErrorMessage(_("Not yet implemented."))
 
     def moveMessagesToOtherSymbol_activate_cb(self, action):
         """Callback executed when the user clicks on the move
         button. It retrieves the selected message, and change the cursor
         to show that moving is in progress. The user needs to click on a symbol to
         select the target symbol"""
-        if self.getCurrentProject() is None:
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
             return
-
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
         if selectedMessages is None or len(selectedMessages) == 0:
+            NetzobErrorMessage(_("Not selected message(s)."))
             return
 
         self.selectedMessagesToMove = selectedMessages
@@ -349,11 +408,17 @@ class NewVocabularyController(object):
         self.selectedMessagesToMove = None
 
     def deleteMessages_activate_cb(self, action):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
+        if selectedMessages == [] or selectedMessages == None:
+            NetzobErrorMessage(_("No selected message(s)."))
+            return
         questionMsg = _("Click yes to confirm the deletion of the selected message(s)")
         result = NetzobQuestionMessage(questionMsg)
         if result != Gtk.ResponseType.YES:
             return
-        selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
         for message in selectedMessages:
             # Remove message from model
             self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
@@ -365,16 +430,25 @@ class NewVocabularyController(object):
     def searchText_toggled_cb(self, action):
         """Callback executed when the user clicks
         on the research toggle button"""
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         if action.get_active():
             self._view.researchController.show()
         else:
             self._view.researchController.hide()
 
     def environmentDep_activate_cb(self, action):
-        pass
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        NetzobErrorMessage(_("Not yet implemented."))
 
     def messagesDistribution_activate_cb(self, action):
         # Sanity check
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         symbols = self.view.getCheckedSymbolList()
         if symbols == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
@@ -383,10 +457,16 @@ class NewVocabularyController(object):
         distribution.run()
 
     def relationsViewer_activate_cb(self, action):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         relations = RelationsController(self)
         relations.show()
 
     def variableTable_activate_cb(self, action):
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
@@ -440,30 +520,36 @@ class NewVocabularyController(object):
     def importMessagesFromFile_activate_cb(self, action):
         """Execute all the plugins associated with
         file import."""
-        if self.netzob.getCurrentProject() is not None:
-            chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
-            res = chooser.run()
-            plugin = None
-            if res == chooser.RESPONSE_OK:
-                (filePathList, plugin) = chooser.getFilenameListAndPlugin()
-            chooser.destroy()
-            if plugin is not None:
-                plugin.setFinish_cb(self.view.updateSymbolList)
-                plugin.importFile(filePathList)
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+
+        chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+        res = chooser.run()
+        plugin = None
+        if res == chooser.RESPONSE_OK:
+            (filePathList, plugin) = chooser.getFilenameListAndPlugin()
+        chooser.destroy()
+        if plugin is not None:
+            plugin.setFinish_cb(self.view.updateSymbolList)
+            plugin.importFile(filePathList)
 
     def captureMessages_activate_cb(self, action):
         """Execute all the plugins associated with
         capture function."""
-        if self.netzob.getCurrentProject() is not None:
-            chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
-            res = chooser.run()
-            plugin = None
-            if res == chooser.RESPONSE_OK:
-                (filePathList, plugin) = chooser.getFilenameListAndPlugin()
-            chooser.destroy()
-            if plugin is not None:
-                plugin.setFinish_cb(self.view.updateSymbolList)
-                plugin.importFile(filePathList)
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+
+        chooser = ImportFileChooserDialog(NetzobPlugin.getLoadedPlugins(FileImporterPlugin))
+        res = chooser.run()
+        plugin = None
+        if res == chooser.RESPONSE_OK:
+            (filePathList, plugin) = chooser.getFilenameListAndPlugin()
+        chooser.destroy()
+        if plugin is not None:
+            plugin.setFinish_cb(self.view.updateSymbolList)
+            plugin.importFile(filePathList)
 
     def getCurrentProject(self):
         """Return the current project (can be None)"""

@@ -58,6 +58,7 @@ from netzob.Common.CommandLine import CommandLine
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.NetzobMainView import NetzobMainView
+from netzob.UI.NetzobWidgets import NetzobErrorMessage
 
 
 class NetzobMainController(object):
@@ -252,8 +253,10 @@ class NetzobMainController(object):
 
     def saveProject_activate_cb(self, action):
         """Save the current project"""
-        if self.getCurrentProject() is not None:
-            self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
+        if self.getCurrentProject() == None:
+            NetzobErrorMessage(_("No project selected."))
+            return
+        self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
 
     def fileSetFileChooser_importProject_cb(self, widget, applyButton):
         """Callback executed when the user

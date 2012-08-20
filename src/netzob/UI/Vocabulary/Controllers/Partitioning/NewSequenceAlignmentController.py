@@ -52,7 +52,7 @@ from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAn
 class NewSequenceAlignmentController(object):
     '''Controls the execution of the alignment process'''
 
-    def __init__(self, vocabularyController, symbols=None):
+    def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
         self._view = NewSequenceAlignmentView(self)
         self.log = logging.getLogger(__name__)
@@ -98,9 +98,9 @@ class NewSequenceAlignmentController(object):
 
         # Define the alignment JOB
         self._view.sequence_stop.set_sensitive(True)
-        Job(self.startSequenceAlignment(self.symbols, unitSize))
+        Job(self.startSequenceAlignment(unitSize))
 
-    def startSequenceAlignment(self, symbols, unitSize):
+    def startSequenceAlignment(self, unitSize):
         """Definition of a JOB, which executes the alignment process
         @type symbols: a list of Symbols
         @var symbols: the list of symbols to align
@@ -108,7 +108,7 @@ class NewSequenceAlignmentController(object):
         @var unitSize: the unit size to consider when aligning
         """
         try:
-            (yield ThreadedTask(self.alignmentSolution.alignSymbols, symbols, self.vocabularyController.getCurrentProject()))
+            (yield ThreadedTask(self.alignmentSolution.alignSymbols, self.symbols, self.vocabularyController.getCurrentProject()))
         except TaskError, e:
             self.log.error(_("Error while proceeding to the alignment: {0}").format(str(e)))
 

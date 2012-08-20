@@ -51,11 +51,12 @@ from netzob.UI.Vocabulary.Views.Partitioning.ResetPartitioningView import ResetP
 class ResetPartitioningController(object):
     """Reset the partitions on selected symbols"""
 
-    def __init__(self, vocabularyController):
+    def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
         self._view = ResetPartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
+        self.symbols = symbols
 
     @property
     def view(self):
@@ -72,26 +73,24 @@ class ResetPartitioningController(object):
         self._view.reset_cancel.set_sensitive(False)
         self._view.reset_execute.set_sensitive(False)
         self._view.reset_stop.set_sensitive(True)
-        #extract choose value
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
 
         # Define the reset JOB
-        Job(self.startReset(symbolList))
+        Job(self.startReset())
 
         #update button
         self._view.reset_cancel.set_sensitive(True)
         self._view.reset_execute.set_sensitive(False)
         self._view.reset_stop.set_sensitive(False)
 
-    def startReset(self, symbols):
+    def startReset(self):
         """Start the reset operation by creating
         a dedicated thread
         @var symbols: the list of symbols that should be reseted
         """
-        if len(symbols) > 0:
+        if len(self.symbols) > 0:
             self.log.debug("Start to reset the selected symbols")
             try:
-                (yield ThreadedTask(self.reset, symbols))
+                (yield ThreadedTask(self.reset))
             except TaskError, e:
                 self.log.error(_("Error while proceeding to the reseting of symbols: {0}").format(str(e)))
 
@@ -99,11 +98,17 @@ class ResetPartitioningController(object):
         else:
             self.log.debug("No symbol selected")
 
-    def reset(self, symbols):
+        # Update button
+        self._view.reset_stop.set_sensitive(True)
+
+        # Close dialog box
+        self._view.resetDialog.destroy()
+
+    def reset(self):
         """Reset the provided symbols"""
-        step = float(100) / float(len(symbols))
+        step = float(100) / float(len(self.symbols))
         total = float(0)
-        for symbol in symbols:
+        for symbol in self.symbols:
             GObject.idle_add(self._view.reset_progressbar.set_text, _("Reset symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return

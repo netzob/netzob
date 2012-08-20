@@ -51,11 +51,12 @@ from netzob.UI.Vocabulary.Views.Partitioning.NewSmoothPartitioningView import Ne
 class NewSmoothPartitioningController(object):
     """Executes the smooth operation on selected symbols"""
 
-    def __init__(self, vocabularyController):
+    def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
         self._view = NewSmoothPartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
+        self.symbols = symbols
 
     @property
     def view(self):
@@ -72,26 +73,24 @@ class NewSmoothPartitioningController(object):
         self._view.smooth_cancel.set_sensitive(False)
         self._view.smooth_execute.set_sensitive(False)
         self._view.smooth_stop.set_sensitive(True)
-        #extract choose value
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
 
         # Define the smooth JOB
-        Job(self.startSmooth(symbolList))
+        Job(self.startSmooth())
 
         #update button
         self._view.smooth_cancel.set_sensitive(True)
         self._view.smooth_execute.set_sensitive(False)
         self._view.smooth_stop.set_sensitive(False)
 
-    def startSmooth(self, symbols):
+    def startSmooth(self):
         """Start the smooth operation by creating
         a dedicated thread
         @var symbols: the list of symbols that should be smoothed
         """
-        if len(symbols) > 0:
+        if len(self.symbols) > 0:
             self.log.debug("Start to smooth the selected symbols")
             try:
-                (yield ThreadedTask(self.smooth, symbols))
+                (yield ThreadedTask(self.smooth))
             except TaskError, e:
                 self.log.error(_("Error while proceeding to the smoothing of symbols: {0}").format(str(e)))
 
@@ -99,11 +98,16 @@ class NewSmoothPartitioningController(object):
         else:
             self.log.debug("No symbol selected")
 
-    def smooth(self, symbols):
+        # Update button
+        self._view.smooth_stop.set_sensitive(True)
+        # Close dialog box
+        self._view.smoothDialog.destroy()
+
+    def smooth(self):
         """Smooth the provided symbols"""
-        step = float(100) / float(len(symbols))
+        step = float(100) / float(len(self.symbols))
         total = float(0)
-        for symbol in symbols:
+        for symbol in self.symbols:
             GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return

@@ -30,13 +30,13 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+import time
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.Common.Type.UnitSize import UnitSize
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -44,7 +44,9 @@ from gi.repository import GObject
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.Partitioning.NewSimplePartitioningView import NewSimplePartitioningView
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
+from netzob.Common.Type.UnitSize import UnitSize
 
 
 class NewSimplePartitioningController(object):
@@ -52,10 +54,12 @@ class NewSimplePartitioningController(object):
     classdocs
     '''
 
-    def __init__(self, vocabularyController):
+    def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
         self._view = NewSimplePartitioningView(self)
         self.log = logging.getLogger(__name__)
+        self.flagStop = False
+        self.symbols = symbols
 
     @property
     def view(self):
@@ -65,6 +69,7 @@ class NewSimplePartitioningController(object):
         self._view.simpleDialog.destroy()
 
     def simple_execute_clicked_cb(self, widget):
+        self.flagStop = False
         # update widget
         self._view.simple_cancel.set_sensitive(False)
         self._view.simple_execute.set_sensitive(False)
@@ -74,9 +79,7 @@ class NewSimplePartitioningController(object):
         self._view.radiobutton64bits.set_sensitive(False)
 
         #extract chosen value
-        symbolList = self.vocabularyController.view.getCheckedSymbolList()
         formatBits = UnitSize.BITS8
-
         if self._view.radiobutton16bits.get_active():
             formatBits = UnitSize.BITS16
         elif self._view.radiobutton32bits.get_active():
@@ -85,13 +88,13 @@ class NewSimplePartitioningController(object):
             formatBits = UnitSize.BITS64
 
         # create a job to execute the partitioning
-        Job(self.startSimplePartitioning(symbolList, formatBits))
+        Job(self.startSimplePartitioning(formatBits))
 
-    def startSimplePartitioning(self, symbols, unitSize):
-        if len(symbols) > 0:
+    def startSimplePartitioning(self, unitSize):
+        if len(self.symbols) > 0:
             self.log.debug("Start to simple partitioning the selected symbols")
             try:
-                (yield ThreadedTask(self.simplePartitioning, symbols, unitSize))
+                (yield ThreadedTask(self.simplePartitioning, unitSize))
             except TaskError, e:
                 self.log.error(_("Error while proceeding to the simple partitioning of symbols: {0}").format(str(e)))
         else:
@@ -105,11 +108,11 @@ class NewSimplePartitioningController(object):
         #close dialog box
         self._view.simpleDialog.destroy()
 
-    def simplePartitioning(self, symbols, unitSize):
+    def simplePartitioning(self, unitSize):
         """Simple partitioning the provided symbols"""
-        step = float(100) / float(len(symbols))
+        step = float(100) / float(len(self.symbols))
         total = float(0)
-        for symbol in symbols:
+        for symbol in self.symbols:
             GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
@@ -123,9 +126,7 @@ class NewSimplePartitioningController(object):
     def simple_stop_clicked_cb(self, widget):
         # update button
         self._view.simple_stop.set_sensitive(False)
-
-        # ++CODE HERE++
-        # STOP THE THREAD OF simple PARTITIONING
+        self.flagStop = True
 
         # update widget
         self._view.simple_execute.set_sensitive(True)
