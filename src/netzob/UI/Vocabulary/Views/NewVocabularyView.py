@@ -90,7 +90,8 @@ class NewVocabularyView(object):
         self.builder.connect_signals(self.controller)
         # Configure the drag and drop
         self.symbolListTreeView.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
-        self.symbolListTreeView.connect('drag-data-received', self.drag_data_received_event)
+        self.symbolListTreeView.connect("drag-data-received", self.drag_data_received_event)
+        self.symbolListTreeView.connect("button-press-event", self.controller.symbolListTreeView_button_press_event_cb)
         self.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
         self.symbolListTreeView.drag_dest_add_text_targets()
         # List of currently displayed message tables

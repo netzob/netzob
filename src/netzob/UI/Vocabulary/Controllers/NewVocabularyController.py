@@ -59,6 +59,7 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
+from netzob.UI.Vocabulary.Controllers.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
 
 
 class NewVocabularyController(object):
@@ -246,6 +247,28 @@ class NewVocabularyController(object):
 
             self.view.setDisplayedSymbolInSelectedMessageTable(symbol)
             self._view.updateSymbolProperties()
+
+    def symbolListTreeView_button_press_event_cb(self, treeview, eventButton):
+        # Popup a contextual menu if right click
+        if eventButton.type == Gdk.EventType.BUTTON_PRESS and eventButton.button == 3:
+            x = int(eventButton.x)
+            y = int(eventButton.y)
+            try:
+                (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
+            except:
+                # No symbol selected
+                return
+
+            # Retrieve the selected symbol
+            symbol_id = treeview.get_model()[path][NewVocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            if symbol_id is not None:
+                symbol = self.getCurrentProject().getVocabulary().getSymbolByID(symbol_id)
+            else:
+                return
+
+            # Popup a contextual menu
+            menuController = ContextualMenuOnSymbolController(self, symbol)
+            menuController.run(eventButton)
 
 ################ TO BE FIXED
     def button_newview_cb(self, widget):
