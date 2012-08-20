@@ -93,8 +93,6 @@ class NewSmoothPartitioningController(object):
                 (yield ThreadedTask(self.smooth))
             except TaskError, e:
                 self.log.error(_("Error while proceeding to the smoothing of symbols: {0}").format(str(e)))
-
-            self.vocabularyController.restart()
         else:
             self.log.debug("No symbol selected")
 

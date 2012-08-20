@@ -272,6 +272,7 @@ class NewVocabularyController(object):
             return
         sequence_controller = NewSequenceAlignmentController(self, symbols)
         sequence_controller.run()
+        self.restart()
 
     def partitioningForce_activate_cb(self, action):
         if self.getCurrentProject() == None:
@@ -283,6 +284,7 @@ class NewVocabularyController(object):
             return
         force_controller = NewForcePartitioningController(self, symbols)
         force_controller.run()
+        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningSimple_activate_cb(self, action):
         if self.getCurrentProject() == None:
@@ -294,6 +296,7 @@ class NewVocabularyController(object):
             return
         simple_controller = NewSimplePartitioningController(self, symbols)
         simple_controller.run()
+        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningSmooth_activate_cb(self, action):
         if self.getCurrentProject() == None:
@@ -305,6 +308,7 @@ class NewVocabularyController(object):
             return
         smooth_controller = NewSmoothPartitioningController(self, symbols)
         smooth_controller.run()
+        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningReset_activate_cb(self, action):
         """Callback executed when the user clicks
@@ -318,6 +322,7 @@ class NewVocabularyController(object):
             return
         reset_controller = ResetPartitioningController(self, symbols)
         reset_controller.run()
+        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def concatField_activate_cb(self, action):
         # Sanity check
@@ -357,7 +362,7 @@ class NewVocabularyController(object):
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
         # Split field
         if fields != None and len(fields) > 0:
-            field = fields[0] # We take the first one
+            field = fields[0]  # We take the first one
             controller = SplitFieldController(self, symbol, field)
             controller.run()
         else:

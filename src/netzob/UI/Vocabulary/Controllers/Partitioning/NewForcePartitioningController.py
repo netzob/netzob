@@ -38,7 +38,7 @@ import time
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.Format import Format
 gi.require_version('Gtk', '3.0')
@@ -99,8 +99,6 @@ class NewForcePartitioningController(object):
                 self.log.error(_("Error while proceeding to the force partitioning of symbols: {0}").format(str(e)))
         else:
             self.log.debug("No symbol selected")
-
-        self.vocabularyController.restart()
 
         #update button
         self._view.force_stop.set_sensitive(True)

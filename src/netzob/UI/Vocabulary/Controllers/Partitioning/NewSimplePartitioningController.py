@@ -100,12 +100,10 @@ class NewSimplePartitioningController(object):
         else:
             self.log.debug("No symbol selected")
 
-        self.vocabularyController.restart()
-
-        #update button
+        # Update button
         self._view.simple_stop.set_sensitive(True)
 
-        #close dialog box
+        # Close dialog box
         self._view.simpleDialog.destroy()
 
     def simplePartitioning(self, unitSize):
