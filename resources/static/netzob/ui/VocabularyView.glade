@@ -25,6 +25,14 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="symbolPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="symbolListStore">
     <columns>
       <!-- column-name selected -->
@@ -36,14 +44,6 @@
       <!-- column-name numOfFields -->
       <column type="gint"/>
       <!-- column-name id -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="symbolPropertiesListstore">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name value -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -507,7 +507,7 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="resize">False</property>
+                        <property name="resize">True</property>
                         <property name="shrink">True</property>
                       </packing>
                     </child>
@@ -534,6 +534,7 @@
                   </object>
                   <packing>
                     <property name="position">1</property>
+                    <property name="reorderable">True</property>
                   </packing>
                 </child>
                 <child type="tab">
