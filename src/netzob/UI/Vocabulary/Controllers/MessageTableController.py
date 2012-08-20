@@ -36,6 +36,7 @@ from gi.repository import Gdk
 from netzob.UI.Vocabulary.Views.MessageTableView import MessageTableView
 from netzob.UI.Vocabulary.Controllers.ContextualMenuOnFieldController import ContextualMenuOnFieldController
 
+
 class MessageTableController(object):
 
     def __init__(self, vocabularyPerspective):

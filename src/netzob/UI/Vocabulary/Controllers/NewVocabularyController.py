@@ -102,7 +102,7 @@ class NewVocabularyController(object):
         self.view.updateSymbolListToolbar()
 
     def createSymbolButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         builder2 = Gtk.Builder()
@@ -145,7 +145,7 @@ class NewVocabularyController(object):
             button.set_sensitive(False)
 
     def concatSymbolButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         #concat the message of all selected symbols
@@ -169,7 +169,7 @@ class NewVocabularyController(object):
 
     #possible que si on selectionne un unique symbol
     def renameSymbolButton_clicked_cb(self, widget):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbol = self.view.getCheckedSymbolList()[0]
@@ -208,7 +208,7 @@ class NewVocabularyController(object):
             dialog.destroy()
 
     def deleteSymbolButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         # Delete symbol
@@ -223,7 +223,7 @@ class NewVocabularyController(object):
         self.view.updateLeftPanel()
 
     def newMessageTableButton_clicked_cb(self, toolButton):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         self.view.addMessageTable()
@@ -263,7 +263,7 @@ class NewVocabularyController(object):
 
 ######### MENU / TOOLBAR ENTRIES CONTROLLERS
     def sequenceAlignment_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbols = self.view.getCheckedSymbolList()
@@ -272,10 +272,9 @@ class NewVocabularyController(object):
             return
         sequence_controller = NewSequenceAlignmentController(self, symbols)
         sequence_controller.run()
-        self.restart()
 
     def partitioningForce_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbols = self.view.getCheckedSymbolList()
@@ -287,7 +286,7 @@ class NewVocabularyController(object):
         self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningSimple_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbols = self.view.getCheckedSymbolList()
@@ -299,7 +298,7 @@ class NewVocabularyController(object):
         self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningSmooth_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbols = self.view.getCheckedSymbolList()
@@ -313,7 +312,7 @@ class NewVocabularyController(object):
     def partitioningReset_activate_cb(self, action):
         """Callback executed when the user clicks
         on the reset button. It starts the dedicated controller."""
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbols = self.view.getCheckedSymbolList()
@@ -326,15 +325,15 @@ class NewVocabularyController(object):
 
     def concatField_activate_cb(self, action):
         # Sanity check
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbol = self.view.getDisplayedSymbol()
-        if symbol == None:
+        if symbol is None:
             NetzobErrorMessage(_("No selected symbol."))
             return
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
-        if fields == None or len(fields) < 2:
+        if fields is None or len(fields) < 2:
             NetzobErrorMessage(_("You need to select at least two fields."))
             return
         # We retrieve the first and last fields selected
@@ -352,11 +351,11 @@ class NewVocabularyController(object):
 
     def split_activate_cb(self, action):
         # Sanity check
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbol = self.view.getDisplayedSymbol()
-        if symbol == None:
+        if symbol is None:
             NetzobErrorMessage(_("No selected symbol."))
             return
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
@@ -369,7 +368,7 @@ class NewVocabularyController(object):
             NetzobErrorMessage(_("No selected field."))
 
     def createVariable_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         NetzobErrorMessage(_("Not yet implemented."))
@@ -379,7 +378,7 @@ class NewVocabularyController(object):
         button. It retrieves the selected message, and change the cursor
         to show that moving is in progress. The user needs to click on a symbol to
         select the target symbol"""
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
@@ -413,11 +412,11 @@ class NewVocabularyController(object):
         self.selectedMessagesToMove = None
 
     def deleteMessages_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         selectedMessages = self.view.getSelectedMessagesInSelectedMessageTable()
-        if selectedMessages == [] or selectedMessages == None:
+        if selectedMessages == [] or selectedMessages is None:
             NetzobErrorMessage(_("No selected message(s)."))
             return
         questionMsg = _("Click yes to confirm the deletion of the selected message(s)")
@@ -435,7 +434,7 @@ class NewVocabularyController(object):
     def searchText_toggled_cb(self, action):
         """Callback executed when the user clicks
         on the research toggle button"""
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         if action.get_active():
@@ -444,14 +443,14 @@ class NewVocabularyController(object):
             self._view.researchController.hide()
 
     def environmentDep_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         NetzobErrorMessage(_("Not yet implemented."))
 
     def messagesDistribution_activate_cb(self, action):
         # Sanity check
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         symbols = self.view.getCheckedSymbolList()
@@ -462,14 +461,14 @@ class NewVocabularyController(object):
         distribution.run()
 
     def relationsViewer_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         relations = RelationsController(self)
         relations.show()
 
     def variableTable_activate_cb(self, action):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
         builder2 = Gtk.Builder()
@@ -525,7 +524,7 @@ class NewVocabularyController(object):
     def importMessagesFromFile_activate_cb(self, action):
         """Execute all the plugins associated with
         file import."""
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 
@@ -542,7 +541,7 @@ class NewVocabularyController(object):
     def captureMessages_activate_cb(self, action):
         """Execute all the plugins associated with
         capture function."""
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
 

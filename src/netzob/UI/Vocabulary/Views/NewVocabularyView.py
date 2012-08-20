@@ -312,7 +312,7 @@ class NewVocabularyView(object):
         return count
 
     def getCheckedSymbolList(self):
-        if self.getCurrentProject() == None:
+        if self.getCurrentProject() is None:
             return []
         currentVocabulary = self.getCurrentProject().getVocabulary()
         selectedSymbolList = []
@@ -460,6 +460,6 @@ class NewVocabularyView(object):
         return self.controller.netzob.getCurrentProject()
 
     def getDisplayedSymbol(self):
-        if self.selectedMessageTable == None:
+        if self.selectedMessageTable is None:
             return None
         return self.selectedMessageTable.getDisplayedSymbol()

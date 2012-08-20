@@ -178,4 +178,3 @@ class ContextualMenuOnFieldController(object):
     def displayPopupToEditField_cb(self, event):
         popup = PopupEditFieldController(self.vocabularyController, self.field)
         popup.run()
-

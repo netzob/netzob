@@ -123,6 +123,7 @@ class NewSequenceAlignmentController(object):
             self.vocabularyController.getCurrentProject().getVocabulary().setSymbols(new_symbols)
             # close dialog box
             self._view.sequenceDialog.destroy()
+            self.vocabularyController.restart()
 
     def percentOfAlignmentProgessBar(self, stage, percent, message):
         # select the good progress bar in function of the stage
