@@ -15,6 +15,8 @@
       <column type="gchararray"/>
       <!-- column-name value -->
       <column type="gchararray"/>
+      <!-- column-name isEditable -->
+      <column type="gboolean"/>
     </columns>
   </object>
   <object class="GtkListStore" id="projectPropertiesListstore">
@@ -23,6 +25,8 @@
       <column type="gchararray"/>
       <!-- column-name value -->
       <column type="gchararray"/>
+      <!-- column-name isEditable -->
+      <column type="gboolean"/>
     </columns>
   </object>
   <object class="GtkListStore" id="symbolPropertiesListstore">
@@ -31,6 +35,8 @@
       <column type="gchararray"/>
       <!-- column-name value -->
       <column type="gchararray"/>
+      <!-- column-name isEditable -->
+      <column type="gboolean"/>
     </columns>
   </object>
   <object class="GtkListStore" id="symbolListStore">
@@ -437,8 +443,9 @@
                           <object class="GtkTreeViewColumn" id="treeviewcolumn2">
                             <property name="title" translatable="yes">Value</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cellrenderertext6"/>
+                              <object class="GtkCellRendererCombo" id="cellrenderercombo_project_props"/>
                               <attributes>
+                                <attribute name="editable">2</attribute>
                                 <attribute name="text">1</attribute>
                               </attributes>
                             </child>
@@ -496,8 +503,9 @@
                               <object class="GtkTreeViewColumn" id="treeviewcolumn4">
                                 <property name="title" translatable="yes">Value</property>
                                 <child>
-                                  <object class="GtkCellRendererText" id="cellrenderertext7"/>
+                                  <object class="GtkCellRendererCombo" id="cellrenderercombo_symbol_props"/>
                                   <attributes>
+                                    <attribute name="editable">2</attribute>
                                     <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
@@ -581,9 +589,11 @@
                           <object class="GtkTreeViewColumn" id="treeviewcolumn9">
                             <property name="title" translatable="yes">Value</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cellrenderertext9"/>
+                              <object class="GtkCellRendererCombo" id="cellrenderercombo_message_props"/>
                               <attributes>
+                                <attribute name="editable">2</attribute>
                                 <attribute name="text">1</attribute>
+                                <attribute name="foreground-rgba">5</attribute>
                               </attributes>
                             </child>
                           </object>

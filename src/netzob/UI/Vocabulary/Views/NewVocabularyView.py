@@ -61,12 +61,15 @@ class NewVocabularyView(object):
 
     PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
     PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
 
     SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN = 0
     SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
 
     MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN = 0
     MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
 
     FIELDPROPERTIESLISTSTORE_NAME_COLUMN = 0
     FIELDPROPERTIESLISTSTORE_VALUE_COLUMN = 1
@@ -84,7 +87,8 @@ class NewVocabularyView(object):
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
                                         "messageTableBox", "symbolListTreeView",
-                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox"
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox",
+                                        "cellrenderercombo_project_props", "cellrenderercombo_symbol_props", "cellrenderercombo_message_props"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
@@ -94,6 +98,22 @@ class NewVocabularyView(object):
         self.symbolListTreeView.connect("button-press-event", self.controller.symbolListTreeView_button_press_event_cb)
         self.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
         self.symbolListTreeView.drag_dest_add_text_targets()
+
+        # Allow edition of project properties
+        liststore_project_properties_values = Gtk.ListStore(str)
+        self.cellrenderercombo_project_props.set_property("model", liststore_project_properties_values)
+        self.cellrenderercombo_project_props.set_property("text-column", 0)
+
+        # Allow edition of symbol properties
+        liststore_symbol_properties_values = Gtk.ListStore(str)
+        self.cellrenderercombo_symbol_props.set_property("model", liststore_symbol_properties_values)
+        self.cellrenderercombo_symbol_props.set_property("text-column", 0)
+
+        # Allow edition of message properties
+        liststore_message_properties_values = Gtk.ListStore(str)
+        self.cellrenderercombo_message_props.set_property("model", liststore_message_properties_values)
+        self.cellrenderercombo_message_props.set_property("text-column", 0)
+
         # List of currently displayed message tables
         self.messageTableList = []
         self.selectedMessageTable = None
@@ -385,6 +405,7 @@ class NewVocabularyView(object):
             line = self.projectPropertiesListstore.append()
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, True)
 
     def getSymbolProperties(self):
         """Create the list of properties associated
@@ -422,6 +443,7 @@ class NewVocabularyView(object):
             line = self.symbolPropertiesListstore.append()
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN, True)
 
         # update the variable definition
         self.updateSymbolVariableDefinition()
@@ -456,6 +478,7 @@ class NewVocabularyView(object):
             line = self.messagePropertiesListstore.append()
             self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, key)
             self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN, True)
 
     def getCurrentProject(self):
         return self.controller.netzob.getCurrentProject()
