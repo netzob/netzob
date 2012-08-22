@@ -149,23 +149,25 @@ class NewVocabularyController(object):
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        #concat the message of all selected symbols
+        # retrieve the checked symbols
         symbols = self.view.getCheckedSymbolList()
-        message = []
+
+        # Create a new symbol
+        newSymbol = Symbol(uuid.uuid4(), "Merged", self.getCurrentProject())
+
+        # fetch all their messages
         for sym in symbols:
-            message.extend(sym.getMessages())
-        #give the message to the first symbol
-        concatSymbol = symbols[0]
-        concatSymbol.setMessages(message)
-        currentProject = self.netzob.getCurrentProject()
+            newSymbol.addMessages(sym.getMessages())
+
         #delete all selected symbols
-        self.view.emptyMessageTableDisplayingSymbols(symbols[1:])
+        self.view.emptyMessageTableDisplayingSymbols(symbols)
         for sym in symbols:
-            currentProject.getVocabulary().removeSymbol(sym)
+            self.getCurrentProject().getVocabulary().removeSymbol(sym)
+
         #add the concatenate symbol
-        currentProject.getVocabulary().addSymbol(concatSymbol)
+        self.getCurrentProject().getVocabulary().addSymbol(newSymbol)
+
         #refresh view
-        self.view.updateMessageTableDisplayingSymbols([concatSymbol])
         self.view.updateLeftPanel()
 
     #possible que si on selectionne un unique symbol
