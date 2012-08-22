@@ -78,13 +78,13 @@ class Property(object):
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------
-    def setName(self):
+    def setName(self, name):
         self.name = name
 
-    def setFormat(self):
+    def setFormat(self, format):
         self.format = format
 
-    def setCurrentValue(self):
+    def setCurrentValue(self, currentValue):
         self.currentValue = currentValue
 
     def setPossibleValues(self, possibleValues):
@@ -95,4 +95,3 @@ class Property(object):
 
     def setHasEntry(self, hasEntry):
         self.hasEntry = hasEntry
-

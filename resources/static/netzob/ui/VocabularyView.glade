@@ -451,6 +451,8 @@
                             <child>
                               <object class="GtkCellRendererCombo" id="cellrenderercombo_project_props">
                                 <property name="text_column">0</property>
+                                <signal name="changed" handler="cellrenderer_project_props_changed_cb" swapped="no"/>
+                                <signal name="edited" handler="cellrenderer_project_props_changed_cb" swapped="no"/>
                               </object>
                               <attributes>
                                 <attribute name="editable">2</attribute>
