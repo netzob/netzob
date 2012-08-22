@@ -62,14 +62,17 @@ class NewVocabularyView(object):
     PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
     PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
     PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN = 3
 
     SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN = 0
     SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN = 1
     SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN = 3
 
     MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN = 0
     MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
     MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN = 3
 
     FIELDPROPERTIESLISTSTORE_NAME_COLUMN = 0
     FIELDPROPERTIESLISTSTORE_VALUE_COLUMN = 1
@@ -87,8 +90,7 @@ class NewVocabularyView(object):
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
                                         "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
                                         "messageTableBox", "symbolListTreeView",
-                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox",
-                                        "cellrenderercombo_project_props", "cellrenderercombo_symbol_props", "cellrenderercombo_message_props"
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox"
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
@@ -98,21 +100,6 @@ class NewVocabularyView(object):
         self.symbolListTreeView.connect("button-press-event", self.controller.symbolListTreeView_button_press_event_cb)
         self.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
         self.symbolListTreeView.drag_dest_add_text_targets()
-
-        # Allow edition of project properties
-        liststore_project_properties_values = Gtk.ListStore(str)
-        self.cellrenderercombo_project_props.set_property("model", liststore_project_properties_values)
-        self.cellrenderercombo_project_props.set_property("text-column", 0)
-
-        # Allow edition of symbol properties
-        liststore_symbol_properties_values = Gtk.ListStore(str)
-        self.cellrenderercombo_symbol_props.set_property("model", liststore_symbol_properties_values)
-        self.cellrenderercombo_symbol_props.set_property("text-column", 0)
-
-        # Allow edition of message properties
-        liststore_message_properties_values = Gtk.ListStore(str)
-        self.cellrenderercombo_message_props.set_property("model", liststore_message_properties_values)
-        self.cellrenderercombo_message_props.set_property("text-column", 0)
 
         # List of currently displayed message tables
         self.messageTableList = []
@@ -375,24 +362,10 @@ class NewVocabularyView(object):
         """Computes the set of properties
         on the current project, and displays them
         in the treeview"""
+        properties = []
         project = self.getCurrentProject()
-        properties = OrderedDict()
-        if project != None:
-            configuration = project.getConfiguration()
-            properties = OrderedDict()
-            properties['workspace'] = self.controller.netzob.getCurrentWorkspace().getPath()
-            properties['name'] = project.getName()
-            properties['date'] = project.getCreationDate()
-            properties['symbols'] = len(project.getVocabulary().getSymbols())
-            properties['messages'] = len(project.getVocabulary().getMessages())
-            field = 0
-            for sym in project.getVocabulary().getSymbols():
-                field = field + len(sym.getFields())
-            properties['fields'] = field
-            properties[configuration.VOCABULARY_GLOBAL_FORMAT] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_FORMAT)
-            properties[configuration.VOCABULARY_GLOBAL_UNITSIZE] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_UNITSIZE)
-            properties[configuration.VOCABULARY_GLOBAL_SIGN] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_SIGN)
-            properties[configuration.VOCABULARY_GLOBAL_ENDIANESS] = configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_ENDIANESS)
+        if project is not None:
+            properties = project.getProperties()
         return properties
 
     def updateProjectProperties(self):
@@ -401,36 +374,24 @@ class NewVocabularyView(object):
         # get project properties
         properties = self.getProjectProperties()
         # add project properties
-        for key in properties:
+        for prop in properties:
             line = self.projectPropertiesListstore.append()
-            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, key)
-            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
-            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, True)
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
     def getSymbolProperties(self):
         """Create the list of properties associated
         with the current displayed symbol"""
+        properties = []
         symbol = self.getDisplayedSymbolInSelectedMessageTable()
-        properties = OrderedDict()
-        if symbol != None:
-            properties['name'] = symbol.getName()
-            properties['messages'] = len(symbol.getMessages())
-            properties['fields'] = len(symbol.getFields())
-            minMsgSize = None
-            maxMsgSize = 0
-            avgMsgSize = 0
-            if len(symbol.getMessages()) > 0:
-                for m in symbol.getMessages():
-                    s = len(m.getData()) * 2
-                    if minMsgSize is None or s < minMsgSize:
-                        minMsgSize = s
-                    if maxMsgSize is None or s > maxMsgSize:
-                        maxMsgSize = s
-                    avgMsgSize += s
-                avgMsgSize = avgMsgSize / len(symbol.getMessages())
-            properties['avg msg size (bytes)'] = avgMsgSize
-            properties['min msg size (bytes)'] = minMsgSize
-            properties['max msg size (bytes)'] = maxMsgSize
+        if symbol is not None:
+            properties = symbol.getProperties()
         return properties
 
     def updateSymbolProperties(self):
@@ -439,11 +400,16 @@ class NewVocabularyView(object):
         # get symbol properties
         properties = self.getSymbolProperties()
         # add symbol properties
-        for key in properties:
+        for prop in properties:
             line = self.symbolPropertiesListstore.append()
-            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, key)
-            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
-            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN, True)
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
         # update the variable definition
         self.updateSymbolVariableDefinition()
@@ -457,16 +423,13 @@ class NewVocabularyView(object):
     def getMessageProperties(self):
         """Retrieve the current first selected message (in the
         selected TableMessage) and return its properties"""
+        properties = []
         messages = self.getSelectedMessagesInSelectedMessageTable()
         if messages is not None and len(messages) > 0:
             message = messages[0]
-            properties = OrderedDict()
-            if message != None:
-                for p in message.getProperties():
-                    properties[p[0]] = str(p[2])
-            return properties
-        else:
-            return []
+            if message is not None:
+                properties = message.getProperties()
+        return properties
 
     def updateMessageProperties(self):
         # clean store
@@ -474,11 +437,16 @@ class NewVocabularyView(object):
         # get message properties
         properties = self.getMessageProperties()
         # add message properties
-        for key in properties:
+        for prop in properties:
             line = self.messagePropertiesListstore.append()
-            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, key)
-            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(properties[key]))
-            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN, True)
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
 
     def getCurrentProject(self):
         return self.controller.netzob.getCurrentProject()

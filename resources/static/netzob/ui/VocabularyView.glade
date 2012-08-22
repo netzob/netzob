@@ -17,6 +17,8 @@
       <column type="gchararray"/>
       <!-- column-name isEditable -->
       <column type="gboolean"/>
+      <!-- column-name model -->
+      <column type="GtkListStore"/>
     </columns>
   </object>
   <object class="GtkListStore" id="projectPropertiesListstore">
@@ -27,16 +29,8 @@
       <column type="gchararray"/>
       <!-- column-name isEditable -->
       <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="symbolPropertiesListstore">
-    <columns>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name value -->
-      <column type="gchararray"/>
-      <!-- column-name isEditable -->
-      <column type="gboolean"/>
+      <!-- column-name model -->
+      <column type="GtkListStore"/>
     </columns>
   </object>
   <object class="GtkListStore" id="symbolListStore">
@@ -51,6 +45,18 @@
       <column type="gint"/>
       <!-- column-name id -->
       <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="symbolPropertiesListstore">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+      <!-- column-name isEditable -->
+      <column type="gboolean"/>
+      <!-- column-name model -->
+      <column type="GtkListStore"/>
     </columns>
   </object>
   <object class="GtkListStore" id="variableListstore">
@@ -443,10 +449,13 @@
                           <object class="GtkTreeViewColumn" id="treeviewcolumn2">
                             <property name="title" translatable="yes">Value</property>
                             <child>
-                              <object class="GtkCellRendererCombo" id="cellrenderercombo_project_props"/>
+                              <object class="GtkCellRendererCombo" id="cellrenderercombo_project_props">
+                                <property name="text_column">0</property>
+                              </object>
                               <attributes>
                                 <attribute name="editable">2</attribute>
                                 <attribute name="text">1</attribute>
+                                <attribute name="model">3</attribute>
                               </attributes>
                             </child>
                           </object>
@@ -503,10 +512,13 @@
                               <object class="GtkTreeViewColumn" id="treeviewcolumn4">
                                 <property name="title" translatable="yes">Value</property>
                                 <child>
-                                  <object class="GtkCellRendererCombo" id="cellrenderercombo_symbol_props"/>
+                                  <object class="GtkCellRendererCombo" id="cellrenderercombo_symbol_props">
+                                    <property name="text_column">0</property>
+                                  </object>
                                   <attributes>
                                     <attribute name="editable">2</attribute>
                                     <attribute name="text">1</attribute>
+                                    <attribute name="model">3</attribute>
                                   </attributes>
                                 </child>
                               </object>
@@ -589,11 +601,13 @@
                           <object class="GtkTreeViewColumn" id="treeviewcolumn9">
                             <property name="title" translatable="yes">Value</property>
                             <child>
-                              <object class="GtkCellRendererCombo" id="cellrenderercombo_message_props"/>
+                              <object class="GtkCellRendererCombo" id="cellrenderercombo_message_props">
+                                <property name="text_column">0</property>
+                              </object>
                               <attributes>
                                 <attribute name="editable">2</attribute>
                                 <attribute name="text">1</attribute>
-                                <attribute name="foreground-rgba">5</attribute>
+                                <attribute name="model">3</attribute>
                               </attributes>
                             </child>
                           </object>

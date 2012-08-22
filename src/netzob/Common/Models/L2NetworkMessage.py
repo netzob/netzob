@@ -36,6 +36,7 @@ import logging
 from netzob.Common.Type.Format import Format
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.L2NetworkMessageFactory import L2NetworkMessageFactory
+from netzob.Common.Property import Property
 
 
 class L2NetworkMessage(AbstractMessage):
@@ -63,13 +64,13 @@ class L2NetworkMessage(AbstractMessage):
 
     def getProperties(self):
         properties = []
-        properties.append(['ID', Format.STRING, str(self.getID())])
-        properties.append(['Type', Format.STRING, self.getType()])
-        properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
-        properties.append(['Layer 2 Protocol', Format.STRING, self.getL2Protocol()])
-        properties.append(['Layer 2 Source Address', Format.STRING, self.getL2SourceAddress()])
-        properties.append(['Layer 2 Destination Address', Format.STRING, self.getL2DestinationAddress()])
-        properties.append(['Data', Format.HEX, self.getStringData()])
+        properties.append(Property('ID', Format.STRING, str(self.getID())))
+        properties.append(Property('Type', Format.STRING, self.getType()))
+        properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
+        properties.append(Property('Layer 2 Protocol', Format.STRING, self.getL2Protocol()))
+        properties.append(Property('Layer 2 Source Address', Format.STRING, self.getL2SourceAddress()))
+        properties.append(Property('Layer 2 Destination Address', Format.STRING, self.getL2DestinationAddress()))
+        properties.append(Property('Data', Format.HEX, self.getStringData()))
 #        if self.pattern != []:
-#            properties.append(['Pattern', Format.STRING, self.getPatternString()])
+#            properties.append(Property('Pattern', Format.STRING, self.getPatternString()))
         return properties
