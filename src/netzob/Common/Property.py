@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
@@ -37,77 +38,61 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Models.AbstractMessage import AbstractMessage
-from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
-from netzob.Common.Type.Format import Format
-from netzob.Common.Property import Property
 
 
 #+---------------------------------------------------------------------------+
-#| IPCMessage:
-#|     Definition of an IPC message
+#| Property:
+#|     Definition of an object (project, symbol, message, etc.) property
 #+---------------------------------------------------------------------------+
-class IPCMessage(AbstractMessage):
-    def __init__(self, id, timestamp, data, category, key, direction):
-        AbstractMessage.__init__(self, id, timestamp, data, "IPC")
-
-        self.category = category
-        self.key = key
-        self.direction = direction
-
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.Models.IPCMessage.py')
-
-    #+-----------------------------------------------------------------------+
-    #| getFactory
-    #| @return the associated factory
-    #+-----------------------------------------------------------------------+
-    def getFactory(self):
-        return IPCMessageFactory
-
-    #+-----------------------------------------------------------------------+
-    #| getProperties
-    #|     Computes and returns the properties of the current message
-    #| @return an array with all the properties [[key,val],...]
-    #+-----------------------------------------------------------------------+
-    def getProperties(self):
-        properties = []
-        properties.append(Property('ID', Format.STRING, str(self.getID())))
-        properties.append(Property('Type', Format.STRING, self.getType()))
-        properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
-        properties.append(Property('Category', Format.STRING, self.getCategory()))
-        properties.append(Property('Key', Format.STRING, self.getKey()))
-        properties.append(Property('Direction', Format.STRING, self.getDirection()))
-        properties.append(Property('Data', Format.STRING, self.getStringData()))
-
-        return properties
+class Property(object):
+    def __init__(self, name, format, currentValue):
+        self.name = name
+        self.format = format
+        self.currentValue = currentValue
+        self.possibleValues = []
+        self.isEditable = False
+        self.hasEntry = False
+        self.log = logging.getLogger(__name__)
 
     #+----------------------------------------------
     #| GETTERS:
     #+----------------------------------------------
-    def getCategory(self):
-        return self.category
+    def getName(self):
+        return self.name
 
-    def getKey(self):
-        return self.key
+    def getFormat(self):
+        return self.format
 
-    def getType(self):
-        return self.type
+    def getCurrentValue(self):
+        return self.currentValue
 
-    def getDirection(self):
-        return self.direction
+    def getPossibleValues(self):
+        return self.possibleValues
+
+    def isEditable(self):
+        return self.isEditable
+
+    def hasEntry(self):
+        return self.hasEntry
 
     #+----------------------------------------------
     #| SETTERS:
     #+----------------------------------------------
-    def setCategory(self, category):
-        self.category = category
+    def setName(self):
+        self.name = name
 
-    def setKey(self, key):
-        self.key = key
+    def setFormat(self):
+        self.format = format
 
-    def setType(self, type):
-        self.type = type
+    def setCurrentValue(self):
+        self.currentValue = currentValue
 
-    def setDirection(self, direction):
-        self.direction = direction
+    def setPossibleValues(self, possibleValues):
+        self.possibleValues = possibleValues
+
+    def setIsEditable(self, isEditable):
+        self.isEditable = isEditable
+
+    def setHasEntry(self, hasEntry):
+        self.hasEntry = hasEntry
+

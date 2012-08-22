@@ -46,7 +46,13 @@ from netzob.Common.ProjectConfiguration import ProjectConfiguration
 from netzob.Common.Vocabulary import Vocabulary
 from netzob.Common.Grammar import Grammar
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.Format import Format
+from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Sign import Sign
+from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.XSDResolver import XSDResolver
+from netzob.Common.Property import Property
+
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -311,6 +317,42 @@ class Project(object):
 
     # Dictionary of projects versions, must be sorted by version DESC
     PROJECT_SCHEMAS = {"xsds/0.1/Project.xsd": loadProject_0_1}
+
+    def getProperties(self):
+        properties = []
+        configuration = self.getConfiguration()
+        properties.append(Property('workspace', Format.STRING, self.getPath()))
+        prop = Property('name', Format.STRING, self.getName())
+        prop.setIsEditable(True)
+        properties.append(prop)
+        properties.append(Property('date', Format.STRING, self.getCreationDate()))
+        properties.append(Property('symbols', Format.DECIMAL, len(self.getVocabulary().getSymbols())))
+        properties.append(Property('messages', Format.DECIMAL, len(self.getVocabulary().getMessages())))
+        fields = 0
+        for sym in self.getVocabulary().getSymbols():
+            fields = fields + len(sym.getFields())
+        properties.append(Property('fields', Format.DECIMAL, fields))
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_FORMAT, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_FORMAT))
+        prop.setIsEditable(True)
+        prop.setPossibleValues(Format.getSupportedFormats())
+        properties.append(prop)
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_UNITSIZE, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_UNITSIZE))
+        prop.setIsEditable(True)
+        prop.setPossibleValues([UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64])
+        properties.append(prop)
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_SIGN, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_SIGN))
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Sign.SIGNED, Sign.UNSIGNED])
+        properties.append(prop)
+
+        prop = Property(configuration.VOCABULARY_GLOBAL_ENDIANESS, Format.STRING, configuration.getVocabularyInferenceParameter(configuration.VOCABULARY_GLOBAL_ENDIANESS))
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Endianess.BIG, Endianess.LITTLE])
+        properties.append(prop)
+        return properties
 
     def getID(self):
         return self.id

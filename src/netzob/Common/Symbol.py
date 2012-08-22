@@ -55,6 +55,7 @@ from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
+from netzob.Common.Property import Property
 
 
 NAMESPACE = "http://www.netzob.org/"
@@ -843,9 +844,9 @@ class Symbol(AbstractSymbol):
             messageTable = message.applyAlignment()
             for cell in messageTable:
                 for prop in message.getProperties():
-                    name = prop[0]
-                    aType = prop[1]
-                    value = prop[2]
+                    name = prop.getName()
+                    aType = prop.getFormat()
+                    value = prop.getCurrentValue()
                     if value == "" or name == "Data":
                         break
                     matchElts = str(TypeConvertor.encodeNetzobRawToGivenType(cell, aType)).count(str(value))
@@ -1169,6 +1170,51 @@ class Symbol(AbstractSymbol):
                 variable = field.getVariable()
             rootSymbol.addChild(variable)
         return rootSymbol
+
+    def getProperties(self):
+        properties = []
+        prop = Property('name', Format.STRING, self.getName())
+        prop.setIsEditable(True)
+        properties.append(prop)
+
+        properties.append(Property('messages', Format.DECIMAL, len(self.getMessages())))
+        properties.append(Property('fields', Format.DECIMAL, len(self.getFields())))
+        minMsgSize = None
+        maxMsgSize = 0
+        avgMsgSize = 0
+        if len(self.getMessages()) > 0:
+            for m in self.getMessages():
+                s = len(m.getData()) * 2
+                if minMsgSize is None or s < minMsgSize:
+                    minMsgSize = s
+                if maxMsgSize is None or s > maxMsgSize:
+                    maxMsgSize = s
+                avgMsgSize += s
+            avgMsgSize = avgMsgSize / len(self.getMessages())
+        properties.append(Property('avg msg size (bytes)', Format.DECIMAL, avgMsgSize))
+        properties.append(Property('min msg size (bytes)', Format.DECIMAL, minMsgSize))
+        properties.append(Property('max msg size (bytes)', Format.DECIMAL, maxMsgSize))
+
+        prop = Property("format", Format.STRING, self.format)
+        prop.setIsEditable(True)
+        prop.setPossibleValues(Format.getSupportedFormats())
+        properties.append(prop)
+
+        prop = Property("unitSize", Format.STRING, self.unitSize)
+        prop.setIsEditable(True)
+        prop.setPossibleValues([UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64])
+        properties.append(prop)
+
+        prop = Property("sign", Format.STRING, self.sign)
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Sign.SIGNED, Sign.UNSIGNED])
+        properties.append(prop)
+
+        prop = Property("endianess", Format.STRING, self.endianess)
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Endianess.BIG, Endianess.LITTLE])
+        properties.append(prop)
+        return properties
 
     #+----------------------------------------------
     #| GETTERS

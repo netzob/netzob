@@ -36,6 +36,7 @@ import logging
 from netzob.Common.Type.Format import Format
 from netzob.Common.Models.L2NetworkMessage import L2NetworkMessage
 from netzob.Common.Models.Factories.L3NetworkMessageFactory import L3NetworkMessageFactory
+from netzob.Common.Property import Property
 
 
 ## Remarques :
@@ -69,7 +70,7 @@ class L3NetworkMessage(L2NetworkMessage):
 
     def getProperties(self):
         properties = super(L3NetworkMessage, self).getProperties()
-        properties.append(['Layer 3 Protocol', Format.STRING, self.getL3Protocol()])
-        properties.append(['Layer 3 Source Address', Format.IP, self.getL3SourceAddress()])
-        properties.append(['Layer 3 Destination Address', Format.IP, self.getL3DestinationAddress()])
+        properties.append(Property('Layer 3 Protocol', Format.STRING, self.getL3Protocol()))
+        properties.append(Property('Layer 3 Source Address', Format.IP, self.getL3SourceAddress()))
+        properties.append(Property('Layer 3 Destination Address', Format.IP, self.getL3DestinationAddress()))
         return properties
