@@ -928,6 +928,11 @@ class Symbol(AbstractSymbol):
         else:
             self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
 
+    def addMessages(self, messages):
+        """Add the provided messages in the symbol"""
+        for message in messages:
+            self.addMessage(message)
+
     def addMessage(self, message):
         for msg in self.messages:
             if msg.getID() == message.getID():
