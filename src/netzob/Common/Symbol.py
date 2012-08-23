@@ -87,7 +87,7 @@ class Symbol(AbstractSymbol):
         self.project = project
         self.encodingFilters = []
         self.visualizationFilters = []
-        self.mathematicalFilters = []
+        self.mathematicFilters = []
         self.pattern = pattern
         self.minEqu = minEqu
 
@@ -128,18 +128,19 @@ class Symbol(AbstractSymbol):
             filters.extend(field.getEncodingFilters())
         filters.extend(self.encodingFilters)
 
-    def getMathematicalFilters(self):
-        """Return the activated mathematical filters
+    def getMathematicFilters(self):
+        """Return the activated mathematic filters
         on symbol scope"""
-        return self.mathematicalFilters
+        return self.mathematicFilters
 
-    def addMathematicalFilters(self, filter):
+    def addMathematicFilter(self, filter):
         """Add a math filter for the symbol"""
-        self.mathematicalFilters.append(filter)
+        self.mathematicFilters.append(filter)
 
-    def removeMathematicalFilters(self, filter):
+    def removeMathematicFilter(self, filter):
         """Remove the provided filter from current symbol"""
-        self.mathematicalFilters.remove(filter)
+        if filter in self.mathematicFilters:
+            self.mathematicFilters.remove(filter)
 
     #+----------------------------------------------
     #| forcePartitioning:

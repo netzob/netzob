@@ -170,14 +170,14 @@ class Workspace(object):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
 
-    def getMathematicalFilters(self):
+    def getMathematicFilters(self):
         """Computes and returns the list of available
         filters"""
-        mathematicalFilters = []
-        mathematicalFilters.append(Base64Filter(_("Base64 Filter")))
-        mathematicalFilters.append(GZipFilter(_("GZip Filter")))
-        mathematicalFilters.append(BZ2Filter(_("BZ2 Filter")))
-        return mathematicalFilters
+        filters = []
+        filters.append(Base64Filter(_("Base64 Filter")))
+        filters.append(GZipFilter(_("GZip Filter")))
+        filters.append(BZ2Filter(_("BZ2 Filter")))
+        return filters
 
     #+-----------------------------------------------------------------------+
     #| referenceProject:
