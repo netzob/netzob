@@ -34,7 +34,7 @@ from gi.repository import Gdk
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.UI.Vocabulary.Views.MessageTableView import MessageTableView
-from netzob.UI.Vocabulary.Controllers.ContextualMenuOnFieldController import ContextualMenuOnFieldController
+from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnFieldController import ContextualMenuOnFieldController
 
 
 class MessageTableController(object):

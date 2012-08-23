@@ -59,7 +59,7 @@ from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
-from netzob.UI.Vocabulary.Controllers.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
+from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
 
 
 class NewVocabularyController(object):

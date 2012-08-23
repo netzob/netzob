@@ -65,13 +65,30 @@ class ContextualMenuOnSymbolView(object):
         item.set_submenu(subMenu)
         item.show()
         self.menu.append(item)
+
+        # Add sub-entries to manage mathematical filter
+        submenuMathFiler = self.build_math_filters_submenu()
+        itemMathFiler = Gtk.MenuItem(_("Mathematical filters"))
+        itemMathFiler.set_submenu(submenuMathFilter)
+        itemMathFiler.show()
+        self.menu.append(submenuMathFiler)
+
         self.menu.popup(None, None, None, None, event.button, event.time)
+
+    def build_math_filters_submenu(self):
+        """Create a GTK submenu which contains
+        entries to edit the mathematical filters
+        of selected symbol"""
+        menu = Gtk.Menu()
 
     #+----------------------------------------------
     #| build_encoding_submenu:
     #|   Build a submenu for symbol data visualization.
     #+----------------------------------------------
     def build_encoding_submenu(self):
+        """Create a GTK menu which contains
+        entries to edit the visualizations formats of
+        selected symbol"""
         menu = Gtk.Menu()
 
         # Format submenu
