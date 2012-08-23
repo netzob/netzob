@@ -55,7 +55,7 @@ class CustomMathFilterView(object):
         self._getObjects(self.builder, ["customMathFilterDialog",
                                         "imageError", "imageValid", "cancelButton",
                                         "applyButton", "nameOfFilterEntry", "labelMessage",
-                                        "filterTextView"])
+                                        "filterTextView", "messagesListStore"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 

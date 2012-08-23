@@ -37,6 +37,7 @@ import logging
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.UI.Common.Views.CustomMathFilterView import CustomMathFilterView
+from netzob.Common.Filters.Mathematic.CustomFilter import CustomFilter
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
@@ -48,10 +49,14 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 class CustomMathFilterController(object):
     """Manage the creation of a custom math filter"""
 
-    def __init__(self, vocabularyController):
+    def __init__(self, vocabularyController, symbol):
         self.vocabularyController = vocabularyController
         self.log = logging.getLogger(__name__)
         self._view = CustomMathFilterView(self)
+        self.symbol = symbol
+        self.sourceCode = ""
+        self.filterName = ""
+        self.filter = None
 
     @property
     def view(self):
@@ -59,13 +64,69 @@ class CustomMathFilterController(object):
 
     def run(self):
         self._view.run()
+        self.updateMessages()
 
     def cancelButton_clicked_cb(self, widget):
         """Callback executed when the user clicks
         on the cancel button"""
-        print "cancel"
+        self._view.customMathFilterDialog.destroy()
 
     def applyButton_clicked_cb(self, widget):
         """Callback executed when the user clicks
         on the apply button."""
-        print "apply"
+        self._view.customMathFilterDialog.destroy()
+
+        if self.filter is not None:
+            # Add the current filter to the current symbol
+            self.symbol.addMathematicFilter(self.filter)
+
+    def testYourFilterButton_clicked_cb(self, widget):
+        self.dataUpdated()
+
+    def dataUpdated(self):
+        # retrieve the source code
+        self.sourceCode = self._view.filterTextView.get_buffer().get_text(self._view.filterTextView.get_buffer().get_start_iter(), self._view.filterTextView.get_buffer().get_end_iter(), True)
+        # retrieve the name of the filter
+        self.filterName = self._view.nameOfFilterEntry.get_text()
+
+        if self.filterName is not None and len(self.filterName) > 0 and self.sourceCode is not None and len(self.sourceCode) > 0:
+            self.filter = CustomFilter(self.filterName, self.sourceCode)
+            errorMessage = self.filter.compileSourceCode()
+
+            if errorMessage is None:
+                self._view.applyButton.set_sensitive(True)
+                self.updateMessages()
+                self._view.imageValid.show()
+                self._view.imageError.hide()
+                self._view.labelMessage.set_label(_("Verify below the filtered messages"))
+                self._view.labelMessage.show()
+            else:
+                self.filter = None
+                self._view.applyButton.set_sensitive(False)
+                self.updateMessages()
+                self._view.imageValid.hide()
+                self._view.imageError.show()
+                self._view.labelMessage.set_label("{0}".format(errorMessage))
+                self._view.labelMessage.show()
+        else:
+            self._view.applyButton.set_sensitive(False)
+            self._view.imageValid.hide()
+            self._view.imageError.show()
+            self._view.labelMessage.set_label(_("Specify the name of the source code of the Filter"))
+            self._view.labelMessage.show()
+
+    def updateMessages(self):
+        self._view.messagesListStore.clear()
+
+        for message in self.symbol.getMessages():
+            original = message.getStringData()
+            if self.filter is not None:
+                filtered = self.filter.apply(original)
+            else:
+                filtered = ""
+            self.addMessage(original, filtered)
+
+    def addMessage(self, original, filtered):
+        i = self._view.messagesListStore.append()
+        self._view.messagesListStore.set(i, 0, original)
+        self._view.messagesListStore.set(i, 1, filtered)

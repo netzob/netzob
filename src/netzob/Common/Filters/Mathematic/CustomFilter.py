@@ -54,3 +54,7 @@ class CustomFilter(MathematicFilter):
 
     def apply(self, message):
         return "00"
+
+    def compileSourceCode(self):
+        errorMessage = "Its very grave !"
+        return errorMessage

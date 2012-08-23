@@ -121,5 +121,5 @@ class ContextualMenuOnSymbolController(object):
     def createCustomFilter_cb(self, event):
         """Callback executed when the user
         clicks on menu entry to create a custom filter"""
-        customFilterController = CustomMathFilterController(self.vocabularyController)
+        customFilterController = CustomMathFilterController(self.vocabularyController, self.symbol)
         customFilterController.run()
