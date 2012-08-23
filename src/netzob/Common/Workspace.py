@@ -44,6 +44,9 @@ import shutil
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.ImportedTrace import ImportedTrace
+from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
+from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
+from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -166,6 +169,15 @@ class Workspace(object):
     def removeImportedTrace(self, importedTrace):
         self.importedTraces.remove(importedTrace)
 #        self.saveConfigFile()
+
+    def getMathematicalFilters(self):
+        """Computes and returns the list of available
+        filters"""
+        mathematicalFilters = []
+        mathematicalFilters.append(Base64Filter(_("Base64 Filter")))
+        mathematicalFilters.append(GZipFilter(_("GZip Filter")))
+        mathematicalFilters.append(BZ2Filter(_("BZ2 Filter")))
+        return mathematicalFilters
 
     #+-----------------------------------------------------------------------+
     #| referenceProject:
