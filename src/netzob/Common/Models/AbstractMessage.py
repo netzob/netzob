@@ -153,7 +153,8 @@ class AbstractMessage(object):
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
-        return str(self.data)
+        message = str(self.data)
+        return message
 
     def getReducedSize(self):
         start = 0
@@ -262,9 +263,19 @@ class AbstractMessage(object):
 
         # Add Mathematics filters
         i = 0
+
+        filters = self.symbol.getMathematicFilters()
+
         for field in self.symbol.getFields():
             for filter in field.getMathematicFilters():
-                splittedData[i] = filter.apply(splittedData[i])
+                if not filter in filters:
+                    filters.append(filter)
+
+            for filter in filters:
+                try:
+                    splittedData[i] = filter.apply(splittedData[i])
+                except:
+                    self.log.warning("Impossible to apply filter {0} on data {1}.".format(filter.getName(), splittedData[i]))
             i = i + 1
 
         # Create the locationTable

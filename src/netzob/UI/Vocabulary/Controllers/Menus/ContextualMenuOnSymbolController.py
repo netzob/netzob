@@ -102,7 +102,6 @@ class ContextualMenuOnSymbolController(object):
         self.symbol.setEndianess(endianess)
         self.vocabularyController.view.updateSelectedMessageTable()
 
-
     def applyMathematicFilter_cb(self, event, mathFilter):
         """Add the selected mathematic filter"""
         found = False
@@ -116,4 +115,3 @@ class ContextualMenuOnSymbolController(object):
             self.symbol.addMathematicFilter(mathFilter)
 
         self.vocabularyController.view.updateSelectedMessageTable()
-
