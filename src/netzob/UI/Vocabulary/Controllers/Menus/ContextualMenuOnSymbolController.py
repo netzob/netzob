@@ -44,7 +44,7 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.ContextualMenuOnSymbolView import ContextualMenuOnSymbolView
+from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnSymbolView import ContextualMenuOnSymbolView
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
@@ -101,3 +101,19 @@ class ContextualMenuOnSymbolController(object):
     def changeEndianess_cb(self, event, endianess):
         self.symbol.setEndianess(endianess)
         self.vocabularyController.view.updateSelectedMessageTable()
+
+
+    def applyMathematicFilter_cb(self, event, mathFilter):
+        """Add the selected mathematic filter"""
+        found = False
+        for appliedFilter in self.symbol.getMathematicFilters():
+            if appliedFilter.getName() == mathFilter.getName():
+                found = True
+                break
+        if found:
+            self.symbol.removeMathematicFilter(appliedFilter)
+        else:
+            self.symbol.addMathematicFilter(mathFilter)
+
+        self.vocabularyController.view.updateSelectedMessageTable()
+

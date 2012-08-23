@@ -67,11 +67,12 @@ class ContextualMenuOnSymbolView(object):
         self.menu.append(item)
 
         # Add sub-entries to manage mathematical filter
-        submenuMathFiler = self.build_math_filters_submenu()
-        itemMathFiler = Gtk.MenuItem(_("Mathematical filters"))
-        itemMathFiler.set_submenu(submenuMathFilter)
-        itemMathFiler.show()
-        self.menu.append(submenuMathFiler)
+        # Add sub-entries to add mathematic filters on a  specific column
+        subMenuMathematicFilters = self.build_math_filters_submenu()
+        item = Gtk.MenuItem(_("Mathematics filters"))
+        item.set_submenu(subMenuMathematicFilters)
+        item.show()
+        self.menu.append(item)
 
         self.menu.popup(None, None, None, None, event.button, event.time)
 
@@ -80,6 +81,24 @@ class ContextualMenuOnSymbolView(object):
         entries to edit the mathematical filters
         of selected symbol"""
         menu = Gtk.Menu()
+
+        # Retrieve the list of available mathematical filters
+        currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
+        mathematicFilters = currentWorkspace.getMathematicFilters()
+
+        for mathFilter in mathematicFilters:
+            toggled = False
+            for f in self.controller.symbol.getMathematicFilters():
+                if f.getName() == mathFilter.getName():
+                    toggled = True
+                    break
+
+            mathFilterItem = Gtk.CheckMenuItem(mathFilter.getName())
+            mathFilterItem.set_active(toggled)
+            mathFilterItem.connect("activate", self.controller.applyMathematicFilter_cb, mathFilter)
+            mathFilterItem.show()
+            menu.append(mathFilterItem)
+        return menu
 
     #+----------------------------------------------
     #| build_encoding_submenu:
