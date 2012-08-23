@@ -44,7 +44,7 @@ from gi.repository import Pango
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.ContextualMenuOnFieldView import ContextualMenuOnFieldView
+from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnFieldView import ContextualMenuOnFieldView
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
