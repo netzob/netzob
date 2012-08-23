@@ -47,7 +47,6 @@ from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
 from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
-from netzob.Common.Filters.Mathematic.TestFilter import TestFilter
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
