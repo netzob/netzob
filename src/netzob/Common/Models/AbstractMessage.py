@@ -154,6 +154,13 @@ class AbstractMessage(object):
     #+----------------------------------------------
     def getStringData(self):
         message = str(self.data)
+
+        for filter in self.symbol.getMathematicFilters():
+            try:
+                message = filter.apply(message)
+            except:
+                message = "Error, invalid filter"
+
         return message
 
     def getReducedSize(self):
@@ -264,12 +271,8 @@ class AbstractMessage(object):
         # Add Mathematics filters
         i = 0
 
-        filters = self.symbol.getMathematicFilters()
-
         for field in self.symbol.getFields():
-            for filter in field.getMathematicFilters():
-                if not filter in filters:
-                    filters.append(filter)
+            filters = field.getMathematicFilters()
 
             for filter in filters:
                 try:

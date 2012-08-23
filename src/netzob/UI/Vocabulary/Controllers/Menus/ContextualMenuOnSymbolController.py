@@ -103,7 +103,7 @@ class ContextualMenuOnSymbolController(object):
         self.vocabularyController.view.updateSelectedMessageTable()
 
     def applyMathematicFilter_cb(self, event, mathFilter):
-        """Add the selected mathematic filter"""
+        """Add the selected mathematics filter"""
         found = False
         for appliedFilter in self.symbol.getMathematicFilters():
             if appliedFilter.getName() == mathFilter.getName():
@@ -114,4 +114,5 @@ class ContextualMenuOnSymbolController(object):
         else:
             self.symbol.addMathematicFilter(mathFilter)
 
+        self.symbol.resetPartitioning(self.vocabularyController.getCurrentProject())
         self.vocabularyController.view.updateSelectedMessageTable()
