@@ -32,6 +32,7 @@ from gettext import gettext as _
 from lxml import etree
 import logging
 import random
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -41,10 +42,14 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import \
     AbstractNodeVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
+    AlternateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 
 
 class RepeatVariable(AbstractNodeVariable):
@@ -96,27 +101,41 @@ class RepeatVariable(AbstractNodeVariable):
         for key, val in dictOfValue.iteritems():
             dictOfValues[key] = val
 
-        for i in range(maxIterations):
-            self.getChild().read(readingToken)
-            if readingToken.isOk():
-                successfullIterations += 1
-            else:
-                break
+        if self.isLearnable():
+            # We assume to be unlimited.
+            while True:
+                self.getChild().read(readingToken)
+                if readingToken.isOk():
+                    successfullIterations += 1
+                else:
+                    break
+            self.maxIterations = max(successfullIterations, self.maxIterations)
+        else:
+            for i in range(maxIterations):
+                self.getChild().read(readingToken)
+                if readingToken.isOk():
+                    successfullIterations += 1
+                else:
+                    break
         # We search if we have done the minimum number of iterations.
         if successfullIterations < minIterations:
-            readingToken.setOk(False)
-            # If not, we clean our traces.
-            vocabulary = readingToken.getVocabulary()
-            for key, val in dictOfValues.iteritems():
-                child = vocabulary.getVariableByID(key)
-                # We restore the current values.
-                child.setCurrentValue(val)
-                # We restore the cached values.
-                child.restore(readingToken)
+            if self.isLearnable():
+                # We adapt the minimum number of iterations to comply to the read value.
+                minIterations = successfullIterations
+                readingToken.setOk(True)
+            else:
+                readingToken.setOk(False)
+                # If not, we clean our traces.
+                vocabulary = readingToken.getVocabulary()
+                for key, val in dictOfValues.iteritems():
+                    child = vocabulary.getVariableByID(key)
+                    # We restore the current values.
+                    child.setCurrentValue(val)
+                    # We restore the cached values.
+                    child.restore(readingToken)
         else:
             readingToken.setOk(True)
 
-        self.checkChild(True)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def writeChild(self, writingToken):
@@ -153,7 +172,6 @@ class RepeatVariable(AbstractNodeVariable):
         else:
             writingToken.setOk(True)
 
-        self.checkChild(True)
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def randomizeIterations(self):
@@ -210,12 +228,17 @@ class RepeatVariable(AbstractNodeVariable):
         """
         self.log.debug(_("[ {0} (Aggregate): read access:").format(AbstractVariable.toString(self)))
         if self.getChildren() is not None:
-            self.readChild(readingToken)  # TODO: implement adaptation in readChild.
+            self.readChild(readingToken)
 
         else:
             # no child.
             self.log.debug(_("Write abort: the variable has no child."))
             readingToken.setOk(False)
+
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -238,7 +261,36 @@ class RepeatVariable(AbstractNodeVariable):
             # no child.
             self.log.debug(_("Write abort: the variable has no child."))
             writingToken.setOk(False)
+
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def trivialCompareFormat(self, readingToken):
+        """trivialCompareFormat:
+                Run recursively the format comparison on the child a number of times inferior to the maximum number of iterations.
+                If one of them fails, the treatment stops.
+                If the minimum number of iterations is achieves, the treatment is successful, else it is not.
+        """
+        self.log.debug(_("[ {0} (Repeat): trivialCompareFormat:").format(AbstractVariable.toString(self)))
+
+        (minIterations, maxIterations) = self.getNumberIterations()
+        successfullIterations = 0
+        for i in range(maxIterations):
+            self.getChild().trivialCompareFormat(readingToken)
+            if readingToken.isOk():
+                successfullIterations += 1
+            else:
+                break
+
+        if successfullIterations < minIterations:
+            readingToken.setOk(False)
+        else:
+            readingToken.setOk(True)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -276,6 +328,7 @@ class RepeatVariable(AbstractNodeVariable):
 
     def addChild(self, child):
         self.children[0] = child
+        child.setFather(self)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

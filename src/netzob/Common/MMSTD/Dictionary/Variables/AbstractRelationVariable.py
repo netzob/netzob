@@ -29,7 +29,10 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from abc import abstractmethod
+from bitarray import bitarray
 from gettext import gettext as _
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 import logging
 import random
 
@@ -41,8 +44,6 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
-    AbstractVariable
 
 
 class AbstractRelationVariable(AbstractVariable):
@@ -51,49 +52,37 @@ class AbstractRelationVariable(AbstractVariable):
             Beware when using it, it can leads to obviously dangerous behavior.
     """
 
-    def __init__(self, _id, name, mutable, learnable, pointedID):
+    def __init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable):
         """Constructor of AbstractRelationVariable:
 
-                @type pointedID: string
-                @param pointedID: the id of the pointed variable.
+                @type pointedVariable: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param pointedVariable: the pointed variable.
         """
         AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
-        self.pointedID = pointedID
-        self.currentValue = None
+        self.pointedVariable = pointedVariable
+        self.rootVariable = rootVariable
+        self.directPointer = self.findDirectPointer()
 
-    def compare(self, readingToken):
-        """compare:
-                The variable compares its value to the read value.
-
-                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
-                @param readingToken: a token which contains all critical information on this access.
+    def findDirectPointer(self, vocabulary):
+        """findDirectPointer:
+                A direct pointer or left pointer points from the right of a tree to the left or an other tree.
+                A reverse pointer or right pointer points from the left of a tree to its right.
         """
-        self.log.debug(_("- [ {0}: compare.").format(self.toString()))
-        localValue = self.getCurrentValue()
-        tmp = readingToken.getValue()[readingToken.getIndex():]
-        if len(tmp) >= len(localValue):
-            if tmp[:len(localValue)] == localValue:
-                self.log.debug(_("Comparison successful."))
-                readingToken.incrementIndex(len(localValue))
-                readingToken.setOk(True)
-            else:
-                readingToken.setOk(False)
-                self.log.debug(_("Comparison failed: wrong value."))
-        else:
-            readingToken.setOk(False)
-            self.log.debug(_("Comparison failed: wrong size."))
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
-
-    def writeValue(self, writingToken):
-        """writeValue:
-                Write the variable value if it has one, else it returns the memorized value.
-                Write this value in the writingToken.
-        """
-        self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
-        value = self.getCurrentValue()
-        writingToken.appendValue(value)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+        if self.pointedVariable is None:
+            return True
+            self.log.debug("No pointed variable.")
+        treeElements = self.rootVariable.getProgeny()
+        foundSelf = False
+        for element in treeElements:
+            if not foundSelf and element.getID() == self.getID():
+                foundSelf = True
+            if element.getID() == self.pointedVariable.getID():
+                if not foundSelf:
+                    return True
+                else:
+                    return False
+        return True
 
     def randomizePointedVariable(self, writingToken):
         """randomizePointedVariable
@@ -108,9 +97,90 @@ class AbstractRelationVariable(AbstractVariable):
         self.pointedID = variables[i].getID()
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
+    def bindValue(self, processingToken):
+        """bindValue:
+                Bind itself to the pointed variable in order to be notified by this variable in case of modification of it.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        if self.pointedVariable is None:
+            self.log.debug("No pointed variable.")
+        else:
+            self.pointedVariable.bindVariable(self)
+
+    def retrieveValue(self, processingToken):
+        """retrieveValue:
+                Retrieve a value according to the pointed variable's own value and attribute it to the variable
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- {0}: retrieveValue.").format(self.toString()))
+        if self.pointedVariable is None:
+            self.log.debug("No pointed variable.")
+            self.currentValue = None
+        else:
+            choppedValue = self.getChoppedValue()
+            currentValue = bitarray('')
+            for choppy in choppedValue:
+                currentValue += choppy
+            self.currentValue = self.computeValue(currentValue)
+
+    def compare(self, readingToken):
+        """compare:
+                The variable compares its value to the read value.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: compare.").format(self.toString()))
+        localValue = self.currentValue
+        tmp = readingToken.getValue()[readingToken.getIndex():]
+        if len(tmp) >= len(localValue):
+            if tmp[:len(localValue)] == localValue:
+                self.log.debug(_("Comparison successful."))
+                readingToken.incrementIndex(len(localValue))
+                readingToken.setOk(True)
+            else:
+                readingToken.setOk(False)
+                self.log.debug(_("Comparison failed: wrong value."))
+        else:
+            readingToken.setOk(False)
+            self.log.debug(_("Comparison failed: wrong size."))
+
+        if readingToken.isOk():
+            readingToken.getChoppedValue().append(localValue)
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def writeValue(self, writingToken):
+        """writeValue:
+                Write the variable value if it has one, else it returns the memorized value.
+                Write this value in the writingToken.
+        """
+        self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
+
+        for choppy in self.getChoppedValue():
+            self.addTokenChoppedIndexes(len(writingToken.getChoppedValue()))
+            writingToken.getChoppedValue().append(choppy)
+        writingToken.updateValue()
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+
+    @abstractmethod
+    def compareFormat(self, readingToken):
+        """compare:
+                The variable compares the format of its value to the format of the read value.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'compareFormat'."))
+
     @abstractmethod
     def learn(self, readingToken):
         """learn:
@@ -120,16 +190,6 @@ class AbstractRelationVariable(AbstractVariable):
                 @param readingToken: a token which contains all critical information on this access.
         """
         raise NotImplementedError(_("The current variable does not implement 'learn'."))
-
-    @abstractmethod
-    def retrieveValue(self, readingToken):
-        """retrieveValue:
-                Retrieve a value according to the pointed variable's own value and attribute it to the variable.
-
-                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
-                @param readingToken: a token which contains all critical information on this access.
-        """
-        raise NotImplementedError(_("The current variable does not implement 'computeValue'."))
 
     @abstractmethod
     def generate(self, writingToken):
@@ -142,12 +202,14 @@ class AbstractRelationVariable(AbstractVariable):
         raise NotImplementedError(_("The current variable does not implement 'generate'."))
 
     @abstractmethod
-    def computeValue(self, writingToken):
+    def computeValue(self, value):
         """computeValue:
-                Compute a value according to the pointed variable's own value and attribute it to the variable.
+                Compute the value of the relation variable from the given value..
 
-                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
-                @param writingToken: a token which contains all critical information on this access.
+                @type value: bitarray
+                @param value: the pointed variable's value.
+                @rtype: bitarray
+                @return: the computed value.
         """
         raise NotImplementedError(_("The current variable does not implement 'computeValue'."))
 
@@ -167,32 +229,39 @@ class AbstractRelationVariable(AbstractVariable):
     def isDefined(self, processingToken):
         """isDefined:
         """
-        pointedVariable = self.getPointedVariable(processingToken.getVocabulary())
-        if pointedVariable is None:
+        if self.pointedVariable is None:
             self.log.debug("No pointed variable.")
             return False
         else:
-            return pointedVariable.isDefined(processingToken)
+            return True
 
     def restore(self, processingToken):
         """restore:
         """
-        pointedVariable = self.getPointedVariable(processingToken.getVocabulary())
-        if pointedVariable is None:
+        if self.pointedVariable is None:
             self.log.debug("No pointed variable.")
             return False
         else:
-            return pointedVariable.restore(processingToken)
+            return self.pointedVariable.restore(processingToken)
+
+    def getChoppedValue(self, processingToken):
+        """getChoppedValue:
+                Return the pointedVariable's chopped value.
+        """
+        if self.pointedVariable is None:
+            self.log.debug("No pointed variable.")
+            return None
+        else:
+            return self.pointedVariable.getChoppedValue(processingToken)
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
         """
-        pointedVariable = self.getPointedVariable(processingToken.getVocabulary())
-        if pointedVariable is None:
+        if self.pointedVariable is None:
             self.log.debug("No pointed variable.")
             return False
         else:
-            return pointedVariable.getDictOfValues(processingToken)
+            return self.pointedVariable.getDictOfValues(processingToken)
 
     def read(self, readingToken):
         """read:
@@ -205,13 +274,22 @@ class AbstractRelationVariable(AbstractVariable):
         else:
             if self.isDefined(readingToken):
                 # not mutable and defined
-                self.retrieveValue(readingToken)  # TODO: repair retrieveValue.
-                self.compare(readingToken)
+                if self.directPointer:
+                    # We directly retrieve and compare the value.
+                    self.retrieveValue(readingToken)
+                    self.compare(readingToken)
+                else:
+                    # We will compare at notification time.
+                    self.bindValue(readingToken)
 
             else:
                 # not mutable and not defined
                 self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
                 readingToken.setOk(False)
+
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -220,39 +298,147 @@ class AbstractRelationVariable(AbstractVariable):
                 The relation variable returns a computed or a generated value.
         """
         self.log.debug(_("[ {0} (relation): write access:").format(AbstractVariable.toString(self)))
-        if self.isLearnable():
+        if self.isMutable():
+            # mutable
             self.randomizePointedVariable(writingToken)
-            self.computeValue(writingToken)
+            self.directPointer = self.findDirectPointer()
+            if not self.directPointer:
+                # We will write the real value at notification time. (An awaiting value is written though.)
+                self.bindValue(writingToken)
+
+            # We directly retrieve and write the actual value (which would be deprecated and replaced if the variable is directPointer).
+            self.retrieveValue(writingToken)
             self.writeValue(writingToken)
 
         else:
             if self.isDefined(writingToken):
-                # not random and defined
-                self.computeValue(writingToken)
-                self.writeValue(writingToken)
+                # not mutable and defined
+                if not self.directPointer:
+                    # We will write the real value at notification time. (An awaiting value is written though.)
+                    self.bindValue(writingToken)
 
+                # We directly retrieve and write the actual value (which would be deprecated and replaced if the variable is directPointer).
+                self.retrieveValue(writingToken)
+                self.writeValue(writingToken)
             else:
-                # not random and not defined
+                # not mutable and not defined
                 self.log.debug(_("Write abort: the variable is neither defined, nor random."))
                 writingToken.setOk(False)
+
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
+#| Notified function                                                         |
+#+---------------------------------------------------------------------------+
+    def notifiedRead(self, readingToken):
+        """notifiedRead:
+                A read access called by a notification of the pointed variable (when it has finished its own treatment).
+                It checks that the new value complies with the reading token value at this very position.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
+        if not self.isMutable():
+            if self.isDefined(readingToken):
+                # not mutable and defined
+                self.notifiedCompare(readingToken)
+
+            else:
+                # not mutable and not defined
+                self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
+                readingToken.setOk(False)
+
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
+    def notifiedWrite(self, writingToken):
+        """notify:
+                A write access called by a notification of the pointed variable (when it has finished its own treatment).
+                It updates the values this variable has written in the writingToken value.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("[ {0} (relation): notifiedWrite access:").format(AbstractVariable.toString(self)))
+        if self.isMutable():
+            # mutable
+            self.notifiedWriteValue(writingToken)
+
+        else:
+            if self.isDefined(writingToken):
+                # not mutable and defined
+                self.notifiedWriteValue(writingToken)
+            else:
+                # not mutable and not defined
+                self.log.debug(_("Write abort: the variable is neither defined, nor random."))
+                writingToken.setOk(False)
+
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def notifiedWriteValue(self, writingToken):
+        """notifiedWriteValue:
+                We update each piece of value the current variable has written with the new piece of values given by the pointed variable.
+                Beware : if the pointed variable points to an aggregate or a repeat variable they may have plenty of different new piece of values.
+                And if the pointed variable is in a repeatVariable, each of the piece of values are written several times.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: notifiedWriteValue.").format(self.toString()))
+        choppedValue = self.getChoppedValue(writingToken)
+
+        for i in len(self.getTokenChoppedIndexes()):
+            # If the current variable is in a repeat variable, len(self.getTokenChoppedIndexes()) = k * len(choppedValue) with k natural integer.
+            value = self.computeValue(choppedValue[i % len(choppedValue)])
+            # We write down the actualized corresponding value in the proper segment of the writing token chopped value.
+            writingToken.getChoppedValue()[self.getTokenChoppedIndexes()[i]] = value
+        # We update the value.
+        writingToken.updateValue()
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
+
+    def notifiedCompare(self, readingToken):
+        """notifiedCompare:
+                We compare the reading token value to the new value of the current variable on the proper segment.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: notifiedCompare.").format(self.toString()))
+        choppedValue = self.getChoppedValue(readingToken)
+
+        # We retrieve the values.
+        for i in len(self.getTokenChoppedIndexes()):
+            value = self.computeValue(choppedValue[i % len(choppedValue)])
+            if readingToken.getChoppedValue()[self.getTokenChoppedIndexes()[i]] != value:
+                # One piece of value differs.
+                readingToken.setOk(False)
+                break
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+#+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getPointedID(self):
-        return self.pointedID
-
-    def getPointedVariable(self, vocabulary):
-        variable = vocabulary.getVariableByID(self.pointedID)
-        return variable
-
     def getType(self):
         return self.type
 
     def getCurrentValue(self):
         return self.currentValue
+
+    def isDirectPointer(self):
+        return self.directPointer
 
     def setPointedID(self, pointedID):
         self.setPointedID(pointedID)

@@ -67,40 +67,15 @@ class AbstractVariable:
         self.mutable = mutable
         self.learnable = learnable
         self.node = node
+        self.father = None  # The variable just above the current variable in the tree representation.
+        self.boundedVariables = []  # A list containing all variables which value is bind to the value of this variable.
+        self.tokenChoppedIndexes = []  # An integer list which contain the index of each segment this variable is responsible for (they have been created from its value)
 
     def toString(self):
         """toString:
                 For debugging purpose.
         """
         return _("Variable {0} ({3}) (mutable: {1}, learnable: {2})").format(self.name, str(self.mutable), str(self.learnable), self.id)
-
-    def findMotherNode(self, rootVariable):
-        """findMotherNode:
-                Find the node that is just above the variable in the global tree structure.
-                Start the search of this node from a given root variable which is supposed to be an ancestor of the variable.
-                May be recursive.
-
-                @type rootVariable: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
-                @param rootVariable: a root ancestor of the being searched node.
-        """
-        # If the variable is the root of the tree.
-        if self.getID() == rootVariable.getID():
-            return None
-
-        motherNode = None
-        # We assume that variable IDs are unique.
-        if rootVariable.isNode():
-            if rootVariable.getChildren() is not None:
-                for child in rootVariable.getChildren():
-                    if self.getID() == child.getID():
-                        # We find it
-                        return rootVariable
-                    else:
-                        # It may be in a child's children.
-                        node = self.findMotherNode(child)
-                        if node is not None:
-                            motherNode = node
-        return motherNode
 
     def getProgeny(self):
         """getProgeny:
@@ -113,6 +88,34 @@ class AbstractVariable:
         progeny = []
         progeny.append(self)
         return progeny
+
+    def getLeafProgeny(self, processingToken):
+        """getLeafProgeny:
+                Return a list which contains the variable if the variable is a leaf and a list containing all leaf child variable if the variable is a node.
+                Do nothning if the variable is neither a leaf variable, nor a node variable, so it does nothing.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+                @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable list
+                @return: a list containing all inheriting variables of the current one.
+        """
+        return None
+
+    def notifyBoundedVariables(self, access, processingToken):
+        """notifyBoundedVariables:
+                Notify every variable that are bounded to the current variable with a set of segment of the read value.
+                This set leads to no repetition in the final read value.
+
+                @type values: integer list
+                @param values: the list of chopped segments that have been modified before this notification.
+        """
+        if access == "read":
+            for bound in self.boundedVariables:
+                bound.notifyRead(processingToken)
+
+        if access == "write":
+            for bound in self.boundedVariables:
+                bound.notifyWrite(processingToken)
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -181,9 +184,21 @@ class AbstractVariable:
         raise NotImplementedError(_("The current variable does not implement 'restore'."))
 
     @abstractmethod
+    def getChoppedValue(self, processingToken):
+        """getChoppedValue:
+                Return the list that contains values of the whole progeny of this element.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+                @rtype: bitarray list
+                @return: the list that contains values of the whole progeny of this element.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'getChoppedValue'."))
+
+    @abstractmethod
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
-                Return a dictionary which contains the variable id as key and the value as value of the variable is a leaf and a dictionary containing all couples variable id - value of the children if the variable is a node.
+                Return a dictionary which contains the variable id as key and the value as value if the variable is a leaf and a dictionary containing all couples variable id - value of the children if the variable is a node.
 
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
@@ -191,6 +206,17 @@ class AbstractVariable:
                 @return: a dictionary containing ids of variable and values in a bitarray format.
         """
         raise NotImplementedError("The current variable doesn't support 'getDictOfValues'.")
+
+    @abstractmethod
+    def trivialCompareFormat(self, readingToken):
+        """trivialCompareFormat:
+                Compare the format of the variable and its children value to the readingToken's read value.
+                Does not have any kind of impact on the variable's value. Used by direct relation variable to compare their format through their pointed variable.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this reading access.
+        """
+        raise NotImplementedError("The current variable doesn't support 'trivialCompareFormat'.")
 
 #+---------------------------------------------------------------------------+
 #| Visitor abstract method                                                   |
@@ -233,6 +259,15 @@ class AbstractVariable:
     def isNode(self):
         return self.node
 
+    def getFather(self):
+        return self.aggregateFather
+
+    def getBoundedVariables(self):
+        return self.boundedVariables
+
+    def getTokenChoppedIndexes(self):
+        return self.tokenChoppedIndexes
+
     def setID(self, _id):
         self.id = _id
 
@@ -244,6 +279,15 @@ class AbstractVariable:
 
     def setNode(self, node):
         self.node = node
+
+    def setFather(self, father):
+        self.father = father
+
+    def bindVariable(self, variable):
+        self.boundedVariables.append(variable)
+
+    def addTokenChoppedIndexes(self, tokenChoppedIndexe):
+        self.tokenChoppedIndexes.append(tokenChoppedIndexe)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

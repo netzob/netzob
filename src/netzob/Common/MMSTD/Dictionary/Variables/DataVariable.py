@@ -143,14 +143,16 @@ class DataVariable(AbstractLeafVariable):
         """
         return self.getValue(processingToken) is not None
 
+    def getChoppedValue(self, processingToken):
+        """getChoppedValue:
+                Simply return the value of the variable.
+        """
+        return [self.getValue(processingToken)]
+
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
-                This function is called for saving the value of the variable.
+                Simply return a dict that contains the value associated to the ID of the variable.
         """
-        # A random variable does not need to be saved.
-        #if self.isRandom():
-        #    return dict()
-
         dictOfValues = dict()
         dictOfValues[self.getID()] = self.getValue(processingToken)
         # self.log.debug(_("- Dict of values: {0}.").format(str(dictOfValues)))
@@ -231,49 +233,8 @@ class DataVariable(AbstractLeafVariable):
                 The variable checks if its format complies with the read value's format.
         """
         self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
-        tmp = readingToken.getValue()[readingToken.getIndex():]
 
-        # If the type has a definite size.
-        if self.type.isSized():
-            minBits = self.type.getMinBits()
-            maxBits = self.type.getMaxBits()
-            # Length comparison.
-            if len(tmp) >= minBits:
-                #self.log.debug(str(len(tmp)) + " - " + str(minBits) + " - " + str(maxBits))
-                if len(tmp) <= maxBits:
-                    # Format comparison.
-                    if self.type.suitsBinary(tmp):
-                        readingToken.setOk(True)
-                        self.log.info(_("Format comparison successful."))
-                    else:
-                        readingToken.setOk(False)
-                        self.log.info(_("Format comparison failed: wrong format."))
-                else:  # len(tmp) > self.maxBits
-                    # Format comparison.
-                    if self.type.suitsBinary(tmp[:maxBits]):
-                        readingToken.setOk(True)
-                        self.log.info(_("Format comparison successful."))
-                    else:
-                        readingToken.setOk(False)
-                        self.log.info(_("Format comparison failed: wrong format."))
-            else:
-                readingToken.setOk(False)
-                self.log.info(_("Format comparison failed: wrong size."))
-
-        # If the type is delimited from 0 to a delimiter.
-        else:
-            endi = -1
-            for i in range(len(tmp)):
-                if self.type.endsHere(tmp[i:]):
-                    endi = i
-                    break
-            if endi != -1:
-                # We learn from the beginning to the delimiter.
-                self.log.info(_("Format comparison successful."))
-                readingToken.setOk(True)
-            else:
-                readingToken.setOk(False)
-                self.log.info(_("Format comparison failed: no delimiter found."))
+        self.type.compareFormat(readingToken)
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 

@@ -106,6 +106,57 @@ class AbstractType():
             value += self.delimiter  # The delimiter is a part of the final value.
             return value
 
+    def compareFormat(self, readingToken):
+        """compareFormat:
+                Compare (starting at the "indice"-th character) the readingToken's value format to the variable type format.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        tmp = readingToken.getValue()[readingToken.getIndex():]
+
+        # If the type has a definite size.
+        if self.type.isSized():
+            minBits = self.type.getMinBits()
+            maxBits = self.type.getMaxBits()
+            # Length comparison.
+            if len(tmp) >= minBits:
+                #self.log.debug(str(len(tmp)) + " - " + str(minBits) + " - " + str(maxBits))
+                if len(tmp) <= maxBits:
+                    # Format comparison.
+                    if self.type.suitsBinary(tmp):
+                        readingToken.setOk(True)
+                        self.log.info(_("Format comparison successful."))
+                    else:
+                        readingToken.setOk(False)
+                        self.log.info(_("Format comparison failed: wrong format."))
+                else:  # len(tmp) > self.maxBits
+                    # Format comparison.
+                    if self.type.suitsBinary(tmp[:maxBits]):
+                        readingToken.setOk(True)
+                        self.log.info(_("Format comparison successful."))
+                    else:
+                        readingToken.setOk(False)
+                        self.log.info(_("Format comparison failed: wrong format."))
+            else:
+                readingToken.setOk(False)
+                self.log.info(_("Format comparison failed: wrong size."))
+
+        # If the type is delimited from 0 to a delimiter.
+        else:
+            endi = -1
+            for i in range(len(tmp)):
+                if self.type.endsHere(tmp[i:]):
+                    endi = i
+                    break
+            if endi != -1:
+                # We learn from the beginning to the delimiter.
+                self.log.info(_("Format comparison successful."))
+                readingToken.setOk(True)
+            else:
+                readingToken.setOk(False)
+                self.log.info(_("Format comparison failed: no delimiter found."))
+
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+

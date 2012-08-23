@@ -28,8 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
-from gettext import gettext as _
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -41,8 +39,6 @@ import logging
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
-    VariableWritingToken
 
 
 class SizeRelationType():
@@ -62,19 +58,16 @@ class SizeRelationType():
         """
         return SizeRelationType.TYPE
 
-    def getAssociatedDataType(self):
-        """getAssociatedDataType:
+    def makeAssociatedDataType(self, sized, minChars, maxChars, delimiter):
+        """makeAssociatedDataType:
                 The data type associated to a size field is obviously an integer.
         """
-        return IntegerType()
+        return IntegerType(sized, minChars, maxChars, delimiter)
 
-    def computeValue(self, pointedVariable, writingToken):
+    def computeValue(self, value):
         """computeValue:
         """
-        writingToken2 = VariableWritingToken(writingToken.getNegative(), writingToken.getVocabulary(), writingToken.getMemory(), bitarray(''), writingToken.getGenerationStrategy())
-        pointedVariable.write(writingToken)
-        if writingToken2.isOk():
-            pointedVariable.setChecked(True)
-            return len(writingToken2.getValue())
+        if value is not None:
+            return len(value)
         else:
             return 0

@@ -201,6 +201,10 @@ class AbstractLeafVariable(AbstractVariable):
                     self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
                     readingToken.setOk(False)
 
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -253,4 +257,20 @@ class AbstractLeafVariable(AbstractVariable):
                     self.log.debug(_("Write abort: the variable is neither defined, nor mutable."))
                     writingToken.setOk(False)
 
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def getLeafProgeny(self, processingToken):
+        """getLeafProgeny:
+                Return the variable.
+        """
+        return [self]
+
+    def trivialCompareFormat(self, readingToken):
+        """trivialCompareFormat:
+                Leaf variable must have a compare Format function and have no children, so we just call it.
+        """
+        self.compareFormat(readingToken)

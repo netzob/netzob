@@ -41,10 +41,6 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
-    VariableReadingToken
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
-    VariableWritingToken
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractRelationVariable import \
     AbstractRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
@@ -77,9 +73,16 @@ class DirectRelationVariable(AbstractRelationVariable):
         """
         return _("[Direct Relation] {0}, pointed ID: {1}").format(AbstractVariable.toString(self), str(self.pointedID))
 
+    def trivialCompareFormat(self, readingToken):
+        """trivialCompareFormat:
+                We call recursively the function on the pointed variable.
+                This may cause infinite loop so be careful.
+        """
+        self.getPointedVariable().trivialCompareFormat(readingToken)
+
     def toXML(self, root, namespace):
         """toXML:
-            Create the xml tree associated to this variable.
+                Create the xml tree associated to this variable.
         """
         self.log.debug(_("[ {0}: toXML:").format(self.toString()))
         xmlVariable = etree.SubElement(root, "{" + namespace + "}variable")
@@ -97,18 +100,22 @@ class DirectRelationVariable(AbstractRelationVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |
 #+---------------------------------------------------------------------------+
-    def retrieveValue(self, readingToken):  # WRONG TODO: correct this
-        """retrieveValue:
+    def compareFormat(self, readingToken):
+        """compareFormat:
+                Similar to the pointedVariable's own compareFormat function.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(readingToken.getVocabulary())
-        if pointedVariable is None:
-            readingToken.setOk(False)
-            self.log.debug("No pointed variable.")
-        else:
-            readingToken2 = VariableReadingToken(readingToken.getNegative(), readingToken.getVocabulary(), readingToken.getMemory(), readingToken.getValue(), readingToken.getIndex())
-            pointedVariable.read(readingToken2)
-            self.setCurrentValue(pointedVariable.getValue())
+        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        oldChoppedValue = readingToken.getChoppedValue()
+        self.trivialCompareFormat(readingToken)
+        newChoppedValue = readingToken.getChoppedValue()
+        # We remove the old values.
+        for value in oldChoppedValue:
+            newChoppedValue.remove(value)
+        if readingToken.isOk():
+            # We add all the new values.
+            for i in len(newChoppedValue):
+                self.addChoppedSegment(len(oldChoppedValue) + i)
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def learn(self, readingToken):
         """learn:
@@ -167,19 +174,12 @@ class DirectRelationVariable(AbstractRelationVariable):
         else:
             self.setCurrentValue(pointedVariable.getType().generateValue(writingToken.getGenerationStrategy()))
 
-    def computeValue(self, writingToken):
+    def computeValue(self, value):
         """computeValue:
-                Compute the value of the relation variable according to the pointed variable's own value.
+                Just affect the value to the current variable.
         """
         self.log.debug(_("- {0}: computeValue.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(writingToken.getVocabulary())
-        if pointedVariable is None:
-            writingToken.setOk(False)
-            self.log.debug("No pointed variable.")
-        else:
-            writingToken2 = VariableWritingToken(writingToken.getNegative(), writingToken.getVocabulary(), writingToken.getMemory(), bitarray(''), writingToken.getGenerationStrategy())
-            pointedVariable.write(writingToken2)
-            self.setCurrentValue(writingToken2.getValue())
+        return value
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

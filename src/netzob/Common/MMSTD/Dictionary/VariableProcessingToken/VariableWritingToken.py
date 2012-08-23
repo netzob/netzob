@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
 
 #+---------------------------------------------------------------------------+
@@ -56,8 +57,7 @@ class VariableWritingToken(AbstractVariableProcessingToken):
                 @type generationStrategy: string
                 @param generationStrategy: the strategy that all generation of value for this variable will follow.
         """
-        AbstractVariableProcessingToken.__init__(self, negative, vocabulary, memory)
-        self.value = value
+        AbstractVariableProcessingToken.__init__(self, negative, vocabulary, memory, value)
         self.generationStrategy = generationStrategy
         self.index = len(value)
 
@@ -67,17 +67,25 @@ class VariableWritingToken(AbstractVariableProcessingToken):
         """
         return _("WritingToken: isOk: {0}, value: {1}").format(str(self.isOk()), TypeConvertor.bin2strhex(self.value))
 
+    def updateValue(self):
+        """updateValue:
+                Re-make the value of the token by concatenating each segment of the chopped value.
+        """
+        self.setValue = bitarray()
+        for choppy in self.choppedValue:
+            self.appendValue(choppy)
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getValue(self):
-        return self.value
-
     def getGenerationStrategy(self):
         return self.generationStrategy
 
     def getIndex(self):
         return self.index
+
+    def getChoppedValue(self):
+        return self.choppedValue
 
     def setValue(self, value):
         self.index = len(value)

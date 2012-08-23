@@ -47,10 +47,20 @@ class AbstractRelationType():
             It defines the type of a relation variable.
     """
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of AbstractRelationType:
+
+                @type sized: boolean
+                @param sized: tell if the variable can be delimited by a size or by a delimiter.
+                @type minChars: integer
+                @param minChars: the minimum number of elementary character the value of this variable can have.
+                @type maxChars: integer
+                @param maxChars: the maximum number of elementary character the value of this variable can have.
+                @type delimiter: bitarray
+                @param delimiter: a set of bits that tells where the associated variable ends.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType.py')
+        self.associatedDataType = self.makeAssociatedDataType(sized, minChars, maxChars, delimiter)
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -65,15 +75,20 @@ class AbstractRelationType():
         """
         raise NotImplementedError(_("The current type does not implement 'getType'."))
 
-    @abstractmethod
-    def getAssociatedDataType(self):
-        """getAssociatedDataType:
-                Return a DataType properly associated to this RelationType (For instance IntegerType for SizeRelationType).
+    def makeAssociatedDataType(self, sized, minChars, maxChars, delimiter):
+        """makeAssociatedDataType
+                Make the associated data type.
 
-                @rtype: netzob.Common.MMSTD.Dictionary.DataTypes
-                @return: the associated data type.
+                @type minChars: integer
+                @type sized: boolean
+                @param sized: tell if the variable can be delimited by a size or by a delimiter.
+                @param minChars: the minimum number of elementary character the value of this variable can have.
+                @type maxChars: integer
+                @param maxChars: the maximum number of elementary character the value of this variable can have.
+                @type delimiter: bitarray
+                @param delimiter: a set of bits that tells where the associated variable ends.
         """
-        raise NotImplementedError(_("The current type does not implement 'getAssociatedDataType'."))
+        raise NotImplementedError(_("The current type does not implement 'makeAssociatedDataType'."))
 
     @abstractmethod
     def computeValue(self, writingToken):
@@ -88,14 +103,20 @@ class AbstractRelationType():
         raise NotImplementedError(_("The current type does not implement 'computeValue'."))
 
 #+---------------------------------------------------------------------------+
+#| Getters and setters                                                       |
+#+---------------------------------------------------------------------------+
+    def getAssociatedDataType(self):
+        return self.associatedDataType
+
+#+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def makeType(typeString):
+    def makeType(typeString, sized, minChars, maxChars, delimiter):
         _type = None
         from netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType import SizeRelationType
         if typeString == SizeRelationType.TYPE:
-            _type = SizeRelationType()
+            _type = SizeRelationType(sized, minChars, maxChars, delimiter)
         else:
             logging.error(_("Wrong type specified for this variable."))
         return _type

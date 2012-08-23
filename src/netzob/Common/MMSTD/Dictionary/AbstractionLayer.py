@@ -225,7 +225,7 @@ class AbstractionLayer():
         # we search in the vocabulary an entry which match the message
         for symbol in self.vocabulary.getSymbols():
             self.log.debug(_("Try to abstract message through : {0}.").format(symbol.getName()))
-            readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0)
+            readingToken = VariableReadingToken(False, self.vocabulary, self.memory, TypeConvertor.strBitarray2Bitarray(message), 0, symbol.getRoot())
             symbol.getRoot().read(readingToken)
 
             logging.debug(_("ReadingToken: isOk: {0}, index: {1}, len(value): {2}").format(str(readingToken.isOk()), str(readingToken.getIndex()), str(len(readingToken.getValue()))))

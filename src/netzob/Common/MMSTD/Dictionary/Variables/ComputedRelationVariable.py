@@ -30,14 +30,6 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from lxml import etree
-from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
-    AbstractRelationType
-from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken import \
-    VariableReadingToken
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractRelationVariable import \
-    AbstractRelationVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
-    AbstractVariable
 import logging
 
 #+---------------------------------------------------------------------------+
@@ -48,6 +40,13 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
+    AbstractRelationType
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractRelationVariable import \
+    AbstractRelationVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class ComputedRelationVariable(AbstractRelationVariable):
@@ -57,22 +56,17 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
     TYPE = "Computed Relation Variable"
 
-    def __init__(self, _id, name, mutable, learnable, _type, pointedID, minChars, maxChars):
+    def __init__(self, _id, name, mutable, learnable, relationType, pointedID):
         """Constructor of ComputedRelationVariable:
 
-                @type _type: string
-                @param _type: the type of computation we will use.
-                @type minChars: integer
-                @param minChars: the minimum number of elementary character the value of this variable can have.
-                @type maxChars: integer
-                @param maxChars: the maximum number of elementary character the value of this variable can have.
+                @type relationType: string
+                @param relationType: the type of computation we will use.
         """
         AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ComputedRelationVariable.py')
         self.pointedID = pointedID
-        self.setType(_type)
+        self.relationType = relationType
         self.currentValue = None
-        self.setNumberBitsAndNumberChars(minChars, maxChars)
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -86,6 +80,14 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """toString:
         """
         return _("[Computed Relation] {0}, pointed ID: {1}, type: {2}, minChars: {3}, maxChars: {4}.").format(AbstractVariable.toString(self), str(self.pointedID), self.type.getType(), str(self.getMinChars()), str(self.getMaxChars()))
+
+    def trivialCompareFormat(self, readingToken):
+        """trivialCompareFormat:
+                We call the compare format function.
+        """
+        self.log.debug(_("- [ {0}: trivialCompareFormat.").format(self.toString()))
+        self.compareFormat(readingToken)
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -119,18 +121,13 @@ class ComputedRelationVariable(AbstractRelationVariable):
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |
 #+---------------------------------------------------------------------------+
-    def retrieveValue(self, readingToken):  # WRONG TODO: correct this
-        """retrieveValue:
+    def compareFormat(self, readingToken):
+        """compareFormat:
+                Similar to the pointedVariable's own compareFormat function.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(readingToken.getVocabulary())
-        if pointedVariable is None:
-            readingToken.setOk(False)
-            self.log.debug("No pointed variable.")
-        else:
-            readingToken2 = VariableReadingToken(readingToken.getNegative(), readingToken.getVocabulary(), readingToken.getMemory(), readingToken.getValue(), readingToken.getIndex())
-            pointedVariable.read(readingToken2)
-            self.setCurrentValue(pointedVariable.getValue())
+        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        self.getDataType().compareFormat()
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def learn(self, readingToken):
         """learn:
@@ -176,12 +173,12 @@ class ComputedRelationVariable(AbstractRelationVariable):
         self.log.debug(_("- {0}: generate.").format(self.toString()))
         self.setCurrentValue(self.type.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
-    def computeValue(self, writingToken):
+    def computeValue(self, value):
         """computeValue:
-                Compute the value of the relation variable according to the pointed variable's own value.
+                Compute the value of the relation variable from the given value..
         """
         self.log.debug(_("- {0}: computeValue.").format(self.toString()))
-        self.setCurrentValue(self.type.computeValue(self.getPointedVariable(writingToken.getVocabulary()), writingToken))
+        return self.type.computeValue(value)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -192,24 +189,17 @@ class ComputedRelationVariable(AbstractRelationVariable):
     def getMaxChars(self):
         return self.maxChars
 
-    def setType(self, _type):
-        self.type = _type
+    def getDataType(self):
+        return self.relationType.getAssociatedDataType()
 
-    def setNumberBitsAndNumberChars(self, minChars, maxChars):
-        if minChars is not None and minChars >= 0:
-            self.minBits = self.type.getAssociatedDataType().getMinBitSize(minChars)
-            self.minChars = minChars
-        else:
-            self.log.info(_("Variable {0} (Data): minChars undefined or < 0. MinBits value is fixed to 0.").format(self.getName()))
-            self.minBits = 0
-            self.minChars = 0
-        if maxChars is not None and maxChars >= minChars:
-            self.maxBits = self.type.getAssociatedDataType().getMaxBitSize(maxChars)
-            self.maxChars = maxChars
-        else:
-            self.log.info(_("Variable {0} (Data): maxChars undefined or < minChars. MaxBits value is fixed to minBits.").format(self.getName()))
-            self.maxBits = self.minBits
-            self.maxChars = self.minChars
+    def getRelationType(self):
+        return self.relationType
+
+    def setDataType(self, dataType):
+        self.dataType = AbstractType.makeType(dataType)
+
+    def setRelationType(self, relationType):
+        self.dataType = AbstractRelationType.makeType(relationType)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

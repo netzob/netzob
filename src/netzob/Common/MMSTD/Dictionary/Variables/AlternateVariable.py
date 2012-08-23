@@ -31,6 +31,7 @@
 from gettext import gettext as _
 from lxml import etree
 import logging
+import uuid
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -40,10 +41,12 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import \
     AbstractNodeVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 
 
 class AlternateVariable(AbstractNodeVariable):
@@ -88,7 +91,7 @@ class AlternateVariable(AbstractNodeVariable):
 
         if self.isLearnable() and not readingToken.isOk():
             # If we dont not found a proper child but the node can learn, we learn the value.
-            pass
+            self.learn(child, readingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -121,6 +124,52 @@ class AlternateVariable(AbstractNodeVariable):
                     vocabulary.getVariableByID(key).setCurrentValue(val)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def learn(self, child, readingToken):
+        """learn:
+                The alternate variable learns the given value and adds it at the end of its children.
+
+                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param child: the child we expected to find while reading the given value.
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+
+        tmp = readingToken.getValue()[readingToken.getIndex():]
+        # The list of all leaf variable of the current symbol.
+        leafList = readingToken.getRootVariable().getLeafProgeny()
+
+        # We find the index of the current variable among all leaf variable.
+        currentVarIndex = 0
+        for var in leafList:
+            if var.getID() == child.getID():
+                break
+            currentVarIndex += 1
+
+        # We find the first static right brother.
+        staticVar = None
+        # Sum of mutable right brother sizes until the first static one:
+        maxBrotherSize = 0
+        # We take into account only the maximum number of bits of variables because the parser behaves greedily.
+        staticVarIndex = currentVarIndex
+        for staticVar in leafList[currentVarIndex:]:  # Perhaps, child of potentially null repeat variable should not matter.
+            if not staticVar.isMutable() and staticVar.isDefined():
+                break
+            else:
+                staticVarIndex += 1
+                # We increment the dynamic brother size.
+                maxBrotherSize += staticVar.getType().getMaxBits()
+
+        # We add the value in the current variable's children.
+        insValue = tmp[:(len(tmp) - maxBrotherSize)]
+        insVariable = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(insValue), len(insValue)), insValue.to01())
+
+        self.addChild(insVariable)
+        # We execute a read access on the inserted variable.
+        insVariable.read(readingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -158,7 +207,7 @@ class AlternateVariable(AbstractNodeVariable):
             if self.isMutable():
                 # mutable.
                 self.shuffleChildren()
-                self.readChildren(readingToken)  # TODO: Implement the children enrichment in readChildren
+                self.readChildren(readingToken)
 
             else:
                 # not mutable.
@@ -168,6 +217,11 @@ class AlternateVariable(AbstractNodeVariable):
             # no child.
             self.log.debug(_("Write abort: the variable has no child."))
             readingToken.setOk(False)
+
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def write(self, writingToken):
@@ -190,7 +244,27 @@ class AlternateVariable(AbstractNodeVariable):
             # no child.
             self.log.debug(_("Write abort: the variable has no child."))
             writingToken.setOk(False)
+
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
+
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
+
+    def trivialCompareFormat(self, readingToken):
+        """trivialCompareFormat:
+                Run recursively the format comparison on the children.
+                If one of them successes, the treatment successes.
+        """
+        self.log.debug(_("[ {0} (Alternate): trivialCompareFormat:").format(AbstractVariable.toString(self)))
+
+        for child in self.children:
+            # Child execution.
+            child.trivialCompareFormat(readingToken)
+            if readingToken.isOk():
+                break
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:

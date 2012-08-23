@@ -141,9 +141,18 @@ class AbstractNodeVariable(AbstractVariable):
             child.restore(processingToken)
         self.log.debug(_("Variable {0}: ]").format(self.getName()))
 
+    def getChoppedValue(self, processingToken):
+        """getChoppedValue:
+                We concatenate every chopped value of each child.
+        """
+        choppedValue = []
+        for child in self.children:
+            choppedValue.extend(child.getChoppedValue())
+        return choppedValue
+
     def getDictOfValues(self, processingToken):
         """getDictOfValues
-                We concatenate every dictOfValues of eachChild.
+                We concatenate every dictOfValues of each child.
         """
         dictOfValues = dict()
         # self.log.debug(_("[ Dict of values:"))
@@ -165,6 +174,16 @@ class AbstractNodeVariable(AbstractVariable):
                 progeny.extend(child.getProgeny())
         return progeny
 
+    def getLeafProgeny(self, processingToken):
+        """getLeafProgenyID:
+                Return a list of each leaf successor.
+        """
+        progeny = []
+        if self.children is not None:
+            for child in self.children:
+                progeny.extend(child.getLeafProgeny())
+        return progeny
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
@@ -177,14 +196,17 @@ class AbstractNodeVariable(AbstractVariable):
     def addChild(self, child):
         if self.children is not None:
             self.children.append(child)
+            child.setFather(self)
 
     def removeChild(self, child):
         if self.children is not None:
             self.children.remove(child)
+            child.setFather(None)
 
     def insertChild(self, i, child):
         if self.children is not None:
             self.children.insert(i, child)
+            child.setFather(self)
 
     def indexOfChild(self, child):
         if self.children is not None:

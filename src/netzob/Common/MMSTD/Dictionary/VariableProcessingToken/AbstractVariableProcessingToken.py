@@ -46,7 +46,7 @@ class AbstractVariableProcessingToken():
             A communication token used by variable when they are processed.
     """
 
-    def __init__(self, negative, vocabulary, memory):
+    def __init__(self, negative, vocabulary, memory, value):
         """Constructor of AbstractVariableProcessingToken:
 
                 @type negative: boolean
@@ -55,11 +55,15 @@ class AbstractVariableProcessingToken():
                 @param vocabulary: the vocabulary of the current project.
                 @type memory: netzob.Common.MMSTD.Memory.Memory
                 @param memory: a memory which can contain a former value of the processed variable.
+                @type value: bitarray
+                @param value: the current read value in binary format.
         """
         self.ok = True  # We consider that a communication token is always correct at construction.
         self.negative = negative
         self.vocabulary = vocabulary
         self.memory = memory
+        self.value = value
+        self.choppedValue = []  # The value in a list (chopped) format, each segment of which are reversely bound to the leaf or relation variable which is responsible of this reading.
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -76,6 +80,12 @@ class AbstractVariableProcessingToken():
     def getMemory(self):
         return self.memory
 
+    def getValue(self):
+        return self.value
+
     def setOk(self, ok):
         logging.debug(_("The token's ok flag is set to {0}.").format(ok))
         self.ok = ok
+
+    def setValue(self, value):
+        self.value = value
