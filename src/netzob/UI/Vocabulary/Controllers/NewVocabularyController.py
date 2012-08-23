@@ -38,7 +38,6 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -47,6 +46,7 @@ gi.require_version('Gtk', '3.0')
 from netzob.UI.Vocabulary.Views.NewVocabularyView import NewVocabularyView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
 from netzob.UI.Vocabulary.Controllers.Partitioning.NewSequenceAlignmentController import NewSequenceAlignmentController
 from netzob.UI.Vocabulary.Controllers.Partitioning.NewForcePartitioningController import NewForcePartitioningController
 from netzob.UI.Vocabulary.Controllers.Partitioning.NewSimplePartitioningController import NewSimplePartitioningController
@@ -60,6 +60,7 @@ from netzob.Common.Plugins.FileImporterPlugin import FileImporterPlugin
 from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, NetzobInfoMessage
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class NewVocabularyController(object):
@@ -597,3 +598,20 @@ class NewVocabularyController(object):
             sourceSymbol = self.getCurrentProject().getVocabulary().getSymbolByID(sourceSymbolID)
             sourceSymbol.removeMessage(message)
             targetSymbol.addMessage(message)
+
+    def cellrenderer_project_props_changed_cb(self, cellrenderer, path, new_value):
+
+        if isinstance(new_value, Gtk.TreeIter):  # a combo box entry has been selected
+            liststore_possibleValues = cellrenderer.get_property('model')
+            value = liststore_possibleValues[new_value][0]
+        else:  # the cellrenderer entry has changed
+            value = new_value
+
+        # Identify the property name/value and reconstruct the associated setter
+        name = self.view.projectPropertiesListstore[path][0]
+
+        for prop in self.getCurrentProject().getProperties():
+            if prop.getName() == name:
+                prop.setCurrentValue(TypeConvertor.encodeGivenTypeToNetzobRaw(value, prop.getFormat()))
+                break
+        self.view.updateProjectProperties()
