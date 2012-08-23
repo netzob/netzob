@@ -207,11 +207,9 @@ class ContextualMenuOnFieldView(object):
     def build_mathematicFilter_submenu(self):
         menu = Gtk.Menu()
 
-        # Build the list of available filters
-        mathematicalFilters = []
-        mathematicalFilters.append(Base64Filter("Base64 Filter"))
-        mathematicalFilters.append(GZipFilter("GZip Filter"))
-        mathematicalFilters.append(BZ2Filter("BZ2 Filter"))
+        # Retrieve the list of available mathematical filters
+        currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
+        mathematicalFilters = currentWorkspace.getMathematicalFilters()
 
         for mathFilter in mathematicalFilters:
             toggled = False
