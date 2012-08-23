@@ -98,6 +98,13 @@ class ContextualMenuOnSymbolView(object):
             mathFilterItem.connect("activate", self.controller.applyMathematicFilter_cb, mathFilter)
             mathFilterItem.show()
             menu.append(mathFilterItem)
+
+        customFilter = Gtk.MenuItem(_("Create your Filter"))
+        customFilter.connect("activate", self.controller.createCustomFilter_cb)
+        customFilter.show()
+        menu.append(customFilter)
+
+        menu.show_all()
         return menu
 
     #+----------------------------------------------

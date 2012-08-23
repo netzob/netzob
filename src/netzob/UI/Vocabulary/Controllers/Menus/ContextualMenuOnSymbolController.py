@@ -37,6 +37,7 @@ import time
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk, GObject
 import gi
+from netzob.UI.Common.Controllers.CustomMathFilterController import CustomMathFilterController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 from gi.repository import Pango
@@ -116,3 +117,9 @@ class ContextualMenuOnSymbolController(object):
 
         self.symbol.resetPartitioning(self.vocabularyController.getCurrentProject())
         self.vocabularyController.view.updateSelectedMessageTable()
+
+    def createCustomFilter_cb(self, event):
+        """Callback executed when the user
+        clicks on menu entry to create a custom filter"""
+        customFilterController = CustomMathFilterController(self.vocabularyController)
+        customFilterController.run()
