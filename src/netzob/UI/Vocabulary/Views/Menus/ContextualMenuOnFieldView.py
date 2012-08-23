@@ -209,9 +209,9 @@ class ContextualMenuOnFieldView(object):
 
         # Retrieve the list of available mathematical filters
         currentWorkspace = self.controller.vocabularyController.getCurrentWorkspace()
-        mathematicalFilters = currentWorkspace.getMathematicalFilters()
+        mathematicFilters = currentWorkspace.getMathematicFilters()
 
-        for mathFilter in mathematicalFilters:
+        for mathFilter in mathematicFilters:
             toggled = False
             for f in self.controller.field.getMathematicFilters():
                 if f.getName() == mathFilter.getName():
