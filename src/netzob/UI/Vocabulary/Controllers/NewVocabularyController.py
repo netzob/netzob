@@ -584,6 +584,10 @@ class NewVocabularyController(object):
         """Return the current project (can be None)"""
         return self.netzob.getCurrentProject()
 
+    def getCurrentWorkspace(self):
+        """Return the current workspace"""
+        return self.netzob.getCurrentWorkspace()
+
     def moveMessage(self, message, targetSymbol):
         """Move the provided message in the specified symbol.
         Warning, this method do not consider the possible regex problems
