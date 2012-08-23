@@ -214,12 +214,14 @@ class ContextualMenuOnFieldView(object):
         mathematicalFilters.append(BZ2Filter("BZ2 Filter"))
 
         for mathFilter in mathematicalFilters:
-            operation = "Add"
+            toggled = False
             for f in self.controller.field.getMathematicFilters():
                 if f.getName() == mathFilter.getName():
-                    operation = "Remove"
+                    toggled = True
+                    break
 
-            mathFilterItem = Gtk.MenuItem(operation + " " + mathFilter.getName())
+            mathFilterItem = Gtk.CheckMenuItem(mathFilter.getName())
+            mathFilterItem.set_active(toggled)
             mathFilterItem.connect("activate", self.controller.applyMathematicalFilter_cb, mathFilter)
             mathFilterItem.show()
             menu.append(mathFilterItem)
