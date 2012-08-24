@@ -70,6 +70,7 @@ class AbstractMessage(object):
         self.leftReductionFactor = 0
         self.visualizationFilters = []
         self.encodingFilters = []
+        self.mathematicFilters = []
 
         self.pattern = []
         if not pattern:
@@ -154,8 +155,7 @@ class AbstractMessage(object):
     #+----------------------------------------------
     def getStringData(self):
         message = str(self.data)
-
-        for filter in self.symbol.getMathematicFilters():
+        for filter in self.getMathematicFilters():
             try:
                 message = filter.apply(message)
             except:
@@ -195,6 +195,20 @@ class AbstractMessage(object):
                 end = end + 1
 
         return "".join(self.getStringData()[start:end])
+
+    def getMathematicFilters(self):
+        """Return the activated mathematic filters
+        on message scope"""
+        return self.mathematicFilters
+
+    def addMathematicFilter(self, filter):
+        """Add a math filter for the message"""
+        self.mathematicFilters.append(filter)
+
+    def removeMathematicFilter(self, filter):
+        """Remove the provided filter from current symbol"""
+        if filter in self.mathematicFilters:
+            self.mathematicFilters.remove(filter)
 
     #+----------------------------------------------
     #| compilePattern:
@@ -449,6 +463,7 @@ class AbstractMessage(object):
         return self.type
 
     def getData(self):
+        """@deprecated: use getStringData instead"""
         return self.data.strip()
 
     def getSymbol(self):

@@ -63,8 +63,9 @@ class CustomMathFilterController(object):
         return self._view
 
     def run(self):
-        self._view.run()
+        self.initSourceCode()
         self.updateMessages()
+        self._view.run()
 
     def cancelButton_clicked_cb(self, widget):
         """Callback executed when the user clicks
@@ -83,6 +84,17 @@ class CustomMathFilterController(object):
     def testYourFilterButton_clicked_cb(self, widget):
         self.dataUpdated()
 
+    def initSourceCode(self):
+        initialSource = """# Type below the Python source code of your filter.
+# The source code must edit the content of a 'message' variable. This variable
+# contains an hexastring value (eg. '0b1c3489') you can 'filter'.
+# An example of a source code would be :
+#
+# message = '00'+message+'00'
+"""
+        print initialSource
+        self._view.filterTextView.get_buffer().set_text(initialSource)
+
     def dataUpdated(self):
         # retrieve the source code
         self.sourceCode = self._view.filterTextView.get_buffer().get_text(self._view.filterTextView.get_buffer().get_start_iter(), self._view.filterTextView.get_buffer().get_end_iter(), True)
@@ -98,6 +110,7 @@ class CustomMathFilterController(object):
                 self.updateMessages()
                 self._view.imageValid.show()
                 self._view.imageError.hide()
+                self._view.scrolledwindow3.show_all()
                 self._view.labelMessage.set_label(_("Verify below the filtered messages"))
                 self._view.labelMessage.show()
             else:
@@ -106,6 +119,7 @@ class CustomMathFilterController(object):
                 self.updateMessages()
                 self._view.imageValid.hide()
                 self._view.imageError.show()
+                self._view.scrolledwindow3.show_all()
                 self._view.labelMessage.set_label("{0}".format(errorMessage))
                 self._view.labelMessage.show()
         else:

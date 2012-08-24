@@ -105,15 +105,18 @@ class ContextualMenuOnSymbolController(object):
 
     def applyMathematicFilter_cb(self, event, mathFilter):
         """Add the selected mathematics filter"""
-        found = False
-        for appliedFilter in self.symbol.getMathematicFilters():
-            if appliedFilter.getName() == mathFilter.getName():
-                found = True
-                break
-        if found:
-            self.symbol.removeMathematicFilter(appliedFilter)
-        else:
-            self.symbol.addMathematicFilter(mathFilter)
+
+        messages = self.symbol.getMessages()
+        for message in messages:
+            found = False
+            for appliedFilter in message.getMathematicFilters():
+                if appliedFilter.getName() == mathFilter.getName():
+                    found = True
+                    break
+            if found:
+                message.removeMathematicFilter(appliedFilter)
+            else:
+                message.addMathematicFilter(mathFilter)
 
         self.symbol.resetPartitioning(self.vocabularyController.getCurrentProject())
         self.vocabularyController.view.updateSelectedMessageTable()
