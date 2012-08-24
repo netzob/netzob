@@ -31,12 +31,16 @@
 import logging
 import gzip
 import StringIO
+import code
+import string
+import traceback
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Filters.MathematicFilter import MathematicFilter
+from code import InteractiveInterpreter
 
 
 #+---------------------------------------------------------------------------+
@@ -50,11 +54,36 @@ class CustomFilter(MathematicFilter):
 
     def __init__(self, name, sourceCode):
         MathematicFilter.__init__(self, CustomFilter.TYPE, name)
-        self.sourceCode = sourceCode
+        self.sourceCode = sourceCode + '\n'
 
     def apply(self, message):
-        return "00"
+        output = "00"
+        compiledCode = None
+        toCompile = self.sourceCode
+        try:
+            compiledCode = code.compile_command(toCompile, "string", "exec")
+        except SyntaxError:
+            errorMessage = traceback.format_exc().rstrip()
+
+        if compiledCode is not None:
+            try:
+                # Initialize locals with the message
+                locals = {'message': message}
+                interpreter = InteractiveInterpreter(locals)
+                # Run the compiled code
+                interpreter.runcode(compiledCode)
+                # Fetch the new value of message
+                output = interpreter.locals['message']
+            except Exception, e:
+                logging.warning("Error while appying filter on a message : " + str(e))
+
+        return output
 
     def compileSourceCode(self):
-        errorMessage = "Its very grave !"
+        errorMessage = None
+        try:
+            compiledCode = code.compile_command(self.sourceCode, "string", "exec")
+        except SyntaxError:
+            errorMessage = traceback.format_exc().rstrip()
+
         return errorMessage

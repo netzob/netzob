@@ -129,6 +129,7 @@ class Workspace(object):
         self.pathOfPrototypes = pathOfPrototypes
         self.lastProjectPath = lastProjectPath
         self.importedTraces = importedTraces
+        self.customMathFilters = []
 
     def getNameOfProjects(self):
         nameOfProjects = []
@@ -177,7 +178,17 @@ class Workspace(object):
         filters.append(Base64Filter(_("Base64 Filter")))
         filters.append(GZipFilter(_("GZip Filter")))
         filters.append(BZ2Filter(_("BZ2 Filter")))
+        filters.extend(self.customMathFilters)
         return filters
+
+    def addCustomMathFilter(self, filter):
+        found = False
+        for f in self.customMathFilters:
+            if f.getName() == filter.getName():
+                found = True
+                break
+        if not found:
+            self.customMathFilters.append(filter)
 
     #+-----------------------------------------------------------------------+
     #| referenceProject:

@@ -78,8 +78,9 @@ class CustomMathFilterController(object):
         self._view.customMathFilterDialog.destroy()
 
         if self.filter is not None:
-            # Add the current filter to the current symbol
-            self.symbol.addMathematicFilter(self.filter)
+            # Create the filter add it to the workspace set of available filters
+            workspace = self.vocabularyController.getCurrentWorkspace()
+            workspace.addCustomMathFilter(self.filter)
 
     def testYourFilterButton_clicked_cb(self, widget):
         self.dataUpdated()
@@ -92,7 +93,6 @@ class CustomMathFilterController(object):
 #
 # message = '00'+message+'00'
 """
-        print initialSource
         self._view.filterTextView.get_buffer().set_text(initialSource)
 
     def dataUpdated(self):
@@ -126,7 +126,8 @@ class CustomMathFilterController(object):
             self._view.applyButton.set_sensitive(False)
             self._view.imageValid.hide()
             self._view.imageError.show()
-            self._view.labelMessage.set_label(_("Specify the name of the source code of the Filter"))
+            self._view.scrolledwindow3.show_all()
+            self._view.labelMessage.set_label(_("Specify the name and the source code of your Filter"))
             self._view.labelMessage.show()
 
     def updateMessages(self):
