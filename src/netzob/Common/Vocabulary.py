@@ -65,7 +65,10 @@ class Vocabulary(object):
         self.trashSymbol = None
 
     def getMessages(self):
-        return self.messages
+        messages = []
+        for symbol in self.symbols:
+            messages.extend(symbol.getMessages())
+        return messages
 
     def getMessageByID(self, id):
         for message in self.messages:
