@@ -10,10 +10,14 @@
     <complexType name="Workspace">
     	<sequence>
     		<element name="configuration"
-    			type="netzob-ws:Workspace_configuration" maxOccurs="1" minOccurs="1">
+    			type="netzob-ws:Workspace_configuration" maxOccurs="1"
+    			minOccurs="1">
     		</element>
     		<element name="projects" type="netzob-ws:Projects"></element>
-    		<element name="traces" type="netzob-ws:Traces" minOccurs="0"></element>
+    		<element name="traces" type="netzob-ws:Traces"
+    			minOccurs="0">
+    		</element>
+    		<element name="filters" type="netzob-ws:Filters" minOccurs="0" maxOccurs="1"></element>
     	</sequence>
     	<attribute name="creation_date" type="dateTime"
     		use="required">
@@ -71,7 +75,35 @@
 	    <element name="prototypes" type="string" minOccurs="0"></element>
     	</sequence>
     </complexType>
+
+	<complexType name="Filters">
+		<sequence>
+			<element name="filter" type="netzob-ws:Filter" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Filter">
+		<attribute name="type" type="string"></attribute>
+		<attribute name="name" type="string"></attribute>
+	</complexType>
+
+	<complexType name="MathematicsFilter">
+		<complexContent>
+			<extension base="netzob-ws:Filter">
+				
+			</extension>
+		</complexContent>
+	</complexType>
 	
+	<complexType name="CustomFilter">
+		<complexContent>
+			<extension base="netzob-ws:MathematicsFilter">
+				<sequence>
+					<element name="source-code" type="string"></element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>	
 	
 	<element name="workspace" type="netzob-ws:Workspace"></element>
 </schema>

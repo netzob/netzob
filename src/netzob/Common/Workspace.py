@@ -47,6 +47,7 @@ from netzob.Common.ImportedTrace import ImportedTrace
 from netzob.Common.Filters.Mathematic.Base64Filter import Base64Filter
 from netzob.Common.Filters.Mathematic.GZipFilter import GZipFilter
 from netzob.Common.Filters.Mathematic.B22Filter import BZ2Filter
+from netzob.Common.Filters.RenderingFilter import RenderingFilter
 
 WORKSPACE_NAMESPACE = "http://www.netzob.org/workspace"
 COMMON_NAMESPACE = "http://www.netzob.org/common"
@@ -98,6 +99,13 @@ def loadWorkspace_0_1(workspacePath, workspaceFile):
             workspace.referenceProject(project_path)
             if project_path == lastProject and lastProject is not None:
                 workspace.referenceLastProject(lastProject)
+
+    # Reference the filters
+    if xmlWorkspace.find("{" + WORKSPACE_NAMESPACE + "}filters") is not None:
+        for xmlFilter in xmlWorkspace.findall("{" + WORKSPACE_NAMESPACE + "}filters/{" + WORKSPACE_NAMESPACE + "}filter"):
+            filter = RenderingFilter.loadFromXML(xmlFilter, WORKSPACE_NAMESPACE, "0.1")
+            if filter is not None:
+                workspace.addCustomMathFilter(filter)
 
     return workspace
 
@@ -181,6 +189,9 @@ class Workspace(object):
         filters.extend(self.customMathFilters)
         return filters
 
+    def getCustomFilters(self):
+        return self.customMathFilters
+
     def addCustomMathFilter(self, filter):
         found = False
         for f in self.customMathFilters:
@@ -228,7 +239,7 @@ class Workspace(object):
         xmlPrototypes.text = str(self.getPathOfPrototypes())
 
         xmlWorkspaceProjects = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}projects")
-        logging.info("Projects included in workspace.xml :")
+        logging.debug("Projects included in workspace.xml :")
         for project in self.getProjects():
             xmlProject = etree.SubElement(xmlWorkspaceProjects, "{" + WORKSPACE_NAMESPACE + "}project")
             xmlProject.set("path", project.getPath())
@@ -236,6 +247,10 @@ class Workspace(object):
         xmlWorkspaceImported = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}traces")
         for importedTrace in self.getImportedTraces():
             importedTrace.save(xmlWorkspaceImported, WORKSPACE_NAMESPACE, COMMON_NAMESPACE, os.path.join(self.path, self.getPathOfTraces()))
+
+        xmlWorkspaceFilters = etree.SubElement(root, "{" + WORKSPACE_NAMESPACE + "}filters")
+        for filter in self.getCustomFilters():
+            filter.save(xmlWorkspaceFilters, WORKSPACE_NAMESPACE)
 
         tree = ElementTree(root)
         tree.write(workspaceFile)

@@ -63,3 +63,28 @@ class RenderingFilter(object):
 
     def setPriority(self, priority):
         self.priority = priority
+
+    @staticmethod
+    def save(filter, root, namespace_workspace):
+        print "oups"
+
+    @staticmethod
+    def loadFromXML(rootElement, namespace, version):
+        """loadFromXML:
+           Function which parses an XML and extract from it
+           the definition of a rendering filter
+           @param rootElement: XML root of the filter
+           @return an instance of a filter
+           @throw NameError if XML invalid"""
+
+        # Computes which type is it
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
+            raise NameError("The parsed xml doesn't represent a valid type of filter.")
+
+        filterType = rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")
+        from netzob.Common.Filters.Mathematic.CustomFilter import CustomFilter
+
+        if filterType == "netzob:" + CustomFilter.TYPE:
+            return CustomFilter.loadFromXML(rootElement, namespace, version)
+        else:
+            raise NameError("The parsed xml doesn't represent a know type of filter.")

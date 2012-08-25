@@ -34,6 +34,8 @@ import StringIO
 import code
 import string
 import traceback
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -87,3 +89,29 @@ class CustomFilter(MathematicFilter):
             errorMessage = traceback.format_exc().rstrip()
 
         return errorMessage
+
+    def save(self, root, namespace_common):
+        xmlFilter = etree.SubElement(root, "{" + namespace_common + "}filter")
+        xmlFilter.set("type", self.getType())
+        xmlFilter.set("name", self.getName())
+        xmlFilter.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:CustomFilter")
+        xmlSourceCode = etree.SubElement(xmlFilter, "{" + namespace_common + "}source-code")
+        xmlSourceCode.text = self.getSourceCode()
+
+    @staticmethod
+    def loadFromXML(rootElement, namespace, version):
+        """loadFromXML:
+           Function which parses an XML and extract from it
+           the definition of a rendering filter
+           @param rootElement: XML root of the filter
+           @return an instance of a filter
+           @throw NameError if XML invalid"""
+
+        nameFilter = rootElement.get("name")
+        sourceCode = rootElement.find("{" + namespace + "}source-code").text
+
+        filter = CustomFilter(nameFilter, sourceCode)
+        return filter
+
+    def getSourceCode(self):
+        return self.sourceCode
