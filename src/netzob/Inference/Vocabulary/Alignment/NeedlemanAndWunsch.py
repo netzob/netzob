@@ -45,6 +45,7 @@ from netzob.Common.NetzobException import NetzobException
 #+---------------------------------------------------------------------------+
 import _libNeedleman
 import _libInterface
+from netzob.UI import NetzobWidgets
 
 
 #+---------------------------------------------------------------------------+

@@ -46,6 +46,8 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
 from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
 
+import _libRegex
+
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage:
@@ -329,45 +331,66 @@ class AbstractMessage(object):
     #+-----------------------------------------------------------------------+
     def getSplittedData(self):
         regex = []
-        dynamicDatas = None
+        fields = None
         # First we compute the global regex
         for field in self.symbol.getFields():
             regex.append(field.getRegex())
 
-        # Now we apply the regex over the message
+        # Execute in C the regex application
         try:
-            compiledRegex = re.compile("".join(regex))
-            data = self.getReducedStringData()
-            dynamicDatas = compiledRegex.match(data)
+            result = _libRegex.match("".join(regex), self.getReducedStringData(), 0)
+            fields = result.split("\x01")
+        except:
+            pass
 
-        except AssertionError:
-            raise NetzobException("This Python version only supports 100 named groups in regex")
-
-        if dynamicDatas is None:
+        if fields is None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
-            self.log.warning("Message: " + data[:255] + "...")
+            self.log.warning("Message: " + self.getReducedStringData() + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-
-        result = []
-        iCol = 1
-        for field in self.symbol.getFields():
-            if field.isStatic():
-#                if encoded:
-#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-#                else:
-#                    result.append(glib.markup_escape_text(field.getRegex()))
-                result.append(field.getRegex())
-            else:
-                start = dynamicDatas.start(iCol)
-                end = dynamicDatas.end(iCol)
-#                if encoded:
-#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-#                else:
-#                    result.append(glib.markup_escape_text(data[start:end]))
-                result.append(data[start:end])
-                iCol += 1
-        return result
+        return fields
+#
+#
+#
+#
+#
+#
+#
+#
+#        # Now we apply the regex over the message
+#        try:
+#            compiledRegex = re.compile("".join(regex))
+#            data = self.getReducedStringData()
+#            dynamicDatas = compiledRegex.match(data)
+#
+#        except AssertionError:
+#            raise NetzobException("This Python version only supports 100 named groups in regex")
+#
+#        if dynamicDatas is None:
+#            self.log.warning("The regex of the group doesn't match one of its message")
+#            self.log.warning("Regex: " + "".join(regex))
+#            self.log.warning("Message: " + data[:255] + "...")
+#            raise NetzobException("The regex of the group doesn't match one of its message")
+#
+#        result = []
+#        iCol = 1
+#        for field in self.symbol.getFields():
+#            if field.isStatic():
+##                if encoded:
+##                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
+##                else:
+##                    result.append(glib.markup_escape_text(field.getRegex()))
+#                result.append(field.getRegex())
+#            else:
+#                start = dynamicDatas.start(iCol)
+#                end = dynamicDatas.end(iCol)
+##                if encoded:
+##                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
+##                else:
+##                    result.append(glib.markup_escape_text(data[start:end]))
+#                result.append(data[start:end])
+#                iCol += 1
+#        return result
 
 #    def getStyledData(self, styled=False, encoded=False):
 #        result = []

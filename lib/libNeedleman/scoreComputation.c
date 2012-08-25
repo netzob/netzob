@@ -232,7 +232,7 @@ float NeedlemanScore(t_message * message1, t_message * message2, Bool debugMode)
 			}	  //End for iblock
 		}	  //End for blockLoop
 
-			  //Actualize the number of block for the next time
+		//Actualize the number of block for the next time
 		if (diagloop < minLen / BLEN) {
 			nbBlock++;
 		} else if (diagloop > maxLen / BLEN) {
