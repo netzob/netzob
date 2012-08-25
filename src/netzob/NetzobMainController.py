@@ -160,11 +160,17 @@ class NetzobMainController(object):
         Gtk.main()
 
     def close(self):
+        """The method which closes the current project
+        and the workspace before stopping the GTK"""
         currentProject = self.getCurrentProject()
         # Close the current project
         if currentProject is not None:
             if currentProject.hasPendingModifications(self.getCurrentWorkspace()) and self.view.offerToSaveCurrentProject():
                 self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
+
+        # Save the workspace
+        self.getCurrentWorkspace().saveConfigFile()
+
         # Close the controller
         Gtk.main_quit()
 
