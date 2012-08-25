@@ -141,6 +141,7 @@ class MessageTableView(object):
         """Performs a full update on the treeview displaying messages.
         You should call this method only if you need a full update
         of the (ie if the fields of the symbols)"""
+        logging.debug("Start to update the message table")
         ## Remove former TreeView if necessary
         if self.messageTableTreeView is not None:
             self.messageTableScrolledWindow.remove(self.messageTableTreeView)
@@ -153,6 +154,7 @@ class MessageTableView(object):
         ## Display newly created treeview
         self.messageTableScrolledWindow.add(self.messageTableTreeView)
         self.messageTableTreeView.show()
+        logging.debug("End to update the message table")
 
     def updateMessageTableListStore(self):
         """Updates the liststore containing the displayed messages.
@@ -161,6 +163,7 @@ class MessageTableView(object):
         changed. (ie the columns of the treeview won't be updated)"""
         splitMessagesMatrix = []
         # Split every message
+        logging.debug("Start to compute the alignments of messages")
         for message in self.displayedSymbol.getMessages():
             try:
                 splitMessage = [str(message.getID())]
@@ -170,6 +173,7 @@ class MessageTableView(object):
                 logging.warn("Message : " + str(message.getStringData()))
                 continue  # We don't display the message in error
             splitMessagesMatrix.append(splitMessage)
+        logging.debug("Alignent computed")
         # Setup listStore
         numOfColumns = min(self.MAX_DISPLAYED_FIELDS,
                            len(self.displayedSymbol.getFields()))
@@ -397,7 +401,8 @@ class TreeViewHeaderWidget(Gtk.VBox):
         if focused and not self.collapsed:
             self.__setState(self.STATE_FOCUSED)
         elif not focused and not self.collapsed:
-            self.__setState(self.STATE_UNFOCUSED)
+#            self.__setState(self.STATE_UNFOCUSED)
+            pass
 
     def setCollapsed(self, collapsed):
         """Set the 'collapsed' state of the header, and modify its appearance
