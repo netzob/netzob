@@ -340,7 +340,6 @@ class AbstractMessage(object):
         # First we compute the global regex
         for field in self.symbol.getFields():
             regex.append(field.getRegex())
-
         # Execute in C the regex application
         try:
             result = _libRegex.match("".join(regex), self.getReducedStringData(), 0)
@@ -383,7 +382,7 @@ class AbstractMessage(object):
 
                 i_aligned += 1
 
-            if i_field == len(fields):
+            if i_field >= len(fields):
                 finish = True
 
         return result
