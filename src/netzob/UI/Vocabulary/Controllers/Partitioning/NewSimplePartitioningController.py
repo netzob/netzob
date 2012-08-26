@@ -78,6 +78,8 @@ class NewSimplePartitioningController(object):
         self._view.radiobutton32bits.set_sensitive(False)
         self._view.radiobutton64bits.set_sensitive(False)
 
+        self._view.simple_stop.set_sensitive(True)
+
         #extract chosen value
         formatBits = UnitSize.BITS8
         if self._view.radiobutton16bits.get_active():
@@ -101,25 +103,38 @@ class NewSimplePartitioningController(object):
             self.log.debug("No symbol selected")
 
         # Update button
-        self._view.simple_stop.set_sensitive(True)
+        self._view.simple_stop.set_sensitive(False)
 
         # Close dialog box
         self._view.simpleDialog.destroy()
 
     def simplePartitioning(self, unitSize):
         """Simple partitioning the provided symbols"""
-        step = float(100) / float(len(self.symbols))
-        total = float(0)
+        self.id_current_symbol = 0
         for symbol in self.symbols:
             GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning symbol {0}".format(symbol.getName())))
-            if self.flagStop:
+            if self.isFlagStopRaised():
                 return
-            symbol.simplePartitioning(unitSize)
-            total = total + step
-            rtotal = float(total) / float(100)
-            time.sleep(0.01)
-            GObject.idle_add(self._view.simple_progressbar.set_fraction, rtotal)
+            symbol.simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
+            self.id_current_symbol += 1
         GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning finished !"))
+
+    def updateProgessBar(self, percent, message):
+        """Update the progress bar given the provided informations"""
+        nbStage = len(self.symbols)
+        if percent is not None:
+            totalPercent = (100 / nbStage) * self.id_current_symbol + percent / nbStage
+            valTotalPercent = float(totalPercent) / float(100)
+            time.sleep(0.01)
+            GObject.idle_add(self._view.simple_progressbar.set_fraction, valTotalPercent)
+
+        if message is None:
+            GObject.idle_add(self._view.simple_progressbar.set_text, "")
+        else:
+            GObject.idle_add(self._view.simple_progressbar.set_text, message)
+
+    def isFlagStopRaised(self):
+        return self.flagStop
 
     def simple_stop_clicked_cb(self, widget):
         # update button

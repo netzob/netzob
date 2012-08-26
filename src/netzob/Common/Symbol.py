@@ -170,25 +170,43 @@ class Symbol(AbstractSymbol):
     #| simplePartitioning:
     #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simplePartitioning(self, unitSize):
+    def simplePartitioning(self, unitSize, status_cb=None, idStop_cb=None):
+        logging.debug("Compute the simple partitioning on current symbol")
         self.alignmentType = "regex"
         self.rawDelimiter = ""
+        # Restore fields to the default situation
         self.cleanFields()
-
         # Retrieve the biggest message
         maxLen = 0
         for message in self.getMessages():
             curLen = len(message.getStringData())
             if curLen > maxLen:
                 maxLen = curLen
+        logging.debug("Size of the longest message : {0}".format(maxLen))
 
         # Try to see if the column is static or variable
         resultString = ""
         resultMask = ""
+
+        # Stop and clean if requested
+        if idStop_cb is not None:
+            if idStop_cb():
+                self.cleanFields()
+                return
+
+        step = float(100) / float(maxLen)
+        totalPercent = 0
         # Loop until maxLen
         for it in range(maxLen):
             ref = ""
             isDifferent = False
+
+            # Stop and clean if requested
+            if idStop_cb is not None:
+                if idStop_cb():
+                    self.cleanFields()
+                    return
+
             # Loop through each cells of the column
             for message in self.getMessages():
                 try:
@@ -200,7 +218,6 @@ class Symbol(AbstractSymbol):
                         break
                 except IndexError:
                     isDifferent = True
-                    pass
 
             if isDifferent:
                 resultString += "-"
@@ -209,6 +226,10 @@ class Symbol(AbstractSymbol):
                 resultString += ref
                 resultMask += "0"
 
+            totalPercent += step
+            if status_cb is not None:
+                status_cb(totalPercent, None)
+
         # Apply unitSize
         if unitSize != UnitSize.NONE:
             unitSize = UnitSize.getSizeInBits(unitSize)
@@ -216,6 +237,13 @@ class Symbol(AbstractSymbol):
             tmpResultString = ""
             tmpResultMask = ""
             for i in range(0, len(resultString), nbLetters):
+
+                # Stop and clean if requested
+                if idStop_cb is not None:
+                    if idStop_cb():
+                        self.cleanFields()
+                        return
+
                 tmpText = resultString[i:i + nbLetters]
                 if tmpText.count("-") >= 1:
                     for j in range(len(tmpText)):
@@ -265,6 +293,12 @@ class Symbol(AbstractSymbol):
                     currentStaticField += resultString[it]
                     nbElements += 1
                 isLastDyn = False
+
+        # Stop and clean if requested
+        if idStop_cb is not None:
+            if idStop_cb():
+                self.cleanFields()
+                return
 
         # We add the last field
         iField += 1
