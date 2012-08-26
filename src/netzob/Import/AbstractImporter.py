@@ -66,20 +66,33 @@ class AbstractImporter(object):
     def saveMessagesInProject(self, workspace, project, messages, fetchEnv=True):
         """Add a selection of messages to an existing project
            it also saves them in the workspace"""
-        # We register each message in the vocabulary of the project
+
+        # Remove duplicated messages
+        # Todo : should be executed if requested by user
+        messagesToAdd = project.getVocabulary().getMessages()
         for message in messages:
+            found = False
+            for m in messagesToAdd:
+                if m.getStringData() == message.getStringData():
+                    found = True
+                    break
+            if not found:
+                messagesToAdd.append(message)
+
+        # We register each message in the vocabulary of the project
+        for message in messagesToAdd:
             project.getVocabulary().addMessage(message)
 
         # We create a session with each message
         session = Session(uuid.uuid4(), "Session 1", "")
-        for message in messages:
+        for message in messagesToAdd:
             session.addMessage(message)
         # We register the session in the vocabulary of the project
         project.getVocabulary().addSession(session)
 
         # We create a default symbol dedicated for this
         symbol = Symbol(uuid.uuid4(), self.type, project)
-        for message in messages:
+        for message in messagesToAdd:
             symbol.addMessage(message)
         # We create a default field for the symbol
         symbol.addField(Field.createDefaultField())
@@ -97,7 +110,7 @@ class AbstractImporter(object):
         # We also save the session and the messages in the workspace
         trace = ImportedTrace(uuid.uuid4(), date, self.type, description, project.getName())
         trace.addSession(session)
-        for message in messages:
+        for message in messagesToAdd:
             trace.addMessage(message)
         workspace.addImportedTrace(trace)
 
