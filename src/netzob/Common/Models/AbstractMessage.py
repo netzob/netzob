@@ -281,6 +281,10 @@ class AbstractMessage(object):
         splittedData = self.getSplittedData()
 
         if len(splittedData) != len(self.symbol.getFields()):
+
+            print "Nb of expected fields : {0}".format(self.symbol.getFields())
+            print "fields : {0}".format(splittedData)
+
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
@@ -331,7 +335,8 @@ class AbstractMessage(object):
     #+-----------------------------------------------------------------------+
     def getSplittedData(self):
         regex = []
-        fields = None
+        aligned = None
+
         # First we compute the global regex
         for field in self.symbol.getFields():
             regex.append(field.getRegex())
@@ -339,101 +344,49 @@ class AbstractMessage(object):
         # Execute in C the regex application
         try:
             result = _libRegex.match("".join(regex), self.getReducedStringData(), 0)
-            fields = result.split("\x01")
+            aligned = result.split("\x01")
         except:
             pass
 
-        if fields is None:
+        if aligned is None:
             self.log.warning("The regex of the group doesn't match one of its message")
             self.log.warning("Regex: " + "".join(regex))
             self.log.warning("Message: " + self.getReducedStringData() + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
-        return fields
-#
-#
-#
-#
-#
-#
-#
-#
-#        # Now we apply the regex over the message
-#        try:
-#            compiledRegex = re.compile("".join(regex))
-#            data = self.getReducedStringData()
-#            dynamicDatas = compiledRegex.match(data)
-#
-#        except AssertionError:
-#            raise NetzobException("This Python version only supports 100 named groups in regex")
-#
-#        if dynamicDatas is None:
-#            self.log.warning("The regex of the group doesn't match one of its message")
-#            self.log.warning("Regex: " + "".join(regex))
-#            self.log.warning("Message: " + data[:255] + "...")
-#            raise NetzobException("The regex of the group doesn't match one of its message")
-#
-#        result = []
-#        iCol = 1
-#        for field in self.symbol.getFields():
-#            if field.isStatic():
-##                if encoded:
-##                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-##                else:
-##                    result.append(glib.markup_escape_text(field.getRegex()))
-#                result.append(field.getRegex())
-#            else:
-#                start = dynamicDatas.start(iCol)
-#                end = dynamicDatas.end(iCol)
-##                if encoded:
-##                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-##                else:
-##                    result.append(glib.markup_escape_text(data[start:end]))
-#                result.append(data[start:end])
-#                iCol += 1
-#        return result
 
-#    def getStyledData(self, styled=False, encoded=False):
-#        result = []
-#        splittedData = self.getSplittedData(encoded)
-#
-#        if styled == False:
-#            return splittedData
-#
-#        iGlobal = 0
-#        iCol = 0
-#
-#        for data in splittedData:
-#            localResult = ""
-#            # Retrieve the field associated with this value
-#            field = self.symbol.getFieldByIndex(iCol)
-#            # Retrieve the unit size
-#            unitSize = Format.getUnitSize(field.getFormat())
-#            # First we apply filters on all the message
-#            for filter in self.getVisualizationFilters():
-#                if filter.isValid(0, -1, data, unitSize):
-#                    localResult += filter.apply(data)
-#
-#            for iLocal in range(0, len(data)):
-#                tmp_result = data[iLocal]
-#                if sizeFormat != None:
-#                    for filter in self.getVisualizationFilters():
-#                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):
-#                            tmp_result = filter.apply(tmp_result)
-#
-#                localResult += tmp_result
-#
-#            # Now we apply the color to the fields
-#            for filter in field.getVisualizationFilters():
-#                localResult = filter.apply(localResult)
-#
-#            iGlobal = iGlobal + len(data)
-#            result.append(localResult)
-#            iCol += 1
-#        return result
-#
-#    def getVisualizationData(self, styled=False, encoded=False):
-#        result = self.getStyledData(styled, encoded)
-#        return result
+        # Split the obtained alignment to consider the
+        # case when multiple static fields are next to each other.
+        result = []
+        prefix = ""
+        fields = self.symbol.getFields()
+        i_aligned = 0
+        i_field = 0
+        finish = False
+        while not finish:
+            field = fields[i_field]
+            current = aligned[i_aligned]
+            if not field.isStatic():
+                result.append(current)
+                i_field += 1
+                i_aligned += 1
+            elif field.getRegex() == current:
+                result.append(field.getRegex())
+                i_field += 1
+                i_aligned += 1
+            else:
+                buffer_merge = ""
+                while current != buffer_merge:
+                    field = fields[i_field]
+                    buffer_merge += field.getRegex()
+                    i_field += 1
+                    result.append(field.getRegex())
+
+                i_aligned += 1
+
+            if i_field == len(fields):
+                finish = True
+
+        return result
 
     #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message
