@@ -248,7 +248,7 @@ class PCAPImporter(AbstractImporter):
                 warnMessage = _("Cannot import one of the provided packets since " +
                                 "its layer 4 is unsupported (Only UDP and TCP " +
                                 "are currently supported, packet IP protocol " +
-                                "number = {0})").format(ipProtocolNum.get_ip_p())
+                                "number = {0})").format(ipProtocolNum)
                 self.log.warn(warnMessage)
                 raise NetzobImportException("PCAP", warnMessage, WARNING,
                                             self.INVALID_LAYER4)
