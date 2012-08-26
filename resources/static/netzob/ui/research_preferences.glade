@@ -21,7 +21,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Research in:</property>
+                <property name="label" translatable="yes">Search in</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -91,6 +91,17 @@
             <property name="position">0</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkSeparator" id="separator1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area7">
             <property name="can_focus">False</property>
@@ -134,7 +145,7 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="pack_type">end</property>
-            <property name="position">5</property>
+            <property name="position">6</property>
           </packing>
         </child>
         <child>
@@ -359,9 +370,9 @@
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">6</property>
+            <property name="position">7</property>
           </packing>
         </child>
       </object>
