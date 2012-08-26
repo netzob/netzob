@@ -108,6 +108,9 @@ class NewSimplePartitioningController(object):
         # Close dialog box
         self._view.simpleDialog.destroy()
 
+        # Update the message table view
+        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
+
     def simplePartitioning(self, unitSize):
         """Simple partitioning the provided symbols"""
         self.id_current_symbol = 0
