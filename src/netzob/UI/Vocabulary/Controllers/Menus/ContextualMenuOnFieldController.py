@@ -178,3 +178,9 @@ class ContextualMenuOnFieldController(object):
     def displayPopupToEditField_cb(self, event):
         popup = PopupEditFieldController(self.vocabularyController, self.field)
         popup.run()
+
+    def deleteMessage_cb(self, event):
+        """Callback executed when the user requests
+        to delete the current message"""
+        self.symbol.removeMessage(self.message)
+        self.vocabularyController._view.updateMessageTableDisplayingSymbols([self.symbol])

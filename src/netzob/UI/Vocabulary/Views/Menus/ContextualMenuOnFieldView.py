@@ -88,6 +88,12 @@ class ContextualMenuOnFieldView(object):
         item.connect("activate", self.controller.displayDomainOfDefinition_cb)
         self.menu.append(item)
 
+        # Add entry to delete the current message
+        item = Gtk.MenuItem(_("Delete message"))
+        item.show()
+        item.connect("activate", self.controller.deleteMessage_cb)
+        self.menu.append(item)
+
         # Add entries for copy functions
         subMenu = self.build_copy_submenu()
         item = Gtk.MenuItem(_("Copy to clipboard"))
