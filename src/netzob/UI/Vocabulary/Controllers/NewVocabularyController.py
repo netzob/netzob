@@ -240,6 +240,7 @@ class NewVocabularyController(object):
     def symbolListTreeViewSelection_changed_cb(self, selection):
         """Callback executed when the user
         clicks on a symbol in the list"""
+        logging.debug("The current symbol has changed")
         model, iter = selection.get_selected()
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
         if iter is not None:
@@ -309,7 +310,6 @@ class NewVocabularyController(object):
             return
         force_controller = NewForcePartitioningController(self, symbols)
         force_controller.run()
-        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningSimple_activate_cb(self, action):
         if self.getCurrentProject() is None:
@@ -321,7 +321,6 @@ class NewVocabularyController(object):
             return
         simple_controller = NewSimplePartitioningController(self, symbols)
         simple_controller.run()
-        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningSmooth_activate_cb(self, action):
         if self.getCurrentProject() is None:
@@ -333,7 +332,6 @@ class NewVocabularyController(object):
             return
         smooth_controller = NewSmoothPartitioningController(self, symbols)
         smooth_controller.run()
-        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def partitioningReset_activate_cb(self, action):
         """Callback executed when the user clicks
@@ -347,7 +345,6 @@ class NewVocabularyController(object):
             return
         reset_controller = ResetPartitioningController(self, symbols)
         reset_controller.run()
-        self.view.selectedMessageTable.updateMessageTableTreeView()
 
     def concatField_activate_cb(self, action):
         # Sanity check
