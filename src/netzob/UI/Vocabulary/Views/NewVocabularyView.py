@@ -30,6 +30,7 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import os
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -240,6 +241,7 @@ class NewVocabularyView(object):
         self.setSelectedSymbolFromSelectedMessageTable()
 
     def setDisplayedSymbolInSelectedMessageTable(self, symbol):
+        logging.debug("Update the displayed symbol in selected table message")
         if len(self.messageTableList) == 0:
             self.addMessageTable()
             self.setSelectedMessageTable(self.messageTableList[0])
@@ -248,6 +250,7 @@ class NewVocabularyView(object):
             return
         if symbol != self.selectedMessageTable.displayedSymbol:
             self.selectedMessageTable.setDisplayedSymbol(symbol)
+        logging.debug("Updated")
 
     def getDisplayedSymbolInSelectedMessageTable(self):
         if self.selectedMessageTable is None:
@@ -399,7 +402,7 @@ class NewVocabularyView(object):
         self.symbolPropertiesListstore.clear()
         # get symbol properties
         properties = self.getSymbolProperties()
-        # add symbol properties
+#        # add symbol properties
         for prop in properties:
             line = self.symbolPropertiesListstore.append()
             self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
@@ -417,7 +420,7 @@ class NewVocabularyView(object):
     def updateSymbolVariableDefinition(self):
         currentSymbol = self.getDisplayedSymbolInSelectedMessageTable()
         if currentSymbol is not None:
-            variableDisplayerController = VariableDisplayerController(self, currentSymbol)
+            variableDisplayerController = VariableDisplayerController(self, currentSymbol, True)
             variableDisplayerController.run(self.messagesDistributionSymbolViewport)
 
     def getMessageProperties(self):

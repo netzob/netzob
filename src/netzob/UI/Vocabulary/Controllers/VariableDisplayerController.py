@@ -47,19 +47,26 @@ from netzob.UI.Vocabulary.Views.VariableDisplayerView import VariableDisplayerVi
 
 class VariableDisplayerController(object):
 
-    def __init__(self, vocabularyController, symbol):
+    def __init__(self, vocabularyController, symbol, allowMaximize=False):
         self.vocabularyController = vocabularyController
+        self.allowMaximize = allowMaximize
         self._view = VariableDisplayerView(self)
         self.symbol = symbol
         self.log = logging.getLogger(__name__)
+        self.panel = None
 
     @property
     def view(self):
         return self._view
 
+    def maximize(self):
+        if self.panel is not None:
+            self.vocabularyController.messageTableBox.pack_start(self.panel, True, True, 0)
+
     def run(self, panel=None):
         # clean first the panel
         if panel is not None:
+            self.panel = panel
             for c in panel.get_children():
                 panel.remove(c)
         self._view.run(panel)

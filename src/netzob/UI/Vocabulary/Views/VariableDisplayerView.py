@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import os
 import uuid
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -75,9 +76,15 @@ class VariableDisplayerView(object):
         dotCode = ["digraph G {"]
         dotCode.extend(self.addDotCodeForFields(fields))
         dotCode.append("}")
-
         xdotWidget.drawDotCode('\n'.join(dotCode))
         xdotWidget.show_all()
+
+        if self.controller.allowMaximize:
+            panel.connect("button_press_event", self.doubleClick_cb)
+
+    def doubleClick_cb(self, widget, event):
+        if event.type == Gdk.EventType._2BUTTON_PRESS:
+            self.controller.maximize()
 
     def addDotCodeForFields(self, fields):
         dotCode = []
