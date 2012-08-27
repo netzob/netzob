@@ -339,7 +339,10 @@ class AbstractMessage(object):
 
         # First we compute the global regex
         for field in self.symbol.getFields():
-            regex.append(field.getRegex())
+            if field.isStatic():
+                regex.append("(" + field.getRegex() + ")")
+            else:
+                regex.append(field.getRegex())
         # Execute in C the regex application
         try:
             result = _libRegex.match("".join(regex), self.getReducedStringData(), 0)
@@ -353,39 +356,7 @@ class AbstractMessage(object):
             self.log.warning("Message: " + self.getReducedStringData() + "...")
             raise NetzobException("The regex of the group doesn't match one of its message")
 
-        # Split the obtained alignment to consider the
-        # case when multiple static fields are next to each other.
-        result = []
-        prefix = ""
-        fields = self.symbol.getFields()
-        i_aligned = 0
-        i_field = 0
-        finish = False
-        while not finish:
-            field = fields[i_field]
-            current = aligned[i_aligned]
-            if not field.isStatic():
-                result.append(current)
-                i_field += 1
-                i_aligned += 1
-            elif field.getRegex() == current:
-                result.append(field.getRegex())
-                i_field += 1
-                i_aligned += 1
-            else:
-                buffer_merge = ""
-                while current != buffer_merge:
-                    field = fields[i_field]
-                    buffer_merge += field.getRegex()
-                    i_field += 1
-                    result.append(field.getRegex())
-
-                i_aligned += 1
-
-            if i_field >= len(fields):
-                finish = True
-
-        return result
+        return aligned
 
     #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message
