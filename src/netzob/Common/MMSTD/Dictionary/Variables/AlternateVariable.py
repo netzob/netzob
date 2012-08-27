@@ -46,7 +46,11 @@ from netzob.Common.MMSTD.Dictionary.Variables.AbstractNodeVariable import \
     AbstractNodeVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
+    RepeatVariable
 
 
 class AlternateVariable(AbstractNodeVariable):
@@ -89,11 +93,80 @@ class AlternateVariable(AbstractNodeVariable):
                 for key, val in dictOfValues.iteritems():
                     vocabulary.getVariableByID(key).setCurrentValue(val)
 
-        if self.isLearnable() and not readingToken.isOk():
+        if self.isLearnable() and not readingToken.isOk() and not self.isLearning():
             # If we dont not found a proper child but the node can learn, we learn the value.
             self.learn(child, readingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
+    def learn(self, child, readingToken):
+        """learn:
+                The alternate variable learns the given value and adds it at the end of its children.
+
+                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @param child: the child we expected to find while reading the given value.
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
+
+        dictOfValues = dict()
+        savedIndex = readingToken.getIndex()
+        savedFather = self.getFather()
+        selfPosition = savedFather.indexOfChild(self)
+
+        # We create a fake father for this alternate.
+        if self.getFather().getType() == AggregateVariable.TYPE:
+            fakeFather = AggregateVariable(uuid.uuid4(), "Fake father", False, False)
+            # We add this element and its right brother as child of the fake father in order to pursue the read access from where we are.
+            fakeFather.addChild(self)
+            for rightBrother in self.getFather().getChildren()[selfPosition:]:
+                fakeFather.addChild(rightBrother)
+        elif self.getFather().getType() == RepeatVariable.TYPE:
+            (minIterations, maxIterations) = self.getFather().getNumberIterations()
+            # Some iterations of this treatment could have be made before. The fake father should not make more iterations than it remains for the real father.
+            minIterations = max(0, minIterations - self.getFather().getCurrentIteration())
+            maxIterations = max(0, maxIterations - self.getFather().getCurrentIteration())
+            fakeFather = RepeatVariable(uuid.uuid4(), "Fake father", False, False, self, minIterations, maxIterations)
+        else:
+            self.log.error(_("The father is neither an aggregate nor a repeat variable."))
+
+        # We execute the treatment on the fake father.
+        valueToBeRead = readingToken.getValue()[readingToken.getIndex():]
+        for index in len(valueToBeRead):
+            # We search if, by shifting the position of actual variable, we could read the given value.
+            tmpValue = valueToBeRead[:index]
+            tmpChild = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(tmpValue), len(tmpValue)), tmpValue.to01())
+            # We add the new variable at the end, in order to minimize its impact.
+            self.add(tmpChild)
+
+            # We read this new variable from the father in a learning context.
+            self.setLearning(True)
+            fakeFather.read(readingToken)
+            # If this read access works, we learn the variable.
+            if readingToken.isOk():
+                break
+            else:
+                # We remove the just added child.
+                self.removeChild(tmpChild)
+
+        # We restore the action induced by the fake father.
+        readingToken.setIndex(savedIndex)
+        vocabulary = readingToken.getVocabulary()
+        for key, val in dictOfValues.iteritems():
+            child = vocabulary.getVariableByID(key)
+            # We restore the current values.
+            child.setCurrentValue(val)
+            # We restore the cached values.
+            child.restore(readingToken)
+
+        if readingToken.isOk():
+            # We reset the original father as real father for the current variable.
+            self.setFather(savedFather)
+            # We continue the treatment. The real father's treatment will pursue.
+            self.read(readingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def writeChildren(self, writingToken):
         """write:
@@ -124,52 +197,6 @@ class AlternateVariable(AbstractNodeVariable):
                     vocabulary.getVariableByID(key).setCurrentValue(val)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
-
-    def learn(self, child, readingToken):
-        """learn:
-                The alternate variable learns the given value and adds it at the end of its children.
-
-                @type child: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
-                @param child: the child we expected to find while reading the given value.
-                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
-                @param readingToken: a token which contains all critical information on this access.
-        """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
-
-        tmp = readingToken.getValue()[readingToken.getIndex():]
-        # The list of all leaf variable of the current symbol.
-        leafList = readingToken.getRootVariable().getLeafProgeny()
-
-        # We find the index of the current variable among all leaf variable.
-        currentVarIndex = 0
-        for var in leafList:
-            if var.getID() == child.getID():
-                break
-            currentVarIndex += 1
-
-        # We find the first static right brother.
-        staticVar = None
-        # Sum of mutable right brother sizes until the first static one:
-        maxBrotherSize = 0
-        # We take into account only the maximum number of bits of variables because the parser behaves greedily.
-        staticVarIndex = currentVarIndex
-        for staticVar in leafList[currentVarIndex:]:  # Perhaps, child of potentially null repeat variable should not matter.
-            if not staticVar.isMutable() and staticVar.isDefined():
-                break
-            else:
-                staticVarIndex += 1
-                # We increment the dynamic brother size.
-                maxBrotherSize += staticVar.getType().getMaxBits()
-
-        # We add the value in the current variable's children.
-        insValue = tmp[:(len(tmp) - maxBrotherSize)]
-        insVariable = DataVariable(uuid.uuid4(), "Learned Inserted Variable", True, True, BinaryType(True, len(insValue), len(insValue)), insValue.to01())
-
-        self.addChild(insVariable)
-        # We execute a read access on the inserted variable.
-        insVariable.read(readingToken)
-
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |

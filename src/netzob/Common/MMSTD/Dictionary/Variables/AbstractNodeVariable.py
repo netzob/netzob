@@ -60,6 +60,7 @@ class AbstractNodeVariable(AbstractVariable):
         self.children = []
         if children is not None:
             self.children.extend(children)
+        self.learning = False  # (read access with mutable flag) Tells if the variable reads normally or through an attempt of learning.
 
     def moveChild(self, child, position):
         """removeVariable:
@@ -174,21 +175,17 @@ class AbstractNodeVariable(AbstractVariable):
                 progeny.extend(child.getProgeny())
         return progeny
 
-    def getLeafProgeny(self, processingToken):
-        """getLeafProgenyID:
-                Return a list of each leaf successor.
-        """
-        progeny = []
-        if self.children is not None:
-            for child in self.children:
-                progeny.extend(child.getLeafProgeny())
-        return progeny
-
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def getChildren(self):
         return self.children
+
+    def isLearning(self):
+        return self.isLearning()
+
+    def setLearning(self, learning):
+        self.learning = learning
 
 #+---------------------------------------------------------------------------+
 #| Implementation of list functions                                          |

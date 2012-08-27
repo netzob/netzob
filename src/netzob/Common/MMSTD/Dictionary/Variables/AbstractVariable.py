@@ -79,7 +79,7 @@ class AbstractVariable:
 
     def getProgeny(self):
         """getProgeny:
-                Get this variable and all variable that descends from it. (i.e. son, grandson...)
+                Get this variable and all variable that descends from it. (i.e. son, grandson...). Return EVERY child variable, especially for alternate variable.
                 Overwritten for AbstractNodeVariable.
 
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable List
@@ -88,18 +88,6 @@ class AbstractVariable:
         progeny = []
         progeny.append(self)
         return progeny
-
-    def getLeafProgeny(self, processingToken):
-        """getLeafProgeny:
-                Return a list which contains the variable if the variable is a leaf and a list containing all leaf child variable if the variable is a node.
-                Do nothning if the variable is neither a leaf variable, nor a node variable, so it does nothing.
-
-                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
-                @param processingToken: a token which contains all critical information on this access.
-                @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable list
-                @return: a list containing all inheriting variables of the current one.
-        """
-        return None
 
     def notifyBoundedVariables(self, access, processingToken):
         """notifyBoundedVariables:
@@ -260,7 +248,7 @@ class AbstractVariable:
         return self.node
 
     def getFather(self):
-        return self.aggregateFather
+        return self.father
 
     def getBoundedVariables(self):
         return self.boundedVariables

@@ -263,12 +263,6 @@ class AbstractLeafVariable(AbstractVariable):
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
-    def getLeafProgeny(self, processingToken):
-        """getLeafProgeny:
-                Return the variable.
-        """
-        return [self]
-
     def trivialCompareFormat(self, readingToken):
         """trivialCompareFormat:
                 Leaf variable must have a compare Format function and have no children, so we just call it.
