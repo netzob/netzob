@@ -270,9 +270,8 @@ class UPGMA(object):
             # extract orphans
             for i, symbol in zip(range(len(self.symbols)), self.symbols):
                 if len(symbol.getMessages()) == 1:
-                    symbol.emptyScores()  # We reset the scores
-                    symbol.setPos(i)
                     orphans.append(symbol)
+
             # create a tmp symbols array where symbols will be added once computed
             for symbol in self.symbols:
                 if len(symbol.getMessages()) > 1:
