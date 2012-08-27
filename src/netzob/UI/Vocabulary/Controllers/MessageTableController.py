@@ -91,7 +91,7 @@ class MessageTableController(object):
                 return
 
             # Retrieve the selected message
-            symbol = self.vocabularyPerspective.getSelectedSymbol()
+            symbol = self._view.getDisplayedSymbol()
             if symbol is None:
                 logging.warn("No symbol is selected, please choose one.")
                 return
