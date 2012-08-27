@@ -166,7 +166,6 @@ class NewSequenceAlignmentController(object):
             totalPercent = (100 / nbStage) * stage + percent / nbStage
             valPercent = float(percent) / float(100)
             valTotalPercent = float(totalPercent) / float(100)
-            logging.debug("Alignment progression ({0}): {1}% {2}".format(stage, totalPercent, message))
             time.sleep(0.01)
             GObject.idle_add(self._view.sequence_progressbar.set_fraction, valTotalPercent)
             GObject.idle_add(progressBar.set_fraction, valPercent)
