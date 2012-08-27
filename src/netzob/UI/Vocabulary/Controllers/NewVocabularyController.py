@@ -240,10 +240,11 @@ class NewVocabularyController(object):
     def symbolListTreeViewSelection_changed_cb(self, selection):
         """Callback executed when the user
         clicks on a symbol in the list"""
-        logging.debug("The current symbol has changed")
+        logging.debug("1-The current symbol has changed")
         model, iter = selection.get_selected()
         currentVocabulary = self.netzob.getCurrentProject().getVocabulary()
         if iter is not None:
+            logging.debug("Iter is not none")
             symID = model[iter][self.view.SYMBOLLISTSTORE_ID_COLUMN]
             symbol = currentVocabulary.getSymbolByID(symID)
 

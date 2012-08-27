@@ -194,6 +194,7 @@ class NewVocabularyView(object):
 
     ## Message Tables management
     def addMessageTable(self):
+        """ Create a new message table and selects it"""
         messageTableController = MessageTableController(self)
         messageTable = messageTableController.view
         self.messageTableList.append(messageTable)
@@ -232,25 +233,28 @@ class NewVocabularyView(object):
             mTable.update()
 
     def setSelectedMessageTable(self, selectedMessageTable):
+        """Set provided message table as selected"""
+
         # Update appearance of old and new selected message table
         if self.selectedMessageTable is not None:
             self.selectedMessageTable.setSelected(False)
+
         selectedMessageTable.setSelected(True)
         # Update current selected message table and
         self.selectedMessageTable = selectedMessageTable
-        self.setSelectedSymbolFromSelectedMessageTable()
 
     def setDisplayedSymbolInSelectedMessageTable(self, symbol):
+        """Show the definition of provided symbol on the selected
+        message table"""
         logging.debug("Update the displayed symbol in selected table message")
+
+        # Open a message table is None is available
         if len(self.messageTableList) == 0:
             self.addMessageTable()
-            self.setSelectedMessageTable(self.messageTableList[0])
 
-        if self.selectedMessageTable is None:
-            return
-        if symbol != self.selectedMessageTable.displayedSymbol:
+        # if a message table is selected we update its symbol (if required)
+        if self.selectedMessageTable is not None and symbol != self.selectedMessageTable.displayedSymbol:
             self.selectedMessageTable.setDisplayedSymbol(symbol)
-        logging.debug("Updated")
 
     def getDisplayedSymbolInSelectedMessageTable(self):
         if self.selectedMessageTable is None:
