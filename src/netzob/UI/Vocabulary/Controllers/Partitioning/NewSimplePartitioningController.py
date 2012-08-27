@@ -110,6 +110,8 @@ class NewSimplePartitioningController(object):
 
         # Update the message table view
         self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
+        # Update the symbol properties view
+        self.vocabularyController._view.updateLeftPanel()
 
     def simplePartitioning(self, unitSize):
         """Simple partitioning the provided symbols"""
