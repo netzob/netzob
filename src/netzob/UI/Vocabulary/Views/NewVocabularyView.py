@@ -344,11 +344,13 @@ class NewVocabularyView(object):
                 selection.select_path(path)
 
     def getSelectedSymbol(self):
+        """Returns the selected symbol in the list of symbols"""
         currentVocabulary = self.getCurrentProject().getVocabulary()
         model, iter = self.symbolListTreeView.get_selection().get_selected()
         if iter is not None:
             symID = model[iter][self.SYMBOLLISTSTORE_ID_COLUMN]
             return currentVocabulary.getSymbolByID(symID)
+        return None
 
     def getSelectedMessagesInSelectedMessageTable(self):
         if self.selectedMessageTable is not None:

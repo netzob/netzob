@@ -29,6 +29,7 @@
 #| Global Imports
 #+----------------------------------------------
 from gi.repository import Gdk
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -91,13 +92,17 @@ class MessageTableController(object):
 
             # Retrieve the selected message
             symbol = self.vocabularyPerspective.getSelectedSymbol()
+            if symbol is None:
+                logging.warn("No symbol is selected, please choose one.")
+                return
+
             message_id = None
             aIter = treeview.get_model().get_iter(path)
             if aIter and treeview.get_model().iter_is_valid(aIter):
                 message_id = treeview.get_model().get_value(aIter, 0)
                 message = symbol.getMessageByID(message_id)
             else:
-                self.log.warn(_("Impossible to retrieve the clicked message !"))
+                logging.warn(_("Impossible to retrieve the clicked message !"))
                 return
 
             # Retrieve the selected field number
@@ -108,7 +113,7 @@ class MessageTableController(object):
                 iField += 1
             field = symbol.getFieldByIndex(iField)
             if field is None:
-                self.log.warn(_("Impossible to retrieve the clicked field !"))
+                logging.warn(_("Impossible to retrieve the clicked field !"))
                 return
 
             # Popup a contextual menu
