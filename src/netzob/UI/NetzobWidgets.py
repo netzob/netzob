@@ -44,6 +44,7 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobLabel:
 #| @param text: the string of the label
@@ -53,6 +54,7 @@ def NetzobLabel(text):
     label.show()
     label.modify_font(Pango.FontDescription("sans 9"))
     return label
+
 
 #+---------------------------------------------------------------------------+
 #| NetzobButton:
@@ -70,6 +72,7 @@ def NetzobButton(text):
         label.modify_font(Pango.FontDescription("sans 9"))
     return but
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobFrame:
 #| @param text: the string of the frame
@@ -82,6 +85,7 @@ def NetzobFrame(text):
     label.modify_font(Pango.FontDescription("sans 9"))
     return frame
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobComboBoxEntry:
 #+---------------------------------------------------------------------------+
@@ -93,6 +97,7 @@ def NetzobComboBoxEntry():
     cell.set_property("size-points", 9)
     return combo
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobProgressBar:
 #+---------------------------------------------------------------------------+
@@ -103,6 +108,7 @@ def NetzobProgressBar(text=None):
 
     pb.show()
     return pb
+
 
 #+---------------------------------------------------------------------------+
 #| NetzobErrorMessage:
@@ -116,6 +122,7 @@ def NetzobErrorMessage(text):
     md.run()
     md.destroy()
 
+
 #+---------------------------------------------------------------------------+
 #| NetzobInfoMessage:
 #+---------------------------------------------------------------------------+
@@ -127,6 +134,7 @@ def NetzobInfoMessage(text):
                            text)
     md.run()
     md.destroy()
+
 
 #+---------------------------------------------------------------------------+
 #| NetzobQuestionMessage:
@@ -151,7 +159,6 @@ def addNetzobIconsToDefaultFactory():
             "icons",
             "24x24",
             iconFilename))
-        print iconPath
         iconSource.set_filename(iconPath)
         iconSource.set_size(Gtk.IconSize.LARGE_TOOLBAR)
         iconSet.add_source(iconSource)
