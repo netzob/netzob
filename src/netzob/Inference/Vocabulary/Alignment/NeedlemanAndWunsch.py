@@ -124,8 +124,8 @@ class NeedlemanAndWunsch(object):
                     return
                 self.buildRegexFromAlignment(symbol, alignment, defaultFormat)
 
-            except NetzobException:
-                logging.warn("Partitionnement error: too much fields (>100) for the symbol '" + symbol.getName() + "'")
+            except NetzobException, e:
+                logging.warn("Partitionnement error: {0}".format(e))
                 symbol.cleanFields()
 
                 field = Field.createDefaultField()
@@ -282,8 +282,8 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-        if len(symbol.getFields()) >= 100:
-            raise NetzobException("This Python version only supports 100 named groups in regex")
+        if len(symbol.getFields()) >= 200:
+            raise NetzobException("This Python version only supports 200 named groups in regex (found {0})".format(len(symbol.getFields())))
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
