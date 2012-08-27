@@ -15,30 +15,17 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="relationsCancelButton">
-                <property name="label">gtk-cancel</property>
+              <object class="GtkButton" id="relationOkButton">
+                <property name="label">gtk-ok</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="action_name">ok</property>
                 <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="relationApplyButton">
-                <property name="label">gtk-apply</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
+                <property name="image_position">top</property>
+                <signal name="clicked" handler="relationOkButton_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -103,8 +90,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">relationsCancelButton</action-widget>
-      <action-widget response="0">relationApplyButton</action-widget>
+      <action-widget response="0">relationOkButton</action-widget>
     </action-widgets>
   </object>
 </interface>

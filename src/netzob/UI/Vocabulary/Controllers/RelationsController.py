@@ -70,6 +70,9 @@ class RelationsController(object):
     def hide(self):
         self._view.relationsDialog.hide()
 
+    def destroy(self):
+        self._view.relationsDialog.destroy()
+
     def on_configure(self, widget, event, data=None):
         """Configure the double buffer based on size of the widget"""
 
@@ -239,3 +242,5 @@ class RelationsController(object):
             print('Invalid double buffer')
 
         return True
+    def relationOkButton_clicked_cb(self, widget):
+        self.destroy()
