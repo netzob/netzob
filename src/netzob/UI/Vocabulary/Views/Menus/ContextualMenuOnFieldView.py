@@ -109,6 +109,8 @@ class ContextualMenuOnFieldView(object):
     def build_encoding_submenu(self):
         menu = Gtk.Menu()
 
+        field = self.controller.field
+
         # Retrieve the selected message and field content
         if self.controller.message is not None:
             # Retrieve content of the field
@@ -120,15 +122,25 @@ class ContextualMenuOnFieldView(object):
         possible_choices = Format.getSupportedFormats()
         subMenu = Gtk.Menu()
         for value in possible_choices:
+            label = value
+
+            # Compute if its activated
+            toggled = False
+            if field.getFormat() == value:
+                toggled = True
+
+            # Compute the label
             if field_content is not None:
                 # Get preview of field content
                 text_preview = TypeConvertor.encodeNetzobRawToGivenType(field_content, value)
                 if len(text_preview) > 10:
                     text_preview = text_preview[:10] + "..."
+                label = value + " (" + text_preview + ")"
 
-                item = Gtk.MenuItem(value + " (" + text_preview + ")")
-            else:
-                item = Gtk.MenuItem(value)
+            # Create the check item
+            item = Gtk.CheckMenuItem(label)
+            item.set_active(toggled)
+
             item.show()
             item.connect("activate", self.controller.changeFormat_cb, value)
             subMenu.append(item)
@@ -141,7 +153,15 @@ class ContextualMenuOnFieldView(object):
         possible_choices = [UnitSize.NONE, UnitSize.BIT, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64]
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+
+            # Compute if its activated
+            toggled = False
+            if field.getUnitSize() == value:
+                toggled = True
+
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
+
             item.show()
             item.connect("activate", self.controller.changeUnitSize_cb, value)
             subMenu.append(item)
@@ -154,7 +174,15 @@ class ContextualMenuOnFieldView(object):
         possible_choices = [Sign.SIGNED, Sign.UNSIGNED]
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+
+            # Compute if its activated
+            toggled = False
+            if field.getSign() == value:
+                toggled = True
+
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
+
             item.show()
             item.connect("activate", self.controller.changeSign_cb, value)
             subMenu.append(item)
@@ -167,7 +195,13 @@ class ContextualMenuOnFieldView(object):
         possible_choices = [Endianess.BIG, Endianess.LITTLE]
         subMenu = Gtk.Menu()
         for value in possible_choices:
-            item = Gtk.MenuItem(value)
+            # Compute if its activated
+            toggled = False
+            if field.getEndianess() == value:
+                toggled = True
+
+            item = Gtk.CheckMenuItem(value)
+            item.set_active(toggled)
             item.show()
             item.connect("activate", self.controller.changeEndianess_cb, value)
             subMenu.append(item)
