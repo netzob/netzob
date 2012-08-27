@@ -82,13 +82,13 @@ class NetzobMainView(object):
 
     def _registerPerspectives(self):
         self.registerPerspective(self.VOCABULARY_INFERENCE_VIEW,
-                                 "Vocabulary Inference",
+                                 _("Vocabulary Inference"),
                                  NewVocabularyController)
         self.registerPerspective(self.GRAMMAR_INFERENCE_VIEW,
-                                 "Grammar Inference",
+                                 _("Grammar Inference"),
                                  UIGrammarInference)
         self.registerPerspective(self.TRAFFIC_SIMULATOR_VIEW,
-                                 "Simulator",
+                                 _("Simulator"),
                                  UISimulator)
         self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
         self.perspectiveComboBox.set_active(0)
