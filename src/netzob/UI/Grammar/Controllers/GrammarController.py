@@ -32,6 +32,7 @@ from gettext import gettext as _
 import logging
 from netzob.UI.Grammar.Views.GrammarView import GrammarView
 from netzob.UI.Grammar.Controllers.CreateStateController import CreateStateController
+from netzob.UI.Grammar.Controllers.CreateSemiStochasticTransitionController import CreateSemiStochasticTransitionController
 
 
 #+---------------------------------------------------------------------------+
@@ -95,7 +96,20 @@ class GrammarController:
         createStateController = CreateStateController(self)
         createStateController.run()
 
-    def createTransition_activate_cb(self, event):
+    def createSemiStochasticTransition_activate_cb(self, event):
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
+
+        createTransitionController = CreateSemiStochasticTransitionController(self)
+        createTransitionController.run()
+
+    def createOpenChannelTransition_activate_cb(self, event):
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
+
+    def createCloseChannelTransition_activate_cb(self, event):
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
