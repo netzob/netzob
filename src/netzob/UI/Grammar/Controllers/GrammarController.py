@@ -34,6 +34,7 @@ from netzob.UI.Grammar.Views.GrammarView import GrammarView
 from netzob.UI.Grammar.Controllers.CreateStateController import CreateStateController
 from netzob.UI.Grammar.Controllers.CreateSemiStochasticTransitionController import CreateSemiStochasticTransitionController
 from netzob.UI.Grammar.Controllers.CreateOpenChannelTransitionController import CreateOpenChannelTransitionController
+from netzob.UI.Grammar.Controllers.CreateCloseChannelTransitionController import CreateCloseChannelTransitionController
 
 
 #+---------------------------------------------------------------------------+
@@ -117,3 +118,6 @@ class GrammarController:
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
+
+        createTransitionController = CreateCloseChannelTransitionController(self)
+        createTransitionController.run()
