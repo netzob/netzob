@@ -341,11 +341,13 @@ class AbstractMessage(object):
         # First we compute the global regex
         for field in self.symbol.getFields():
             if field.isStatic():
-                regex.append("(" + field.getRegex() + ")")
+                # C Version :
+                #regex.append("(" + field.getRegex() + ")")
+                regex.append(field.getRegex())
             else:
                 regex.append(field.getRegex())
 
-        # Now we apply the regex over the message
+        # Now we atwpply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
