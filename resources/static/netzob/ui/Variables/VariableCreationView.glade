@@ -72,11 +72,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="randomLabel">
+              <object class="GtkLabel" id="learnableLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="yalign">0.51999998092651367</property>
-                <property name="label" translatable="yes">Random</property>
+                <property name="label" translatable="yes">Learnable</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -116,7 +116,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="randomCheck">
+              <object class="GtkCheckButton" id="learnableCheck">
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -128,30 +128,6 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">2</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="minLabel">
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Minimum</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">5</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="maxLabel">
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Maximum</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">6</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -205,7 +181,8 @@
             </child>
             <child>
               <object class="GtkEntry" id="valueEntry">
-                <property name="can_focus">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
               </object>
               <packing>
@@ -216,62 +193,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="typeLabel">
+              <object class="GtkLabel" id="relationTypeLabel">
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Type</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">7</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBoxText" id="typeCombo">
-                <property name="can_focus">False</property>
-                <property name="focus_on_click">False</property>
-                <property name="entry_text_column">0</property>
-                <property name="id_column">1</property>
-                <items>
-                  <item translatable="yes">Binary</item>
-                  <item translatable="yes">Decimal Word</item>
-                  <item translatable="yes">Hex Word</item>
-                  <item translatable="yes">Integer</item>
-                  <item translatable="yes">IPv4 Word</item>
-                  <item translatable="yes">MAC Word</item>
-                  <item translatable="yes">Word</item>
-                </items>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">7</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="minSpin">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">5</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="maxSpin">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">6</property>
+                <property name="top_attach">11</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -288,19 +216,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">9</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="relationTypeLabel">
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Type</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">9</property>
+                <property name="top_attach">11</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -313,7 +229,7 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">8</property>
+                <property name="top_attach">10</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -327,6 +243,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">●</property>
+                    <property name="invisible_char_set">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -354,7 +271,151 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
+                <property name="top_attach">10</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBoxText" id="typeCombo">
+                <property name="can_focus">False</property>
+                <property name="focus_on_click">False</property>
+                <property name="entry_text_column">0</property>
+                <property name="id_column">1</property>
+                <items>
+                  <item translatable="yes">Binary</item>
+                  <item translatable="yes">Decimal Word</item>
+                  <item translatable="yes">Hex Word</item>
+                  <item translatable="yes">Integer</item>
+                  <item translatable="yes">IPv4 Word</item>
+                  <item translatable="yes">MAC Word</item>
+                  <item translatable="yes">Word</item>
+                </items>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">9</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="typeLabel">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Type</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">9</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="maxLabel">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Maximum</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">7</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="maxSpin">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="invisible_char_set">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">7</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="minLabel">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Minimum</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">6</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="minSpin">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="invisible_char_set">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">6</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="sizedLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">has a size</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">5</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="delimiterLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Delimiter</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
                 <property name="top_attach">8</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="delimiterEntry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">●</property>
+                <property name="invisible_char_set">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">8</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="sizedCheck">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="xalign">0</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">5</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
