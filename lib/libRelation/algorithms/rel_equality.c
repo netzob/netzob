@@ -116,7 +116,7 @@ relation_equality_find(const char*** messages, int row, int idx,
 	cells = messages[row];
 	ref = cells[idx];
 	ref_len = strlen(ref);
-	for (i = 0; i < vlen; i++) {
+	for (i = 0; i < hlen; i++) {
 		rel = cells[i];
 		rel_len = strlen(rel);
 		if (i != idx && rel && ref_len <= rel_len && ref_len >= MIN_SIZE) {
