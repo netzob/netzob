@@ -64,5 +64,12 @@
         <signal name="activate" handler="compare_sessions_activate_cb" swapped="no"/>
       </object>
     </child>
+    <child>
+      <object class="GtkAction" id="findRelationsInSessions">
+        <property name="label" translatable="yes">Find relations in sessions</property>
+        <property name="tooltip" translatable="yes">Find relations sessions</property>
+        <signal name="activate" handler="find_relations_sessions_activate_cb" swapped="no"/>
+      </object>
+    </child>
   </object>
 </interface>
