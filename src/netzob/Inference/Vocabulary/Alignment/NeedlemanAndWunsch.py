@@ -282,8 +282,8 @@ class NeedlemanAndWunsch(object):
             field.setFormat(defaultFormat)
             symbol.addField(field)
             iField = iField + 1
-        if len(symbol.getFields()) >= 200:
-            raise NetzobException("This Python version only supports 200 named groups in regex (found {0})".format(len(symbol.getFields())))
+        if len(symbol.getFields()) >= 100:
+            raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(symbol.getFields())))
         # We look for useless fields
         doLoop = True
         # We loop until we don't pop any field
