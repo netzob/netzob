@@ -46,6 +46,11 @@ PyMODINIT_FUNC init_libRelation(void) {
 	/* PyDict_SetItemString(d, "error", exception); */
 }
 
+/*
+ * C wrapper for function "find" of _libRelation.
+ * This functions takes a two-dimension array built like this:
+ * > [(m0f0, m0f1, ...), (m1f0, m1f1, ...)]
+ */
 static PyObject*
 py_find(PyObject* self, PyObject* args) {
 	PyObject* pListCells;
@@ -169,5 +174,5 @@ create_python_dm(struct relation_datamodel* dm)
 	}
 	return pDm;
  error:
-	return NULL;
+	Py_RETURN_NONE;
 }
