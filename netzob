@@ -24,7 +24,7 @@
 #| @contact  : contact@netzob.org                                            |
 #| @sponsors : Amossys, http://www.amossys.fr                                |
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
-#+---------------------------------------------------------------------------+ 
+#+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
 #| Standard library imports
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # compute the requested execution following the provided arguments
     commandLineParser.parse()
 
-    GObject.threads_init() # for handling concurrent GUI access from threads
+    GObject.threads_init()  # for handling concurrent GUI access from threads
 
     if commandLineParser.isStartGUIRequested():
         from netzob.NetzobMainController import NetzobMainController
