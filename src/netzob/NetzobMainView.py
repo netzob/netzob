@@ -163,6 +163,8 @@ class NetzobMainView(object):
         self.resetMainWindow()
         self.log.debug("Setting perspective ID {0}".format(newPerspectiveCode))
         perspective = self.perspectiveDict[newPerspectiveCode][1]
+        # Activate it
+        perspective.activate()
         # Switch central panel
         self.currentPerspectivePanel = perspective.view.getPanel()
         self.setCentralPanel(self.currentPerspectivePanel)

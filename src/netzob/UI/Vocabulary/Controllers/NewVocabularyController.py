@@ -79,6 +79,10 @@ class NewVocabularyController(object):
     def view(self):
         return self._view
 
+    def activate(self):
+        """Activate the perspective"""
+        pass
+
     def restart(self):
         """Restart the view"""
         logging.debug("Restarting the vocabulary view")
