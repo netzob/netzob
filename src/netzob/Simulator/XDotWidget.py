@@ -63,3 +63,6 @@ class XDotWidget(DotWidget):
     def drawDotCode(self, dotCode):
         self.set_dotcode(dotCode)
         self.zoom_to_fit()
+
+    def clear(self):
+        pass
