@@ -348,7 +348,7 @@ class AbstractMessage(object):
         # Now we apply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
-            data = self.getStringData()
+            data = self.getReducedStringData()
             dynamicDatas = compiledRegex.match(data)
 
         except AssertionError:
