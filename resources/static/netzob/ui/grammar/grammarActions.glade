@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkActionGroup" id="grammarActionGroup">
+    <child>
+      <object class="GtkAction" id="activeGrammarInferring">
+        <property name="label" translatable="yes">Active Grammar Inferring</property>
+        <property name="tooltip" translatable="yes">Infer the grammar</property>
+        <property name="stock_id">gtk-media-stop</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="activeGrammarInferring_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="passiveGrammarInferring">
+        <property name="label" translatable="yes">Passive Grammar Inferring</property>
+        <property name="tooltip" translatable="yes">Infer the grammar based on provided examples</property>
+        <property name="stock_id">gtk-media-stop</property>
+        <signal name="activate" handler="passiveGrammarInferring_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createState">
+        <property name="label" translatable="yes">Create State</property>
+        <property name="tooltip" translatable="yes">Create a state in the current grammar</property>
+        <property name="stock_id">gtk-add</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createState_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createTransition">
+        <property name="label" translatable="yes">Create Transition</property>
+        <property name="tooltip" translatable="yes">Create a transition and attach it to a state</property>
+        <property name="stock_id">gtk-add</property>
+        <property name="is_important">True</property>
+        <signal name="activate" handler="createTransition_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="grammarInference">
+        <property name="label" translatable="yes">Grammar Inference</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="grammarEdition">
+        <property name="label" translatable="yes">Grammar Edition</property>
+      </object>
+    </child>
+  </object>
+</interface>

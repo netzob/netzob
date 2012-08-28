@@ -1,0 +1,23 @@
+<ui>
+  <menubar name="mainMenuBar">
+    <placeholder name="mainMenuBarAdditions">
+      <menu action="grammarInference">
+        <menuitem action="activeGrammarInferring" />
+        <menuitem action="passiveGrammarInferring" />
+      </menu>
+      <menu action="grammarEdition">
+        <menuitem action="createState" />
+        <menuitem action="createTransition" />
+      </menu>
+    </placeholder>
+  </menubar>
+  <toolbar name="mainToolbar">
+    <placeholder name="mainToolbarAdditions">
+      <toolitem action="activeGrammarInferring" />
+      <toolitem action="passiveGrammarInferring" />
+      <separator />
+      <toolitem action="createState" />
+      <toolitem action="createTransition" />
+    </placeholder>
+  </toolbar>
+</ui>

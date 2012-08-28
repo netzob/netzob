@@ -47,6 +47,7 @@ from netzob.UI.NetzobWidgets import addNetzobIconsToDefaultFactory
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Controllers.NewVocabularyController import NewVocabularyController
 from netzob.UI.Simulator.UISimulator import UISimulator
+from netzob.UI.Grammar.Controllers.GrammarController import GrammarController
 from netzob.UI.Grammar.UIGrammarInference import UIGrammarInference
 
 
@@ -86,7 +87,7 @@ class NetzobMainView(object):
                                  NewVocabularyController)
         self.registerPerspective(self.GRAMMAR_INFERENCE_VIEW,
                                  _("Grammar Inference"),
-                                 UIGrammarInference)
+                                 GrammarController)
         self.registerPerspective(self.TRAFFIC_SIMULATOR_VIEW,
                                  _("Simulator"),
                                  UISimulator)
