@@ -29,12 +29,12 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="createTransition">
-        <property name="label" translatable="yes">Create Transition</property>
-        <property name="tooltip" translatable="yes">Create a transition and attach it to a state</property>
+      <object class="GtkAction" id="createSemiStochasticTransition">
+        <property name="label" translatable="yes">Create Semi-Stochastic Transiton</property>
+        <property name="tooltip" translatable="yes">Create a semi stochastic transition</property>
         <property name="stock_id">gtk-add</property>
         <property name="is_important">True</property>
-        <signal name="activate" handler="createTransition_activate_cb" swapped="no"/>
+        <signal name="activate" handler="createSemiStochasticTransition_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
@@ -45,6 +45,22 @@
     <child>
       <object class="GtkAction" id="grammarEdition">
         <property name="label" translatable="yes">Grammar Edition</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createOpenChannelTransition">
+        <property name="label" translatable="yes">Create OpenChannel Transition</property>
+        <property name="tooltip" translatable="yes">Create Open Channel Transition</property>
+        <property name="stock_id">gtk-add</property>
+        <signal name="activate" handler="createOpenChannelTransition_activate_cb" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkAction" id="createCloseChannelTransition">
+        <property name="label" translatable="yes">Create CloseChannel Transition</property>
+        <property name="tooltip" translatable="yes">Create a Close Channel Transition</property>
+        <property name="stock_id">gtk-add</property>
+        <signal name="activate" handler="createCloseChannelTransition_activate_cb" swapped="no"/>
       </object>
     </child>
   </object>

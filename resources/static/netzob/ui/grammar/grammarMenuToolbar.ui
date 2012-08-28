@@ -7,7 +7,9 @@
       </menu>
       <menu action="grammarEdition">
         <menuitem action="createState" />
-        <menuitem action="createTransition" />
+        <menuitem action="createSemiStochasticTransition" />
+        <menuitem action="createOpenChannelTransition" />
+        <menuitem action="createCloseChannelTransition" />
       </menu>
     </placeholder>
   </menubar>
@@ -17,7 +19,9 @@
       <toolitem action="passiveGrammarInferring" />
       <separator />
       <toolitem action="createState" />
-      <toolitem action="createTransition" />
+      <toolitem action="createSemiStochasticTransition" />
+      <toolitem action="createOpenChannelTransition" />
+      <toolitem action="createCloseChannelTransition" />
     </placeholder>
   </toolbar>
 </ui>

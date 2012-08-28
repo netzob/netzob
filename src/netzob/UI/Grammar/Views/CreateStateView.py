@@ -54,7 +54,7 @@ class CreateStateView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui", "grammar",
-                                                "grammarDialogs.glade"))
+                                                "createStateDialog.glade"))
         self._getObjects(self.builder, ["createStateDialog",
                                         "createButton", "cancelButton",
                                         "idEntry", "nameEntry", "initialStateCheckButton",
