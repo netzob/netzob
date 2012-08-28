@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import logging
 from netzob.UI.Grammar.Views.GrammarView import GrammarView
+from netzob.UI.Grammar.Controllers.CreateStateController import CreateStateController
 
 
 #+---------------------------------------------------------------------------+
@@ -57,14 +58,44 @@ class GrammarController:
     def view(self):
         return self._view
 
+    def restart(self):
+        """Restart the view"""
+        logging.debug("Restarting the grammar perspective")
+        self._view.restart()
+
+    def activate(self):
+        """Activate the perspective"""
+        self.restart()
+
+    def getCurrentProject(self):
+        """Return the current project (can be None)"""
+        return self.netzob.getCurrentProject()
+
+    def getCurrentWorkspace(self):
+        """Return the current workspace"""
+        return self.netzob.getCurrentWorkspace()
+
     def activeGrammarInferring_activate_cb(self, event):
-        pass
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
 
     def passiveGrammarInferring_activate_cb(self, event):
-        pass
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
 
     def createState_activate_cb(self, event):
-        pass
+        """Callback executed when the user wants
+        to create a state"""
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
+
+        createStateController = CreateStateController(self)
+        createStateController.run()
 
     def createTransition_activate_cb(self, event):
-        pass
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return

@@ -30,94 +30,47 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import os
-import logging
-import uuid
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob.Simulator.XDotWidget import XDotWidget
-from netzob.Common.MMSTD.States.impl.NormalState import NormalState
-from netzob.Common.MMSTD.MMSTD import MMSTD
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class GrammarView(object):
+class CreateStateView(object):
 
-    def __init__(self, controller):
-        self.controller = controller
-        self.netzob = self.controller.netzob
+    def __init__(self, controller, idState):
+        '''
+        Constructor
+        '''
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "grammar",
-            "GrammarView.glade"))
-        self._getObjects(self.builder, ["paned1", "grammarViewport"])
-        self._loadActionGroupUIDefinition()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "grammar",
+                                                "grammarDialogs.glade"))
+        self._getObjects(self.builder, ["createStateDialog",
+                                        "createButton", "cancelButton",
+                                        "idEntry", "nameEntry", "initialStateCheckButton",
+                                        "errorImage", "errorLabel"])
+        self.controller = controller
         self.builder.connect_signals(self.controller)
 
-        self.xdotWidget = XDotWidget()
-        self.xdotWidget.show_all()
-        self.paned1.add(self.xdotWidget)
-
-    def _loadActionGroupUIDefinition(self):
-        """Loads the action group and the UI definition of menu items
-        . This method should only be called in the constructor"""
-        # Load actions
-        actionsBuilder = Gtk.Builder()
-        actionsBuilder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "grammar",
-            "grammarActions.glade"))
-        self._actionGroup = actionsBuilder.get_object("grammarActionGroup")
-        actionsBuilder.connect_signals(self.controller)
-        uiDefinitionFilePath = os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "grammar",
-            "grammarMenuToolbar.ui")
-        with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
-            self._uiDefinition = uiDefinitionFile.read()
+        self.idEntry.set_text(str(idState))
+        self.idEntry.set_sensitive(False)
 
     def _getObjects(self, builder, objectsList):
-        for object in objectsList:
-            setattr(self, object, builder.get_object(object))
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
 
-    ## Mandatory view methods
-    def getPanel(self):
-        return self.grammarViewport
+    def run(self):
+        self.createStateDialog.run()
 
-    # Return the actions
-    def getActionGroup(self):
-        return self._actionGroup
-
-    # Return toolbar and menu
-    def getMenuToolbarUIDefinition(self):
-        return self._uiDefinition
-
-    def restart(self):
-        """restart the view"""
-        self.updateGrammar()
-
-    def updateGrammar(self):
-        """Update the displayed grammar"""
-        # retrieve the current grammar
-        if self.controller.getCurrentProject() is None:
-            logging.info("No project is selected.")
-            return
-
-        grammar = self.controller.getCurrentProject().getGrammar()
-        if grammar is not None:
-            automata = grammar.getAutomata()
-            if automata is not None:
-                logging.debug("automata dot code : {0}".format(automata.getDotCode()))
-
-                self.xdotWidget.drawAutomata(automata)
-            else:
-                self.xdotWidget.clear()
+    def destroy(self):
+        self.createStateDialog.destroy()

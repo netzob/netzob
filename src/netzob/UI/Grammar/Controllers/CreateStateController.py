@@ -29,16 +29,16 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import os
 import logging
+import time
 import uuid
+
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob.Simulator.XDotWidget import XDotWidget
+from netzob.UI.Grammar.Views.CreateStateView import CreateStateView
 from netzob.Common.MMSTD.States.impl.NormalState import NormalState
 from netzob.Common.MMSTD.MMSTD import MMSTD
 gi.require_version('Gtk', '3.0')
@@ -49,75 +49,70 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 
 
-class GrammarView(object):
+class CreateStateController(object):
+    """Manages the creation of a new state"""
 
-    def __init__(self, controller):
-        self.controller = controller
-        self.netzob = self.controller.netzob
-        self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "grammar",
-            "GrammarView.glade"))
-        self._getObjects(self.builder, ["paned1", "grammarViewport"])
-        self._loadActionGroupUIDefinition()
-        self.builder.connect_signals(self.controller)
+    def __init__(self, grammarController):
+        self.grammarController = grammarController
+        self.idState = uuid.uuid4()
+        self._view = CreateStateView(self, self.idState)
+        self.log = logging.getLogger(__name__)
 
-        self.xdotWidget = XDotWidget()
-        self.xdotWidget.show_all()
-        self.paned1.add(self.xdotWidget)
+    @property
+    def view(self):
+        return self._view
 
-    def _loadActionGroupUIDefinition(self):
-        """Loads the action group and the UI definition of menu items
-        . This method should only be called in the constructor"""
-        # Load actions
-        actionsBuilder = Gtk.Builder()
-        actionsBuilder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "grammar",
-            "grammarActions.glade"))
-        self._actionGroup = actionsBuilder.get_object("grammarActionGroup")
-        actionsBuilder.connect_signals(self.controller)
-        uiDefinitionFilePath = os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "grammar",
-            "grammarMenuToolbar.ui")
-        with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
-            self._uiDefinition = uiDefinitionFile.read()
+    def displayErrorMessage(self, errorMessage):
+        if errorMessage is None:
+            self._view.errorImage.hide()
+            self._view.errorLabel.set_label("")
+            self._view.errorLabel.hide()
+        else:
+            self._view.errorLabel.set_label(errorMessage)
+            self._view.errorLabel.show()
+            self._view.errorImage.show()
 
-    def _getObjects(self, builder, objectsList):
-        for object in objectsList:
-            setattr(self, object, builder.get_object(object))
+    def cancelButton_clicked_cb(self, event):
+        """Callback executed when the user clicks on the cancel button"""
+        self._view.destroy()
 
-    ## Mandatory view methods
-    def getPanel(self):
-        return self.grammarViewport
+    def createButton_clicked_cb(self, event):
+        currentProject = self.grammarController.getCurrentProject()
 
-    # Return the actions
-    def getActionGroup(self):
-        return self._actionGroup
+        """callback executed when the user clicks on the create button"""
+        initialState = self._view.initialStateCheckButton.get_active()
+        stateName = self._view.nameEntry.get_text()
 
-    # Return toolbar and menu
-    def getMenuToolbarUIDefinition(self):
-        return self._uiDefinition
+        automata = currentProject.getGrammar().getAutomata()
 
-    def restart(self):
-        """restart the view"""
-        self.updateGrammar()
-
-    def updateGrammar(self):
-        """Update the displayed grammar"""
-        # retrieve the current grammar
-        if self.controller.getCurrentProject() is None:
-            logging.info("No project is selected.")
+        errorMessage = None
+        # verify initialState is valid
+        if not initialState and automata is None:
+            errorMessage = _("The first created state must be an initial state")
+            self.displayErrorMessage(errorMessage)
             return
 
-        grammar = self.controller.getCurrentProject().getGrammar()
-        if grammar is not None:
-            automata = grammar.getAutomata()
-            if automata is not None:
-                logging.debug("automata dot code : {0}".format(automata.getDotCode()))
+        # verify the name of the state is unique
+        found = False
+        if automata is not None:
+            for state in automata.getStates():
+                if state.getName() == stateName:
+                    found = True
+                    break
 
-                self.xdotWidget.drawAutomata(automata)
-            else:
-                self.xdotWidget.clear()
+        if found:
+            errorMessage = _("A state already has this name, please specify another one")
+            self.displayErrorMessage(errorMessage)
+            return
+
+        newState = NormalState(self.idState, stateName)
+        if automata == None:
+            automata = MMSTD(initialState, currentProject.getVocabulary())
+            currentProject.getGrammar().setAutomata(automata)
+
+        automata.addState(newState)
+        self._view.destroy()
+        self.grammarController.restart()
+
+    def run(self):
+        self._view.run()
