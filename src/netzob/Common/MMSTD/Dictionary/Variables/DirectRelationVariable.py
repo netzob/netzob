@@ -54,10 +54,10 @@ class DirectRelationVariable(AbstractRelationVariable):
 
     TYPE = "Direct Relation Variable"
 
-    def __init__(self, _id, name, mutable, learnable, pointedID):
+    def __init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable):
         """Constructor of DirectRelationVariable:
         """
-        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedID)
+        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
 
 #+---------------------------------------------------------------------------+

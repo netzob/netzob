@@ -342,12 +342,16 @@ class DataVariable(AbstractLeafVariable):
 
     def setOriginalValue(self, originalValue):
         if originalValue is not None:
-            size = self.type.getBitSize(originalValue)
-            if size >= self.type.getMinBits() and size <= self.type.getMaxBits():
-                self.originalValue = self.type.str2bin(originalValue)
+            if self.type.isSized():
+                size = self.type.getBitSize(originalValue)
+                if size >= self.type.getMinBits() and size <= self.type.getMaxBits():
+                    self.originalValue = self.type.str2bin(originalValue)
+                else:
+                    self.originalValue = None
+                    self.log.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
             else:
-                self.originalValue = None
-                self.log.info(_("Variable {0} (Data): The given original value has an inappropriate size.").format(self.getName()))
+                self.originalValue = self.type.str2bin(originalValue)
+
         else:
             self.originalValue = None
             self.log.info(_("Variable {0} (Data): The given original value is None.").format(self.getName()))

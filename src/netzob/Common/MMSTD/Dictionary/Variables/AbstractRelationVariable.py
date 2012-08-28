@@ -31,8 +31,6 @@
 from abc import abstractmethod
 from bitarray import bitarray
 from gettext import gettext as _
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
-    AbstractVariable
 import logging
 import random
 
@@ -44,6 +42,8 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
+    AbstractVariable
 
 
 class AbstractRelationVariable(AbstractVariable):

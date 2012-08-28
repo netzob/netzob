@@ -56,15 +56,14 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
     TYPE = "Computed Relation Variable"
 
-    def __init__(self, _id, name, mutable, learnable, relationType, pointedID):
+    def __init__(self, _id, name, mutable, learnable, relationType, pointedVariable, rootVariable):
         """Constructor of ComputedRelationVariable:
 
                 @type relationType: string
                 @param relationType: the type of computation we will use.
         """
-        AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
+        AbstractVariable.__init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ComputedRelationVariable.py')
-        self.pointedID = pointedID
         self.relationType = relationType
         self.currentValue = None
 
