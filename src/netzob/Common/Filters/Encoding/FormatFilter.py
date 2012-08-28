@@ -124,6 +124,8 @@ class FormatFilter(EncodingFilter):
                 encodedSplittedData.append(TypeConvertor.netzobRawToString(netzobRaw))
             elif self.formatType == Format.BINARY:
                 encodedSplittedData.append(TypeConvertor.netzobRawToBinary(netzobRaw))
+            elif self.formatType == Format.IPv4:
+                encodedSplittedData.append(TypeConvertor.netzobRawToIPv4(netzobRaw))
             elif UnitSize.getSizeInBits(self.unitsize) < UnitSize.getSizeInBits(UnitSize.BITS8):
                 encodedSplittedData.append(TypeConvertor.encodeNetzobRawToGivenType(netzobRaw, self.formatType))
 

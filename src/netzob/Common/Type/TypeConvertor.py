@@ -140,8 +140,8 @@ class TypeConvertor():
             return TypeConvertor.netzobRawToBinary(raw)
         elif aType == Format.DECIMAL:
             return TypeConvertor.netzobRawToDecimal(raw)
-        elif aType == Format.IP:
-            return TypeConvertor.netzobRawToIP(raw)
+        elif aType == Format.IPv4:
+            return TypeConvertor.netzobRawToIPv4(raw)
         else:
             return raw
 
@@ -295,9 +295,18 @@ class TypeConvertor():
     #+----------------------------------------------
     #| Return the hex string parameter in IP
     #+----------------------------------------------
-    def netzobRawToIP(raw):
-        logging.error("Not yet implemented")
-        # TODO
+    def netzobRawToIPv4(raw):
+        if len(raw) == 8:
+            try:
+                ip1 = int(raw[0:2], 16)
+                ip2 = int(raw[2:4], 16)
+                ip3 = int(raw[4:6], 16)
+                ip4 = int(raw[6:8], 16)
+                result = "{0}.{1}.{2}.{3}".format(ip1, ip2, ip3, ip4)
+                return result
+            except Exception, e:
+                logging.info("The raw ({0}) cannot be converted into an IPv4 data".format(raw))
+                pass
         return raw
 
     @staticmethod
