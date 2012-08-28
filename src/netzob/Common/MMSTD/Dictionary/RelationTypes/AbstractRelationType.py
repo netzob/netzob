@@ -62,13 +62,16 @@ class AbstractRelationType():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType.py')
         self.associatedDataType = self.makeAssociatedDataType(sized, minChars, maxChars, delimiter)
 
+    def toString(self):
+        return (_("{0}, associatedDataType: {1}").format(self.getType(), self.associatedDataType.toString()))
+
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
 #+---------------------------------------------------------------------------+
     @abstractmethod
     def getType(self):
         """getType:
-                Return a string description of the current Type.
+                Return a string describing the current Type.
 
                 @rtype: string
                 @return: the current type in string format.
@@ -107,6 +110,9 @@ class AbstractRelationType():
 #+---------------------------------------------------------------------------+
     def getAssociatedDataType(self):
         return self.associatedDataType
+
+    def setAssociatedDataType(self, dataType):
+        self.associatedDataType = dataType
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

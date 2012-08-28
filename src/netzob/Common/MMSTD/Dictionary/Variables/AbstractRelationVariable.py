@@ -52,32 +52,33 @@ class AbstractRelationVariable(AbstractVariable):
             Beware when using it, it can leads to obviously dangerous behavior.
     """
 
-    def __init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable):
+    def __init__(self, _id, name, mutable, learnable, pointedID, symbol):
         """Constructor of AbstractRelationVariable:
 
-                @type pointedVariable: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
-                @param pointedVariable: the pointed variable.
+                @type pointedID: string
+                @param pointedID: the pointed variable's ID.
         """
         AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
-        self.pointedVariable = pointedVariable
-        self.rootVariable = rootVariable
+        self.pointedID = pointedID
+        self.symbol = symbol
         self.directPointer = self.findDirectPointer()
+        self.pointedVariable = None
 
-    def findDirectPointer(self, vocabulary):
+    def findDirectPointer(self):
         """findDirectPointer:
                 A direct pointer or left pointer points from the right of a tree to the left or an other tree.
                 A reverse pointer or right pointer points from the left of a tree to its right.
         """
-        if self.pointedVariable is None:
+        if self.pointedID is None:
             return True
-            self.log.debug("No pointed variable.")
-        treeElements = self.rootVariable.getProgeny()
+            self.log.debug("No pointed ID.")
+        treeElements = self.symbol.getRoot().getProgeny()
         foundSelf = False
         for element in treeElements:
             if not foundSelf and element.getID() == self.getID():
                 foundSelf = True
-            if element.getID() == self.pointedVariable.getID():
+            if element.getID() == self.pointedID:
                 if not foundSelf:
                     return True
                 else:
@@ -94,7 +95,8 @@ class AbstractRelationVariable(AbstractVariable):
         self.log.debug(_("- [ {0}: randomizePointedVariable.").format(self.toString()))
         variables = writingToken.getVocabulary().getVariables()
         i = random.randint(0, len(variables))
-        self.pointedID = variables[i].getID()
+        self.pointedVariable = variables[i]
+        self.pointedID = self.pointedVariable.getID()
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
     def bindValue(self, processingToken):
@@ -104,10 +106,10 @@ class AbstractRelationVariable(AbstractVariable):
                 @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
                 @param processingToken: a token which contains all critical information on this access.
         """
-        if self.pointedVariable is None:
+        if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
         else:
-            self.pointedVariable.bindVariable(self)
+            self.getPointedVariable().bindVariable(self)
 
     def retrieveValue(self, processingToken):
         """retrieveValue:
@@ -117,11 +119,11 @@ class AbstractRelationVariable(AbstractVariable):
                 @param processingToken: a token which contains all critical information on this access.
         """
         self.log.debug(_("- {0}: retrieveValue.").format(self.toString()))
-        if self.pointedVariable is None:
+        if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
             self.currentValue = None
         else:
-            choppedValue = self.getChoppedValue()
+            choppedValue = self.getChoppedValue(processingToken)
             currentValue = bitarray('')
             for choppy in choppedValue:
                 currentValue += choppy
@@ -161,7 +163,7 @@ class AbstractRelationVariable(AbstractVariable):
         """
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
 
-        for choppy in self.getChoppedValue():
+        for choppy in self.getChoppedValue(writingToken):
             self.addTokenChoppedIndexes(len(writingToken.getChoppedValue()))
             writingToken.getChoppedValue().append(choppy)
         writingToken.updateValue()
@@ -229,7 +231,7 @@ class AbstractRelationVariable(AbstractVariable):
     def isDefined(self, processingToken):
         """isDefined:
         """
-        if self.pointedVariable is None:
+        if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
             return False
         else:
@@ -238,30 +240,30 @@ class AbstractRelationVariable(AbstractVariable):
     def restore(self, processingToken):
         """restore:
         """
-        if self.pointedVariable is None:
+        if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
             return False
         else:
-            return self.pointedVariable.restore(processingToken)
+            return self.getPointedVariable().restore(processingToken)
 
     def getChoppedValue(self, processingToken):
         """getChoppedValue:
                 Return the pointedVariable's chopped value.
         """
-        if self.pointedVariable is None:
+        if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
             return None
         else:
-            return self.pointedVariable.getChoppedValue(processingToken)
+            return self.getPointedVariable().getChoppedValue(processingToken)
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
         """
-        if self.pointedVariable is None:
+        if self.getPointedVariable() is None:
             self.log.debug("No pointed variable.")
             return False
         else:
-            return self.pointedVariable.getDictOfValues(processingToken)
+            return self.getPointedVariable().getDictOfValues(processingToken)
 
     def read(self, readingToken):
         """read:
@@ -437,11 +439,20 @@ class AbstractRelationVariable(AbstractVariable):
     def getCurrentValue(self):
         return self.currentValue
 
+    def getPointedID(self):
+        return self.pointedID
+
+    def getPointedVariable(self):
+        if self.pointedVariable is not None:
+            if self.pointedVariable.getID() == self.pointedID:
+                # The pointed variable is already set.
+                return self.pointedVariable
+
+        self.pointedVariable = self.symbol.getProject().getVocabulary().getVariableByID(self.pointedID)
+        return self.pointedVariable
+
     def isDirectPointer(self):
         return self.directPointer
-
-    def setPointedID(self, pointedID):
-        self.setPointedID(pointedID)
 
     def setCurrentValue(self, currentValue):
         self.currentValue = currentValue

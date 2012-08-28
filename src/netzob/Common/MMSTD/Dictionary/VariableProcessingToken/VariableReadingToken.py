@@ -47,17 +47,14 @@ class VariableReadingToken(AbstractVariableProcessingToken):
             A communication token used by variable when they are read.
     """
 
-    def __init__(self, negative, vocabulary, memory, value, index, rootVariable):
+    def __init__(self, negative, vocabulary, memory, value, index):
         """Constructor of VariableReadingToken:
 
                 @type index: integer
                 @param index: the current reading index in the read value.
-                @type rootVariable: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
-                @param rootVariable: the root variable on which the reading operation starts.
         """
         AbstractVariableProcessingToken.__init__(self, negative, vocabulary, memory, value)
         self.index = index
-        self.rootVariable
 
     def toString(self):
         """toString:
@@ -70,9 +67,6 @@ class VariableReadingToken(AbstractVariableProcessingToken):
 #+---------------------------------------------------------------------------+
     def getIndex(self):
         return self.index
-
-    def getRootVariable(self):
-        return self.rootVariable
 
     def getChoppedValue(self):
         return self.choppedValue

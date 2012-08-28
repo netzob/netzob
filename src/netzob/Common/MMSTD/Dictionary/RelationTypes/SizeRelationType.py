@@ -39,19 +39,22 @@ import logging
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
+from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
+    AbstractRelationType
 
 
-class SizeRelationType():
+class SizeRelationType(AbstractRelationType):
     """SizeRelationType:
             It defines the type of a size relation variable.
     """
 
     TYPE = "Size Relation"
 
-    def __init__(self):
+    def __init__(self, sized, minChars, maxChars, delimiter):
         """Constructor of SizeRelationType:
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.SizeRelationType.py')
+        self.setAssociatedDataType(self.makeAssociatedDataType(sized, minChars, maxChars, delimiter))
 
     def getType(self):
         """getType:

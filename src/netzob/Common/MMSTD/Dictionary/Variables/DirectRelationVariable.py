@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -54,10 +53,10 @@ class DirectRelationVariable(AbstractRelationVariable):
 
     TYPE = "Direct Relation Variable"
 
-    def __init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable):
+    def __init__(self, _id, name, mutable, learnable, pointedID, symbol):
         """Constructor of DirectRelationVariable:
         """
-        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable)
+        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedID, symbol)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
 
 #+---------------------------------------------------------------------------+
@@ -71,7 +70,7 @@ class DirectRelationVariable(AbstractRelationVariable):
     def toString(self):
         """toString:
         """
-        return _("[Direct Relation] {0}, pointed ID: {1}").format(AbstractVariable.toString(self), str(self.pointedID))
+        return _("[Direct Relation] {0}, pointed ID: {1}").format(AbstractVariable.toString(self), str(self.getPointedID()))
 
     def trivialCompareFormat(self, readingToken):
         """trivialCompareFormat:
@@ -94,7 +93,7 @@ class DirectRelationVariable(AbstractRelationVariable):
 
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
-        xmlRefID.text = self.pointedID
+        xmlRefID.text = str(self.pointedID)
         self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
@@ -102,64 +101,47 @@ class DirectRelationVariable(AbstractRelationVariable):
 #+---------------------------------------------------------------------------+
     def compareFormat(self, readingToken):
         """compareFormat:
-                Similar to the pointedVariable's own compareFormat function.
+                The variable checks if its format complies with the read value's format.
         """
         self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
-        oldChoppedValue = readingToken.getChoppedValue()
-        self.trivialCompareFormat(readingToken)
-        newChoppedValue = readingToken.getChoppedValue()
-        # We remove the old values.
-        for value in oldChoppedValue:
-            newChoppedValue.remove(value)
-        if readingToken.isOk():
-            # We add all the new values.
-            for i in len(newChoppedValue):
-                self.addChoppedSegment(len(oldChoppedValue) + i)
+        self.getPointedVariable().getType().compareFormat(readingToken)
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def learn(self, readingToken):
         """learn:
-                The variable checks if the pointed variable's format complies with the read value's format.
-                If it matches, the variable learns, else it returns NOk.
-                Not used anymore but may be interesting in the future.
         """
         self.log.debug(_("- [ {0}: learn.").format(self.toString()))
-        tmp = readingToken.getValue()[readingToken.getIndex():]
+        if readingToken.isOk():  # A format comparison had been executed before, its result must be "OK".
+            tmp = readingToken.getValue()[readingToken.getIndex():]
 
-        pointedVariable = self.getPointedVariable(readingToken.getVocabulary())
-        if pointedVariable is None:
-            self.log.debug("No pointed variable.")
-            readingToken.setOk(False)
-        else:
-            minBits = pointedVariable.getMinBits()
-            maxBits = pointedVariable.getMaxBits()
-            # Length comparison.
-            if len(tmp) >= minBits:
+            # If the type has a definite size.
+            if self.getPointedVariable().getType().isSized():
+                maxBits = self.getPointedVariable().getType().getMaxBits()
+                # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
                 if len(tmp) <= maxBits:
-                    # Format comparison.
-                    if pointedVariable.getType().suitsBinary(tmp):
-                        # We learn everything that last.
-                        self.setCurrentValue(tmp)
-                        readingToken.incrementIndex(len(tmp))
-                        readingToken.setOk(True)
-                        self.log.info(_("Format comparison successful."))
-                    else:
-                        readingToken.setOk(False)
-                        self.log.info(_("Format comparison failed: wrong format."))
-                else:  # len(tmp) > self.maxBits
-                    # Format comparison.
-                    if pointedVariable.getType().suitsBinary(tmp[:maxBits]):
-                        # We learn as much as we can.
-                        self.setCurrentValue(tmp[:maxBits])
-                        readingToken.incrementIndex(maxBits)
-                        readingToken.setOk(True)
-                        self.log.info(_("Format comparison successful."))
-                    else:
-                        readingToken.setOk(False)
-                        self.log.info(_("Format comparison failed: wrong format."))
+                    self.setCurrentValue(tmp)
+                    readingToken.incrementIndex(len(tmp))
+
+                else:  # len(tmp) > maxBits
+                    # We learn as much as we can.
+                    self.setCurrentValue(tmp[:maxBits])
+                    readingToken.incrementIndex(maxBits)
+
+            # If the type is delimited from 0 to a delimiter.
             else:
-                readingToken.setOk(False)
-                self.log.info(_("Format comparison failed: wrong size."))
+                endi = 0
+                for i in range(len(tmp)):
+                    if self.getPointedVariable().getType().endsHere(tmp[i:]):
+                        endi = i
+                        break
+                # We learn from the beginning to the delimiter.
+                self.setCurrentValue(tmp[:endi + len(self.getPointedVariable().getType().getDelimiter())])  # The delimiter token is a part of the variable.
+                readingToken.incrementIndex(endi + len(self.getPointedVariable().getType().getDelimiter()))
+
+            self.log.info(_("Learning done."))
+        else:
+            self.log.info(_("Learning abort because the previous format comparison failed."))
+
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def generate(self, writingToken):
@@ -167,12 +149,11 @@ class DirectRelationVariable(AbstractRelationVariable):
                 A new current value is generated according to the pointed variable type and the given generation strategy.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        pointedVariable = self.getPointedVariable(writingToken.getVocabulary())
-        if pointedVariable is None:
+        if self.getPointedVariable() is None:
             writingToken.setOk(False)
             self.log.debug("No pointed variable.")
         else:
-            self.setCurrentValue(pointedVariable.getType().generateValue(writingToken.getGenerationStrategy()))
+            self.setCurrentValue(self.getPointedVariable().getType().generateValue(writingToken.getGenerationStrategy()))
 
     def computeValue(self, value):
         """computeValue:
@@ -185,7 +166,7 @@ class DirectRelationVariable(AbstractRelationVariable):
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
                 Loads a DirectRelationVariable variable from an XML definition.
         """
@@ -197,7 +178,7 @@ class DirectRelationVariable(AbstractRelationVariable):
             xmlLearnable = xmlRoot.get("learnable") == "True"
 
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            result = DirectRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, xmlRefID)
+            result = DirectRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, xmlRefID, symbol)
             logging.debug(_("DirectRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("DirectRelationVariable: loadFromXML fails"))

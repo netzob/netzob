@@ -47,6 +47,7 @@ from netzob.Common.MMSTD.Dictionary.Variables.AbstractRelationVariable import \
     AbstractRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class ComputedRelationVariable(AbstractRelationVariable):
@@ -56,13 +57,13 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
     TYPE = "Computed Relation Variable"
 
-    def __init__(self, _id, name, mutable, learnable, relationType, pointedVariable, rootVariable):
+    def __init__(self, _id, name, mutable, learnable, relationType, pointedID, symbol):
         """Constructor of ComputedRelationVariable:
 
                 @type relationType: string
                 @param relationType: the type of computation we will use.
         """
-        AbstractVariable.__init__(self, _id, name, mutable, learnable, pointedVariable, rootVariable)
+        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedID, symbol)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ComputedRelationVariable.py')
         self.relationType = relationType
         self.currentValue = None
@@ -78,7 +79,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
     def toString(self):
         """toString:
         """
-        return _("[Computed Relation] {0}, pointed ID: {1}, type: {2}, minChars: {3}, maxChars: {4}.").format(AbstractVariable.toString(self), str(self.pointedID), self.type.getType(), str(self.getMinChars()), str(self.getMaxChars()))
+        return _("[Computed Relation] {0}, pointed ID: {1}, type: {2}.").format(AbstractVariable.toString(self), str(self.getPointedID()), self.relationType.toString())
 
     def trivialCompareFormat(self, readingToken):
         """trivialCompareFormat:
@@ -100,22 +101,30 @@ class ComputedRelationVariable(AbstractRelationVariable):
         xmlVariable.set("mutable", str(self.isMutable()))
         xmlVariable.set("learnable", str(self.isLearnable()))
 
+        # sized
+        xmlSized = etree.SubElement(xmlVariable, "{" + namespace + "}sized")
+        xmlSized.text = str(self.relationType.getAssociatedDataType().isSized())
+
         # type
         xmlType = etree.SubElement(xmlVariable, "{" + namespace + "}type")
-        xmlType.text = self.type.getType()
+        xmlType.text = self.relationType.getType()
 
         # Definition of the referenced variable ID.
         xmlRefID = etree.SubElement(xmlVariable, "{" + namespace + "}ref")
-        xmlRefID.text = self.pointedID
+        xmlRefID.text = str(self.pointedID)
         self.log.debug(_("Variable {0}. ]").format(self.getName()))
 
         # minChars
         xmlMinChars = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
-        xmlMinChars.text = str(self.minChars)
+        xmlMinChars.text = str(self.relationType.getAssociatedDataType().getMinChars())
 
         # maxBits
         xmlMaxChars = etree.SubElement(xmlVariable, "{" + namespace + "}maxChars")
-        xmlMaxChars.text = str(self.maxChars)
+        xmlMaxChars.text = str(self.relationType.getAssociatedDataType().getMaxChars())
+
+        # delimiter
+        xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
+        xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.relationType.getAssociatedDataType().getDelimiter()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractRelationVariable                         |
@@ -130,39 +139,40 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
     def learn(self, readingToken):
         """learn:
-                The pointed variable checks if its format complies with the read value's format.
-                If it matches, the variable learns, else it returns NOK.
                 Not used anymore but may be interesting in the future.
         """
         self.log.debug(_("- [ {0}: learn.").format(self.toString()))
-        tmp = readingToken.getValue()[readingToken.getIndex():]
-        # Length comparison.
-        if len(tmp) >= self.minBits:
-            if len(tmp) <= self.maxBits:
-                # Format comparison.
-                if self.type.getAssociatedDataType().suitsBinary(tmp):
-                    # We learn everything that last.
+        if readingToken.isOk():  # A format comparison had been executed before, its result must be "OK".
+            tmp = readingToken.getValue()[readingToken.getIndex():]
+
+            # If the type has a definite size.
+            if self.self.relationType.isSized():
+                maxBits = self.relationType.getMaxBits()
+                # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
+                if len(tmp) <= maxBits:
                     self.setCurrentValue(tmp)
                     readingToken.incrementIndex(len(tmp))
-                    readingToken.setOk(True)
-                    self.log.info(_("Format comparison successful."))
-                else:
-                    readingToken.setOk(False)
-                    self.log.info(_("Format comparison failed: wrong format."))
-            else:  # len(tmp) > self.maxBits
-                # Format comparison.
-                if self.type.getAssociatedDataType().suitsBinary(tmp[:self.maxBits]):
+
+                else:  # len(tmp) > maxBits
                     # We learn as much as we can.
-                    self.setCurrentValue(tmp[:self.maxBits])
-                    readingToken.incrementIndex(self.maxBits)
-                    readingToken.setOk(True)
-                    self.log.info(_("Format comparison successful."))
-                else:
-                    readingToken.setOk(False)
-                    self.log.info(_("Format comparison failed: wrong format."))
+                    self.setCurrentValue(tmp[:maxBits])
+                    readingToken.incrementIndex(maxBits)
+
+            # If the type is delimited from 0 to a delimiter.
+            else:
+                endi = 0
+                for i in range(len(tmp)):
+                    if self.relationType.endsHere(tmp[i:]):
+                        endi = i
+                        break
+                # We learn from the beginning to the delimiter.
+                self.setCurrentValue(tmp[:endi + len(self.relationType.getDelimiter())])  # The delimiter token is a part of the variable.
+                readingToken.incrementIndex(endi + len(self.relationType.getDelimiter()))
+
+            self.log.info(_("Learning done."))
         else:
-            readingToken.setOk(False)
-            self.log.info(_("Format comparison failed: wrong size."))
+            self.log.info(_("Learning abort because the previous format comparison failed."))
+
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
     def generate(self, writingToken):
@@ -170,14 +180,14 @@ class ComputedRelationVariable(AbstractRelationVariable):
                 A new current value is generated according to the variable type and the given generation strategy.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        self.setCurrentValue(self.type.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
+        self.setCurrentValue(self.relationType.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
 
     def computeValue(self, value):
         """computeValue:
                 Compute the value of the relation variable from the given value..
         """
         self.log.debug(_("- {0}: computeValue.").format(self.toString()))
-        return self.type.computeValue(value)
+        return self.relationType.computeValue(value)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -204,7 +214,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
                 Loads a ComputedRelationVariable from an XML definition.
         """
@@ -215,16 +225,12 @@ class ComputedRelationVariable(AbstractRelationVariable):
             xmlMutable = xmlRoot.get("mutable") == "True"
             xmlLearnable = xmlRoot.get("learnable") == "True"
 
-            # type
-            _type = None
-            xmlType = xmlRoot.find("{" + namespace + "}type")
-            if xmlType is not None:
-                _type = AbstractRelationType.makeType(xmlType.text)
-                if _type is None:
-                    return None
+            # sized
+            xmlSized = xmlRoot.find("{" + namespace + "}sized")
+            if xmlSized is not None and xmlSized.text != "None":
+                sized = xmlSized.text == 'True'
             else:
-                logging.error(_("No type specified for this variable in the xml file."))
-                return None
+                sized = True
 
             # minChars
             xmlMinChars = xmlRoot.find("{" + namespace + "}minChars")
@@ -240,8 +246,28 @@ class ComputedRelationVariable(AbstractRelationVariable):
             else:
                 maxChars = minChars
 
+            # delimiter
+            xmlDelimiter = xmlRoot.find("{" + namespace + "}delimiter")
+            if xmlDelimiter is not None and xmlDelimiter.text != "None":
+                delimiter = xmlDelimiter.text
+            else:
+                delimiter = None
+
+            # type
+            _type = None
+            xmlType = xmlRoot.find("{" + namespace + "}type")
+            if xmlType is not None:
+                _type = AbstractRelationType.makeType(xmlType.text, sized, minChars, maxChars, delimiter)
+                if _type is None:
+                    return None
+            else:
+                logging.error(_("No type specified for this variable in the xml file."))
+                return None
+
+            # ref
             xmlRefID = xmlRoot.find("{" + namespace + "}ref").text
-            result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, xmlRefID, minChars, maxChars)
+
+            result = ComputedRelationVariable(xmlID, xmlName, xmlMutable, xmlLearnable, _type, xmlRefID, symbol)
             logging.debug(_("ComputedRelationVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("ComputedRelationVariable: loadFromXML fails"))
