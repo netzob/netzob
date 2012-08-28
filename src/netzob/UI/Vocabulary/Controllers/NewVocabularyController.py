@@ -72,6 +72,9 @@ class NewVocabularyController(object):
         self.view.updateLeftPanel()
         self.selectedMessagesToMove = None
 
+        self.view.symbolListTreeViewSelection.set_select_function(self.symbol_list_selection_function, None)
+        self.symbol_list_set_selection = True
+
     @property
     def view(self):
         return self._view
@@ -233,9 +236,29 @@ class NewVocabularyController(object):
         self.view.addMessageTable()
 
     def toggleCellRenderer_toggled_cb(self, widget, buttonid):
+        # Update this flag so the line won't be selected.
+        self.symbol_list_set_selection = False
+
         model = self.view.symbolListStore
         model[buttonid][0] = not model[buttonid][0]
         self.view.updateSymbolListToolbar()
+
+    def symbol_list_selection_function(self, selection, model, path, selected, data):
+        """This method is in charge of deciding if the current line of
+        symbol tree view (symbolListTreeViewSelection) should be
+        selected.
+
+        If the users clicked on the checkbox, then, the current line
+        should _not_ be selected. In other cases, the current line is
+        selected.
+
+        """
+
+        if not self.symbol_list_set_selection:
+            self.symbol_list_set_selection = True
+            return False
+
+        return True
 
     def symbolListTreeViewSelection_changed_cb(self, selection):
         """Callback executed when the user
