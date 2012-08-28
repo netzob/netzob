@@ -122,6 +122,9 @@ py_find(PyObject* self, PyObject* args) {
 	return pDm;
 }
 
+/*
+ * Convert the native datamodel to a Python structure.
+ */
 static PyObject*
 create_python_dm(struct relation_datamodel* dm)
 {

@@ -36,6 +36,9 @@
 
 static const char* algorithm_path = "lib/libRelation/algorithms";
 
+/*
+ * Build a native datamodel containing results.
+ */
 void
 relation_find(struct relation_datamodel** dm,
 							const char*** data,
@@ -54,6 +57,7 @@ relation_find(struct relation_datamodel** dm,
 				if (matches != NULL)
 					append_algo_matches(dm, algo_opers, matches);
 			}
+			/* only search over the first row, others are useless */
 			break;
 		}
 		algo_opers = algo_opers->next;
@@ -61,6 +65,9 @@ relation_find(struct relation_datamodel** dm,
 	clean_algo(algo_opers);
 }
 
+/*
+ * Append a result to the datamodel structure.
+ */
 static struct relation_datamodel*
 append_algo_matches(struct relation_datamodel** dm,
 										struct relation_algorithm_operations_list* opers,
@@ -76,6 +83,11 @@ append_algo_matches(struct relation_datamodel** dm,
 	*dm = new;
 	return new;
 }
+
+/*
+ * Build a list of libRelation algorithm.
+ * This structure contains a handle returned by dlopen() of libraries.
+ */
 static struct relation_algorithm_operations_list*
 search_algorithms()
 {
@@ -131,6 +143,9 @@ search_algorithms()
 	return algo_opers;
 }
 
+/*
+ * Correctly free a relation_algorithm_operations_list recursively.
+ */
 static void
 clean_algo(struct relation_algorithm_operations_list* algo)
 {

@@ -33,6 +33,10 @@
 
 static unsigned int MIN_SIZE = 2;
 
+/*
+ * wrapper of string comparison used to detect a relation with the
+ * specified parameters.
+ */
 static int
 get_match(const char* cell_ref, const char* cell_rel,
 					off_t start, size_t len)
@@ -53,6 +57,9 @@ get_match(const char* cell_ref, const char* cell_rel,
 	return ret;
 }
 
+/*
+ * Append a node to the set of matches.
+ */
 static struct relation_matches*
 append_match(struct relation_matches** matches,
 						 const struct relation_match* match)
@@ -80,7 +87,7 @@ verify_match(const char*** messages, size_t msgs_len, size_t cells_len,
 	const char* ref;
 	const char* rel;
 
-	DLOG("Verifying M0000");
+	DLOG("Verifying M%04d", 0);
 	for (i = 0; i < msgs_len; i++) {
 		if (i == match->message_idx)
 			continue;
@@ -97,6 +104,9 @@ verify_match(const char*** messages, size_t msgs_len, size_t cells_len,
 	return ret;
 }
 
+/*
+ * Main function used to build a set of matches.
+ */
 static struct relation_matches*
 relation_equality_find(const char*** messages, int row, int idx,
 											 size_t vlen, size_t hlen)
