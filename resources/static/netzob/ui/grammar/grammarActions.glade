@@ -16,6 +16,7 @@
         <property name="label" translatable="yes">Passive Grammar Inferring</property>
         <property name="tooltip" translatable="yes">Infer the grammar based on provided examples</property>
         <property name="stock_id">gtk-media-stop</property>
+        <property name="is_important">True</property>
         <signal name="activate" handler="passiveGrammarInferring_activate_cb" swapped="no"/>
       </object>
     </child>
@@ -52,6 +53,7 @@
         <property name="label" translatable="yes">Create OpenChannel Transition</property>
         <property name="tooltip" translatable="yes">Create Open Channel Transition</property>
         <property name="stock_id">gtk-add</property>
+        <property name="is_important">True</property>
         <signal name="activate" handler="createOpenChannelTransition_activate_cb" swapped="no"/>
       </object>
     </child>
@@ -60,6 +62,7 @@
         <property name="label" translatable="yes">Create CloseChannel Transition</property>
         <property name="tooltip" translatable="yes">Create a Close Channel Transition</property>
         <property name="stock_id">gtk-add</property>
+        <property name="is_important">True</property>
         <signal name="activate" handler="createCloseChannelTransition_activate_cb" swapped="no"/>
       </object>
     </child>
