@@ -53,6 +53,7 @@ class TypeConvertor():
     #| @endian the endian selected (little or big) (normal = big)
     #| @return
     #+----------------------------------------------
+
     @staticmethod
     def string2bin(aStr, endian='big'):
         result = bitarray(endian=endian)
@@ -646,3 +647,85 @@ class TypeConvertor():
             res += str(tmp)
 
         return res  # s[:-1]  # We delete the last space character
+
+#+---------------------------------------------------------------------------+
+#| Convertors by Benjamin                                                    |
+#+---------------------------------------------------------------------------+
+    @staticmethod
+    def stringB2bin(stri):
+        if stri is not None:
+            bina = bitarray()
+            bina.fromstring(stri)
+            return bina
+        else:
+            return None
+
+    @staticmethod
+    def binB2string(bina):
+        if bina is not None:
+            return bina.tostring()
+        else:
+            return None
+
+    @staticmethod
+    def binstring2bin(stri):
+        if stri is not None:
+            bina = bitarray(stri)
+            return bina
+        else:
+            return None
+
+    @staticmethod
+    def bin2binstring(bina):
+        if bina is not None:
+            return bina.to01()
+        else:
+            return None
+
+    @staticmethod
+    def hexstring2bin(stri):
+        """hexstring2bin:
+                From "0123456789abcdef" to bitarray('011010111000110...').
+        """
+        if stri is not None:
+        # bitarray(bin(int(stri, 16))[2:]) : remove (int) all left-sided useful '0's.*
+
+            sbin = ''
+            for char in stri:
+                # We translate half-byte by half-byte.
+                onecharbin = bin(int(char, 16))[2:]  # We translate a character into binary.
+                for i in range(4 - len(onecharbin)):
+                    sbin += '0'  # We prepend '0's to match the format: one hex char = 4 binary chars.
+                sbin += onecharbin  # We append a new character's translation.
+            return bitarray(sbin)
+        else:
+            return None
+
+    @staticmethod
+    def bin2hexstring(bina):
+        if bina is not None:
+            # str(hex(int(bina.to01(), 2))) : remove (int) all left-sided useful '0's.
+
+            sbin = bina.to01()  # We retrieve a string with the '0's and '1's of the binary.
+            stri = ''
+            for start in xrange(0, len(sbin), 4):
+                # We translate half-byte by half-byte.
+                stri += str(hex(int(sbin[start:start + 4], 2)))[2:]
+            return stri
+        else:
+            return None
+
+    @staticmethod
+    def intstring2bin(stri):
+        if stri is not None:
+            bina = bitarray(bin(stri)[2:])
+            return bina
+        else:
+            return None
+
+    @staticmethod
+    def bin2intstring(bina):
+        if bina is not None:
+            return str(int(bina.to01(), 2))  # Transform from a base 2 to a base 10 integer and then translate it in string.
+        else:
+            return None

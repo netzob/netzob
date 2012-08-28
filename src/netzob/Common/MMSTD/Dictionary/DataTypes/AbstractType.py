@@ -41,6 +41,7 @@ import random
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class AbstractType():
@@ -66,10 +67,18 @@ class AbstractType():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Types.AbstractType.py')
         self.sized = sized
         self.setNumberBitsAndNumberChars(minChars, maxChars)
-        self.delimiter = delimiter
+        try:
+            # We assume that delimiters are written by the user as hex string.
+            self.delimiter = TypeConvertor.hexstring2bin(delimiter)
+        except:
+            self.delimiter
+            self.log.error(_("The delimiter {0} is not a valid hexadecimal string.").format(str(delimiter)))
 
     def toString(self):
-        return (_("{0}, bits: ({1}, {2}), chars: ({3}, {4})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars)))
+        if self.sized:
+            return (_("{0}, bits: ({1}, {2}), chars: ({3}, {4})").format(self.getType(), str(self.minBits), str(self.maxBits), str(self.minChars), str(self.maxChars)))
+        else:
+            return (_("{0}, delimiter: {1}").format(self.getType(), self.bin2str(self.delimiter)))
 
     def endsHere(self, bina):
         """endsHere:

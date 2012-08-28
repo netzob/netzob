@@ -50,7 +50,7 @@ class IPv4WordType(AbstractWordType):
 
     TYPE = "IPv4 Word"
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of IPv4WordType:
         """
         AbstractWordType.__init__(self, True, 7, 15, None)

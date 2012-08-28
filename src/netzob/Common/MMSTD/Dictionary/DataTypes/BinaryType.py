@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 import logging
 import random
 
@@ -41,6 +40,7 @@ import random
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class BinaryType(AbstractType):
@@ -105,17 +105,10 @@ class BinaryType(AbstractType):
         return self.str2bin(value)
 
     def str2bin(self, stri):
-        if stri is not None:
-            bina = bitarray(stri)
-            return bina
-        else:
-            return None
+        return TypeConvertor.binstring2bin(stri)
 
     def bin2str(self, bina):
-        if bina is not None:
-            return bina.to01()
-        else:
-            return None
+        return TypeConvertor.bin2binstring(bina)
 
     def getBitSize(self, typeValue):
         return len(typeValue)

@@ -49,7 +49,7 @@ class MACWordType(AbstractWordType):
 
     TYPE = "MAC Word"
 
-    def __init__(self):
+    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
         """Constructor of MACWordType:
         """
         AbstractWordType.__init__(self, True, 17, 17, None)
