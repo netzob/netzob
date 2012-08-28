@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -78,7 +77,7 @@ class DataVariable(AbstractLeafVariable):
                 For debugging purpose.
         """
         # We simply avoid to print unreadable binary.
-        if self.getType().getType() == BinaryType.TYPE:
+        if self.type.getType() == BinaryType.TYPE:
             readableValue = TypeConvertor.bin2strhex(self.originalValue)
         else:
             readableValue = self.bin2str(self.originalValue)
@@ -124,7 +123,7 @@ class DataVariable(AbstractLeafVariable):
                 Get the full description of the variable.
         """
         # We simply avoid to print unreadable binary.
-        if self.getType().getType() == BinaryType.TYPE:
+        if self.type.getType() == BinaryType.TYPE:
             readableValue = TypeConvertor.bin2strhex(self.getValue(writingToken))
         else:
             readableValue = str(self.bin2str(self.getValue(writingToken)))
@@ -201,7 +200,7 @@ class DataVariable(AbstractLeafVariable):
 
         # delimiter
         xmlDelimiter = etree.SubElement(xmlVariable, "{" + namespace + "}delimiter")
-        xmlDelimiter.text = str(self.type.getDelimiter())
+        xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.type.getDelimiter()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractLeafVariable                             |
@@ -248,7 +247,7 @@ class DataVariable(AbstractLeafVariable):
             # If the type has a definite size.
             if self.type.isSized():
                 maxBits = self.type.getMaxBits()
-                # Length comparison. (len(tmp) >= minBits is implicita as the readingToken is OK.)
+                # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
                 if len(tmp) <= maxBits:
                     self.setCurrentValue(tmp)
                     readingToken.incrementIndex(len(tmp))
@@ -266,8 +265,8 @@ class DataVariable(AbstractLeafVariable):
                         endi = i
                         break
                 # We learn from the beginning to the delimiter.
-                self.setCurrentValue(tmp[:endi + len(self.getType().getDelimiter())])  # The delimiter token is a part of the variable.
-                readingToken.incrementIndex(endi + len(self.getType().getDelimiter()))
+                self.setCurrentValue(tmp[:endi + len(self.type.getDelimiter())])  # The delimiter token is a part of the variable.
+                readingToken.incrementIndex(endi + len(self.type.getDelimiter()))
 
             self.log.info(_("Learning done."))
         else:
@@ -301,14 +300,14 @@ class DataVariable(AbstractLeafVariable):
                 The current value is mutated according to the given generation strategy.
         """
         self.log.debug(_("- {0}: mutate.").format(self.toString()))
-        self.setCurrentValue(self.getType().mutateValue(writingToken.getGenerationStrategy(), self.getValue()))
+        self.setCurrentValue(self.type.mutateValue(writingToken.getGenerationStrategy(), self.getValue()))
 
     def generate(self, writingToken):
         """generate:
                 A new current value is generated according to the variable type and the given generation strategy.
         """
         self.log.debug(_("- {0}: generate.").format(self.toString()))
-        self.setCurrentValue(self.getType().generateValue(writingToken.getGenerationStrategy()))
+        self.setCurrentValue(self.type.generateValue(writingToken.getGenerationStrategy()))
 
     def writeValue(self, writingToken):
         """writeValue:
@@ -363,7 +362,7 @@ class DataVariable(AbstractLeafVariable):
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
                 Loads a data variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
@@ -406,7 +405,7 @@ class DataVariable(AbstractLeafVariable):
             # delimiter
             xmlDelimiter = xmlRoot.find("{" + namespace + "}delimiter")
             if xmlDelimiter is not None and xmlDelimiter.text != "None":
-                delimiter = bitarray(xmlDelimiter.text)
+                delimiter = xmlDelimiter.text
             else:
                 delimiter = None
 

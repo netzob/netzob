@@ -247,11 +247,11 @@ class RepeatVariable(AbstractNodeVariable):
             if self.isMutable():
                 # mutable.
                 self.randomizeIterations()
-                self.writeChildren(writingToken)
+                self.writeChild(writingToken)
 
             else:
                 # not mutable.
-                self.writeChildren(writingToken)
+                self.writeChild(writingToken)
 
         else:
             # no child.
@@ -333,7 +333,7 @@ class RepeatVariable(AbstractNodeVariable):
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
                 Loads a repeat variable from an XML definition.
                 We do not trust the user and check every field (even mandatory).
@@ -346,7 +346,7 @@ class RepeatVariable(AbstractNodeVariable):
             xmlLearnable = xmlRoot.get("learnable") == "True"
 
             xmlChild = xmlRoot.find("{" + namespace + "}variable")
-            child = AbstractVariable.loadFromXML(xmlChild, namespace, version)
+            child = AbstractVariable.loadFromXML(xmlChild, namespace, version, symbol)
 
             # minIterations
             xmlMinIterations = xmlRoot.find("{" + namespace + "}minIterations")

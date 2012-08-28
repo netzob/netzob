@@ -313,7 +313,7 @@ class AlternateVariable(AbstractNodeVariable):
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
                 Loads an alternate variable from an XML definition.
         """
@@ -324,11 +324,11 @@ class AlternateVariable(AbstractNodeVariable):
             xmlMutable = xmlRoot.get("mutable") == "True"
             xmlLearnable = xmlRoot.get("learnable") == "True"
 
-            children = []
+            result = AlternateVariable(xmlID, xmlName, xmlMutable, xmlLearnable, [])
             for xmlChildren in xmlRoot.findall("{" + namespace + "}variable"):
-                child = AbstractVariable.loadFromXML(xmlChildren, namespace, version)
-                children.append(child)
-            result = AlternateVariable(xmlID, xmlName, xmlMutable, xmlLearnable, children)
+                child = AbstractVariable.loadFromXML(xmlChildren, namespace, version, symbol)
+                result.addChild(child)
+
             logging.debug(_("AlternateVariable: loadFromXML successes: {0} ]").format(result.toString()))
             return result
         logging.debug(_("AlternateVariable: loadFromXML fails"))

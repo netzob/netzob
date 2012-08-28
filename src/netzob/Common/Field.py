@@ -46,7 +46,6 @@ from netzob.Common.Filters.Encoding.FormatFilter import FormatFilter
 from netzob.Common.Filters.Visualization.BackgroundColorFilter import \
     BackgroundColorFilter
 from netzob.Common.Filters.Visualization.TextColorFilter import TextColorFilter
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.MMSTD.Dictionary.DataTypes.BinaryType import BinaryType
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
@@ -448,7 +447,7 @@ class Field(object):
                 field.setColor(field_color)
 
             if xmlRoot.find("{" + namespace + "}variable") is not None:
-                var = AbstractVariable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version)
+                var = AbstractVariable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version, symbol)
                 field.setVariable(var)
 
             logging.debug(_("Field: loadFromXML: {0} ]").format(field.getName()))

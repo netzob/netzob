@@ -148,7 +148,7 @@ class AbstractNodeVariable(AbstractVariable):
         """
         choppedValue = []
         for child in self.children:
-            choppedValue.extend(child.getChoppedValue())
+            choppedValue.extend(child.getChoppedValue(processingToken))
         return choppedValue
 
     def getDictOfValues(self, processingToken):

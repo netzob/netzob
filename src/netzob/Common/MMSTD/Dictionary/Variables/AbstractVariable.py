@@ -281,7 +281,7 @@ class AbstractVariable:
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(xmlRoot, namespace, version):
+    def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
                 Load a variable from an XML definition.
                 Calls its proper heir function for it to create the variable.
@@ -293,6 +293,8 @@ class AbstractVariable:
                 @type version: string
                 @param version: the load version.
                 @rtype: netzob.Common.MMSTD.Dictionary.Variable.AbstractVariable.AbstractVariable
+                @type symbol: netzob.Common.Symbol
+                @param symbol: the symbol in which the current variable is placed, used by relation variable.
                 @return: a variable constructed from this XML definition.
         """
         if version == "0.1":
@@ -300,32 +302,32 @@ class AbstractVariable:
             # Data Variable
             if xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DataVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-                return DataVariable.loadFromXML(xmlRoot, namespace, version)
+                return DataVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Aggregate Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AggregateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-                return AggregateVariable.loadFromXML(xmlRoot, namespace, version)
+                return AggregateVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Alternate Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:AlternateVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
-                return AlternateVariable.loadFromXML(xmlRoot, namespace, version)
+                return AlternateVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Repeat Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:RepeatVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import RepeatVariable
-                return RepeatVariable.loadFromXML(xmlRoot, namespace, version)
+                return RepeatVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Direct Relation Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DirectRelationVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.DirectRelationVariable import DirectRelationVariable
-                return DirectRelationVariable.loadFromXML(xmlRoot, namespace, version)
+                return DirectRelationVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Computed Relation Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ComputedRelationVariable":
                 from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import ComputedRelationVariable
-                return ComputedRelationVariable.loadFromXML(xmlRoot, namespace, version)
+                return ComputedRelationVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             else:
                 logging.debug(_("xmlRoot.get(...) returns {0} which does not correspond to a true variable class.").format(xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))
