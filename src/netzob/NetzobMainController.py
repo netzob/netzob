@@ -193,8 +193,11 @@ class NetzobMainController(object):
             newPerspectiveCode = model[iter][0]
             self.view.switchPerspective(newPerspectiveCode)
 
-    def mainWindow_destroy_cb(self, window):
+    def mainWindow_delete_event_cb(self, window, data):
         self.close()
+
+    def mainWindow_destroy_cb(self, window):
+        Gtk.main_quit()
 
     def entry_disableButtonIfEmpty_cb(self, widget, button):
         if(len(widget.get_text()) > 0):
