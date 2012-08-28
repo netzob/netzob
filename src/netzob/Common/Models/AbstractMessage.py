@@ -347,7 +347,7 @@ class AbstractMessage(object):
             else:
                 regex.append(field.getRegex())
 
-        # Now we atwpply the regex over the message
+        # Now we apply the regex over the message
         try:
             compiledRegex = re.compile("".join(regex))
             data = self.getReducedStringData()
