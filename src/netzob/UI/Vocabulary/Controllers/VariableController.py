@@ -202,8 +202,7 @@ class VariableTreeController:
         md.destroy()
         if result == Gtk.ResponseType.YES:
             # Remove the variable from the global tree.
-            motherNode = variable.findMotherNode(self.field.getVariable())
-            motherNode.removeChildByID(variable)
+            variable.getFather().removeChildByID(variable)
 
             # Remove its entry.
             entry = self.dictEntry[variable.getID()]
@@ -237,13 +236,12 @@ class VariableTreeController:
                 self.registerVariable(None, variable)
             else:
                 # Edit the variable
-                motherNode = variable.findMotherNode(self.field.getVariable())
-                motherNode.editChildByID(variable)
+                variable.getFather().editChildByID(variable)
 
                 # Update its entry
                 entry = self.dictEntry[variable.getID()]
                 self.treestore.remove(entry)
-                self.registerVariable(self.dictEntry[motherNode.getID()], variable)
+                self.registerVariable(self.dictEntry[variable.getFather().getID()], variable)
         else:
             logging.info(_("The user didn't confirm the edition of the variable {0}").format(variable.getName()))
 
@@ -380,9 +378,8 @@ class VariableCreationController:
 
         # Direct Relation variable
         elif strVarType == DirectRelationVariable.TYPE:
-            self.view.getWidg("valueLabel").set_text("Pointed ID")
 
-            self.view.getWidg("valueLabel").set_visible(True)
+            self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
             self.view.getWidg("relationTypeLabel").set_visible(False)
             self.view.getWidg("sizedLabel").set_visible(False)
@@ -405,11 +402,10 @@ class VariableCreationController:
 
         # Computed Relation variable
         elif strVarType == ComputedRelationVariable.TYPE:
-            self.view.getWidg("valueLabel").set_text("Pointed ID")
             self.view.getWidg("minLabel").set_text("Minimum number of characters")
             self.view.getWidg("maxLabel").set_text("Maximum number of characters")
 
-            self.view.getWidg("valueLabel").set_visible(True)
+            self.view.getWidg("valueLabel").set_visible(False)
             self.view.getWidg("typeLabel").set_visible(False)
             self.view.getWidg("relationTypeLabel").set_visible(True)
             self.view.getWidg("sizedLabel").set_visible(True)
@@ -633,22 +629,16 @@ class VariableCreationController:
 
             # We find the variable by its ID.
             pointedID = str(self.view.getWidg("IDEntry").get_text())
-            pointedVariable = self.treeController.netzob.getVocabulary().getVariableByID(pointedID)
+            symbol = self.treeController.field.getSymbol()
 
-            # We find the root variable of the symbol.
-            rootVariable = self.treeController.field.getSymbol().getRoot()
-
-            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedVariable, rootVariable)
+            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, symbol)
 
         # Computed Relation Variable
         elif strVarType == ComputedRelationVariable.TYPE:
 
             # We find the variable by its ID.
             pointedID = str(self.view.getWidg("IDEntry").get_text())
-            pointedVariable = self.treeController.netzob.getVocabulary().getVariableByID(pointedID)
-
-            # We find the root variable of the symbol.
-            rootVariable = self.treeController.field.getSymbol().getRoot()
+            symbol = self.treeController.field.getSymbol()
 
             sized = self.view.getWidg("sizedCheck").get_active()
             if sized:
@@ -662,9 +652,10 @@ class VariableCreationController:
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
             vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text(), sized, minChars, maxChars, delimiter)
-            variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedVariable, rootVariable)
+            variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, symbol)
 
         if variable is not None:
+            father = self.variable.getFather()
             # We notify the symbol that is no more composed of default variable.
             self.treeController.field.getSymbol().setDefault(False)
 
@@ -692,7 +683,8 @@ class VariableCreationController:
                 # We do not manage/save children.
                 else:
                     self.variable = variable
-                self.treeController.editVariable(variable)
+                self.variable.setFather(self.variable)
+                self.treeController.editVariable(self.variable)
 
             else:
                 self.variable.addChild(variable)
@@ -763,8 +755,7 @@ class VariableMovingController:
                 Run a dialog that allows to move a variable.
         """
         dialog = self.view.getWidg("dialog")
-        motherNode = self.variable.findMotherNode(self.treeController.field.getVariable())
-        self.view.getWidg("entry").set_text(str(motherNode.indexOfChild(self.variable)))
+        self.view.getWidg("entry").set_text(str(self.variable.getFather().indexOfChild(self.variable)))
         dialog.show_all()
         dialog.run()
 
@@ -777,14 +768,13 @@ class VariableMovingController:
                 @param widget: the widget which calls this function.
         """
         position = int(self.view.getWidg("entry").get_text())
-        motherNode = self.variable.findMotherNode(self.treeController.field.getVariable())
 
         # Move the variable entry in the tree view.
         entry = self.treeController.dictEntry[self.variable.getID()]
-        self.treeController.treestore.move_before(entry, self.treeController.dictEntry[motherNode.getChildren()[position].getID()])
+        self.treeController.treestore.move_before(entry, self.treeController.dictEntry[self.variable.getFather().getChildren()[position].getID()])
 
         # Move the variable.
-        motherNode.moveChild(self.variable, position)
+        self.variable.getFather().moveChild(self.variable, position)
 
         self.view.getWidg("dialog").destroy()
 
