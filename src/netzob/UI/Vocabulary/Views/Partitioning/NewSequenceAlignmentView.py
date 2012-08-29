@@ -54,8 +54,8 @@ class NewSequenceAlignmentView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "sequence_alignement.glade"))
+            "ui", "vocabulary", "partitioning",
+            "sequenceAlignement.glade"))
         self._getObjects(self.builder, ["sequenceDialog",
                                         "sequence_execute", "sequence_cancel", "sequence_stop",
                                         "sequence_adjustment", "sequence_scale", "sequence_spinbutton",

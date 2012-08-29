@@ -54,8 +54,8 @@ class PopupEditFieldView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "edit_field.glade"))
+            "ui", "vocabulary",
+            "editFieldDialog.glade"))
         self._getObjects(self.builder, ["dialog", "fieldName", "description", "regex", "encapsulationLevel"])
         self.controller = controller
         self.builder.connect_signals(self.controller)

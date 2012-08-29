@@ -49,7 +49,7 @@ class AbstractImporterView(AbstractPluginView):
         self._builder = Gtk.Builder()
         gladeFilePath = os.path.join(
             self.getPlugin().getNetzobStaticResourcesPath(),
-            "ui", AbstractImporterView.GLADE_FILENAME)
+            "ui", "import", AbstractImporterView.GLADE_FILENAME)
 
         self._builder.add_from_file(gladeFilePath)
         self._getObjects(self._builder, ["dialog", "openFileEntry",

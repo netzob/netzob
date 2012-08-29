@@ -525,8 +525,8 @@ class NewVocabularyController(object):
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "variable_table.glade"))
+            "ui", "vocabulary",
+            "variableTable.glade"))
         dialog = builder2.get_object("variableDialog")
 
         #button apply

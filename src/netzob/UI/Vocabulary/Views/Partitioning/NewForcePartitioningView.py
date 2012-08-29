@@ -53,8 +53,8 @@ class NewForcePartitioningView(object):
         '''
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui",
-                                                "force_partitioning.glade"))
+                                                "ui", "vocabulary", "partitioning",
+                                                "forcePartitioning.glade"))
         self._getObjects(self.builder, ["forceDialog",
                                         "force_execute", "force_stop", "force_cancel",
                                         "force_entry",

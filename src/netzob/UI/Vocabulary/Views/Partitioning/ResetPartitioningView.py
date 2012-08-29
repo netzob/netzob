@@ -50,8 +50,8 @@ class ResetPartitioningView(object):
     def __init__(self, controller):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui",
-                                                "reset_partitioning.glade"))
+                                                "ui", "vocabulary", "partitioning",
+                                                "resetPartitioning.glade"))
         self._getObjects(self.builder, ["resetDialog",
                                         "reset_execute", "reset_stop", "reset_cancel",
                                         "reset_progressbar"])

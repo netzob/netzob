@@ -50,8 +50,8 @@ class MoveMessageView(object):
     def __init__(self, controller):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui",
-                                                "MoveMessageDialog.glade"))
+                                                "ui", "vocabulary",
+                                                "moveMessageDialog.glade"))
         self._getObjects(self.builder, ["moveMessageDialog",
                                         "moveMessageMoveAndForgetRadioButton", "moveMessageMoveAndReComputeRadioButton",
                                         "moveMessageMoveInTrashRadioButton"])

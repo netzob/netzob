@@ -39,13 +39,13 @@ from netzob.Common.Plugins.Importers.AbstractImporterView import AbstractImporte
 
 class AbstractFileImporterView(AbstractImporterView):
 
-    SOURCE_WIDGET_GLADE_FILENAME = "FileListSourceWidget.glade"
+    SOURCE_WIDGET_GLADE_FILENAME = "fileListSourceWidget.glade"
 
     def __init__(self, plugin, controller):
         super(AbstractFileImporterView, self).__init__(plugin, controller)
         sourceWidgetGladeFilePath = os.path.join(
             self.getPlugin().getNetzobStaticResourcesPath(),
-            "ui", AbstractFileImporterView.SOURCE_WIDGET_GLADE_FILENAME)
+            "ui", "import", AbstractFileImporterView.SOURCE_WIDGET_GLADE_FILENAME)
         sourceWidgetBuilder = Gtk.Builder()
         sourceWidgetBuilder.add_from_file(sourceWidgetGladeFilePath)
         self._getObjects(sourceWidgetBuilder, ["fileListLabel", "fileListExpander"])

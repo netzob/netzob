@@ -53,8 +53,8 @@ class NewSimplePartitioningView(object):
         '''
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui",
-                                                "simple_partitioning.glade"))
+                                                "ui", "vocabulary", "partitioning",
+                                                "simplePartitioning.glade"))
         self._getObjects(self.builder, ["simpleDialog",
                                         "simple_execute", "simple_stop", "simple_cancel",
                                         "radiobutton8bits", "radiobutton16bits",

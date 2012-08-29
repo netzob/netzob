@@ -54,8 +54,8 @@ class NewResearchView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "research_bar.glade"))
+            "ui", "vocabulary", "search",
+            "searchBar.glade"))
         self._getObjects(self.builder, ["researchBar",
                                         "research_entry", "numberOfResultLabel",
                                         "research_format", "research_preferences",

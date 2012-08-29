@@ -84,8 +84,8 @@ class NewVocabularyView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "VocabularyView.glade"))
+            "ui", "vocabulary",
+            "vocabularyView.glade"))
         self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
                                         "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
                                         "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
@@ -120,13 +120,13 @@ class NewVocabularyView(object):
         actionsBuilder = Gtk.Builder()
         actionsBuilder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
+            "ui", "vocabulary",
             "vocabularyActions.glade"))
         self._actionGroup = actionsBuilder.get_object("vocabularyActionGroup")
         actionsBuilder.connect_signals(self.controller)
         uiDefinitionFilePath = os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
+            "ui", "vocabulary",
             "vocabularyMenuToolbar.ui")
         with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
             self._uiDefinition = uiDefinitionFile.read()

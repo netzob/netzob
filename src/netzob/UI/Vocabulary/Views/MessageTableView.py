@@ -55,8 +55,8 @@ class MessageTableView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "MessageTable.glade"))
+            "ui", "vocabulary",
+            "messageTable.glade"))
         self._getObjects(self.builder, ["messageTableBox",
                                         "symbolNameLabel",
                                         "messageTableScrolledWindow"])

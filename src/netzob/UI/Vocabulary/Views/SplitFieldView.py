@@ -54,8 +54,7 @@ class SplitFieldView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "split_field.glade"))
+            "ui", "vocabulary", "splitFieldDialog.glade"))
         self._getObjects(self.builder, ["splitFieldDialog", "buffer"])
         self.controller = controller
         self.builder.connect_signals(self.controller)

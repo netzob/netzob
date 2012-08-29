@@ -50,8 +50,8 @@ class CustomMathFilterView(object):
     def __init__(self, controller):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui",
-                                                "customMathFilter.glade"))
+                                                "ui", "vocabulary",
+                                                "customMathFilterDialog.glade"))
         self._getObjects(self.builder, ["customMathFilterDialog",
                                         "imageError", "imageValid", "cancelButton",
                                         "applyButton", "nameOfFilterEntry", "labelMessage",

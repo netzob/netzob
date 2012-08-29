@@ -54,7 +54,7 @@ class RelationsView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
+            "ui", "vocabulary",
             "relationsView.glade"))
         self._getObjects(self.builder, ["relationsDialog",
                                         "relationsViewport",

@@ -53,8 +53,8 @@ class NewSmoothPartitioningView(object):
         '''
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui",
-                                                "smooth_partitioning.glade"))
+                                                "ui", "vocabulary", "partitioning",
+                                                "smoothPartitioning.glade"))
         self._getObjects(self.builder, ["smoothDialog",
                                         "smooth_execute", "smooth_stop", "smooth_cancel",
                                         "smooth_progressbar"])

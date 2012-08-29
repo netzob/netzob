@@ -274,8 +274,8 @@ class NewResearchController(object):
         builder2 = Gtk.Builder()
         builder2.add_from_file(os.path.join(
             ResourcesConfiguration.getStaticResources(),
-            "ui",
-            "research_preferences.glade"))
+            "ui", "vocabulary", "search",
+            "searchPreferences.glade"))
         dialog = builder2.get_object("preferencesResearchDialog")
 
         # ++CODE HERE++
