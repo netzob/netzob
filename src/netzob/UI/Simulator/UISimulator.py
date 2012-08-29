@@ -25,30 +25,30 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Standard library imports                                                  |
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
 from gi.repository import Gtk
 import gi
-from netzob.Common.MMSTD.Dictionary.Memory import Memory
-gi.require_version('Gtk', '3.0')
 import logging
 import threading
+gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
-#| Related third party imports
+#| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
+#+---------------------------------------------------------------------------+
 from netzob.Common.ConfigurationParser import ConfigurationParser
-from netzob.Common.MMSTD.Tools.Parsers.MMSTDParser import MMSTDXmlParser
-from netzob.Common.MMSTD.Actors.Network import NetworkServer
-from netzob.Common.MMSTD.Actors.Network import NetworkClient
-from netzob.Common.MMSTD.Dictionary import AbstractionLayer
 from netzob.Common.MMSTD.Actors import MMSTDVisitor
+from netzob.Common.MMSTD.Actors.Network import NetworkClient, NetworkServer
+from netzob.Common.MMSTD.Dictionary import AbstractionLayer
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Simulator.XDotWidget import XDotWidget
 
 
@@ -491,7 +491,8 @@ class UISimulator:
             communicationChannel = NetworkClient.NetworkClient(actorIP, actorNetworkProtocol, int(actorPort), int(actorSPort))
 
         # Create the abstraction layer for this connection
-        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))
+        abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory())
+        # abstractionLayer = AbstractionLayer.AbstractionLayer(communicationChannel, self.netzob.getCurrentProject().getVocabulary(), Memory(self.netzob.getCurrentProject().getVocabulary().getVariables()))
 
         # And we create an MMSTD visitor for this
         visitor = MMSTDVisitor.MMSTDVisitor(actorName, grammar.getAutomata(), isMaster, abstractionLayer)
@@ -586,8 +587,8 @@ class UISimulator:
 
         # Now we update its memory
         self.treestore_memory.clear()
-        for memory_id in self.selectedActor.getMemory().recallAll().keys():
-            self.treestore_memory.append(None, [memory_id, "type", self.selectedActor.getMemory().recallAll()[memory_id]])
+        for memory_id in self.selectedActor.getMemory().recallMemory().keys():
+            self.treestore_memory.append(None, [memory_id, "type", TypeConvertor.bin2strhex(self.selectedActor.getMemory().recallMemory()[memory_id])])
 
     def refreshGUI(self, tempo=0.5):
 #TODO

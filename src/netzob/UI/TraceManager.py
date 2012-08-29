@@ -275,7 +275,7 @@ class TraceManager():
             GObject.idle_add(self.progressbarAlignment.set_fraction, float(percent))
 
         # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
+        Field.createDefaultField()
         # and register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
         project.saveConfigFile(self.workspace)

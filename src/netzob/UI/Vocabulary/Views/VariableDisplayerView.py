@@ -41,7 +41,7 @@ import gi
 from netzob.Simulator.XDotWidget import XDotWidget
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
-from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -108,8 +108,8 @@ class VariableDisplayerView(object):
             dotCode.extend(self.addAggregateVariable(variable))
         elif variable.getTypeVariable() == AlternateVariable.TYPE:
             dotCode.extend(self.addAlternateVariable(variable))
-        elif variable.getTypeVariable() == BinaryVariable.TYPE:
-            dotCode.extend(self.addBinaryVariable(variable))
+        elif variable.getTypeVariable() == DataVariable.TYPE:
+            dotCode.extend(self.addDataVariable(variable))
         else:
             print variable
         return dotCode
@@ -134,9 +134,9 @@ class VariableDisplayerView(object):
             dotCode.append("\"{0}\" -> \"{1}\"".format(var.getID(), c.getID()))
         return dotCode
 
-    def addBinaryVariable(self, var):
+    def addDataVariable(self, var):
         dotCode = []
-        label = "Bin{0}".format(self.idBin)
+        label = "Data{0}".format(self.idBin)
         self.idBin += 1
         dotCode.append("\"{0}\" [style=filled, fillcolor = green, label=\"{1}\"];".format(var.getID(), label))
         return dotCode

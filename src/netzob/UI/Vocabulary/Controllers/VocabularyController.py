@@ -40,6 +40,7 @@ from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
 
+
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -63,6 +64,10 @@ from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController imp
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
+#+----------------------------------------------
+#| VocabularyController:
+#|     GUI for vocabulary inference
+#+----------------------------------------------
 class VocabularyController(object):
 
     def __init__(self, netzob):

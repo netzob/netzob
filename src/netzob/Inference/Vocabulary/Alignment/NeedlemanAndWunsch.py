@@ -96,13 +96,14 @@ class NeedlemanAndWunsch(object):
         if messages is None or len(messages) == 0:
             logging.debug("The symbol '" + symbol.getName() + "' is empty. No alignment needed")
             symbol.cleanFields()
+
             if self.isFinish():
                 return
 
-            field = Field.createDefaultField()
+            field = Field.createDefaultField(symbol)
+
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
-            symbol.addField(field)
         else:
             symbol.cleanFields()
 
@@ -128,10 +129,10 @@ class NeedlemanAndWunsch(object):
                 logging.warn("Partitionnement error: {0}".format(e))
                 symbol.cleanFields()
 
-                field = Field.createDefaultField()
+                field = Field.createDefaultField(symbol)
+
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
-                symbol.addField(field)
 
     #+-----------------------------------------------------------------------+
     #| align
@@ -273,14 +274,12 @@ class NeedlemanAndWunsch(object):
         symbol.cleanFields()
         logging.debug("REGEX " + str(regex))
         for regexElt in regex:
-
             if self.isFinish():
                 return
+            field = Field("Field " + str(iField), iField, regexElt, symbol)
 
-            field = Field("Field " + str(iField), iField, regexElt)
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
-            symbol.addField(field)
             iField = iField + 1
         if len(symbol.getFields()) >= 100:
             raise NetzobException("This Python version only supports 100 named groups in regex (found {0})".format(len(symbol.getFields())))

@@ -94,10 +94,10 @@ class AbstractImporter(object):
         symbol = Symbol(uuid.uuid4(), self.type, project)
         for message in messagesToAdd:
             symbol.addMessage(message)
-        # We create a default field for the symbol
-        symbol.addField(Field.createDefaultField())
         # We register the symbol in the vocabulary of the project
         project.getVocabulary().addSymbol(symbol)
+        # We create a default field for the symbol
+        symbol.reinitFields()
 
         # Add the environmental dependencies to the project
         if fetchEnv:
