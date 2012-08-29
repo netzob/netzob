@@ -202,7 +202,7 @@ class Symbol(AbstractSymbol):
             isDifferent = False
 
             # Stop and clean if requested
-            if idStop_cb is not None:
+            if it % 10 == 0 and idStop_cb is not None:
                 if idStop_cb():
                     self.cleanFields()
                     return
@@ -227,7 +227,7 @@ class Symbol(AbstractSymbol):
                 resultMask += "0"
 
             totalPercent += step
-            if status_cb is not None:
+            if it % 20 == 0 and status_cb is not None:
                 status_cb(totalPercent, None)
 
         # Apply unitSize

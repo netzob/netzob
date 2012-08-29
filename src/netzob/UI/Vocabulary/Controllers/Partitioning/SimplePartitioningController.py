@@ -122,7 +122,6 @@ class SimplePartitioningController(object):
                 return
             symbol.simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
             self.id_current_symbol += 1
-        GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning finished !"))
 
     def updateProgessBar(self, percent, message):
         """Update the progress bar given the provided informations"""
