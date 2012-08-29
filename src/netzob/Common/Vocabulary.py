@@ -46,6 +46,7 @@ from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Inference.Vocabulary.Alignment.UPGMA import UPGMA
 from netzob.Common.Models.Factories.AbstractMessageFactory import AbstractMessageFactory
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
+from netzob.Common.TrashSymbol import TrashSymbol
 
 
 #+---------------------------------------------------------------------------+
@@ -61,9 +62,13 @@ class Vocabulary(object):
         self.messages = []
         self.symbols = []
         self.sessions = []
+        self.trashSymbol = None
 
     def getMessages(self):
-        return self.messages
+        messages = []
+        for symbol in self.symbols:
+            messages.extend(symbol.getMessages())
+        return messages
 
     def getMessageByID(self, id):
         for message in self.messages:
@@ -80,6 +85,11 @@ class Vocabulary(object):
 
     def getSymbols(self):
         return self.symbols
+
+    def getTrashSymbol(self):
+        if self.trashSymbol == None:
+            self.trashSymbol = TrashSymbol(None)
+        return self.trashSymbol
 
     def getSessions(self):
         return self.sessions

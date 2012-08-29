@@ -41,7 +41,7 @@
 //+---------------------------------------------------------------------------+
 //| callbackStatus : displays the status on terminal when using only C calls
 //+---------------------------------------------------------------------------+
-int callbackStatus(double percent, char* message, ...) {
+int callbackStatus(int stage, double percent, char* message, ...) {
   // Variadic member
   va_list args;
 
@@ -53,7 +53,7 @@ int callbackStatus(double percent, char* message, ...) {
   va_end(args);
   buffer[4095] = '\0';
   
-  printf("[%f] %s\n", percent, buffer);
+  printf("[%d, %f] %s\n", stage, percent, buffer);
   return 1;
 
 }

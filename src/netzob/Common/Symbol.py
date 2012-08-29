@@ -55,6 +55,7 @@ from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.NetzobException import NetzobException
 from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
+from netzob.Common.Property import Property
 
 
 NAMESPACE = "http://www.netzob.org/"
@@ -130,7 +131,7 @@ class Symbol(AbstractSymbol):
     #| forcePartitioning:
     #|  Specify a delimiter for partitioning
     #+----------------------------------------------
-    def forcePartitioning(self, projectConfiguration, aFormat, rawDelimiter):
+    def forcePartitioning(self, aFormat, rawDelimiter):
         self.alignmentType = "delimiter"
         self.rawDelimiter = rawDelimiter
         self.cleanFields()
@@ -169,25 +170,43 @@ class Symbol(AbstractSymbol):
     #| simplePartitioning:
     #|  Do message partitioning according to column variation
     #+----------------------------------------------
-    def simplePartitioning(self, projectConfiguration, unitSize):
+    def simplePartitioning(self, unitSize, status_cb=None, idStop_cb=None):
+        logging.debug("Compute the simple partitioning on current symbol")
         self.alignmentType = "regex"
         self.rawDelimiter = ""
+        # Restore fields to the default situation
         self.cleanFields()
-
         # Retrieve the biggest message
         maxLen = 0
         for message in self.getMessages():
             curLen = len(message.getStringData())
             if curLen > maxLen:
                 maxLen = curLen
+        logging.debug("Size of the longest message : {0}".format(maxLen))
 
         # Try to see if the column is static or variable
         resultString = ""
         resultMask = ""
+
+        # Stop and clean if requested
+        if idStop_cb is not None:
+            if idStop_cb():
+                self.cleanFields()
+                return
+
+        step = float(100) / float(maxLen)
+        totalPercent = 0
         # Loop until maxLen
         for it in range(maxLen):
             ref = ""
             isDifferent = False
+
+            # Stop and clean if requested
+            if idStop_cb is not None:
+                if idStop_cb():
+                    self.cleanFields()
+                    return
+
             # Loop through each cells of the column
             for message in self.getMessages():
                 try:
@@ -199,7 +218,6 @@ class Symbol(AbstractSymbol):
                         break
                 except IndexError:
                     isDifferent = True
-                    pass
 
             if isDifferent:
                 resultString += "-"
@@ -208,6 +226,10 @@ class Symbol(AbstractSymbol):
                 resultString += ref
                 resultMask += "0"
 
+            totalPercent += step
+            if status_cb is not None:
+                status_cb(totalPercent, None)
+
         # Apply unitSize
         if unitSize != UnitSize.NONE:
             unitSize = UnitSize.getSizeInBits(unitSize)
@@ -215,6 +237,13 @@ class Symbol(AbstractSymbol):
             tmpResultString = ""
             tmpResultMask = ""
             for i in range(0, len(resultString), nbLetters):
+
+                # Stop and clean if requested
+                if idStop_cb is not None:
+                    if idStop_cb():
+                        self.cleanFields()
+                        return
+
                 tmpText = resultString[i:i + nbLetters]
                 if tmpText.count("-") >= 1:
                     for j in range(len(tmpText)):
@@ -265,6 +294,12 @@ class Symbol(AbstractSymbol):
                     nbElements += 1
                 isLastDyn = False
 
+        # Stop and clean if requested
+        if idStop_cb is not None:
+            if idStop_cb():
+                self.cleanFields()
+                return
+
         # We add the last field
         iField += 1
         if resultMask[-1] == "1":  # If the last column is dynamic
@@ -276,10 +311,10 @@ class Symbol(AbstractSymbol):
         self.addField(field)
 
     #+----------------------------------------------
-    #| freezePartitioning:
+    #| computeFieldsLimits:
     #|
     #+----------------------------------------------
-    def freezePartitioning(self):
+    def computeFieldsLimits(self):
         for field in self.getFields():
             tmpRegex = field.getRegex()
             if field.isStatic():
@@ -368,9 +403,22 @@ class Symbol(AbstractSymbol):
 
     #+----------------------------------------------
     #| concatFields:
-    #|  Concatenate two fields starting from iField
+    #|  Concatenate fields from index startField to endField
     #+----------------------------------------------
-    def concatFields(self, iField):
+    def concatFields(self, startField, endField):
+        for i_concatleft in range(endField - startField):
+            if not self.concatCloseFields(startField):
+                break
+            else:
+                for i_concatleft in range(startField - endField):
+                    if not self.concatCloseFields(endField):
+                        break
+
+    #+----------------------------------------------
+    #| concatCloseFields:
+    #|  Concatenate two fields starting from index iField
+    #+----------------------------------------------
+    def concatCloseFields(self, iField):
         field1 = None
         field2 = None
         if iField == len(self.fields) - 1:
@@ -475,18 +523,18 @@ class Symbol(AbstractSymbol):
         new_encapsulationLevel = field.getEncapsulationLevel()
 
         # We Build the two new fields
-        field1 = Field("(1/2)" + field.getName(), field.getIndex(), regex1)
+        field1 = Field(field.getName() + "-1", field.getIndex(), regex1)
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field1.setDescription("(1/2) " + field.getDescription())
-        field2 = Field("(2/2) " + field.getName(), field.getIndex() + 1, regex2)
+            field1.setDescription(field.getDescription() + "-1")
+        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2)
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
         field2.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
-            field2.setDescription("(2/2) " + field.getDescription())
+            field2.setDescription(field.getDescription() + "-2")
 
         # Remove the truncated one
         self.fields.remove(field)
@@ -500,7 +548,6 @@ class Symbol(AbstractSymbol):
         self.fields.append(field2)
         # sort fields by their index
         self.fields = sorted(self.fields, key=attrgetter('index'), reverse=False)
-
         return True
 
     #+-----------------------------------------------------------------------+
@@ -831,9 +878,9 @@ class Symbol(AbstractSymbol):
             messageTable = message.applyAlignment()
             for cell in messageTable:
                 for prop in message.getProperties():
-                    name = prop[0]
-                    aType = prop[1]
-                    value = prop[2]
+                    name = prop.getName()
+                    aType = prop.getFormat()
+                    value = prop.getCurrentValue()
                     if value == "" or name == "Data":
                         break
                     matchElts = str(TypeConvertor.encodeNetzobRawToGivenType(cell, aType)).count(str(value))
@@ -911,7 +958,15 @@ class Symbol(AbstractSymbol):
     #| message and recompute regex and score
     #+----------------------------------------------
     def removeMessage(self, message):
-        self.messages.remove(message)
+        if message in self.messages:
+            self.messages.remove(message)
+        else:
+            self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
+
+    def addMessages(self, messages):
+        """Add the provided messages in the symbol"""
+        for message in messages:
+            self.addMessage(message)
 
     def addMessage(self, message):
         for msg in self.messages:
@@ -1155,6 +1210,51 @@ class Symbol(AbstractSymbol):
             rootSymbol.addChild(variable)
         return rootSymbol
 
+    def getProperties(self):
+        properties = []
+        prop = Property('name', Format.STRING, self.getName())
+        prop.setIsEditable(True)
+        properties.append(prop)
+
+        properties.append(Property('messages', Format.DECIMAL, len(self.getMessages())))
+        properties.append(Property('fields', Format.DECIMAL, len(self.getFields())))
+        minMsgSize = None
+        maxMsgSize = 0
+        avgMsgSize = 0
+        if len(self.getMessages()) > 0:
+            for m in self.getMessages():
+                s = len(m.getData()) * 2
+                if minMsgSize is None or s < minMsgSize:
+                    minMsgSize = s
+                if maxMsgSize is None or s > maxMsgSize:
+                    maxMsgSize = s
+                avgMsgSize += s
+            avgMsgSize = avgMsgSize / len(self.getMessages())
+        properties.append(Property('avg msg size (bytes)', Format.DECIMAL, avgMsgSize))
+        properties.append(Property('min msg size (bytes)', Format.DECIMAL, minMsgSize))
+        properties.append(Property('max msg size (bytes)', Format.DECIMAL, maxMsgSize))
+
+        prop = Property("format", Format.STRING, self.format)
+        prop.setIsEditable(True)
+        prop.setPossibleValues(Format.getSupportedFormats())
+        properties.append(prop)
+
+        prop = Property("unitSize", Format.STRING, self.unitSize)
+        prop.setIsEditable(True)
+        prop.setPossibleValues([UnitSize.NONE, UnitSize.BITS4, UnitSize.BITS8, UnitSize.BITS16, UnitSize.BITS32, UnitSize.BITS64])
+        properties.append(prop)
+
+        prop = Property("sign", Format.STRING, self.sign)
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Sign.SIGNED, Sign.UNSIGNED])
+        properties.append(prop)
+
+        prop = Property("endianess", Format.STRING, self.endianess)
+        prop.setIsEditable(True)
+        prop.setPossibleValues([Endianess.BIG, Endianess.LITTLE])
+        properties.append(prop)
+        return properties
+
     #+----------------------------------------------
     #| GETTERS
     #+----------------------------------------------
@@ -1162,7 +1262,15 @@ class Symbol(AbstractSymbol):
         return self.id
 
     def getMessages(self):
-        return self.messages
+        """Computes and returns messages
+        associated with the current symbol"""
+        result = []
+        for message in self.messages:
+            if message.getSymbol() is self:
+                result.append(message)
+            else:
+                self.removeMessage(message)
+        return result
 
     def getScore(self):
         return self.score
@@ -1222,6 +1330,9 @@ class Symbol(AbstractSymbol):
     def setName(self, name):
         self.name = name
 
+    def setMessages(self, mess):
+        self.messages = mess
+
     def setAlignmentType(self, aType):
         self.alignmentType = aType
 
@@ -1247,6 +1358,25 @@ class Symbol(AbstractSymbol):
         self.endianess = endianess
         for field in self.getFields():
             field.setEndianess(endianess)
+
+    def isRegexValidForMessage(self, message):
+        """Offers to verify if the provided message
+        can be splitted in fields following their definition
+        in the current symbol"""
+        regex = []
+        for field in self.getFields():
+            regex.append(field.getRegex())
+        # Now we apply the regex over the message
+        try:
+            compiledRegex = re.compile("".join(regex))
+            data = message.getReducedStringData()
+            dynamicDatas = compiledRegex.match(data)
+        except AssertionError:
+            return False
+
+        if dynamicDatas is None:
+            return False
+        return True
 
     def __str__(self):
         return str(self.getName())

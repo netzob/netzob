@@ -46,6 +46,8 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Token import Token
 from netzob.Common.Filters.FilterApplicationTable import FilterApplicationTable
 
+#import _libRegex
+
 
 #+---------------------------------------------------------------------------+
 #| AbstractMessage:
@@ -70,6 +72,7 @@ class AbstractMessage(object):
         self.leftReductionFactor = 0
         self.visualizationFilters = []
         self.encodingFilters = []
+        self.mathematicFilters = []
 
         self.pattern = []
         if not pattern:
@@ -153,7 +156,14 @@ class AbstractMessage(object):
     #| @return string(data)
     #+----------------------------------------------
     def getStringData(self):
-        return str(self.data)
+        message = str(self.data)
+        for filter in self.getMathematicFilters():
+            try:
+                message = filter.apply(message)
+            except:
+                message = "Error, invalid filter"
+
+        return message
 
     def getReducedSize(self):
         start = 0
@@ -187,6 +197,20 @@ class AbstractMessage(object):
                 end = end + 1
 
         return "".join(self.getStringData()[start:end])
+
+    def getMathematicFilters(self):
+        """Return the activated mathematic filters
+        on message scope"""
+        return self.mathematicFilters
+
+    def addMathematicFilter(self, filter):
+        """Add a math filter for the message"""
+        self.mathematicFilters.append(filter)
+
+    def removeMathematicFilter(self, filter):
+        """Remove the provided filter from current symbol"""
+        if filter in self.mathematicFilters:
+            self.mathematicFilters.remove(filter)
 
     #+----------------------------------------------
     #| compilePattern:
@@ -252,19 +276,29 @@ class AbstractMessage(object):
         else:
             return self.applyDelimiter(styled, encoded)
 
-    def getFields(self, encoding=False, visualization=False):
+    def getFields(self, visualization=False, encoding=False):
         # Retrieve the data in columns
         splittedData = self.getSplittedData()
 
         if len(splittedData) != len(self.symbol.getFields()):
+
+            print "Nb of expected fields : {0}".format(self.symbol.getFields())
+            print "fields : {0}".format(splittedData)
+
             logging.error("Inconsistency problem between number of fields and the regex application")
             return []
 
         # Add Mathematics filters
         i = 0
+
         for field in self.symbol.getFields():
-            for filter in field.getMathematicFilters():
-                splittedData[i] = filter.apply(splittedData[i])
+            filters = field.getMathematicFilters()
+
+            for filter in filters:
+                try:
+                    splittedData[i] = filter.apply(splittedData[i])
+                except:
+                    self.log.warning("Impossible to apply filter {0} on data {1}.".format(filter.getName(), splittedData[i]))
             i = i + 1
 
         # Create the locationTable
@@ -301,10 +335,17 @@ class AbstractMessage(object):
     #+-----------------------------------------------------------------------+
     def getSplittedData(self):
         regex = []
+        aligned = None
+
         dynamicDatas = None
         # First we compute the global regex
         for field in self.symbol.getFields():
-            regex.append(field.getRegex())
+            if field.isStatic():
+                # C Version :
+                #regex.append("(" + field.getRegex() + ")")
+                regex.append(field.getRegex())
+            else:
+                regex.append(field.getRegex())
 
         # Now we apply the regex over the message
         try:
@@ -325,64 +366,29 @@ class AbstractMessage(object):
         iCol = 1
         for field in self.symbol.getFields():
             if field.isStatic():
-#                if encoded:
-#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(field.getRegex(), field)))
-#                else:
-#                    result.append(glib.markup_escape_text(field.getRegex()))
                 result.append(field.getRegex())
             else:
                 start = dynamicDatas.start(iCol)
                 end = dynamicDatas.end(iCol)
-#                if encoded:
-#                    result.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(data[start:end], field)))
-#                else:
-#                    result.append(glib.markup_escape_text(data[start:end]))
                 result.append(data[start:end])
                 iCol += 1
         return result
 
-#    def getStyledData(self, styled=False, encoded=False):
-#        result = []
-#        splittedData = self.getSplittedData(encoded)
+# C VERSION (should work)#
+#        # Execute in C the regex application
+#        try:
+#            result = _libRegex.match("".join(regex), self.getReducedStringData(), 0)
+#            aligned = result.split("\x01")
+#        except:
+#            pass
 #
-#        if styled == False:
-#            return splittedData
-#
-#        iGlobal = 0
-#        iCol = 0
-#
-#        for data in splittedData:
-#            localResult = ""
-#            # Retrieve the field associated with this value
-#            field = self.symbol.getFieldByIndex(iCol)
-#            # Retrieve the unit size
-#            unitSize = Format.getUnitSize(field.getFormat())
-#            # First we apply filters on all the message
-#            for filter in self.getVisualizationFilters():
-#                if filter.isValid(0, -1, data, unitSize):
-#                    localResult += filter.apply(data)
-#
-#            for iLocal in range(0, len(data)):
-#                tmp_result = data[iLocal]
-#                if sizeFormat != None:
-#                    for filter in self.getVisualizationFilters():
-#                        if filter.isValid(iGlobal + iLocal, tmp_result, sizeFormat):
-#                            tmp_result = filter.apply(tmp_result)
-#
-#                localResult += tmp_result
-#
-#            # Now we apply the color to the fields
-#            for filter in field.getVisualizationFilters():
-#                localResult = filter.apply(localResult)
-#
-#            iGlobal = iGlobal + len(data)
-#            result.append(localResult)
-#            iCol += 1
-#        return result
-#
-#    def getVisualizationData(self, styled=False, encoded=False):
-#        result = self.getStyledData(styled, encoded)
-#        return result
+#        if aligned is None:
+#            self.log.warning("The regex of the group doesn't match one of its message")
+#            self.log.warning("Regex: " + "".join(regex))
+#            self.log.warning("Message: " + self.getReducedStringData() + "...")
+#            raise NetzobException("The regex of the group doesn't match one of its message")
+
+        return aligned
 
     #+----------------------------------------------
     #| applyDelimiter: apply the current delimiter on the message
@@ -435,6 +441,7 @@ class AbstractMessage(object):
         return self.type
 
     def getData(self):
+        """@deprecated: use getStringData instead"""
         return self.data.strip()
 
     def getSymbol(self):

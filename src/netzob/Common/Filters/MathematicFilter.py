@@ -62,6 +62,11 @@ class MathematicFilter(RenderingFilter):
         self.log.error("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
         raise NotImplementedError("The filter class (" + self.getType() + ") doesn't define 'isValid' !")
 
+    def save(self, root, namespace_common):
+        """Save under the provided XML root the current maths filter"""
+        self.log.error("The filter class ({0}) doesn't define the 'save' method !".format(self.getType()))
+        raise NotImplemented("The filter class ({0}) doesn't define the 'save' method !".format(self.getType()))
+
     #+-----------------------------------------------------------------------+
     #| getConversionAddressingTable
     #|     Retrieve a table which describes the conversion addressing

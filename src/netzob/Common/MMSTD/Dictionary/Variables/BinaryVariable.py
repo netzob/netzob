@@ -50,11 +50,13 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class BinaryVariable(Variable):
 
+    TYPE = "Binary"
+
     # OriginalValue : must be a "real" bitarray (a binary one)
     # min : nb of bits minimum
     # max : nb of bits maximum
     def __init__(self, id, name, originalValue, minBits, maxBits):
-        Variable.__init__(self, "Binary", id, name)
+        Variable.__init__(self, BinaryVariable.TYPE, id, name)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable.py')
         self.originalValue = originalValue
         self.minBits = minBits

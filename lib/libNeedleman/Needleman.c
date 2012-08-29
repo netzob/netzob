@@ -86,8 +86,11 @@ void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group,
   for (i_message=1; i_message < group->len; i_message++) {
     matchstatus = -1;
     // Update the execution status
-    if (callbackStatus(status, "Consider message %d in the alignment process", i_message) == -1) {
+    if (callbackStatus(0, status, "Consider message %d in the alignment process", i_message) == -1) {
       printf("Error, error while executing C callback.\n");
+    }
+    if (callbackIsFinish() == 1) {
+    	return;
     }
 	
 	/*initialize the next message*/
@@ -120,7 +123,7 @@ void alignMessages2(t_message *resMessage, Bool doInternalSlick, t_group* group,
   }
 
   // Update the execution status
-  if (callbackStatus(status, "The %d messages have sucessfully been aligned.", group->len) == -1) {
+  if (callbackStatus(0, status, "The %d messages have sucessfully been aligned.", group->len) == -1) {
     printf("Error, error while executing C callback.\n");
   }
 
@@ -177,8 +180,11 @@ void alignMessages(t_message *resMessage, Bool doInternalSlick, t_group* group, 
   }
   for (i_message=1; i_message < group->len; i_message++) {
     // Update the execution status
-    if (callbackStatus(status, "Consider message %d in the alignment process", i_message) == -1) {
+    if (callbackStatus(0, status, "Consider message %d in the alignment process", i_message) == -1) {
       printf("Error, error while executing C callback.\n");
+    }
+    if (callbackIsFinish() == 1) {
+    	return;
     }
 
     new_message.len = group->messages[i_message].len;
@@ -201,7 +207,7 @@ void alignMessages(t_message *resMessage, Bool doInternalSlick, t_group* group, 
   }
 
   // Update the execution status
-  if (callbackStatus(status, "The %d messages have sucessfully been aligned.", group->len) == -1) {
+  if (callbackStatus(0, status, "The %d messages have sucessfully been aligned.", group->len) == -1) {
     printf("Error, error while executing C callback.\n");
   }
 

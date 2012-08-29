@@ -42,8 +42,11 @@ from gettext import gettext as _
 #|     Shows the about dialog of Netzob
 #+----------------------------------------------
 class AboutDialog:
+    """Static class which includes the method
+    to display the about dialog of Netzob."""
 
-    def __init__(self):
+    @staticmethod
+    def display():
         about = Gtk.AboutDialog()
         about.set_program_name(release.appname)
         about.set_version(release.version)

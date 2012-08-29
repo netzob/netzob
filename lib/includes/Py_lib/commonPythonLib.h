@@ -32,9 +32,6 @@
 //+---------------------------------------------------------------------------+
 #include <Python.h>
 #include "factory.h"
-//Python callback
-extern PyObject *python_callback;
-
 
 #define DEFAULT_BID "0000000000"
 #define STR(x) x

@@ -38,6 +38,8 @@
 #include <malloc.h>
 #endif
 
+// The Python callback
+extern PyObject *python_callback;
 
 static PyMethodDef libNeedleman_methods[] = {
 		{"getBID", py_getBID, METH_NOARGS},
@@ -57,6 +59,7 @@ PyMODINIT_FUNC init_libNeedleman(void) {
 //| py_alignSequences : Python wrapper for alignMessages
 //+---------------------------------------------------------------------------+
 PyObject* py_alignMessages(PyObject* self, PyObject* args) {
+
   // Parameters (in order)
   unsigned int doInternalSlick = 0;
   unsigned int nbMessages = 0;

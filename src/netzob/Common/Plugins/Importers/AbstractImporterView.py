@@ -42,14 +42,14 @@ from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
 
 class AbstractImporterView(AbstractPluginView):
-    GLADE_FILENAME = "AbstractImporterView.glade"
+    GLADE_FILENAME = "abstractImporterView.glade"
 
     def __init__(self, plugin, controller):
         super(AbstractImporterView, self).__init__(plugin, controller)
         self._builder = Gtk.Builder()
         gladeFilePath = os.path.join(
             self.getPlugin().getNetzobStaticResourcesPath(),
-            "ui", AbstractImporterView.GLADE_FILENAME)
+            "ui", "import", AbstractImporterView.GLADE_FILENAME)
 
         self._builder.add_from_file(gladeFilePath)
         self._getObjects(self._builder, ["dialog", "openFileEntry",

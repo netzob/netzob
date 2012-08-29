@@ -34,6 +34,7 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.Format import Format
 from netzob.Inference.Vocabulary.SearchResult import SearchResult
 from netzob.Inference.Vocabulary.SearchTask import SearchTask
+import re
 
 #+----------------------------------------------
 #| Local Imports
@@ -115,6 +116,12 @@ class Searcher(object):
     #+----------------------------------------------
     def getSearchedDataForIP(self, value):
         tasks = []
+
+        ipPattern = "^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+        # first verify its a ip format
+        if not re.match(ipPattern, value):
+            return tasks
+
         # parse the value to get a, b, c and d
         ipTab = value.split('.')
         a = ipTab[0]
@@ -263,7 +270,6 @@ class Searcher(object):
         return results
 
     def semiInvertedOnNaturalSearch(self, data, message):
-        logging.debug("semi inverted = " + str(data))
         results = []
         invData = ""
         for i in range(0, len(data), 2):

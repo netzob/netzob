@@ -41,6 +41,7 @@ from netzob.Common.Models.IRPMessage import IRPMessage
 from netzob.Common.Models.Factories.IRPDeviceIoControlMessageFactory import IRPDeviceIoControlMessageFactory
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Property import Property
 
 
 #+---------------------------------------------------------------------------+
@@ -72,24 +73,24 @@ class IRPDeviceIoControlMessage(IRPMessage):
     #+-----------------------------------------------------------------------+
     def getProperties(self):
         properties = []
-        properties.append(['ID', Format.STRING, str(self.getID())])
-        properties.append(['Type', Format.STRING, self.getType()])
-        properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
+        properties.append(Property('ID', Format.STRING, str(self.getID())))
+        properties.append(Property('Type', Format.STRING, self.getType()))
+        properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
 
-        properties.append(['Direction', Format.STRING, self.getDirection()])
-        properties.append(['Major', Format.STRING, self.getMajor()])
-        properties.append(['Minor', Format.DECIMAL, self.getMinor()])
-        properties.append(['Requestmode', Format.STRING, self.getRequestMode()])
-        properties.append(['PID', Format.DECIMAL, self.getPID()])
-        properties.append(['Status', Format.DECIMAL, self.getStatus()])
-        properties.append(['Information', Format.DECIMAL, self.getInformation()])
-        properties.append(['Cancel', Format.STRING, self.getCancel()])
-        properties.append(['SizeIn', Format.DECIMAL, self.getSizeIn()])
-        properties.append(['SizeOut', Format.DECIMAL, self.getSizeOut()])
-        properties.append(['IOCTL', Format.DECIMAL, self.getIOCTL()])
+        properties.append(Property('Direction', Format.STRING, self.getDirection()))
+        properties.append(Property('Major', Format.STRING, self.getMajor()))
+        properties.append(Property('Minor', Format.DECIMAL, self.getMinor()))
+        properties.append(Property('Requestmode', Format.STRING, self.getRequestMode()))
+        properties.append(Property('PID', Format.DECIMAL, self.getPID()))
+        properties.append(Property('Status', Format.DECIMAL, self.getStatus()))
+        properties.append(Property('Information', Format.DECIMAL, self.getInformation()))
+        properties.append(Property('Cancel', Format.STRING, self.getCancel()))
+        properties.append(Property('SizeIn', Format.DECIMAL, self.getSizeIn()))
+        properties.append(Property('SizeOut', Format.DECIMAL, self.getSizeOut()))
+        properties.append(Property('IOCTL', Format.DECIMAL, self.getIOCTL()))
 
-        properties.append(['Data', Format.HEX, self.getStringData()])
-        properties.append(['Pattern', Format.STRING, self.getPatternString()])
+        properties.append(Property('Data', Format.HEX, self.getStringData()))
+        properties.append(Property('Pattern', Format.STRING, self.getPatternString()))
 
         return properties
 

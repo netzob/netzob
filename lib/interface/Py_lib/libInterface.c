@@ -37,7 +37,9 @@
 #include <malloc.h>
 #endif
 
-PyObject *python_callback = NULL;
+// The Python callback
+PyObject *python_callback;
+PyObject *python_callback_isFinish;
 
 unsigned int deserializeSymbols(t_groups * groups, PyObject *symbols, Bool debugMode);
 PyObject* py_deserializeSymbols(PyObject* self, PyObject* args);
@@ -56,40 +58,60 @@ PyMODINIT_FUNC init_libInterface(void) {
   (void) Py_InitModule("_libInterface", libInterface_methods);
 }
 
+int callbackIsFinish(void) {
+	if (python_callback_isFinish != NULL) {
+			int isFinish;
+			PyObject *result_cb;
+			result_cb = PyObject_CallObject(python_callback_isFinish, NULL);
+			if (result_cb == NULL) {
+				return -1;
+			}
+			if (result_cb == Py_True) {
+				isFinish = 1;
+			}
+			else if (result_cb == Py_False) {
+				isFinish = 0;
+			} else {
+				isFinish = -1;
+			}
+			Py_DECREF(result_cb);
+			return isFinish;
+	}
+	return -1;
+}
 
 //+---------------------------------------------------------------------------+
 //| callbackStatus : displays the status or call python wrapper is available
 //+---------------------------------------------------------------------------+
-int callbackStatus(double percent, char* message, ...) {
-  // Variadic member
-  va_list args;
+int callbackStatus(int stage, double percent, char* message, ...) {
+	// Variadic member
+	va_list args;
 
-  // local variables
-  PyObject *arglist_cb;
-  PyObject *result_cb;
-  char buffer[4096];
+	// local variables
+	PyObject *arglist_cb;
+	PyObject *result_cb;
+	char buffer[4096];
 
-  va_start(args, message);
-  vsnprintf(buffer, sizeof(buffer), message, args);
-  va_end(args);
-  buffer[4095] = '\0';
+	va_start(args, message);
+	vsnprintf(buffer, sizeof(buffer), message, args);
+	va_end(args);
+	buffer[4095] = '\0';
+	if (python_callback != NULL) {
+		arglist_cb = Py_BuildValue("(i,d,s)", stage, percent, buffer);
+		result_cb = PyObject_CallObject(python_callback, arglist_cb);
+		Py_DECREF(arglist_cb);
 
-  if (python_callback != NULL) {
-    arglist_cb = Py_BuildValue("(d,s)", percent, buffer);
-    result_cb = PyObject_CallObject(python_callback, arglist_cb);
-    Py_DECREF(arglist_cb);
-
-    if (result_cb == NULL) {
-      return -1;
-    }
-    Py_DECREF(result_cb);
-    return 1;
-  }
-  else {
-    printf("[%f] %s\n", percent, buffer);
-    return 1;
-  }
-  return 0;
+		if (result_cb == NULL) {
+		  return -1;
+		}
+		Py_DECREF(result_cb);
+		return 1;
+	}
+	else {
+		printf("[%f] %s\n", percent, buffer);
+		return 1;
+	}
+	return 0;
 }
 
 //+---------------------------------------------------------------------------+

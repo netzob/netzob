@@ -329,4 +329,5 @@
 	</complexType>
 	
 	<element name="messages" type="netzob-common:Messages"></element>
+
 </schema>

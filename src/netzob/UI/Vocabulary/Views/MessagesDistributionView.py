@@ -30,11 +30,13 @@
 #+----------------------------------------------
 from gettext import gettext as _
 import logging
-from pylab import figure, show
-
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
+import matplotlib.pyplot as plt
+from pylab import figure, show
+from random import randint
+from matplotlib.widgets import Button
 
 
 #+----------------------------------------------
@@ -45,37 +47,84 @@ class MessagesDistributionView(object):
     #+----------------------------------------------
     #| Constructor:
     #+----------------------------------------------
-    def __init__(self, symbol):
+    def __init__(self, controller):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.UI.Vocabulary.Views.MessagesDistributionView.py')
-        self.symbol = symbol
+        self.controller = controller
 
-    #+----------------------------------------------
-    #| buildDistributionView:
-    #|   show messages distribution
-    #+----------------------------------------------
-    def buildDistributionView(self):
-        resX = []
-        resY = []
-        segments = []
-        i = 0
-        for field in self.symbol.getFields():
-            maxCell = -1
-            for cell in self.symbol.getUniqValuesByField(field):
-                for j in range(len(cell) / 2):
-                    resX.append(i + j)
-                    resY.append(int(cell[j * 2:j * 2 + 2], 16))
-                if len(cell) / 2 > maxCell:
-                    maxCell = len(cell) / 2
-            i += maxCell
-            segments.append(i)
+    def buildListDistributionView(self, panel=None):
+        symbolDataPointList = []
+        symbolNameList = []
+        axis = None
+        #calculate the distribution for each symbol
+        for symbol in self.controller.symbolList:
+            i = 0
+            resX = []
+            resY = []
+            symbolNameList.append(symbol.getName())
+            for field in symbol.getFields():
+                maxCell = -1
+                for cell in symbol.getUniqValuesByField(field):
+                    for j in range(len(cell) / 2):
+                        resX.append(i + j)
+                        resY.append(int(cell[j * 2:j * 2 + 2], 16))
+                    if len(cell) / 2 > maxCell:
+                        maxCell = len(cell) / 2
+                i += maxCell
+            symbolDataPointList.append([resX, resY])
 
-        fig = figure()  # figsize=(800, 500))#, dpi=75)
-        axis = fig.add_subplot(111, frame_on=False)
-        axis.hold(True)
-        axis.plot(resX, resY, '.')
-        for segment in segments:
-            axis.plot([segment, segment], [0, 255], 'k-')
-        axis.set_xlim(0, 255)
-        axis.set_ylim(0, 255)
-        show()
+        #create figure
+        fig = figure("Message distribution of symbol : " + str(symbolNameList))
+        fig.set_facecolor('w')
+
+        #add calculate point on the figure
+        symbolPointObjectList = []
+        for sym in symbolDataPointList:
+            axis = fig.add_subplot(111, frame_on=False)
+            (resX, resY) = sym
+            data = axis.plot(resX, resY, '.', color=self.createColor())
+            symbolPointObjectList.append(data[0])
+
+        #add legend
+        if axis is not None:
+            axis.legend(symbolPointObjectList, symbolNameList, 'upper right')
+            axis.hold(True)
+
+
+        #add reload color button
+        reloadColor = plt.axes([0.74, 0.9, 0.15, 0.075])
+        button = Button(reloadColor, 'Reload color')
+        button.on_clicked(self.reloadColor_cb)
+        self.axis = axis
+
+        self.symbolPointObjectList = symbolPointObjectList
+        self.symbolNameList = symbolNameList
+
+        #set the limit of the figure
+        maxX = 0
+        maxY = 0
+        for sym in symbolDataPointList:
+            (resX, resY) = sym
+            maxX = max([max(resX), maxX])
+            maxY = max([max(resY), maxY])
+
+        if axis is not None:
+            axis.set_xlim(0, maxX + 5)
+            axis.set_ylim(0, maxY + 5)
+
+        if panel == None:
+            #display figure
+            show()
+        else:
+            canvas = FigureCanvasGTK(fig)
+            canvas.show()
+            panel.pack_start(self.canvas, True, True)
+
+    def reloadColor_cb(self, event):
+        for point in self.symbolPointObjectList:
+            point.set_color(self.createColor())
+
+        self.axis.legend(self.symbolPointObjectList, self.symbolNameList, 'upper right')
+
+    def createColor(self):
+        return '#' + hex(randint(0, pow(255, 3))).lstrip('0x').zfill(6)

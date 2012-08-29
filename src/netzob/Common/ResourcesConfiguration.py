@@ -56,6 +56,7 @@ class ResourcesConfiguration(object):
     CONFFILE = "global.conf"
     DELIMITOR_LOCALFILE = "="
     VAR_WORKSPACE_LOCALFILE = "workspace"
+    VAR_API_KEY_LOCALFILE = "reporterApiKey"
 
     @staticmethod
     #+----------------------------------------------
@@ -86,15 +87,34 @@ class ResourcesConfiguration(object):
             if userPath is None:
                 return False
             else:
-                # the user has specified its home directory so we store it in
-                # a dedicated local file
-                localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
-                # create or update the content
-                localFile = open(localFilePath, 'w')
-                localFile.write(ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(os.path.abspath(userPath)))
-                localFile.close()
-                return True
+                ResourcesConfiguration.generateUserFile(userPath)
         return True
+
+    @staticmethod
+    def generateUserFile(worskpace, apiKey=None):
+        """Write the path to the workspace and the apiKey (if provided)
+        to the netzob configuration associated with user (~/.netzob)."""
+        # the user has specified its home directory so we store it in
+        # a dedicated local file
+        localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        # create or update the content
+        localFile = open(localFilePath, 'w')
+        localFile.write(ResourcesConfiguration.VAR_WORKSPACE_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(os.path.abspath(worskpace)) + '\n\r')
+        if apiKey is not None:
+            localFile.write(ResourcesConfiguration.VAR_API_KEY_LOCALFILE + ResourcesConfiguration.DELIMITOR_LOCALFILE + str(apiKey) + '\n\r')
+        localFile.close()
+
+    @staticmethod
+    def saveAPIKey(apiKey):
+        """Save the provided API key in the configuration file of the user.
+        It retrieves the value of the workspace from the current file and rewrite it
+        to include the api key."""
+        localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        workspace = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
+        if workspace is not None:
+            ResourcesConfiguration.generateUserFile(workspace, apiKey)
+            return True
+        return False
 
     @staticmethod
     def askForUserDir():
@@ -172,8 +192,23 @@ class ResourcesConfiguration(object):
                     workspacePath = strippedLine[indexDelimitor + 1:]
                     break
             localFile.close()
-            return workspacePath
         return workspacePath
+
+    @staticmethod
+    def extractAPIKeyDefinitionFromLocalFile():
+        localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        apiKey = None
+        if os.path.isfile(localFilePath):
+            localFile = open(localFilePath, 'r')
+
+            for line in localFile:
+                strippedLine = line.strip('\n\r')
+                indexDelimitor = strippedLine.find(ResourcesConfiguration.DELIMITOR_LOCALFILE)
+                if indexDelimitor > 0 and strippedLine[:indexDelimitor] == ResourcesConfiguration.VAR_API_KEY_LOCALFILE and len(strippedLine[indexDelimitor + 1:]) > 0:
+                    apiKey = strippedLine[indexDelimitor + 1:]
+                    break
+            localFile.close()
+        return apiKey
 
     @staticmethod
     def getStaticResources():

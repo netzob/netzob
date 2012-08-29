@@ -26,13 +26,23 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk
-from gi.repository import Pango
+import os
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk, Pango
 import gi
 gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
 #+---------------------------------------------------------------------------+
@@ -124,3 +134,57 @@ def NetzobInfoMessage(text):
                            text)
     md.run()
     md.destroy()
+
+
+#+---------------------------------------------------------------------------+
+#| NetzobQuestionMessage:
+#+---------------------------------------------------------------------------+
+def NetzobQuestionMessage(text):
+    md = Gtk.MessageDialog(None,
+                           Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                           Gtk.MessageType.QUESTION,
+                           Gtk.ButtonsType.YES_NO,
+                           text)
+    result = md.run()
+    md.destroy()
+    return result
+
+
+def addNetzobIconsToDefaultFactory():
+    def addIconToFactory(iconStockID, iconFilename):
+        iconSet = Gtk.IconSet()
+        iconSource = Gtk.IconSource()
+        iconPath = os.path.abspath(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "icons",
+            "24x24",
+            iconFilename))
+        iconSource.set_filename(iconPath)
+        iconSource.set_size(Gtk.IconSize.LARGE_TOOLBAR)
+        iconSet.add_source(iconSource)
+        netzobIconFactory.add(iconStockID, iconSet)
+    netzobIconFactory = Gtk.IconFactory()
+    addIconToFactory("netzob-import-messages", "import-messages.png")
+    addIconToFactory("netzob-capture-messages", "capture-messages.png")
+    addIconToFactory("netzob-partitioning-sequence", "partitioning-sequence.png")
+    addIconToFactory("netzob-partitioning-simple", "partitioning-simple.png")
+    addIconToFactory("netzob-partitioning-force", "partitioning-force.png")
+    addIconToFactory("netzob-partitioning-smooth", "partitioning-smooth.png")
+    addIconToFactory("netzob-partitioning-reset", "partitioning-reset.png")
+    addIconToFactory("netzob-partitioning-freeze", "partitioning-freeze.png")
+    addIconToFactory("netzob-concat-field", "concat-field.png")
+    addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
+    addIconToFactory("netzob-edit-cut-left", "edit-cut-left.png")
+    addIconToFactory("netzob-edit-cut-right", "edit-cut-right.png")
+    addIconToFactory("netzob-create-variable", "create-variable.png")
+    addIconToFactory("netzob-move-to-symbol", "move-to-symbol.png")
+    addIconToFactory("netzob-search-environment-dep", "search-environment-dep.png")
+    addIconToFactory("netzob-messages-distribution", "messages-distribution.png")
+    addIconToFactory("netzob-variable-table", "variable-table.png")
+    addIconToFactory("netzob-field-limit", "field-limit.png")
+    addIconToFactory("netzob-select-all", "select-all.png")
+    addIconToFactory("netzob-unselect-all", "unselect-all.png")
+    addIconToFactory("netzob-concat-symbol", "concat-symbol.png")
+    addIconToFactory("netzob-rename", "rename.png")
+    addIconToFactory("netzob-new-window", "new-window.png")
+    Gtk.IconFactory.add_default(netzobIconFactory)

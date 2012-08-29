@@ -25,238 +25,442 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+----------------------------------------------
-#| Global Imports
-#+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Standard library imports
+#+---------------------------------------------------------------------------+
 from gettext import gettext as _
-from gi.repository import Gtk, Gdk
-from gi.repository import Pango
-import gi
-from gi.repository import GObject
-gi.require_version('Gtk', '3.0')
+import os
 import logging
 
-#+----------------------------------------------
-#| Local Imports
-#+----------------------------------------------
-from netzob.UI.NetzobWidgets import NetzobLabel, NetzobButton, NetzobFrame, NetzobComboBoxEntry, \
-    NetzobProgressBar, NetzobErrorMessage, NetzobInfoMessage
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
-from netzob.Common.Threads.Job import Job
+#+---------------------------------------------------------------------------+
+#| Related third party imports
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk, Gdk
+import gi
+from netzob.UI.Vocabulary.Controllers.MessageTableController import MessageTableController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Symbol import Symbol
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Models.RawMessage import RawMessage
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
-from netzob.Common.Type.Format import Format
-from netzob.Common.Type.UnitSize import UnitSize
-from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Inference.Vocabulary.SearchView import SearchView
-from netzob.UI.Vocabulary.Views.TreeSymbolView import TreeSymbolView
-from netzob.UI.Vocabulary.Views.TreeMessageView import TreeMessageView
-from netzob.UI.Vocabulary.Views.TreeTypeStructureView import TreeTypeStructureView
-from netzob.UI.Vocabulary.Views.TreePropertiesView import TreePropertiesView
-from netzob.UI.Vocabulary.Views.TreeSearchView import TreeSearchView
-from netzob.Inference.Vocabulary.VariableView import VariableView
-from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
-from netzob.Inference.Vocabulary.Searcher import Searcher
+from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
+from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
+from netzob.UI.Vocabulary.Controllers.VariableDisplayerController import VariableDisplayerController
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+from collections import OrderedDict
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+from netzob.UI.Vocabulary.Controllers.ResearchController import ResearchController
 
 
-#+----------------------------------------------
-#| VocabularyView:
-#|     GUI for vocabulary inference
-#+----------------------------------------------
-class VocabularyView:
+class VocabularyView(object):
+    SYMBOLLISTSTORE_SELECTED_COLUMN = 0
+    SYMBOLLISTSTORE_NAME_COLUMN = 1
+    SYMBOLLISTSTORE_MESSAGE_COLUMN = 2
+    SYMBOLLISTSTORE_FIELD_COLUMN = 3
+    SYMBOLLISTSTORE_ID_COLUMN = 4
 
-    #+----------------------------------------------
-    #| Constructor:
-    #| @param netzob: the netzob main class
-    #+----------------------------------------------
-    def __init__(self, netzob, controller):
-        self.netzob = netzob
-        self.log = logging.getLogger('netzob.UI.Vocabulary.View.VocabularyView.py')
+    PROJECTPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN = 3
+
+    SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN = 3
+
+    MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+    MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN = 2
+    MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN = 3
+
+    FIELDPROPERTIESLISTSTORE_NAME_COLUMN = 0
+    FIELDPROPERTIESLISTSTORE_VALUE_COLUMN = 1
+
+    def __init__(self, controller):
         self.controller = controller
-        self.buildPanel()
+        self.netzob = self.controller.netzob
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "vocabularyView.glade"))
+        self._getObjects(self.builder, ["vocabularyPanel", "symbolListStore",
+                                        "renameSymbolButton", "concatSymbolButton", "deleteSymbolButton", "newMessageList",
+                                        "projectTreeview", "symbolTreeview", "messageTreeview", "fieldTreeview",
+                                        "projectPropertiesListstore", "symbolPropertiesListstore", "messagePropertiesListstore",
+                                        "messageTableBox", "symbolListTreeView",
+                                        "symbolListTreeViewSelection", "messagesDistributionSymbolViewport", "messageTableBoxAndResearchBox"
+                                        ])
+        self._loadActionGroupUIDefinition()
+        self.builder.connect_signals(self.controller)
+        # Configure the drag and drop
+        self.symbolListTreeView.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
+        self.symbolListTreeView.connect("drag-data-received", self.drag_data_received_event)
+        self.symbolListTreeView.connect("button-press-event", self.controller.symbolListTreeView_button_press_event_cb)
+        self.symbolListTreeView.enable_model_drag_dest([], Gdk.DragAction.MOVE)
+        self.symbolListTreeView.drag_dest_add_text_targets()
 
-    def buildPanel(self):
-        # Definition of the Sequence Onglet
-        # First we create an VBox which hosts the two main children
-        self.panel = Gtk.VBox(False, spacing=0)
-        self.panel.show()
+        # List of currently displayed message tables
+        self.messageTableList = []
+        self.selectedMessageTable = None
+        # add the netzobBegin label attribute
+        self.netzobBegin = None
+        # add the researchBar
+        self.researchController = ResearchController(self.controller)
+        self.messageTableBoxAndResearchBox.pack_end(self.researchController._view.researchBar, False, False, 0)
+        self.researchController._view.research_format.set_active(4)
+        self.researchController.hide()
 
-        #+----------------------------------------------
-        #| TOP PART OF THE GUI : BUTTONS
-        #+----------------------------------------------
-        topPanel = Gtk.HBox(False, spacing=2)
-        topPanel.show()
-        self.panel.pack_start(topPanel, False, False, 0)
+    def _loadActionGroupUIDefinition(self):
+        """Loads the action group and the UI definition of menu items
+        . This method should only be called in the constructor"""
+        # Load actions
+        actionsBuilder = Gtk.Builder()
+        actionsBuilder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "vocabularyActions.glade"))
+        self._actionGroup = actionsBuilder.get_object("vocabularyActionGroup")
+        actionsBuilder.connect_signals(self.controller)
+        uiDefinitionFilePath = os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary",
+            "vocabularyMenuToolbar.ui")
+        with open(uiDefinitionFilePath, "r") as uiDefinitionFile:
+            self._uiDefinition = uiDefinitionFile.read()
 
-        ## Message format inference
-        frame = NetzobFrame(_("1 - Message format inference"))
-        topPanel.pack_start(frame, False, False, 0)
-        table = Gtk.Table(rows=5, columns=2, homogeneous=False)
-        table.show()
-        frame.add(table)
+    def _getObjects(self, builder, objectsList):
+        for object in objectsList:
+            setattr(self, object, builder.get_object(object))
 
-        # Widget for sequence alignment
-        self.butSeqAlignment = NetzobButton(_("Sequence alignment"))
-        self.butSeqAlignment.set_tooltip_text(_("Automatically discover the best alignment of messages"))
-        table.attach(self.butSeqAlignment, 0, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    ## Mandatory view methods
+    def getPanel(self):
+        return self.vocabularyPanel
 
-        # Widget for forcing partitioning delimiter
-        self.butForcePartitioning = NetzobButton(_("Force partitioning"))
-        self.butForcePartitioning.set_tooltip_text(_("Set a delimiter to force partitioning"))
-        table.attach(self.butForcePartitioning, 0, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    # Return the actions
+    def getActionGroup(self):
+        return self._actionGroup
 
-        # Widget for simple partitioning
-        self.butSimplePartitioning = NetzobButton(_("Simple partitioning"))
-        self.butSimplePartitioning.set_tooltip_text(_("In order to show the simple differences between messages"))
-        table.attach(self.butSimplePartitioning, 0, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    # Return toolbar and menu
+    def getMenuToolbarUIDefinition(self):
+        return self._uiDefinition
 
-        # Widget button slick regex
-        self.butSmoothPartitioning = NetzobButton(_("Smooth partitioning"))
-        self.butSmoothPartitioning.set_tooltip_text(_("Merge small static fields with its neighbours"))
-        table.attach(self.butSmoothPartitioning, 0, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    def drag_data_received_event(self, widget, drag_context, x, y, data, info, time):
+        """Callback executed when the user drops
+        some data in the treeview of symbols."""
+        receivedData = data.get_text()
 
-        # Widget button reset partitioning
-        self.butResetPartitioning = NetzobButton(_("Reset partitioning"))
-        self.butResetPartitioning.set_tooltip_text(_("Reset the current partitioning"))
-        table.attach(self.butResetPartitioning, 0, 2, 4, 5, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+        # retrieve the drop row
+        path, position = widget.get_dest_row_at_pos(x, y)
+        targetSymbol = None
+        if path is not None:
+            symbolID = widget.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            if symbolID is not None:
+                targetSymbol = self.controller.getCurrentProject().getVocabulary().getSymbolByID(symbolID)
 
-        ## Field type inference
-        frame = NetzobFrame(_("2 - Field type inference"))
-        topPanel.pack_start(frame, False, False, 0)
-        table = Gtk.Table(rows=5, columns=2, homogeneous=False)
-        table.show()
-        frame.add(table)
+        if targetSymbol is None:
+            return
 
-        # Widget button refine regex
-        self.butFreezePartitioning = NetzobButton(_("Freeze partitioning"))
-        self.butFreezePartitioning.set_tooltip_text(_("Automatically find and freeze the boundaries (min/max of cell's size) for each fields"))
-        table.attach(self.butFreezePartitioning, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+        if receivedData is not None and len(receivedData) > 2:
+            if targetSymbol is not None and receivedData[:2] == "m:":
+                for msgID in receivedData[2:].split(","):
+                    message = self.controller.getCurrentProject().getVocabulary().getMessageByID(msgID)
+                    # verify if the target symbol's regex is valid according to the message
+                    if message is not None:
+                        if targetSymbol.isRegexValidForMessage(message):
+                            self.controller.moveMessage(message, targetSymbol)
+                        else:
+                            self.drag_receivedMessages(targetSymbol, message)
+                        self.updateSelectedMessageTable()
+                        self.updateLeftPanel()
 
-        # Widget button to show message distribution
-        self.butMessagesDistribution = NetzobButton(_("Messages distribution"))
-        self.butMessagesDistribution.set_tooltip_text(_("Open a graph with messages distribution, separated by fields"))
-        table.attach(self.butMessagesDistribution, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    def drag_receivedMessages(self, targetSymbol, message):
+        """Executed by the drop callback which has discovered
+        some messages (identified by their ID) to be moved from their
+        current symbol to the selected symbol"""
+        if message is not None:
+            moveMessageController = MoveMessageController(self.controller, [message], targetSymbol)
+            moveMessageController.run()
 
-        # Widget button data carving
-        self.butDataCarving = NetzobButton(_("Data carving"))
-        self.butDataCarving.set_tooltip_text(_("Automatically look for known patterns of data (URL, IP, email, etc.)"))
-        table.attach(self.butDataCarving, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    ## View manipulation methods
+    def updateLeftPanel(self):
+        self.updateSymbolList()
+        self.updateSymbolListToolbar()
+        self.updateProjectProperties()
+        self.updateSymbolProperties()
+        self.updateMessageProperties()
 
-        # Widget button to analyze for ASN.1 presence
-#        self.but = NetzobButton("Find ASN.1 fields")
-#        table.attach(self.but, 0, 1, 3, 4, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    ## Message Tables management
+    def addMessageTable(self):
+        """ Create a new message table and selects it"""
+        messageTableController = MessageTableController(self)
+        messageTable = messageTableController.view
+        self.messageTableList.append(messageTable)
+        self.setSelectedMessageTable(messageTable)
+        self.messageTableBox.pack_start(messageTable.getPanel(), True, True, 0)
 
-        ## Dependencies inference
-        frame = NetzobFrame(_("3 - Dependencies inference"))
-        topPanel.pack_start(frame, False, False, 0)
-        table = Gtk.Table(rows=4, columns=4, homogeneous=False)
-        table.show()
-        frame.add(table)
+    def removeMessageTable(self, messageTable):
+        self.messageTableBox.remove(messageTable.getPanel())
+        messageTable.destroy()
+        self.messageTableList = [mTable for mTable in self.messageTableList
+                                 if mTable != messageTable]
+        # Select a new table in messageTable was the selected message table
+        if len(self.messageTableList) > 0:
+            self.setSelectedMessageTable(self.messageTableList[0])
 
-        # Widget button find size fields
-        self.butFindSizeFields = NetzobButton(_("Find size fields"))
-        self.butFindSizeFields.set_tooltip_text(_("Automatically find potential size fields and associated payloads"))
-        table.attach(self.butFindSizeFields, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    def removeAllMessageTables(self):
+        for child in self.messageTableBox.get_children():
+            self.messageTableBox.remove(child)
 
-        # Widget button for environment dependencies
-        self.butEnvDependencies = NetzobButton(_("Environment dependencies"))
-        self.butEnvDependencies.set_tooltip_text(_("Automatically look for environmental dependencies (retrieved during capture) in messages"))
-        table.attach(self.butEnvDependencies, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+        self.messageTableList = []
 
-        ## Visualization
-        frame = NetzobFrame(_("4 - Visualization"))
-        topPanel.pack_start(frame, False, False, 0)
-        table = Gtk.Table(rows=4, columns=4, homogeneous=False)
-        table.show()
-        frame.add(table)
+    def emptyMessageTableDisplayingSymbols(self, symbolList):
+        toBeRemovedTables = [mTable for mTable in self.messageTableList
+                             if mTable.getDisplayedSymbol() in symbolList]
+        for mTable in toBeRemovedTables:
+            mTable.setDisplayedSymbol(None)
 
-        # Widget for choosing the format
-        label = NetzobLabel(_("Format : "))
-        self.comboDisplayFormat = NetzobComboBoxEntry()
-        table.attach(label, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplayFormat, 1, 2, 0, 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+    def updateSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            self.selectedMessageTable.update()
 
-        # Widget for choosing the unit size
-        label = NetzobLabel(_("Unit size : "))
-        self.comboDisplayUnitSize = NetzobComboBoxEntry()
-        table.attach(label, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplayUnitSize, 1, 2, 1, 2, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+    def updateMessageTableDisplayingSymbols(self, symbolList):
+        toBeUpdatedTables = [mTable for mTable in self.messageTableList
+                             if mTable.getDisplayedSymbol() in symbolList]
+        for mTable in toBeUpdatedTables:
+            mTable.update()
 
-        # Widget for choosing the displayed sign
-        label = NetzobLabel(_("Sign : "))
-        self.comboDisplaySign = NetzobComboBoxEntry()
-        table.attach(label, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplaySign, 1, 2, 2, 3, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+    def setSelectedMessageTable(self, selectedMessageTable):
+        """Set provided message table as selected"""
 
-        # Widget for choosing the displayed endianess
-        label = NetzobLabel(_("Endianess : "))
-        self.comboDisplayEndianess = NetzobComboBoxEntry()
-        table.attach(label, 0, 1, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
-        table.attach(self.comboDisplayEndianess, 1, 2, 3, 4, xoptions=Gtk.AttachOptions.FILL, yoptions=0, xpadding=2, ypadding=0)
+        # Update appearance of old and new selected message table
+        if self.selectedMessageTable is not None:
+            self.selectedMessageTable.setSelected(False)
 
-        ## Semantic inference
-        frame = NetzobFrame(_("5 - Search data"))
-        topPanel.pack_start(frame, False, False, 0)
-        table = Gtk.Table(rows=4, columns=4, homogeneous=False)
-        table.show()
-        frame.add(table)
+        selectedMessageTable.setSelected(True)
+        # Update current selected message table and
+        self.selectedMessageTable = selectedMessageTable
 
-        # Widget button for search
-        self.searchEntry = Gtk.Entry()
-        self.searchEntry.show()
-        table.attach(self.searchEntry, 0, 1, 0, 1, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+    def setDisplayedSymbolInSelectedMessageTable(self, symbol):
+        """Show the definition of provided symbol on the selected
+        message table"""
+        logging.debug("Update the displayed symbol in selected table message")
 
-        # Combo to select the type of the input
-        self.typeCombo = Gtk.ComboBoxText.new_with_entry()
-        self.typeCombo.show()
-        self.typeStore = Gtk.ListStore(str)
-        self.typeCombo.set_model(self.typeStore)
-        self.typeCombo.get_model().append([Format.STRING])
-        self.typeCombo.get_model().append([Format.HEX])
-#        self.typeCombo.get_model().append([Format.BINARY])
-#        self.typeCombo.get_model().append([Format.OCTAL])
-        self.typeCombo.get_model().append([Format.DECIMAL])
-        self.typeCombo.get_model().append([Format.IP])
-        self.typeCombo.set_active(0)
-        table.attach(self.typeCombo, 0, 1, 1, 2, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+        # Open a message table is None is available
+        if len(self.messageTableList) == 0:
+            self.addMessageTable()
 
-        self.butSearch = NetzobButton(_("Search"))
-        self.butSearch.set_tooltip_text(_("A search function available in different encoding format"))
-        table.attach(self.butSearch, 0, 1, 2, 3, xoptions=Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, yoptions=Gtk.AttachOptions.FILL, xpadding=2, ypadding=2)
+        # if a message table is selected we update its symbol (if required)
+        if self.selectedMessageTable is not None and symbol != self.selectedMessageTable.displayedSymbol:
+            self.selectedMessageTable.setDisplayedSymbol(symbol)
 
-        #+----------------------------------------------
-        #| LEFT PART OF THE GUI : SYMBOL TREEVIEW
-        #+----------------------------------------------
-        bottomPanel = Gtk.HPaned()
-        bottomPanel.show()
-        self.panel.pack_start(bottomPanel, True, True, 0)
-        leftPanel = Gtk.VBox(False, spacing=0)
-#        leftPanel.set_size_request(-1, -1)
-        leftPanel.show()
-        bottomPanel.add(leftPanel)
-        # Initialize the treeview generator for the symbols
-        leftPanel.pack_start(self.controller.treeSymbolController.getScrollLib(), True, True, 0)
-        # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.controller.treeSymbolController.getTreeview().enable_model_drag_dest([], Gdk.DragAction.DEFAULT)
-        self.controller.treeSymbolController.getTreeview().drag_dest_add_text_targets()
+    def getDisplayedSymbolInSelectedMessageTable(self):
+        if self.selectedMessageTable is None:
+            return None
+        else:
+            return self.selectedMessageTable.displayedSymbol
 
-        #+----------------------------------------------
-        #| RIGHT PART OF THE GUI :
-        #| includes the messages treeview and the optional views in tabs
-        #+----------------------------------------------
-        rightPanel = Gtk.VPaned()
-        rightPanel.show()
-        bottomPanel.add(rightPanel)
-        # add the messages in the right panel
-        rightPanel.add(self.controller.treeMessageController.getScrollLib())
-        # Attach to the treeview few actions (DnD, cursor and buttons handlers...)
-        self.controller.treeMessageController.getTreeview().enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [], Gdk.DragAction.DEFAULT | Gdk.DragAction.MOVE)
-        self.controller.treeMessageController.getTreeview().drag_source_add_text_targets()
+    ## Symbol List
+    def updateSymbolList(self):
+        """Updates the symbol list of the left panel, preserving the current
+        selection"""
+        # Retrieve symbols of the current project vocabulary (if one selected)
+        symbolList = []
+        if self.getCurrentProject() is not None and self.getCurrentProject().getVocabulary() is not None:
+            symbolList.extend(self.getCurrentProject().getVocabulary().getSymbols())
 
-        # find the optional views
-        rightPanel.add(self.controller.optionalPanelsController.getView().getPanel())
+        checkedMessagesIDList = []
+        for row in self.symbolListStore:
+            if (row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]):
+                checkedMessagesIDList.append(row[self.SYMBOLLISTSTORE_ID_COLUMN])
+        # Block selection changed handler
+        self.symbolListTreeViewSelection.handler_block_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
+        self.symbolListStore.clear()
+        for sym in symbolList:
+            self.addRowSymbolList(checkedMessagesIDList, sym.getName(),
+                                  len(sym.getMessages()),
+                                  len(sym.getFields()),
+                                  str(sym.getID()))
+        self.setSelectedSymbolFromSelectedMessageTable()
+        self.symbolListTreeViewSelection.handler_unblock_by_func(self.controller.symbolListTreeViewSelection_changed_cb)
+
+    def setSelectedSymbolFromSelectedMessageTable(self):
+        if self.selectedMessageTable is None:
+            self.setSelectedSymbol(None)
+        else:
+            messageTableSymbol = self.selectedMessageTable.displayedSymbol
+            self.setSelectedSymbol(messageTableSymbol)
+
+    def addRowSymbolList(self, checkedMessagesIDList, name, message, field, symID):
+        """Adds a row in the symbol list of left panel
+        @type  selection: boolean
+        @param selection: if selected symbol
+        @type  name: string
+        @param name: name of the symbol
+        @type  message: string
+        @param message: number of message in the symbol
+        @type  field: string
+        @param field: number of field in the symbol
+        @type  image: string
+        @param image: image of the lock button (freeze partitioning)"""
+        i = self.symbolListStore.append()
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_SELECTED_COLUMN, (symID in checkedMessagesIDList))
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_NAME_COLUMN, name)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_MESSAGE_COLUMN, message)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_FIELD_COLUMN, field)
+        self.symbolListStore.set(i, self.SYMBOLLISTSTORE_ID_COLUMN, symID)
+
+    def updateSymbolListToolbar(self):
+        """Enables or disable buttons of the symbol list toolbar"""
+        selectedSymbolsCount = self.countSelectedSymbols()
+        self.renameSymbolButton.set_sensitive((selectedSymbolsCount == 1))
+        self.concatSymbolButton.set_sensitive((selectedSymbolsCount >= 2))
+        self.deleteSymbolButton.set_sensitive((selectedSymbolsCount >= 1))
+
+    def countSelectedSymbols(self):
+        count = 0
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                count += 1
+        return count
+
+    def getCheckedSymbolList(self):
+        if self.getCurrentProject() is None:
+            return []
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        selectedSymbolList = []
+        for row in self.symbolListStore:
+            if row[self.SYMBOLLISTSTORE_SELECTED_COLUMN]:
+                symID = row[self.SYMBOLLISTSTORE_ID_COLUMN]
+                sym = currentVocabulary.getSymbolByID(symID)
+                selectedSymbolList.append(sym)
+        return selectedSymbolList
+
+    def setSelectedSymbol(self, symbol):
+        selection = self.symbolListTreeView.get_selection()
+        if symbol is None:
+            selection.unselect_all()
+        else:
+            path = self.getSymbolPathInSymbolList(symbol)
+            if path is not None:
+                selection.select_path(path)
+
+    def getSelectedSymbol(self):
+        """Returns the selected symbol in the list of symbols"""
+        currentVocabulary = self.getCurrentProject().getVocabulary()
+        model, iter = self.symbolListTreeView.get_selection().get_selected()
+        if iter is not None:
+            symID = model[iter][self.SYMBOLLISTSTORE_ID_COLUMN]
+            return currentVocabulary.getSymbolByID(symID)
+        return None
+
+    def getSelectedMessagesInSelectedMessageTable(self):
+        if self.selectedMessageTable is not None:
+            return self.selectedMessageTable.controller.getSelectedMessages()
+
+    def getSymbolPathInSymbolList(self, symbol):
+        symID = symbol.getID()
+        for path, row in enumerate(self.symbolListStore):
+            if row[self.SYMBOLLISTSTORE_ID_COLUMN] == symID:
+                return path
+
+    ## Properties panel
+    def getProjectProperties(self):
+        """Computes the set of properties
+        on the current project, and displays them
+        in the treeview"""
+        properties = []
+        project = self.getCurrentProject()
+        if project is not None:
+            properties = project.getProperties()
+        return properties
+
+    def updateProjectProperties(self):
+        # clean store
+        self.projectPropertiesListstore.clear()
+        # get project properties
+        properties = self.getProjectProperties()
+        # add project properties
+        for prop in properties:
+            line = self.projectPropertiesListstore.append()
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.projectPropertiesListstore.set(line, self.PROJECTPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
+
+    def getSymbolProperties(self):
+        """Create the list of properties associated
+        with the current displayed symbol"""
+        properties = []
+        symbol = self.getDisplayedSymbolInSelectedMessageTable()
+        if symbol is not None:
+            properties = symbol.getProperties()
+        return properties
+
+    def updateSymbolProperties(self):
+        # clean store
+        self.symbolPropertiesListstore.clear()
+        # get symbol properties
+        properties = self.getSymbolProperties()
+#        # add symbol properties
+        for prop in properties:
+            line = self.symbolPropertiesListstore.append()
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.symbolPropertiesListstore.set(line, self.SYMBOLPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
+
+        # update the variable definition
+        self.updateSymbolVariableDefinition()
+
+    def updateSymbolVariableDefinition(self):
+        currentSymbol = self.getDisplayedSymbolInSelectedMessageTable()
+        if currentSymbol is not None:
+            variableDisplayerController = VariableDisplayerController(self, currentSymbol, True)
+            variableDisplayerController.run(self.messagesDistributionSymbolViewport)
+
+    def getMessageProperties(self):
+        """Retrieve the current first selected message (in the
+        selected TableMessage) and return its properties"""
+        properties = []
+        messages = self.getSelectedMessagesInSelectedMessageTable()
+        if messages is not None and len(messages) > 0:
+            message = messages[0]
+            if message is not None:
+                properties = message.getProperties()
+        return properties
+
+    def updateMessageProperties(self):
+        # clean store
+        self.messagePropertiesListstore.clear()
+        # get message properties
+        properties = self.getMessageProperties()
+        # add message properties
+        for prop in properties:
+            line = self.messagePropertiesListstore.append()
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_NAME_COLUMN, prop.getName())
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_VALUE_COLUMN, str(prop.getCurrentValue()))
+            self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_EDITABLE_COLUMN, prop.isEditable)
+            if prop.getPossibleValues() != []:
+                liststore_possibleValues = Gtk.ListStore(str)
+                for val in prop.getPossibleValues():
+                    liststore_possibleValues.append([val])
+                self.messagePropertiesListstore.set(line, self.MESSAGEPROPERTIESLISTSTORE_MODEL_COLUMN, liststore_possibleValues)
+
+    def getCurrentProject(self):
+        return self.controller.netzob.getCurrentProject()
+
+    def getDisplayedSymbol(self):
+        if self.selectedMessageTable is None:
+            return None
+        return self.selectedMessageTable.getDisplayedSymbol()

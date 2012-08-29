@@ -42,6 +42,7 @@ from netzob.Common.Models.L3NetworkMessage import L3NetworkMessage
 from netzob.Common.Models.Factories.L4NetworkMessageFactory import L4NetworkMessageFactory
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Property import Property
 
 
 class L4NetworkMessage(L3NetworkMessage):
@@ -68,9 +69,9 @@ class L4NetworkMessage(L3NetworkMessage):
         """Computes and returns the properties of the current message
            @return an array with all the properties [[key,type,val],...]"""
         properties = super(L4NetworkMessage, self).getProperties()
-        properties.append(['Layer 4 Protocol', Format.STRING, self.getL4Protocol()])
-        properties.append(['Source port', Format.DECIMAL, self.getL4SourcePort()])
-        properties.append(['Target port', Format.DECIMAL, self.getL4DestinationPort()])
+        properties.append(Property('Layer 4 Protocol', Format.STRING, self.getL4Protocol()))
+        properties.append(Property('Source port', Format.DECIMAL, self.getL4SourcePort()))
+        properties.append(Property('Target port', Format.DECIMAL, self.getL4DestinationPort()))
         return properties
 
     def getL4Protocol(self):

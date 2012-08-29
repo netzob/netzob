@@ -45,7 +45,7 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 class ImportFileChooserDialog(object):
 
-    GLADE_FILENAME = "ImportFileChooserDialog.glade"
+    GLADE_FILENAME = "importFileChooserDialog.glade"
     RESPONSE_OK = 0
     RESPONSE_CANCEL = 1
 
@@ -55,7 +55,7 @@ class ImportFileChooserDialog(object):
             self.pluginDict[plugin.getFileTypeDescription()] = plugin
         self.builder = Gtk.Builder()
         gladeFilePath = os.path.join(
-            ResourcesConfiguration.getStaticResources(), "ui",
+            ResourcesConfiguration.getStaticResources(), "ui", "import",
             ImportFileChooserDialog.GLADE_FILENAME)
         self.builder.add_from_file(gladeFilePath)
         self.builder.connect_signals(self)

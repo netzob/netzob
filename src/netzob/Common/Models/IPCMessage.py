@@ -40,6 +40,7 @@ import logging
 from netzob.Common.Models.AbstractMessage import AbstractMessage
 from netzob.Common.Models.Factories.IPCMessageFactory import IPCMessageFactory
 from netzob.Common.Type.Format import Format
+from netzob.Common.Property import Property
 
 
 #+---------------------------------------------------------------------------+
@@ -71,13 +72,13 @@ class IPCMessage(AbstractMessage):
     #+-----------------------------------------------------------------------+
     def getProperties(self):
         properties = []
-        properties.append(['ID', Format.STRING, str(self.getID())])
-        properties.append(['Type', Format.STRING, self.getType()])
-        properties.append(['Timestamp', Format.DECIMAL, self.getTimestamp()])
-        properties.append(['Category', Format.STRING, self.getCategory()])
-        properties.append(['Key', Format.STRING, self.getKey()])
-        properties.append(['Direction', Format.STRING, self.getDirection()])
-        properties.append(['Data', Format.STRING, self.getStringData()])
+        properties.append(Property('ID', Format.STRING, str(self.getID())))
+        properties.append(Property('Type', Format.STRING, self.getType()))
+        properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
+        properties.append(Property('Category', Format.STRING, self.getCategory()))
+        properties.append(Property('Key', Format.STRING, self.getKey()))
+        properties.append(Property('Direction', Format.STRING, self.getDirection()))
+        properties.append(Property('Data', Format.STRING, self.getStringData()))
 
         return properties
 
