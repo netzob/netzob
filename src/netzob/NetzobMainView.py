@@ -37,6 +37,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.UI.Simulator.Controllers.SimulatorController import SimulatorController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -89,7 +90,7 @@ class NetzobMainView(object):
                                  GrammarController)
         self.registerPerspective(self.TRAFFIC_SIMULATOR_VIEW,
                                  _("Simulator"),
-                                 UISimulator)
+                                 SimulatorController)
         self.switchPerspective(self.VOCABULARY_INFERENCE_VIEW)
         self.perspectiveComboBox.set_active(0)
 
