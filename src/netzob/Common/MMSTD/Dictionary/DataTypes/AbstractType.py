@@ -117,7 +117,7 @@ class AbstractType():
 
     def compareFormat(self, readingToken):
         """compareFormat:
-                Compare (starting at the "indice"-th character) the readingToken's value format to the variable type format.
+                Compare (starting at the "indice"-th character) the readingToken's value format to the type format.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
@@ -125,15 +125,15 @@ class AbstractType():
         tmp = readingToken.getValue()[readingToken.getIndex():]
 
         # If the type has a definite size.
-        if self.type.isSized():
-            minBits = self.type.getMinBits()
-            maxBits = self.type.getMaxBits()
+        if self.isSized():
+            minBits = self.getMinBits()
+            maxBits = self.getMaxBits()
             # Length comparison.
             if len(tmp) >= minBits:
                 #self.log.debug(str(len(tmp)) + " - " + str(minBits) + " - " + str(maxBits))
                 if len(tmp) <= maxBits:
                     # Format comparison.
-                    if self.type.suitsBinary(tmp):
+                    if self.suitsBinary(tmp):
                         readingToken.setOk(True)
                         self.log.info(_("Format comparison successful."))
                     else:
@@ -141,7 +141,7 @@ class AbstractType():
                         self.log.info(_("Format comparison failed: wrong format."))
                 else:  # len(tmp) > self.maxBits
                     # Format comparison.
-                    if self.type.suitsBinary(tmp[:maxBits]):
+                    if self.suitsBinary(tmp[:maxBits]):
                         readingToken.setOk(True)
                         self.log.info(_("Format comparison successful."))
                     else:
@@ -155,7 +155,7 @@ class AbstractType():
         else:
             endi = -1
             for i in range(len(tmp)):
-                if self.type.endsHere(tmp[i:]):
+                if self.endsHere(tmp[i:]):
                     endi = i
                     break
             if endi != -1:
