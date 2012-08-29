@@ -76,7 +76,9 @@ contributors = ["Georges Bossert <georges.bossert@supelec.fr>",
                 "Alexandre Pigné <alex@freesenses.net>",
                 "Franck Roland <franck.l.roland@gmail.com>",
                 "Fabien André <fabien.andre@insa-rennes.fr>",
-                "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>"]
+                "Quentin Heyler <quentin.heyler@etudiant.univ-rennes1.fr>",
+                "Benjamin Dufour <benjamin.dufour@amossys.fr>"
+                ]
 
 #+---------------------------------------------------------------------------+
 #| Email to contact authors
