@@ -104,45 +104,18 @@ class DirectRelationVariable(AbstractRelationVariable):
                 The variable checks if its format complies with the read value's format.
         """
         self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
-        self.getPointedVariable().getType().compareFormat(readingToken)
+        self.getPointedVariable().getType().trivialCompareFormat(readingToken)
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
-    def learn(self, readingToken):
-        """learn:
+    def lightRead(self, readingToken):
+        """lightRead:
+                We execute a read on the distant variable and restore the readingToken afterward.
         """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
-        if readingToken.isOk():  # A format comparison had been executed before, its result must be "OK".
-            tmp = readingToken.getValue()[readingToken.getIndex():]
-
-            # If the type has a definite size.
-            if self.getPointedVariable().getType().isSized():
-                maxBits = self.getPointedVariable().getType().getMaxBits()
-                # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
-                if len(tmp) <= maxBits:
-                    self.setCurrentValue(tmp)
-                    readingToken.incrementIndex(len(tmp))
-
-                else:  # len(tmp) > maxBits
-                    # We learn as much as we can.
-                    self.setCurrentValue(tmp[:maxBits])
-                    readingToken.incrementIndex(maxBits)
-
-            # If the type is delimited from 0 to a delimiter.
-            else:
-                endi = 0
-                for i in range(len(tmp)):
-                    if self.getPointedVariable().getType().endsHere(tmp[i:]):
-                        endi = i
-                        break
-                # We learn from the beginning to the delimiter.
-                self.setCurrentValue(tmp[:endi + len(self.getPointedVariable().getType().getDelimiter())])  # The delimiter token is a part of the variable.
-                readingToken.incrementIndex(endi + len(self.getPointedVariable().getType().getDelimiter()))
-
-            self.log.info(_("Learning done."))
-        else:
-            self.log.info(_("Learning abort because the previous format comparison failed."))
-
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.getPointedVariable().read(readingToken)
+        for linkedValue in readingToken.getLinkedValue():
+            # We replace the author of everything the pointed variable read by the current variable.
+            if linkedValue[0] == self.getPointedVariable().getID():
+                linkedValue[0] = self.getID()
 
     def generate(self, writingToken):
         """generate:

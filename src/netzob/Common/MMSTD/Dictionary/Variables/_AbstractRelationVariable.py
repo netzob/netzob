@@ -62,7 +62,6 @@ class AbstractRelationVariable(AbstractVariable):
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.AbstractRelationVariable.py')
         self.pointedID = pointedID
         self.symbol = symbol
-        self.directPointer = self.findDirectPointer()
         self.pointedVariable = None
 
     def findDirectPointer(self):
@@ -74,15 +73,19 @@ class AbstractRelationVariable(AbstractVariable):
             return True
             self.log.debug("No pointed ID.")
         treeElements = self.symbol.getRoot().getProgeny()
-        foundSelf = False
+        found = False
         for element in treeElements:
-            if not foundSelf and element.getID() == self.getID():
-                foundSelf = True
-            if element.getID() == self.pointedID:
-                if not foundSelf:
+            if not found and element.getID() == self.pointedID:
+                self.log.debug(_("We found the pointed value."))
+                found = True
+            if element.getID() == self.getID():
+                if found:
+                    self.log.debug(_("The pointing value is after the pointed value in the same tree."))
                     return True
                 else:
+                    self.log.debug(_("The pointing value is before the pointed value or in a different tree."))
                     return False
+        self.log.debug(_("Default case."))
         return True
 
     def randomizePointedVariable(self, writingToken):
@@ -142,7 +145,7 @@ class AbstractRelationVariable(AbstractVariable):
         if len(tmp) >= len(localValue):
             if tmp[:len(localValue)] == localValue:
                 self.log.debug(_("Comparison successful."))
-                readingToken.incrementIndex(len(localValue))
+                readingToken.read(self, len(localValue))
                 readingToken.setOk(True)
             else:
                 readingToken.setOk(False)
@@ -150,9 +153,6 @@ class AbstractRelationVariable(AbstractVariable):
         else:
             readingToken.setOk(False)
             self.log.debug(_("Comparison failed: wrong size."))
-
-        if readingToken.isOk():
-            readingToken.getChoppedValue().append(localValue)
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
@@ -162,12 +162,7 @@ class AbstractRelationVariable(AbstractVariable):
                 Write this value in the writingToken.
         """
         self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
-
-        for choppy in self.getChoppedValue(writingToken):
-            self.addTokenChoppedIndexes(len(writingToken.getChoppedValue()))
-            writingToken.getChoppedValue().append(choppy)
-        writingToken.updateValue()
-
+        writingToken.write(self, self.currentValue)
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
@@ -184,14 +179,14 @@ class AbstractRelationVariable(AbstractVariable):
         raise NotImplementedError(_("The current variable does not implement 'compareFormat'."))
 
     @abstractmethod
-    def learn(self, readingToken):
-        """learn:
-                Learn (starting at the "indice"-th character) value.
+    def lightRead(self, readingToken):
+        """lightRead:
+                A read which is confirmed and completed by a notified read.
 
                 @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
                 @param readingToken: a token which contains all critical information on this access.
         """
-        raise NotImplementedError(_("The current variable does not implement 'learn'."))
+        raise NotImplementedError(_("The current variable does not implement 'lightRead'."))
 
     @abstractmethod
     def generate(self, writingToken):
@@ -246,16 +241,6 @@ class AbstractRelationVariable(AbstractVariable):
         else:
             return self.getPointedVariable().restore(processingToken)
 
-    def getChoppedValue(self, processingToken):
-        """getChoppedValue:
-                Return the pointedVariable's chopped value.
-        """
-        if self.getPointedVariable() is None:
-            self.log.debug("No pointed variable.")
-            return None
-        else:
-            return self.getPointedVariable().getChoppedValue(processingToken)
-
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
         """
@@ -270,6 +255,8 @@ class AbstractRelationVariable(AbstractVariable):
                 The relation variable tries to compare/learn the read value.
         """
         self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
+        self.directPointer = self.findDirectPointer()
+
         if self.isMutable():
             self.compareFormat(readingToken)
 
@@ -281,7 +268,9 @@ class AbstractRelationVariable(AbstractVariable):
                     self.retrieveValue(readingToken)
                     self.compare(readingToken)
                 else:
-                    # We will compare at notification time.
+                    # We make a light comparison.
+                    self.lightRead(readingToken)
+                    # We will verify at notification time.
                     self.bindValue(readingToken)
 
             else:
@@ -291,7 +280,7 @@ class AbstractRelationVariable(AbstractVariable):
 
         # Variable notification
         if readingToken.isOk():
-            self.notifyBoundedVariables("read", readingToken)
+            self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -300,6 +289,8 @@ class AbstractRelationVariable(AbstractVariable):
                 The relation variable returns a computed or a generated value.
         """
         self.log.debug(_("[ {0} (relation): write access:").format(AbstractVariable.toString(self)))
+        self.directPointer = self.findDirectPointer()
+
         if self.isMutable():
             # mutable
             self.randomizePointedVariable(writingToken)
@@ -336,7 +327,7 @@ class AbstractRelationVariable(AbstractVariable):
 #+---------------------------------------------------------------------------+
 #| Notified function                                                         |
 #+---------------------------------------------------------------------------+
-    def notifiedRead(self, readingToken):
+    def notifiedRead(self, readingToken, pointedValue):
         """notifiedRead:
                 A read access called by a notification of the pointed variable (when it has finished its own treatment).
                 It checks that the new value complies with the reading token value at this very position.
@@ -348,7 +339,7 @@ class AbstractRelationVariable(AbstractVariable):
         if not self.isMutable():
             if self.isDefined(readingToken):
                 # not mutable and defined
-                self.notifiedCompare(readingToken)
+                self.notifiedCompare(readingToken, pointedValue)
 
             else:
                 # not mutable and not defined
@@ -357,7 +348,7 @@ class AbstractRelationVariable(AbstractVariable):
 
         # Variable notification
         if readingToken.isOk():
-            self.notifyBoundedVariables("read", readingToken)
+            self.notifyBoundedVariables("read", readingToken, pointedValue)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -399,18 +390,15 @@ class AbstractRelationVariable(AbstractVariable):
                 @param writingToken: a token which contains all critical information on this access.
         """
         self.log.debug(_("- [ {0}: notifiedWriteValue.").format(self.toString()))
-        choppedValue = self.getChoppedValue(writingToken)
 
-        for i in len(self.getTokenChoppedIndexes()):
-            # If the current variable is in a repeat variable, len(self.getTokenChoppedIndexes()) = k * len(choppedValue) with k natural integer.
-            value = self.computeValue(choppedValue[i % len(choppedValue)])
-            # We write down the actualized corresponding value in the proper segment of the writing token chopped value.
-            writingToken.getChoppedValue()[self.getTokenChoppedIndexes()[i]] = value
-        # We update the value.
+        for linkedValue in writingToken.getLinkedValue():
+            if linkedValue[0] == self.getID():
+                linkedValue[1] = self.currentValue
         writingToken.updateValue()
+
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
-    def notifiedCompare(self, readingToken):
+    def notifiedCompare(self, readingToken, pointedValue):
         """notifiedCompare:
                 We compare the reading token value to the new value of the current variable on the proper segment.
 
@@ -418,15 +406,13 @@ class AbstractRelationVariable(AbstractVariable):
                 @param readingToken: a token which contains all critical information on this access.
         """
         self.log.debug(_("- [ {0}: notifiedCompare.").format(self.toString()))
-        choppedValue = self.getChoppedValue(readingToken)
 
-        # We retrieve the values.
-        for i in len(self.getTokenChoppedIndexes()):
-            value = self.computeValue(choppedValue[i % len(choppedValue)])
-            if readingToken.getChoppedValue()[self.getTokenChoppedIndexes()[i]] != value:
-                # One piece of value differs.
-                readingToken.setOk(False)
-                break
+        for linkedValue in readingToken.getLinkedValue():
+            if linkedValue[0] == self.getID():
+                # We compare the pointed value to the value the current variable wrote in memory.
+                if linkedValue[1] != self.computeValue(pointedValue):
+                    readingToken.setOk(False)
+                    break
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
@@ -447,7 +433,6 @@ class AbstractRelationVariable(AbstractVariable):
             if self.pointedVariable.getID() == self.pointedID:
                 # The pointed variable is already set.
                 return self.pointedVariable
-
         self.pointedVariable = self.symbol.getProject().getVocabulary().getVariableByID(self.pointedID)
         return self.pointedVariable
 
