@@ -42,7 +42,7 @@ from netzob.Common.Plugins.AbstractPluginView import AbstractPluginView
 
 
 class AbstractImporterView(AbstractPluginView):
-    GLADE_FILENAME = "AbstractImporterView.glade"
+    GLADE_FILENAME = "abstractImporterView.glade"
 
     def __init__(self, plugin, controller):
         super(AbstractImporterView, self).__init__(plugin, controller)
