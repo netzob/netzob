@@ -120,6 +120,7 @@ class Project(object):
         self.path = path
         self.vocabulary = Vocabulary()
         self.grammar = Grammar()
+        self.simulator = Simulator()
         self.configuration = ProjectConfiguration.loadDefaultProjectConfiguration()
 
     def generateXMLConfigFile(self):

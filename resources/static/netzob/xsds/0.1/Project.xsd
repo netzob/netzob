@@ -4,12 +4,12 @@
 	xmlns:netzob-project="http://www.netzob.org/project"
 	xmlns:netzob-common="http://www.netzob.org/common">
 
-	<import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
+    <import schemaLocation="common.xsd" namespace="http://www.netzob.org/common"></import>
 
 	<complexType name="Project">
 		<sequence>
-			<element name="configuration" type="netzob-project:Project_configuration"
-				minOccurs="0">
+			<element name="configuration"
+				type="netzob-project:Project_configuration" minOccurs="0">
 			</element>
 			<element name="vocabulary" type="netzob-project:Vocabulary"
 				minOccurs="0">
@@ -17,6 +17,7 @@
 			<element name="grammar" type="netzob-project:Grammar"
 				minOccurs="0">
 			</element>
+			<element name="simulator" type="netzob-project:Simulator" minOccurs="0" maxOccurs="1"></element>
 		</sequence>
 		<attribute name="id" use="required">
 			<simpleType>
@@ -766,4 +767,70 @@
 			</simpleType>
 		</attribute>
     </complexType>
+
+    <complexType name="Simulator">
+    	<sequence>
+    		<sequence>
+    			<element name="actors" type="netzob-project:Actors"></element>
+    		</sequence>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Actors">
+    	<sequence>
+    		<element name="actor" type="netzob-project:Actor"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="Actor">
+    	<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+    </complexType>
+    
+    <complexType name="NetworkActor">
+		<complexContent>
+			<extension base="netzob-project:Actor">
+				<sequence>
+					<element name="L4_protocol" type="string" minOccurs="1" maxOccurs="1"></element>
+					<element name="bind_ip" type="string" minOccurs="1"
+						maxOccurs="1">
+					</element>
+					<element name="bind_port" type="string"
+						minOccurs="1" maxOccurs="1">
+					</element>
+					<element name="target_ip" type="string"
+						minOccurs="1" maxOccurs="1">
+					</element>
+					<element name="target_port" type="string"
+						minOccurs="1" maxOccurs="1">
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+    <complexType name="ClientNetworkActor">
+    	<complexContent>
+    		<extension base="netzob-project:NetworkActor"></extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="ServerNetworkActor">
+		<complexContent>
+			<extension base="netzob-project:NetworkActor">
+			</extension>
+		</complexContent>
+	</complexType>
 </schema>
