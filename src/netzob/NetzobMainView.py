@@ -48,7 +48,6 @@ from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Controllers.NewVocabularyController import NewVocabularyController
 from netzob.UI.Simulator.UISimulator import UISimulator
 from netzob.UI.Grammar.Controllers.GrammarController import GrammarController
-from netzob.UI.Grammar.UIGrammarInference import UIGrammarInference
 
 
 class NetzobMainView(object):
