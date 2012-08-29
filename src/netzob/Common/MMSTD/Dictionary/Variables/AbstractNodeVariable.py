@@ -193,17 +193,17 @@ class AbstractNodeVariable(AbstractVariable):
     def addChild(self, child):
         if self.children is not None:
             self.children.append(child)
-            child.setFather(self)
+            child.addFather(self)
 
     def removeChild(self, child):
         if self.children is not None:
             self.children.remove(child)
-            child.setFather(None)
+            child.removeFather(self)
 
     def insertChild(self, i, child):
         if self.children is not None:
             self.children.insert(i, child)
-            child.setFather(self)
+            child.addFather(self)
 
     def indexOfChild(self, child):
         if self.children is not None:

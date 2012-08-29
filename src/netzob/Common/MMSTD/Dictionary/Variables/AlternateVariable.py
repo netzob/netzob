@@ -72,7 +72,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If it fails, it restore it value and the next child try.
                 It stops if one child successes.
         """
-        self.log.debug(_("[ {0} (Alternate): read access:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0} (Alternate): readChildren:").format(AbstractVariable.toString(self)))
         savedIndex = readingToken.getIndex()
         for child in self.getChildren():
             # Memorized values for the child and its successors.
@@ -112,21 +112,21 @@ class AlternateVariable(AbstractNodeVariable):
 
         dictOfValues = dict()
         savedIndex = readingToken.getIndex()
-        savedFather = self.getFather()
+        savedFather = self.getFathers()[0]  # TODO: not accurate. But yet  we can only have one father
         selfPosition = savedFather.indexOfChild(self)
 
         # We create a fake father for this alternate.
-        if self.getFather().getType() == AggregateVariable.TYPE:
+        if self.getFathers()[0].getType() == AggregateVariable.TYPE:
             fakeFather = AggregateVariable(uuid.uuid4(), "Fake father", False, False)
             # We add this element and its right brother as child of the fake father in order to pursue the read access from where we are.
             fakeFather.addChild(self)
-            for rightBrother in self.getFather().getChildren()[selfPosition:]:
+            for rightBrother in self.getFathers()[0].getChildren()[selfPosition:]:
                 fakeFather.addChild(rightBrother)
-        elif self.getFather().getType() == RepeatVariable.TYPE:
-            (minIterations, maxIterations) = self.getFather().getNumberIterations()
+        elif self.getFathers()[0].getType() == RepeatVariable.TYPE:
+            (minIterations, maxIterations) = self.getFathers()[0].getNumberIterations()
             # Some iterations of this treatment could have be made before. The fake father should not make more iterations than it remains for the real father.
-            minIterations = max(0, minIterations - self.getFather().getCurrentIteration())
-            maxIterations = max(0, maxIterations - self.getFather().getCurrentIteration())
+            minIterations = max(0, minIterations - self.getFathers()[0].getCurrentIteration())
+            maxIterations = max(0, maxIterations - self.getFathers()[0].getCurrentIteration())
             fakeFather = RepeatVariable(uuid.uuid4(), "Fake father", False, False, self, minIterations, maxIterations)
         else:
             self.log.error(_("The father is neither an aggregate nor a repeat variable."))
@@ -150,6 +150,7 @@ class AlternateVariable(AbstractNodeVariable):
                 # We remove the just added child.
                 self.removeChild(tmpChild)
 
+        self.removefather(fakeFather)
         # We restore the action induced by the fake father.
         readingToken.setIndex(savedIndex)
         vocabulary = readingToken.getVocabulary()
@@ -161,8 +162,6 @@ class AlternateVariable(AbstractNodeVariable):
             child.restore(readingToken)
 
         if readingToken.isOk():
-            # We reset the original father as real father for the current variable.
-            self.setFather(savedFather)
             # We continue the treatment. The real father's treatment will pursue.
             self.read(readingToken)
 
@@ -174,7 +173,7 @@ class AlternateVariable(AbstractNodeVariable):
                 If it fails, it restore it value and the next child try.
                 It stops if one child successes.
         """
-        self.log.debug(_("[ {0} (Alternate): write access:").format(AbstractVariable.toString(self)))
+        self.log.debug(_("[ {0} (Alternate): writeChildren:").format(AbstractVariable.toString(self)))
 
         savedValue = writingToken.getValue()
         for child in self.getChildren():

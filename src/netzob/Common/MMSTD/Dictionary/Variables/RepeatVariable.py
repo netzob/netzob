@@ -327,7 +327,7 @@ class RepeatVariable(AbstractNodeVariable):
 
     def addChild(self, child):
         self.children[0] = child
-        child.setFather(self)
+        child.addFather(self)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

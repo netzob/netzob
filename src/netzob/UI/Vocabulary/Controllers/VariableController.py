@@ -202,7 +202,7 @@ class VariableTreeController:
         md.destroy()
         if result == Gtk.ResponseType.YES:
             # Remove the variable from the global tree.
-            variable.getFather().removeChildByID(variable)
+            variable.getFathers()[0].removeChildByID(variable)
 
             # Remove its entry.
             entry = self.dictEntry[variable.getID()]
@@ -236,12 +236,12 @@ class VariableTreeController:
                 self.registerVariable(None, variable)
             else:
                 # Edit the variable
-                variable.getFather().editChildByID(variable)
+                variable.getFathers()[0].editChildByID(variable)
 
                 # Update its entry
                 entry = self.dictEntry[variable.getID()]
                 self.treestore.remove(entry)
-                self.registerVariable(self.dictEntry[variable.getFather().getID()], variable)
+                self.registerVariable(self.dictEntry[variable.getFathers()[0].getID()], variable)
         else:
             logging.info(_("The user didn't confirm the edition of the variable {0}").format(variable.getName()))
 
@@ -655,7 +655,6 @@ class VariableCreationController:
             variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, symbol)
 
         if variable is not None:
-            father = self.variable.getFather()
             # We notify the symbol that is no more composed of default variable.
             self.treeController.field.getSymbol().setDefault(False)
 
@@ -678,12 +677,12 @@ class VariableCreationController:
                 elif (self.variable.getVariableType() == RepeatVariable.TYPE) and (variable.getVariableType() == RepeatVariable.TYPE):
                     child = self.variable.getChild()
                     self.variable = variable
-                    self.variable.setChild(child)
+                    self.variable.addChild(child)
 
                 # We do not manage/save children.
                 else:
                     self.variable = variable
-                self.variable.setFather(self.variable)
+                self.variable.addFather(self.variable)
                 self.treeController.editVariable(self.variable)
 
             else:
@@ -755,7 +754,7 @@ class VariableMovingController:
                 Run a dialog that allows to move a variable.
         """
         dialog = self.view.getWidg("dialog")
-        self.view.getWidg("entry").set_text(str(self.variable.getFather().indexOfChild(self.variable)))
+        self.view.getWidg("entry").set_text(str(self.variable.getFathers()[0].indexOfChild(self.variable)))
         dialog.show_all()
         dialog.run()
 
@@ -771,10 +770,10 @@ class VariableMovingController:
 
         # Move the variable entry in the tree view.
         entry = self.treeController.dictEntry[self.variable.getID()]
-        self.treeController.treestore.move_before(entry, self.treeController.dictEntry[self.variable.getFather().getChildren()[position].getID()])
+        self.treeController.treestore.move_before(entry, self.treeController.dictEntry[self.variable.getFathers()[0].getChildren()[position].getID()])
 
         # Move the variable.
-        self.variable.getFather().moveChild(self.variable, position)
+        self.variable.getFathers[0]().moveChild(self.variable, position)
 
         self.view.getWidg("dialog").destroy()
 

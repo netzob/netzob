@@ -67,7 +67,7 @@ class AbstractVariable:
         self.mutable = mutable
         self.learnable = learnable
         self.node = node
-        self.father = None  # The variable just above the current variable in the tree representation.
+        self.fathers = []  # The variables just above the current variable in the tree representation.
         self.boundedVariables = []  # A list containing all variables which value is bind to the value of this variable.
         self.tokenChoppedIndexes = []  # An integer list which contain the index of each segment this variable is responsible for (they have been created from its value)
 
@@ -247,8 +247,8 @@ class AbstractVariable:
     def isNode(self):
         return self.node
 
-    def getFather(self):
-        return self.father
+    def getFathers(self):
+        return self.fathers
 
     def getBoundedVariables(self):
         return self.boundedVariables
@@ -268,8 +268,11 @@ class AbstractVariable:
     def setNode(self, node):
         self.node = node
 
-    def setFather(self, father):
-        self.father = father
+    def addFather(self, father):
+        self.fathers.append(father)
+
+    def removeFather(self, father):
+        self.fathers.remove(father)
 
     def bindVariable(self, variable):
         self.boundedVariables.append(variable)
