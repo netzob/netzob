@@ -47,20 +47,18 @@ class AbstractRelationType():
             It defines the type of a relation variable.
     """
 
-    def __init__(self, sized, minChars=0, maxChars=0, delimiter=None):
+    def __init__(self, sized, nbChars=0, delimiter=None):
         """Constructor of AbstractRelationType:
 
                 @type sized: boolean
                 @param sized: tell if the variable can be delimited by a size or by a delimiter.
-                @type minChars: integer
-                @param minChars: the minimum number of elementary character the value of this variable can have.
-                @type maxChars: integer
-                @param maxChars: the maximum number of elementary character the value of this variable can have.
+                @type nbChars: integer
+                @param nbChars: the number of elementary character the value of this variable can have.
                 @type delimiter: bitarray
                 @param delimiter: a set of bits that tells where the associated variable ends.
         """
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType.py')
-        self.associatedDataType = self.makeAssociatedDataType(sized, minChars, maxChars, delimiter)
+        self.associatedDataType = self.makeAssociatedDataType(sized, nbChars, nbChars, delimiter)
 
     def toString(self):
         return (_("{0}, associatedDataType: {1}").format(self.getType(), self.associatedDataType.toString()))
@@ -110,6 +108,12 @@ class AbstractRelationType():
 #+---------------------------------------------------------------------------+
     def getAssociatedDataType(self):
         return self.associatedDataType
+
+    def getNbChars(self):
+        return self.associatedDataType.getMaxChars()
+
+    def getNbBits(self):
+        return self.associatedDataType.getMaxBits()
 
     def setAssociatedDataType(self, dataType):
         self.associatedDataType = dataType

@@ -147,6 +147,16 @@ class AbstractLeafVariable(AbstractVariable):
         """
         raise NotImplementedError(_("The current variable does not implement 'writeValue'."))
 
+    @abstractmethod
+    def getValue(self, processingToken):
+        """getValue:
+                Return the current value if it has one, a memorized value in other cases.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        raise NotImplementedError(_("The current variable does not implement 'writeValue'."))
+
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
 #+---------------------------------------------------------------------------+
@@ -203,7 +213,7 @@ class AbstractLeafVariable(AbstractVariable):
 
         # Variable notification
         if readingToken.isOk():
-            self.notifyBoundedVariables("read", readingToken)
+            self.notifyBoundedVariables("read", readingToken, self.getValue(readingToken))
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -262,9 +272,3 @@ class AbstractLeafVariable(AbstractVariable):
             self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
-
-    def trivialCompareFormat(self, readingToken):
-        """trivialCompareFormat:
-                Leaf variable must have a compare Format function and have no children, so we just call it.
-        """
-        self.compareFormat(readingToken)

@@ -142,15 +142,6 @@ class AbstractNodeVariable(AbstractVariable):
             child.restore(processingToken)
         self.log.debug(_("Variable {0}: ]").format(self.getName()))
 
-    def getChoppedValue(self, processingToken):
-        """getChoppedValue:
-                We concatenate every chopped value of each child.
-        """
-        choppedValue = []
-        for child in self.children:
-            choppedValue.extend(child.getChoppedValue(processingToken))
-        return choppedValue
-
     def getDictOfValues(self, processingToken):
         """getDictOfValues
                 We concatenate every dictOfValues of each child.

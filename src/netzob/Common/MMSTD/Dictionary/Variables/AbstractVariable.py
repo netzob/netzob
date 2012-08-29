@@ -70,6 +70,7 @@ class AbstractVariable:
         self.fathers = []  # The variables just above the current variable in the tree representation.
         self.boundedVariables = []  # A list containing all variables which value is bind to the value of this variable.
         self.tokenChoppedIndexes = []  # An integer list which contain the index of each segment this variable is responsible for (they have been created from its value)
+        self.currentValue = None  # The value we see from the current variable if we flatten the subtree which starts here.
 
     def toString(self):
         """toString:
@@ -89,21 +90,25 @@ class AbstractVariable:
         progeny.append(self)
         return progeny
 
-    def notifyBoundedVariables(self, access, processingToken):
+    def notifyBoundedVariables(self, access, processingToken, value=None):
         """notifyBoundedVariables:
                 Notify every variable that are bounded to the current variable with a set of segment of the read value.
                 This set leads to no repetition in the final read value.
 
-                @type values: integer list
-                @param values: the list of chopped segments that have been modified before this notification.
+                @type access: integer list
+                @param access: the list of chopped segments that have been modified before this notification.
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+                @type value: bitarray
+                @param value: the value of the notifying variable.
         """
         if access == "read":
             for bound in self.boundedVariables:
-                bound.notifyRead(processingToken)
+                bound.notifiedRead(processingToken, value)
 
         if access == "write":
             for bound in self.boundedVariables:
-                bound.notifyWrite(processingToken)
+                bound.notifiedWrite(processingToken)
 
 #+---------------------------------------------------------------------------+
 #| Abstract methods                                                          |
@@ -172,18 +177,6 @@ class AbstractVariable:
         raise NotImplementedError(_("The current variable does not implement 'restore'."))
 
     @abstractmethod
-    def getChoppedValue(self, processingToken):
-        """getChoppedValue:
-                Return the list that contains values of the whole progeny of this element.
-
-                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
-                @param processingToken: a token which contains all critical information on this access.
-                @rtype: bitarray list
-                @return: the list that contains values of the whole progeny of this element.
-        """
-        raise NotImplementedError(_("The current variable does not implement 'getChoppedValue'."))
-
-    @abstractmethod
     def getDictOfValues(self, processingToken):
         """getDictOfValues:
                 Return a dictionary which contains the variable id as key and the value as value if the variable is a leaf and a dictionary containing all couples variable id - value of the children if the variable is a node.
@@ -194,17 +187,6 @@ class AbstractVariable:
                 @return: a dictionary containing ids of variable and values in a bitarray format.
         """
         raise NotImplementedError("The current variable doesn't support 'getDictOfValues'.")
-
-    @abstractmethod
-    def trivialCompareFormat(self, readingToken):
-        """trivialCompareFormat:
-                Compare the format of the variable and its children value to the readingToken's read value.
-                Does not have any kind of impact on the variable's value. Used by direct relation variable to compare their format through their pointed variable.
-
-                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
-                @param readingToken: a token which contains all critical information on this reading access.
-        """
-        raise NotImplementedError("The current variable doesn't support 'trivialCompareFormat'.")
 
 #+---------------------------------------------------------------------------+
 #| Visitor abstract method                                                   |
@@ -253,8 +235,8 @@ class AbstractVariable:
     def getBoundedVariables(self):
         return self.boundedVariables
 
-    def getTokenChoppedIndexes(self):
-        return self.tokenChoppedIndexes
+    def getCurrentValue(self):
+        return self.currentValue
 
     def setID(self, _id):
         self.id = _id
@@ -276,9 +258,6 @@ class AbstractVariable:
 
     def bindVariable(self, variable):
         self.boundedVariables.append(variable)
-
-    def addTokenChoppedIndexes(self, tokenChoppedIndexe):
-        self.tokenChoppedIndexes.append(tokenChoppedIndexe)
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
@@ -323,9 +302,9 @@ class AbstractVariable:
                 return RepeatVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Direct Relation Variable
-            elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DirectRelationVariable":
-                from netzob.Common.MMSTD.Dictionary.Variables.DirectRelationVariable import DirectRelationVariable
-                return DirectRelationVariable.loadFromXML(xmlRoot, namespace, version, symbol)
+            #elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:DirectRelationVariable":
+            #    from netzob.Common.MMSTD.Dictionary.Variables.DirectRelationVariable import DirectRelationVariable
+            #    return DirectRelationVariable.loadFromXML(xmlRoot, namespace, version, symbol)
 
             # Computed Relation Variable
             elif xmlRoot.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ComputedRelationVariable":

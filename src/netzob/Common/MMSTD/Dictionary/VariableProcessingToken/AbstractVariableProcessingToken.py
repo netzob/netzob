@@ -63,7 +63,8 @@ class AbstractVariableProcessingToken():
         self.vocabulary = vocabulary
         self.memory = memory
         self.value = value
-        self.choppedValue = []  # The value in a list (chopped) format, each segment of which are reversely bound to the leaf or relation variable which is responsible of this reading.
+        self.index = 0
+        self.linkedValue = []  # A list of (id, value) that associates the contribution to the final value of every variable to its ID.
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
@@ -82,6 +83,15 @@ class AbstractVariableProcessingToken():
 
     def getValue(self):
         return self.value
+
+    def getIndex(self):
+        return self.index
+
+    def getLinkedValue(self):
+        return self.linkedValue
+
+    def appendLinkedValue(self, value):
+        self.linkedValue.append(value)
 
     def setOk(self, ok):
         logging.debug(_("The token's ok flag is set to {0}.").format(ok))

@@ -50,8 +50,6 @@ from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
 from netzob.Common.MMSTD.Dictionary.Variables.ComputedRelationVariable import \
     ComputedRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
-from netzob.Common.MMSTD.Dictionary.Variables.DirectRelationVariable import \
-    DirectRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
     RepeatVariable
 from netzob.UI.Vocabulary.Views.VariableView import VariableTreeView, \
@@ -376,29 +374,31 @@ class VariableCreationController:
                 object.disconnect(handler_id)
                 handler_id = None
 
-        # Direct Relation variable
-        elif strVarType == DirectRelationVariable.TYPE:
-
-            self.view.getWidg("valueLabel").set_visible(False)
-            self.view.getWidg("typeLabel").set_visible(False)
-            self.view.getWidg("relationTypeLabel").set_visible(False)
-            self.view.getWidg("sizedLabel").set_visible(False)
-
-            self.view.getWidg("valueEntry").set_visible(False)
-            self.view.getWidg("typeCombo").set_visible(False)
-
-            self.view.getWidg("relationTypeCombo").set_visible(False)
-            self.view.getWidg("IDGrid").set_visible(True)
-            self.view.getWidg("IDLabel").set_visible(True)
-            self.view.getWidg("IDEntry").set_visible(True)
-            self.view.getWidg("IDButton").set_visible(True)
-            self.view.getWidg("sizedCheck").set_visible(False)
-
-            self.updateDelimiterAndSize(default=True)
-
-            if handler_id is not None:
-                object.disconnect(handler_id)
-                handler_id = None
+#===============================================================================
+#        # Direct Relation variable
+#        elif strVarType == DirectRelationVariable.TYPE:
+#
+#            self.view.getWidg("valueLabel").set_visible(False)
+#            self.view.getWidg("typeLabel").set_visible(False)
+#            self.view.getWidg("relationTypeLabel").set_visible(False)
+#            self.view.getWidg("sizedLabel").set_visible(False)
+#
+#            self.view.getWidg("valueEntry").set_visible(False)
+#            self.view.getWidg("typeCombo").set_visible(False)
+#
+#            self.view.getWidg("relationTypeCombo").set_visible(False)
+#            self.view.getWidg("IDGrid").set_visible(True)
+#            self.view.getWidg("IDLabel").set_visible(True)
+#            self.view.getWidg("IDEntry").set_visible(True)
+#            self.view.getWidg("IDButton").set_visible(True)
+#            self.view.getWidg("sizedCheck").set_visible(False)
+#
+#            self.updateDelimiterAndSize(default=True)
+#
+#            if handler_id is not None:
+#                object.disconnect(handler_id)
+#                handler_id = None
+#===============================================================================
 
         # Computed Relation variable
         elif strVarType == ComputedRelationVariable.TYPE:
@@ -550,9 +550,11 @@ class VariableCreationController:
                 self.view.getWidg("minSpin").set_text(str(self.variable.getNumberIterations()[0]))
                 self.view.getWidg("maxSpin").set_text(str(self.variable.getNumberIterations()[1]))
 
-            # Direct Relation Variable
-            elif self.variable.getVariableType() == DirectRelationVariable.TYPE:
-                self.view.getWidg("IDEntry").set_text(self.variable.getPointedVariable().getID())
+            #===================================================================
+            # # Direct Relation Variable
+            # elif self.variable.getVariableType() == DirectRelationVariable.TYPE:
+            #    self.view.getWidg("IDEntry").set_text(self.variable.getPointedVariable().getID())
+            #===================================================================
 
             # Computed Relation Variable
             elif self.variable.getVariableType() == ComputedRelationVariable.TYPE:
@@ -624,14 +626,16 @@ class VariableCreationController:
             vtype = AbstractType.makeType(self.view.getWidg("typeCombo").get_active_text(), sized, minChars, maxChars, delimiter)
             variable = DataVariable(anid, name, mutable, learnable, vtype, originalValue)
 
-        # Direct Relation Variable
-        elif strVarType == DirectRelationVariable.TYPE:
-
-            # We find the variable by its ID.
-            pointedID = str(self.view.getWidg("IDEntry").get_text())
-            symbol = self.treeController.field.getSymbol()
-
-            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, symbol)
+#===============================================================================
+#        # Direct Relation Variable
+#        elif strVarType == DirectRelationVariable.TYPE:
+#
+#            # We find the variable by its ID.
+#            pointedID = str(self.view.getWidg("IDEntry").get_text())
+#            symbol = self.treeController.field.getSymbol()
+#
+#            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, symbol)
+#===============================================================================
 
         # Computed Relation Variable
         elif strVarType == ComputedRelationVariable.TYPE:

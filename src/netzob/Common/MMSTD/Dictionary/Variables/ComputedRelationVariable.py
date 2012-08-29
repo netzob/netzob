@@ -40,17 +40,14 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Dictionary.DataTypes.AbstractType import AbstractType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
-from netzob.Common.MMSTD.Dictionary.Variables.AbstractRelationVariable import \
-    AbstractRelationVariable
 from netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable import \
     AbstractVariable
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-class ComputedRelationVariable(AbstractRelationVariable):
+class ComputedRelationVariable(AbstractVariable):
     """ComputedRelationVariable:
             A variable which points to an other variable and gets its value by computing in a certain way the pointed variable.
     """
@@ -59,14 +56,130 @@ class ComputedRelationVariable(AbstractRelationVariable):
 
     def __init__(self, _id, name, mutable, learnable, relationType, pointedID, symbol):
         """Constructor of ComputedRelationVariable:
+                Mutable and learnable are useless.
 
                 @type relationType: string
                 @param relationType: the type of computation we will use.
         """
-        AbstractRelationVariable.__init__(self, _id, name, mutable, learnable, pointedID, symbol)
+        AbstractVariable.__init__(self, _id, name, mutable, learnable, False)
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Variable.ComputedRelationVariable.py')
         self.relationType = relationType
         self.currentValue = None
+        self.pointedID = pointedID
+        self.symbol = symbol
+        self.pointedVariable = None
+
+    def findDirectPointer(self):
+        """findDirectPointer:
+                A direct pointer or left pointer points from the right of a tree to the left or an other tree.
+                A reverse pointer or right pointer points from the left of a tree to its right.
+        """
+        if self.pointedID is None:
+            return True
+            self.log.debug("No pointed ID.")
+        treeElements = self.symbol.getRoot().getProgeny()
+        found = False
+        for element in treeElements:
+            if not found and element.getID() == self.pointedID:
+                self.log.debug(_("We found the pointed value."))
+                found = True
+            if element.getID() == self.getID():
+                if found:
+                    self.log.debug(_("The pointing value is after the pointed value in the same tree."))
+                    return True
+                else:
+                    self.log.debug(_("The pointing value is before the pointed value or in a different tree."))
+                    return False
+        self.log.debug(_("Default case."))
+        return True
+
+    def retrieveValue(self, processingToken):
+        """retrieveValue:
+                Retrieve a value according to the pointed variable's own value and attribute it to the variable
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- {0}: retrieveValue.").format(self.toString()))
+        if self.getPointedVariable() is None:
+            self.log.debug("No pointed variable.")
+            self.currentValue = None
+        else:
+            self.currentValue = self.computeValue(self.getPointedVariable().getValue(processingToken))
+
+    def guessValue(self):
+        """guessValue:
+                Try to guess the pointed variable's value and give it to the current value.
+        """
+        # The 'TEMP' value is explicit enough.
+        self.currentValue = TypeConvertor.stringB2bin("TEMP")
+
+    def compare(self, readingToken):
+        """compare:
+                The variable compares its value to the read value.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
+        """
+        self.log.debug(_("- [ {0}: compare.").format(self.toString()))
+        localValue = self.currentValue
+        tmp = readingToken.getValue()[readingToken.getIndex():]
+        if len(tmp) >= len(localValue):
+            if tmp[:len(localValue)] == localValue:
+                self.log.debug(_("Comparison successful."))
+                readingToken.read(self, len(localValue))
+                readingToken.setOk(True)
+            else:
+                readingToken.setOk(False)
+                self.log.debug(_("Comparison failed: wrong value."))
+        else:
+            readingToken.setOk(False)
+            self.log.debug(_("Comparison failed: wrong size."))
+
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def compareFormat(self, readingToken):
+        """compareFormat:
+                Similar to the pointedVariable's own compareFormat function.
+        """
+        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
+        self.getDataType().compareFormat(readingToken)
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+
+    def bindValue(self, processingToken):
+        """bindValue:
+                Bind itself to the pointed variable in order to be notified by this variable in case of modification of it.
+
+                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
+                @param processingToken: a token which contains all critical information on this access.
+        """
+        if self.getPointedVariable() is None:
+            self.log.debug("No pointed variable.")
+        else:
+            self.getPointedVariable().bindVariable(self)
+
+    def generate(self, writingToken):
+        """generate:
+                A new current value is generated according to the variable type and the given generation strategy.
+        """
+        self.log.debug(_("- {0}: generate.").format(self.toString()))
+        self.setCurrentValue(self.relationType.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
+
+    def computeValue(self, value):
+        """computeValue:
+                Compute the value of the relation variable from the given value..
+        """
+        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
+        return self.relationType.computeValue(value)
+
+    def writeValue(self, writingToken):
+        """writeValue:
+                Write the variable value if it has one, else it returns the memorized value.
+                Write this value in the writingToken.
+        """
+        self.log.debug(_("- [ {0}: writeValue.").format(self.toString()))
+        writingToken.write(self, self.currentValue)
+        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -81,13 +194,96 @@ class ComputedRelationVariable(AbstractRelationVariable):
         """
         return _("[Computed Relation] {0}, pointed ID: {1}, type: {2}.").format(AbstractVariable.toString(self), str(self.getPointedID()), self.relationType.toString())
 
-    def trivialCompareFormat(self, readingToken):
-        """trivialCompareFormat:
-                We call the compare format function.
+    def getDescription(self, processingToken):
+        """getDescription:
         """
-        self.log.debug(_("- [ {0}: trivialCompareFormat.").format(self.toString()))
-        self.compareFormat(readingToken)
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        return _("[{0}]").format(self.toString())
+
+    def getUncontextualizedDescription(self):
+        """getUncontextualizedDescription:
+        """
+        return _("[{0}]").format(self.toString())
+
+    def isDefined(self, processingToken):
+        """isDefined:
+        """
+        if self.getPointedVariable() is None:
+            self.log.debug("No pointed variable.")
+            return False
+        else:
+            return True
+
+    def restore(self, processingToken):
+        """restore:
+        """
+        if self.getPointedVariable() is None:
+            self.log.debug("No pointed variable.")
+            return False
+        else:
+            return self.getPointedVariable().restore(processingToken)
+
+    def getDictOfValues(self, processingToken):
+        """getDictOfValues:
+        """
+        if self.getPointedVariable() is None:
+            self.log.debug("No pointed variable.")
+            return False
+        else:
+            return self.getPointedVariable().getDictOfValues(processingToken)
+
+    def read(self, readingToken):
+        """read:
+                The relation variable tries to compare/learn the read value.
+        """
+        self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
+        self.directPointer = self.findDirectPointer()
+
+        if self.isDefined(readingToken):
+            if self.directPointer:
+                # We directly retrieve and compare the value.
+                self.retrieveValue(readingToken)
+                self.compare(readingToken)
+            else:
+                # We make a small format comparison.
+                self.compareFormat(readingToken)
+                # We will verify the value at notification time.
+                self.bindValue(readingToken)
+
+        else:
+            self.log.debug(_("Read abort: the variable is not defined."))
+            readingToken.setOk(False)
+
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken, self.currentValue)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
+    def write(self, writingToken):
+        """write:
+                The relation variable returns a computed or a generated value.
+        """
+        self.log.debug(_("[ {0} (relation): write access:").format(AbstractVariable.toString(self)))
+        self.directPointer = self.findDirectPointer()
+
+        if self.isDefined(writingToken):
+            if not self.directPointer:
+                # We will write the real value at notification time. (An awaiting value is written though.)
+                self.bindValue(writingToken)
+                self.guessValue()
+            else:
+                # We directly retrieve and write the actual value (which would be deprecated and replaced if the variable is directPointer).
+                self.retrieveValue(writingToken)
+            self.writeValue(writingToken)
+        else:
+            self.log.debug(_("Write abort: the variable is not defined."))
+            writingToken.setOk(False)
+
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
@@ -118,7 +314,7 @@ class ComputedRelationVariable(AbstractRelationVariable):
         xmlMinChars = etree.SubElement(xmlVariable, "{" + namespace + "}minChars")
         xmlMinChars.text = str(self.relationType.getAssociatedDataType().getMinChars())
 
-        # maxBits
+        # maxChars
         xmlMaxChars = etree.SubElement(xmlVariable, "{" + namespace + "}maxChars")
         xmlMaxChars.text = str(self.relationType.getAssociatedDataType().getMaxChars())
 
@@ -127,76 +323,77 @@ class ComputedRelationVariable(AbstractRelationVariable):
         xmlDelimiter.text = str(TypeConvertor.bin2hexstring(self.relationType.getAssociatedDataType().getDelimiter()))
 
 #+---------------------------------------------------------------------------+
-#| Functions inherited from AbstractRelationVariable                         |
+#| Notified functions                                                        |
 #+---------------------------------------------------------------------------+
-    def compareFormat(self, readingToken):
-        """compareFormat:
-                Similar to the pointedVariable's own compareFormat function.
+    def notifiedRead(self, readingToken, pointedValue):
+        """notifiedRead:
+                A read access called by a notification of the pointed variable (when it has finished its own treatment).
+                It checks that the new value complies with the reading token value at this very position.
+
+                @type readingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableReadingToken.VariableReadingToken
+                @param readingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- [ {0}: compareFormat.").format(self.toString()))
-        self.getDataType().compareFormat()
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        self.log.debug(_("[ {0} (relation): read access:").format(AbstractVariable.toString(self)))
 
-    def learn(self, readingToken):
-        """learn:
-                Not used anymore but may be interesting in the future.
-        """
-        self.log.debug(_("- [ {0}: learn.").format(self.toString()))
-        if readingToken.isOk():  # A format comparison had been executed before, its result must be "OK".
-            tmp = readingToken.getValue()[readingToken.getIndex():]
-
-            # If the type has a definite size.
-            if self.self.relationType.isSized():
-                maxBits = self.relationType.getMaxBits()
-                # Length comparison. (len(tmp) >= minBits is implicit as the readingToken is OK.)
-                if len(tmp) <= maxBits:
-                    self.setCurrentValue(tmp)
-                    readingToken.incrementIndex(len(tmp))
-
-                else:  # len(tmp) > maxBits
-                    # We learn as much as we can.
-                    self.setCurrentValue(tmp[:maxBits])
-                    readingToken.incrementIndex(maxBits)
-
-            # If the type is delimited from 0 to a delimiter.
-            else:
-                endi = 0
-                for i in range(len(tmp)):
-                    if self.relationType.endsHere(tmp[i:]):
-                        endi = i
+        if self.isDefined(readingToken):
+            for linkedValue in readingToken.getLinkedValue():
+                if linkedValue[0] == self.getID():
+                    # We compare the pointed value to the value the current variable wrote in memory.
+                    if linkedValue[1] != self.computeValue(pointedValue):
+                        readingToken.setOk(False)
                         break
-                # We learn from the beginning to the delimiter.
-                self.setCurrentValue(tmp[:endi + len(self.relationType.getDelimiter())])  # The delimiter token is a part of the variable.
-                readingToken.incrementIndex(endi + len(self.relationType.getDelimiter()))
 
-            self.log.info(_("Learning done."))
         else:
-            self.log.info(_("Learning abort because the previous format comparison failed."))
+            self.log.debug(_("Read abort: the variable is neither defined, nor mutable."))
+            readingToken.setOk(False)
 
-        self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
+        # Variable notification
+        if readingToken.isOk():
+            self.notifyBoundedVariables("read", readingToken, pointedValue)
 
-    def generate(self, writingToken):
-        """generate:
-                A new current value is generated according to the variable type and the given generation strategy.
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
+
+    def notifiedWrite(self, writingToken):
+        """notify:
+                A write access called by a notification of the pointed variable (when it has finished its own treatment).
+                It updates the values this variable has written in the writingToken value.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this access.
         """
-        self.log.debug(_("- {0}: generate.").format(self.toString()))
-        self.setCurrentValue(self.relationType.getAssociatedDataType().generateValue(writingToken.getGenerationStrategy(), self.minChars, self.maxChars))
+        self.log.debug(_("[ {0} (relation): notifiedWrite access:").format(AbstractVariable.toString(self)))
 
-    def computeValue(self, value):
-        """computeValue:
-                Compute the value of the relation variable from the given value..
-        """
-        self.log.debug(_("- {0}: computeValue.").format(self.toString()))
-        return self.relationType.computeValue(value)
+        if self.isDefined(writingToken):
+            for linkedValue in writingToken.getLinkedValue():
+                if linkedValue[0] == self.getID():
+                    linkedValue[1] = self.currentValue
+            writingToken.updateValue()
+        else:
+            self.log.debug(_("Write abort: the variable is neither defined, nor random."))
+            writingToken.setOk(False)
+
+        # Variable notification
+        if writingToken.isOk():
+            self.notifyBoundedVariables("write", writingToken)
+
+        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getMinChars(self):
-        return self.minChars
+    def getCurrentValue(self):
+        return self.currentValue
 
-    def getMaxChars(self):
-        return self.maxChars
+    def getPointedID(self):
+        return self.pointedID
+
+    def getPointedVariable(self):
+        if self.pointedVariable is not None:
+            if self.pointedVariable.getID() == self.pointedID:
+                # The pointed variable is already set.
+                return self.pointedVariable
+        self.pointedVariable = self.symbol.getProject().getVocabulary().getVariableByID(self.pointedID)
+        return self.pointedVariable
 
     def getDataType(self):
         return self.relationType.getAssociatedDataType()
@@ -204,11 +401,11 @@ class ComputedRelationVariable(AbstractRelationVariable):
     def getRelationType(self):
         return self.relationType
 
-    def setDataType(self, dataType):
-        self.dataType = AbstractType.makeType(dataType)
+    def isDirectPointer(self):
+        return self.directPointer
 
-    def setRelationType(self, relationType):
-        self.dataType = AbstractRelationType.makeType(relationType)
+    def setCurrentValue(self, currentValue):
+        self.currentValue = currentValue
 
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |

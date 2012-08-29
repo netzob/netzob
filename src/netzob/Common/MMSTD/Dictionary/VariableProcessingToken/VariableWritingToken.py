@@ -72,24 +72,21 @@ class VariableWritingToken(AbstractVariableProcessingToken):
                 Re-make the value of the token by concatenating each segment of the chopped value.
         """
         self.setValue = bitarray()
-        for choppy in self.choppedValue:
-            self.appendValue(choppy)
+        for linkedValue in self.getLinkedValue():
+            self.appendValue(linkedValue[1])
+
+    def write(self, variable, value):
+        """write:
+                A variable writes a value in the token.
+        """
+        self.appendLinkedValue([variable.getID(), value])
+        self.appendValue(value)
 
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
     def getGenerationStrategy(self):
         return self.generationStrategy
-
-    def getIndex(self):
-        return self.index
-
-    def getChoppedValue(self):
-        return self.choppedValue
-
-    def setValue(self, value):
-        self.index = len(value)
-        self.value = value
 
     def appendValue(self, value):
         if value is not None:

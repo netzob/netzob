@@ -86,10 +86,7 @@ class DataVariable(AbstractLeafVariable):
 
     def getValue(self, processingToken):
         """getValue:
-                Return the current value if it has one, a memorized value in other cases.
-
-                @type processingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.AbstractVariableProcessingToken.AbstractVariableProcessingToken
-                @param processingToken: a token which contains all critical information on this access.
+                Return the current or memorized value.
         """
         if self.getCurrentValue() is not None:
             return self.getCurrentValue()
@@ -141,12 +138,6 @@ class DataVariable(AbstractLeafVariable):
                 If the leaf has no values, it is not defined.
         """
         return self.getValue(processingToken) is not None
-
-    def getChoppedValue(self, processingToken):
-        """getChoppedValue:
-                Simply return the value of the variable.
-        """
-        return [self.getValue(processingToken)]
 
     def getDictOfValues(self, processingToken):
         """getDictOfValues:

@@ -28,6 +28,7 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
+from bitarray import bitarray
 from gettext import gettext as _
 from lxml import etree
 import logging
@@ -131,6 +132,9 @@ class AggregateVariable(AbstractNodeVariable):
                 child.setCurrentValue(val)
                 # We restore the cached values.
                 child.restore(readingToken)
+        else:
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.getValue()[globalSavedIndex:readingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
@@ -147,6 +151,7 @@ class AggregateVariable(AbstractNodeVariable):
         # Computing memory, contains all values before the start of the computation. So, if an error occured, we can restore the former and correct values.
         dictOfValues = dict()
         savedIndex = readingToken.getIndex()
+        self.currentValue = bitarray('')
 
         for child in self.getChildren():
             # Memorize each child susceptible to be restored. One by one.
@@ -174,6 +179,9 @@ class AggregateVariable(AbstractNodeVariable):
                     child.setCurrentValue(val)
                     # We restore the cached values.
                     child.restore(readingToken)
+        else:
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
@@ -215,6 +223,9 @@ class AggregateVariable(AbstractNodeVariable):
         if not readingToken.isOk():
             self.removeChild(repeatVariable)
             readingToken.setIndex(savedIndex)
+        else:
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), readingToken.toString()))
 
@@ -230,6 +241,7 @@ class AggregateVariable(AbstractNodeVariable):
 
         dictOfValues = dict()
         savedValue = writingToken.getValue()
+        savedIndex = writingToken.getIndex()
         for child in self.getChildren():
             # Memorize each child susceptible to be restored. One by one.
             dictOfValue = child.getDictOfValues(writingToken)
@@ -251,6 +263,9 @@ class AggregateVariable(AbstractNodeVariable):
                 child.setCurrentValue(val)
                 # We restore the cached values.
                 child.restore(writingToken)
+        else:
+            # The value of the variable is simply the value we made.
+            self.currentValue = writingToken.getValue()[savedIndex:writingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ] -").format(self.getName(), writingToken.toString()))
 
@@ -305,7 +320,7 @@ class AggregateVariable(AbstractNodeVariable):
 
         # Variable notification
         if readingToken.isOk():
-            self.notifyBoundedVariables("read", readingToken)
+            self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -335,21 +350,6 @@ class AggregateVariable(AbstractNodeVariable):
             self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
-
-    def trivialCompareFormat(self, readingToken):
-        """trivialCompareFormat:
-                Run recursively the format comparison on the children.
-                If one of them fails, the treatment fails.
-        """
-        self.log.debug(_("[ {0} (Aggregate): trivialCompareFormat:").format(AbstractVariable.toString(self)))
-
-        for child in self.children:
-            # Child execution.
-            child.trivialCompareFormat(readingToken)
-            if not readingToken.isOk():
-                break
-
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:

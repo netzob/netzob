@@ -41,6 +41,7 @@ import logging
 from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
 from netzob.Common.MMSTD.Dictionary.RelationTypes.AbstractRelationType import \
     AbstractRelationType
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 class SizeRelationType(AbstractRelationType):
@@ -71,6 +72,6 @@ class SizeRelationType(AbstractRelationType):
         """computeValue:
         """
         if value is not None:
-            return len(value)
+            return TypeConvertor.intstring2bin(str(len(value)))
         else:
             return 0

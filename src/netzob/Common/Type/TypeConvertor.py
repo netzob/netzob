@@ -718,7 +718,7 @@ class TypeConvertor():
     @staticmethod
     def intstring2bin(stri):
         if stri is not None:
-            bina = bitarray(bin(stri)[2:])
+            bina = bitarray(bin(int(stri))[2:])
             return bina
         else:
             return None

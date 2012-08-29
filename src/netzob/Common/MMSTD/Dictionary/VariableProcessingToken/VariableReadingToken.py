@@ -62,15 +62,16 @@ class VariableReadingToken(AbstractVariableProcessingToken):
         """
         return _("ReadingToken: isOk: {0}, value left: {1}").format(str(self.isOk()), TypeConvertor.bin2strhex(self.value[self.index:]))
 
+    def read(self, variable, increment):
+        """read:
+                A variable reads a piece of the token value.
+        """
+        self.appendLinkedValue([variable.getID(), self.getValue()[self.index:self.index + increment]])
+        self.incrementIndex(increment)
+
 #+---------------------------------------------------------------------------+
 #| Getters and setters                                                       |
 #+---------------------------------------------------------------------------+
-    def getIndex(self):
-        return self.index
-
-    def getChoppedValue(self):
-        return self.choppedValue
-
     def incrementIndex(self, increment):
         self.index += increment
 

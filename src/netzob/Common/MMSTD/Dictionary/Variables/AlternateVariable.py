@@ -93,6 +93,10 @@ class AlternateVariable(AbstractNodeVariable):
                 for key, val in dictOfValues.iteritems():
                     vocabulary.getVariableByID(key).setCurrentValue(val)
 
+        if readingToken.isOk():
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
+
         if self.isLearnable() and not readingToken.isOk() and not self.isLearning():
             # If we dont not found a proper child but the node can learn, we learn the value.
             self.learn(child, readingToken)
@@ -176,6 +180,7 @@ class AlternateVariable(AbstractNodeVariable):
         self.log.debug(_("[ {0} (Alternate): writeChildren:").format(AbstractVariable.toString(self)))
 
         savedValue = writingToken.getValue()
+        savedIndex = writingToken.getIndex()
         for child in self.getChildren():
             # Memorized values for the child and its successor.
             dictOfValues = dict()
@@ -194,6 +199,10 @@ class AlternateVariable(AbstractNodeVariable):
                 vocabulary = writingToken.getVocabulary()
                 for key, val in dictOfValues.iteritems():
                     vocabulary.getVariableByID(key).setCurrentValue(val)
+
+        if writingToken.isOk():
+            # The value of the variable is simply the value we made.
+            self.currentValue = writingToken.getValue()[savedIndex:writingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
@@ -246,7 +255,7 @@ class AlternateVariable(AbstractNodeVariable):
 
         # Variable notification
         if readingToken.isOk():
-            self.notifyBoundedVariables("read", readingToken)
+            self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -276,21 +285,6 @@ class AlternateVariable(AbstractNodeVariable):
             self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
-
-    def trivialCompareFormat(self, readingToken):
-        """trivialCompareFormat:
-                Run recursively the format comparison on the children.
-                If one of them successes, the treatment successes.
-        """
-        self.log.debug(_("[ {0} (Alternate): trivialCompareFormat:").format(AbstractVariable.toString(self)))
-
-        for child in self.children:
-            # Child execution.
-            child.trivialCompareFormat(readingToken)
-            if readingToken.isOk():
-                break
-
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:

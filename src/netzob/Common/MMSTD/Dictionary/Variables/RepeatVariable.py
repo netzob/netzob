@@ -94,6 +94,8 @@ class RepeatVariable(AbstractNodeVariable):
         # Memorized initial values for the child and its successors.
         dictOfValues = dict()
         dictOfValue = self.getChild().getDictOfValues(readingToken)
+        savedIndex = readingToken.getIndex()
+
         for key, val in dictOfValue.iteritems():
             dictOfValues[key] = val
 
@@ -122,6 +124,7 @@ class RepeatVariable(AbstractNodeVariable):
             else:
                 readingToken.setOk(False)
                 # If not, we clean our traces.
+                readingToken.setIndex(savedIndex)
                 vocabulary = readingToken.getVocabulary()
                 for key, val in dictOfValues.iteritems():
                     child = vocabulary.getVariableByID(key)
@@ -131,6 +134,8 @@ class RepeatVariable(AbstractNodeVariable):
                     child.restore(readingToken)
         else:
             readingToken.setOk(True)
+            # The value of the variable is simply the value we 'ate'.
+            self.currentValue = readingToken.getValue()[savedIndex:readingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -141,6 +146,8 @@ class RepeatVariable(AbstractNodeVariable):
         self.log.debug(_("[ {0}: write access:").format(self.toString()))
         (minIterations, maxIterations) = self.getNumberIterations()
         self.currentIteration = 0
+        savedIndex = writingToken.getIndex()
+        savedValue = writingToken.getValue()
 
         # Memorized initial values for the child and its successors.
         dictOfValues = dict()
@@ -158,6 +165,7 @@ class RepeatVariable(AbstractNodeVariable):
         if self.currentIteration < minIterations:
             writingToken.setOk(False)
             # If not, we clean our traces.
+            writingToken.setValue(savedValue)
             vocabulary = writingToken.getVocabulary()
             for key, val in dictOfValues.iteritems():
                 child = vocabulary.getVariableByID(key)
@@ -167,6 +175,8 @@ class RepeatVariable(AbstractNodeVariable):
                 child.restore(writingToken)
         else:
             writingToken.setOk(True)
+            # The value of the variable is simply the value we made.
+            self.currentValue = writingToken.getValue()[savedIndex:writingToken.getIndex()]
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
 
@@ -180,14 +190,6 @@ class RepeatVariable(AbstractNodeVariable):
         self.minIterations = min(x, y)
         self.maxIterations = max(x, y)
         return self.getNumberIterations()
-
-    def checkChild(self, checked):
-        """checkChild:
-                Variable are checked by their mother node.
-                This function checks the child of the variable.
-        """
-        if self.getChild() is not None:
-            self.getChild().setChecked(checked)
 
 #+---------------------------------------------------------------------------+
 #| Functions inherited from AbstractVariable                                 |
@@ -233,7 +235,7 @@ class RepeatVariable(AbstractNodeVariable):
 
         # Variable notification
         if readingToken.isOk():
-            self.notifyBoundedVariables("read", readingToken)
+            self.notifyBoundedVariables("read", readingToken, self.currentValue)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
@@ -263,30 +265,6 @@ class RepeatVariable(AbstractNodeVariable):
             self.notifyBoundedVariables("write", writingToken)
 
         self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), writingToken.toString()))
-
-    def trivialCompareFormat(self, readingToken):
-        """trivialCompareFormat:
-                Run recursively the format comparison on the child a number of times inferior to the maximum number of iterations.
-                If one of them fails, the treatment stops.
-                If the minimum number of iterations is achieves, the treatment is successful, else it is not.
-        """
-        self.log.debug(_("[ {0} (Repeat): trivialCompareFormat:").format(AbstractVariable.toString(self)))
-
-        (minIterations, maxIterations) = self.getNumberIterations()
-        successfullIterations = 0
-        for i in range(maxIterations):
-            self.getChild().trivialCompareFormat(readingToken)
-            if readingToken.isOk():
-                successfullIterations += 1
-            else:
-                break
-
-        if successfullIterations < minIterations:
-            readingToken.setOk(False)
-        else:
-            readingToken.setOk(True)
-
-        self.log.debug(_("Variable {0}: {1}. ]").format(self.getName(), readingToken.toString()))
 
     def toXML(self, root, namespace):
         """toXML:
