@@ -45,25 +45,27 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewResearchView(object):
+class SimplePartitioningView(object):
 
     def __init__(self, controller):
         '''
         Constructor
         '''
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(
-            ResourcesConfiguration.getStaticResources(),
-            "ui", "vocabulary", "search",
-            "searchBar.glade"))
-        self._getObjects(self.builder, ["researchBar",
-                                        "research_entry", "numberOfResultLabel",
-                                        "research_format", "research_preferences",
-                                        "research_previous", "research_next",
-                                        "research_close", "spinnerSearchProcess", "imageWarning", "currentSelectedResultLabel"])
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "vocabulary", "partitioning",
+                                                "simplePartitioning.glade"))
+        self._getObjects(self.builder, ["simpleDialog",
+                                        "simple_execute", "simple_stop", "simple_cancel",
+                                        "radiobutton8bits", "radiobutton16bits",
+                                        "radiobutton32bits", "radiobutton64bits",
+                                        "simple_progressbar"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
+
+    def run(self):
+        self.simpleDialog.run()

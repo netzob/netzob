@@ -35,28 +35,25 @@ import time
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 import gi
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
-from netzob.Common.Type.Format import Format
+from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.Partitioning.NewForcePartitioningView import NewForcePartitioningView
+from netzob.UI.Vocabulary.Views.Partitioning.SmoothPartitioningView import SmoothPartitioningView
 
 
-class NewForcePartitioningController(object):
-    """Manages the execution of the force partitioning on
-    the selected symbols"""
+class SmoothPartitioningController(object):
+    """Executes the smooth operation on selected symbols"""
 
     def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
-        self._view = NewForcePartitioningView(self)
+        self._view = SmoothPartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
         self.symbols = symbols
@@ -65,81 +62,73 @@ class NewForcePartitioningController(object):
     def view(self):
         return self._view
 
-    def force_cancel_clicked_cb(self, widget):
-        self._view.forceDialog.destroy()
+    def smooth_cancel_clicked_cb(self, widget):
+        self._view.smoothDialog.destroy()
 
-    def force_execute_clicked_cb(self, widget):
-        self.flagStop = False
-        #update widget
-        self._view.force_stop.set_sensitive(True)
-        self._view.force_cancel.set_sensitive(False)
-        self._view.force_execute.set_sensitive(False)
-        self._view.force_entry.set_sensitive(False)
-        self._view.force_radiobutton_hexa.set_sensitive(False)
-        self._view.force_radiobutton_string.set_sensitive(False)
-        #extract choose value
-        delimiter = self._view.force_entry.get_text()
-        if self._view.force_radiobutton_hexa.get_active():
-            delimiterType = Format.HEX
-        else:
-            delimiterType = Format.STRING
+    def smooth_execute_clicked_cb(self, widget):
+        """Callback executed when the user
+        requests to start the smooth
+        operation"""
+        # update widget
+        self._view.smooth_cancel.set_sensitive(False)
+        self._view.smooth_execute.set_sensitive(False)
+        self._view.smooth_stop.set_sensitive(True)
 
-        # encode the delimiter
-        encodedDelimiter = TypeConvertor.encodeGivenTypeToNetzobRaw(delimiter, delimiterType)
+        # Define the smooth JOB
+        Job(self.startSmooth())
 
-        # create a job to execute the partitioning
-        Job(self.startForcePartitioning(encodedDelimiter, delimiterType))
+        #update button
+        self._view.smooth_cancel.set_sensitive(True)
+        self._view.smooth_execute.set_sensitive(False)
+        self._view.smooth_stop.set_sensitive(False)
 
-    def startForcePartitioning(self, delimiter, format):
+    def startSmooth(self):
+        """Start the smooth operation by creating
+        a dedicated thread
+        @var symbols: the list of symbols that should be smoothed
+        """
         if len(self.symbols) > 0:
-            self.log.debug("Start to force partitioning the selected symbols")
+            self.log.debug("Start to smooth the selected symbols")
             try:
-                (yield ThreadedTask(self.forcePartitioning, delimiter, format))
+                (yield ThreadedTask(self.smooth))
             except TaskError, e:
-                self.log.error(_("Error while proceeding to the force partitioning of symbols: {0}").format(str(e)))
+                self.log.error(_("Error while proceeding to the smoothing of symbols: {0}").format(str(e)))
         else:
             self.log.debug("No symbol selected")
 
-        #update button
-        self._view.force_stop.set_sensitive(True)
+        # Update button
+        self._view.smooth_stop.set_sensitive(True)
+        # Close dialog box
+        self._view.smoothDialog.destroy()
 
-        #close dialog box
-        self._view.forceDialog.destroy()
-
-    def forcePartitioning(self, encodedDelimiter, format):
+    def smooth(self):
         """Smooth the provided symbols"""
         step = float(100) / float(len(self.symbols))
         total = float(0)
         for symbol in self.symbols:
-            GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning symbol {0}".format(symbol.getName())))
+            GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth symbol {0}".format(symbol.getName())))
             if self.flagStop:
                 return
-            symbol.forcePartitioning(format, encodedDelimiter)
+            symbol.slickRegex(self.vocabularyController.getCurrentProject())
             total = total + step
             rtotal = float(total) / float(100)
             time.sleep(0.01)
-            GObject.idle_add(self._view.force_progressbar.set_fraction, rtotal)
-        GObject.idle_add(self._view.force_progressbar.set_text, _("Force partitioning finished !"))
+            GObject.idle_add(self._view.smooth_progressbar.set_fraction, rtotal)
+        GObject.idle_add(self._view.smooth_progressbar.set_text, _("Smooth finished !"))
 
-    def force_stop_clicked_cb(self, widget):
+    def smooth_stop_clicked_cb(self, widget):
+        """Callback executed when the
+        user wants to stop the current smooth operation"""
         # update button
-        self._view.force_stop.set_sensitive(False)
-
+        self._view.smooth_stop.set_sensitive(False)
+        # update widget
+        self._view.smooth_execute.set_sensitive(True)
+        self._view.smooth_cancel.set_sensitive(True)
         self.flagStop = True
 
-        #update widget
-        self._view.force_execute.set_sensitive(True)
-        self._view.force_cancel.set_sensitive(True)
-        self._view.force_entry.set_sensitive(True)
-        self._view.force_radiobutton_hexa.set_sensitive(True)
-        self._view.force_radiobutton_string.set_sensitive(True)
-
-    def force_entry_changed_cb(self, widget):
-        if(len(widget.get_text()) > 0):
-            self._view.force_execute.set_sensitive(True)
-        else:
-            self._view.force_execute.set_sensitive(False)
-
     def run(self):
-        self._view.force_stop.set_sensitive(False)
+        self._view.smooth_stop.set_sensitive(False)
         self._view.run()
+
+    def stop(self):
+        self.flagStop = True

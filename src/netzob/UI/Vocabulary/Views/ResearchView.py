@@ -45,27 +45,25 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewForcePartitioningView(object):
+class ResearchView(object):
 
     def __init__(self, controller):
         '''
         Constructor
         '''
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui", "vocabulary", "partitioning",
-                                                "forcePartitioning.glade"))
-        self._getObjects(self.builder, ["forceDialog",
-                                        "force_execute", "force_stop", "force_cancel",
-                                        "force_entry",
-                                        "force_radiobutton_hexa", "force_radiobutton_string",
-                                        "force_progressbar"])
+        self.builder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary", "search",
+            "searchBar.glade"))
+        self._getObjects(self.builder, ["researchBar",
+                                        "research_entry", "numberOfResultLabel",
+                                        "research_format", "research_preferences",
+                                        "research_previous", "research_next",
+                                        "research_close", "spinnerSearchProcess", "imageWarning", "currentSelectedResultLabel"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
     def _getObjects(self, builder, objectsList):
         for obj in objectsList:
             setattr(self, obj, builder.get_object(obj))
-
-    def run(self):
-        self.forceDialog.run()

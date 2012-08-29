@@ -43,20 +43,20 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.Partitioning.NewSimplePartitioningView import NewSimplePartitioningView
+from netzob.UI.Vocabulary.Views.Partitioning.SimplePartitioningView import SimplePartitioningView
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.UnitSize import UnitSize
 
 
-class NewSimplePartitioningController(object):
+class SimplePartitioningController(object):
     '''
     classdocs
     '''
 
     def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
-        self._view = NewSimplePartitioningView(self)
+        self._view = SimplePartitioningView(self)
         self.log = logging.getLogger(__name__)
         self.flagStop = False
         self.symbols = symbols

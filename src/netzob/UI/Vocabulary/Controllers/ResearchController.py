@@ -50,15 +50,15 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewResearchView import NewResearchView
+from netzob.UI.Vocabulary.Views.ResearchView import ResearchView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewResearchController(object):
+class ResearchController(object):
 
     def __init__(self, vocabularyController):
         self.vocabularyController = vocabularyController
-        self._view = NewResearchView(self)
+        self._view = ResearchView(self)
         self.log = logging.getLogger(__name__)
         self.searchRunning = False
         self.stopFlag = False

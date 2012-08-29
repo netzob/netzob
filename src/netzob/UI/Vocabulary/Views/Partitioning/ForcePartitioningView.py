@@ -45,7 +45,7 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewSmoothPartitioningView(object):
+class ForcePartitioningView(object):
 
     def __init__(self, controller):
         '''
@@ -54,10 +54,12 @@ class NewSmoothPartitioningView(object):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
                                                 "ui", "vocabulary", "partitioning",
-                                                "smoothPartitioning.glade"))
-        self._getObjects(self.builder, ["smoothDialog",
-                                        "smooth_execute", "smooth_stop", "smooth_cancel",
-                                        "smooth_progressbar"])
+                                                "forcePartitioning.glade"))
+        self._getObjects(self.builder, ["forceDialog",
+                                        "force_execute", "force_stop", "force_cancel",
+                                        "force_entry",
+                                        "force_radiobutton_hexa", "force_radiobutton_string",
+                                        "force_progressbar"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -66,4 +68,4 @@ class NewSmoothPartitioningView(object):
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.smoothDialog.run()
+        self.forceDialog.run()

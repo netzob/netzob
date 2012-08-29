@@ -38,7 +38,7 @@ from gi.repository import Gtk, Gdk
 import gi
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Common.Views.MoveMessageView import MoveMessageView
-from netzob.UI.Vocabulary.Controllers.Partitioning.NewSequenceAlignmentController import NewSequenceAlignmentController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SequenceAlignmentController import SequenceAlignmentController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -94,7 +94,7 @@ class MoveMessageController(object):
         self.vocabularyController.moveMessage(message, self.targetSymbol)
 
         self._view.destroy()
-        sequence_controller = NewSequenceAlignmentController(self.vocabularyController, [self.targetSymbol])
+        sequence_controller = SequenceAlignmentController(self.vocabularyController, [self.targetSymbol])
         sequence_controller.run()
 
     def moveInTrash(self, message):

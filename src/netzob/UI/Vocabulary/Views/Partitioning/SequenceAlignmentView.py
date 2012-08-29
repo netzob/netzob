@@ -45,21 +45,24 @@ from gi.repository import GObject
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class NewSimplePartitioningView(object):
+class SequenceAlignmentView(object):
 
     def __init__(self, controller):
         '''
         Constructor
         '''
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
-                                                "ui", "vocabulary", "partitioning",
-                                                "simplePartitioning.glade"))
-        self._getObjects(self.builder, ["simpleDialog",
-                                        "simple_execute", "simple_stop", "simple_cancel",
-                                        "radiobutton8bits", "radiobutton16bits",
-                                        "radiobutton32bits", "radiobutton64bits",
-                                        "simple_progressbar"])
+        self.builder.add_from_file(os.path.join(
+            ResourcesConfiguration.getStaticResources(),
+            "ui", "vocabulary", "partitioning",
+            "sequenceAlignement.glade"))
+        self._getObjects(self.builder, ["sequenceDialog",
+                                        "sequence_execute", "sequence_cancel", "sequence_stop",
+                                        "sequence_adjustment", "sequence_scale", "sequence_spinbutton",
+                                        "radiobutton4bit", "radiobutton8bit",
+                                        "orphanButton", "smoothButton",
+                                        "sequence_progressbar", "stage0ProgressBar", "stage1ProgressBar", "stage2ProgressBar", "stage3ProgressBar",
+                                        "labelStage0", "labelStage1", "labelStage2", "labelStage3"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 
@@ -68,4 +71,25 @@ class NewSimplePartitioningView(object):
             setattr(self, obj, builder.get_object(obj))
 
     def run(self):
-        self.simpleDialog.run()
+        self.sequenceDialog.run()
+
+    def resetProgressBars(self):
+        """Reset the initial values of all the
+        progress bars declared in the interface."""
+        self.labelStage0.show()
+        self.stage0ProgressBar.show()
+        self.stage0ProgressBar.set_fraction(0)
+
+        self.labelStage1.show()
+        self.stage1ProgressBar.show()
+        self.stage1ProgressBar.set_fraction(0)
+
+        self.labelStage2.show()
+        self.stage2ProgressBar.show()
+        self.stage2ProgressBar.set_fraction(0)
+
+        self.labelStage3.show()
+        self.stage3ProgressBar.show()
+        self.stage3ProgressBar.set_fraction(0)
+
+        self.sequence_progressbar.set_fraction(0)

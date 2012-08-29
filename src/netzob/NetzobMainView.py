@@ -45,7 +45,7 @@ from gi.repository import GObject
 #+---------------------------------------------------------------------------+
 from netzob.UI.NetzobWidgets import addNetzobIconsToDefaultFactory
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob.UI.Vocabulary.Controllers.NewVocabularyController import NewVocabularyController
+from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
 from netzob.UI.Simulator.UISimulator import UISimulator
 from netzob.UI.Grammar.Controllers.GrammarController import GrammarController
 
@@ -83,7 +83,7 @@ class NetzobMainView(object):
     def _registerPerspectives(self):
         self.registerPerspective(self.VOCABULARY_INFERENCE_VIEW,
                                  _("Vocabulary Inference"),
-                                 NewVocabularyController)
+                                 VocabularyController)
         self.registerPerspective(self.GRAMMAR_INFERENCE_VIEW,
                                  _("Grammar Inference"),
                                  GrammarController)

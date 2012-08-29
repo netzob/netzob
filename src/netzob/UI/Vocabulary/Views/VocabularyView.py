@@ -50,10 +50,10 @@ from collections import OrderedDict
 #| Local application imports
 #+---------------------------------------------------------------------------+
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
-from netzob.UI.Vocabulary.Controllers.NewResearchController import NewResearchController
+from netzob.UI.Vocabulary.Controllers.ResearchController import ResearchController
 
 
-class NewVocabularyView(object):
+class VocabularyView(object):
     SYMBOLLISTSTORE_SELECTED_COLUMN = 0
     SYMBOLLISTSTORE_NAME_COLUMN = 1
     SYMBOLLISTSTORE_MESSAGE_COLUMN = 2
@@ -108,7 +108,7 @@ class NewVocabularyView(object):
         # add the netzobBegin label attribute
         self.netzobBegin = None
         # add the researchBar
-        self.researchController = NewResearchController(self.controller)
+        self.researchController = ResearchController(self.controller)
         self.messageTableBoxAndResearchBox.pack_end(self.researchController._view.researchBar, False, False, 0)
         self.researchController._view.research_format.set_active(4)
         self.researchController.hide()
@@ -156,7 +156,7 @@ class NewVocabularyView(object):
         path, position = widget.get_dest_row_at_pos(x, y)
         targetSymbol = None
         if path is not None:
-            symbolID = widget.get_model()[path][NewVocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            symbolID = widget.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
             if symbolID is not None:
                 targetSymbol = self.controller.getCurrentProject().getVocabulary().getSymbolByID(symbolID)
 

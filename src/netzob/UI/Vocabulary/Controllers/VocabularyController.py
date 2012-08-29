@@ -43,14 +43,14 @@ gi.require_version('Gtk', '3.0')
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
-from netzob.UI.Vocabulary.Views.NewVocabularyView import NewVocabularyView
+from netzob.UI.Vocabulary.Views.VocabularyView import VocabularyView
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.Common.Symbol import Symbol
 from netzob.UI.Common.Controllers.MoveMessageController import MoveMessageController
-from netzob.UI.Vocabulary.Controllers.Partitioning.NewSequenceAlignmentController import NewSequenceAlignmentController
-from netzob.UI.Vocabulary.Controllers.Partitioning.NewForcePartitioningController import NewForcePartitioningController
-from netzob.UI.Vocabulary.Controllers.Partitioning.NewSimplePartitioningController import NewSimplePartitioningController
-from netzob.UI.Vocabulary.Controllers.Partitioning.NewSmoothPartitioningController import NewSmoothPartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SequenceAlignmentController import SequenceAlignmentController
+from netzob.UI.Vocabulary.Controllers.Partitioning.ForcePartitioningController import ForcePartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SimplePartitioningController import SimplePartitioningController
+from netzob.UI.Vocabulary.Controllers.Partitioning.SmoothPartitioningController import SmoothPartitioningController
 from netzob.UI.Vocabulary.Controllers.MessagesDistributionController import MessagesDistributionController
 from netzob.UI.Vocabulary.Controllers.Partitioning.ResetPartitioningController import ResetPartitioningController
 from netzob.UI.Vocabulary.Controllers.SplitFieldController import SplitFieldController
@@ -63,11 +63,11 @@ from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController imp
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
-class NewVocabularyController(object):
+class VocabularyController(object):
 
     def __init__(self, netzob):
         self.netzob = netzob
-        self._view = NewVocabularyView(self)
+        self._view = VocabularyView(self)
         self.log = logging.getLogger(__name__)
         self.view.updateLeftPanel()
         self.selectedMessagesToMove = None
@@ -292,7 +292,7 @@ class NewVocabularyController(object):
                 return
 
             # Retrieve the selected symbol
-            symbol_id = treeview.get_model()[path][NewVocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
+            symbol_id = treeview.get_model()[path][VocabularyView.SYMBOLLISTSTORE_ID_COLUMN]
             if symbol_id is not None:
                 symbol = self.getCurrentProject().getVocabulary().getSymbolByID(symbol_id)
             else:
@@ -325,7 +325,7 @@ class NewVocabularyController(object):
         if symbols == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        sequence_controller = NewSequenceAlignmentController(self, symbols)
+        sequence_controller = SequenceAlignmentController(self, symbols)
         sequence_controller.run()
 
     def partitioningForce_activate_cb(self, action):
@@ -336,7 +336,7 @@ class NewVocabularyController(object):
         if symbols == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        force_controller = NewForcePartitioningController(self, symbols)
+        force_controller = ForcePartitioningController(self, symbols)
         force_controller.run()
 
     def partitioningSimple_activate_cb(self, action):
@@ -347,7 +347,7 @@ class NewVocabularyController(object):
         if symbols == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        simple_controller = NewSimplePartitioningController(self, symbols)
+        simple_controller = SimplePartitioningController(self, symbols)
         simple_controller.run()
 
     def partitioningSmooth_activate_cb(self, action):
@@ -358,7 +358,7 @@ class NewVocabularyController(object):
         if symbols == []:
             NetzobErrorMessage(_("No symbol(s) selected."))
             return
-        smooth_controller = NewSmoothPartitioningController(self, symbols)
+        smooth_controller = SmoothPartitioningController(self, symbols)
         smooth_controller.run()
 
     def partitioningReset_activate_cb(self, action):

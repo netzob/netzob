@@ -45,16 +45,16 @@ import time
 from netzob.Common.Threads.Job import Job
 from netzob.Common.Threads.Tasks.ThreadedTask import ThreadedTask, TaskError
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.UI.Vocabulary.Views.Partitioning.NewSequenceAlignmentView import NewSequenceAlignmentView
+from netzob.UI.Vocabulary.Views.Partitioning.SequenceAlignmentView import SequenceAlignmentView
 from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 
 
-class NewSequenceAlignmentController(object):
+class SequenceAlignmentController(object):
     '''Controls the execution of the alignment process'''
 
     def __init__(self, vocabularyController, symbols=[]):
         self.vocabularyController = vocabularyController
-        self._view = NewSequenceAlignmentView(self)
+        self._view = SequenceAlignmentView(self)
         self.log = logging.getLogger(__name__)
         self.alignmentSolution = None
         self.symbols = symbols
