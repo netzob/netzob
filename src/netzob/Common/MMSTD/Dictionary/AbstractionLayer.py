@@ -89,14 +89,6 @@ class AbstractionLayer():
         self.log.debug("Connected changes to FALSE")
         self.connected = False
 
-#    def registerInputSymbol(self, symbol):
-#        self.manipulatedSymbols.append(symbol)
-#        self.inputSymbols.append(symbol)
-
-#    def registerOutputSymbol(self, symbol):
-#        self.manipulatedSymbols.append(symbol)
-#        self.outputSymbols.append(symbol)
-
     def openServer(self, vocabulary, outputState, isMaster):
         self.log.info("OpenServer " + str(self.communicationChannel))
         self.connected = False
@@ -127,22 +119,6 @@ class AbstractionLayer():
         self.log.debug("Disconnecting the abstraction layer")
         self.communicationChannel.close()
         self.connected = False
-#
-#
-#
-##        self.connected = not self.communicationChannel.close()
-#        self.log.debug("Connected = " + str(self.connected))
-#        # if its a server:
-#        if self.communicationChannel.isServer():
-#            self.log.debug("Close the server")
-#            self.closeServer()
-#        else:
-#            # if its a client:
-#            self.log.debug("Close the client...")
-#            try:
-#                self.connected = self.communicationChannel.close()
-#            except:
-#                self.log.warn("Error while trying to disconnect")
 
     #+-----------------------------------------------------------------------+
     #| receiveSymbol
@@ -153,17 +129,17 @@ class AbstractionLayer():
         self.log.debug("Waiting for the reception of a message")
         return self.receiveSymbolWithTimeout(-1)
 
-    def registerInputSymbol(self, symbol):
+    def registerInputSymbol(self, receptionTime, message, symbol):
         self.manipulatedSymbols.append(symbol)
         self.inputSymbols.append(symbol)
         if (self.cb_inputSymbol is not None):
-            self.cb_inputSymbol(symbol)
+            self.cb_inputSymbol(receptionTime, message, symbol)
 
-    def registerOutputSymbol(self, symbol):
+    def registerOutputSymbol(self, sendingTime, message, symbol):
         self.manipulatedSymbols.append(symbol)
         self.outputSymbols.append(symbol)
         if self.cb_outputSymbol is not None:
-            self.cb_outputSymbol(symbol)
+            self.cb_outputSymbol(sendingTime, message, symbol)
 
     def receiveSymbolWithTimeout(self, timeout):
         # First we read from the input the message
@@ -186,7 +162,7 @@ class AbstractionLayer():
 
             # We store the received messages its time and its abstract representation
             self.inputMessages.append([receptionTime, TypeConvertor.bin2strhex(receivedData), symbol.getName()])
-            self.registerInputSymbol(symbol)
+            self.registerInputSymbol(receptionTime, TypeConvertor.bin2strhex(receivedData), symbol)
 
             return (symbol, receivedData)
         else:
@@ -194,9 +170,9 @@ class AbstractionLayer():
                 if self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == EmptySymbol.TYPE or self.manipulatedSymbols[len(self.manipulatedSymbols) - 1].getType() == UnknownSymbol.TYPE:
                     self.log.warn("Consider client has disconnected since no valid symbol received after " + str(nbMaxAttempts) + " attempts")
                     return (None, None)
-
+            receptionTime = now.strftime("%H:%M:%S")
             symbol = EmptySymbol()
-            self.registerInputSymbol(symbol)
+            self.registerInputSymbol(receptionTime, "", symbol)
             return (symbol, None)
 
     def writeSymbol(self, symbol):
@@ -211,7 +187,7 @@ class AbstractionLayer():
         now = datetime.datetime.now()
         sendingTime = now.strftime("%H:%M:%S")
         self.outputMessages.append([sendingTime, strMessage, symbol.getName()])
-        self.registerOutputSymbol(symbol)
+        self.registerOutputSymbol(sendingTime, strMessage, symbol)
 
         self.communicationChannel.write(binMessage)
 
@@ -296,6 +272,12 @@ class AbstractionLayer():
 
     def getCommunicationChannel(self):
         return self.communicationChannel
+
+    def setInputSymbolReception_cb(self, cb):
+        self.cb_inputSymbol = cb
+
+    def setOutputSymbolSending_cb(self, cb):
+        self.cb_outputSymbol = cb
 
     def save(self, root, namespace):
         """Save in the XML tree the abstraction Layer definition"""

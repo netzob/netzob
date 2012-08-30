@@ -209,3 +209,19 @@ class SimulatorView(object):
         else:
             self.xdotWidget.clear()
             self.xdotWidget.hide()
+
+    def registerInputSymbolOfCurrentActor(self, receptionTime, message, symbol):
+        """Add a symbol, the message and the reception time in the list"""
+        i = self.currentActorIOChannelListStore.append()
+        self.currentActorIOChannelListStore.set(i, 0, Gtk.STOCK_GO_BACK)
+        self.currentActorIOChannelListStore.set(i, 1, receptionTime)
+        self.currentActorIOChannelListStore.set(i, 2, symbol.getName())
+        self.currentActorIOChannelListStore.set(i, 3, message)
+
+    def registerOutputSymbolOfCurrentActor(self, receptionTime, message, symbol):
+        """Add a symbol, the message and the reception time in the list"""
+        i = self.currentActorIOChannelListStore.append()
+        self.currentActorIOChannelListStore.set(i, 0, Gtk.STOCK_GO_FORWARD)
+        self.currentActorIOChannelListStore.set(i, 1, receptionTime)
+        self.currentActorIOChannelListStore.set(i, 2, symbol.getName())
+        self.currentActorIOChannelListStore.set(i, 3, message)

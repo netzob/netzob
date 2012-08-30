@@ -64,8 +64,6 @@ class NetworkClient(AbstractChannel):
         self.outputMessages = []
 
     def open(self):
-        print self.getProtocol()
-
         try:
             if (self.getProtocol() == "UDP"):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -78,10 +76,13 @@ class NetworkClient(AbstractChannel):
                 self.socket.bind((self.getBindIP(), self.getBindPort()))
 
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            print self.getTargetIP()
-            print self.getTargetPort()
-            self.socket.connect((self.getTargetIP(), self.getTargetPort()))
+
+            targetIp = self.getTargetIP()
+            targetPort = self.getTargetPort()
+            self.socket.connect((targetIp, targetPort))
             self.socket.setblocking(True)
+
+            self.log.debug("NetworkClient has initiated a connection with {0}:{1}".format(targetIp, targetPort))
         except socket.error, msg:
             self.log.warn("Opening the network connection has failed : " + str(msg))
             self.socket = None
