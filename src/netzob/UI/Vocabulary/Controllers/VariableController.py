@@ -74,7 +74,8 @@ class VariableTreeController:
         self.field = field
 
         self.view = VariableTreeView(self)
-        self.registerContent(self.field.getVariable())
+        if self.field.getVariable() is not None:
+            self.registerContent(self.field.getVariable())
         self.initCallbacks()
 
     def initCallbacks(self):
@@ -254,8 +255,9 @@ class VariableTreeController:
         """
         if self.field.getVariable() is None:
             self.field.variable = self.field.getDefaultVariable(self.symbol)
-        self.registerVariable(None, self.field.variable)
-
+            self.registerContent(self.field.getVariable())
+        else:
+            logging.info(_("A variable already exists."))
 
 class VariableCreationController:
     """VariableCreationController:
@@ -671,7 +673,7 @@ class VariableCreationController:
 
         if variable is not None:
             # We notify the symbol that is no more composed of default variable.
-            self.symbol.setDefault(False)
+            self.treeController.symbol.setDefault(False)
 
             # This part is for saving and transfering children when transforming a node variable into an other kind of node variable.
             if self.editOverCreate:
