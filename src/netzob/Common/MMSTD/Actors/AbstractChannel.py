@@ -30,6 +30,10 @@
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
 import logging
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -37,26 +41,51 @@ import logging
 
 
 #+---------------------------------------------------------------------------+
-#| AbstractActor:
-#|     Definition of an actor
+#| AbstractChannel:
+#|     Abstract class of a communication channel
 #+---------------------------------------------------------------------------+
-class AbstractActor():
+class AbstractChannel():
 
-    def __init__(self, idActor, nameActor, isServer, instanciated, protocol, bindIP, bindPort, targetIP, targetPort):
-        self.id = idActor
-        self.name = nameActor
-#        Thread.__init__(self)
-        # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.AbstractActor.py')
+    def __init__(self, idChannel, isServer, instanciated, memory, protocol, bind_ip, bind_port, target_ip, target_port):
+        self.id = idChannel
+        self.log = logging.getLogger(__name__)
         self.Terminated = False
         self.is_server = isServer
         self.active = False
         self.instanciated = instanciated
-        self.protocol = protocol
-        self.bindIP = bindIP
-        self.bindPort = bindPort
-        self.targetIP = targetIP
-        self.targetPort = targetPort
+        self.memory = memory
+
+        self.originalProtocol = protocol
+        self.originalBindIp = bind_ip
+        self.originalBindPort = bind_port
+        self.originalTargetIp = target_ip
+        self.originalTargetPort = target_port
+
+        self.configureMemory()
+
+    def configureMemory(self):
+        """Presets the meta-variables of the channel with specified values"""
+
+        varL4Protocol = DataVariable("L4_PROTOCOL", "L4_PROTOCOL", True, True, WordType(True, 0, 5), self.originalProtocol)
+        varBindIP = DataVariable("BIND_IP", "BIND_IP", True, True, IPv4WordType(True), self.originalBindIp)
+        varBindPort = DataVariable("BIND_PORT", "BIND_PORT", True, True, IntegerType(True, 0, 5), self.originalBindPort)
+        varTargetIP = DataVariable("TARGET_IP", "TARGET_IP", True, True, IPv4WordType(True), self.originalTargetIp)
+        varTargetPort = DataVariable("TARGET_PORT", "TARGET_PORT", True, True, IntegerType(True, 0, 5), self.originalTargetPort)
+
+        self.memory.forget(varL4Protocol)
+        self.memory.memorize(varL4Protocol)
+
+        self.memory.forget(varBindIP)
+        self.memory.memorize(varBindIP)
+
+        self.memory.forget(varBindPort)
+        self.memory.memorize(varBindPort)
+
+        self.memory.forget(varTargetIP)
+        self.memory.memorize(varTargetIP)
+
+        self.memory.forget(varTargetPort)
+        self.memory.memorize(varTargetPort)
 
     def isAnInstanciated(self):
         return self.instanciated
@@ -76,39 +105,39 @@ class AbstractActor():
     def getName(self):
         return self.name
 
-    def getL4Protocol(self):
-        return self.protocol
+    def getOriginalL4Protocol(self):
+        return self.originalProtocol
 
-    def getBindIP(self):
-        return self.bindIP
+    def getOriginalBindIP(self):
+        return self.originalBindIp
 
-    def getBindPort(self):
-        return self.bindPort
+    def getOriginalBindPort(self):
+        return self.originalBindPort
 
-    def getTargetIP(self):
-        return self.targetIP
+    def getOriginalTargetIP(self):
+        return self.originalTargetIp
 
-    def getTargetPort(self):
-        return self.targetPort
+    def getOriginalTargetPort(self):
+        return self.originalTargetPort
 
     #+-----------------------------------------------------------------------+
     #| Load
     #+-----------------------------------------------------------------------+
     @staticmethod
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, memory):
         # Computes which type is it
         if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
             raise NameError("The parsed xml doesn't represent a valid type of actor.")
 
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ClientNetworkActor":
-            from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ClientNetworkChannel":
+            from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkClient import NetworkClient
 
-            return NetworkClient.loadFromXML(rootElement, namespace, version)
-        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ServerNetworkActor":
-            from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
+            return NetworkClient.loadFromXML(rootElement, namespace, version, memory)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ServerNetworkChannel":
+            from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkServer import NetworkServer
 
-            return NetworkServer.loadFromXML(rootElement, namespace, version)
+            return NetworkServer.loadFromXML(rootElement, namespace, version, memory)
         else:
-            logging.warn("The parsed type of Actor ({0}) is unknown.".format(rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))
+            logging.warn("The parsed type of channel ({0}) is unknown.".format(rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))
 
         return None

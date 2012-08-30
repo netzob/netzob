@@ -36,7 +36,8 @@ import logging
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
-
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
@@ -48,6 +49,8 @@ from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken
 from netzob.Common.MMSTD.Symbols.impl.EmptySymbol import EmptySymbol
 from netzob.Common.MMSTD.Symbols.impl.UnknownSymbol import UnknownSymbol
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
 
 
 class TimeoutException(Exception):
@@ -293,3 +296,27 @@ class AbstractionLayer():
 
     def getCommunicationChannel(self):
         return self.communicationChannel
+
+    def save(self, root, namespace):
+        """Save in the XML tree the abstraction Layer definition"""
+        xmlLayer = etree.SubElement(root, "{" + namespace + "}abstractionLayer")
+
+        # save the communication channel
+        self.communicationChannel.save(xmlLayer, namespace)
+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version, vocabulary):
+        if version == "0.1":
+            communicationChannel = None
+            memory = Memory()
+
+            if xmlRoot.find("{" + namespace + "}communicationChannel") is not None:
+                communicationChannel = AbstractChannel.loadFromXML(xmlRoot.find("{" + namespace + "}communicationChannel"), namespace, version, memory)
+
+            if memory is None or communicationChannel is None:
+                logging.warn("An error occurred and prevented loading the abstraction layer from its XML definiton")
+                return None
+
+            return AbstractionLayer(communicationChannel, vocabulary, memory)
+
+        return None

@@ -42,15 +42,15 @@ import socket
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 
 
 #+---------------------------------------------------------------------------+
 #| InstanciatedNetworkServer:
 #|     Definition of an instanciated network server
 #+---------------------------------------------------------------------------+
-class InstanciatedNetworkServer(AbstractActor):
+class InstanciatedNetworkServer(AbstractChannel):
 
     def __init__(self, socket):
         AbstractActor.__init__(self, True, True)

@@ -32,7 +32,7 @@ from gettext import gettext as _
 import logging
 from lxml.etree import ElementTree
 from lxml import etree
-from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
+from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
 
 
 #+---------------------------------------------------------------------------+
@@ -50,6 +50,14 @@ class Simulator(object):
     def __init__(self):
         self.actors = []
 
+    def getActorByID(self, actorID):
+        """Computes and retrieves the actor which's ID is
+        provided (None if unfound)"""
+        for actor in self.actors:
+            if str(actor.getID()) == str(actorID):
+                return actor
+        return None
+
     #+-----------------------------------------------------------------------+
     #| Save & Load
     #+-----------------------------------------------------------------------+
@@ -63,7 +71,7 @@ class Simulator(object):
                 actor.save(xmlActors, namespace)
 
     @staticmethod
-    def loadSimulator(xmlRoot, namespace, version):
+    def loadSimulator(xmlRoot, namespace, version, automata, vocabulary):
         if version == "0.1":
             simulator = None
             actors = []
@@ -71,7 +79,7 @@ class Simulator(object):
             if xmlRoot.find("{" + namespace + "}actors") is not None:
                 xmlActors = xmlRoot.find("{" + namespace + "}actors")
                 for xmlActor in xmlActors.findall("{" + namespace + "}actor"):
-                    actor = AbstractActor.loadFromXML(xmlActor, namespace, version)
+                    actor = MMSTDVisitor.loadFromXML(xmlActor, namespace, version, automata, vocabulary)
                     if actor is None:
                         logging.warn("An error occurred and prevented to load the actor.")
                     else:

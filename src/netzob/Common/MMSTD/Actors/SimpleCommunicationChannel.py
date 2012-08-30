@@ -28,7 +28,6 @@
 #+---------------------------------------------------------------------------+
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from AbstractActor import AbstractActor
 from collections import deque
 from gettext import gettext as _
 import bitarray
@@ -39,13 +38,14 @@ import logging
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken import \
     VariableWritingToken
+from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 
 
 #+---------------------------------------------------------------------------+
 #| SimpleCommunicationLayer:
 #|     Definition of a simple communicationLayer
 #+---------------------------------------------------------------------------+
-class SimpleCommunicationLayer(AbstractActor):
+class SimpleCommunicationLayer(AbstractChannel):
 
     def __init__(self, inputs, outputs, vocabulary, memory):
         AbstractActor.__init__(self, False, False)

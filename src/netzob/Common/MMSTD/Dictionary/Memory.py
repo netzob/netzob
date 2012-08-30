@@ -130,7 +130,7 @@ class Memory():
                 Remove a variable and its value from the temporary memory.
         """
         if self.hasMemorized(variable):
-            self.temporaryMemory.pop(variable.getID())
+            self.temporaryMemory.remove(variable.getID())
 
     def recall(self, variable):
         """recall:

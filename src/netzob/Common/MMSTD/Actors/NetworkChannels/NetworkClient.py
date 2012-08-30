@@ -41,25 +41,24 @@ import socket
 #| Related third party imports                                               |
 #+---------------------------------------------------------------------------+
 
-
-
 #+---------------------------------------------------------------------------+
 #| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
-from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.MMSTD.Actors.AbstractChannel import AbstractChannel
 
 
 #+---------------------------------------------------------------------------+
 #| NetworkClient:
 #|     Definition of a network client
 #+---------------------------------------------------------------------------+
-class NetworkClient(AbstractActor):
+class NetworkClient(AbstractChannel):
 
-    def __init__(self, id, name, protocol, bindIP, bindPort, targetIP, targetPort):
-        AbstractActor.__init__(self, id, name, False, False, protocol, bindIP, bindPort, targetIP, targetPort)
+    def __init__(self, id, memory, protocol, bind_ip, bind_port, target_ip, target_port):
+        AbstractChannel.__init__(self, id, False, False, memory, protocol, bind_ip, bind_port, target_ip, target_port)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkClient.py')
+        self.log = logging.getLogger(__name__)
         self.socket = None
         self.inputMessages = []
         self.outputMessages = []
@@ -161,49 +160,47 @@ class NetworkClient(AbstractActor):
 
     def save(self, root, namespace):
         """Save in the XML tree the actor definition"""
-        xmlActor = etree.SubElement(root, "{" + namespace + "}actor")
-        xmlActor.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ClientNetworkActor")
+        xmlActor = etree.SubElement(root, "{" + namespace + "}communicationChannel")
+        xmlActor.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ClientNetworkChannel")
         xmlActor.set('id', str(self.getID()))
-        xmlActor.set('name', str(self.getName()))
 
         xmlL4Protocol = etree.SubElement(xmlActor, "{" + namespace + "}l4_protocol")
-        if self.getL4Protocol() is not None:
-            xmlL4Protocol.text = self.getL4Protocol()
+        if self.getOriginalL4Protocol() is not None:
+            xmlL4Protocol.text = self.getOriginalL4Protocol()
         else:
             xmlL4Protocol.text = ""
 
         xmlBindIp = etree.SubElement(xmlActor, "{" + namespace + "}bind_ip")
-        if self.getBindIP() is not None:
-            xmlBindIp.text = self.getBindIP()
+        if self.getOriginalBindIP() is not None:
+            xmlBindIp.text = self.getOriginalBindIP()
         else:
             xmlBindIp.text = ""
 
         xmlBindPort = etree.SubElement(xmlActor, "{" + namespace + "}bind_port")
-        if self.getBindPort() is not None:
-            xmlBindPort.text = str(self.getBindPort())
+        if self.getOriginalBindPort() is not None:
+            xmlBindPort.text = str(self.getOriginalBindPort())
         else:
             xmlBindPort.text = ""
 
         xmlTargetIp = etree.SubElement(xmlActor, "{" + namespace + "}target_ip")
-        if self.getTargetIP() is not None:
-            xmlTargetIp.text = self.getTargetIP()
+        if self.getOriginalTargetIP() is not None:
+            xmlTargetIp.text = self.getOriginalTargetIP()
         else:
             xmlTargetIp.text = ""
 
         xmlTragetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
-        if self.getTargetPort() is not None:
-            xmlTargetIp.text = str(self.getTargetPort())
+        if self.getOriginalTargetPort() is not None:
+            xmlTargetIp.text = str(self.getOriginalTargetPort())
         else:
             xmlTargetIp.text = ""
 
     @staticmethod
-    def loadFromXML(rootElement, namespace, version):
+    def loadFromXML(rootElement, namespace, version, memory):
         # Then we verify its an IPC Message
-        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:ClientNetworkActor":
-            raise NameError("The parsed xml doesn't represent a a network client.")
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:ClientNetworkChannel":
+            raise NameError("The parsed xml doesn't represent a valid network client channel.")
 
-        idActor = rootElement.get('id')
-        nameActor = rootElement.get('name')
+        idChannel = rootElement.get('id')
 
         # Parse the data field and transform it into a byte array
         l4_protocol = rootElement.find("{" + namespace + "}l4_protocol").text
@@ -238,5 +235,5 @@ class NetworkClient(AbstractActor):
                 return None
 
         # create the actor
-        actor = NetworkClient(idActor, nameActor, l4_protocol, bind_ip, bind_port, target_ip, target_port)
+        actor = NetworkClient(idChannel, memory, l4_protocol, bind_ip, bind_port, target_ip, target_port)
         return actor

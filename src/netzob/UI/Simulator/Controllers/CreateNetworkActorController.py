@@ -39,8 +39,15 @@ import uuid
 from gi.repository import Gtk, Gdk
 import gi
 from netzob.UI.Simulator.Views.CreateNetworkActorView import CreateNetworkView
-from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
-from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
+from netzob.Common.MMSTD.Dictionary.Memory import Memory
+from netzob.Common.MMSTD.Actors.MMSTDVisitor import MMSTDVisitor
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.DataTypes.WordType import WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IPv4WordType import IPv4WordType
+from netzob.Common.MMSTD.Dictionary.DataTypes.IntegerType import IntegerType
+from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkClient import NetworkClient
+from netzob.Common.MMSTD.Actors.NetworkChannels.NetworkServer import NetworkServer
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
@@ -101,6 +108,8 @@ class CreateNetworkActorController(object):
         # initiator
         initiator = self._view.initiatorCheckButton.get_active()
 
+        # Create the Channel
+
         # retrieve the type (SERVER or CLIENT)
         typeActor = self._view.typeComboBoxText.get_active_text()
         if typeActor is None:
@@ -151,7 +160,11 @@ class CreateNetworkActorController(object):
         else:
             targetPort = None
 
-        actor = None
+        communicationChannel = None
+        idChannel = uuid.uuid4()
+
+        # Initialize a memory with communication channels variables
+        memory = Memory()
 
         if typeActor == "CLIENT":
             # Create a Client Network Actor
@@ -166,7 +179,7 @@ class CreateNetworkActorController(object):
                 self.displayErrorMessage(errorMessage)
                 return
 
-            actor = NetworkClient(self.idActor, actorName, l4Protocol, bindIP, bindPort, targetIP, targetPort)
+            communicationChannel = NetworkClient(idChannel, memory, l4Protocol, bindIP, bindPort, targetIP, targetPort)
 
         if typeActor == "SERVER":
             # Create a Server Network Actor
@@ -181,9 +194,18 @@ class CreateNetworkActorController(object):
                 self.displayErrorMessage(errorMessage)
                 return
 
-            actor = NetworkServer(self.idActor, actorName, l4Protocol, bindIP, bindPort, targetIP, targetPort)
+            communicationChannel = NetworkServer(idChannel, memory, l4Protocol, bindIP, bindPort, targetIP, targetPort)
 
-        if actor is not None:
+        if communicationChannel is not None and memory is not None:
+            vocabulary = self.simulatorController.getCurrentProject().getVocabulary()
+            grammar = self.simulatorController.getCurrentProject().getGrammar()
+
+            # Create the abstraction layer
+            abstractionLayer = AbstractionLayer(communicationChannel, vocabulary, memory)
+
+            # Create the MMSTD Visitor
+            actor = MMSTDVisitor(self.idActor, actorName, grammar.getAutomata(), initiator, abstractionLayer)
+
             # Register the new actor
             self.simulatorController.getCurrentProject().getSimulator().addActor(actor)
 

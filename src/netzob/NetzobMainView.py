@@ -37,7 +37,6 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.UI.Simulator.Controllers.SimulatorController import SimulatorController
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
@@ -47,8 +46,8 @@ from gi.repository import GObject
 from netzob.UI.NetzobWidgets import addNetzobIconsToDefaultFactory
 from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 from netzob.UI.Vocabulary.Controllers.VocabularyController import VocabularyController
-from netzob.UI.Simulator.UISimulator import UISimulator
 from netzob.UI.Grammar.Controllers.GrammarController import GrammarController
+from netzob.UI.Simulator.Controllers.SimulatorController import SimulatorController
 
 
 class NetzobMainView(object):

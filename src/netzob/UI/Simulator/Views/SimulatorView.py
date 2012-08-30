@@ -29,17 +29,17 @@
 #| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import os
+from gi.repository import GObject, Gtk, Gdk
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
+import gi
 import logging
+import os
 import uuid
+from netzob.Simulator.XDotWidget import XDotWidget
 #+---------------------------------------------------------------------------+
 #| Related third party imports
 #+---------------------------------------------------------------------------+
-from gi.repository import Gtk, Gdk
-import gi
-from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 gi.require_version('Gtk', '3.0')
-from gi.repository import GObject
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -61,12 +61,28 @@ class SimulatorView(object):
                                         "deleteActorButton",
                                         "stopActorButton",
                                         "startActorButton",
-                                        "actorsListStore"
+                                        "actorsListStore",
+                                        "grammarCurrentActorViewport",
+                                        "statusCurrentActorImage",
+                                        "nameCurrentActorLabel",
+                                        "stopCurrentActorButton",
+                                        "startCurrentActorButton",
+                                        "infoCurrentActorLabel",
+                                        "statusCurrentActorLabel",
+                                        "currentActorIOChannelListStore",
+                                        "currentActorMemoryListStore"
+
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
         self.toggledActors = []
+
+        self.xdotWidget = XDotWidget()
+        self.xdotWidget.show_all()
+        self.grammarCurrentActorViewport.add(self.xdotWidget)
+
         self.refreshListOfActors()
+        self.updateCurrentActor()
 
     def _loadActionGroupUIDefinition(self):
         """Loads the action group and the UI definition of menu items
@@ -133,3 +149,63 @@ class SimulatorView(object):
             self.actorsListStore.set(i, 1, imageStatus)
             self.actorsListStore.set(i, 2, str(actor.getID()))
             self.actorsListStore.set(i, 3, actor.getName())
+
+    def updateCurrentActor(self):
+        currentActor = self.controller.getCurrentActor()
+        if currentActor is None:
+            # Disable most of the right panels
+            self.currentActorIOChannelListStore.clear()
+            self.currentActorMemoryListStore.clear()
+
+            self.statusCurrentActorImage.hide()
+            self.nameCurrentActorLabel.set_label("")
+            self.nameCurrentActorLabel.hide()
+
+            self.stopCurrentActorButton.set_sensitive(False)
+            self.startCurrentActorButton.set_sensitive(False)
+
+            self.updateGrammarOfCurrentActor()
+
+            self.infoCurrentActorLabel.set_label("")
+            self.infoCurrentActorLabel.hide()
+
+            self.statusCurrentActorLabel.set_label("")
+            self.statusCurrentActorLabel.hide()
+        else:
+            if currentActor.isActive():
+                imageStatus = Gtk.STOCK_YES
+                actorStatus = "active"
+            else:
+                imageStatus = Gtk.STOCK_NO
+                actorStatus = "inactive"
+
+            self.statusCurrentActorImage = Gtk.Image(stock=imageStatus)
+            self.statusCurrentActorImage.show()
+            self.nameCurrentActorLabel.set_label(currentActor.getName())
+            self.nameCurrentActorLabel.show()
+
+            self.stopCurrentActorButton.set_sensitive(True)
+            self.startCurrentActorButton.set_sensitive(True)
+
+            self.updateGrammarOfCurrentActor()
+
+            self.infoCurrentActorLabel.set_label("hum hum")
+            self.infoCurrentActorLabel.show()
+
+            self.statusCurrentActorLabel.set_label(actorStatus)
+            self.statusCurrentActorLabel.show()
+
+    def updateGrammarOfCurrentActor(self):
+        currentActor = self.controller.getCurrentActor()
+        if currentActor is not None:
+            grammar = self.controller.getCurrentProject().getGrammar()
+            if grammar is not None:
+                automata = grammar.getAutomata()
+                if automata is not None:
+                    self.xdotWidget.drawAutomata(automata)
+                else:
+                    self.xdotWidget.clear()
+            self.xdotWidget.show()
+        else:
+            self.xdotWidget.clear()
+            self.xdotWidget.hide()

@@ -31,6 +31,9 @@
 from gettext import gettext as _
 import logging
 import threading
+from lxml.etree import ElementTree
+from lxml import etree
+from netzob.Common.MMSTD.Dictionary.AbstractionLayer import AbstractionLayer
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -43,23 +46,24 @@ import threading
 #+---------------------------------------------------------------------------+
 class MMSTDVisitor(threading.Thread):
 
-    def __init__(self, name, mmstd, isMaster, abstractionLayer):
+    def __init__(self, id, name, mmstd, initiator, abstractionLayer):
         threading.Thread.__init__(self)
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.MMSTD.Actors.MMSTDVisitor.py')
+        self.log = logging.getLogger(__name__)
+        self.id = id
         self.name = name
         self.model = mmstd
-        self.isMaster = isMaster
+        self.initiator = initiator
         self.abstractionLayer = abstractionLayer
         self.active = False
 
     def run(self):
-        if self.isMaster:
+        if self.initiator:
             self.log.debug("Starting the MMSTDVisitor as a Master")
         else:
             self.log.debug("Starting the MMSTDVisitor as a Client")
         self.active = True
-        if self.isMaster:
+        if self.initiator:
             self.runAsMaster()
         else:
             self.runAsClient()
@@ -106,14 +110,17 @@ class MMSTDVisitor(threading.Thread):
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
     #+-----------------------------------------------------------------------+
+    def getID(self):
+        return self.id
+
     def getName(self):
         return self.name
 
     def getModel(self):
         return self.model
 
-    def isMaster(self):
-        return self.isMaster
+    def isInitiator(self):
+        return self.initiator
 
     def isActive(self):
         return self.active
@@ -123,3 +130,31 @@ class MMSTDVisitor(threading.Thread):
 
     def setName(self, name):
         self.name = name
+
+    def save(self, root, namespace):
+        """Save in the XML tree the actor definition"""
+        xmlActor = etree.SubElement(root, "{" + namespace + "}actor")
+        xmlActor.set('id', str(self.getID()))
+        xmlActor.set('name', str(self.getName()))
+        if self.isInitiator():
+            xmlActor.set('initiator', "true")
+        else:
+            xmlActor.set('initiator', "false")
+
+        self.abstractionLayer.save(xmlActor, namespace)
+
+    @staticmethod
+    def loadFromXML(xmlRoot, namespace, version, automata, vocabulary):
+        if version == "0.1":
+
+            id = xmlRoot.get('id')
+            name = xmlRoot.get('name')
+            initiator = bool(xmlRoot.get('initiator'))
+
+            abstractionLayer = None
+            if xmlRoot.find("{" + namespace + "}abstractionLayer") is not None:
+                abstractionLayer = AbstractionLayer.loadFromXML(xmlRoot.find("{" + namespace + "}abstractionLayer"), namespace, version, vocabulary)
+
+            return MMSTDVisitor(id, name, automata, initiator, abstractionLayer)
+
+        return None

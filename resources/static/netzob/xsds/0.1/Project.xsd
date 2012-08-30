@@ -779,6 +779,12 @@
 	</complexType>
 
 	<complexType name="Actor">
+		<sequence>
+			<element name="abstractionLayer"
+				type="netzob-project:AbstractionLayer" maxOccurs="1"
+				minOccurs="0">
+			</element>
+		</sequence>
 		<attribute name="id" use="required">
 			<simpleType>
 				<restriction base="string">
@@ -793,11 +799,28 @@
 				</restriction>
 			</simpleType>
 		</attribute>
+		<attribute name="initiator" type="boolean"></attribute>
 	</complexType>
 
-	<complexType name="NetworkActor" abstract="true">
+	<complexType name="AbstractionLayer">
+		<sequence>
+			<element name="communicationChannel" type="netzob-project:Channel"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Channel">
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="NetworkChannel" abstract="true">
 		<complexContent>
-			<extension base="netzob-project:Actor">
+			<extension base="netzob-project:Channel">
 				<sequence>
 					<element name="l4_protocol" type="string" minOccurs="1"
 						maxOccurs="1"></element>
@@ -818,9 +841,9 @@
 		</complexContent>
 	</complexType>
 
-	<complexType name="ClientNetworkActor">
+	<complexType name="ClientNetworkChannel">
 		<complexContent>
-			<extension base="netzob-project:NetworkActor">
+			<extension base="netzob-project:NetworkChannel">
 				
 			</extension>
 		</complexContent>
@@ -828,7 +851,7 @@
 
 	<complexType name="ServerNetworkActor">
 		<complexContent>
-			<extension base="netzob-project:NetworkActor">
+			<extension base="netzob-project:NetworkChannel">
 			</extension>
 		</complexContent>
 	</complexType>

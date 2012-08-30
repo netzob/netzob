@@ -49,6 +49,7 @@ class SimulatorController:
 
     def __init__(self, netzob):
         self.netzob = netzob
+        self.currentActor = None
         self._view = SimulatorView(self)
         self.log = logging.getLogger(__name__)
 
@@ -72,6 +73,10 @@ class SimulatorController:
     def getCurrentWorkspace(self):
         """Return the current workspace"""
         return self.netzob.getCurrentWorkspace()
+
+    def getCurrentActor(self):
+        """Return the current actor to display (mostly on the right panel)"""
+        return self.currentActor
 
     def createNetworkActor_activate_cb(self, event):
         """Callback executed when the user wants to create a network actor"""
@@ -117,3 +122,19 @@ class SimulatorController:
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
+
+    def listOfActorsSelection_changed_cb(self, selection):
+        """Callback executed when the user selects a different actor"""
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
+
+        self.currentActor = None
+
+        model, iter = selection.get_selected()
+        if iter is not None:
+            actorID = model[iter][2]
+            print actorID
+            self.currentActor = self.getCurrentProject().getSimulator().getActorByID(actorID)
+
+        self._view.updateCurrentActor()

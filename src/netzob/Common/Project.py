@@ -95,7 +95,7 @@ def loadProject_0_1(projectFile):
 
     # Parse the simulator
     if xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator") is not None:
-        projectSimulator = Simulator.loadSimulator(xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator"), PROJECT_NAMESPACE, "0.1")
+        projectSimulator = Simulator.loadSimulator(xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator"), PROJECT_NAMESPACE, "0.1", project.getGrammar().getAutomata(), project.getVocabulary())
         if projectSimulator is not None:
             project.setSimulator(projectSimulator)
 
