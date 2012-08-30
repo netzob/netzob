@@ -249,7 +249,6 @@ class Field(object):
                 @type namespace: string
                 @param namespace: a precision for the xml subtree.
         """
-        logging.debug(_("[ Field {0}: toXML:").format(self.getName()))
         xmlField = etree.SubElement(root, "{" + namespace + "}field")
         xmlField.set("name", str(self.getName()))
         xmlField.set("index", str(self.getIndex()))
@@ -288,8 +287,6 @@ class Field(object):
 
         if self.getVariable() is not None:
             self.getVariable().toXML(xmlField, namespace)
-        # logging.debug(_("Field {0}: toXML: {1} ]").format(self.getName(), etree.tostring(root)))  # a bit heavy
-        logging.debug(_("Field {0}: toXML: ]").format(self.getName()))
 
 #+---------------------------------------------------------------------------+
 #| Getters                                                                   |
