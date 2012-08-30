@@ -398,8 +398,6 @@ class Field(object):
                 @return: the built field.
         """
         if version == "0.1":
-            # logging.debug(_("[ Field: loadFromXML: {0}").format(etree.tostring(xmlRoot)))  # a bit heavy
-            logging.debug(_("[ Field: loadFromXML:").format())
             field_name = xmlRoot.get("name")
             field_index = int(xmlRoot.get("index"))
             field_regex = ""
@@ -440,7 +438,6 @@ class Field(object):
                 var = AbstractVariable.loadFromXML(xmlRoot.find("{" + namespace + "}variable"), namespace, version, symbol)
                 field.setVariable(var)
 
-            logging.debug(_("Field: loadFromXML: {0} ]").format(field.getName()))
             return field
 
         return None
