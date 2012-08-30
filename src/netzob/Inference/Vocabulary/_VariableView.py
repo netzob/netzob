@@ -29,19 +29,25 @@
 #| Global Imports
 #+----------------------------------------------
 from gettext import gettext as _
-import logging
 from gi.repository import Gtk
-import gi
-import uuid
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.MMSTD.Dictionary.Variables.WordVariable import WordVariable
-from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import AlternateVariable
-from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import ReferencedVariable
-from netzob.Common.MMSTD.Dictionary.Variables.IPv4Variable import IPv4Variable
+from netzob.Common.MMSTD.Dictionary.Types.BinaryType import BinaryType
+from netzob.Common.MMSTD.Dictionary.Types.DecimalWordType import DecimalWordType
+from netzob.Common.MMSTD.Dictionary.Types.HexWordType import HexWordType
+from netzob.Common.MMSTD.Dictionary.Types.IPv4WordType import IPv4WordType
+from netzob.Common.MMSTD.Dictionary.Types.WordType import WordType
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.AlternateVariable import \
+    AlternateVariable
+from netzob.Common.MMSTD.Dictionary.Variables.DataVariable import DataVariable
+from netzob.Common.MMSTD.Dictionary.Variables.ReferencedVariable import \
+    ReferencedVariable
+from netzob.Common.MMSTD.Dictionary.Variables.RepeatVariable import \
+    RepeatVariable
 from netzob.Common.Type.Format import Format
-from netzob.Common.MMSTD.Dictionary.Variables.BinaryVariable import BinaryVariable
-from netzob.Common.MMSTD.Dictionary.Variables.HexVariable import HexVariable
-from netzob.Common.MMSTD.Dictionary.Variables.DecimalWordVariable import DecimalWordVariable
+import gi
+import logging
+import uuid
 gi.require_version('Gtk', '3.0')
 
 #+----------------------------------------------
@@ -70,7 +76,7 @@ class VariableView(object):
         self.datas = dict()
 
         # Add the initial Aggregate
-        self.rootVariable = AggregateVariable(variableId, self.varName, None)
+        self.rootVariable = AggregateVariable(variableId, self.varName, True, False, None)
         if self.defaultValue is not None:
             self.rootVariable.addChild(self.defaultValue)
 
@@ -117,7 +123,7 @@ class VariableView(object):
         self.log.debug(_("Register: {0}").format(str(name)))
         self.datas[str(variable.getID())] = variable
         newEntry = self.treestore.append(rootEntry, [str(variable.getID()), name])
-        if variable.getTypeVariable() == AggregateVariable.TYPE or variable.getTypeVariable() == AlternateVariable.TYPE:
+        if variable.getType() == AggregateVariable.TYPE or variable.getType() == AlternateVariable.TYPE:
             for child in variable.getChildren():
                 self.registerVariable(newEntry, child, child.getName())
 
@@ -136,7 +142,7 @@ class VariableView(object):
 
     def showMenu(self, treeview, event):
         rootVariable = None
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
+        if event.type == Gtk.EventType.BUTTON_PRESS and event.button == 3:
             x = int(event.x)
             y = int(event.y)
             (path, treeviewColumn, x, y) = treeview.get_path_at_pos(x, y)
@@ -173,11 +179,23 @@ class VariableView(object):
         itemDecimalWord.connect("activate", self.addDecimalWord, rootVariable, aIter)
         subElementMenu.append(itemDecimalWord)
 
-        # IPv4 Variable
-        itemIPv4 = Gtk.MenuItem(_("IPv4"))
+        # IPv4 Word Variable
+        itemIPv4 = Gtk.MenuItem(_("IPv4 Word"))
         itemIPv4.show()
-        itemIPv4.connect("activate", self.addIPv4, rootVariable, aIter)
+        itemIPv4.connect("activate", self.addIPv4Word, rootVariable, aIter)
         subElementMenu.append(itemIPv4)
+
+        # MAC Word Variable
+        itemMAC = Gtk.MenuItem(_("MAC Word"))
+        itemMAC.show()
+        itemMAC.connect("activate", self.addMACWord, rootVariable, aIter)
+        subElementMenu.append(itemMAC)
+
+        # Hexadecimal Variable
+        itemHex = Gtk.MenuItem(_("Hexadecimal Word"))
+        itemHex.show()
+        itemHex.connect("activate", self.addHexWord, rootVariable, aIter)
+        subElementMenu.append(itemHex)
 
         # Binary Variable
         itemBinary = Gtk.MenuItem(_("Binary"))
@@ -185,11 +203,11 @@ class VariableView(object):
         itemBinary.connect("activate", self.addBinary, rootVariable, aIter)
         subElementMenu.append(itemBinary)
 
-        # Hexadecimal Variable
-        itemBinary = Gtk.MenuItem(_("Hexadecimal"))
-        itemBinary.show()
-        itemBinary.connect("activate", self.addHexadecimal, rootVariable, aIter)
-        subElementMenu.append(itemBinary)
+        # Integer Variable
+        itemInteger = Gtk.MenuItem(_("Integer"))
+        itemInteger.show()
+        itemInteger.connect("activate", self.addInteger, rootVariable, aIter)
+        subElementMenu.append(itemInteger)
 
         # Aggregate Variable
         itemAggregate = Gtk.MenuItem(_("Aggregate"))
@@ -204,10 +222,16 @@ class VariableView(object):
         subElementMenu.append(itemAlternate)
 
         # Referenced Variable
-        itemAlternate = Gtk.MenuItem(_("Referenced Variable"))
-        itemAlternate.show()
-        itemAlternate.connect("activate", self.addReferencedVariable, rootVariable, aIter)
-        subElementMenu.append(itemAlternate)
+        itemRef = Gtk.MenuItem(_("Referenced Variable"))
+        itemRef.show()
+        itemRef.connect("activate", self.addReferencedVariable, rootVariable, aIter)
+        subElementMenu.append(itemRef)
+
+        # Repeat Variable
+        itemRepeat = Gtk.MenuItem(_("Repeat Variable"))
+        itemRepeat.show()
+        itemRepeat.connect("activate", self.addRepeatVariable, rootVariable, aIter)
+        subElementMenu.append(itemRepeat)
 
         item = Gtk.MenuItem(_("Add a sub-element"))
         item.set_submenu(subElementMenu)
@@ -291,7 +315,7 @@ class VariableView(object):
         minSize = int(minBitsEntry.get_text())
         maxSize = int(maxBitsEntry.get_text())
 
-        binVariable = BinaryVariable(varID, "binary", originalValue, minSize, maxSize)
+        binVariable = DataVariable(varID, "binary", True, False, BinaryType(), originalValue, minSize, maxSize)
         rootVariable.addChild(binVariable)
 
         self.datas[str(binVariable.getID())] = binVariable
@@ -376,7 +400,7 @@ class VariableView(object):
         minSize = int(minBitsEntry.get_text())
         maxSize = int(maxBitsEntry.get_text())
 
-        hexVariable = HexVariable(varID, "hexadecimal", originalValue, minSize, maxSize)
+        hexVariable = DataVariable(varID, "hexadecimal", True, False, HexWordType(), originalValue, minSize, maxSize)
         rootVariable.addChild(hexVariable)
 
         self.datas[str(hexVariable.getID())] = hexVariable
@@ -433,7 +457,7 @@ class VariableView(object):
         varName = variableValueEntry.get_text()
 
         # Creation of the aggregate id, name, mutable, value):
-        alternateVariable = AlternateVariable(variableID, varName, None)
+        alternateVariable = AlternateVariable(variableID, varName, True, False, None)
         rootVariable.addChild(alternateVariable)
 
         self.datas[str(alternateVariable.getID())] = alternateVariable
@@ -490,7 +514,7 @@ class VariableView(object):
         varName = variableValueEntry.get_text()
 
         # Creation of the aggregate id, name, mutable, value):
-        aggregateVariable = AggregateVariable(variableID, varName, None)
+        aggregateVariable = AggregateVariable(variableID, varName, True, False, None)
         rootVariable.addChild(aggregateVariable)
 
         self.datas[str(aggregateVariable.getID())] = aggregateVariable
@@ -559,7 +583,7 @@ class VariableView(object):
             varValue = None
 
         # Creation of the word id, name, mutable, value):
-        wordVariable = WordVariable(variableID, varName, varValue)
+        wordVariable = DataVariable(variableID, varName, True, False, WordType(), varValue, len(varValue), len(varValue))
         rootVariable.addChild(wordVariable)
 
         self.datas[str(wordVariable.getID())] = wordVariable
@@ -616,7 +640,8 @@ class VariableView(object):
         varValue = variableValueEntry.get_text()
 
         # Creation of the word id, name, mutable, value):
-        decimalwordVariable = DecimalWordVariable(variableID, varValue, None)
+
+        decimalwordVariable = DataVariable(variableID, "decimal word", True, False, DecimalWordType(), varValue, len(varValue), len(varValue))
         rootVariable.addChild(decimalwordVariable)
 
         self.datas[str(decimalwordVariable.getID())] = decimalwordVariable
@@ -725,7 +750,7 @@ class VariableView(object):
 
         # format
         format = formatValueCombo.get_model().get_value(formatValueCombo.get_active_iter(), 0)
-        ipVariable = IPv4Variable(varID, "ipv4", originalValue, startValue, endValue, format)
+        ipVariable = DataVariable(varID, "ipv4", True, False, IPv4WordType(), originalValue, startValue, endValue, format)
         rootVariable.addChild(ipVariable)
 
         self.datas[str(ipVariable.getID())] = ipVariable
@@ -787,7 +812,7 @@ class VariableView(object):
             return
 
         idReferencedVariable = self.varCombo.get_model().get_value(self.varCombo.get_active_iter(), 1)
-        referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", idReferencedVariable)
+        referencedVariable = ReferencedVariable(uuid.uuid4(), "Ref", True, False, idReferencedVariable)
         rootVariable.addChild(referencedVariable)
 
         self.datas[str(referencedVariable.getID())] = referencedVariable

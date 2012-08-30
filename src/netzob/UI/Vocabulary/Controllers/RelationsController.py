@@ -242,5 +242,6 @@ class RelationsController(object):
             print('Invalid double buffer')
 
         return True
+
     def relationOkButton_clicked_cb(self, widget):
         self.destroy()

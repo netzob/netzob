@@ -26,19 +26,28 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
-from gettext import gettext as _
-import socket
-import select
-import logging
 from bitarray import bitarray
+from gettext import gettext as _
+import logging
 from lxml.etree import ElementTree
 from lxml import etree
+
+import select
+import socket
+
 #+---------------------------------------------------------------------------+
-#| Local application imports
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+
+
+
+#+---------------------------------------------------------------------------+
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.MMSTD.Actors.AbstractActor import AbstractActor
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 
 #+---------------------------------------------------------------------------+
@@ -84,7 +93,7 @@ class NetworkClient(AbstractActor):
         try:
             self.socket.shutdown(socket.SHUT_RDWR)
         except socket.error, msg:
-            self.log.debug("Error appeared while shuting down the socket." + str(msg))
+            self.log.debug("Error appeared while shutting down the socket." + str(msg))
 
         try:
             self.socket.close()
@@ -114,16 +123,16 @@ class NetworkClient(AbstractActor):
         self.log.debug("Read finished")
         if (len(chars) == 0):
             return result
-        result.fromstring(chars)
+        result.frombytes(chars)
 
-        self.log.debug("Received : " + str(result))
+        self.log.debug("Received : {0}".format(TypeConvertor.bin2strhex(result)))
         return result
 
     def write(self, message):
         self.log.debug("Write down !")
         self.outputMessages.append(message)
         try:
-            self.outputFile.write(message.tostring())
+            self.outputFile.write(message.tobytes())
             self.outputFile.flush()
         except:
             self.log.warn("An error occured while trying to write on the communication channel")

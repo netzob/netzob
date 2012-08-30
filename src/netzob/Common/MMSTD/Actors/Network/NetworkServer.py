@@ -125,6 +125,12 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
+    def __init__(self, connectionInfos, UDPConnectionHandler):
+        SocketServer.UDPServer.__init__(self, connectionInfos, UDPConnectionHandler)
+        self.instances = []
+        self.allow_reuse_address = True
+        self.multipleConnectionAllowed = True
+
     def getVocabulary(self):
         return self.vocabulary
 
@@ -142,6 +148,15 @@ class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
 
     def setMaster(self, master):
         self.master = master
+
+    def addGeneratedInstance(self, instance):
+        self.instances.append(instance)
+
+    def removeGeneratedInstance(self, instance):
+        self.instances.remove(instance)
+
+    def getGeneratedInstances(self):
+        return self.instances
 
     def setCBWhenAClientConnects(self, cb):
         self.cbClientConnected = cb
@@ -201,7 +216,8 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
         instanciatedNetworkServer = InstanciatedNetworkServer(self.request)
 
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        # abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
 
         # And we create an MMSTD visitor for this
         self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer)
@@ -240,29 +256,61 @@ class TCPConnectionHandler(SocketServer.BaseRequestHandler):
 
 class UDPConnectionHandler(SocketServer.DatagramRequestHandler):
 
+    def __init__(self, request, client_address, server):
+        server.allow_reuse_address = True
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        self.subVisitor = None
+
     def handle(self):
 
         self.server.notifyAClientIsConnected()
 
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.Network.NetworkServer_ConnectionHandler.py')
+
+        if not self.server.isMultipleConnectionAllowed() and len(self.server.getGeneratedInstances()) > 0:
+            return
         self.log.info("A client has just initiated a connection on the server.")
+        self.server.notifyAClientIsConnected()
+
+        initialState = self.server.getInitialState()
+        vocabulary = self.server.getVocabulary()
+        isMaster = self.server.isMaster()
+
+        # we create a sub automata
+        automata = MMSTD(initialState, vocabulary)
+
+        # We create an instantiated network server
+        instanciatedNetworkServer = InstanciatedNetworkServer(self.request)
 
         # Create the input and output abstraction layer
-        abstractionLayer = AbstractionLayer(self.rfile, self.wfile, self.server.getModel().getVocabulary(), Memory(self.server.getModel().getVocabulary().getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
+        # abstractionLayer = AbstractionLayer(instanciatedNetworkServer, vocabulary, Memory(vocabulary.getVariables()), self.server.getCBInputSymbol(), self.server.getCBOutputSymbol())
 
-        # Initialize a dedicated automata and creates a visitor
-        modelVisitor = MMSTDVisitor(self.server.getModel(), self.server.isMaster(), abstractionLayer)
+        # And we create an MMSTD visitor for this
+        self.subVisitor = MMSTDVisitor("Instance-" + str(uuid.uuid4()), automata, isMaster, abstractionLayer)
+
         self.log.info("An MMSTDVistor has been instantiated and assigned to the current network client.")
-        modelVisitor.start()
+        self.subVisitor.start()
 
         # save it
-        self.server.addGeneratedInstance(modelVisitor)
+        self.server.addGeneratedInstance(self.subVisitor)
 
-        while (modelVisitor.isAlive()):
-            ready = select.select([self.request], [], [], 1)
-            time.sleep(0.1)
+        finish = not self.subVisitor.isAlive()
+
+        while (not finish):
+            try:
+                ready = select.select([self.request], [], [], 1)
+                time.sleep(0.1)
+                finish = not self.subVisitor.isAlive()
+            except:
+                self.log.warn("The socket is not anymore opened !")
+                finish = True
+
+        self.subVisitor.join(None)
 
         self.server.notifyAClientIsDisconnected()
+
+        self.log.warn("End of the execution of the UDP Connection handler")
 
 
 #+---------------------------------------------------------------------------+

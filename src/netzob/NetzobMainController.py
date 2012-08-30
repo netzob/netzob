@@ -163,10 +163,18 @@ class NetzobMainController(object):
         """The method which closes the current project
         and the workspace before stopping the GTK"""
         currentProject = self.getCurrentProject()
+
         # Close the current project
-        if currentProject is not None:
-            if currentProject.hasPendingModifications(self.getCurrentWorkspace()) and self.view.offerToSaveCurrentProject():
+        if currentProject is not None and currentProject.hasPendingModifications(self.getCurrentWorkspace()):
+            resp = self.view.offerToSaveCurrentProject()
+
+            if resp == Gtk.ResponseType.YES:
+                logging.debug("Saving the current project")
                 self.getCurrentProject().saveConfigFile(self.getCurrentWorkspace())
+
+            elif resp == Gtk.ResponseType.CANCEL:
+                logging.debug("Abort quitting")
+                return True
 
         # Save the workspace
         self.getCurrentWorkspace().saveConfigFile()
@@ -194,7 +202,7 @@ class NetzobMainController(object):
             self.view.switchPerspective(newPerspectiveCode)
 
     def mainWindow_delete_event_cb(self, window, data):
-        self.close()
+        return self.close()
 
     def mainWindow_destroy_cb(self, window):
         Gtk.main_quit()

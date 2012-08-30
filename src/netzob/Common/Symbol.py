@@ -26,38 +26,46 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Standard library imports
+#| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import logging
-from gi.repository import Gtk
-from operator import attrgetter
-import re
-import glib
-import struct
-from lxml.etree import ElementTree
 from lxml import etree
+from lxml.etree import ElementTree
+from operator import attrgetter
+import glib
+import logging
+import re
+import struct
+
+#+---------------------------------------------------------------------------+
+#| Related third party imports                                               |
+#+---------------------------------------------------------------------------+
+from gi.repository import Gtk
 #import pyasn1.codec.der.decoder
 #from pyasn1.error import PyAsn1Error
 #from pyasn1.error import SubstrateUnderrunError
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Local application imports                                                 |
 #+---------------------------------------------------------------------------+
 from netzob.Common.Field import Field
+from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import \
+    AggregateVariable
+from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
+from netzob.Common.NetzobException import NetzobException
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.Type.TypeIdentifier import TypeIdentifier
-from netzob.Common.Type.TypeConvertor import TypeConvertor
-from netzob.Common.Type.UnitSize import UnitSize
+from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
-from netzob.Common.Type.Endianess import Endianess
-from netzob.Common.NetzobException import NetzobException
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
-from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 from netzob.Common.Property import Property
+from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.Common.Type.TypeIdentifier import TypeIdentifier
+from netzob.Common.Type.UnitSize import UnitSize
 
 
+#+---------------------------------------------------------------------------+
+#| Namespaces                                                                |
+#+---------------------------------------------------------------------------+
 NAMESPACE = "http://www.netzob.org/"
 
 # TODO: Note: this is probably useless, as it is already specified in Project.py
@@ -78,6 +86,7 @@ class Symbol(AbstractSymbol):
         AbstractSymbol.__init__(self, "Symbol")
         self.id = id
         self.name = name
+        self.project = project
         self.alignment = ""
         self.score = 0.0
         self.messages = []
@@ -96,11 +105,15 @@ class Symbol(AbstractSymbol):
         self.sign = Sign.UNSIGNED
         self.endianess = Endianess.BIG
 
+        self.default = True
         # Clean the symbol
-        aFormat = project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
-        field = Field.createDefaultField()
+        self.reinitFields()
+
+    def reinitFields(self):
+        self.fields = []
+        aFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
+        field = Field.createDefaultField(self)  # Only one default field by symbol.
         field.setFormat(aFormat)
-        self.addField(field)
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -145,25 +158,22 @@ class Symbol(AbstractSymbol):
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
         if minNbSplit <= 1:  # If the delimiter does not create splitted fields
-            field = Field(_("Name"), 0, "(.{,})")
+            field = Field(_("Name"), 0, "(.{,})", self)
             field.setFormat(aFormat)
             field.setColor("blue")
-            self.addField(field)
             return
 
         # Else, we add (maxNbSplit + maxNbSplit - 1) fields
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field(_("Name"), iField, "(.{,})")
+            field = Field(_("Name"), iField, "(.{,})", self)
             field.setFormat(aFormat)
             field.setColor("blue")
-            self.addField(field)
             iField += 1
-            field = Field("__sep__", iField, self.getRawDelimiter())
+            field = Field("__sep__", iField, self.getRawDelimiter(), self)
             field.setFormat(aFormat)
             field.setColor("black")
-            self.addField(field)
         self.popField()
 
     #+----------------------------------------------
@@ -273,9 +283,8 @@ class Symbol(AbstractSymbol):
                 else:
                     # We change the field
                     iField += 1
-                    field = Field(_("Name"), iField, currentStaticField)
+                    field = Field(_("Name"), iField, currentStaticField, self)
                     field.setColor("black")
-                    self.addField(field)
                     # We start a new field
                     currentStaticField = ""
                     nbElements = 1
@@ -283,9 +292,8 @@ class Symbol(AbstractSymbol):
             else:  # The current column is static
                 if isLastDyn:  # We change the field
                     iField += 1
-                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
+                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
                     field.setColor("blue")
-                    self.addField(field)
                     # We start a new field
                     currentStaticField = resultString[it]
                     nbElements = 1
@@ -303,12 +311,11 @@ class Symbol(AbstractSymbol):
         # We add the last field
         iField += 1
         if resultMask[-1] == "1":  # If the last column is dynamic
-            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
+            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
             field.setColor("blue")
         else:
-            field = Field(_("Name"), iField, currentStaticField)
+            field = Field(_("Name"), iField, currentStaticField, self)
             field.setColor("black")
-        self.addField(field)
 
     #+----------------------------------------------
     #| computeFieldsLimits:
@@ -455,7 +462,7 @@ class Symbol(AbstractSymbol):
         # Default representation is BINARY
         new_name = field1.getName() + "+" + field2.getName()
         # Creation of the new Field
-        newField = Field(new_name, field1.getIndex(), newRegex)
+        newField = Field(new_name, field1.getIndex(), newRegex, self)
 
         self.fields.remove(field1)
         self.fields.remove(field2)
@@ -523,13 +530,14 @@ class Symbol(AbstractSymbol):
         new_encapsulationLevel = field.getEncapsulationLevel()
 
         # We Build the two new fields
-        field1 = Field(field.getName() + "-1", field.getIndex(), regex1)
+        field1 = Field(field.getName() + "-1", field.getIndex(), regex1, self)
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
             field1.setDescription(field.getDescription() + "-1")
-        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2)
+        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2, self)
+
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
         field2.setColor(field.getColor())
@@ -948,9 +956,9 @@ class Symbol(AbstractSymbol):
     def getVariables(self):
         result = []
         for field in self.getFields():
-            if not field.isStatic():
-                if field.getVariable() is not None:
-                    result.append(field.getVariable())
+            if field.getVariable() is not None:
+                # We add all variable that has the root variable of field as ancestor.
+                result.extend(field.getVariable().getProgeny())
         return result
 
     #+----------------------------------------------
@@ -962,6 +970,10 @@ class Symbol(AbstractSymbol):
             self.messages.remove(message)
         else:
             self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
+        # We reinit the fields' variables.
+        if self.default:
+            for field in self.fields:
+                field.variable = field.getDefaultVariable()
 
     def addMessages(self, messages):
         """Add the provided messages in the symbol"""
@@ -974,6 +986,10 @@ class Symbol(AbstractSymbol):
                 return
         message.setSymbol(self)
         self.messages.append(message)
+        # We reinit the fields' variables.
+        if self.default:
+            for field in self.fields:
+                field.variable = field.getDefaultVariable()
 
     def addField(self, field, index=None):
         if index is None:
@@ -1191,17 +1207,24 @@ class Symbol(AbstractSymbol):
         self.cleanFields()
 
         # Create a single field
-        field = Field.createDefaultField()
-        field.setFormat(aFormat)
-        self.addField(field)
+        field = self.reinitFields()
 
-    def getValueToSend(self, inverse, vocabulary, memory):
-        result = self.getRoot().getValueToSend(inverse, vocabulary, memory)
+    def write(self, writingToken):
+        """write:
+                Grants a writing access to the symbol and its variables. Retrieve and return the value issued from this access.
+
+                @type writingToken: netzob.Common.MMSTD.Dictionary.VariableProcessingToken.VariableWritingToken.VariableWritingToken
+                @param writingToken: a token which contains all critical information on this writing access.
+                @rtype: bitarray
+                @return: the value this acces writes.
+        """
+        self.getRoot().write(writingToken)
+        result = writingToken.getValue()
         return result
 
     def getRoot(self):
         # We create an aggregate of all the fields
-        rootSymbol = AggregateVariable(self.getID(), self.getName(), None)
+        rootSymbol = AggregateVariable(self.getID(), self.getName(), True, False, None)
         for field in self.getFields():
             if field.getVariable() is None:
                 variable = field.getDefaultVariable(self)
@@ -1255,9 +1278,10 @@ class Symbol(AbstractSymbol):
         properties.append(prop)
         return properties
 
-    #+----------------------------------------------
-    #| GETTERS
-    #+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Getters                                                                   |
+#+---------------------------------------------------------------------------+
+
     def getID(self):
         return self.id
 
@@ -1315,9 +1339,12 @@ class Symbol(AbstractSymbol):
     def getEndianess(self):
         return self.endianess
 
-    #+----------------------------------------------
-    #| SETTERS
-    #+----------------------------------------------
+    def isDefault(self):
+        return self.default
+
+#+---------------------------------------------------------------------------+
+#| Setters                                                                   |
+#+---------------------------------------------------------------------------+
     def setFields(self, fields):
         self.fields = fields
 
@@ -1378,6 +1405,9 @@ class Symbol(AbstractSymbol):
             return False
         return True
 
+    def setDefault(self, default):
+        self.default = default
+
     def __str__(self):
         return str(self.getName())
 
@@ -1396,9 +1426,9 @@ class Symbol(AbstractSymbol):
             self.log.warn(_("Tried to compare a Symbol with {0}").format(str(other)))
             return 1
 
-    #+----------------------------------------------
-    #| Static methods
-    #+----------------------------------------------
+#+---------------------------------------------------------------------------+
+#| Static methods                                                            |
+#+---------------------------------------------------------------------------+
     @staticmethod
     def loadSymbol(xmlRoot, namespace_project, namespace_common, version, project, poolOfMessages):
         if version == "0.1":
@@ -1447,9 +1477,7 @@ class Symbol(AbstractSymbol):
             if xmlRoot.find("{" + namespace_project + "}fields") is not None:
                 xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
                 for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
-                    field = Field.loadFromXML(xmlField, namespace_project, version)
-                    if field is not None:
-                        symbol.addField(field)
+                    field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
 
             return symbol
         return None

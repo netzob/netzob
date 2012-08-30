@@ -65,7 +65,8 @@ class NetworkOracle(threading.Thread):
         self.log.info("Start the network oracle based on given MMSTD")
 
         # Create a new and clean memory
-        memory = Memory(self.mmstd.getVocabulary().getVariables())
+        memory = Memory()
+        # memory = Memory(self.mmstd.getVocabulary().getVariables())
         memory.createMemory()
         # Create the abstraction layer for this connection
         abstractionLayer = AbstractionLayer(self.communicationChannel, self.mmstd.getVocabulary(), memory)

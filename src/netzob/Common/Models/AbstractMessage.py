@@ -39,7 +39,6 @@ import glib
 #+---------------------------------------------------------------------------+
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.NetzobException import NetzobException
-from netzob.Common.MMSTD.Dictionary.Variable import Variable
 from netzob.Common.MMSTD.Dictionary.Memory import Memory
 from netzob.Common.Type.UnitSize import UnitSize
 from netzob.Common.Type.Format import Format

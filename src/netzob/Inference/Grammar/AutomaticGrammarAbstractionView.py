@@ -126,7 +126,8 @@ class AutomaticGrammarAbstractionView(object):
         # Configure the role-play environment
         # with :
         #  - a memory
-        memory = Memory(None)
+        memory = Memory()
+        # memory = Memory(None)
         #  - an abstraction layer
         abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
 
@@ -172,7 +173,8 @@ class AutomaticGrammarAbstractionView(object):
         return difference
 
     def displaySession(self, session):
-        memory = Memory(None)
+        memory = Memory()
+        # memory = Memory(None)
         #  - an abstraction layer
         abstractionLayer = AbstractionLayer(None, self.project.getVocabulary(), memory, None, None)
         symbols = []
