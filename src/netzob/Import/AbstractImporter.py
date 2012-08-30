@@ -31,6 +31,7 @@
 from gettext import gettext as _
 import uuid
 from datetime import datetime
+import logging
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
@@ -72,12 +73,15 @@ class AbstractImporter(object):
         messagesToAdd = project.getVocabulary().getMessages()
         for message in messages:
             found = False
-            for m in messagesToAdd:
-                if m.getStringData() == message.getStringData():
-                    found = True
-                    break
-            if not found:
-                messagesToAdd.append(message)
+
+            # we verify its a not an empty message
+            if len(message.getStringData()) > 0:
+                for m in messagesToAdd:
+                    if m.getStringData() == message.getStringData():
+                        found = True
+                        break
+                if not found:
+                    messagesToAdd.append(message)
 
         # We register each message in the vocabulary of the project
         for message in messagesToAdd:
