@@ -160,6 +160,9 @@ class CreateOpenChannelTransitionController(object):
         transition = OpenChannelTransition(self.idTransition, transitionName, startState, endState, timeTransition, maxNumberOfAttempt)
         startState.registerTransition(transition)
 
+        # attach the transition to the grammar
+        self.grammarController.getCurrentProject().getGrammar().getAutomata().addTransition(transition)
+
         self._view.destroy()
         self.grammarController.restart()
 

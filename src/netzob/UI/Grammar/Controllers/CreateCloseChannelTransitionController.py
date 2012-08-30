@@ -149,6 +149,9 @@ class CreateCloseChannelTransitionController(object):
         transition = CloseChannelTransition(self.idTransition, transitionName, startState, endState, timeTransition)
         startState.registerTransition(transition)
 
+        # attach the transition to the grammar
+        self.grammarController.getCurrentProject().getGrammar().getAutomata().addTransition(transition)
+
         self._view.destroy()
         self.grammarController.restart()
 
