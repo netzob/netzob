@@ -101,6 +101,7 @@ class NeedlemanAndWunsch(object):
                 return
 
             field = Field.createDefaultField(symbol)
+            symbol.addField(field)
 
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)
@@ -130,6 +131,7 @@ class NeedlemanAndWunsch(object):
                 symbol.cleanFields()
 
                 field = Field.createDefaultField(symbol)
+                symbol.addField(field)
 
                 # Use the default protocol type for representation
                 field.setFormat(defaultFormat)
@@ -276,7 +278,8 @@ class NeedlemanAndWunsch(object):
         for regexElt in regex:
             if self.isFinish():
                 return
-            field = Field("Field " + str(iField), iField, regexElt, symbol)
+            field = Field("Field " + str(iField), iField, regexElt)
+            symbol.addField(field)
 
             # Use the default protocol type for representation
             field.setFormat(defaultFormat)

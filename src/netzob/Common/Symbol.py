@@ -114,6 +114,7 @@ class Symbol(AbstractSymbol):
         aFormat = self.project.getConfiguration().getVocabularyInferenceParameter(ProjectConfiguration.VOCABULARY_GLOBAL_FORMAT)
         field = Field.createDefaultField(self)  # Only one default field by symbol.
         field.setFormat(aFormat)
+        self.addField(field)
 
     def addVisualizationFilter(self, filter):
         self.visualizationFilters.append(filter)
@@ -158,22 +159,25 @@ class Symbol(AbstractSymbol):
             maxNbSplit = max(maxNbSplit,
                              len(tmpStr))
         if minNbSplit <= 1:  # If the delimiter does not create splitted fields
-            field = Field(_("Name"), 0, "(.{,})", self)
+            field = Field(_("Name"), 0, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
+            self.addField(field)
             return
 
         # Else, we add (maxNbSplit + maxNbSplit - 1) fields
         iField = -1
         for i in range(maxNbSplit):
             iField += 1
-            field = Field(_("Name"), iField, "(.{,})", self)
+            field = Field(_("Name"), iField, "(.{,})")
             field.setFormat(aFormat)
             field.setColor("blue")
+            self.addField(field)
             iField += 1
-            field = Field("__sep__", iField, self.getRawDelimiter(), self)
+            field = Field("__sep__", iField, self.getRawDelimiter())
             field.setFormat(aFormat)
             field.setColor("black")
+            self.addField(field)
         self.popField()
 
     #+----------------------------------------------
@@ -283,8 +287,9 @@ class Symbol(AbstractSymbol):
                 else:
                     # We change the field
                     iField += 1
-                    field = Field(_("Name"), iField, currentStaticField, self)
+                    field = Field(_("Name"), iField, currentStaticField)
                     field.setColor("black")
+                    self.addField(field)
                     # We start a new field
                     currentStaticField = ""
                     nbElements = 1
@@ -292,8 +297,9 @@ class Symbol(AbstractSymbol):
             else:  # The current column is static
                 if isLastDyn:  # We change the field
                     iField += 1
-                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
+                    field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
                     field.setColor("blue")
+                    self.addField(field)
                     # We start a new field
                     currentStaticField = resultString[it]
                     nbElements = 1
@@ -311,11 +317,12 @@ class Symbol(AbstractSymbol):
         # We add the last field
         iField += 1
         if resultMask[-1] == "1":  # If the last column is dynamic
-            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})", self)
+            field = Field(_("Name"), iField, "(.{," + str(nbElements) + "})")
             field.setColor("blue")
         else:
-            field = Field(_("Name"), iField, currentStaticField, self)
+            field = Field(_("Name"), iField, currentStaticField)
             field.setColor("black")
+        self.addField(field)
 
     #+----------------------------------------------
     #| computeFieldsLimits:
@@ -462,7 +469,7 @@ class Symbol(AbstractSymbol):
         # Default representation is BINARY
         new_name = field1.getName() + "+" + field2.getName()
         # Creation of the new Field
-        newField = Field(new_name, field1.getIndex(), newRegex, self)
+        newField = Field(new_name, field1.getIndex(), newRegex)
 
         self.fields.remove(field1)
         self.fields.remove(field2)
@@ -530,13 +537,13 @@ class Symbol(AbstractSymbol):
         new_encapsulationLevel = field.getEncapsulationLevel()
 
         # We Build the two new fields
-        field1 = Field(field.getName() + "-1", field.getIndex(), regex1, self)
+        field1 = Field(field.getName() + "-1", field.getIndex(), regex1)
         field1.setEncapsulationLevel(new_encapsulationLevel)
         field1.setFormat(new_format)
         field1.setColor(field.getColor())
         if field.getDescription() is not None and len(field.getDescription()) > 0:
             field1.setDescription(field.getDescription() + "-1")
-        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2, self)
+        field2 = Field(field.getName() + "-2", field.getIndex() + 1, regex2)
 
         field2.setEncapsulationLevel(new_encapsulationLevel)
         field2.setFormat(new_format)
@@ -971,9 +978,10 @@ class Symbol(AbstractSymbol):
         else:
             self.log.error("Cannot remove message {0} from symbol {1}, since it doesn't exist.".format(message.getID(), self.getName()))
         # We reinit the fields' variables.
-        if self.default:
-            for field in self.fields:
-                field.variable = field.getDefaultVariable()
+        # Note(fgy): this could overwrite user variable
+#        if self.default:
+#            for field in self.fields:
+#                field.variable = field.getDefaultVariable(self)
 
     def addMessages(self, messages):
         """Add the provided messages in the symbol"""
@@ -987,9 +995,10 @@ class Symbol(AbstractSymbol):
         message.setSymbol(self)
         self.messages.append(message)
         # We reinit the fields' variables.
-        if self.default:
-            for field in self.fields:
-                field.variable = field.getDefaultVariable()
+        # Note(fgy): this could overwrite user variable
+#        if self.default:
+#            for field in self.fields:
+#                field.variable = field.getDefaultVariable(self)
 
     def addField(self, field, index=None):
         if index is None:
@@ -1478,6 +1487,7 @@ class Symbol(AbstractSymbol):
                 xmlFields = xmlRoot.find("{" + namespace_project + "}fields")
                 for xmlField in xmlFields.findall("{" + namespace_project + "}field"):
                     field = Field.loadFromXML(xmlField, namespace_project, version, symbol)
-
+                    if field != None:
+                        symbol.addField(field)
             return symbol
         return None

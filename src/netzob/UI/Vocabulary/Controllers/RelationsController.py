@@ -185,7 +185,6 @@ class RelationsController(object):
         variable = field.getVariable()
         if variable is None:
             variable = field.getDefaultVariable(symbol)
-        print variable
         # we retrieve all the relations declared in the variable
         relationVariables = self.getRelationsInVariable(variable)
 

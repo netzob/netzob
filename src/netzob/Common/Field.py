@@ -66,7 +66,7 @@ class Field(object):
             Class definition of a field.
     """
 
-    def __init__(self, name, index, regex, symbol):
+    def __init__(self, name, index, regex):
         """Constructor of Field:
 
                 @type name: string
@@ -75,19 +75,15 @@ class Field(object):
                 @param index: the index of the field in the symbol structure.
                 @type regex: string
                 @param regex: a regex that rules values of the field.
-                @type symbol: netzob.Common.Symbol.Symbol
-                @param symbol: the symbol the field belongs to.
         """
         self.name = name
         self.index = index
         self.regex = regex
-        self.symbol = symbol
 
         # Default values
         self.encapsulation_level = 0
         self.description = ""
         self.color = "black"
-        self.symbol.addField(self, index)
 
         # Interpretation attributes
         self.format = Format.HEX
@@ -97,7 +93,6 @@ class Field(object):
         self.mathematicFilters = []
 
         self.variable = None
-        self.variable = self.getDefaultVariable()
 
     def getEncodedVersionOfTheRegex(self):
         """getEncodedVersionOfTheRegex:
@@ -137,10 +132,12 @@ class Field(object):
         else:
             return False
 
-    def getDefaultVariable(self):
+    def getDefaultVariable(self, symbol):
         """getDefaultVariable:
                 Generates and returns a variable which is an aggregate that has one child which is an alternate of all default values of the field picked in the current symbol values.
 
+                @type symbol: netzob.Common.Symbol
+                @param symbol: the parent symbol.
                 @rtype: netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable.AggregateVariable
                 @return: the generated variable
         """
@@ -150,7 +147,7 @@ class Field(object):
             return variable
         else:
             # The default variable is an alternative of all the possibilities (in binary type)
-            cells = self.symbol.getUniqValuesByField(self)
+            cells = symbol.getUniqValuesByField(self)
             tmpDomain = set()
             for cell in cells:
                 tmpDomain.add(TypeConvertor.netzobRawToBitArray(cell))
@@ -300,9 +297,6 @@ class Field(object):
     def getRegex(self):
         return self.regex
 
-    def getSymbol(self):
-        return self.symbol
-
     def getDescription(self):
         return self.description
 
@@ -384,7 +378,7 @@ class Field(object):
                 @rtype: netzob.Commons.Field.Field
                 @return: the built field.
         """
-        return Field("Default", 0, "(.{,})", symbol)
+        return Field("Default", 0, "(.{,})")
 
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version, symbol):
@@ -412,7 +406,7 @@ class Field(object):
             if xmlRoot.find("{" + namespace + "}regex") is not None:
                 field_regex = xmlRoot.find("{" + namespace + "}regex").text
 
-            field = Field(field_name, field_index, field_regex, symbol)
+            field = Field(field_name, field_index, field_regex)
 
             if xmlRoot.find("{" + namespace + "}encapsulation_level") is not None:
                 field_encapsulation_level = xmlRoot.find("{" + namespace + "}encapsulation_level").text
