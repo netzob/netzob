@@ -158,7 +158,6 @@ class Field(object):
 
             variable = AggregateVariable(uuid.uuid4(), "Aggregate", True, False, None)
             alternateVar = AlternateVariable(uuid.uuid4(), "Alternate", True, False, None)
-            logging.debug("Symbol {0}, Field {1}, Domain {2}".format(self.symbol.getName(), self.getName(), str(domain)))
             for d in domain:
                 child = DataVariable(uuid.uuid4(), "defaultVariable", False, False, BinaryType(True, len(d), len(d)), d.to01())
                 alternateVar.addChild(child)

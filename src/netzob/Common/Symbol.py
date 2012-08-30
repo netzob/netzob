@@ -401,11 +401,8 @@ class Symbol(AbstractSymbol):
             return []
 
         res = []
-        logging.debug(_("Symbol {0}, Field {1}, Messages {2}").format(self.getName(), field.getName(), str(self.getMessages())))
         for message in self.getMessages():
-            logging.debug("Message data: " + str(message.getData()))
             messageTable = message.applyAlignment()
-            logging.debug("Message table: " + str(messageTable) + " index " + str(field.getIndex()))
             messageElt = messageTable[field.getIndex()]
             if len(messageElt) > 0 and not messageElt in res:
                 res.append(messageElt)
