@@ -439,9 +439,7 @@ class VocabularyController(object):
             return
         # Open a popup to edit the variable
         field = fields[-1]  # We take the last selected field
-#        if field.getVariable() is None:
-#            field.variable = field.getDefaultVariable(symbol)
-        creationPanel = VariableTreeController(self.netzob, field)
+        creationPanel = VariableTreeController(self.netzob, symbol, field)
 
     def moveMessagesToOtherSymbol_activate_cb(self, action):
         """Callback executed when the user clicks on the move
