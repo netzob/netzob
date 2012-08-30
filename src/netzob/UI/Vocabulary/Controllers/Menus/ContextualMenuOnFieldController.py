@@ -48,6 +48,7 @@ from netzob.UI.Vocabulary.Views.Menus.ContextualMenuOnFieldView import Contextua
 from netzob.UI.NetzobWidgets import NetzobLabel
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.UI.Vocabulary.Controllers.PopupEditFieldController import PopupEditFieldController
+from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 
 
 class ContextualMenuOnFieldController(object):
@@ -178,6 +179,11 @@ class ContextualMenuOnFieldController(object):
     def displayPopupToEditField_cb(self, event):
         popup = PopupEditFieldController(self.vocabularyController, self.field)
         popup.run()
+
+    def displayPopupToEditVariable_cb(self, event):
+#        if self.field.getVariable() is None:
+#            self.field.variable = self.field.getDefaultVariable(self.symbol)
+        creationPanel = VariableTreeController(self.vocabularyController.netzob, self.field)
 
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests

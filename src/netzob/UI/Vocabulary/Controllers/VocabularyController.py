@@ -62,6 +62,7 @@ from netzob.UI.NetzobWidgets import NetzobQuestionMessage, NetzobErrorMessage, N
 from netzob.UI.Vocabulary.Controllers.RelationsController import RelationsController
 from netzob.UI.Vocabulary.Controllers.Menus.ContextualMenuOnSymbolController import ContextualMenuOnSymbolController
 from netzob.Common.Type.TypeConvertor import TypeConvertor
+from netzob.UI.Vocabulary.Controllers.VariableController import VariableTreeController
 
 
 #+----------------------------------------------
@@ -417,17 +418,30 @@ class VocabularyController(object):
         fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
         # Split field
         if fields != None and len(fields) > 0:
-            field = fields[0]  # We take the first one
+            field = fields[-1]  # We take the last selected field
             controller = SplitFieldController(self, symbol, field)
             controller.run()
         else:
             NetzobErrorMessage(_("No selected field."))
 
-    def createVariable_activate_cb(self, action):
+    def editVariable_activate_cb(self, action):
+        # Sanity check
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        NetzobErrorMessage(_("Not yet implemented."))
+        symbol = self.view.getDisplayedSymbol()
+        if symbol is None:
+            NetzobErrorMessage(_("No selected symbol."))
+            return
+        fields = self.view.selectedMessageTable.treeViewHeaderGroup.getSelectedFields()
+        if fields is None or len(fields) < 1:
+            NetzobErrorMessage(_("No selected field."))
+            return
+        # Open a popup to edit the variable
+        field = fields[-1]  # We take the last selected field
+#        if field.getVariable() is None:
+#            field.variable = field.getDefaultVariable(symbol)
+        creationPanel = VariableTreeController(self.netzob, field)
 
     def moveMessagesToOtherSymbol_activate_cb(self, action):
         """Callback executed when the user clicks on the move

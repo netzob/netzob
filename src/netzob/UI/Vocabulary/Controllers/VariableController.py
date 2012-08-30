@@ -108,6 +108,8 @@ class VariableTreeController:
                 @type variable: netzob.Common.MMSTD.Dictionary.Variables.AbstractVariable.AbstractVariable
                 @param variable: the variable which will be added to the tree view representation.
         """
+        if variable is None:
+            return
         self.dictVariable[str(variable.getID())] = variable
         newEntry = self.treestore.append(rootEntry, [str(variable.getID()), variable.toString()])
         self.dictEntry[str(variable.getID())] = newEntry

@@ -82,6 +82,12 @@ class ContextualMenuOnFieldView(object):
         item.show()
         self.menu.append(item)
 
+        # Add entry to edit variable
+        item = Gtk.MenuItem(_("Edit variable"))
+        item.show()
+        item.connect("activate", self.controller.displayPopupToEditVariable_cb)
+        self.menu.append(item)
+
         # Add entry to retrieve the field domain of definition
         item = Gtk.MenuItem(_("Field's domain of definition"))
         item.show()

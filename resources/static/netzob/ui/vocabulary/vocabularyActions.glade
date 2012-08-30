@@ -43,11 +43,11 @@
       </object>
     </child>
     <child>
-      <object class="GtkAction" id="createVariable">
-        <property name="label" translatable="yes">Create Variable…</property>
-        <property name="tooltip" translatable="yes">Create a new variable for selected field</property>
+      <object class="GtkAction" id="editVariable">
+        <property name="label" translatable="yes">Edit Variable…</property>
+        <property name="tooltip" translatable="yes">Edit the variable for selected field</property>
         <property name="stock_id">netzob-create-variable</property>
-        <signal name="activate" handler="createVariable_activate_cb" swapped="no"/>
+        <signal name="activate" handler="editVariable_activate_cb" swapped="no"/>
       </object>
     </child>
     <child>
