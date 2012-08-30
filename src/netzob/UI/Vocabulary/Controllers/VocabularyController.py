@@ -495,7 +495,7 @@ class VocabularyController(object):
             return
         for message in selectedMessages:
             # Remove message from model
-            self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
+#            self.netzob.getCurrentProject().getVocabulary().removeMessage(message)
             message.getSymbol().removeMessage(message)
         # Update view
         self.view.updateSelectedMessageTable()

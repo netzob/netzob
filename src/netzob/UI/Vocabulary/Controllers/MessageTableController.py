@@ -66,8 +66,12 @@ class MessageTableController(object):
                 iter = model.get_iter(row)
                 msgID = model[iter][0]
                 if msgID is not None:
-                    self.selectedMessages.append(self.vocabularyPerspective.getCurrentProject().getVocabulary().getMessageByID(msgID))
-                    self.vocabularyPerspective.updateMessageProperties()
+                    message = self.vocabularyPerspective.getCurrentProject().getVocabulary().getMessageByID(msgID)
+                    if message is None:
+                        logging.warn("Impossible to retrieve the requested message ({0})".format(msgID))
+                    else:
+                        self.selectedMessages.append(message)
+            self.vocabularyPerspective.updateMessageProperties()
             return
         self.selectedMessages = []
         self.vocabularyPerspective.updateMessageProperties()

@@ -72,7 +72,7 @@ class Vocabulary(object):
 
     def getMessageByID(self, id):
         for message in self.messages:
-            if message.getID() == id:
+            if str(message.getID()) == str(id):
                 return message
         return None
 

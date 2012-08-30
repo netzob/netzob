@@ -359,6 +359,8 @@ class VocabularyView(object):
     def getSelectedMessagesInSelectedMessageTable(self):
         if self.selectedMessageTable is not None:
             return self.selectedMessageTable.controller.getSelectedMessages()
+        else:
+            return None
 
     def getSymbolPathInSymbolList(self, symbol):
         symID = symbol.getID()
