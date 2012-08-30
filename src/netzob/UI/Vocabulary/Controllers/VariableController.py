@@ -61,7 +61,7 @@ class VariableTreeController:
             Controls a variable's tree view display
     """
 
-    def __init__(self, netzob, field):
+    def __init__(self, netzob, symbol, field):
         """Constructor of VariableTreeController:
 
                 @type netzob: netzob.Common.NetzobGui.NetzobGui
@@ -70,6 +70,7 @@ class VariableTreeController:
                 @param field: the field, the variable of which we want to display.
         """
         self.netzob = netzob
+        self.symbol = symbol
         self.field = field
 
         self.view = VariableTreeView(self)
@@ -82,6 +83,7 @@ class VariableTreeController:
         """
         self.view.getWidg("treeview").connect('button-press-event', self.showMenu)
         self.view.getWidg("button").connect('clicked', self.view.destroyDialog)
+        self.view.getWidg("createDefaultVariable_button").connect('clicked', self.createDefaultVariable_cb)
 
     def registerContent(self, variable):
         """registerContent:
@@ -244,6 +246,15 @@ class VariableTreeController:
                 self.registerVariable(self.dictEntry[variable.getFathers()[0].getID()], variable)
         else:
             logging.info(_("The user didn't confirm the edition of the variable {0}").format(variable.getName()))
+
+    def createDefaultVariable_cb(self, event):
+        """createDefaultVariable_cb:
+                Create a default variable, which is an alternate of
+                all the possible values of the field.
+        """
+        if self.field.getVariable() is None:
+            self.field.variable = self.field.getDefaultVariable(self.symbol)
+        self.registerVariable(None, self.field.variable)
 
 
 class VariableCreationController:
@@ -634,9 +645,8 @@ class VariableCreationController:
 #
 #            # We find the variable by its ID.
 #            pointedID = str(self.view.getWidg("IDEntry").get_text())
-#            symbol = self.treeController.field.getSymbol()
 #
-#            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, symbol)
+#            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, self.symbol)
 #===============================================================================
 
         # Computed Relation Variable
@@ -644,7 +654,6 @@ class VariableCreationController:
 
             # We find the variable by its ID.
             pointedID = str(self.view.getWidg("IDEntry").get_text())
-            symbol = self.treeController.field.getSymbol()
 
             sized = self.view.getWidg("sizedCheck").get_active()
             if sized:
@@ -658,11 +667,11 @@ class VariableCreationController:
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
             vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text(), sized, minChars, maxChars, delimiter)
-            variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, symbol)
+            variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, self.symbol)
 
         if variable is not None:
             # We notify the symbol that is no more composed of default variable.
-            self.treeController.field.getSymbol().setDefault(False)
+            self.symbol.setDefault(False)
 
             # This part is for saving and transfering children when transforming a node variable into an other kind of node variable.
             if self.editOverCreate:

@@ -181,9 +181,7 @@ class ContextualMenuOnFieldController(object):
         popup.run()
 
     def displayPopupToEditVariable_cb(self, event):
-#        if self.field.getVariable() is None:
-#            self.field.variable = self.field.getDefaultVariable(self.symbol)
-        creationPanel = VariableTreeController(self.vocabularyController.netzob, self.field)
+        creationPanel = VariableTreeController(self.vocabularyController.netzob, self.symbol, self.field)
 
     def deleteMessage_cb(self, event):
         """Callback executed when the user requests

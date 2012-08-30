@@ -93,7 +93,7 @@ class VariableTreeView(AbstractView):
 
     def __init__(self, controller):
         AbstractView.__init__(self, controller, VariableTreeView.GLADE_FILENAME)
-        self.getObjects(["dialog", "button", "treeview"])
+        self.getObjects(["dialog", "button", "treeview", "createDefaultVariable_button"])
         self.showObjects()
 
         # Make the column
