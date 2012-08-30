@@ -58,7 +58,7 @@ class Simulator(object):
         xmlSimulator = etree.SubElement(root, "{" + namespace + "}simulator")
 
         if len(self.actors) > 0:
-            xmlActors = etre.SubElement(xmlSimulator, "{" + namespace + "}actors")
+            xmlActors = etree.SubElement(xmlSimulator, "{" + namespace + "}actors")
             for actor in self.actors:
                 actor.save(xmlActors, namespace)
 
@@ -72,7 +72,10 @@ class Simulator(object):
                 xmlActors = xmlRoot.find("{" + namespace + "}actors")
                 for xmlActor in xmlActors.findall("{" + namespace + "}actor"):
                     actor = AbstractActor.loadFromXML(xmlActor, namespace, version)
-                    actors.append(actor)
+                    if actor is None:
+                        logging.warn("An error occurred and prevented to load the actor.")
+                    else:
+                        actors.append(actor)
 
             simulator = Simulator()
             simulator.setActors(actors)
@@ -87,3 +90,6 @@ class Simulator(object):
 
     def setActors(self, actors):
         self.actors = actors
+
+    def addActor(self, actor):
+        self.actors.append(actor)

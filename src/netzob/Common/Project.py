@@ -52,6 +52,7 @@ from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.XSDResolver import XSDResolver
 from netzob.Common.Property import Property
+from netzob.Common.Simulator import Simulator
 
 
 PROJECT_NAMESPACE = "http://www.netzob.org/project"
@@ -91,6 +92,12 @@ def loadProject_0_1(projectFile):
         projectGrammar = Grammar.loadGrammar(xmlProject.find("{" + PROJECT_NAMESPACE + "}grammar"), projectVocabulary, PROJECT_NAMESPACE, "0.1")
         if projectGrammar is not None:
             project.setGrammar(projectGrammar)
+
+    # Parse the simulator
+    if xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator") is not None:
+        projectSimulator = Simulator.loadSimulator(xmlProject.find("{" + PROJECT_NAMESPACE + "}simulator"), PROJECT_NAMESPACE, "0.1")
+        if projectSimulator is not None:
+            project.setSimulator(projectSimulator)
 
     return project
 
@@ -140,11 +147,17 @@ class Project(object):
         root.set("name", str(self.getName()))
         # Save the configuration in it
         self.getConfiguration().save(root, PROJECT_NAMESPACE)
+
         # Save the vocabulary in it
         self.getVocabulary().save(root, PROJECT_NAMESPACE, COMMON_NAMESPACE)
+
         # Save the grammar in it
         if self.getGrammar() is not None:
             self.getGrammar().save(root, PROJECT_NAMESPACE)
+
+        # Save the simulator in it
+        self.getSimulator().save(root, PROJECT_NAMESPACE)
+
         return root
 
     def saveConfigFile(self, workspace):
@@ -376,6 +389,9 @@ class Project(object):
     def getConfiguration(self):
         return self.configuration
 
+    def getSimulator(self):
+        return self.simulator
+
     def setID(self, idproject):
         self.id = idproject
 
@@ -396,3 +412,6 @@ class Project(object):
 
     def setGrammar(self, grammar):
         self.grammar = grammar
+
+    def setSimulator(self, simulator):
+        self.simulator = simulator

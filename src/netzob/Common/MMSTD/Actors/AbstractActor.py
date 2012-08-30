@@ -31,7 +31,6 @@
 from gettext import gettext as _
 import logging
 
-
 #+---------------------------------------------------------------------------+
 #| Local application imports
 #+---------------------------------------------------------------------------+
@@ -43,7 +42,9 @@ import logging
 #+---------------------------------------------------------------------------+
 class AbstractActor():
 
-    def __init__(self, isServer, instanciated):
+    def __init__(self, idActor, nameActor, isServer, instanciated, protocol, bindIP, bindPort, targetIP, targetPort):
+        self.id = idActor
+        self.name = nameActor
 #        Thread.__init__(self)
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Common.MMSTD.Actors.AbstractActor.py')
@@ -51,6 +52,11 @@ class AbstractActor():
         self.is_server = isServer
         self.active = False
         self.instanciated = instanciated
+        self.protocol = protocol
+        self.bindIP = bindIP
+        self.bindPort = bindPort
+        self.targetIP = targetIP
+        self.targetPort = targetPort
 
     def isAnInstanciated(self):
         return self.instanciated
@@ -64,6 +70,45 @@ class AbstractActor():
     def isActive(self):
         return self.active
 
+    def getID(self):
+        return self.id
+
+    def getName(self):
+        return self.name
+
+    def getL4Protocol(self):
+        return self.protocol
+
+    def getBindIP(self):
+        return self.bindIP
+
+    def getBindPort(self):
+        return self.bindPort
+
+    def getTargetIP(self):
+        return self.targetIP
+
+    def getTargetPort(self):
+        return self.targetPort
+
     #+-----------------------------------------------------------------------+
-    #| GETTERS AND SETTERS
+    #| Load
     #+-----------------------------------------------------------------------+
+    @staticmethod
+    def loadFromXML(rootElement, namespace, version):
+        # Computes which type is it
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "abstract":
+            raise NameError("The parsed xml doesn't represent a valid type of actor.")
+
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ClientNetworkActor":
+            from netzob.Common.MMSTD.Actors.Network.NetworkClient import NetworkClient
+
+            return NetworkClient.loadFromXML(rootElement, namespace, version)
+        elif rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") == "netzob:ServerNetworkActor":
+            from netzob.Common.MMSTD.Actors.Network.NetworkServer import NetworkServer
+
+            return NetworkServer.loadFromXML(rootElement, namespace, version)
+        else:
+            logging.warn("The parsed type of Actor ({0}) is unknown.".format(rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract")))
+
+        return None
