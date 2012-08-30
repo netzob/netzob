@@ -105,3 +105,15 @@ class SimulatorController:
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
+
+    def stopCurrentActorButton_clicked_cb(self, event):
+        """Callback executed when the user wants to start the current actor"""
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
+
+    def startCurrentActorButton_clicked_cb(self, event):
+        """Callback executed when the user wants to stop the current Actor"""
+        if self.getCurrentProject() is None:
+            logging.info("No project loaded.")
+            return
