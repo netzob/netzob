@@ -104,11 +104,11 @@ class VariableDisplayerView(object):
 
     def addDotCodeForVariable(self, variable):
         dotCode = []
-        if variable.getTypeVariable() == AggregateVariable.TYPE:
+        if variable.getVariableType() == AggregateVariable.TYPE:
             dotCode.extend(self.addAggregateVariable(variable))
-        elif variable.getTypeVariable() == AlternateVariable.TYPE:
+        elif variable.getVariableType() == AlternateVariable.TYPE:
             dotCode.extend(self.addAlternateVariable(variable))
-        elif variable.getTypeVariable() == DataVariable.TYPE:
+        elif variable.getVariableType() == DataVariable.TYPE:
             dotCode.extend(self.addDataVariable(variable))
         else:
             print variable
