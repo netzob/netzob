@@ -123,6 +123,9 @@ class SimulatorController:
             logging.info("No project loaded.")
             return
 
+        if self.currentActor is not None and not self.currentActor.isActive():
+            self.currentActor.start()
+
     def listOfActorsSelection_changed_cb(self, selection):
         """Callback executed when the user selects a different actor"""
         if self.getCurrentProject() is None:
