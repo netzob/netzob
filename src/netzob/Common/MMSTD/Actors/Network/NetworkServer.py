@@ -36,6 +36,8 @@ import threading
 import time
 import uuid
 import select
+from lxml.etree import ElementTree
+from lxml import etree
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -360,3 +362,85 @@ class NetworkServer(AbstractActor):
 
     def setPort(self, port):
         self.port = port
+
+    def save(self, root, namespace):
+        """Save in the XML tree the actor definition"""
+        xmlActor = etree.SubElement(root, "{" + namespace + "}actor")
+        xmlActor.set("{http://www.w3.org/2001/XMLSchema-instance}type", "netzob:ServerNetworkActor")
+        xmlActor.set('id', str(self.getID()))
+        xmlActor.set('name', str(self.getName()))
+
+        xmlL4Protocol = etree.SubElement(xmlActor, "{" + namespace + "}l4_protocol")
+        if self.getL4Protocol() is not None:
+            xmlL4Protocol.text = self.getL4Protocol()
+        else:
+            xmlL4Protocol.text = ""
+
+        xmlBindIp = etree.SubElement(xmlActor, "{" + namespace + "}bind_ip")
+        if self.getBindIP() is not None:
+            xmlBindIp.text = self.getBindIP()
+        else:
+            xmlBindIp.text = ""
+
+        xmlBindPort = etree.SubElement(xmlActor, "{" + namespace + "}bind_port")
+        if self.getBindPort() is not None:
+            xmlBindPort.text = str(self.getBindPort())
+        else:
+            xmlBindPort.text = ""
+
+        xmlTargetIp = etree.SubElement(xmlActor, "{" + namespace + "}target_ip")
+        if self.getTargetIP() is not None:
+            xmlTargetIp.text = self.getTargetIP()
+        else:
+            xmlTargetIp.text = ""
+
+        xmlTragetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
+        if self.getTargetPort() is not None:
+            xmlTargetIp.text = str(self.getTargetPort())
+        else:
+            xmlTargetIp.text = ""
+
+    @staticmethod
+    def loadFromXML(rootElement, namespace, version):
+        # Then we verify its an IPC Message
+        if rootElement.get("{http://www.w3.org/2001/XMLSchema-instance}type", "abstract") != "netzob:ServerNetworkActor":
+            raise NameError("The parsed xml doesn't represent a network server.")
+
+        idActor = rootElement.get('id')
+        nameActor = rootElement.get('name')
+
+        # Parse the data field and transform it into a byte array
+        l4_protocol = rootElement.find("{" + namespace + "}l4_protocol").text
+        if l4_protocol != "UDP" and l4_protocol != "TCP":
+            logging.warning("Invalid L4 protocol.")
+            return None
+
+        bind_ip = rootElement.find("{" + namespace + "}bind_ip").text
+        if bind_ip is None or len(bind_ip) == 0:
+            bind_ip = None
+
+        bind_port = None
+        tmp = rootElement.find("{" + namespace + "}bind_port").text
+        if tmp is not None and len(tmp) > 0:
+            try:
+                bind_port = int(tmp)
+            except:
+                logging.warn("Invalid bind port.")
+                return None
+
+        target_ip = rootElement.find("{" + namespace + "}target_ip").text
+        if target_ip is None or len(target_ip) == 0:
+            target_ip = None
+
+        target_port = None
+        tmp = rootElement.find("{" + namespace + "}target_port").text
+        if tmp is not None and len(tmp) > 0:
+            try:
+                target_port = int(tmp)
+            except:
+                logging.warn("Invalid target port")
+                return None
+
+        # create the actor
+        actor = NetworkServer(idActor, nameActor, l4_protocol, bind_ip, bind_port, target_ip, target_port)
+        return actor

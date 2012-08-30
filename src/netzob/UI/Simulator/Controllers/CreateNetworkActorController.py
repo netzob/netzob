@@ -133,6 +133,8 @@ class CreateNetworkActorController(object):
                 errorMessage = _("Specify a valid bind port (int>0)")
                 self.displayErrorMessage(errorMessage)
                 return
+        else:
+            bindPort = None
 
         targetIP = self._view.targetIPEntry.get_text()
         targetPort = self._view.targetPortEntry.get_text()
@@ -146,6 +148,8 @@ class CreateNetworkActorController(object):
                 errorMessage = _("Specify a valid target port (int>0)")
                 self.displayErrorMessage(errorMessage)
                 return
+        else:
+            targetPort = None
 
         actor = None
 
