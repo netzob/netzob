@@ -207,12 +207,25 @@ class NetzobMainView(object):
     def offerToSaveCurrentProject(self):
         """Display a message dialog which
         offer to the user to save the current project"""
-        questionMsg = (_("Do you want to save the current project (%s)") %
-                       self.controller.getCurrentProject().getName())
-        md = (Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, questionMsg))
+
+        projectName = self.controller.getCurrentProject().getName()
+
+        questionMsg = _("Save the changes to the project \"{0}\" before closing?").format(projectName)
+
+        md = Gtk.MessageDialog(None,
+                               Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                               Gtk.MessageType.WARNING,
+                               Gtk.ButtonsType.NONE,
+                               questionMsg)
+
+        md.format_secondary_text(_("If you don't save, changes will be permanently lost."))
+
+        md.add_button(_("Close _Without Saving"), Gtk.ResponseType.NO)
+        md.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        md.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
+        md.set_default_response(Gtk.ResponseType.YES)
+
         result = md.run()
         md.destroy()
-        if result == Gtk.ResponseType.YES:
-            return True
-        else:
-            return False
+
+        return result
