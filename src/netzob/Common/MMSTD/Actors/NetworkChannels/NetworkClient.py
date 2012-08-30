@@ -64,15 +64,23 @@ class NetworkClient(AbstractChannel):
         self.outputMessages = []
 
     def open(self):
+        print self.getProtocol()
+
         try:
-            if (self.protocol == "UDP"):
+            if (self.getProtocol() == "UDP"):
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             else:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.socket.bind(('', self.sport))
+
+            if self.getBindIP() is not None or self.getBindPort() is not None:
+                self.socket.bind((self.getBindIP(), self.getBindPort()))
+
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            self.socket.connect((self.host, self.port))
+            print self.getTargetIP()
+            print self.getTargetPort()
+            self.socket.connect((self.getTargetIP(), self.getTargetPort()))
             self.socket.setblocking(True)
         except socket.error, msg:
             self.log.warn("Opening the network connection has failed : " + str(msg))
@@ -190,9 +198,9 @@ class NetworkClient(AbstractChannel):
 
         xmlTragetPort = etree.SubElement(xmlActor, "{" + namespace + "}target_port")
         if self.getOriginalTargetPort() is not None:
-            xmlTargetIp.text = str(self.getOriginalTargetPort())
+            xmlTragetPort.text = str(self.getOriginalTargetPort())
         else:
-            xmlTargetIp.text = ""
+            xmlTragetPort.text = ""
 
     @staticmethod
     def loadFromXML(rootElement, namespace, version, memory):
