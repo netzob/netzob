@@ -52,6 +52,11 @@ class Memory():
         self.log = logging.getLogger('netzob.Common.MMSTD.Dictionary.Memory.py')
         self.memory = dict()
         self.temporaryMemory = dict()
+        self.memory_acces_cb = None
+
+    def setMemoryAccess_cb(self, cb):
+        """Set the callback to execute after a memory access"""
+        self.memory_acces_cb = cb
 
 #+---------------------------------------------------------------------------+
 #| Functions on memories                                                     |
@@ -115,6 +120,8 @@ class Memory():
         """
         if variable.getID() in self.memory.keys():
             self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
+            if self.memory_acces_cb is not None:
+                self.memory_acces_cb("W", variable, variable.getCurrentValue())
 
     def memorize(self, variable):
         """memorize:
@@ -124,6 +131,8 @@ class Memory():
         """
         if variable.getCurrentValue() is not None:
             self.temporaryMemory[variable.getID()] = variable.getCurrentValue()
+            if self.memory_acces_cb is not None:
+                self.memory_acces_cb("W", variable, variable.getCurrentValue())
 
     def forget(self, variable):
         """forget:
@@ -131,6 +140,8 @@ class Memory():
         """
         if self.hasMemorized(variable):
             self.temporaryMemory.remove(variable.getID())
+            if self.memory_acces_cb is not None:
+                self.memory_acces_cb("D", variable, None)
 
     def recall(self, variable):
         """recall:
@@ -140,6 +151,8 @@ class Memory():
                 @return: the value of the given variable in the temporary memory.
         """
         if self.hasMemorized(variable):
+            if self.memory_acces_cb is not None:
+                self.memory_acces_cb("R", variable, variable.getCurrentValue())
             return self.temporaryMemory[variable.getID()]
         else:
             return None

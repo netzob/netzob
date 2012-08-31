@@ -130,6 +130,11 @@ class SimulatorController:
         if self.currentActor is not None and not self.currentActor.isActive():
             self.currentActor.getAbstractionLayer().setInputSymbolReception_cb(self._view.registerInputSymbolOfCurrentActor)
             self.currentActor.getAbstractionLayer().setOutputSymbolSending_cb(self._view.registerOutputSymbolOfCurrentActor)
+            self.currentActor.getAbstractionLayer().getMemory().setMemoryAccess_cb(self._view.registerMemoryAccess)
+
+            # Restart the view
+            self._view.updateCurrentActor()
+
             self.currentActor.start()
 
     def listOfActorsSelection_changed_cb(self, selection):

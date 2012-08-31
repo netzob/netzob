@@ -35,6 +35,7 @@ import gi
 import logging
 import os
 import uuid
+import datetime
 from netzob.Simulator.XDotWidget import XDotWidget
 #+---------------------------------------------------------------------------+
 #| Related third party imports
@@ -71,7 +72,6 @@ class SimulatorView(object):
                                         "statusCurrentActorLabel",
                                         "currentActorIOChannelListStore",
                                         "currentActorMemoryListStore"
-
                                         ])
         self._loadActionGroupUIDefinition()
         self.builder.connect_signals(self.controller)
@@ -152,11 +152,11 @@ class SimulatorView(object):
 
     def updateCurrentActor(self):
         currentActor = self.controller.getCurrentActor()
-        if currentActor is None:
-            # Disable most of the right panels
-            self.currentActorIOChannelListStore.clear()
-            self.currentActorMemoryListStore.clear()
 
+        self.currentActorIOChannelListStore.clear()
+        self.currentActorMemoryListStore.clear()
+
+        if currentActor is None:
             self.statusCurrentActorImage.hide()
             self.nameCurrentActorLabel.set_label("")
             self.nameCurrentActorLabel.hide()
@@ -225,3 +225,22 @@ class SimulatorView(object):
         self.currentActorIOChannelListStore.set(i, 1, receptionTime)
         self.currentActorIOChannelListStore.set(i, 2, symbol.getName())
         self.currentActorIOChannelListStore.set(i, 3, message)
+
+    def registerMemoryAccess(self, access, variable, value):
+        """Describe in the GUI a memory access"""
+
+        now = datetime.datetime.now()
+        receptionTime = now.strftime("%H:%M:%S")
+
+        if variable is not None:
+            name = variable.getName()
+        else:
+            name = "?"
+
+        data = str(value)
+
+        i = self.currentActorMemoryListStore.append()
+        self.currentActorMemoryListStore.set(i, 0, access)
+        self.currentActorMemoryListStore.set(i, 1, receptionTime)
+        self.currentActorMemoryListStore.set(i, 2, name)
+        self.currentActorMemoryListStore.set(i, 3, data)
