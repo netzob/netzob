@@ -134,7 +134,7 @@ class AbstractChannel():
         if binPort == None:
             self.log.warn("Impossible to find the memorized value of the Bind Port")
             return None
-        return int(TypeConvertor.netzobRawToDecimal(TypeConvertor.bin2hexstring(binPort)))
+        return TypeConvertor.bin2int(binPort)
 
     def getTargetIP(self):
         """Returns in string the value of the target IP retrieved from memory"""
@@ -150,7 +150,7 @@ class AbstractChannel():
         if binPort == None:
             self.log.warn("Impossible to find the memorized value of the Target Port")
             return None
-        return int(TypeConvertor.netzobRawToDecimal(TypeConvertor.bin2hexstring(binPort)))
+        return TypeConvertor.bin2int(binPort)
 
     def getOriginalL4Protocol(self):
         return self.originalProtocol
