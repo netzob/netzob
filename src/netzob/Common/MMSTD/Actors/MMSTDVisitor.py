@@ -57,6 +57,8 @@ class MMSTDVisitor(threading.Thread):
         self.abstractionLayer = abstractionLayer
         self.active = False
 
+        self.modificationStatus_cb = None
+
     def clone(self):
         """The MMSTDVisitor is a thread. Hence we cannot restart it so it
         requires to clone it."""
@@ -67,7 +69,7 @@ class MMSTDVisitor(threading.Thread):
             self.log.debug("Starting the MMSTDVisitor as a Master")
         else:
             self.log.debug("Starting the MMSTDVisitor as a Client")
-        self.active = True
+        self.setActive(True)
         if self.initiator:
             self.runAsMaster()
         else:
@@ -77,7 +79,7 @@ class MMSTDVisitor(threading.Thread):
     def stop(self):
         self.log.debug("Stops the MMSTDVisitor")
         self.abstractionLayer.disconnect()
-        self.active = False
+        self.setActive(False)
 
     def runAsMaster(self):
         self.log.debug("The MMSTD Visitor is running as a master")
@@ -85,7 +87,7 @@ class MMSTDVisitor(threading.Thread):
         while self.active:
             currentState = currentState.executeAsMaster(self.abstractionLayer)
             if currentState is None:
-                self.active = False
+                self.setActive(False)
         self.log.debug("The MASTER stops !")
 
     def runAsClient(self):
@@ -97,7 +99,7 @@ class MMSTDVisitor(threading.Thread):
             currentState = currentState.executeAsClient(self.abstractionLayer)
             if currentState is None:
                 self.log.warn("The execution of the transition didn't provide the next state")
-                self.active = False
+                self.setActive(False)
         self.log.debug("The CLIENT stops !")
 
     def getInputMessages(self):
@@ -135,6 +137,16 @@ class MMSTDVisitor(threading.Thread):
 
     def setName(self, name):
         self.name = name
+
+    def setActive(self, active):
+        """Update the status of the visitor.
+        Triggers the execution of the notification callbacks (if it exists)"""
+        self.active = active
+        if self.modificationStatus_cb is not None:
+            self.modificationStatus_cb()
+
+    def setStatusModification_cb(self, cb):
+        self.modificationStatus_cb = cb
 
     def save(self, root, namespace):
         """Save in the XML tree the actor definition"""

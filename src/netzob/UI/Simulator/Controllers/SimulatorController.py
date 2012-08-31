@@ -128,6 +128,7 @@ class SimulatorController:
             return
 
         if self.currentActor is not None and not self.currentActor.isActive():
+            self.currentActor.setStatusModification_cb(self._view.updateStatusOfCurrentActor)
             self.currentActor.getAbstractionLayer().setInputSymbolReception_cb(self._view.registerInputSymbolOfCurrentActor)
             self.currentActor.getAbstractionLayer().setOutputSymbolSending_cb(self._view.registerOutputSymbolOfCurrentActor)
             self.currentActor.getAbstractionLayer().getMemory().setMemoryAccess_cb(self._view.registerMemoryAccess)
@@ -142,8 +143,6 @@ class SimulatorController:
         if self.getCurrentProject() is None:
             logging.info("No project loaded.")
             return
-
-        self.currentActor = None
 
         model, iter = selection.get_selected()
         if iter is not None:

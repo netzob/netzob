@@ -244,3 +244,28 @@ class SimulatorView(object):
         self.currentActorMemoryListStore.set(i, 1, receptionTime)
         self.currentActorMemoryListStore.set(i, 2, name)
         self.currentActorMemoryListStore.set(i, 3, data)
+
+    def updateStatusOfCurrentActor(self):
+        """Update the status (displayed) of the current actor"""
+
+        currentActor = self.controller.getCurrentActor()
+        if currentActor is not None:
+            if currentActor.isActive():
+                imageStatus = Gtk.STOCK_YES
+                actorStatus = "active"
+                self.stopCurrentActorButton.set_sensitive(True)
+                self.startCurrentActorButton.set_sensitive(False)
+
+            else:
+                imageStatus = Gtk.STOCK_YES
+                actorStatus = "inactive"
+                self.stopCurrentActorButton.set_sensitive(False)
+                self.startCurrentActorButton.set_sensitive(True)
+
+            self.statusCurrentActorImage = Gtk.Image(stock=imageStatus)
+            self.statusCurrentActorImage.show()
+
+            self.statusCurrentActorLabel.set_label(actorStatus)
+            self.statusCurrentActorLabel.show()
+
+        self.refreshListOfActors()

@@ -262,6 +262,7 @@ class AbstractVariable:
 #+---------------------------------------------------------------------------+
 #| Static methods                                                            |
 #+---------------------------------------------------------------------------+
+
     @staticmethod
     def loadFromXML(xmlRoot, namespace, version, symbol):
         """loadFromXML:
