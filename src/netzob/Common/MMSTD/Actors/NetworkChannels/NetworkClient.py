@@ -79,16 +79,17 @@ class NetworkClient(AbstractChannel):
 
             targetIp = self.getTargetIP()
             targetPort = self.getTargetPort()
+            self.log.debug("Try to connect on {0}:{1}".format(targetIp, targetPort))
             self.socket.connect((targetIp, targetPort))
             self.socket.setblocking(True)
 
             self.log.debug("NetworkClient has initiated a connection with {0}:{1}".format(targetIp, targetPort))
         except socket.error, msg:
-            self.log.warn("Opening the network connection has failed : " + str(msg))
+            self.log.warn("Opening the network connection on {0}:{1} has failed : {2}".format(targetIp, targetPort, msg))
             self.socket = None
 
         if self.socket is None:
-            self.log.warn("Impossible to open the socket created in the NetworkClient")
+            self.log.warn("Impossible to open the socket")
             return False
 
 #        self.inputFile = self.socket.makefile('r', -1)

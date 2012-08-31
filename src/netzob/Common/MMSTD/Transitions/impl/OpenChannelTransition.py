@@ -198,8 +198,8 @@ class OpenChannelTransition(AbstractTransition):
             if abstractionLayer.isConnected():
                 self.log.debug("Connected !")
             else:
-                self.log.warn("Error, the connection attempt number " + str(j) + "failed")
-#            i = i - 1
+                self.log.warn("Error, the connection attempt failed ({0}/{1})".format(j, self.maxNumberOfAttempt))
+            i = i - 1
             j = j + 1
 
         if (abstractionLayer.isConnected()):
