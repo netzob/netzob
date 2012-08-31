@@ -47,6 +47,12 @@ from netzob.Common.Type.TypeConvertor import TypeConvertor
 #+---------------------------------------------------------------------------+
 class AbstractChannel():
 
+    varID_L4_PROTOCOL = "L4_PROTOCOL"
+    varID_BIND_IP = "BIND_IP"
+    varID_BIND_PORT = "BIND_PORT"
+    varID_TARGET_IP = "TARGET_IP"
+    varID_TARGET_PORT = "TARGET_PORT"
+
     def __init__(self, idChannel, isServer, instanciated, memory, protocol, bind_ip, bind_port, target_ip, target_port):
         self.id = idChannel
         self.log = logging.getLogger(__name__)
@@ -67,11 +73,11 @@ class AbstractChannel():
     def configureMemory(self):
         """Presets the meta-variables of the channel with specified values"""
 
-        self.varL4Protocol = DataVariable("L4_PROTOCOL", "L4_PROTOCOL", True, True, WordType(True, 0, 5), self.originalProtocol)
-        self.varBindIP = DataVariable("BIND_IP", "BIND_IP", True, True, IPv4WordType(True, 7, 15), self.originalBindIp)
-        self.varBindPort = DataVariable("BIND_PORT", "BIND_PORT", True, True, IntegerType(True, 0, 5), self.originalBindPort)
-        self.varTargetIP = DataVariable("TARGET_IP", "TARGET_IP", True, True, IPv4WordType(True), self.originalTargetIp)
-        self.varTargetPort = DataVariable("TARGET_PORT", "TARGET_PORT", True, True, IntegerType(True, 0, 5), self.originalTargetPort)
+        self.varL4Protocol = DataVariable(AbstractChannel.varID_L4_PROTOCOL, AbstractChannel.varID_L4_PROTOCOL, True, True, WordType(True, 0, 5), self.originalProtocol)
+        self.varBindIP = DataVariable(AbstractChannel.varID_BIND_IP, AbstractChannel.varID_BIND_IP, True, True, IPv4WordType(True, 7, 15), self.originalBindIp)
+        self.varBindPort = DataVariable(AbstractChannel.varID_BIND_PORT, AbstractChannel.varID_BIND_PORT, True, True, IntegerType(True, 0, 5), self.originalBindPort)
+        self.varTargetIP = DataVariable(AbstractChannel.varID_TARGET_IP, AbstractChannel.varID_TARGET_IP, True, True, IPv4WordType(True), self.originalTargetIp)
+        self.varTargetPort = DataVariable(AbstractChannel.varID_TARGET_PORT, AbstractChannel.varID_TARGET_PORT, True, True, IntegerType(True, 0, 5), self.originalTargetPort)
 
         self.memory.forget(self.varL4Protocol)
         self.memory.memorize(self.varL4Protocol)
