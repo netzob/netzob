@@ -116,7 +116,7 @@ class VariableDisplayerView(object):
 
     def addAggregateVariable(self, var):
         dotCode = []
-        label = "Agg{0}".format(self.idAg)
+        label = "Agg{0}:{1}".format(self.idAg, var.getName())
         self.idAg += 1
         dotCode.append("\"{0}\" [style=filled, fillcolor = red, label=\"{1}\"];".format(var.getID(), label))
         for c in var.getChildren():
@@ -126,7 +126,7 @@ class VariableDisplayerView(object):
 
     def addAlternateVariable(self, var):
         dotCode = []
-        label = "Alt{0}".format(self.idAl)
+        label = "Alt{0}:{1}".format(self.idAl, var.getName())
         self.idAl += 1
         dotCode.append("\"{0}\" [style=filled, fillcolor = yellow, label=\"{1}\"];".format(var.getID(), label))
         for c in var.getChildren():
@@ -136,7 +136,7 @@ class VariableDisplayerView(object):
 
     def addDataVariable(self, var):
         dotCode = []
-        label = "Data{0}".format(self.idBin)
+        label = "Data{0}:{1}".format(self.idBin, var.getName())
         self.idBin += 1
         dotCode.append("\"{0}\" [style=filled, fillcolor = green, label=\"{1}\"];".format(var.getID(), label))
         return dotCode

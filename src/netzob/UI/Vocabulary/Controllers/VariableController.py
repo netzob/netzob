@@ -648,7 +648,7 @@ class VariableCreationController:
 #            # We find the variable by its ID.
 #            pointedID = str(self.view.getWidg("IDEntry").get_text())
 #
-#            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, self.symbol)
+#            variable = DirectRelationVariable(anid, name, mutable, learnable, pointedID, self.treeController.symbol)
 #===============================================================================
 
         # Computed Relation Variable
@@ -669,7 +669,7 @@ class VariableCreationController:
                 maxChars = 0
                 delimiter = self.view.getWidg("delimiterEntry").get_text()
             vtype = AbstractRelationType.makeType(self.view.getWidg("relationTypeCombo").get_active_text(), sized, minChars, maxChars, delimiter)
-            variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, self.symbol)
+            variable = ComputedRelationVariable(anid, name, mutable, learnable, vtype, pointedID, self.treeController.symbol)
 
         if variable is not None:
             # We notify the symbol that is no more composed of default variable.
