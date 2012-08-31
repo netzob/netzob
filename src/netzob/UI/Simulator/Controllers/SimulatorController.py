@@ -117,6 +117,10 @@ class SimulatorController:
             logging.info("No project loaded.")
             return
 
+        self.currentActor.stop()
+        # reset the thread (to allows it reuses)
+        self.currentActor = self.currentActor.clone()
+
     def startCurrentActorButton_clicked_cb(self, event):
         """Callback executed when the user wants to stop the current Actor"""
         if self.getCurrentProject() is None:

@@ -57,6 +57,11 @@ class MMSTDVisitor(threading.Thread):
         self.abstractionLayer = abstractionLayer
         self.active = False
 
+    def clone(self):
+        """The MMSTDVisitor is a thread. Hence we cannot restart it so it
+        requires to clone it."""
+        return MMSTDVisitor(self.id, self.name, self.model, self.initiator, self.abstractionLayer)
+
     def run(self):
         if self.initiator:
             self.log.debug("Starting the MMSTDVisitor as a Master")

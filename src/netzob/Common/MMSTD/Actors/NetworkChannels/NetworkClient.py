@@ -156,7 +156,6 @@ class NetworkClient(AbstractChannel):
 
     def stop(self):
         self.log.debug("Stopping the thread of the network client")
-        AbstractActor.stop(self)
 
     #+-----------------------------------------------------------------------+
     #| GETTERS AND SETTERS
