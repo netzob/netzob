@@ -29,6 +29,7 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import logging
+from netzob.Common.Type.TypeConvertor import TypeConvertor
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
@@ -121,7 +122,10 @@ class Memory():
         if variable.getID() in self.memory.keys():
             self.temporaryMemory[variable.getID()] = self.memory[variable.getID()]
             if self.memory_acces_cb is not None:
-                self.memory_acces_cb("W", variable, variable.getCurrentValue())
+                value = variable.getCurrentValue()
+                if value is not None:
+                    value = TypeConvertor.bin2strhex(value)
+                self.memory_acces_cb("W", variable, value)
 
     def memorize(self, variable):
         """memorize:
@@ -132,7 +136,10 @@ class Memory():
         if variable.getCurrentValue() is not None:
             self.temporaryMemory[variable.getID()] = variable.getCurrentValue()
             if self.memory_acces_cb is not None:
-                self.memory_acces_cb("W", variable, variable.getCurrentValue())
+                value = variable.getCurrentValue()
+                if value is not None:
+                    value = TypeConvertor.bin2strhex(value)
+                self.memory_acces_cb("W", variable, value)
 
     def forget(self, variable):
         """forget:
@@ -152,7 +159,10 @@ class Memory():
         """
         if self.hasMemorized(variable):
             if self.memory_acces_cb is not None:
-                self.memory_acces_cb("R", variable, variable.getCurrentValue())
+                value = self.temporaryMemory[variable.getID()]
+                if value is not None:
+                    value = TypeConvertor.bin2strhex(value)
+                self.memory_acces_cb("R", variable, value)
             return self.temporaryMemory[variable.getID()]
         else:
             return None
