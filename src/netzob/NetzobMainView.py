@@ -181,6 +181,8 @@ class NetzobMainView(object):
             if pController is not None:
                 logging.debug("Restarting the perspective {0}".format(pDescription))
                 pController.restart()
+        # Update the switch project menu (to update the toggled element)
+        self.controller.updateListOfAvailableProjects()
 
     def currentWorkspaceHasChanged(self):
         """Update the view when the current workspace has changed"""
@@ -195,9 +197,20 @@ class NetzobMainView(object):
         for i in switchProjectMenu.get_children():
             switchProjectMenu.remove(i)
 
+        # Retrieves the Name of the current project
+        currentProjectName = None
+        currentProject = self.controller.getCurrentProject()
+        if currentProject is not None:
+            currentProjectName = currentProject.getName()
+
         for (projectName, projectPath) in listOfProjectsNameAndPath:
-#            actionSwitchOtherProject = Gtk.Action("FileMenu", "File", None, None)
-            projectEntry = Gtk.MenuItem(projectName)
+            projectLoaded = False
+            # Set toggled the current project
+            if currentProjectName is not None:
+                projectLoaded = (currentProjectName == projectName)
+
+            projectEntry = Gtk.CheckMenuItem(projectName)
+            projectEntry.set_active(projectLoaded)
             projectEntry.connect("activate", self.controller.switchProject_cb, projectPath)
             switchProjectMenu.append(projectEntry)
 
