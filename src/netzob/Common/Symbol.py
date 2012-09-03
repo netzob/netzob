@@ -966,6 +966,8 @@ class Symbol(AbstractSymbol):
             if field.getVariable() is not None:
                 # We add all variable that has the root variable of field as ancestor.
                 result.extend(field.getVariable().getProgeny())
+            else:
+                self.log.debug(_("Field {0} has no variable").format(str(field.getName())))
         return result
 
     #+----------------------------------------------
