@@ -102,7 +102,8 @@ class AggregateVariable(AbstractNodeVariable):
                 child.read(readingToken)
                 if readingToken.isOk():
                     # We have found a suitable child, so we remove it from childrenLeft and add it (at the end, to respect the order) to the orderedChildren list.
-                    orderedChildren.append(childrenLeft.pop(child))
+                    orderedChildren.append(child)
+                    childrenLeft.remove(child)
                     processing = True  # We want to continue the process on what is left.
                     break
 
