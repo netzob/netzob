@@ -1233,7 +1233,7 @@ class Symbol(AbstractSymbol):
 
     def getRoot(self):
         # We create an aggregate of all the fields
-        rootSymbol = AggregateVariable(self.getID(), self.getName(), True, False, None)
+        rootSymbol = AggregateVariable(self.getID(), self.getName(), False, False, None)
         for field in self.getFields():
             if field.getVariable() is None:
                 variable = field.getDefaultVariable(self)
