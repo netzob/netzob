@@ -53,7 +53,6 @@ from netzob.UI.WorkspaceSelector import WorkspaceSelector
 class ResourcesConfiguration(object):
 
     LOCALFILE = ".netzob"
-    CONFFILE = "global.conf"
     DELIMITOR_LOCALFILE = "="
     VAR_WORKSPACE_LOCALFILE = "workspace"
     VAR_API_KEY_LOCALFILE = "reporterApiKey"
