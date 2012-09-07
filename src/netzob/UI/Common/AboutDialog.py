@@ -46,8 +46,8 @@ class AboutDialog:
     to display the about dialog of Netzob."""
 
     @staticmethod
-    def display():
-        about = Gtk.AboutDialog()
+    def display(parent=None):
+        about = Gtk.AboutDialog(parent=parent)
         about.set_program_name(release.appname)
         about.set_version(release.version)
         about.set_copyright(release.copyright)

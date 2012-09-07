@@ -534,7 +534,7 @@ class NetzobMainController(object):
         """Displays the about dialog
         when the user click on the associate
         menu entry."""
-        AboutDialog.display()
+        AboutDialog.display(self.view.mainWindow)
 
     def switchProject_cb(self, widget, projectPath):
         """Callback for the GTK view in order to

@@ -14,3 +14,4 @@ Contributors
   * Franck Roland (developer)
   * Fabien André (developer)
   * Quentin Heyler (developer)
+  * Benjamin Dufour (developer)
