@@ -31,7 +31,6 @@
 from gettext import gettext as _
 import os.path
 import logging
-from gi.repository import Gtk
 import shutil
 
 #+----------------------------------------------
@@ -43,7 +42,6 @@ import shutil
 #+----------------------------------------------
 from netzob import NetzobResources
 from netzob.Common.Workspace import Workspace
-from netzob.UI.WorkspaceSelector import WorkspaceSelector
 
 
 #+----------------------------------------------
@@ -61,7 +59,7 @@ class ResourcesConfiguration(object):
     #+----------------------------------------------
     #| initializeResources:
     #+----------------------------------------------
-    def initializeResources(forceWSCreation=False):
+    def initializeResources():
         # We search for the
         # STATIC resources (images, documentations, ...)
         # USER resources (workspaces, configurations, ...)
@@ -74,19 +72,6 @@ class ResourcesConfiguration(object):
         if staticPath is None:
             logging.fatal(_("The static resources were not found !"))
             return False
-
-        if not forceWSCreation:
-            userPath = ResourcesConfiguration.verifyUserResources()
-        else:
-            userPath = None
-
-        if userPath is None:
-            logging.info("The user resources were not found, we ask to the user its Netzob home directory")
-            userPath = ResourcesConfiguration.askForUserDir()
-            if userPath is None:
-                return False
-            else:
-                ResourcesConfiguration.generateUserFile(userPath)
         return True
 
     @staticmethod
@@ -109,22 +94,11 @@ class ResourcesConfiguration(object):
         It retrieves the value of the workspace from the current file and rewrite it
         to include the api key."""
         localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
-        workspace = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
-        if workspace is not None:
-            ResourcesConfiguration.generateUserFile(workspace, apiKey)
+        workspaceDir = ResourcesConfiguration.extractWorkspaceDirFromFile(localFilePath)
+        if workspaceDir is not None:
+            ResourcesConfiguration.generateUserFile(workspaceDir, apiKey)
             return True
         return False
-
-    @staticmethod
-    def askForUserDir():
-        workspaceSelector = WorkspaceSelector()
-        workspaceSelector.run()
-        workspacePath = workspaceSelector.selectedWorkspace
-
-        if workspacePath is not None:
-            ResourcesConfiguration.createWorkspace(workspacePath)
-
-        return workspacePath
 
     @staticmethod
     def createWorkspace(path):
@@ -154,11 +128,11 @@ class ResourcesConfiguration(object):
         return None
 
     @staticmethod
-    def verifyUserResources():
+    def verifyAndReturnWorkspaceDir():
         # the user has specified its home directory so we store it in
         # a dedicated local file
         localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
-        workspacePath = ResourcesConfiguration.extractWorkspaceDefinitionFromFile(localFilePath)
+        workspacePath = ResourcesConfiguration.extractWorkspaceDirFromFile(localFilePath)
 
         # Workspace not declared
         if workspacePath is None:
@@ -179,7 +153,7 @@ class ResourcesConfiguration(object):
         return workspacePath
 
     @staticmethod
-    def extractWorkspaceDefinitionFromFile(localFilePath):
+    def extractWorkspaceDirFromFile(localFilePath):
         workspacePath = None
         if os.path.isfile(localFilePath):
             localFile = open(localFilePath, 'r')
@@ -224,9 +198,9 @@ class ResourcesConfiguration(object):
             return NetzobResources.PLUGINS_STATIC_DIR
 
     @staticmethod
-    def getWorkspaceFile():
+    def getWorkspaceDir():
         if NetzobResources.WORKSPACE_DIR is None:
-            return ResourcesConfiguration.verifyUserResources()
+            return ResourcesConfiguration.verifyAndReturnWorkspaceDir()
         else:
             return NetzobResources.WORKSPACE_DIR
 

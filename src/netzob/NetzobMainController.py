@@ -43,9 +43,6 @@ from lxml.etree import ElementTree
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
-from netzob.Common.Project import Project
-from netzob.UI.Common.AboutDialog import AboutDialog
-from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
 gi.require_version('Gtk', '3.0')
 
 #+---------------------------------------------------------------------------+
@@ -58,7 +55,11 @@ from netzob.Common.CommandLine import CommandLine
 from netzob.Common.Plugins.NetzobPlugin import NetzobPlugin
 from netzob.Common.LoggingConfiguration import LoggingConfiguration
 from netzob.NetzobMainView import NetzobMainView
+from netzob.Common.Project import Project
+from netzob.UI.Common.AboutDialog import AboutDialog
+from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
+from netzob.UI.WorkspaceSelector import WorkspaceSelector
 
 
 class NetzobMainController(object):
@@ -108,31 +109,42 @@ class NetzobMainController(object):
             logging.debug("Bug reporter not requested.")
 
     def _loadWorkspace(self, opts):
-        if opts.workspace == None:
-            workspace = str(ResourcesConfiguration.getWorkspaceFile())
+        if opts.workspace is None:
+            workspaceDir = ResourcesConfiguration.getWorkspaceDir()
         else:
-            workspace = opts.workspace
+            workspaceDir = opts.workspace
 
-        logging.debug("The workspace: {0}".format(str(workspace)))
-
-        # Load workspace
-        self.currentWorkspace = (Workspace.loadWorkspace(workspace))
-
-        # the semi-automatic loading of the workspace has failed (second attempt)
-        if self.currentWorkspace == None:
-            # we force the creation (or specification) of the workspace
-            if not ResourcesConfiguration.initializeResources(True):
-                logging.fatal("Error while configuring the resources of Netzob")
-                sys.exit()
-            workspace = str(ResourcesConfiguration.getWorkspaceFile())
-            logging.debug("The workspace: {0}".format(str(workspace)))
-            # loading the workspace
-            self.currentWorkspace = (Workspace.loadWorkspace(workspace))
-            if self.currentWorkspace == None:
+        if workspaceDir is None:
+            # We force the creation (or specification) of the workspace
+            logging.info("The user resources were not found, we ask to the user its Netzob home directory")
+            workspaceDir = self.askForWorkspaceDir()
+            if workspaceDir is None:
                 logging.fatal("Stopping the execution (no workspace computed)!")
                 sys.exit()
+            else:
+                ResourcesConfiguration.generateUserFile(workspaceDir)
 
+        if not ResourcesConfiguration.initializeResources():
+            logging.fatal("Error while configuring the resources of Netzob")
+            sys.exit()
+        logging.debug("The workspace: {0}".format(str(workspaceDir)))
+
+        # Loading the workspace
+        self.currentWorkspace = (Workspace.loadWorkspace(workspaceDir))
+        if self.currentWorkspace == None:
+            logging.fatal("Stopping the execution (no workspace computed)!")
+            sys.exit()
+
+        # Loading the last project
         self.currentProject = self.currentWorkspace.getLastProject()
+
+    def askForWorkspaceDir(self):
+        workspaceSelector = WorkspaceSelector()
+        workspaceSelector.run()
+        workspacePath = workspaceSelector.selectedWorkspace
+        if workspacePath is not None:
+            ResourcesConfiguration.createWorkspace(workspacePath)
+        return workspacePath
 
     def _initResourcesAndLocales(self):
         # Initialiaze gettext
@@ -143,11 +155,6 @@ class NetzobMainController(object):
         except:
             logging.exception("setlocale failed, resetting to C")
             locale.setlocale(locale.LC_ALL, "C")
-
-        # Initialize and verify all resources
-        if not ResourcesConfiguration.initializeResources():
-            logging.fatal("Error while configuring the resources of Netzob")
-            sys.exit()
 
     def _initLogging(self):
         # Create the logging infrastructure
