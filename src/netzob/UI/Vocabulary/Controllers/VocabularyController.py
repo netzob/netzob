@@ -38,6 +38,7 @@ import logging
 #+---------------------------------------------------------------------------+
 from gi.repository import Gtk, Gdk
 import gi
+from netzob.UI.Vocabulary.Controllers.EnvironmentDependenciesSearcherController import EnvironmentDependenciesSearcherController
 gi.require_version('Gtk', '3.0')
 
 
@@ -511,10 +512,18 @@ class VocabularyController(object):
             self._view.researchController.hide()
 
     def environmentDep_activate_cb(self, action):
+        """Callback executed when the user requests
+        the execution of environmental deps search through menu
+        or toolbar"""
         if self.getCurrentProject() is None:
             NetzobErrorMessage(_("No project selected."))
             return
-        NetzobErrorMessage(_("Not yet implemented."))
+        symbols = self.view.getCheckedSymbolList()
+        if symbols == []:
+            NetzobErrorMessage(_("No symbol(s) selected."))
+            return
+        envDepController = EnvironmentDependenciesSearcherController(self, symbols)
+        envDepController.run()
 
     def messagesDistribution_activate_cb(self, action):
         # Sanity check
@@ -642,7 +651,6 @@ class VocabularyController(object):
             targetSymbol.addMessage(message)
 
     def cellrenderer_project_props_changed_cb(self, cellrenderer, path, new_value):
-
         if isinstance(new_value, Gtk.TreeIter):  # a combo box entry has been selected
             liststore_possibleValues = cellrenderer.get_property('model')
             value = liststore_possibleValues[new_value][0]
@@ -657,3 +665,8 @@ class VocabularyController(object):
                 prop.setCurrentValue(TypeConvertor.encodeGivenTypeToNetzobRaw(value, prop.getFormat()))
                 break
         self.view.updateProjectProperties()
+
+    def executeAbritrarySearch(self, searchTasks):
+        """Execute a search (shows the dedicated view) but
+        the user can't edit the searched informations. Only a displayer."""
+        self._view.researchController.executeArbitrarySearch(searchTasks)

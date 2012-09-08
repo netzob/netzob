@@ -198,6 +198,45 @@ class Project(object):
 
         return result
 
+    def getEnvironmentDependencies(self):
+        """Computes and returns the list of environment dependencies
+        and associates.
+        @return: a list of Properties"""
+        envDeps = []
+
+        excludedProperties = ["Data", "ID"]
+
+        symbols = []
+        if self.getVocabulary() is not None:
+            symbols.extend(self.getVocabulary().getSymbols())
+
+        # Retrieve the list of properties for each Symbol
+        for symbol in symbols:
+            for message in symbol.getMessages():
+                properties = message.getProperties()
+                for property in properties:
+
+                    if not property.getName() in excludedProperties:
+                        found = False
+                        for prop in envDeps:
+                            if prop.getCurrentValue() == property.getCurrentValue():
+                                found = True
+                                break
+                        if not found:
+                            envDeps.append(property)
+
+        # Retrieve the list of properties for the project
+        propertiesProject = self.getProperties()
+        for prop in propertiesProject:
+            found = False
+            for property in envDeps:
+                if prop.getCurrentValue() == property.getCurrentValue():
+                    found = True
+                    break
+            if not found:
+                envDeps.append(prop)
+        return envDeps
+
     @staticmethod
     def createProject(workspace, name):
         idProject = str(uuid.uuid4())
