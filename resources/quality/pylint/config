@@ -55,10 +55,10 @@ disable-msg=C,R,W0142,E0213,W0703,W0613,W0622,W0201,W0612,W0511,W0212
 
 # set the output format. Available formats are text, parseable, colorized and
 # html
-output-format=colorized
+output-format=parseable
 
 # Include message's id in output
-include-ids=yes
+include-ids=no
 
 # Put messages in a separate file for each module / package specified on the
 # command line instead of printing them on stdout. Reports (if any) will be
@@ -66,7 +66,7 @@ include-ids=yes
 files-output=no
 
 # Tells wether to display a full report or only the messages
-reports=yes
+reports=no
 
 # Python expression which should return a note less than 10 (10 is the highest
 # note).You have access to the variables errors warning, statement which
