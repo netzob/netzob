@@ -44,10 +44,11 @@ class NetzobTestCase(unittest.TestCase):
     
     def __init__(self, methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
+        self.debug = False
     
     def setUp(self):
         resourcesPath = "resources/"
-        staticPath = os.path.join("../" + resourcesPath, "static")
+        staticPath = os.path.join("../" + resourcesPath, "static/netzob/")
         # We retrieve the full name of the child class (the caller) 
         for m in self.__class__.__module__.split('.') :
             resourcesPath = os.path.join(resourcesPath, m)
