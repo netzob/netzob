@@ -32,7 +32,6 @@ from gettext import gettext as _
 from lxml import etree
 from lxml.etree import ElementTree
 from operator import attrgetter
-import glib
 import logging
 import re
 import struct

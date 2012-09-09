@@ -32,7 +32,6 @@ from gettext import gettext as _
 import logging
 import uuid
 import re
-import glib
 
 #+---------------------------------------------------------------------------+
 #| Local application imports
@@ -420,12 +419,18 @@ class AbstractMessage(object):
 
             if styled:
                 if encoded:
-                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
+                    from gi.repository import GLib  # TODO: to fix
+                    import gi
+                    gi.require_version('Gtk', '3.0')
+                    res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + GLib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)) + '</span>')
                 else:
                     res.append('<span foreground="' + color + '" ' + backgroundColor + ' font_family="monospace">' + tmp + '</span>')
             else:
                 if encoded:
-                    res.append(glib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))
+                    from gi.repository import GLib  # TODO: to fix
+                    import gi
+                    gi.require_version('Gtk', '3.0')
+                    res.append(GLib.markup_escape_text(TypeConvertor.encodeNetzobRawToGivenField(tmp, field)))
                 else:
                     res.append(tmp)
         return res

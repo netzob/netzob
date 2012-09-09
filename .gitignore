@@ -13,3 +13,5 @@
 *.egg-info
 /resources/static/netzob/locales/netzob.pot
 *.mo
+.tox
+doc/documentation/build/
