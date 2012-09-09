@@ -78,7 +78,7 @@ class test_Needleman(NetzobTestCase):
             message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
             message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
             # Create the symbol
-            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), None)
+            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
             
@@ -122,7 +122,7 @@ class test_Needleman(NetzobTestCase):
             message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
             message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
             # Create the symbol
-            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), None)
+            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
             
@@ -169,7 +169,7 @@ class test_Needleman(NetzobTestCase):
             message1 = RawMessage(uuid.uuid4(), str(time.time()), data1)
             message2 = RawMessage(uuid.uuid4(), str(time.time()), data2)
             # Create the symbol
-            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), None)
+            symbol = Symbol(uuid.uuid4(), "test_randomAlignments#" + str(i_test), currentProject)
             symbol.addMessage(message1)
             symbol.addMessage(message2)
             

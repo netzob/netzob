@@ -41,9 +41,10 @@ from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Models.RawMessage import RawMessage
 from netzob.Common.Symbol import Symbol
+from common.NetzobTestCase import NetzobTestCase
 
 
-class test_TypeConvertor(unittest.TestCase):
+class test_TypeConvertor(NetzobTestCase):
     
     def generateRandomString(self, min_len, max_len):
         return ''.join((random.choice(string.letters + string.digits) for _ in xrange(random.randint(min_len, max_len))))
@@ -76,9 +77,12 @@ class test_TypeConvertor(unittest.TestCase):
     def test_serializeSymbol(self):
         # Generate randoms symbols and retrieve their 
         # serializations
+
+        workspace = self.getWorkspace()
+        currentProject = workspace.getProjects()[0]
         nb_test = 100
         for i_test in range(0, nb_test) :                   
-            symbol = Symbol(uuid.uuid4(), "TestSymbol", None)
+            symbol = Symbol(uuid.uuid4(), "TestSymbol", currentProject)
             nb_messages = random.randint(5, 50)
             size_messages = []
             for i_message in range(0, nb_messages) :
