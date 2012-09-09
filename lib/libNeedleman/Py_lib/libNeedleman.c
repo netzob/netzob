@@ -142,7 +142,9 @@ PyObject* py_alignMessages(PyObject* self, PyObject* args) {
   int functionnb = 0;
   (*alignMessagesfunctions[functionnb])(&resMessage, bool_doInternalSlick, &group, bool_debugMode);
   int t1=clock();
-  printf ("It took you for function %d %f operation \n",functionnb, (float)(t1-t)/CLOCKS_PER_SEC);
+  if (debugMode == 1) {
+    printf ("It took you for function %d %f operation \n",functionnb, (float)(t1-t)/CLOCKS_PER_SEC);
+  }
   
   // Return the results
   return Py_BuildValue("(fffs#s#)", resMessage.score->s1, resMessage.score->s2, resMessage.score->s3, resMessage.alignment, resMessage.len, resMessage.mask, resMessage.len);
