@@ -26,6 +26,12 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+ 
 
+
+"""
+This is the old command line entry point for runnings tests.
+The prefered way is now through: python setup.py test
+"""
+
 import sys
 import logging.config
 import gobject
