@@ -31,16 +31,8 @@
 from gettext import gettext as _
 import logging
 import uuid
-from gi.repository import Gtk
-from operator import attrgetter
-import re
-import glib
-import struct
 from lxml.etree import ElementTree
 from lxml import etree
-#import pyasn1.codec.der.decoder
-#from pyasn1.error import PyAsn1Error
-#from pyasn1.error import SubstrateUnderrunError
 
 #+---------------------------------------------------------------------------+
 #| Local Imports
