@@ -54,7 +54,6 @@ from netzob.Common.Type.Format import Format
 from netzob.Common.Type.Sign import Sign
 from netzob.Common.Type.Endianess import Endianess
 from netzob.Common.NetzobException import NetzobException
-from netzob.Common.MMSTD.Dictionary.Variables.AggregateVariable import AggregateVariable
 from netzob.Common.MMSTD.Symbols.AbstractSymbol import AbstractSymbol
 
 NAMESPACE = "http://www.netzob.org/"
