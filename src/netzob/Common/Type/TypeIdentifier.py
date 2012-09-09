@@ -31,46 +31,36 @@
 import base64
 import logging
 import StringIO
-from netzob.Common.Type.Format import Format
 
 #+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
+from netzob.Common.Type.Format import Format
 
 
 class TypeIdentifier():
 
     def __init__(self):
         # create logger with the given configuration
-        self.log = logging.getLogger('netzob.Common.TypeIdentifier.py')
+        self.log = logging.getLogger('netzob.Common.Type.TypeIdentifier.py')
 
     #+----------------------------------------------
     #| Identify the possible types from a hexa string
     #+----------------------------------------------
-    def getTypes(self, stringsTable):
-        entireString = "".join(stringsTable)
-
-        setSpace = set()
-        for i in range(0, len(entireString), 2):
-            setSpace.add(int(entireString[i:i + 2], 16))
-        sorted(setSpace)
-
-        aggregatedValues = ""
-        for i in setSpace:
-            aggregatedValues += chr(i)
-
+    def getTypes(self, val):
+        val = str(val)
         typesList = []
-        if aggregatedValues == "":
+        if val == "":
             return typesList
-        if aggregatedValues.isdigit():
+        if val.isdigit():
             typesList.append(Format.DECIMAL)
-        if aggregatedValues.isalpha():
+        if val.isalpha():
             typesList.append(Format.ALPHA)
-        if aggregatedValues.isalnum():
+        if val.isalnum():
             typesList.append(Format.ALPHA_NUM)
-        if self.isAscii(aggregatedValues):
+        if self.isAscii(val):
             typesList.append(Format.ASCII)
-        if self.isBase64(stringsTable):
+        if self.isBase64(val):
             typesList.append(Format.BASE64_ENC)
             typesList.append(Format.BASE64_DEC)
         typesList.append(Format.BINARY)
@@ -80,9 +70,9 @@ class TypeIdentifier():
     #+----------------------------------------------
     #| Return True if the string parameter is ASCII
     #+----------------------------------------------
-    def isAscii(self, string):
+    def isAscii(self, val):
         try:
-            string.decode('ascii')
+            val.decode('ascii')
             return True
         except UnicodeDecodeError:
             return False
@@ -91,17 +81,12 @@ class TypeIdentifier():
     #| Return True if the string table parameter is base64
     #|  encoded
     #+----------------------------------------------
-    def isBase64(self, stringsTable):
+    def isBase64(self, val):
         res = True
         try:
-            for string in stringsTable:
-                s = ""
-                for i in range(0, len(string), 2):
-                    s += chr(int(string[i:i + 2], 16))
-                tmp = base64.b64decode(s)
-                if tmp == "":
-                    res = False
+            tmp = base64.b64decode(val)
+            if tmp == "":
+                res = False
         except TypeError:
             res = False
-
         return res
