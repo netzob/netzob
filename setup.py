@@ -37,6 +37,7 @@ from setuptools import setup, Extension, find_packages
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
+from resources.sdist.test_command import test_command
 
 #+----------------------------------------------------------------------------
 #| Definition of variables
@@ -141,7 +142,8 @@ dependencies = [
 #+----------------------------------------------------------------------------
 CMD_CLASS = {
     'build_py': pybuild_command,
-    'build_manpage': manpage_command
+    'build_manpage': manpage_command,
+    'test': test_command
 }
 
 #+----------------------------------------------------------------------------
