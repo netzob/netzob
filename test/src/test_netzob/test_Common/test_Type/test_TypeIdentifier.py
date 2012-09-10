@@ -25,14 +25,14 @@
 #|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 #+---------------------------------------------------------------------------+
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Global Imports
 #+----------------------------------------------
 import unittest
 import random
 import base64
 
-#+---------------------------------------------- 
+#+----------------------------------------------
 #| Local Imports
 #+----------------------------------------------
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
@@ -42,34 +42,33 @@ from common.NetzobTestCase import NetzobTestCase
 
 
 class test_TypeIdentifier(NetzobTestCase):
-    
-    def test_getTypesNum(self):        
+
+    def test_getTypesNum(self):
         number = random.randint(0, 10000)
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.DECIMAL, typeIdentifier.getTypes(number))
-    
-    def test_getTypesAlpha(self):    
+
+    def test_getTypesAlpha(self):
         alphabet = map(chr, range(97, 123))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.ALPHA, typeIdentifier.getTypes(alpha))
-        
-    def test_getTypesAscii(self):    
+
+    def test_getTypesAscii(self):
         alphabet = map(chr, range(97, 123))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.ASCII, typeIdentifier.getTypes(alpha))
-        
-    def test_getTypesBase64(self):    
+
+    def test_getTypesBase64(self):
         string = "Vive Netzob !"
         base64String = base64.encodestring(string)
         typeIdentifier = TypeIdentifier()
         self.assertIn(Format.BASE64_ENC, typeIdentifier.getTypes(base64String))
-        
-    def test_getTypesBinary(self):    
+
+    def test_getTypesBinary(self):
         alphabet = map(chr, range(97, 123))
         alpha = alphabet[random.randint(0, len(alphabet) - 1)]
         typeIdentifier = TypeIdentifier()
         hexOfNumber = str(hex(ord(alpha)))[2:]
         self.assertIn(Format.BINARY, typeIdentifier.getTypes(hexOfNumber))
-        
