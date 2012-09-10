@@ -37,9 +37,10 @@ import sys
 
 
 class test_command(Command):
-    user_options = [ ]
+    user_options = [('reportfile=', None, 'name of the generated XML report file (not required)') ]
 
     def initialize_options(self):
+        self.reportfile = None
         self._dir = os.getcwd()
 
     def finalize_options(self):
@@ -71,19 +72,26 @@ class test_command(Command):
         from test_netzob import suite_global
         #import netzob.NetzobGui as NetzobGui
 
-        # Output is given through argument.
-        # If no argument : output to stdout 
-        outputStdout = True
-
         # We retrieve the current test suite
         currentTestSuite = suite_global.getSuite()
     
         # We execute the test suite
-        if (outputStdout == True) :
-            runner = TextTestRunner()
-            testResult = runner.run(currentTestSuite)
-        else :
-            File = open(reportFile, "w")
-            reporter = XMLTestRunner(File)
-            reporter.run(currentTestSuite)
-            File.close()
+        File = open(self.reportfile, "w")
+        reporter = XMLTestRunner(File)
+        reporter.run(currentTestSuite)
+        File.close()
+
+
+        # runner = TextTestRunner()
+        # testResult = runner.run(currentTestSuite)
+
+        
+
+        # if (outputStdout == True) :
+        #     runner = TextTestRunner()
+        #     testResult = runner.run(currentTestSuite)
+        # else :
+        #     File = open(reportFile, "w")
+        #     reporter = XMLTestRunner(File)
+        #     reporter.run(currentTestSuite)
+        #     File.close()
