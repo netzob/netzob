@@ -298,6 +298,8 @@ class Workspace(object):
         represents a valid (and loadable) workspace
         @return: None if the workspace is loadable or the error message if not valid
         """
+        if workspacePath is None:
+            return _("The workspace's path ({0}) is incorrect.".format(workspacePath))
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
 
         # verify we can open and read the file

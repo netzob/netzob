@@ -114,7 +114,9 @@ class NetzobMainController(object):
         else:
             workspaceDir = opts.workspace
 
-        if workspaceDir is None:
+        # Loading the workspace
+        self.currentWorkspace = (Workspace.loadWorkspace(workspaceDir))
+        if self.currentWorkspace is None:
             # We force the creation (or specification) of the workspace
             logging.info("The user resources were not found, we ask to the user its Netzob home directory")
             workspaceDir = self.askForWorkspaceDir()
@@ -123,17 +125,12 @@ class NetzobMainController(object):
                 sys.exit()
             else:
                 ResourcesConfiguration.generateUserFile(workspaceDir)
+                self.currentWorkspace = (Workspace.loadWorkspace(workspaceDir))
 
         if not ResourcesConfiguration.initializeResources():
             logging.fatal("Error while configuring the resources of Netzob")
             sys.exit()
         logging.debug("The workspace: {0}".format(str(workspaceDir)))
-
-        # Loading the workspace
-        self.currentWorkspace = (Workspace.loadWorkspace(workspaceDir))
-        if self.currentWorkspace == None:
-            logging.fatal("Stopping the execution (no workspace computed)!")
-            sys.exit()
 
         # Loading the last project
         self.currentProject = self.currentWorkspace.getLastProject()
