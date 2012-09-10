@@ -38,9 +38,10 @@ import base64
 from netzob.Common.Type.TypeIdentifier import TypeIdentifier
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Type.Format import Format
+from common.NetzobTestCase import NetzobTestCase
 
 
-class test_TypeIdentifier(unittest.TestCase):
+class test_TypeIdentifier(NetzobTestCase):
     
     def test_getTypesNum(self):        
         number = random.randint(0, 10000)
