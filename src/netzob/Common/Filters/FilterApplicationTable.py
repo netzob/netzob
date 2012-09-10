@@ -112,7 +112,7 @@ class FilterApplicationTable:
             from gi.repository import GLib  # TODO: to fix
             import gi
             gi.require_version('Gtk', '3.0')
-            encodedResult.append(glib.markup_escape_text(newData))
+            encodedResult.append(GLib.markup_escape_text(newData))
 
         i_global = 0
 

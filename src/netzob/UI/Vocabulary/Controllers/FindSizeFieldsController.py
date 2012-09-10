@@ -46,7 +46,6 @@ from netzob.Common.Threads.Job import Job
 from netzob.Common.Type.TypeConvertor import TypeConvertor
 from netzob.Common.Symbol import Symbol
 from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Inference.Vocabulary.Alignment.NeedlemanAndWunsch import NeedlemanAndWunsch
 from netzob.Inference.Vocabulary.SizeFieldIdentifier import SizeFieldIdentifier
 
 
