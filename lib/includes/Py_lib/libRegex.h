@@ -24,7 +24,7 @@
 //| @sponsors : Amossys, http://www.amossys.fr                                |
 //|             Supélec, http://www.rennes.supelec.fr/ren/rd/cidre/           |
 //+---------------------------------------------------------------------------+
-#ifndef lIBREGEX_H
+#ifndef LIBREGEX_H
 #define LIBREGEX_H
 #include <Python.h>
 #include "struct.h"
