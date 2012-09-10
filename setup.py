@@ -33,46 +33,52 @@ import sys
 sys.path.insert(0, 'src/')
 import os
 import uuid
+from fnmatch import fnmatch
+from glob import glob
 from setuptools import setup, Extension, find_packages
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
 
+def opj(*args):
+    path = os.path.join(*args)
+    return os.path.normpath(path)
+
 #+----------------------------------------------------------------------------
 #| Definition of variables
 #+----------------------------------------------------------------------------
 # Path to the resources
-staticResourcesPath = os.path.join("resources", "static")
-netzobStaticResourcesPath = os.path.join(staticResourcesPath, "netzob")
-pluginsStaticResourcesPath = os.path.join(staticResourcesPath, "plugins")
+staticResourcesPath = opj("resources", "static")
+netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
+pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 
 #+----------------------------------------------------------------------------
 #| C Extensions
 #+----------------------------------------------------------------------------
 # Includes path
 libPath = "lib"
-includesPath = os.path.join(libPath, "includes")
-pyIncludesPath = os.path.join(includesPath, "Py_lib")
+includesPath = opj(libPath, "includes")
+pyIncludesPath = opj(includesPath, "Py_lib")
 includes = [includesPath, pyIncludesPath]
 
 # Interface path
-interfacePath = os.path.join(libPath, "interface")
-pyInterfacePath = os.path.join(interfacePath, "Py_lib")
+interfacePath = opj(libPath, "interface")
+pyInterfacePath = opj(interfacePath, "Py_lib")
 
 # Needleman path
-needlemanPath = os.path.join(libPath, "libNeedleman")
-pyNeedlemanPath = os.path.join(needlemanPath, "Py_lib")
+needlemanPath = opj(libPath, "libNeedleman")
+pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 
 # ArgsFactories path
-argsFactoriesPath = os.path.join(libPath, "argsFactories")
+argsFactoriesPath = opj(libPath, "argsFactories")
 
 # Regex path
-regexPath = os.path.join(libPath, "libRegex")
-pyRegexPath = os.path.join(regexPath, "Py_lib")
+regexPath = opj(libPath, "libRegex")
+pyRegexPath = opj(regexPath, "Py_lib")
 
 # Tools path
-toolsPath = os.path.join(libPath, "tools")
+toolsPath = opj(libPath, "tools")
 
 # Generate the random binary identifier BID
 macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
@@ -81,15 +87,15 @@ macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
 moduleLibNeedleman = Extension('_libNeedleman',
                                # extra_compile_args=["-fopenmp"],
                                # extra_link_args=["-fopenmp"],
-                               sources=[os.path.join(interfacePath, "Interface.c"),
-                                        os.path.join(pyInterfacePath, "libInterface.c"),
-                                        os.path.join(pyNeedlemanPath, "libNeedleman.c"),
-                                        os.path.join(needlemanPath, "Needleman.c"),
-                                        os.path.join(needlemanPath, "scoreComputation.c"),
-                                        os.path.join(argsFactoriesPath, "factory.c"),
-                                        os.path.join(regexPath, "regex.c"),
-                                        os.path.join(regexPath, "manipulate.c"),
-                                        os.path.join(toolsPath, "getBID.c")],
+                               sources=[opj(interfacePath, "Interface.c"),
+                                        opj(pyInterfacePath, "libInterface.c"),
+                                        opj(pyNeedlemanPath, "libNeedleman.c"),
+                                        opj(needlemanPath, "Needleman.c"),
+                                        opj(needlemanPath, "scoreComputation.c"),
+                                        opj(argsFactoriesPath, "factory.c"),
+                                        opj(regexPath, "regex.c"),
+                                        opj(regexPath, "manipulate.c"),
+                                        opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
@@ -97,32 +103,32 @@ moduleLibNeedleman = Extension('_libNeedleman',
 moduleLibScoreComputation = Extension('_libScoreComputation',
                                       # extra_compile_args=["-fopenmp"],
                                       # extra_link_args=["-fopenmp"],
-                                      sources=[os.path.join(needlemanPath, "scoreComputation.c"),
-                                               os.path.join(pyNeedlemanPath, "libScoreComputation.c"),
-                                               os.path.join(needlemanPath, "Needleman.c"),
-                                               os.path.join(interfacePath, "Interface.c"),
-                                               os.path.join(pyInterfacePath, "libInterface.c"),
-                                               os.path.join(argsFactoriesPath, "factory.c"),
-                                               os.path.join(regexPath, "regex.c"),
-                                               os.path.join(regexPath, "manipulate.c"),
-                                               os.path.join(toolsPath, "getBID.c")],
+                                      sources=[opj(needlemanPath, "scoreComputation.c"),
+                                               opj(pyNeedlemanPath, "libScoreComputation.c"),
+                                               opj(needlemanPath, "Needleman.c"),
+                                               opj(interfacePath, "Interface.c"),
+                                               opj(pyInterfacePath, "libInterface.c"),
+                                               opj(argsFactoriesPath, "factory.c"),
+                                               opj(regexPath, "regex.c"),
+                                               opj(regexPath, "manipulate.c"),
+                                               opj(toolsPath, "getBID.c")],
                                       define_macros=macros,
                                       include_dirs=includes)
 
 # Module Interface
 moduleLibInterface = Extension('_libInterface',
-                               sources=[os.path.join(interfacePath, "Interface.c"),
-                                        os.path.join(pyInterfacePath, "libInterface.c"),
-                                        os.path.join(toolsPath, "getBID.c")],
+                               sources=[opj(interfacePath, "Interface.c"),
+                                        opj(pyInterfacePath, "libInterface.c"),
+                                        opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
 # Module Regex
 moduleLibRegex = Extension('_libRegex',
-                           sources=[os.path.join(regexPath, "regex.c"),
-                                    os.path.join(pyRegexPath, "libRegex.c"),
-                                    os.path.join(regexPath, "manipulate.c"),
-                                    os.path.join(toolsPath, "getBID.c")],
+                           sources=[opj(regexPath, "regex.c"),
+                                    opj(pyRegexPath, "libRegex.c"),
+                                    opj(regexPath, "manipulate.c"),
+                                    opj(toolsPath, "getBID.c")],
                            define_macros=macros,
                            include_dirs=includes)
 
