@@ -169,6 +169,59 @@ try:
 except ImportError:
     print "Info: Babel support unavailable, translations not available"
 
+#+---------------------------------------------------------------------------------------------
+#| Build a mapping of merge path and local files to put in data_files argument of setup() call
+#+---------------------------------------------------------------------------------------------
+def find_data_files(dstdir, srcdir, *wildcards, **kw):
+    # get a list of all files under the srcdir matching wildcards,
+    # returned in a format to be used for install_data
+    def walk_helper(arg, dirname, files):
+        if '.git' in dirname:
+            return
+        names = []
+        (lst,) = arg
+        for wc in wildcards:
+            wc_name = opj(dirname, wc)
+            for f in files:
+                filename = opj(dirname, f)
+                if fnmatch(filename, wc_name) and not os.path.isdir(filename):
+                    names.append(filename)
+        lst.append((dirname.replace(srcdir, dstdir), names))
+
+    file_list = []
+    if kw.get('recursive', True):
+        os.path.walk(srcdir, walk_helper, (file_list,))
+    else:
+        walk_helper((file_list,), srcdir,
+                    [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
+    return file_list
+
+root_data_files    = find_data_files(opj("share", "netzob"),
+                                     netzobStaticResourcesPath,
+                                     'logo.png', recursive=False)
+app_data_files     = find_data_files(opj("share", "applications"),
+                                     netzobStaticResourcesPath,
+                                     'netzob.desktop', recursive=False)
+icons_data_files   = find_data_files(opj("share", "netzob", "icons"),
+                                     opj(netzobStaticResourcesPath, "icons"),
+                                     '*.png')
+default_data_files = find_data_files(opj("share", "netzob", "defaults"),
+                                     opj(netzobStaticResourcesPath, "defaults"),
+                                     '*.default', recursive=False)
+xsds_data_files    = find_data_files(opj("share", "netzob", "xsds"),
+                                     opj(netzobStaticResourcesPath, "xsds"),
+                                     '*.xsd')
+locale_data_files  = find_data_files(opj("share", "locale"),
+                                     opj(netzobStaticResourcesPath, "locales"),
+                                     '*.mo')
+ui_data_files      = find_data_files(opj("share", "netzob", "ui"),
+                                     opj(netzobStaticResourcesPath, "ui"),
+                                     '*.glade', '*.ui')
+data_files = root_data_files + app_data_files + icons_data_files + \
+             default_data_files + xsds_data_files + locale_data_files + \
+             ui_data_files
+
+
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
@@ -177,19 +230,7 @@ setup(
     packages=find_packages(where='src'),
     package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
-    data_files=[
-        (os.path.join("share", "netzob"), [os.path.join(netzobStaticResourcesPath, "logo.png")]),
-        (os.path.join("share", "applications"), [os.path.join(netzobStaticResourcesPath, "netzob.desktop")]),
-        (os.path.join("share", "icons", "hicolor", "22x22", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "22x22", "netzob.png")]),
-        (os.path.join("share", "icons", "hicolor", "48x48", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "48x48", "netzob.png")]),
-        (os.path.join("share", "icons", "hicolor", "64x64", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "64x64", "netzob.png")]),
-        (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "repository.xml.default")]),
-        (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "logging.conf.default")]),
-        (os.path.join("share", "netzob", "xsds", "0.1"), [os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Workspace.xsd"),
-                                                          os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Project.xsd"),
-                                                          os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "common.xsd")]),
-        (os.path.join("share", "locale", "fr", "LC_MESSAGES"), [os.path.join(netzobStaticResourcesPath, "locales", "fr", "LC_MESSAGES", "netzob.mo")])
-    ],
+    data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,
     version=release.version,
