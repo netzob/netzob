@@ -334,13 +334,14 @@ class Workspace(object):
             return None
 
         workspaceFile = os.path.join(workspacePath, Workspace.CONFIGURATION_FILENAME)
+        logging.debug("  Workspace configuration file found: " + str(workspaceFile))
         # We validate the file given the schemas
         for xmlSchemaFile in Workspace.WORKSPACE_SCHEMAS.keys():
             from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
             xmlSchemaPath = os.path.join(ResourcesConfiguration.getStaticResources(), xmlSchemaFile)
             # If we find a version which validates the XML, we parse with the associated function
             if Workspace.isSchemaValidateXML(xmlSchemaPath, workspaceFile):
-                logging.debug("The file " + str(xmlSchemaPath) + " validates the workspace configuration file.")
+                logging.debug("  Workspace configuration file " + str(workspaceFile) + " is valid against XSD scheme " + str(xmlSchemaPath))
                 parsingFunc = Workspace.WORKSPACE_SCHEMAS[xmlSchemaFile]
                 workspace = parsingFunc(workspacePath, workspaceFile)
                 if workspace is not None:
