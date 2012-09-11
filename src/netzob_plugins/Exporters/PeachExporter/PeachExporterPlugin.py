@@ -5,7 +5,7 @@
 #|                                                                           |
 #|               Netzob : Inferring communication protocols                  |
 #+---------------------------------------------------------------------------+
-#| Copyright (C) 2011 Benjamin Dufour                                        |
+#| Copyright (C) 2011 AMOSSYS                                                |
 #| This program is free software: you can redistribute it and/or modify      |
 #| it under the terms of the GNU General Public License as published by      |
 #| the Free Software Foundation, either version 3 of the License, or         |
@@ -55,6 +55,7 @@ class PeachExporterPlugin(ExporterPlugin):
     __plugin_description__ = _("Provide the possibility to export netzob symbols to Peach pit files.")
     __plugin_author__ = "Benjamin Dufour <benjamin.dufour@amossys.fr>"
     __plugin_copyright__ = "AMOSSYS"
+    __plugin_license__ = "GPLv3+"
 
     def __init__(self, netzob):
         """Constructor of PeachExporterPlugin:
