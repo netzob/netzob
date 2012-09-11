@@ -51,6 +51,8 @@ class OSpyImporterPlugin(FileImporterPlugin):
     __plugin_version__ = "1.0"
     __plugin_description__ = _("Provides the possibility to import messages from OSpy project file.")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
+    __plugin_license__ = "GPLv3+"
 
     FILE_TYPE_DESCRIPTION = "oSpy File"
 

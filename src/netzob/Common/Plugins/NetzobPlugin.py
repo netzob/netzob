@@ -72,6 +72,8 @@ class NetzobPlugin(object):
     __plugin_version__ = abstractproperty()
     __plugin_description__ = abstractproperty()
     __plugin_author__ = abstractproperty()
+    __plugin_copyright__ = abstractproperty()
+    __plugin_license__ = abstractproperty()
 
     def getName(self):
         return self.__plugin_name__
@@ -160,7 +162,7 @@ class NetzobPlugin(object):
     @staticmethod
     def loadPlugins(netzob):
         from netzob.Common.Plugins.PluginChecker import PluginChecker
-        logging.debug("Loading plugins:")
+        logging.debug("+ Loading plugins:")
         for entrypoint in pkg_resources.iter_entry_points('netzob.plugins'):
             try:
                 plugin_class = entrypoint.load()
