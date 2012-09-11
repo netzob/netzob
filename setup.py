@@ -264,10 +264,10 @@ setup(
             pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
             ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
             xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin
+            peachExporter = netzob_plugins.Exporters.PeachExporter.PeachExporterPlugin:PeachExporterPlugin
 
          [babel.extractors]
             glade = resources.sdist.babel_extract:extract_glade
-            peachExporter = netzob_plugins.Exporters.PeachExporter.PeachExporterPlugin:PeachExporterPlugin
         """,
     # Files that should be scanned by Babel (if available)
     message_extractors={
