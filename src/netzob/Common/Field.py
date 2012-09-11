@@ -173,7 +173,7 @@ class Field(object):
         # dynamic fields are in Blue
         if not self.isStatic():
             filters.append(TextColorFilter("Dynamic Field", "blue"))
-#            # fields with no variable define are in yellow
+            # fields with no variable define are in yellow
             if self.variable is None:
                 filters.append(BackgroundColorFilter("Default variable", "yellow"))
 

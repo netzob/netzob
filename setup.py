@@ -30,49 +30,55 @@
 #| Global Imports
 #+----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'src/')
 import os
 import uuid
+from fnmatch import fnmatch
+from glob import glob
+sys.path.insert(0, 'src/')
 from setuptools import setup, Extension, find_packages
 from netzob import release
 from resources.sdist.manpage_command import manpage_command
 from resources.sdist.pybuild_command import pybuild_command
 from resources.sdist.test_command import test_command
 
+def opj(*args):
+    path = os.path.join(*args)
+    return os.path.normpath(path)
+
 #+----------------------------------------------------------------------------
 #| Definition of variables
 #+----------------------------------------------------------------------------
 # Path to the resources
-staticResourcesPath = os.path.join("resources", "static")
-netzobStaticResourcesPath = os.path.join(staticResourcesPath, "netzob")
-pluginsStaticResourcesPath = os.path.join(staticResourcesPath, "plugins")
+staticResourcesPath = opj("resources", "static")
+netzobStaticResourcesPath = opj(staticResourcesPath, "netzob")
+pluginsStaticResourcesPath = opj(staticResourcesPath, "plugins")
 
 #+----------------------------------------------------------------------------
-#| C Extensions
+#| Definition of the extensions
 #+----------------------------------------------------------------------------
 # Includes path
 libPath = "lib"
-includesPath = os.path.join(libPath, "includes")
-pyIncludesPath = os.path.join(includesPath, "Py_lib")
+includesPath = opj(libPath, "includes")
+pyIncludesPath = opj(includesPath, "Py_lib")
 includes = [includesPath, pyIncludesPath]
 
 # Interface path
-interfacePath = os.path.join(libPath, "interface")
-pyInterfacePath = os.path.join(interfacePath, "Py_lib")
+interfacePath = opj(libPath, "interface")
+pyInterfacePath = opj(interfacePath, "Py_lib")
 
 # Needleman path
-needlemanPath = os.path.join(libPath, "libNeedleman")
-pyNeedlemanPath = os.path.join(needlemanPath, "Py_lib")
+needlemanPath = opj(libPath, "libNeedleman")
+pyNeedlemanPath = opj(needlemanPath, "Py_lib")
 
 # ArgsFactories path
-argsFactoriesPath = os.path.join(libPath, "argsFactories")
+argsFactoriesPath = opj(libPath, "argsFactories")
 
 # Regex path
-regexPath = os.path.join(libPath, "libRegex")
-pyRegexPath = os.path.join(regexPath, "Py_lib")
+regexPath = opj(libPath, "libRegex")
+pyRegexPath = opj(regexPath, "Py_lib")
 
 # Tools path
-toolsPath = os.path.join(libPath, "tools")
+toolsPath = opj(libPath, "tools")
 
 # Generate the random binary identifier BID
 macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
@@ -81,15 +87,15 @@ macros = [('BID', '"{0}"'.format(uuid.uuid4()))]
 moduleLibNeedleman = Extension('_libNeedleman',
                                # extra_compile_args=["-fopenmp"],
                                # extra_link_args=["-fopenmp"],
-                               sources=[os.path.join(interfacePath, "Interface.c"),
-                                        os.path.join(pyInterfacePath, "libInterface.c"),
-                                        os.path.join(pyNeedlemanPath, "libNeedleman.c"),
-                                        os.path.join(needlemanPath, "Needleman.c"),
-                                        os.path.join(needlemanPath, "scoreComputation.c"),
-                                        os.path.join(argsFactoriesPath, "factory.c"),
-                                        os.path.join(regexPath, "regex.c"),
-                                        os.path.join(regexPath, "manipulate.c"),
-                                        os.path.join(toolsPath, "getBID.c")],
+                               sources=[opj(interfacePath, "Interface.c"),
+                                        opj(pyInterfacePath, "libInterface.c"),
+                                        opj(pyNeedlemanPath, "libNeedleman.c"),
+                                        opj(needlemanPath, "Needleman.c"),
+                                        opj(needlemanPath, "scoreComputation.c"),
+                                        opj(argsFactoriesPath, "factory.c"),
+                                        opj(regexPath, "regex.c"),
+                                        opj(regexPath, "manipulate.c"),
+                                        opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
@@ -97,32 +103,32 @@ moduleLibNeedleman = Extension('_libNeedleman',
 moduleLibScoreComputation = Extension('_libScoreComputation',
                                       # extra_compile_args=["-fopenmp"],
                                       # extra_link_args=["-fopenmp"],
-                                      sources=[os.path.join(needlemanPath, "scoreComputation.c"),
-                                               os.path.join(pyNeedlemanPath, "libScoreComputation.c"),
-                                               os.path.join(needlemanPath, "Needleman.c"),
-                                               os.path.join(interfacePath, "Interface.c"),
-                                               os.path.join(pyInterfacePath, "libInterface.c"),
-                                               os.path.join(argsFactoriesPath, "factory.c"),
-                                               os.path.join(regexPath, "regex.c"),
-                                               os.path.join(regexPath, "manipulate.c"),
-                                               os.path.join(toolsPath, "getBID.c")],
+                                      sources=[opj(needlemanPath, "scoreComputation.c"),
+                                               opj(pyNeedlemanPath, "libScoreComputation.c"),
+                                               opj(needlemanPath, "Needleman.c"),
+                                               opj(interfacePath, "Interface.c"),
+                                               opj(pyInterfacePath, "libInterface.c"),
+                                               opj(argsFactoriesPath, "factory.c"),
+                                               opj(regexPath, "regex.c"),
+                                               opj(regexPath, "manipulate.c"),
+                                               opj(toolsPath, "getBID.c")],
                                       define_macros=macros,
                                       include_dirs=includes)
 
 # Module Interface
 moduleLibInterface = Extension('_libInterface',
-                               sources=[os.path.join(interfacePath, "Interface.c"),
-                                        os.path.join(pyInterfacePath, "libInterface.c"),
-                                        os.path.join(toolsPath, "getBID.c")],
+                               sources=[opj(interfacePath, "Interface.c"),
+                                        opj(pyInterfacePath, "libInterface.c"),
+                                        opj(toolsPath, "getBID.c")],
                                define_macros=macros,
                                include_dirs=includes)
 
 # Module Regex
 moduleLibRegex = Extension('_libRegex',
-                           sources=[os.path.join(regexPath, "regex.c"),
-                                    os.path.join(pyRegexPath, "libRegex.c"),
-                                    os.path.join(regexPath, "manipulate.c"),
-                                    os.path.join(toolsPath, "getBID.c")],
+                           sources=[opj(regexPath, "regex.c"),
+                                    opj(pyRegexPath, "libRegex.c"),
+                                    opj(regexPath, "manipulate.c"),
+                                    opj(toolsPath, "getBID.c")],
                            define_macros=macros,
                            include_dirs=includes)
 
@@ -163,6 +169,59 @@ try:
 except ImportError:
     print "Info: Babel support unavailable, translations not available"
 
+#+---------------------------------------------------------------------------------------------
+#| Build a mapping of merge path and local files to put in data_files argument of setup() call
+#+---------------------------------------------------------------------------------------------
+def find_data_files(dstdir, srcdir, *wildcards, **kw):
+    # get a list of all files under the srcdir matching wildcards,
+    # returned in a format to be used for install_data
+    def walk_helper(arg, dirname, files):
+        if '.git' in dirname:
+            return
+        names = []
+        (lst,) = arg
+        for wc in wildcards:
+            wc_name = opj(dirname, wc)
+            for f in files:
+                filename = opj(dirname, f)
+                if fnmatch(filename, wc_name) and not os.path.isdir(filename):
+                    names.append(filename)
+        lst.append((dirname.replace(srcdir, dstdir), names))
+
+    file_list = []
+    if kw.get('recursive', True):
+        os.path.walk(srcdir, walk_helper, (file_list,))
+    else:
+        walk_helper((file_list,), srcdir,
+                    [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
+    return file_list
+
+root_data_files    = find_data_files(opj("share", "netzob"),
+                                     netzobStaticResourcesPath,
+                                     'logo.png', recursive=False)
+app_data_files     = find_data_files(opj("share", "applications"),
+                                     netzobStaticResourcesPath,
+                                     'netzob.desktop', recursive=False)
+icons_data_files   = find_data_files(opj("share", "netzob", "icons"),
+                                     opj(netzobStaticResourcesPath, "icons"),
+                                     '*.png')
+default_data_files = find_data_files(opj("share", "netzob", "defaults"),
+                                     opj(netzobStaticResourcesPath, "defaults"),
+                                     '*.default', recursive=False)
+xsds_data_files    = find_data_files(opj("share", "netzob", "xsds"),
+                                     opj(netzobStaticResourcesPath, "xsds"),
+                                     '*.xsd')
+locale_data_files  = find_data_files(opj("share", "locale"),
+                                     opj(netzobStaticResourcesPath, "locales"),
+                                     '*.mo')
+ui_data_files      = find_data_files(opj("share", "netzob", "ui"),
+                                     opj(netzobStaticResourcesPath, "ui"),
+                                     '*.glade', '*.ui')
+data_files = root_data_files + app_data_files + icons_data_files + \
+             default_data_files + xsds_data_files + locale_data_files + \
+             ui_data_files
+
+
 #+----------------------------------------------------------------------------
 #| Definition of Netzob for setup
 #+----------------------------------------------------------------------------
@@ -171,19 +230,7 @@ setup(
     packages=find_packages(where='src'),
     package_dir={"netzob": "src" + os.sep + "netzob", "netzob_plugins": "src" + os.sep + "netzob_plugins"},
     ext_modules=[moduleLibNeedleman, moduleLibScoreComputation, moduleLibInterface, moduleLibRegex],
-    data_files=[
-        (os.path.join("share", "netzob"), [os.path.join(netzobStaticResourcesPath, "logo.png")]),
-        (os.path.join("share", "applications"), [os.path.join(netzobStaticResourcesPath, "netzob.desktop")]),
-        (os.path.join("share", "icons", "hicolor", "22x22", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "22x22", "netzob.png")]),
-        (os.path.join("share", "icons", "hicolor", "48x48", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "48x48", "netzob.png")]),
-        (os.path.join("share", "icons", "hicolor", "64x64", "apps"), [os.path.join(netzobStaticResourcesPath, "icons", "64x64", "netzob.png")]),
-        (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "repository.xml.default")]),
-        (os.path.join("share", "netzob", "defaults"), [os.path.join(netzobStaticResourcesPath, "defaults", "logging.conf.default")]),
-        (os.path.join("share", "netzob", "xsds", "0.1"), [os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Workspace.xsd"),
-                                                          os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "Project.xsd"),
-                                                          os.path.join(netzobStaticResourcesPath, "xsds", "0.1", "common.xsd")]),
-        (os.path.join("share", "locale", "fr", "LC_MESSAGES"), [os.path.join(netzobStaticResourcesPath, "locales", "fr", "LC_MESSAGES", "netzob.mo")])
-    ],
+    data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,
     version=release.version,
@@ -217,6 +264,7 @@ setup(
             pcapImporter = netzob_plugins.Importers.PCAPImporter.PCAPImporterPlugin:PCAPImporterPlugin
             ospyImporter = netzob_plugins.Importers.OSpyImporter.OSpyImporterPlugin:OSpyImporterPlugin
             xmlImporter = netzob_plugins.Importers.XMLImporter.XMLImporterPlugin:XMLImporterPlugin
+            peachExporter = netzob_plugins.Exporters.PeachExporter.PeachExporterPlugin:PeachExporterPlugin
 
          [babel.extractors]
             glade = resources.sdist.babel_extract:extract_glade

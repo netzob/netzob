@@ -309,7 +309,6 @@ class AggregateVariable(AbstractNodeVariable):
                 # mutable.
                 self.sortChildrenToRead(readingToken)
                 self.readChildren(readingToken)
-
             else:
                 # not mutable.
                 self.readChildren(readingToken)

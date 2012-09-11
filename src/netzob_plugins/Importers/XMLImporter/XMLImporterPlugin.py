@@ -51,6 +51,8 @@ class XMLImporterPlugin(FileImporterPlugin):
     __plugin_version__ = "1.0"
     __plugin_description__ = _("Provide the possibility to import messages from netzob XML message files")
     __plugin_author__ = "Georges Bossert <georges.bossert@supelec.fr>"
+    __plugin_copyright__ = "Georges Bossert and Frédéric Guihéry"
+    __plugin_license__ = "GPLv3+"
 
     FILE_TYPE_DESCRIPTION = "Netzob XML Traces"
 

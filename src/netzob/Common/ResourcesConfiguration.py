@@ -119,10 +119,13 @@ class ResourcesConfiguration(object):
         if localStaticPath == "":
             return None
 
-        logging.debug("Static path declared : " + staticPath)
+        logging.debug("  System static path declared: " + staticPath)
+        logging.debug("  Local static path declared: " + localStaticPath)
         if (os.path.isdir(localStaticPath)):
+            logging.debug("  Static path used: " + localStaticPath)
             return localStaticPath
         elif (os.path.isdir(staticPath)):
+            logging.debug("  Static path used: " + staticPath)
             return staticPath
 
         return None
@@ -132,24 +135,28 @@ class ResourcesConfiguration(object):
         # the user has specified its home directory so we store it in
         # a dedicated local file
         localFilePath = os.path.join(os.path.expanduser("~"), ResourcesConfiguration.LOCALFILE)
+        logging.debug("  Local configuration file used: " + localFilePath)
         workspacePath = ResourcesConfiguration.extractWorkspaceDirFromFile(localFilePath)
+        logging.debug("  Workspace path declared in configuration file: " + workspacePath)
 
         # Workspace not declared
         if workspacePath is None:
+            logging.debug("  Workspace path declared does not exist: " + workspacePath)
             return None
         # is the workspace a directory
         if not os.path.isdir(workspacePath):
-            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not valid : its not a directory.")
+            logging.warn("  The specified workspace's path (" + str(workspacePath) + ") is not valid : its not a directory.")
             return None
         # is it readable
         if not os.access(workspacePath, os.R_OK):
-            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not readable.")
+            logging.warn("  The specified workspace's path (" + str(workspacePath) + ") is not readable.")
             return None
         # is it writable
         if not os.access(workspacePath, os.W_OK):
-            logging.warn("The specified workspace's path (" + str(workspacePath) + ") is not writable.")
+            logging.warn("  The specified workspace's path (" + str(workspacePath) + ") is not writable.")
             return None
 
+        logging.debug("  Workspace R/W access is valid: " + workspacePath)
         return workspacePath
 
     @staticmethod

@@ -70,11 +70,15 @@ class NetzobMainController(object):
         cmdLine = CommandLine()
         cmdLine.parse()
         opts = cmdLine.getOptions()
+
         # Initialize everything
         self._loadBugReporter(opts)
-        self._loadWorkspace(opts)
+        self.currentWorkspace = self._loadWorkspace(opts)
         self._initLogging()
         self._initResourcesAndLocales()
+
+        # Loading the last project
+        self.currentProject = self.currentWorkspace.getLastProject()
 
         # Initialize a clipboard object
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
@@ -85,6 +89,7 @@ class NetzobMainController(object):
             sys.exit()
 
         # Initialize main view
+        self.log.info(_("Starting netzob UI"))
         self.view = None    # small hack since the attribute need to exists when the main glade is loaded
         self.view = NetzobMainView(self)
 
@@ -109,31 +114,25 @@ class NetzobMainController(object):
             logging.debug("Bug reporter not requested.")
 
     def _loadWorkspace(self, opts):
+        logging.debug("+ Load workspace...")
         if opts.workspace is None:
             workspaceDir = ResourcesConfiguration.getWorkspaceDir()
         else:
             workspaceDir = opts.workspace
 
         # Loading the workspace
-        self.currentWorkspace = (Workspace.loadWorkspace(workspaceDir))
-        if self.currentWorkspace is None:
+        workspace = (Workspace.loadWorkspace(workspaceDir))
+        if workspace is None:
             # We force the creation (or specification) of the workspace
-            logging.info("The user resources were not found, we ask to the user its Netzob home directory")
+            logging.info("Workspace not found: we ask to the user its new Netzob home directory")
             workspaceDir = self.askForWorkspaceDir()
             if workspaceDir is None:
                 logging.fatal("Stopping the execution (no workspace computed)!")
                 sys.exit()
             else:
                 ResourcesConfiguration.generateUserFile(workspaceDir)
-                self.currentWorkspace = (Workspace.loadWorkspace(workspaceDir))
-
-        if not ResourcesConfiguration.initializeResources():
-            logging.fatal("Error while configuring the resources of Netzob")
-            sys.exit()
-        logging.debug("The workspace: {0}".format(str(workspaceDir)))
-
-        # Loading the last project
-        self.currentProject = self.currentWorkspace.getLastProject()
+                workspace = (Workspace.loadWorkspace(workspaceDir))
+        return workspace
 
     def askForWorkspaceDir(self):
         workspaceSelector = WorkspaceSelector()
@@ -144,6 +143,12 @@ class NetzobMainController(object):
         return workspacePath
 
     def _initResourcesAndLocales(self):
+        # Initialize resources
+        logging.debug("+ Initialize resources...")
+        if not ResourcesConfiguration.initializeResources():
+            logging.fatal("Error while configuring the resources of Netzob")
+            sys.exit()
+
         # Initialiaze gettext
         gettext.bindtextdomain("netzob", ResourcesConfiguration.getLocaleLocation())
         gettext.textdomain("netzob")
@@ -157,7 +162,6 @@ class NetzobMainController(object):
         # Create the logging infrastructure
         LoggingConfiguration().initializeLogging(self.currentWorkspace)
         self.log = logging.getLogger(__name__)
-        self.log.info(_("Starting netzob"))
 
     def run(self):
         self.view.run()
