@@ -31,25 +31,31 @@ load-plugins=
 
 [MESSAGES CONTROL]
 
+# Disable following rules:
+# C0301 : line too long
+# E0611 : Gobject use introspection wich is incomptaible with pylint
+disable=R,C0301,E0611
+
 # Enable only checker(s) with the given id(s). This option conflict with the
 # disable-checker option
 #enable-checker=
 
 # Enable all checker(s) except those with the given id(s). This option conflict
 # with the disable-checker option
-#disable-checker=
+#disable-checker=C0301
 
 # Enable all messages in the listed categories.
 #enable-msg-cat=
 
 # Disable all messages in the listed categories.
-#disable-msg-cat=
+#disable-msg-cat=C,R,W
 
 # Enable the message(s) with the given id(s).
-#enable-msg=
+#enable-msg=W0311,W0511,W0611,W0613
+#W0142,E0213,W0703,W0613,W0622,W0201,W0612,W0511,W0212
 
 # Disable the message(s) with the given id(s).
-disable-msg=C,R,W0142,E0213,W0703,W0613,W0622,W0201,W0612,W0511,W0212
+#disable-msg=
 
 [REPORTS]
 
@@ -66,7 +72,7 @@ include-ids=no
 files-output=no
 
 # Tells wether to display a full report or only the messages
-reports=no
+reports=yes
 
 # Python expression which should return a note less than 10 (10 is the highest
 # note).You have access to the variables errors warning, statement which
@@ -154,23 +160,23 @@ class-rgx=[A-Z_][a-zA-Z0-9]+$
 function-rgx=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression which should only match correct method names
-method-rgx=[a-z_][a-z0-9_]{2,30}$
+method-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 
 # Regular expression which should only match correct instance attribute names
-attr-rgx=[a-z_][a-z0-9_]{2,30}$
+attr-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 
 # Regular expression which should only match correct argument names
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+argument-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 
 # Regular expression which should only match correct variable names
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+variable-rgx=[a-z_][a-zA-Z0-9_]{1,30}$
 
 # Regular expression which should only match correct list comprehension /
 # generator expression variable names
 inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=i,j,k,ex,Run,_
+good-names=a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z
 
 # Bad variable names which should always be refused, separated by a comma
 bad-names=foo,bar,baz,toto,tutu,tata
