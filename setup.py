@@ -141,6 +141,7 @@ dependencies = [
     'pcapy',
     'bitarray',
     'lxml',
+    'numpy'
 ]
 
 #+----------------------------------------------------------------------------
@@ -196,25 +197,25 @@ def find_data_files(dstdir, srcdir, *wildcards, **kw):
                     [os.path.basename(f) for f in glob(opj(srcdir, '*'))])
     return file_list
 
-root_data_files    = find_data_files(opj("share", "netzob"),
+root_data_files = find_data_files(opj("share", "netzob"),
                                      netzobStaticResourcesPath,
                                      'logo.png', recursive=False)
-app_data_files     = find_data_files(opj("share", "applications"),
+app_data_files = find_data_files(opj("share", "applications"),
                                      netzobStaticResourcesPath,
                                      'netzob.desktop', recursive=False)
-icons_data_files   = find_data_files(opj("share", "netzob", "icons"),
+icons_data_files = find_data_files(opj("share", "netzob", "icons"),
                                      opj(netzobStaticResourcesPath, "icons"),
                                      '*.png')
 default_data_files = find_data_files(opj("share", "netzob", "defaults"),
                                      opj(netzobStaticResourcesPath, "defaults"),
                                      '*.default', recursive=False)
-xsds_data_files    = find_data_files(opj("share", "netzob", "xsds"),
+xsds_data_files = find_data_files(opj("share", "netzob", "xsds"),
                                      opj(netzobStaticResourcesPath, "xsds"),
                                      '*.xsd')
-locale_data_files  = find_data_files(opj("share", "locale"),
+locale_data_files = find_data_files(opj("share", "locale"),
                                      opj(netzobStaticResourcesPath, "locales"),
                                      '*.mo')
-ui_data_files      = find_data_files(opj("share", "netzob", "ui"),
+ui_data_files = find_data_files(opj("share", "netzob", "ui"),
                                      opj(netzobStaticResourcesPath, "ui"),
                                      '*.glade', '*.ui')
 data_files = root_data_files + app_data_files + icons_data_files + \
