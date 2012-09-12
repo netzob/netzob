@@ -76,6 +76,83 @@ class ResearchController(object):
     def hide(self):
         self._view.researchBar.hide()
 
+    def executeArbitrarySearch(self, searchTasks):
+        """Special method to execute and displays results
+        obtained after searching provided tasks"""
+
+        if self.vocabularyController.getCurrentProject() is None:
+            return
+
+#        self.stopSearch()
+#        while self.searchRunning:
+#            time.sleep(0.001)
+
+#        self._view.research_entry.set_text(_("{0} Properties".format(len(searchTasks))))
+#        self._view.research_entry.set_sensitive(False)
+#        self._view.research_preferences.set_sensitive(False)
+#        self._view.research_format.set_sensitive(False)
+#
+#        self._view.research_previous.set_sensitive(False)
+#        self._view.research_next.set_sensitive(False)
+#        self._view.currentSelectedResultLabel.set_label("")
+
+        self.show()
+
+        Job(self.startArbitrarySearch(searchTasks))
+
+    def startArbitrarySearch(self, searchTasks):
+        """Starts an arbitrary search"""
+        try:
+            (yield ThreadedTask(self.arbitrarySearch, searchTasks))
+        except TaskError, e:
+            self.log.error(_("Error while proceeding to the arbitrary search process: {0}").format(str(e)))
+
+        if self.executedSearchTasks is not None and len(self.executedSearchTasks) > 0:
+            self.idResult += 1
+            self.showCurrentResult()
+
+    def arbitrarySearch(self, searchTasks):
+        """Execute an arbitrary search process"""
+        self.searchRunning = True
+
+        GObject.idle_add(self._view.spinnerSearchProcess.show)
+        GObject.idle_add(self._view.spinnerSearchProcess.start)
+
+        # create a task for the text
+        searcher = Searcher(self.vocabularyController.getCurrentProject())
+
+        if searchTasks is not None:
+            self.executedSearchTasks = searcher.search(searchTasks)
+            self.idResult = -1
+            self.nbResult = 0
+            for searchTask in self.executedSearchTasks:
+                self.nbResult += len(searchTask.getResults())
+
+            if self.nbResult == 0:
+                GObject.idle_add(self._view.imageWarning.show)
+                GObject.idle_add(self._view.numberOfResultLabel.show)
+                GObject.idle_add(self._view.numberOfResultLabel.set_label, _("No occurrence found."))
+            else:
+                GObject.idle_add(self._view.imageWarning.hide)
+                GObject.idle_add(self._view.numberOfResultLabel.show)
+                if self.nbResult > 1:
+                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrences found.".format(self.nbResult)))
+                else:
+                    GObject.idle_add(self._view.numberOfResultLabel.set_label, _("{0} occurrence found.".format(self.nbResult)))
+
+            if not self.stopFlag and self.nbResult > 0:
+                # if search has completed (not stopped), nav. is allowed
+                GObject.idle_add(self._view.research_previous.set_sensitive, False)
+                GObject.idle_add(self._view.research_next.set_sensitive, True)
+            else:
+                self.executedSearchTasks = None
+                self.idResult = 0
+
+        self.searchRunning = False
+        self.stopFlag = False
+        GObject.idle_add(self._view.spinnerSearchProcess.stop)
+        GObject.idle_add(self._view.spinnerSearchProcess.hide)
+
     def research_entry_changed_cb(self, widget):
         """Callback executed when the user types some
         data in the research entry"""
