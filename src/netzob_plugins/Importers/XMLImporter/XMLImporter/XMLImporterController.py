@@ -48,9 +48,9 @@ class XMLImporterController(AbstractFileImporterController):
     COLUMN_SELECTED = 0
 
     def __init__(self, netzob, plugin):
-        super(XMLImporterController, self).__init__(netzob, plugin)
+        view = XMLImporterView(plugin, self)
+        super(XMLImporterController, self).__init__(netzob, plugin, view)
         self.model = XMLImporter(netzob)
-        self.view = XMLImporterView(plugin, self)
 
     def run(self):
         self.view.run()
