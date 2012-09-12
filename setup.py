@@ -136,14 +136,17 @@ moduleLibRegex = Extension('_libRegex',
 #| Definition of the dependencies
 #+----------------------------------------------------------------------------
 dependencies = [
+    'babel',
+    'numpy',
     'python-ptrace',
     'matplotlib',
     'pcapy',
     'bitarray',
     'lxml',
-    'numpy'
 ]
-
+extra_dependencies = {
+        'docs': ['Sphinx>=1.1.3']
+}
 #+----------------------------------------------------------------------------
 #| Extensions in the build operations (create manpage, i18n, ...)
 #+----------------------------------------------------------------------------
@@ -234,6 +237,7 @@ setup(
     data_files=data_files,
     scripts=["netzob"],
     install_requires=dependencies,
+    extras_require=extra_dependencies,
     version=release.version,
     license=release.licenseName,
     description=release.description,
