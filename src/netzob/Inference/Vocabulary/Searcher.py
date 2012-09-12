@@ -52,10 +52,11 @@ class Searcher(object):
     #| Constructor:
     #| @param project : the project where the search will be executed
     #+----------------------------------------------
-    def __init__(self, project):
+    def __init__(self, project, status_cb=None):
         # create logger with the given configuration
         self.log = logging.getLogger('netzob.Inference.Vocabulary.Searcher.py')
         self.project = project
+        self.status_cb = status_cb
 
     #+----------------------------------------------
     #| getSearchedDataForBinary:
@@ -191,12 +192,23 @@ class Searcher(object):
     #| @param tasks the set of "search" task
     #+----------------------------------------------
     def search(self, tasks):
+
+        symbols = self.project.getVocabulary().getSymbols()
+
+        # compute the step for status notification
+        step = 100.0 / (len(symbols) * len(tasks))
+        status = 0.0
+
         for task in tasks:
-            for symbols in self.project.getVocabulary().getSymbols():
-                for message in symbols.getMessages():
+            if self.status_cb is not None and int(status % 2) == 0:
+                    self.status_cb(float(status / 100.0), None)
+            for symbol in symbols:
+                for message in symbol.getMessages():
                     variations = task.getVariations()
                     for variation_value in variations.keys():
                         task.registerResults(self.extendedSearch(variation_value, message), variations[variation_value])
+                status += step
+
         return tasks
 
     #+----------------------------------------------

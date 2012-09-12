@@ -60,7 +60,7 @@ class ResearchView(object):
                                         "research_entry", "numberOfResultLabel",
                                         "research_format", "research_preferences",
                                         "research_previous", "research_next",
-                                        "research_close", "spinnerSearchProcess", "imageWarning", "currentSelectedResultLabel"])
+                                        "research_close", "searchProgressBar", "imageWarning", "currentSelectedResultLabel"])
         self.controller = controller
         self.builder.connect_signals(self.controller)
 

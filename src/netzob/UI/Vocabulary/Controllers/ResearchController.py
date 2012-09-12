@@ -76,26 +76,23 @@ class ResearchController(object):
     def hide(self):
         self._view.researchBar.hide()
 
+    def updateProgessBar(self, percent, message):
+        """Update the progress bar given the provided informations"""
+        if percent is not None:
+            time.sleep(0.01)
+            GObject.idle_add(self._view.searchProgressBar.set_fraction, percent)
+
+        if message is None:
+            GObject.idle_add(self._view.searchProgressBar.set_text, "")
+        else:
+            GObject.idle_add(self._view.searchProgressBar.set_text, message)
+
     def executeArbitrarySearch(self, searchTasks):
         """Special method to execute and displays results
         obtained after searching provided tasks"""
 
         if self.vocabularyController.getCurrentProject() is None:
             return
-
-#        self.stopSearch()
-#        while self.searchRunning:
-#            time.sleep(0.001)
-
-#        self._view.research_entry.set_text(_("{0} Properties".format(len(searchTasks))))
-#        self._view.research_entry.set_sensitive(False)
-#        self._view.research_preferences.set_sensitive(False)
-#        self._view.research_format.set_sensitive(False)
-#
-#        self._view.research_previous.set_sensitive(False)
-#        self._view.research_next.set_sensitive(False)
-#        self._view.currentSelectedResultLabel.set_label("")
-
         self.show()
 
         Job(self.startArbitrarySearch(searchTasks))
@@ -115,11 +112,12 @@ class ResearchController(object):
         """Execute an arbitrary search process"""
         self.searchRunning = True
 
-        GObject.idle_add(self._view.spinnerSearchProcess.show)
-        GObject.idle_add(self._view.spinnerSearchProcess.start)
+        # Reset the progress bar
+        GObject.idle_add(self._view.searchProgressBar.show)
+        GObject.idle_add(self._view.searchProgressBar.set_fraction, 0.0)
 
         # create a task for the text
-        searcher = Searcher(self.vocabularyController.getCurrentProject())
+        searcher = Searcher(self.vocabularyController.getCurrentProject(), self.updateProgessBar)
 
         if searchTasks is not None:
             self.executedSearchTasks = searcher.search(searchTasks)
@@ -150,8 +148,7 @@ class ResearchController(object):
 
         self.searchRunning = False
         self.stopFlag = False
-        GObject.idle_add(self._view.spinnerSearchProcess.stop)
-        GObject.idle_add(self._view.spinnerSearchProcess.hide)
+        GObject.idle_add(self._view.searchProgressBar.hide)
 
     def research_entry_changed_cb(self, widget):
         """Callback executed when the user types some
@@ -192,11 +189,12 @@ class ResearchController(object):
         self.searchRunning = True
 
         symbols = self.vocabularyController.getCurrentProject().getVocabulary().getSymbols()
-        GObject.idle_add(self._view.spinnerSearchProcess.show)
-        GObject.idle_add(self._view.spinnerSearchProcess.start)
+        # Reset the progress bar
+        GObject.idle_add(self._view.searchProgressBar.show)
+        GObject.idle_add(self._view.searchProgressBar.set_fraction, 0.0)
 
         # create a task for the text
-        searcher = Searcher(self.vocabularyController.getCurrentProject())
+        searcher = Searcher(self.vocabularyController.getCurrentProject(), self.updateProgessBar)
         # generate variations for each provided format (see glade file)
         if format == "string":
             searchTasks = searcher.getSearchedDataForString(text)
@@ -243,8 +241,7 @@ class ResearchController(object):
 
         self.searchRunning = False
         self.stopFlag = False
-        GObject.idle_add(self._view.spinnerSearchProcess.stop)
-        GObject.idle_add(self._view.spinnerSearchProcess.hide)
+        GObject.idle_add(self._view.searchProgressBar.hide)
 
     def stopSearch(self):
         """Stop any current search process"""
