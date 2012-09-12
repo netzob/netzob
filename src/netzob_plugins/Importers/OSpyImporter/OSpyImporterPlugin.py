@@ -58,7 +58,6 @@ class OSpyImporterPlugin(FileImporterPlugin):
 
     def __init__(self, netzob):
         super(OSpyImporterPlugin, self).__init__(netzob)
-        self.controller = OSpyImporterController(netzob, self)
         self.entryPoints = []
 
     def getEntryPoints(self):
@@ -71,5 +70,6 @@ class OSpyImporterPlugin(FileImporterPlugin):
         return self.FILE_TYPE_DESCRIPTION
 
     def importFile(self, filePathList):
+        self.controller = OSpyImporterController(self.getNetzob(), self)
         self.controller.setSourceFiles(filePathList)
         self.controller.run()

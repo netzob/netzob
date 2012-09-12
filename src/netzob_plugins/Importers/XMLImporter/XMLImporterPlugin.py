@@ -58,7 +58,6 @@ class XMLImporterPlugin(FileImporterPlugin):
 
     def __init__(self, netzob):
         super(XMLImporterPlugin, self).__init__(netzob)
-        self.controller = XMLImporterController(netzob, self)
         self.entryPoints = []
 
     def getEntryPoints(self):
@@ -71,5 +70,6 @@ class XMLImporterPlugin(FileImporterPlugin):
         return self.FILE_TYPE_DESCRIPTION
 
     def importFile(self, filePathList):
+        self.controller = XMLImporterController(self.getNetzob(), self)
         self.controller.setSourceFiles(filePathList)
         self.controller.run()

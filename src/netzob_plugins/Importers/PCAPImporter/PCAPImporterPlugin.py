@@ -57,7 +57,6 @@ class PCAPImporterPlugin(FileImporterPlugin):
 
     def __init__(self, netzob):
         super(PCAPImporterPlugin, self).__init__(netzob)
-        self.controller = PCAPImporterController(netzob, self)
         self.entryPoints = []
 
     def getEntryPoints(self):
@@ -70,5 +69,6 @@ class PCAPImporterPlugin(FileImporterPlugin):
         return self.FILE_TYPE_DESCRIPTION
 
     def importFile(self, filePathList):
+        self.controller = PCAPImporterController(self.getNetzob(), self)
         self.controller.setSourceFiles(filePathList)
         self.controller.run()

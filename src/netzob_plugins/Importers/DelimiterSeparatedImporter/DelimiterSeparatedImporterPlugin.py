@@ -58,7 +58,6 @@ class DelimiterSeparatedImporterPlugin(FileImporterPlugin):
 
     def __init__(self, netzob):
         super(DelimiterSeparatedImporterPlugin, self).__init__(netzob)
-        self.controller = DelimiterSeparatedImporterController(netzob, self)
         self.entryPoints = []
 
     def getEntryPoints(self):
@@ -71,5 +70,6 @@ class DelimiterSeparatedImporterPlugin(FileImporterPlugin):
         return self.FILE_TYPE_DESCRIPTION
 
     def importFile(self, filePathList):
+        self.controller = DelimiterSeparatedImporterController(self.getNetzob(), self)
         self.controller.setSourceFiles(filePathList)
         self.controller.run()
