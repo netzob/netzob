@@ -217,6 +217,20 @@ class NetzobMainView(object):
         switchProjectMenu.show_all()
         self.uiManager.get_widget("/mainMenuBar/fileMenu/switchProject").set_sensitive(True)
 
+    def updateListExporterPlugins(self, pluginsExtensions):
+        """Update the menu"""
+        exportersMenu = self.uiManager.get_widget("/mainMenuBar/fileMenu/exportProject").get_submenu()
+
+        # Update the list of exporters
+        for i in exportersMenu.get_children():
+            exportersMenu.remove(i)
+
+        for pluginExtension in pluginsExtensions:
+            pluginEntry = Gtk.CheckMenuItem(pluginExtension.menuText)
+            pluginEntry.connect("activate", pluginExtension.executeAction)
+            exportersMenu.append(pluginEntry)
+        exportersMenu.show_all()
+
     def offerToSaveCurrentProject(self):
         """Display a message dialog which
         offer to the user to save the current project"""

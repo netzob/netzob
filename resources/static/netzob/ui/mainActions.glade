@@ -31,7 +31,7 @@
       <object class="GtkAction" id="exportProject">
         <property name="label" translatable="yes">Export Project…</property>
         <property name="tooltip" translatable="yes">Save current project</property>
-        <signal name="activate" handler="exportProject_activate_cb" swapped="no"/>
+        <property name="hide_if_empty">False</property>
       </object>
     </child>
     <child>

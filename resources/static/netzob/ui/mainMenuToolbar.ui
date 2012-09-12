@@ -6,7 +6,7 @@
       <menuitem action="saveProject" />
       <separator />
       <menuitem action="importProject" />
-      <menuitem action="exportProject" />
+      <menu action="exportProject" />
       <separator />
       <placeholder name="fileMenuAdditions" />
       <separator />

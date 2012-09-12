@@ -60,6 +60,7 @@ from netzob.UI.Common.AboutDialog import AboutDialog
 from netzob.UI.Common.Controllers.BugReporterController import BugReporterController
 from netzob.UI.NetzobWidgets import NetzobErrorMessage
 from netzob.UI.WorkspaceSelector import WorkspaceSelector
+from netzob.Common.Plugins.Extensions.ExportMenuExtension import ExportMenuExtension
 
 
 class NetzobMainController(object):
@@ -95,6 +96,9 @@ class NetzobMainController(object):
 
         # Load all available plugins
         NetzobPlugin.loadPlugins(self)
+
+        # Refresh list of available exporter plugins
+        self.updateListOfExporterPlugins()
 
         # Refresh list of available projects
         self.updateListOfAvailableProjects()
@@ -201,6 +205,12 @@ class NetzobMainController(object):
         current workspace, and provide them to its associated view"""
         listOfProjectsNameAndPath = self.currentWorkspace.getNameOfProjects()
         self.view.updateSwitchProjectMenu(listOfProjectsNameAndPath)
+
+    def updateListOfExporterPlugins(self):
+        """Fetch the list of available exporter plugins, and provide
+        them to its associated view"""
+        pluginExtensions = NetzobPlugin.getLoadedPluginsExtension(ExportMenuExtension)
+        self.view.updateListExporterPlugins(pluginExtensions)
 
     def perspectiveComboBox_changed_cb(self, comboBox):
         iter = comboBox.get_active_iter()
