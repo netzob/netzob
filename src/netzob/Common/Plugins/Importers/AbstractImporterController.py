@@ -143,9 +143,6 @@ class AbstractImporterController(AbstractPluginController):
         (yield ThreadedTask(self.doImportMessages, selectedMessages))
 
         self.view.dialog.destroy()
-        # Execute the finish (CB) method if one is defined
-        if self.plugin.finish is not None:
-            self.plugin.finish()
 
     def updateImportProgessBar(self, percent, message):
         """Update the progress bar given the provided informations"""
@@ -165,4 +162,5 @@ class AbstractImporterController(AbstractPluginController):
 
     def requestConfirmation(self, workspace, project, type, messages):
         confirmController = ConfirmImportMessagesController(workspace, project, type, messages)
+        confirmController.setFinish_cb(self.plugin.finish)
         GObject.idle_add(confirmController.run)

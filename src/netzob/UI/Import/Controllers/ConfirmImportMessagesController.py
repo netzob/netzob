@@ -66,6 +66,7 @@ class ConfirmImportMessagesController(object):
         self.importedMessages = messages
         self.excludedMessages = []
         self.importType = importType
+        self.finish_cb = None
 
     @property
     def view(self):
@@ -153,6 +154,9 @@ class ConfirmImportMessagesController(object):
 
         self._view.destroy()
 
+        if self.finish_cb is not None:
+            GObject.idle_add(self.finish_cb)
+
     def displayErrorMessage(self, errorMessage):
         """Display to the user the provided errorMessage"""
         if errorMessage is not None:
@@ -224,87 +228,6 @@ class ConfirmImportMessagesController(object):
 
         self._view.run()
 
-
-#        self.flagStop = False
-#        # update widget
-#        self._view.simple_cancel.set_sensitive(False)
-#        self._view.simple_execute.set_sensitive(False)
-#        self._view.radiobutton8bits.set_sensitive(False)
-#        self._view.radiobutton16bits.set_sensitive(False)
-#        self._view.radiobutton32bits.set_sensitive(False)
-#        self._view.radiobutton64bits.set_sensitive(False)
-#
-#        self._view.simple_stop.set_sensitive(True)
-#
-#        #extract chosen value
-#        formatBits = UnitSize.BITS8
-#        if self._view.radiobutton16bits.get_active():
-#            formatBits = UnitSize.BITS16
-#        elif self._view.radiobutton32bits.get_active():
-#            formatBits = UnitSize.BITS32
-#        elif self._view.radiobutton64bits.get_active():
-#            formatBits = UnitSize.BITS64
-#
-#        # create a job to execute the partitioning
-#        Job(self.startSimplePartitioning(formatBits))
-#
-#    def startSimplePartitioning(self, unitSize):
-#        if len(self.symbols) > 0:
-#            self.log.debug("Start to simple partitioning the selected symbols")
-#            try:
-#                (yield ThreadedTask(self.simplePartitioning, unitSize))
-#            except TaskError, e:
-#                self.log.error(_("Error while proceeding to the simple partitioning of symbols: {0}").format(str(e)))
-#        else:
-#            self.log.debug("No symbol selected")
-#
-#        # Update button
-#        self._view.simple_stop.set_sensitive(False)
-#
-#        # Close dialog box
-#        self._view.simpleDialog.destroy()
-#
-#        # Update the message table view
-#        self.vocabularyController._view.updateMessageTableDisplayingSymbols(self.symbols)
-#        # Update the symbol properties view
-#        self.vocabularyController._view.updateLeftPanel()
-#
-#    def simplePartitioning(self, unitSize):
-#        """Simple partitioning the provided symbols"""
-#        self.id_current_symbol = 0
-#        for symbol in self.symbols:
-#            GObject.idle_add(self._view.simple_progressbar.set_text, _("Simple partitioning symbol {0}".format(symbol.getName())))
-#            if self.isFlagStopRaised():
-#                return
-#            symbol.simplePartitioning(unitSize, self.updateProgessBar, self.isFlagStopRaised)
-#            self.id_current_symbol += 1
-#
-#    def updateProgessBar(self, percent, message):
-#        """Update the progress bar given the provided informations"""
-#        nbStage = len(self.symbols)
-#        if percent is not None:
-#            totalPercent = (100 / nbStage) * self.id_current_symbol + percent / nbStage
-#            valTotalPercent = float(totalPercent) / float(100)
-#            time.sleep(0.01)
-#            GObject.idle_add(self._view.simple_progressbar.set_fraction, valTotalPercent)
-#
-#        if message is None:
-#            GObject.idle_add(self._view.simple_progressbar.set_text, "")
-#        else:
-#            GObject.idle_add(self._view.simple_progressbar.set_text, message)
-#
-#    def isFlagStopRaised(self):
-#        return self.flagStop
-#
-#    def simple_stop_clicked_cb(self, widget):
-#        # update button
-#        self._view.simple_stop.set_sensitive(False)
-#        self.flagStop = True
-#
-#        # update widget
-#        self._view.simple_execute.set_sensitive(True)
-#        self._view.simple_cancel.set_sensitive(True)
-#        self._view.radiobutton8bits.set_sensitive(True)
-#        self._view.radiobutton16bits.set_sensitive(True)
-#        self._view.radiobutton32bits.set_sensitive(True)
-#        self._view.radiobutton64bits.set_sensitive(True)
+    def setFinish_cb(self, function):
+        """Set the callback to execute when import is finished"""
+        self.finish_cb = function
