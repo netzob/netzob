@@ -73,24 +73,8 @@ class IRPDeviceIoControlMessage(IRPMessage):
     #+-----------------------------------------------------------------------+
     def getProperties(self):
         properties = []
-        properties.append(Property('ID', Format.STRING, str(self.getID())))
-        properties.append(Property('Type', Format.STRING, self.getType()))
-        properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
-
-        properties.append(Property('Direction', Format.STRING, self.getDirection()))
-        properties.append(Property('Major', Format.STRING, self.getMajor()))
-        properties.append(Property('Minor', Format.DECIMAL, self.getMinor()))
-        properties.append(Property('Requestmode', Format.STRING, self.getRequestMode()))
-        properties.append(Property('PID', Format.DECIMAL, self.getPID()))
-        properties.append(Property('Status', Format.DECIMAL, self.getStatus()))
-        properties.append(Property('Information', Format.DECIMAL, self.getInformation()))
-        properties.append(Property('Cancel', Format.STRING, self.getCancel()))
-        properties.append(Property('SizeIn', Format.DECIMAL, self.getSizeIn()))
-        properties.append(Property('SizeOut', Format.DECIMAL, self.getSizeOut()))
+        properties.extend(super(IRPDeviceIoControlMessage, self).getProperties())
         properties.append(Property('IOCTL', Format.DECIMAL, self.getIOCTL()))
-
-        properties.append(Property('Data', Format.HEX, self.getStringData()))
-        properties.append(Property('Pattern', Format.STRING, self.getPatternString()))
 
         return properties
 

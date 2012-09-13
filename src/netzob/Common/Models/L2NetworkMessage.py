@@ -71,6 +71,5 @@ class L2NetworkMessage(AbstractMessage):
         properties.append(Property('Layer 2 Source Address', Format.STRING, self.getL2SourceAddress()))
         properties.append(Property('Layer 2 Destination Address', Format.STRING, self.getL2DestinationAddress()))
         properties.append(Property('Data', Format.HEX, self.getStringData()))
-#        if self.pattern != []:
-#            properties.append(Property('Pattern', Format.STRING, self.getPatternString()))
+        properties.extend(super(L2NetworkMessage, self).getProperties())
         return properties

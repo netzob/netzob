@@ -102,7 +102,7 @@ class IRPMessage(AbstractMessage):
 
         properties.append(Property('Data', Format.HEX, self.getStringData()))
         properties.append(Property('Pattern', Format.STRING, self.getPatternString()))
-
+        properties.extend(super(IRPMessage, self).getProperties())
         return properties
 
     #+----------------------------------------------

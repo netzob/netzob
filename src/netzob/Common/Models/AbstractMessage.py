@@ -71,6 +71,7 @@ class AbstractMessage(object):
         self.visualizationFilters = []
         self.encodingFilters = []
         self.mathematicFilters = []
+        self.extraProperties = []
 
         self.pattern = []
         if not pattern:
@@ -95,8 +96,12 @@ class AbstractMessage(object):
     #|     MUST BE IMPLEMENTED IN SUB CLASSES
     #+-----------------------------------------------------------------------+
     def getProperties(self):
-        self.log.error("The message class doesn't have a method 'getProperties' !")
-        raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
+        return self.extraProperties
+#        self.log.error("The message class doesn't have a method 'getProperties' !")
+#        raise NotImplementedError("The message class doesn't have a method 'getProperties' !")
+
+    def addExtraProperty(self, property):
+        self.extraProperties.append(property)
 
     #+-----------------------------------------------------------------------+
     #| addVisualizationFilter

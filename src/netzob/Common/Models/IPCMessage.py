@@ -79,7 +79,7 @@ class IPCMessage(AbstractMessage):
         properties.append(Property('Key', Format.STRING, self.getKey()))
         properties.append(Property('Direction', Format.STRING, self.getDirection()))
         properties.append(Property('Data', Format.STRING, self.getStringData()))
-
+        properties.extend(super(IPCMessage, self).getProperties())
         return properties
 
     #+----------------------------------------------

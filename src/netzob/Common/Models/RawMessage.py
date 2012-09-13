@@ -70,5 +70,5 @@ class RawMessage(AbstractMessage):
         properties.append(Property('ID', Format.STRING, str(self.getID())))
         properties.append(Property('Type', Format.STRING, self.getType()))
         properties.append(Property('Timestamp', Format.DECIMAL, self.getTimestamp()))
-
+        properties.extend(super(RawMessage, self).getProperties())
         return properties

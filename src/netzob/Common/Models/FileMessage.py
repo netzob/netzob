@@ -85,7 +85,7 @@ class FileMessage(AbstractMessage):
         properties.append(Property('Size', Format.DECIMAL, self.getSize()))
         properties.append(Property('Line number', Format.DECIMAL, self.getLineNumber()))
         properties.append(Property('Data', Format.STRING, self.getStringData()))
-
+        properties.extend(super(FileMessage, self).getProperties())
         return properties
 
     #+----------------------------------------------
