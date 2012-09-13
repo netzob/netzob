@@ -26,58 +26,58 @@
 #+---------------------------------------------------------------------------+
 
 #+---------------------------------------------------------------------------+
-#| Global Imports
+#| Standard library imports
 #+---------------------------------------------------------------------------+
 from gettext import gettext as _
-import uuid
-from datetime import datetime
-import logging
+import os
 
 #+---------------------------------------------------------------------------+
-#| Local Imports
+#| Related third party imports
 #+---------------------------------------------------------------------------+
-from netzob.Common.Field import Field
-from netzob.Common.ProjectConfiguration import ProjectConfiguration
-from netzob.Common.ImportedTrace import ImportedTrace
-from netzob.Common.Symbol import Symbol
-from netzob.Common.Session import Session
-from netzob.Common.NetzobException import NetzobImportException
-from netzob.UI.ModelReturnCodes import ERROR
-from netzob.UI.Import.Controllers.ConfirmImportMessagesController import ConfirmImportMessagesController
+from gi.repository import Gtk, Gdk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject
+
+#+---------------------------------------------------------------------------+
+#| Local application imports
+#+---------------------------------------------------------------------------+
+from netzob.Common.ResourcesConfiguration import ResourcesConfiguration
 
 
-class AbstractImporter(object):
-    """Abstract class which provides common methods too any kind of importers"""
+class ConfirmImportMessagesView(object):
+    """The view which displays a dialog box to request for confirmation
+    from the user to import the provided messages in the project. It provides some
+    options like removing (or not) duplicated messages."""
 
-    def __init__(self, type, netzob):
-        self.type = type
-        self.messages = []
-        self.netzob = netzob
+    def __init__(self, controller):
+        '''
+        Constructor
+        '''
+        self.builder = Gtk.Builder()
+        self.builder.add_from_file(os.path.join(ResourcesConfiguration.getStaticResources(),
+                                                "ui", "import",
+                                                "confirmImportMessagesDialog.glade"))
+        self._getObjects(self.builder, ["confirmImportMessagesDialog",
+                                        "cancelButton",
+                                        "importButton",
+                                        "errorLabel",
+                                        "errorImage",
+                                        "nameOfCreatedSymbolEntry",
+                                        "removeDuplicatedMessagesCheckButton",
+                                        "keepPropertiesOfDuplicatedMessagesCheckButton"
+                                        ])
+        self.controller = controller
+        self.builder.connect_signals(self.controller)
+        self.cancelButton.set_sensitive(True)
+        self.importButton.set_sensitive(True)
 
-    def saveMessagesInCurrentProject(self, messageIDList):
-        addMessages = []
-        for messageID in messageIDList:
-            message = self.getMessageByID(str(messageID))
-            if message is not None:
-                addMessages.append(message)
-            else:
-                errorMessage = _("Message ID: {0} not found in importer message list").format(messageID)
-                raise NetzobImportException("PCAP", errorMessage, ERROR)
-        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), self.netzob.getCurrentProject(), addMessages)
+    def _getObjects(self, builder, objectsList):
+        for obj in objectsList:
+            setattr(self, obj, builder.get_object(obj))
 
-    def saveMessagesInProject(self, workspace, project, messages):
-        """Add a selection of messages to an existing project
-           it also saves them in the workspace"""
-        confirmController = ConfirmImportMessagesController(workspace, project, self.type, messages)
-        confirmController.run()
+    def run(self):
+        self.confirmImportMessagesDialog.run()
 
-    def getMessageByID(self, strID):
-        selectedMessage = None
-        for message in self.messages:
-            if str(message.getID()) == strID:
-                selectedMessage = message
-
-        return selectedMessage
-
-    def saveMessages(self):
-        self.saveMessagesInProject(self.netzob.getCurrentWorkspace(), self.netzob.getCurrentProject(), self.messages)
+    def destroy(self):
+        self.confirmImportMessagesDialog.destroy()

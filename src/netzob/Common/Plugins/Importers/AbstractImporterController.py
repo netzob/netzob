@@ -121,18 +121,11 @@ class AbstractImporterController(AbstractPluginController):
         selectedCount = len(selectedMessages)
         if selectedCount != 0:
             currentProjectName = self.getCurrentProject().getName()
-            md = Gtk.MessageDialog(
-                self.view.dialog, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
-                _("Are you sure to you want to import the {0} selected packets in project {1}").format(selectedCount, currentProjectName))
-            result = md.run()
-            md.destroy()
-            if result == Gtk.ResponseType.YES:
-                self.doImportMessages(selectedMessages)
-                self.view.dialog.destroy()
-                # Execute the finish (CB) method if one is defined
-                if self.plugin.finish is not None:
-                    self.plugin.finish()
+            self.doImportMessages(selectedMessages)
+            self.view.dialog.destroy()
+            # Execute the finish (CB) method if one is defined
+            if self.plugin.finish is not None:
+                self.plugin.finish()
 
     def updateCounters(self):
         displayedPackets = self.view.listListStore.iter_n_children(None)
