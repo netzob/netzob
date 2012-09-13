@@ -181,9 +181,9 @@ class PeachExportController(AbstractExporterController):
                 @param button: the button which was clicked and caused the call of this function.
         """
         if self.selectedSymbolID != "-2":
-            chooser = gtk.FileChooserDialog(title=_("Export as Peach Fuzzer (XML)"), action=gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+            chooser = Gtk.FileChooserDialog(title=_("Export as Peach Fuzzer (XML)"), action=Gtk.FileChooserAction.SAVE, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
             res = chooser.run()
-            if res == gtk.RESPONSE_OK:
+            if res == Gtk.ResponseType.OK:
                 fileName = chooser.get_filename()
             chooser.destroy()
 
@@ -192,10 +192,10 @@ class PeachExportController(AbstractExporterController):
             if not isFile:
                 doCreateFile = True
             else:
-                md = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
+                md = Gtk.MessageDialog(None, Gtk.DIALOG_DESTROY_WITH_PARENT, Gtk.MESSAGE_QUESTION, Gtk.BUTTONS_OK_CANCEL, _("Are you sure to override the file '{0}'?").format(fileName))
                 resp = md.run()
                 md.destroy()
-                if resp == gtk.RESPONSE_OK:
+                if resp == Gtk.RESPONSE_OK:
                     doCreateFile = True
 
             if doCreateFile:
